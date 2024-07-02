@@ -3,9 +3,15 @@
 
 ### Returns boolean
 = eq
+
 ! not
+
 != not eq
-> gt
+
+\> gt
+
 < lt
+
 >= gteq
+
 <= lteq
