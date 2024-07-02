@@ -29,10 +29,3 @@ Function: fn<argtype1;...argtypen<returntype>> {(x;y) x+y}
 Bound Function: bf<fn> {(x;y) x + y }(1;) > {(y) 1 + y}
 
 Error: er 'Error Message'
-
-## Type Definition
-
-Function Example
-* x:fn<i64;i64<i64>>::{(x;y) x+y} define a function with its type
-* x:fn<i64;i64<i64>>::(;|\n) define a type without a function
-* x:{(x;y) x+y} define a function and infer its type on calls
