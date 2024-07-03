@@ -20,7 +20,7 @@ Tuple: te<type1;type2;....typen> ["a";1;3.14] fixed array of uniform types
 
 Hash: hh<type> {\`a:1;\`b:2} hashmap of uniform types
 
-Struct: st<key1::type1;...keyn::typen> fixed hash of different types
+Struct: st<key1:type1;...keyn::typen> fixed hash of different types
 
 Union: un<st> only allocates enough space for largest type
 
@@ -29,3 +29,5 @@ Function: fn<argtype1;...argtypen<returntype>> {(x;y) x+y}
 Bound Function: bf<fn> {(x;y) x + y }(1;) > {(y) 1 + y}
 
 Error: er 'Error Message'
+
+File Descriptor: fd
