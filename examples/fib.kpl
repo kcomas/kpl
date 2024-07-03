@@ -1,5 +1,5 @@
 
-/// Calculate fibonacci to n
+// Calculate fibonacci to n
 
 n:u64::10
 

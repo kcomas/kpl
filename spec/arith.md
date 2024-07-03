@@ -8,8 +8,8 @@
 
 \* Mul
 
-\*\* Exp
+^ Exp
 
 / Div
 
-// Mod
+% Mod
