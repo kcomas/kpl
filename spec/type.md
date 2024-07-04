@@ -2,11 +2,13 @@
 # Types
 Void: vd
 
-Bool: bl b0, b1
+Bool: bl can only be zero or 1
 
-Integer: i8, i16, i32, i64, u8, u16, u32, u64
+Number types represent signed, unsigned and floats by 2^x eg u5 is unsigned 32bit integer
 
-Float: f32, f64
+Integer: i3, i4, i5, i6, u3, u4, u5, u6
+
+Float: f5, f6
 
 Char: cr Utf8 char "a"
 
