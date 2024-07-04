@@ -9,13 +9,13 @@ Copies scalar values, hash, and vector types are pointer copied
 x:1 - value set as i64 type infered
 
 ## Define Type
-:: Define
+$ Define
 
 Sets a type
 
-x:u64::1 - value and type set
+x:u64$1 - value and type set
 
-x:u64:: - type set
+x:u64 - type set
 
 ## Comments
 
