@@ -1,21 +1,27 @@
 
 #include "mod.h"
 
-mod_stat mod_file(mod *const m, const char *const path) {
+extern inline mod *mod_init(void);
+
+mod_stat mod_lfile(mod *const m, const char *const path) {
     int fd = open(path, O_RDONLY);
     if (fd == -1) return MOD_STAT(FLF);
-    if (statx(fd, "", AT_EMPTY_PATH, STATX_BASIC_STATS | STATX_BTIME, &mod.src.info) == -1) {
+    if (fstat(fd, &m->src.sb) == -1) {
         close(fd);
         return MOD_STAT(FLF);
     }
-    mod.src.data = calloc(mod.src.info.stx_size + 1, sizeof(char));
-    if (read(fd, mod.src.str, mod.src.info.stx_size) != mod.src.info.stx_size) {
-        free(mod.src.str);
+    m->src.str = calloc(m->src.sb.st_size + 1, sizeof(char));
+    if (read(fd, m->src.str, m->src.sb.st_size) != m->src.sb.st_size) {
+        free(m->src.str);
         close(fd);
         return MOD_STAT(FLF);
     }
-    mod.src.path = calloc(strlen(path) + 1, sizeof(char);
-    strcpy(mod.src.path, path);
+    m->src.path = calloc(strlen(path) + 1, sizeof(char));
+    strcpy(m->src.path, path);
     close(fd);
     return MOD_STAT(OK);
 }
+
+extern inline void mod_psrc(const mod *const m);
+
+extern inline void mod_free(mod *m);
