@@ -10,4 +10,4 @@ fib:fn<u6<u6>>${[x]
         fib(x - 2) + fib(x - 1)
     }}
 
-fd$1 << " " , ["The";sg$n;"th fibonacci is:";sg$fib(n);"\n"]
+$(fd;1) << " " , ["The";sg$n;"th fibonacci is:";sg$fib(n);"\n"]

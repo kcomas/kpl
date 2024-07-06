@@ -3,7 +3,7 @@
 
 #include "kpl.h"
 
-#define MOD_STAT(NAME) MOD_STAT_##NAME
+#define MOD_STAT(N) MOD_STAT_##N
 
 typedef enum {
     MOD_STAT(OK),
