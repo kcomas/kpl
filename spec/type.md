@@ -2,7 +2,7 @@
 # Types
 Void: vd
 
-Bool: bl can only be zero or 1
+Bool: bl b0, b1
 
 Number types represent signed, unsigned and floats by 2^x eg u5 is unsigned 32bit integer
 

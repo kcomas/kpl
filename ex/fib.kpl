@@ -1,0 +1,14 @@
+
+// Calculate fibonacci to n
+
+n:u6$10
+
+fib:fn<u6<u6>>${[x]
+    if (x = 0) {
+        rn x
+    } ei (|(x = 1;x = 2)) {
+        rn 1
+    }
+    fib(x - 1) + fib(x - 2)}
+
+1 << " " , ["The";sg$n;"th fibonacci is:";sg$fib(n);"\n"]
