@@ -8,7 +8,7 @@
 
 != not eq
 
-> gt
+\> gt
 
 < lt
 
