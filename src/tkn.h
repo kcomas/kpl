@@ -24,7 +24,10 @@ inline void tkn_st_init(tkn_st *const ts) {
 typedef enum {
     TKN_TYPE(CMT), // comment
     TKN_TYPE(VAR),
-    TKN_TYPE(INT)
+    TKN_TYPE(INT),
+    TKN_TYPE(FLOAT),
+    // built in types
+    TKN_TYPE(VD)
 } tkn_type;
 
 typedef struct {

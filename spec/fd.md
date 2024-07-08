@@ -12,8 +12,8 @@ data << fd: Write
 fd << fd: Pipe
 
 ## Builtin Descriptors
-f0: STDIN
+0: STDIN
 
-f1: STDOUT
+1: STDOUT
 
-f2: STDERR
+2: STDERR
