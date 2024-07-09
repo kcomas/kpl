@@ -2,15 +2,11 @@
 # Types
 Void: VD
 
-Bool: BL - 0 or 1
-
 Number types represent signed, unsigned and floats by 2^x eg u5 is unsigned 32bit integer
 
 Integer: I3, I4, I5, I6, U3, U4, U5, U6
 
 Float: F5, F6
-
-Char: CR Utf8 char "a"
 
 String: SG Utf8 string "abc"
 
@@ -24,7 +20,7 @@ Hash: HH<type> {\`a:1;\`b:2} hashmap of uniform types
 
 Struct: ST<key1:type1;...keyn:typen> fixed hash of different types
 
-Union: UN<st> only allocates enough space for largest type
+Union: UN<st> only allocates enough space for largest type #TODO
 
 Function: FN<argtype1;...argtypen<returntype>> {[x;y] x+y}
 
