@@ -51,16 +51,16 @@ static tkn_stat var(tkn *const t, const char *const str) {
 }
 
 static tkn_stat num(tkn *const t, const char *const str) {
-    bool isf = false;
+    t->type = TKN_TYPE(INT);
     for (;;) {
-        char c = str[t->pos];
-        if (isdigit(c)) t->pos++;
+        char c = str[t->pos + t->len];
+        if (isdigit(c)) t->len++;
         else if (c == '.') {
-            if (isf) {
+            if (t->type == TKN_TYPE(FLT)) {
                 return TKN_STAT(INV_FLT);
             } else {
-                isf = true;
-                t->pos++;
+                t->type = TKN_TYPE(FLT);
+                t->len++;
             }
         } else break;
     }
@@ -69,6 +69,10 @@ static tkn_stat num(tkn *const t, const char *const str) {
 
 #define T_TYP_LEN(T) t->type = TKN_TYPE(T); \
     t->len++
+
+#define T_ONE_C(C, T) case C: \
+    T_TYP_LEN(T); \
+    break
 
 tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool inc) {
     if (ts->pos < t->pos) return TKN_STAT(END);
@@ -87,9 +91,9 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 T_TYP_LEN(NB);
                 memset(ts, 0, sizeof(ts));
                 break;
-            case '\n':
-                T_TYP_LEN(NL);
-                break;
+            T_ONE_C('\n', NL);
+            T_ONE_C(':', ASS);
+            T_ONE_C('$', CST);
             case '/':
                 T_TYP_LEN(DIV);
                 if (str[t->pos + t->len] == '/') {
