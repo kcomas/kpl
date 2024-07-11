@@ -74,8 +74,15 @@ static tkn_stat num(tkn *const t, const char *const str) {
     T_TYP_LEN(T); \
     break
 
+#define T_TWO_C(C1, T1, C2, T2) case C1: \
+    T_TYP_LEN(T1); \
+    if (str[t->pos + t->len] == C2) { \
+        T_TYP_LEN(T2); \
+    } \
+    break
+
+
 tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool inc) {
-    if (ts->pos < t->pos) return TKN_STAT(END);
     t->lno = ts->lno;
     t->cno = ts->cno;
     t->pos = ts->pos;
@@ -89,11 +96,38 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
         switch (str[t->pos]) {
             case '\0':
                 T_TYP_LEN(NB);
-                memset(ts, 0, sizeof(ts));
-                break;
+                return TKN_STAT(END);
             T_ONE_C('\n', NL);
+            T_ONE_C(';', SEMI);
+            case ' ':
+                T_TYP_LEN(WS);
+                while (str[t->pos + t->len] == ' ') t->len++;
+                break;
+            case '"':
+                T_TYP_LEN(STR);
+                while (str[t->pos + t->len] != '"') t->len++;
+                t->len++;
+                break;
+            T_ONE_C('{', LB);
+            T_ONE_C('}', RB);
+            T_ONE_C('[', LS);
+            T_ONE_C(']', RS);
+            T_ONE_C('(', LP);
+            T_ONE_C(')', RP);
+            case '#':
+                t->len++;
+                switch (str[t->pos + t->len]) {
+                    T_ONE_C('?', IF);
+                    T_ONE_C('@', LOP);
+                    T_ONE_C(';', RET);
+                    default:
+                        return TKN_STAT(INV_CTRL);
+                }
+                break;
             T_ONE_C(':', ASS);
             T_ONE_C('$', CST);
+            T_ONE_C('+', ADD);
+            T_ONE_C('-', SUB);
             case '/':
                 T_TYP_LEN(DIV);
                 if (str[t->pos + t->len] == '/') {
@@ -101,6 +135,12 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                     while (str[t->pos + t->len] != '\n' && str[t->pos + t->len] != '\0') t->len++;
                 }
                 break;
+            T_ONE_C('=', EQ);
+            T_ONE_C('!', NOT);
+            T_ONE_C('>', GT);
+            T_TWO_C('<', LN, '<', RW);
+            T_ONE_C('|', OR);
+            T_ONE_C(',', CNCT);
             default:
                 return TKN_STAT(INV_CHR);
         }
@@ -120,13 +160,71 @@ extern inline tkn_stat tkn_next(tkn_st *const ts, tkn *const t, const char *cons
 extern inline tkn_stat tkn_peek(tkn_st *const ts, tkn *const t, const char *const str);
 
 static const char *const tkn_type_str[] = {
-    // TODO
+    "NB",
+    "NL",
+    "SEMI",
+    "WS",
+    "CMT",
+    "VAR",
+    "INT",
+    "FLT",
+    "STR",
+    "VD",
+    "U3",
+    "U4",
+    "U5",
+    "U6",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "F5",
+    "F6",
+    "SG",
+    "SL",
+    "VR",
+    "TE",
+    "HH",
+    "ST",
+    "FN",
+    "ER",
+    "FD",
+    "LB",
+    "RB",
+    "LS",
+    "RS",
+    "LP",
+    "RP",
+    "IF",
+    "LOP",
+    "RET",
+    "ASS",
+    "CST",
+    "ADD",
+    "SUB",
+    "MUL",
+    "DIV",
+    "EXP",
+    "MOD",
+    "EQ",
+    "NOT",
+    "NEQ",
+    "GT",
+    "LN",
+    "GTEQ",
+    "LTEQ",
+    "AND",
+    "OR",
+    "CNCT",
+    "RW"
 };
 
 void tkn_p(const tkn *const t, const char *const str) {
-    const char *const type = "INVALID";
+    const char *type = "INVALID";
+    if (t->type >= TKN_TYPE(NB) && t->type <= TKN_TYPE(RW)) type = tkn_type_str[t->type];
     printf("type: %s, lno: %lu, cno: %lu, str: ", type, t->lno, t->cno);
     if (t->type == TKN_TYPE(NB)) printf("\\0");
     else if (t->type == TKN_TYPE(NL)) printf("\\n");
+    else if (t->type == TKN_TYPE(WS)) printf("\\s[%lu]", t->len);
     else for (size_t i = 0; i < t->len; i++) putchar(str[t->pos + i]);
 }

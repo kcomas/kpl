@@ -15,3 +15,7 @@
 >= gteq
 
 <= lteq
+
+& and
+
+| or
