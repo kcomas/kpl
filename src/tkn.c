@@ -33,7 +33,7 @@ static const type_var tv[] = {
     TV(FD)
 };
 
-static const size_t tv_len = sizeof(tv) / sizeof(tv[0]);
+static const size_t tv_len = AL(tv);
 
 static tkn_stat var(tkn *const t, const char *const str) {
     char c = str[t->pos];

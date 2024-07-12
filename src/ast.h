@@ -4,6 +4,44 @@
 #include "kpl.h"
 #include "tkn.h"
 
+#define AST_STAT(N) ast_stat_##N
+
+typedef enum {
+    AST_STAT(OK),
+    AST_STAT(TKN_ERR),
+    AST_STAT(END)
+} ast_stat;
+
+typedef struct {
+    tkn_stat tstat;
+    tkn_st ts;
+    tkn next, peek;
+    char *str;
+} ast_st;
+
+inline void ast_st_init(ast_st *const at, char *const str) {
+    tkn_st_init(&at->ts);
+    at->str = str;
+}
+
+#define TKN_IGN(N) TKN_IGN_##N
+
+typedef enum {
+    TKN_IGN(NL) = (1 << 0),
+    TKN_IGN(WS) = (1 << 1),
+    TKN_IGN(CMT) = (1 << 2)
+} tkn_ign;
+
+ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs);
+
+inline ast_stat ast_tkn_next(ast_st *const at, uint8_t ign_flgs) {
+    return _ast_tkn_get(at, true, ign_flgs);
+}
+
+inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs) {
+    return _ast_tkn_get(at, false, ign_flgs);
+}
+
 #define AST_TYPE(N) AST_TYPE_##N
 
 typedef enum {
@@ -89,33 +127,3 @@ typedef struct _ast {
     } node;
     tkn t;
 } ast;
-
-#define AST_STAT(N) ast_stat_##N
-
-typedef enum {
-    AST_STAT(OK),
-    AST_STAT(TKN_ERR),
-    AST_STAT(END)
-} ast_stat;
-
-typedef struct {
-    tkn_stat tstat;
-    tkn_st ts;
-    tkn next, peek;
-    char *str;
-} ast_st;
-
-inline void ast_st_init(ast_st *const at, char *const str) {
-    tkn_st_init(&at->ts);
-    at->str = str;
-}
-
-ast_stat _ast_tkn_get(ast_st *const at, bool inc);
-
-inline ast_stat ast_tkn_next(ast_st *const at) {
-    return _ast_tkn_get(at, true);
-}
-
-inline ast_stat ast_tkn_peek(ast_st *const at) {
-    return _ast_tkn_get(at, false);
-}
