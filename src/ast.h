@@ -9,7 +9,7 @@
 typedef enum {
     AST_TYPE(VAL),
     AST_TYPE(VAR),
-    AST_NODE(OP),
+    AST_TYPE(OP),
     AST_TYPE(LST),
     AST_TYPE(FN)
 } ast_type;
@@ -35,7 +35,8 @@ typedef struct {
 #define OP_TYPE(N) OP_TYPE_##N
 
 typedef enum {
-
+    OP_TYPE(ASS),
+    OP_TYPE(CST)
 } op_type;
 
 typedef struct {
@@ -44,14 +45,33 @@ typedef struct {
 } op_node;
 
 typedef struct _lst_itm {
-    ast *n;
+    ast *a;
     struct _lst_itm *next;
 } lst_itm;
 
+inline lst_itm *lst_itm_init(ast *const a) {
+    lst_itm *itm = calloc(1, sizeof(lst_itm));
+    itm->a = a;
+    return itm;
+}
+
 typedef struct {
     size_t len;
-    lst_item *h, *t;
+    lst_itm *h, *t;
 } lst_node;
+
+inline lst_node *lst_node_int(void) {
+    return calloc(1, sizeof(lst_node));
+}
+
+inline void lst_node_add(lst_node *const lst, ast *const a) {
+    if (lst->h == NULL) lst->h = lst->h->next = lst->t = lst_itm_init(a);
+    else {
+        lst->t->next = lst_itm_init(a);
+        lst->t = lst->t->next;
+    }
+    lst->len++;
+}
 
 typedef struct {
     ast *ret;
@@ -69,3 +89,33 @@ typedef struct _ast {
     } node;
     tkn t;
 } ast;
+
+#define AST_STAT(N) ast_stat_##N
+
+typedef enum {
+    AST_STAT(OK),
+    AST_STAT(TKN_ERR),
+    AST_STAT(END)
+} ast_stat;
+
+typedef struct {
+    tkn_stat tstat;
+    tkn_st ts;
+    tkn next, peek;
+    char *str;
+} ast_st;
+
+inline void ast_st_init(ast_st *const at, char *const str) {
+    tkn_st_init(&at->ts);
+    at->str = str;
+}
+
+ast_stat _ast_tkn_get(ast_st *const at, bool inc);
+
+inline ast_stat ast_tkn_next(ast_st *const at) {
+    return _ast_tkn_get(at, true);
+}
+
+inline ast_stat ast_tkn_peek(ast_st *const at) {
+    return _ast_tkn_get(at, false);
+}
