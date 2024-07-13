@@ -1,15 +1,14 @@
 
 #pragma once
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <ctype.h>
+#include "tbl.h"
 
 typedef struct _ast ast;
 
