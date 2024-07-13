@@ -24,4 +24,4 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
 
 extern inline void mod_psrc(const mod *const m);
 
-extern inline void mod_free(mod *m);
+extern inline void mod_f(mod *m);
