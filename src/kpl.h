@@ -5,8 +5,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <ctype.h>
 #include "tbl.h"
 

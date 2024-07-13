@@ -118,11 +118,8 @@ inline lst_node *lst_node_int(void) {
 }
 
 inline void lst_node_add(lst_node *const lst, ast *const a) {
-    if (lst->h == NULL) lst->h = lst->h->next = lst->t = lst_itm_i(a);
-    else {
-        lst->t->next = lst_itm_i(a);
-        lst->t = lst->t->next;
-    }
+    if (!lst->h) lst->h = lst->h->next = lst->t = lst_itm_i(a);
+    else lst->t = lst->t->next = lst_itm_i(a);
     lst->len++;
 }
 

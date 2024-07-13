@@ -57,7 +57,7 @@ static tkn_stat num(tkn *const t, const char *const str) {
         if (isdigit(c)) t->len++;
         else if (c == '.') {
             if (t->type == TKN_TYPE(FLT)) {
-                return TKN_STAT(INV_FLT);
+                return TKN_STAT(FLT);
             } else {
                 t->type = TKN_TYPE(FLT);
                 t->len++;
@@ -121,7 +121,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                     T_ONE_C('@', LOP);
                     T_ONE_C(';', RET);
                     default:
-                        return TKN_STAT(INV_CTRL);
+                        return TKN_STAT(CTRL);
                 }
                 break;
             T_ONE_C(':', ASS);
@@ -142,7 +142,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
             T_ONE_C('|', OR);
             T_ONE_C(',', CNCT);
             default:
-                return TKN_STAT(INV_CHR);
+                return TKN_STAT(CHR);
         }
     }
     if (inc) {

@@ -7,9 +7,9 @@
 
 typedef enum {
     TKN_STAT(OK),
-    TKN_STAT(INV_FLT), // bad float format
-    TKN_STAT(INV_CHR), // no tkn for chr
-    TKN_STAT(INV_CTRL), // no # ctrl tkn
+    TKN_STAT(FLT), // bad float format
+    TKN_STAT(CHR), // no tkn for chr
+    TKN_STAT(CTRL), // no # ctrl tkn
     TKN_STAT(END) // no more tkns
 } tkn_stat;
 
