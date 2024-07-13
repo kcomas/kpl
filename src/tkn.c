@@ -41,7 +41,7 @@ static tkn_stat var(tkn *const t, const char *const str) {
     t->type = TKN_TYPE(VAR);
     if (t->len == 2) {
         for (size_t i = 0; i < tv_len; i++) {
-            if (str[t->pos] == tv[i].c2[0] && str[t->pos] == tv[i].c2[1]) {
+            if (str[t->pos] == tv[i].c2[0] && str[t->pos + 1] == tv[i].c2[1]) {
                 t->type = tv[i].type;
                 break;
             }
