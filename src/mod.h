@@ -18,7 +18,7 @@ typedef struct {
     ast *root;
 } mod;
 
-inline mod *mod_init(void) {
+inline mod *mod_i(void) {
     return calloc(1, sizeof(mod));
 }
 

@@ -17,7 +17,7 @@ typedef struct {
     size_t lno, cno, pos; // line, char, pos to get next tkn
 } tkn_st;
 
-inline void tkn_st_init(tkn_st *const ts) {
+inline void tkn_st_i(tkn_st *const ts) {
     ts->lno = ts->cno = 1;
     ts->pos = 0;
 }
