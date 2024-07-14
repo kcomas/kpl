@@ -25,7 +25,7 @@ TBL_OBJS = $(SRC)/tbl.o
 tbl$(TNAME): $(TBL_OBJS) $(TEST)/tbl.o
 > $(CCOBJ)
 
-AST_OBJS = $(SRC)/ast.o $(TKN_OBJS)
+AST_OBJS = $(SRC)/ast.o $(TKN_OBJS) $(TBL_OBJS)
 ast$(TNAME): $(AST_OBJS) $(TEST)/ast.o
 > $(CCOBJ)
 

@@ -81,8 +81,7 @@ inline void val_node_f(val_node *v) {
 
 typedef struct {
     uint8_t id;
-    ast *def;
-    char str[]; // null term
+    tbl_itm *itm; // data is ast node
 } var_node;
 
 #define OP_TYPE(N) OP_TYPE_##N

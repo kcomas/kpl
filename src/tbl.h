@@ -20,6 +20,13 @@ inline tbl_itm *tbl_itm_i(const char *const str, void *const data) {
     return ti;
 }
 
+typedef void tbl_itm_data_p(void *data);
+
+inline void tbl_itm_p(const tbl_itm *const ti, tbl_itm_data_p *fn) {
+    printf("str: %s, ", ti->str);
+    fn(ti->data);
+}
+
 typedef void tbl_itm_data_f(void *data);
 
 inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
@@ -42,16 +49,6 @@ inline tbl* tbl_i(size_t size) {
     return tl;
 }
 
-inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
-    tbl_itm *h = tl->h;
-    while (h) {
-        tbl_itm *tmp = h;
-        h = h->next;
-        tbl_itm_f(tmp, fn);
-    }
-    free(tl);
-}
-
 #define TBL_STAT(N) TBL_STAT_##N
 
 typedef enum {
@@ -70,3 +67,31 @@ typedef enum {
 } tbl_op_flg;
 
 tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);
+
+inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn) {
+    for (size_t i = 0; i < tl->size; i++) {
+        printf("i: %lu, ", i);
+        if (!tl->bucks[i]) printf("NULL");
+        else tbl_itm_p(tl->bucks[i], fn);
+        putchar('\n');
+    }
+}
+
+inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn) {
+    tbl_itm *h = tl->h;
+    while (h) {
+        tbl_itm_p(h, fn);
+        putchar('\n');
+        h = h->next;
+    }
+}
+
+inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
+    tbl_itm *h = tl->h;
+    while (h) {
+        tbl_itm *tmp = h;
+        h = h->next;
+        tbl_itm_f(tmp, fn);
+    }
+    free(tl);
+}
