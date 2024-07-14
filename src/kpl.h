@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <ctype.h>
 
-typedef struct _ast ast;
+typedef struct _fn_node fn_node;
 
 // free not null
 #define FNN(V) if (V != NULL) free(V)
