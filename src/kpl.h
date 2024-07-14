@@ -1,12 +1,11 @@
 
 #pragma once
 
-#include <stdio.h>
+#include "tbl.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "tbl.h"
 
 typedef struct _ast ast;
 
