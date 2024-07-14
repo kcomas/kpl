@@ -2,7 +2,7 @@
 # Hashs
 
 ## Operators
-@ [[key;value]] @hash
+@ [[key;value]]  @hash
 
 () Index hash(symbol_var)
 

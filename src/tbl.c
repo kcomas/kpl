@@ -10,9 +10,9 @@ static size_t sdbm(const char *str) {
 
 extern inline tbl_itm *tbl_itm_i(const char *const str, void *const data);
 
-extern inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn);
+extern inline void tbl_itm_f(tbl_itm *ti, const tbl_itm_data_f *const fn);
 
-extern inline void tbl_f(tbl *t, tbl_itm_data_f *fn);
+extern inline void tbl_f(tbl *t, const tbl_itm_data_f *const fn);
 
 #ifndef BUCKS_RSIZE
     #define BUCKS_RSIZE 0.85 // bucks resize %
@@ -22,42 +22,35 @@ extern inline void tbl_f(tbl *t, tbl_itm_data_f *fn);
     #define BUCKS_RSIZE_MUL 2 // mul size by
 #endif
 
-#ifndef OPN_ADDR_SRCH
-    #define OPN_ADDR_SRCH 10 // bucks size / OPN_ADDR_SRCH searching
-#endif
-
-static void add_tbl(tbl *tl, tbl_itm **ins, tbl_itm *ti) {
-    *ins = ti;
-    if (!tl->h) tl->h = tl->h->next = tl->t = ti;
-    else tl->t = tl->t->next = ti;
-    tl->len++;
-}
-
-tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, uint8_t op_flgs) {
+tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, const tbl_itm_data_f *const fn, uint8_t op_flgs) {
     // TODO resize
-    size_t h = sdbm(str) % (*tl)->size;
-    if ((*tl)->bucks[h] == NULL) {
-        if ((op_flgs & TBL_OP_FLG(FD)) || (op_flgs & TBL_OP_FLG(RM))) return TBL_STAT(NF);
-        *ti = tbl_itm_i(str, data);
-        add_tbl(*tl, &(*tl)->bucks[h], *ti);
-        return TBL_STAT(OK);
-    }
-    tbl_itm **b = &(*tl)->bucks[h];
-    while (*b) {
-        if (strcmp((*b)->str, str) == 0) {
-            if (op_flgs & TBL_OP_FLG(FD)) {
-                *ti = *b;
-                return TBL_STAT(OK);
-            } else if (op_flgs & TBL_OP_FLG(AD)) return TBL_STAT(AE);
-            else if (op_flgs & TBL_OP_FLG(RM)) {
-                // TODO remove
-                return TBL_STAT(OK);
+    const size_t h = sdbm(str);
+    for (size_t i = 0; i < (*tl)->size; i++) {
+        tbl_itm *cur = (*tl)->bucks[(h + i) % (*tl)->size];
+        if (!cur) {
+            if ((op_flgs & TBL_OP_FLG(FD)) || op_flgs & TBL_OP_FLG(RM)) return TBL_STAT(NF);
+            (*tl)->bucks[(h + i) % (*tl)->size] = *ti = tbl_itm_i(str, data);
+            if (!(*tl)->h) (*tl)->h = (*tl)->h->next = (*tl)->t = *ti;
+            else (*tl)->t = (*tl)->t->next = *ti;
+            (*tl)->len++;
+            break;
+        } else if (strcmp(cur->str, str) == 0) {
+            if (op_flgs & TBL_OP_FLG(AD)) return TBL_STAT(AE);
+            if (op_flgs & TBL_OP_FLG(RM)) {
+                tbl_itm *h = (*tl)->h;
+                if (cur == h) (*tl)->h = h->next;
+                else {
+                    while (cur != h->next) h = h->next;
+                    h->next = cur->next;
+                }
+                tbl_itm_f(cur, fn);
+            } else {
+                fn(cur->data);
+                cur->data = data;
+                *ti = data;
             }
-            (*b)->data = data;
-            return TBL_STAT(OK);
+            break;
         }
-        *b = (*b)->next;
     }
-    if ((op_flgs & TBL_OP_FLG(FD)) || (op_flgs & TBL_OP_FLG(RM))) return TBL_STAT(NF);
-    // TODO add
+    return TBL_STAT(OK);
 }
