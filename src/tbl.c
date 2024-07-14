@@ -10,7 +10,7 @@ extern inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn);
 extern inline tbl* tbl_i(size_t size);
 
 #ifndef BUCKS_RSIZE
-    #define BUCKS_RSIZE 0.85 // bucks resize %
+    #define BUCKS_RSIZE 0.75 // bucks resize %
 #endif
 
 #ifndef BUCKS_RSIZE_MUL
