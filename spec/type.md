@@ -2,15 +2,23 @@
 # Types
 Void: VD
 
+## Pass By Value
+
 Number types represent signed, unsigned and floats by 2^x eg u5 is unsigned 32bit integer
 
 Integer: I3, I4, I5, I6, U3, U4, U5, U6
 
 Float: F5, F6
 
-String: SG Utf8 string "abc"
+DateTime: DT
+
+Char: CR Utf8 "a"
 
 Symbol: SL c-string \`abc used in hashes and structs
+
+## Pass By Ref
+
+String: SG Utf8 string "abc"
 
 Vector: VR<type> [1;2;3] vector of uniform types
 
