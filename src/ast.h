@@ -55,7 +55,28 @@ typedef enum {
     TYPE(FLT),
     TYPE(STR),
     // data types
-    TYPE(VD)
+    TYPE(VD),
+    TYPE(U3),
+    TYPE(U4),
+    TYPE(U5),
+    TYPE(U6),
+    TYPE(I3),
+    TYPE(I4),
+    TYPE(I5),
+    TYPE(I6),
+    TYPE(F5),
+    TYPE(F6),
+    TYPE(DT),
+    TYPE(CR),
+    TYPE(SL),
+    TYPE(SG),
+    TYPE(VR),
+    TYPE(TE),
+    TYPE(HH),
+    TYPE(ST),
+    TYPE(FN),
+    TYPE(ER),
+    TYPE(FD)
 } type;
 
 typedef struct {
@@ -102,6 +123,19 @@ typedef struct {
     ast *l, *r;
 } op_node;
 
+inline op_node *op_node_i(op_type ot) {
+    op_node *on = calloc(1, sizeof(op_node));
+    on->ot = ot;
+    return on;
+}
+
+inline void op_node_f(op_node *on) {
+    FNNF(on->tn, type_node_f);
+    FNNF(on->l, ast_f);
+    FNNF(on->r, ast_f);
+    free(on);
+}
+
 typedef struct _lst_itm {
     ast *a;
     struct _lst_itm *next;
@@ -113,20 +147,40 @@ inline lst_itm *lst_itm_i(ast *const a) {
     return itm;
 }
 
+inline void lst_itm_f(lst_itm *itm) {
+    FNNF(itm->a, ast_f);
+    free(itm);
+}
+
 typedef struct _lst_node {
     size_t len;
     type_node *tn;
     lst_itm *h, *t;
 } lst_node;
 
-inline lst_node *lst_node_i(void) {
-    return calloc(1, sizeof(lst_node));
+inline lst_node *lst_node_i(type_node *const tn) {
+    lst_node *ln = calloc(1, sizeof(lst_node));
+    ln->tn = tn;
+    return ln;
 }
 
 inline void lst_node_a(lst_node *const lst, ast *const a) {
-    if (!lst->h) lst->h = lst->h->next = lst->t = lst_itm_i(a);
-    else lst->t = lst->t->next = lst_itm_i(a);
+    if (!lst->h) {
+        lst->h = lst_itm_i(a);
+        lst->h->next = lst->t = lst->h;
+    } else lst->t = lst->t->next = lst_itm_i(a);
     lst->len++;
+}
+
+inline void lst_node_f(lst_node *lst) {
+    lst_itm *h = lst->h;
+    while (h) {
+        lst_itm *tmp = h;
+        h = h->next;
+        lst_itm_f(tmp);
+    }
+    FNNF(lst->tn, type_node_f);
+    free(lst);
 }
 
 typedef struct {
@@ -140,6 +194,12 @@ typedef struct _fn_node {
     struct _fn_node *par; // parent node
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
+
+typedef struct {
+    ast *tgt;
+    type_node *tn;
+    lst_node *args;
+} call_node;
 
 typedef struct {
     uint8_t id;
@@ -161,12 +221,6 @@ inline void var_node_f(var_node *vn) {
     free(vn);
 }
 
-typedef struct {
-    ast *tgt;
-    type_node *tn;
-    lst_node *args;
-} call_node;
-
 #define AST_TYPE(N) AST_TYPE_##N
 
 typedef enum {
@@ -187,8 +241,8 @@ typedef union {
     lst_node *lst;
     tbl_node *tl;
     fn_node *fn;
-    var_node *var;
     call_node *cl;
+    var_node *var;
 } node;
 
 typedef struct _ast {
