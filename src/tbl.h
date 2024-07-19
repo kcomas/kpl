@@ -26,7 +26,7 @@ inline void tbl_itm_p(const tbl_itm *const ti, tbl_itm_data_p *fn) {
 typedef void tbl_itm_data_f(void *data);
 
 inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
-    fn(ti->data);
+    FNNF(ti->data, fn);
     free(ti);
 }
 
@@ -83,11 +83,5 @@ inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn) {
 }
 
 inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
-    tbl_itm *h = tl->h;
-    while (h) {
-        tbl_itm *tmp = h;
-        h = h->next;
-        tbl_itm_f(tmp, fn);
-    }
-    free(tl);
+    LST_F(tl, tbl_itm, tbl_itm_f, fn);
 }

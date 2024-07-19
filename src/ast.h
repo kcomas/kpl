@@ -147,7 +147,8 @@ inline lst_itm *lst_itm_i(ast *const a) {
     return itm;
 }
 
-inline void lst_itm_f(lst_itm *itm) {
+inline void lst_itm_f(lst_itm *itm, void *fn) {
+    (void) fn;
     FNNF(itm->a, ast_f);
     free(itm);
 }
@@ -165,31 +166,36 @@ inline lst_node *lst_node_i(type_node *const tn) {
 }
 
 inline void lst_node_a(lst_node *const lst, ast *const a) {
-    if (!lst->h) {
-        lst->h = lst_itm_i(a);
-        lst->h->next = lst->t = lst->h;
-    } else lst->t = lst->t->next = lst_itm_i(a);
-    lst->len++;
+    LST_A(lst, lst_itm_i(a));
 }
 
 inline void lst_node_f(lst_node *lst) {
-    lst_itm *h = lst->h;
-    while (h) {
-        lst_itm *tmp = h;
-        h = h->next;
-        lst_itm_f(tmp);
-    }
     FNNF(lst->tn, type_node_f);
-    free(lst);
+    LST_F(lst, lst_itm, lst_itm_f, NULL);
 }
 
+typedef struct _if_itm {
+    struct _if_itm *next;
+    ast *cond; // null for else
+    lst_node *body;
+} if_itm;
+
 typedef struct {
-    type_node *tn;
-    tbl *tl;
-} tbl_node;
+    size_t len;
+    if_itm *h, *t;
+} if_node;
+
+inline if_node *if_node_i(void) {
+    return calloc(1, sizeof(if_node));
+}
+
+inline void if_node_a(if_node *const in, if_itm *const ii) {
+
+}
 
 typedef struct _fn_node {
     uint8_t idc; // var id counter
+    type_node *tn;
     tbl *tl; // sym tbl
     struct _fn_node *par; // parent node
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
@@ -228,7 +234,7 @@ typedef enum {
     AST_TYPE(VAL),
     AST_TYPE(OP),
     AST_TYPE(LST),
-    AST_TYPE(TBL),
+    AST_TYPE(IF),
     AST_TYPE(FN),
     AST_TYPE(VAR),
     AST_TYPE(CALL)
@@ -239,7 +245,6 @@ typedef union {
     val_node *val;
     op_node *op;
     lst_node *lst;
-    tbl_node *tl;
     fn_node *fn;
     call_node *cl;
     var_node *var;
