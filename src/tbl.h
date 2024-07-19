@@ -30,8 +30,8 @@ inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
     free(ti);
 }
 
-#ifndef TBL_START_SIZE
-    #define TBL_START_SIZE 10
+#ifndef TBL_I_SIZE
+    #define TBL_I_SIZE 10
 #endif
 
 typedef struct {

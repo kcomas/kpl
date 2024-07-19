@@ -20,7 +20,7 @@ void ex_p(void *data) {
 
 int main(void) {
     ex tests[EXT];
-    tbl *tl =  tbl_i(TBL_START_SIZE);
+    tbl *tl =  tbl_i(TBL_I_SIZE);
     tbl_stat st;
     tbl_itm *ti;
     for (uint8_t i = 0; i < EXT; i++) {
