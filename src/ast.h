@@ -25,13 +25,18 @@ inline void ast_st_i(ast_st *const at, char *const str) {
     at->str = str;
 }
 
-#define TKN_IGN(N) TKN_IGN_##N
+#define TKN_FLG(N) TKN_IGN_##N
 
 typedef enum {
-    TKN_IGN(NL) = (1 << 0),
-    TKN_IGN(WS) = (1 << 1),
-    TKN_IGN(CMT) = (1 << 2)
-} tkn_ign;
+    TKN_FLG(NB) = (1 << 0),
+    TKN_FLG(NL) = (1 << 1),
+    TKN_FLG(SEMI) = (1 << 2),
+    TKN_FLG(WS) = (1 << 3),
+    TKN_FLG(CMT) = (1 << 4),
+    TKN_FLG(RB) = (1 << 5), // }
+    TKN_FLG(RS) = (1 << 6), // ]
+    TKN_FLG(RP) = (1 << 7) // )
+} tkn_flg;
 
 ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs);
 
@@ -332,4 +337,4 @@ inline ast *ast_i(ast_type at, node const n, tkn *t) {
     return a;
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl);
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl, uint8_t stp_flgs);
