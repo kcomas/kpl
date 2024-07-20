@@ -136,7 +136,7 @@ extern inline void var_node_f(var_node *vn);
     FNNF(a->n.N, F); \
     break
 
-inline ast *ast_i(ast_type at, node const n, tkn *t);
+extern inline ast *ast_i(ast_type at, node const n, tkn *t);
 
 void ast_f(ast *a) {
     switch (a->at) {
@@ -154,6 +154,22 @@ void ast_f(ast *a) {
     free(a);
 }
 
+#define VAL_CASE(T) case TKN_TYPE(T): \
+    if (*a) return AST_STAT(VAL_A_NN); \
+    *a = ast_i(AST_TYPE(VAL), (node) { .val = val_node_i(TYPE(T)) }, &as->next); \
+    return ast_parse_stmt(as, fns, a, stp_flgs)
+
+static ast_stat ast_parse_op(op_type ot, ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
+    // TODO parse call form peek (
+    op_node *op = op_node_i(ot);
+    op->l = *a;
+    *a = ast_i(AST_TYPE(OP), (node) { .op = op }, &as->next);
+    return ast_parse_stmt(as, fns, &op->r, stp_flgs);
+}
+
+#define OP_CASE(T) case TKN_TYPE(T): \
+    return ast_parse_op(OP_TYPE(T), as, fns, a, stp_flgs)
+
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
     ast_stat astat;
     if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
@@ -162,11 +178,17 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     switch (as->next.type) {
         case TKN_TYPE(VAR):
             if (!(var = var_node_i(fns, &as->next, as->str))) return AST_STAT(VAR_I_ERR);
+            *a = ast_i(AST_TYPE(VAR), (node) { .var = var }, &as->next);
             break;
+        VAL_CASE(INT);
+        VAL_CASE(FLT);
+        VAL_CASE(STR);
+        OP_CASE(ASS);
+        OP_CASE(CST);
         default:
-            return AST_STAT(TKN_NF);
+            break; // TODO remove
     }
-    return AST_STAT(OK);
+    return AST_STAT(TKN_NF);
 }
 
 ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const cl, uint8_t stp_flgs) {
