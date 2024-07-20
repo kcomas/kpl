@@ -5,11 +5,13 @@
 #include "tbl.h"
 #include "tkn.h"
 
-#define AST_STAT(N) ast_stat_##N
+#define AST_STAT(N) AST_STAT_##N
 
 typedef enum {
     AST_STAT(OK),
     AST_STAT(TKN_ERR),
+    AST_STAT(TKN_NF), // no case for tkn
+    AST_STAT(VAR_I_ERR), // failed to add var node
     AST_STAT(END)
 } ast_stat;
 
@@ -37,6 +39,10 @@ typedef enum {
     TKN_FLG(RS) = (1 << 6), // ]
     TKN_FLG(RP) = (1 << 7) // )
 } tkn_flg;
+
+#define TFBLS (TKN_FLG(NB) | TKN_FLG(NL) | TKN_FLG(SEMI))
+
+#define TFWC (TKN_FLG(WS) | TKN_FLG(CMT))
 
 ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs);
 
@@ -283,14 +289,7 @@ typedef struct {
     char str[]; // null term
 } var_node; // tbl itm data TODO struct padding
 
-inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
-    // TODO check if this var node exists
-    var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
-    vn->id = fns->idc++;
-    vn->fns = fns;
-    memcpy(vn->str, str + t->pos, t->len);
-    return vn;
-}
+var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
 
 inline void var_node_f(var_node *vn) {
     FNNF(vn->tn, type_node_f);
@@ -337,4 +336,7 @@ inline ast *ast_i(ast_type at, node const n, tkn *t) {
     return a;
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl, uint8_t stp_flgs);
+// a must be init
+ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs);
+
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const cl, uint8_t stp_flgs);

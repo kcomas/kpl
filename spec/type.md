@@ -30,9 +30,9 @@ Struct: ST<key1:type1;...keyn:typen> fixed hash of different types
 
 Union: UN<st> only allocates enough space for largest type #TODO
 
-Function: FN<argtype1;...argtypen;returntype> {[x;y] x+y}
+Function: FN<argtype1;...argtypen;returntype> {(x;y) x+y}
 
-Bound Function: BF<fn> {[x;y] x + y }(1;) > {[y] 1 + y} type cannot be explicitly created
+Bound Function: BF<fn> {(x;y) x + y }(1;) > {[y] 1 + y} type cannot be explicitly created
 
 Error: ER 'Error Message'
 
