@@ -22,3 +22,6 @@ typedef struct _fn_node fn_node;
 
 // static array len
 #define AL(V) (sizeof(V) / sizeof(V[0]))
+
+// print char x times
+#define PCX(C, X) for (size_t i = 0; i < X; i++) putchar(C)

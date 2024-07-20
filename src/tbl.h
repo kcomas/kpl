@@ -19,8 +19,8 @@ inline tbl_itm *tbl_itm_i(const char *const str, void *const data) {
 typedef void tbl_itm_data_p(void *data);
 
 inline void tbl_itm_p(const tbl_itm *const ti, tbl_itm_data_p *fn) {
-    printf("str: %s, ", ti->str);
-    fn(ti->data);
+    printf("%s", ti->str);
+    if (fn) fn(ti->data);
 }
 
 typedef void tbl_itm_data_f(void *data);
@@ -64,20 +64,20 @@ typedef enum {
 
 tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);
 
-inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn) {
+inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
     for (size_t i = 0; i < tl->size; i++) {
-        printf("i: %lu, ", i);
-        if (!tl->bucks[i]) printf("NULL");
-        else tbl_itm_p(tl->bucks[i], fn);
-        putchar('\n');
+        printf("%lu:", i);
+        // if (!tl->bucks[i]) printf("NULL");
+        if (tl->bucks[i]) tbl_itm_p(tl->bucks[i], fn);
+        if (i < tl->size - 1) putchar(sep);
     }
 }
 
-inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn) {
+inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
     tbl_itm *h = tl->h;
     while (h) {
         tbl_itm_p(h, fn);
-        putchar('\n');
+        if (h->next) putchar(sep);
         h = h->next;
     }
 }
