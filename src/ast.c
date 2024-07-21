@@ -1,10 +1,10 @@
 
 #include "ast.h"
 
-extern inline void ast_st_i(ast_st *const at, char *const str);
+extern inline void ast_st_i(ast_st *const as, char *const str);
 
-static tkn *inc_tkn(ast_st *const at, bool inc) {
-    return inc ? &at->next : &at->peek;
+static tkn *inc_tkn(ast_st *const as, bool inc) {
+    return inc ? &as->next : &as->peek;
 }
 
 typedef struct {
@@ -49,33 +49,92 @@ ast_stat _ast_tkn_get(ast_st *const as, bool inc, uint8_t ign_flgs) {
     return AST_STAT(TKN_ERR);
 }
 
-extern inline ast_stat ast_tkn_next(ast_st *const at, uint8_t ign_flgs);
+extern inline ast_stat ast_tkn_next(ast_st *const as, uint8_t ign_flgs);
 
-extern inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs);
+extern inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs);
+
+static const char *const tgs[] = {
+    "INT",
+    "FLT",
+    "STR",
+    "VD",
+    "U3",
+    "U4",
+    "U5",
+    "U6",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "F5",
+    "F6",
+    "DT",
+    "CR",
+    "SL",
+    "SG",
+    "VR",
+    "TE",
+    "HH",
+    "ST",
+    "FN",
+    "ER",
+    "FD"
+};
+
+const char *type_get_str(type t) {
+    const char *s = "INVALID";
+    if (t >= TYPE(INT) && t <= TYPE(FD)) s = tgs[t];
+    return s;
+}
 
 extern inline type_node *type_node_i(type t, ast *const a);
 
-extern inline void type_node_p(const type_node *const tn, size_t idnt);
+extern inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt);
 
 extern inline void type_node_f(type_node *tn);
 
 extern inline val_node *val_node_i(type t);
 
+extern inline void val_node_p(val_node *v);
+
 extern inline void val_node_f(val_node *v);
 
 extern inline op_node *op_node_i(op_type ot);
+
+static const char *const op_type_str[] = {
+    "ASS",
+    "CST"
+};
+
+void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
+    const char *type = "INVALID";
+    if (op->ot >= OP_TYPE(ASS) && op->ot <= OP_TYPE(CST)) type = op_type_str[op->ot];
+    printf("%s\n", type);
+    PCX(' ', idnt);
+    type_node_p(as, op->ret, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    printf("L- ");
+    ast_p(as, op->l, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    printf("R- ");
+    ast_p(as, op->r, idnt);
+}
 
 extern inline void op_node_f(op_node *on);
 
 extern inline lst_itm *lst_itm_i(ast *const a);
 
-extern inline void lst_itm_p(const lst_itm *const li, void *fn, size_t idnt);
+extern inline void lst_itm_p(const ast_st *const as, const lst_itm *const li, void *fn, size_t idnt);
 
 extern inline void lst_itm_f(lst_itm *li, void *fn);
 
 extern inline lst_node *lst_node_i(type t);
 
 extern inline void lst_node_a(lst_node *const lst, ast *const a);
+
+extern inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt);
 
 extern inline void lst_node_f(lst_node *lst);
 
@@ -91,7 +150,7 @@ extern inline void if_node_f(if_node *in);
 
 extern inline fn_node *fn_node_i(fn_node *const par);
 
-extern inline void fn_node_p(const fn_node *const fn, size_t idnt);
+extern inline void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data) {
     var_node_f((var_node*) data);
@@ -136,16 +195,56 @@ var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const s
     return NULL;
 }
 
+extern inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt);
+
 extern inline void var_node_f(var_node *vn);
 
 #define AST_F_CASE(T, N, F) case AST_TYPE(T): \
     FNNF(a->n.N, F); \
     break
 
-extern inline ast *ast_i(ast_type at, node const n, tkn *t);
+extern inline ast *ast_i(ast_type as, node const n, tkn *t);
 
-void ast_p(ast *a, size_t idnt) {
-    // TODO
+#ifndef IDNT_ADD
+    #define IDNT_ADD 4
+#endif
+
+static const char *const ast_type_str[] = {
+    "TYPE",
+    "VAL",
+    "OP",
+    "LST",
+    "IF",
+    "FN",
+    "CALL",
+    "RET",
+    "VAR"
+};
+
+void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
+    if (!a) {
+        printf("NULL");
+        return;
+    }
+    const char *type = "INVALID";
+    if (a->at >= AST_TYPE(TYPE) && a->at <= AST_TYPE(VAR)) type = ast_type_str[a->at];
+    printf("%s", type);
+    putchar('|');
+    tkn_p(&a->t, as->str);
+    putchar('|');
+    idnt += IDNT_ADD;
+    switch (a->at) {
+        case AST_TYPE(TYPE): return type_node_p(as, a->n.tn, idnt);
+        case AST_TYPE(VAL): return val_node_p(a->n.val);
+        case AST_TYPE(OP): return op_node_p(as, a->n.op, idnt);
+        case AST_TYPE(LST): return lst_node_p(as, a->n.lst, idnt);
+        case AST_TYPE(IF): return; // TODO
+        case AST_TYPE(FN): return fn_node_p(as, a->n.fn, idnt);
+        case AST_TYPE(CALL):
+        case AST_TYPE(RET):
+            return;
+        case AST_TYPE(VAR): return var_node_p(as, a->n.var, idnt);
+    }
 }
 
 void ast_f(ast *a) {
@@ -163,6 +262,11 @@ void ast_f(ast *a) {
     }
     free(a);
 }
+
+#define TYPE_NA_CASE(T) case TKN_TYPE(T): \
+    if (*a) return AST_STAT(TYPE_A_NN); \
+    *a = ast_i(AST_TYPE(TYPE), (node) { .tn = type_node_i(TYPE(T), NULL) }, &as->next); \
+    return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define VAL_CASE(T) case TKN_TYPE(T): \
     if (*a) return AST_STAT(VAL_A_NN); \
@@ -187,12 +291,28 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     var_node *var;
     switch (as->next.type) {
         case TKN_TYPE(VAR):
+            if (*a) return AST_STAT(VAR_A_NN);
             if (!(var = var_node_i(fns, &as->next, as->str))) return AST_STAT(VAR_I_ERR);
             *a = ast_i(AST_TYPE(VAR), (node) { .var = var }, &as->next);
-            break;
+            return ast_parse_stmt(as, fns, a, stp_flgs);
         VAL_CASE(INT);
         VAL_CASE(FLT);
         VAL_CASE(STR);
+        TYPE_NA_CASE(VD);
+        TYPE_NA_CASE(U3);
+        TYPE_NA_CASE(U4);
+        TYPE_NA_CASE(U5);
+        TYPE_NA_CASE(U6);
+        TYPE_NA_CASE(I3);
+        TYPE_NA_CASE(I4);
+        TYPE_NA_CASE(I5);
+        TYPE_NA_CASE(I6);
+        TYPE_NA_CASE(F5);
+        TYPE_NA_CASE(F6);
+        TYPE_NA_CASE(DT);
+        TYPE_NA_CASE(CR);
+        TYPE_NA_CASE(SL);
+        TYPE_NA_CASE(SG);
         OP_CASE(ASS);
         OP_CASE(CST);
         default:

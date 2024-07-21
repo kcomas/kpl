@@ -28,9 +28,10 @@ typedef struct _lst_ex {
     tbl_itm_f(RTGT, DATAF); \
     L->len--
 
-#define LST_P(L, ITT, ITMP, DATAP, IDNT) ITT *h = L->h; \
+#define LST_P(L, ITT, ITMP, STATE, DATAP, IDNT, SEP) ITT *h = L->h; \
     while (h) { \
-        ITMP(h, DATAP, IDNT); \
+        ITMP(STATE, h, DATAP, IDNT); \
+        if (h->next) putchar(SEP); \
         h = h->next; \
     }
 
