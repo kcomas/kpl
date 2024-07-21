@@ -3,25 +3,6 @@
 
 #include "kpl.h"
 
-#define TKN_STAT(N) TKN_STAT_##N
-
-typedef enum {
-    TKN_STAT(OK),
-    TKN_STAT(FLT), // bad float format
-    TKN_STAT(CHR), // no tkn for char
-    TKN_STAT(CTRL), // no # ctrl tkn
-    TKN_STAT(END) // no more tkns
-} tkn_stat;
-
-typedef struct {
-    size_t lno, cno, pos; // line, char, pos to get next tkn
-} tkn_st;
-
-inline void tkn_st_i(tkn_st *const ts) {
-    ts->lno = ts->cno = 1;
-    ts->pos = 0;
-}
-
 #define TKN_TYPE(N) TKN_TYPE_##N
 
 typedef enum {
@@ -97,6 +78,33 @@ typedef struct {
     tkn_type type;
     size_t lno, cno, pos, len; // line, char, start pos, len
 } tkn;
+
+#define TKN_STAT(N) TKN_STAT_##N
+
+typedef enum {
+    TKN_STAT(OK),
+    TKN_STAT(FLT), // bad float format
+    TKN_STAT(CHR), // no tkn for char
+    TKN_STAT(CTRL), // no # ctrl tkn
+    TKN_STAT(END) // no more tkns
+} tkn_stat;
+
+typedef struct {
+    size_t lno, cno, pos; // line, char, pos to get next tkn
+} tkn_st;
+
+inline void tkn_st_i(tkn_st *const ts) {
+    ts->lno = ts->cno = 1;
+    ts->pos = 0;
+}
+
+inline void tkn_st_u(tkn_st *const ts, const tkn *const t) {
+    if (t->type == TKN_TYPE(NL)) {
+        ts->lno++;
+        ts->cno = 1;
+    } else ts->cno = t->cno + t->len;
+    ts->pos = t->pos + t->len;
+}
 
 // state, token, str, inc state
 tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool inc);

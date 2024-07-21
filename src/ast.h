@@ -15,7 +15,8 @@ typedef enum {
     AST_STAT(VAR_A_NN), // previous node not null for var
     AST_STAT(VAL_A_NN), // previous node not null for val
     AST_STAT(TYPE_A_NN), // previous node not null for type
-    AST_STAT(INV_TYPE_LST_INIT), // type list must start with <
+    AST_STAT(FH_A_NN), // prev node not null for fn or hash
+    AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(END)
 } ast_stat;
 
@@ -34,14 +35,14 @@ inline void ast_st_i(ast_st *const as, char *const str) {
 #define TKN_FLG(N) TKN_IGN_##N
 
 typedef enum {
-    TKN_FLG(NL) = (1 << 0),
-    TKN_FLG(SEMI) = (1 << 1),
-    TKN_FLG(WS) = (1 << 2),
-    TKN_FLG(CMT) = (1 << 3),
-    TKN_FLG(RB) = (1 << 4), // }
-    TKN_FLG(RS) = (1 << 5), // ]
-    TKN_FLG(RP) = (1 << 6), // )
-    TKN_FLG(GT) = (1 << 7) // >
+    TKN_FLG(NB) = (1 << 0),
+    TKN_FLG(NL) = (1 << 1),
+    TKN_FLG(SEMI) = (1 << 2),
+    TKN_FLG(WS) = (1 << 3),
+    TKN_FLG(CMT) = (1 << 4),
+    TKN_FLG(RB) = (1 << 5), // }
+    TKN_FLG(RS) = (1 << 6), // ]
+    TKN_FLG(RP) = (1 << 7), // )
 } tkn_flg;
 
 #define TFLS (TKN_FLG(NL) | TKN_FLG(SEMI))
