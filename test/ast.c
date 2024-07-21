@@ -10,9 +10,11 @@ int main(int argc, char *argv[]) {
     ast_stat astat;
     ast_st as;
     ast_st_i(&as, m->src.str);
-    if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFBLS)) != AST_STAT(OK)) {
-        fn_node_p(&as, m->fns, 0);
-        return astat;
+    if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFLS, 0)) != AST_STAT(OK)) {
+        if (astat != AST_STAT(END)) {
+            fn_node_p(&as, m->fns, 0);
+            return astat;
+        }
     }
     fn_node_f(m->fns);
     mod_f(m);
