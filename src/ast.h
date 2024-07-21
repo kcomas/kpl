@@ -16,6 +16,8 @@ typedef enum {
     AST_STAT(VAL_A_NN), // previous node not null for val
     AST_STAT(TYPE_A_NN), // previous node not null for type
     AST_STAT(FH_A_NN), // prev node not null for fn or hash
+    AST_STAT(IF_A_NN), // prev node not null for if
+    AST_STAT(IF_INV_FMT), // missing ( after if start
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(END)
 } ast_stat;
@@ -207,6 +209,8 @@ inline void lst_node_a(lst_node *const lst, ast *const a) {
 }
 
 inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt) {
+    printf("%lu,", lst->len);
+    printf("%s", type_get_str(lst->typ));
     LST_P(lst, lst_itm, lst_itm_p, as, NULL, idnt, '\n');
 }
 
@@ -268,23 +272,7 @@ inline fn_node *fn_node_i(fn_node *const par) {
     return fn;
 }
 
-inline void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
-    PCX(' ', idnt);
-    printf("%p,%d,", fn, fn->idc);
-    tbl_lstp(fn->tl, NULL, ' ');
-    putchar('\n');
-    PCX(' ', idnt);
-    printf("%p", fn->par);
-    putchar('\n');
-    PCX(' ', idnt);
-    type_node_p(as, fn->ret, idnt);
-    putchar('\n');
-    PCX(' ', idnt);
-    lst_node_p(as, fn->args, idnt);
-    putchar('\n');
-    PCX(' ', idnt);
-    lst_node_p(as, fn->body, idnt);
-}
+void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data);
 
