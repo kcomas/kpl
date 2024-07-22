@@ -10,6 +10,7 @@
 typedef enum {
     AST_STAT(OK),
     AST_STAT(TKN_ERR),
+    AST_STAT(TKN_INV), // tkn should not have been found
     AST_STAT(TKN_NF), // no case for tkn
     AST_STAT(VAR_I_ERR), // failed to add var node
     AST_STAT(VAR_A_NN), // previous node not null for var
@@ -18,7 +19,6 @@ typedef enum {
     AST_STAT(FH_A_NN), // prev node not null for fn or hash
     AST_STAT(IF_A_NN), // prev node not null for if
     AST_STAT(IF_INV_FMT), // missing ( after if start
-    AST_STAT(IF_INV_COND), // invalid if cond
     AST_STAT(IF_INV_BODY), // invalid if body
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(END)
@@ -150,7 +150,12 @@ inline void val_node_f(val_node *v) {
 
 typedef enum {
     OP_TYPE(ASS), // :
-    OP_TYPE(CST) // $
+    OP_TYPE(CST), // $
+    // TODO OP
+    OP_TYPE(EQ),
+    OP_TYPE(NOT),
+    // TODO OP
+    OP_TYPE(OR)
 } op_type;
 
 typedef struct {
@@ -373,7 +378,7 @@ typedef struct _ast {
     tkn t;
 } ast;
 
-inline ast *ast_i(ast_type at, node const n, tkn *t) {
+inline ast *ast_i(ast_type at, node const n, const tkn *const t) {
     ast *a = calloc(1, sizeof(ast));
     a->at = at;
     a->n = n;
