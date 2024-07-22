@@ -18,6 +18,8 @@ typedef enum {
     AST_STAT(FH_A_NN), // prev node not null for fn or hash
     AST_STAT(IF_A_NN), // prev node not null for if
     AST_STAT(IF_INV_FMT), // missing ( after if start
+    AST_STAT(IF_INV_COND), // invalid if cond
+    AST_STAT(IF_INV_BODY), // invalid if body
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(END)
 } ast_stat;
@@ -71,6 +73,7 @@ void ast_f(ast *a);
 
 typedef enum {
     // ast types
+    TYPE(STMT), // internal
     TYPE(INT),
     TYPE(FLT),
     TYPE(STR),
@@ -220,21 +223,21 @@ inline void lst_node_f(lst_node *lst) {
 
 typedef struct _if_itm {
     struct _if_itm *next;
-    ast *cond; // null for else
-    lst_node *body;
+    ast *c; // null for else
+    lst_node *b;
 } if_itm;
 
-inline if_itm *if_itm_i(ast *const cond, lst_node *const body) {
+inline if_itm *if_itm_i(ast *const c, lst_node *const b) {
     if_itm *im = calloc(1, sizeof(if_itm));
-    im->cond = cond;
-    im->body = body;
+    im->c = c;
+    im->b = b;
     return im;
 }
 
 inline void if_itm_f(if_itm *im, void *fn) {
     (void) fn;
-    ast_f(im->cond);
-    lst_node_f(im->body);
+    ast_f(im->c);
+    lst_node_f(im->b);
     free(im);
 }
 
@@ -247,8 +250,8 @@ inline if_node *if_node_i(void) {
     return calloc(1, sizeof(if_node));
 }
 
-inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) {
-    LST_A(in, if_itm_i(cond, body));
+inline void if_node_a(if_node *const in, ast* const c, lst_node *const b) {
+    LST_A(in, if_itm_i(c, b));
 }
 
 inline void if_node_f(if_node *in) {
@@ -267,8 +270,8 @@ inline fn_node *fn_node_i(fn_node *const par) {
     fn_node *fn = calloc(1, sizeof(fn_node));
     fn->tl = tbl_i(TBL_I_SIZE);
     fn->par = par;
-    fn->args = lst_node_i(TYPE(TE));
-    fn->body = lst_node_i(TYPE(TE));
+    fn->args = lst_node_i(TYPE(STMT));
+    fn->body = lst_node_i(TYPE(STMT));
     return fn;
 }
 
