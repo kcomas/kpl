@@ -31,6 +31,7 @@ typedef struct _lst_ex {
 #define LST_P(L, ITT, ITMP, STATE, DATAP, IDNT, SEP) ITT *h = L->h; \
     while (h) { \
         putchar(SEP); \
+        PCX(' ', idnt); \
         ITMP(STATE, h, DATAP, IDNT); \
         h = h->next; \
     }
