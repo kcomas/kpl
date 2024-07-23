@@ -58,6 +58,7 @@ extern inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs);
 
 static const char *const tgs[] = {
     "STMT",
+    "MOD",
     "INT",
     "FLT",
     "STR",
@@ -171,7 +172,6 @@ void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     PCX(' ', idnt);
     printf("%p", fn->par);
     putchar('\n');
-    PCX(' ', idnt);
     type_node_p(as, fn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
