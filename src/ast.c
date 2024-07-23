@@ -112,12 +112,14 @@ static const char *const op_type_str[] = {
     "SUB",
     "EQ",
     "NOT",
-    "OR"
+    "OR",
+    "CNCT",
+    "RW"
 };
 
 void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     const char *type = "INVALID";
-    if (op->ot >= OP_TYPE(ASS) && op->ot <= OP_TYPE(OR)) type = op_type_str[op->ot];
+    if (op->ot >= OP_TYPE(ASS) && op->ot <= OP_TYPE(RW)) type = op_type_str[op->ot];
     printf("%s\n", type);
     type_node_p(as, op->ret, idnt);
     putchar('\n');
@@ -383,13 +385,9 @@ static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint
         fn_node_f(fn);
         return astat;
     }
-    fn_node_p(as, fn, 0);
-    exit(10);
+    *a = ast_i(AST_TYPE(FN), (node) { .fn = fn }, tkn_s);
+    return ast_parse_stmt(as, par, a, stp_flgs);
 }
-
-#define AST_N_CHK(E) if (*a) return AST_STAT(E)
-
-#define AST_NN_CHK(E) if (!*a) return AST_STAT(E)
 
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
     ast_stat astat;
@@ -406,7 +404,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         case TKN_TYPE(CMT):
             return AST_STAT(TKN_INV);
         case TKN_TYPE(VAR):
-            AST_N_CHK(VAR_A_NN);
+            if (*a) return AST_STAT(VAR_A_NN);
             if (!(var = var_node_i(fns, &as->next, as->str))) {
                 var_node_f(var);
                 return AST_STAT(VAR_I_ERR);
@@ -433,7 +431,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(SG);
         // TODO TYPES
         case TKN_TYPE(FN):
-            AST_N_CHK(TYPE_A_NN);
+            if (*a) return AST_STAT(TYPE_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->next.type != TKN_TYPE(LP)) return AST_STAT(INV_TYPE_LST_INIT);
@@ -454,32 +452,48 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(NOT);
         // TODO OPS
         OP_CASE(OR);
+        OP_CASE(CNCT);
+        OP_CASE(RW);
         // TODO OPS
-        // TODO WRAPS
+        // wraps
         case TKN_TYPE(LB):
-            AST_N_CHK(FH_A_NN);
+            if (*a) return AST_STAT(FH_A_NN);
             if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->peek.type == TKN_TYPE(LP)) {
+                memcpy(&ttmp, &as->next, sizeof(tkn));
                 tkn_st_u(&as->ts, &as->peek);
                 return ast_parse_fn(as, fns, a, stp_flgs, &ttmp);
             }
             // TODO hash
             break;
-        // TODO WRAPS
+        case TKN_TYPE(RB):
+            return AST_STAT(TKN_INV);
+        case TKN_TYPE(LS):
+            if (*a) return AST_STAT(VT_A_NN);
+            *a = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(STMT)) }, &as->next);
+            if ((astat = ast_parse_stmts(as, fns, (*a)->n.lst, TKN_FLG(SEMI), TKN_FLG(RS))) != AST_STAT(OK)) {
+                ast_f(*a);
+                return astat;
+            }
+            return ast_parse_stmt(as, fns, a, stp_flgs);
+        case TKN_TYPE(RS):
+            return AST_STAT(TKN_INV);
         case TKN_TYPE(LP):
-            AST_NN_CHK(CALL_A_N);
+            if (!*a) return AST_STAT(CALL_A_N);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             return ast_parse_call(as, fns, a, stp_flgs, &ttmp);
+        case TKN_TYPE(RP):
+            return AST_STAT(TKN_INV);
         // TODO controls
         case TKN_TYPE(IF):
-            AST_N_CHK(IF_A_NN);
+            if (*a) return AST_STAT(IF_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->next.type != TKN_TYPE(LP)) return AST_STAT(IF_INV_FMT);
             return ast_parse_if(as, fns, a, stp_flgs, &ttmp);
         // TODO controls
         case TKN_TYPE(RET):
-           AST_N_CHK(RET_A_N);
+            if (*a) return AST_STAT(RET_A_NN);
            *a = ast_i(AST_TYPE(RET), (node) { .ret = ret_node_i() }, &as->next);
            return ast_parse_stmt(as, fns, &(*a)->n.ret->a, stp_flgs);
         // TODO controls
