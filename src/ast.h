@@ -220,13 +220,13 @@ inline void lst_itm_f(lst_itm *li, void *fn) {
 }
 typedef struct _lst_node {
     size_t len;
-    type typ;
+    type_node *tn;
     lst_itm *h, *t;
 } lst_node;
 
-inline lst_node *lst_node_i(type typ) {
+inline lst_node *lst_node_i(type t) {
     lst_node *ln = calloc(1, sizeof(lst_node));
-    ln->typ = typ;
+    ln->tn = type_node_i(t, NULL);
     return ln;
 }
 
@@ -236,7 +236,7 @@ inline void lst_node_a(lst_node *const lst, ast *const a) {
 
 inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt) {
     printf("%lu,", lst->len);
-    printf("%s", type_get_str(lst->typ));
+    type_node_p(as, lst->tn, idnt);
     LST_P(lst, lst_itm, lst_itm_p, as, NULL, idnt, '\n');
 }
 

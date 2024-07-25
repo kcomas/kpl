@@ -479,7 +479,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             return AST_STAT(TKN_INV);
         case TKN_TYPE(LS):
             if (*a) return AST_STAT(VT_A_NN);
-            *a = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(STMT)) }, &as->next);
+            *a = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(TE)) }, &as->next);
             if ((astat = ast_parse_stmts(as, fns, (*a)->n.lst, TKN_FLG(SEMI), TKN_FLG(RS))) != AST_STAT(OK)) {
                 ast_f(*a);
                 return astat;
