@@ -13,6 +13,19 @@ static type_stat type_chk_lst(fn_node *const fns, lst_node *const lst) {
     return TYPE_STAT(OK);
 }
 
+static type_stat type_chk_if(fn_node *const fns, if_node *const in) {
+    type_stat tstat;
+    if_itm *h = in->h;
+    while (h) {
+        IFTCHK(type_chk, fns, h->cond);
+        IFTCHK(type_chk_lst, fns, h->body);
+        h = h->next;
+    }
+    return TYPE_STAT(OK);
+}
+
+#define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_STAT(E);
+
 static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
     type_stat tstat;
     type_node *lt = NULL, *rt = NULL;
@@ -25,7 +38,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                 if (op->l->n.var->tn) {
                     // TODO type check
                 } else {
-                    if (!(rt = ast_gtn(op->r))) return TYPE_STAT(INV_VAR_ASS);
+                    ASTGTN(rt, op->r, INV_VAR_ASS);
                     op->ret = type_node_c(rt);
                     op->l->n.var->tn = type_node_c(rt);
                 }
@@ -34,7 +47,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             return TYPE_STAT(INV_ASS_TO);
         case OP_TYPE(CST):
             if (!(op->l->at == AST_TYPE(TYPE) || op->l->at == AST_TYPE(VAR))) return TYPE_STAT(INV_CST_L_A);
-            if (!(lt = ast_gtn(op->l))) return TYPE_STAT(INV_CST_L_T_N);
+            ASTGTN(lt, op->l, INV_CST_L_T_N);
             if (lt->t == TYPE(FN)) {
                 if (op->r->at != AST_TYPE(FN)) return TYPE_STAT(INV_FN_CST);
                 fn_node *fn = op->r->n.fn;
@@ -45,24 +58,57 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                 type_node *tmpt = NULL;
                 while (fh) {
                     if (fh->a->at != AST_TYPE(VAR)) return TYPE_STAT(INV_FN_ARG_T);
-                    if (!(tmpt = ast_gtn(th->a))) return TYPE_STAT(INV_FN_T_ARG);
+                    ASTGTN(tmpt, th->a, INV_FN_T_ARG);
                     fh->a->n.var->tn = type_node_c(tmpt);
                     fh = fh->next;
                     th = th->next;
                 }
-                if (!(tmpt = ast_gtn(lt->a->n.lst->t->a))) return TYPE_STAT(INV_FN_T_RET);
+                ASTGTN(tmpt, lt->a->n.lst->t->a, INV_FN_T_RET);
                 fn->ret = type_node_c(tmpt);
-                break;
+                return type_chk_fn(fn);
             }
-            if (!(rt = ast_gtn(op->r))) return TYPE_STAT(INV_CST_R_T_N);
+            ASTGTN(rt, op->r, INV_CST_R_T_N);
             if (rt->t == TYPE(INT)) {
                 if (lt->t >= TYPE(U3) && lt->t <= TYPE(I6)) {
                     op->ret = type_node_c(lt);
                     break;
                 }
             }
-            // TODO resolve
+            // TODO cst
             break;
+        // TODO ops
+        case OP_TYPE(EQ):
+            // TODO
+            break;
+        case OP_TYPE(NOT):
+            // TODO check left
+            ASTGTN(rt, op->r, INV_NOT_R_T_N);
+            op->ret = type_node_c(rt);
+            break;
+        // TODO ops
+        case OP_TYPE(OR):
+            // TODO
+            break;
+
+    }
+    return TYPE_STAT(OK);
+}
+
+type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
+    type_stat tstat;
+    IFTCHK(type_chk, fns, cn->tgt);
+    IFTCHK(type_chk_lst, fns, cn->args);
+    if (cn->tgt->at == AST_TYPE(OP)) {
+        if (cn->args->len > 2) return TYPE_STAT(INV_ARGS_OP_CALL);
+        op_node *op = cn->tgt->n.op;
+        if (op->ret || op->l || op->r) return TYPE_STAT(INV_OP_CALL_LRR_N_N);
+        if ((tstat = type_chk_op(fns, op)) != TYPE_STAT(OK)) return tstat;
+        op->l = cn->args->h->a;
+        op->r = cn->args->h->next->a;
+        cn->ret = op->ret;
+        op->ret = NULL;
+        op->l = op->r = NULL;
+        return TYPE_STAT(OK);
     }
     return TYPE_STAT(OK);
 }
@@ -75,6 +121,9 @@ type_stat type_chk(fn_node *const fns, ast *const a) {
             break;
         case AST_TYPE(OP): return type_chk_op(fns, a->n.op);
         case AST_TYPE(LST): return type_chk_lst(fns, a->n.lst);
+        case AST_TYPE(IF): return type_chk_if(fns, a->n.in);
+        case AST_TYPE(FN): return type_chk_fn(a->n.fn);
+        case AST_TYPE(CALL): return type_chk_call(fns, a->n.cn);
     }
     return TYPE_STAT(OK);
 }
