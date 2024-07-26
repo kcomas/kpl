@@ -348,7 +348,6 @@ inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
 }
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
-    putchar('\n');
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
