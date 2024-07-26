@@ -94,6 +94,14 @@ const char *type_get_str(type t) {
 
 extern inline type_node *type_node_i(type t, ast *const a);
 
+type_node *type_node_c(const type_node *const tn) {
+    type_node *nn = calloc(1, sizeof(type_node));
+    nn->t = tn->t;
+    if (tn->a) tn->a->rc++;
+    nn->a = tn->a;
+    return nn;
+}
+
 extern inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt);
 
 extern inline void type_node_f(type_node *tn);
@@ -236,6 +244,8 @@ extern inline void var_node_f(var_node *vn);
 
 extern inline ast *ast_i(ast_type as, node const n, const tkn *const t);
 
+extern inline type_node *ast_gtn(const ast *const a);
+
 static const char *const ast_type_str[] = {
     "TYPE",
     "VAL",
@@ -258,7 +268,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     }
     const char *type = "INVALID";
     if (a->at >= AST_TYPE(TYPE) && a->at <= AST_TYPE(VAR)) type = ast_type_str[a->at];
-    printf("%s", type);
+    printf("%s<%d>", type, a->rc);
     putchar('|');
     tkn_p(&a->t, as->str);
     putchar('|');
@@ -281,6 +291,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     break
 
 void ast_f(ast *a) {
+    if (--a->rc > 0) return;
     switch (a->at) {
         AST_F_CASE(TYPE, tn, type_node_f);
         AST_F_CASE(VAL, val, val_node_f);

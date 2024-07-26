@@ -125,6 +125,8 @@ inline type_node *type_node_i(type t, ast *const a) {
     return tn;
 }
 
+type_node *type_node_c(const type_node *const tn);
+
 inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
     if (tn) {
         printf("%s", type_get_str(tn->t));
@@ -425,6 +427,7 @@ typedef union {
 
 typedef struct _ast {
     ast_type at;
+    uint16_t rc;
     node n;
     tkn t;
 } ast;
@@ -432,9 +435,25 @@ typedef struct _ast {
 inline ast *ast_i(ast_type at, node const n, const tkn *const t) {
     ast *a = calloc(1, sizeof(ast));
     a->at = at;
+    a->rc = 1;
     a->n = n;
     memcpy(&a->t, t, sizeof(tkn));
     return a;
+}
+
+inline type_node *ast_gtn(const ast *const a) {
+    switch (a->at) {
+        case AST_TYPE(TYPE): return a->n.tn;
+        case AST_TYPE(VAL): return NULL;
+        case AST_TYPE(OP): return a->n.op->ret;
+        case AST_TYPE(LST): return a->n.lst->tn;
+        case AST_TYPE(IF): return NULL;
+        case AST_TYPE(FN): return a->n.fn->ret;
+        case AST_TYPE(CALL): return a->n.cn->ret;
+        case AST_TYPE(RET): return ast_gtn(a->n.ret->a);
+        case AST_TYPE(VAR): return a->n.var->tn;
+    }
+    return NULL;
 }
 
 // a must be init
