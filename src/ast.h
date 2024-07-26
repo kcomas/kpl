@@ -127,13 +127,18 @@ inline type_node *type_node_i(type t, ast *const a) {
 
 type_node *type_node_c(const type_node *const tn);
 
-inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
+inline void type_node_p(const ast_st *const as, const type_node *const tn, size_t idnt) {
     if (tn) {
-        printf("%s", type_get_str(tn->t));
         putchar('\n');
         PCX(' ', idnt);
-        ast_p(st, tn->a, idnt);
+        printf("%s", type_get_str(tn->t));
+        if (tn->a) {
+            putchar('\n');
+            PCX(' ', idnt);
+            ast_p(as, tn->a, idnt);
+        }
     } else {
+        putchar('\n');
         PCX(' ', idnt);
         putchar('?');
     }
@@ -145,20 +150,21 @@ inline void type_node_f(type_node *tn) {
 }
 
 typedef struct {
-    type t;
+    type_node *tn;
 } val_node; // val is tkn str
 
 inline val_node *val_node_i(type t) {
     val_node *v = calloc(1, sizeof(val_node));
-    v->t = t;
+    v->tn = type_node_i(t, NULL);
     return v;
 }
 
-inline void val_node_p(val_node *v) {
-    printf("%s", type_get_str(v->t));
+inline void val_node_p(const ast_st *const as, const val_node *const v, size_t idnt) {
+    type_node_p(as, v->tn, idnt);
 }
 
 inline void val_node_f(val_node *v) {
+    type_node_f(v->tn);
     free(v);
 }
 
@@ -237,7 +243,7 @@ inline void lst_node_a(lst_node *const lst, ast *const a) {
 }
 
 inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt) {
-    printf("%lu,", lst->len);
+    printf("%lu\\/", lst->len);
     type_node_p(as, lst->tn, idnt);
     LST_P(lst, lst_itm, lst_itm_p, as, NULL, idnt, '\n');
 }
@@ -390,7 +396,7 @@ typedef struct {
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
 
 inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
-    printf("%p,%d,%s\n", var->fns, var->id, var->str);
+    printf("%p,%d,%s", var->fns, var->id, var->str);
     type_node_p(as, var->tn, idnt);
 }
 
@@ -444,7 +450,7 @@ inline ast *ast_i(ast_type at, node const n, const tkn *const t) {
 inline type_node *ast_gtn(const ast *const a) {
     switch (a->at) {
         case AST_TYPE(TYPE): return a->n.tn;
-        case AST_TYPE(VAL): return NULL;
+        case AST_TYPE(VAL): return a->n.val->tn;
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
         case AST_TYPE(IF): return NULL;

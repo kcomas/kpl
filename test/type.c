@@ -17,7 +17,10 @@ int main(int argc, char *argv[]) {
         }
     }
     type_stat tstat;
-    if ((tstat = type_chk_fn(m->fns)) != TYPE_STAT(OK)) return tstat;
+    if ((tstat = type_chk_fn(m->fns)) != TYPE_STAT(OK)) {
+        fn_node_p(&as, m->fns, 0);
+        return tstat;
+    }
     fn_node_p(&as, m->fns, 0);
     putchar('\n');
     fn_node_f(m->fns);
