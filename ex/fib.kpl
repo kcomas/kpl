@@ -11,6 +11,6 @@ fib:FN(U6;U6)${(x)
     } (|(x = 1;x = 2)) {
         #; 1
     }
-    fib(x - 1) + fib(x - 2)}
+    S(x - 1) + S(x - 2)}
 
 1 << " " , ["The fibonacci of";SG$n;"is:";SG$fib(n);"after";SG$c;"calls\n"]

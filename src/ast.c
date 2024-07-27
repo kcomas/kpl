@@ -107,6 +107,12 @@ extern inline void type_node_p(const ast_st *const as, const type_node *const tn
 
 extern inline void type_node_f(type_node *tn);
 
+extern inline res_node *res_node_i(res_type rt, type_node *tn);
+
+extern inline void res_node_p(const ast_st *const as, const res_node *const rn, size_t idnt);
+
+extern inline void res_node_f(res_node *rn);
+
 extern inline val_node *val_node_i(type t);
 
 extern inline void val_node_p(const ast_st *const as, const val_node *const v, size_t idnt);
@@ -248,6 +254,7 @@ extern inline type_node *ast_gtn(const ast *const a);
 
 static const char *const ast_type_str[] = {
     "TYPE",
+    "RES",
     "VAL",
     "OP",
     "LST",
@@ -275,6 +282,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     idnt += IDNT_ADD;
     switch (a->at) {
         AST_P_CASE(TYPE, tn, type_node_p);
+        AST_P_CASE(RES, rn, res_node_p);
         AST_P_CASE(VAL, val, val_node_p);
         AST_P_CASE(OP, op, op_node_p);
         AST_P_CASE(LST, lst, lst_node_p);
@@ -294,6 +302,7 @@ void ast_f(ast *a) {
     if (--a->rc > 0) return;
     switch (a->at) {
         AST_F_CASE(TYPE, tn, type_node_f);
+        AST_F_CASE(RES, rn, res_node_f);
         AST_F_CASE(VAL, val, val_node_f);
         AST_F_CASE(OP, op, op_node_f);
         AST_F_CASE(LST, lst, lst_node_f);
@@ -315,6 +324,11 @@ void ast_f(ast *a) {
 #define VAL_CASE(T) case TKN_TYPE(T): \
     if (*a) return AST_STAT(VAL_A_NN); \
     *a = ast_i(AST_TYPE(VAL), (node) { .val = val_node_i(TYPE(T)) }, &as->next); \
+    return ast_parse_stmt(as, fns, a, stp_flgs)
+
+#define RES_CASE(T, TT) case TKN_TYPE(T): \
+    if (*a) return AST_STAT(RES_A_NN); \
+    *a = ast_i(AST_TYPE(RES), (node) { .rn = res_node_i(RES_TYPE(T), TT) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 static ast_stat ast_parse_call(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
@@ -434,6 +448,9 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         VAL_CASE(INT);
         VAL_CASE(FLT);
         VAL_CASE(STR);
+        RES_CASE(TRUE, type_node_i(TYPE(BL), NULL));
+        RES_CASE(FALSE, type_node_i(TYPE(BL), NULL));
+        RES_CASE(SELF, NULL);
         TYPE_NA_CASE(VD);
         TYPE_NA_CASE(U3);
         TYPE_NA_CASE(U4);

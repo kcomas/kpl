@@ -16,11 +16,12 @@ typedef enum {
     TKN_TYPE(FLT),
     TKN_TYPE(STR), // "asdf"
     // const
-    TKN_TYPE(T),
-    TKN_TYPE(F),
-    TKN_TYPE(S),
+    TKN_TYPE(TRUE),
+    TKN_TYPE(FALSE),
+    TKN_TYPE(SELF),
     // built in type names
     TKN_TYPE(VD),
+    TKN_TYPE(BL),
     TKN_TYPE(U3),
     TKN_TYPE(U4),
     TKN_TYPE(U5),
