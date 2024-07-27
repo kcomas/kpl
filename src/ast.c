@@ -63,6 +63,7 @@ static const char *const tgs[] = {
     "FLT",
     "STR",
     "VD",
+    "BL",
     "U3",
     "U4",
     "U5",
