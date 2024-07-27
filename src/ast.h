@@ -367,6 +367,7 @@ inline void call_node_f(call_node *cn) {
 }
 
 typedef struct {
+    type_node *tn;
     ast *a;
 } ret_node; // takes next stmt
 
@@ -375,12 +376,14 @@ inline ret_node *ret_node_i(void) {
 }
 
 inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt) {
+    type_node_p(as, r->tn, idnt);
     putchar('\n');
     PCX(' ', idnt);
     ast_p(as, r->a, idnt);
 }
 
 inline void ret_node_f(ret_node *r) {
+    FNNF(r->tn, type_node_f);
     ast_f(r->a);
     free(r);
 }

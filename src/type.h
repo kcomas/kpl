@@ -39,7 +39,9 @@ typedef enum {
     TYPE_STAT(INV_FN_T_ARG), // type for fn arg is invalid
     TYPE_STAT(INV_FN_T_RET), // type for fn ret is invalid
     TYPE_STAT(INV_ARGS_OP_CALL), // invalid args for op call
-    TYPE_STAT(INV_OP_CALL_LRR_N_N) // op node for call l r ret not null
+    TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
+    TYPE_STAT(INV_RET_T), // inv ret type
+    TYPE_STAT(RET_T_NEQ) // ret type not eq to fn type
 } type_stat;
 
 type_stat type_chk(fn_node *const fns, ast *const a);
