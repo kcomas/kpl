@@ -475,6 +475,8 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(SL);
         TYPE_NA_CASE(SG);
         // TODO TYPES
+        TYPE_NA_CASE(FD);
+        // TODO TYPES
         case TKN_TYPE(FN):
             if (*a) return AST_STAT(TYPE_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));

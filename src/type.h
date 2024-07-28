@@ -42,6 +42,8 @@ typedef enum {
     TYPE_STAT(INV_STR_CNCT),
     TYPE_STAT(INV_CNCT),
     // rw
+    TYPE_STAT(INV_RW_L_T_N),
+    TYPE_STAT(INV_RW_R_T_N),
     TYPE_STAT(INV_RW),
     // fn
     TYPE_STAT(INV_FN_ARG_T), // fn arg is not a var

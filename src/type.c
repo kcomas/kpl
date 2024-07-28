@@ -113,8 +113,13 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (op->r) IFTCHK(type_chk, fns, op->r);
             ASTGTN(rt, op->r, INV_CST_R_T_N);
             if (type_int_cor(&op->ret, rt, lt)) break;
-            if (rt->t == TYPE(SG)) {
-                // TODO
+            if (lt->t == TYPE(SG)) {
+                op->ret = type_node_i(TYPE(SG), NULL);
+                break;
+            }
+            if (lt->t == TYPE(FD)) {
+                op->ret = type_node_i(TYPE(FD), NULL);
+                break;
             }
             // TODO cst
             return TYPE_STAT(INV_CST);
@@ -161,6 +166,11 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             // TODO
             return TYPE_STAT(INV_CNCT);
         case OP_TYPE(RW):
+            ASTGTNBOP(RW);
+                if (lt->t == TYPE(FD)) {
+                op->ret = type_node_i(TYPE(VD), NULL);
+                break;
+            }
             // TODO
             return TYPE_STAT(INV_RW);
 
@@ -170,13 +180,14 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
 
 type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
     type_stat tstat;
-    IFTCHK(type_chk_lst, fns, cn->args);
     if (cn->tgt->at == AST_TYPE(OP)) {
         if (cn->args->len > 2) return TYPE_STAT(INV_ARGS_OP_CALL);
         op_node *op = cn->tgt->n.op;
         if (op->ret || op->l || op->r) return TYPE_STAT(INV_OP_CALL_LRR_N_N);
-        op->l = cn->args->h->a;
-        op->r = cn->args->h->next->a;
+        if (cn->args->h) {
+            op->l = cn->args->h->a;
+            if (cn->args->h->next) op->r = cn->args->h->next->a;
+        }
         if ((tstat = type_chk_op(fns, op)) != TYPE_STAT(OK)) return tstat;
         cn->ret = op->ret;
         op->ret = NULL;
@@ -184,6 +195,7 @@ type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
         return TYPE_STAT(OK);
     }
     IFTCHK(type_chk, fns, cn->tgt);
+    IFTCHK(type_chk_lst, fns, cn->args);
     type_node *tt, *ta;
     ASTGTN(tt, cn->tgt, INV_CALL_TGT);
     lst_itm *th, *ah;
