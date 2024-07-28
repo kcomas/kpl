@@ -8,6 +8,19 @@ static bool type_eq(const type_node *const ta, const type_node *tb) {
     return true;
 }
 
+typedef bool type_eq_fn(const type_node *const ta, const type_node *const tb);
+
+static bool type_lst_contig(const lst_node *const lst, const type_node *const tn, type_eq_fn *const fn) {
+    type_node *cmp;
+    lst_itm *h = lst->h;
+    while (h) {
+        if (!(cmp = ast_gtn(h->a))) return false;
+        if (!fn(cmp, tn)) return false;
+        h = h->next;
+    }
+    return true;
+}
+
 #define IFTCHK(FN, FNS, N) if ((tstat = FN(FNS, N)) != TYPE_STAT(OK)) return tstat
 
 static type_stat type_chk_lst(fn_node *const fns, lst_node *const lst) {
@@ -31,17 +44,26 @@ static type_stat type_chk_if(fn_node *const fns, if_node *const in) {
     return TYPE_STAT(OK);
 }
 
-static bool type_int_is(const type_node *const tn) {
+static bool type_int_is(const type_node *const tn, const type_node *const dnu) {
+    (void) dnu;
     return tn->t >= TYPE(U3) && tn->t <= TYPE(I6);
 }
 
 static bool type_int_cor(type_node **tgt, const type_node *const a, const type_node *const b) {
     if (tgt) if (*tgt) return true;
-    if ((a->t == TYPE(INT) || type_int_is(a)) && type_int_is(b)) {
+    if ((a->t == TYPE(INT) || type_int_is(a, NULL)) && type_int_is(b, NULL)) {
         if (tgt) *tgt = type_node_c(b);
         return true;
     }
+    if (a->t == TYPE(INT) && b->t == TYPE(INT)) {
+        if (tgt) *tgt = type_node_i(TYPE(I6), NULL);
+    }
     return false;
+}
+
+static bool type_str_is(const type_node *const tn, const type_node *const dnu) {
+    (void) dnu;
+    return tn->t == TYPE(STR) || tn->t == TYPE(CR) || tn->t == TYPE(SG);
 }
 
 #define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_STAT(E);
@@ -91,6 +113,9 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (op->r) IFTCHK(type_chk, fns, op->r);
             ASTGTN(rt, op->r, INV_CST_R_T_N);
             if (type_int_cor(&op->ret, rt, lt)) break;
+            if (rt->t == TYPE(SG)) {
+                // TODO
+            }
             // TODO cst
             return TYPE_STAT(INV_CST);
         // TODO ops
@@ -119,10 +144,25 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             break;
         // TODO ops
         case OP_TYPE(OR):
-            ASTGTN(lt, op->l, INV_OR_L_T_N);
-            ASTGTN(rt, op->r, INV_OR_R_T_N);
+            ASTGTNBOP(OR);
             op->ret = type_node_i(TYPE(BL), NULL);
             break;
+        case OP_TYPE(CNCT):
+            ASTGTNBOP(CNCT);
+            if (type_str_is(lt, NULL)) {
+                if (!type_str_is(rt, NULL)) {
+                    // TODO check if vr of sg or cr
+                    if (rt->t == TYPE(TE))
+                        if (!type_lst_contig(op->r->n.lst, NULL, type_str_is)) return TYPE_STAT(INV_STR_CNCT);
+                }
+                op->ret = type_node_i(TYPE(SG), NULL);
+                break;
+            }
+            // TODO
+            return TYPE_STAT(INV_CNCT);
+        case OP_TYPE(RW):
+            // TODO
+            return TYPE_STAT(INV_RW);
 
     }
     return TYPE_STAT(OK);

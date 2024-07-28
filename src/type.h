@@ -36,6 +36,14 @@ typedef enum {
     // or
     TYPE_STAT(INV_OR_L_T_N),
     TYPE_STAT(INV_OR_R_T_N),
+    // cnct
+    TYPE_STAT(INV_CNCT_L_T_N),
+    TYPE_STAT(INV_CNCT_R_T_N),
+    TYPE_STAT(INV_STR_CNCT),
+    TYPE_STAT(INV_CNCT),
+    // rw
+    TYPE_STAT(INV_RW),
+    // fn
     TYPE_STAT(INV_FN_ARG_T), // fn arg is not a var
     TYPE_STAT(INV_FN_T_ARG), // type for fn arg is invalid
     TYPE_STAT(INV_FN_T_RET), // type for fn ret is invalid
