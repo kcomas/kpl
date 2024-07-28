@@ -41,6 +41,13 @@ typedef enum {
     TYPE_STAT(INV_FN_T_RET), // type for fn ret is invalid
     TYPE_STAT(INV_ARGS_OP_CALL), // invalid args for op call
     TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
+    TYPE_STAT(INV_CALL_TGT), // cannot get type for call tgt
+    TYPE_STAT(INV_CALL_TGT_T), // invalid call target type
+    TYPE_STAT(INV_CALL_ARGS_LEN), // too little or too many args
+    TYPE_STAT(INV_CALL_TGT_ARG_T), // invalid arg type for call
+    TYPE_STAT(INV_CALL_ARG_T), // arg type in call inv
+    TYPE_STAT(CALL_ARG_T_NEQ), // ivalid type for call arg
+    // ret
     TYPE_STAT(INV_RET_T), // inv ret type
     TYPE_STAT(INV_RET_FNS), // return type for fn not found
     TYPE_STAT(RET_T_NEQ), // ret type not eq to fn type
