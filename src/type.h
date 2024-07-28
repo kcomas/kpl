@@ -42,6 +42,7 @@ typedef enum {
     TYPE_STAT(INV_ARGS_OP_CALL), // invalid args for op call
     TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
     TYPE_STAT(INV_RET_T), // inv ret type
+    TYPE_STAT(INV_RET_FNS), // return type for fn not found
     TYPE_STAT(RET_T_NEQ), // ret type not eq to fn type
     TYPE_STAT(VAR_UT) // var not typed
 } type_stat;

@@ -351,7 +351,7 @@ typedef struct _fn_node {
     uint8_t idc; // var id counter
     tbl *tl; // sym tbl
     struct _fn_node *par; // parent node
-    type_node *ret;
+    type_node *sig;
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
 
@@ -364,13 +364,15 @@ inline fn_node *fn_node_i(fn_node *const par) {
     return fn;
 }
 
+type_node *fn_node_ret_type(const fn_node *const fn);
+
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data);
 
 inline void fn_node_f(fn_node *fn) {
     tbl_f(fn->tl, &fn_node_tbl_data_f);
-    FNNF(fn->ret, type_node_f);
+    FNNF(fn->sig, type_node_f);
     lst_node_f(fn->args);
     lst_node_f(fn->body);
     free(fn);
@@ -501,7 +503,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
         case AST_TYPE(IF): return NULL;
-        case AST_TYPE(FN): return a->n.fn->ret;
+        case AST_TYPE(FN): return a->n.fn->sig;
         case AST_TYPE(CALL): return a->n.cn->ret;
         case AST_TYPE(RET): return ast_gtn(a->n.ret->a);
         case AST_TYPE(VAR): return a->n.var->tn;
