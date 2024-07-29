@@ -51,7 +51,7 @@ static bool type_int_is(const type_node *const tn, const type_node *const dnu) {
 
 static bool type_int_cor(type_node **tgt, const type_node *const a, const type_node *const b) {
     if (tgt) if (*tgt) return true;
-    if ((a->t == TYPE(INT) || type_int_is(a, NULL)) && type_int_is(b, NULL)) {
+    if ((a->t == TYPE(INT) && type_int_is(b, NULL)) || (type_int_is(a, NULL) && type_int_is(b, NULL) && a->t == b->t)) {
         if (tgt) *tgt = type_node_c(b);
         return true;
     }
