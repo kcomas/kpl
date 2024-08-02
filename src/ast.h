@@ -432,8 +432,20 @@ inline void ret_node_f(ret_node *r) {
     free(r);
 }
 
+#define VAR_TYPE(N) VAR_TYPE_##N
+
+typedef enum {
+    VAR_TYPE(U), // unknown
+    VAR_TYPE(G), // global
+    VAR_TYPE(L), // local
+    VAR_TYPE(A) // arg
+} var_type;
+
+const char *var_type_str(var_type vt);
+
 typedef struct {
     uint8_t id;
+    var_type vt;
     type_node *tn; // null for unknown
     fn_node *fns; // scope
     char str[]; // null term
@@ -442,7 +454,7 @@ typedef struct {
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
 
 inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
-    printf("%p,%d,%s", var->fns, var->id, var->str);
+    printf("%p,(%s),%d,%s", var->fns, var_type_str(var->vt), var->id, var->str);
     type_node_p(as, var->tn, idnt);
 }
 
