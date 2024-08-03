@@ -351,8 +351,8 @@ typedef struct _fn_node {
     uint8_t idc; // var id counter
     tbl *tl; // sym tbl
     struct _fn_node *par; // parent node
-    type_node *sig;
-    lst_node *args, *body; // tail arg is ret type only mods have NULL args
+    type_node *sig; // tail arg is ret type only mods have NULL args
+    lst_node *args, *body;
 } fn_node;
 
 inline fn_node *fn_node_i(fn_node *const par) {

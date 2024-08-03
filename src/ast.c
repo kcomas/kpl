@@ -247,10 +247,10 @@ var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const s
     memset(vstr, '\0', MAX_VAR_LEN);
     memcpy(vstr, str + t->pos, t->len);
     tbl_itm *ti;
-    fn_node *scope = fns;
+    fn_node *scope = fns->par != &mfn ? fns : NULL;
     while (scope) {
         if (tbl_op(&scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
-        scope = scope->par != &mfn ? scope->par : NULL;
+        scope = scope->par;
     }
     if (!scope) {
         var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
