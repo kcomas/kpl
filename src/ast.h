@@ -347,8 +347,17 @@ inline void if_node_f(if_node *in) {
     LST_F(in, if_itm, if_itm_f, NULL);
 }
 
+#define FN_VIM(N) FN_VIM_##N
+
+typedef enum {
+   FN_VIM(S), // standard local or global
+   FN_VIM(A), // arg only
+   FN_VIM(L) // local only
+} fn_vim; // fn var insert mode
+
 typedef struct _fn_node {
     uint8_t idc; // var id counter
+    fn_vim vim;
     tbl *tl; // sym tbl
     struct _fn_node *par; // parent node
     type_node *sig; // tail arg is ret type only mods have NULL args
@@ -365,6 +374,8 @@ inline fn_node *fn_node_i(fn_node *const par) {
 }
 
 type_node *fn_node_ret_type(const fn_node *const fn);
+
+const char *fn_vim_str(fn_vim vim);
 
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 

@@ -64,7 +64,7 @@ static bool type_int_cor(type_node **tgt, const type_node *const a, const type_n
 
 static bool type_str_is(const type_node *const tn, const type_node *const dnu) {
     (void) dnu;
-    return tn->t == TYPE(STR) || tn->t == TYPE(CR) || tn->t == TYPE(SG);
+    return tn->t == TYPE(STR) || tn->t == TYPE(SG);
 }
 
 #define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_STAT(E);

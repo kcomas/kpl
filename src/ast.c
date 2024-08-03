@@ -188,8 +188,20 @@ type_node *fn_node_ret_type(const fn_node *const fn) {
     return tmpt;
 }
 
+const char *const fnvims[] = {
+    "S",
+    "A",
+    "L"
+};
+
+const char *fn_vim_str(fn_vim vim) {
+    const char *s = "INVALID";
+    if (vim >= FN_VIM(S) && vim <= FN_VIM(L)) s = fnvims[vim];
+    return s;
+}
+
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
-    printf("%p,%d,", fn, fn->idc);
+    printf("%p,%s,%d,", fn, fn_vim_str(fn->vim), fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
     putchar('\n');
     PCX(' ', idnt);
@@ -240,14 +252,12 @@ const char *var_type_str(var_type vt) {
     #define MAX_VAR_LEN 20
 #endif
 
-static fn_node mfn = {0, NULL, NULL, NULL, NULL, NULL}; // cmp for if parsing args
-
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
     static char vstr[MAX_VAR_LEN];
     memset(vstr, '\0', MAX_VAR_LEN);
     memcpy(vstr, str + t->pos, t->len);
     tbl_itm *ti;
-    fn_node *scope = fns->par != &mfn ? fns : NULL;
+    fn_node *scope = fns->vim == FN_VIM(S) ? fns : NULL;
     while (scope) {
         if (tbl_op(&scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
         scope = scope->par;
@@ -255,7 +265,8 @@ var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const s
     if (!scope) {
         var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
         vn->id = fns->idc++;
-        if (fns->par == &mfn) vn->vt = VAR_TYPE(A);
+        if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
+        else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);
         else vn->vt = fns->par ? VAR_TYPE(L) : VAR_TYPE(G);
         vn->fns = fns;
         memcpy(vn->str, str + t->pos, t->len);
@@ -433,13 +444,14 @@ static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, uint
 }
 
 static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
-    fn_node *fn = fn_node_i(&mfn);
+    fn_node *fn = fn_node_i(par);
+    fn->vim = FN_VIM(A);
     ast_stat astat;
     if ((astat = ast_parse_stmts(as, fn, fn->args, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
         fn_node_f(fn);
         return astat;
     }
-    fn->par = par;
+    fn->vim = FN_VIM(S);
     if ((astat = ast_parse_stmts(as, fn, fn->body, TFLS, TKN_FLG(RB))) != AST_STAT(OK)) {
         fn_node_f(fn);
         return astat;
