@@ -33,7 +33,7 @@ typedef struct {
     tkn_stat tstat;
     tkn_st ts;
     tkn next, peek;
-    char *str;
+    const char *str;
 } ast_st;
 
 inline void ast_st_i(ast_st *const as, char *const str) {
