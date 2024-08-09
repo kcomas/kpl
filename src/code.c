@@ -5,7 +5,19 @@ extern inline code *code_i(size_t size);
 
 extern inline void code_a(code **c, op o);
 
-code_stat code_gen_op(code_st *const cs, const ast *const aop, code *c) {
+#define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
+
+static code_stat code_gen_lst(code_st *const cs, const ast *const alst, code *c) {
+    code_stat cstat;
+    lst_itm *h = alst->n.lst->h;
+    while (h) {
+        IFCGEN(code_gen, cs, h->a, c);
+        h = h->next;
+    }
+    return CODE_STAT(OK);
+}
+
+static code_stat code_gen_op(code_st *const cs, const ast *const aop, code *c) {
     const op_node *op = aop->n.op;
     // TODO check rl
     switch (op->ot) {
@@ -44,8 +56,8 @@ code_stat code_gen_fn(code_st *const cs, const ast *const afn, code *c) {
     const fn_node *fn = afn->n.fn;
     if (fn->args->len > fn->idc) return CODE_STAT(ARG_LEN_GT_LOCAL_LEN);
     uint8_t nl = fn->idc - fn->args->len;
-    if (nl) OP_A(c, AL, U3, { .u3 = nl }, afn);
+    OP_A(c, EFNAL, U3, { .u3 = nl }, afn);
     // TODO body
-    if (nl) OP_A(c, FL, U3, { .u3 = nl }, afn);
+    OP_A(c, RFNFL, U3, { .u3 = nl }, afn);
     return CODE_STAT(OK);
 }
