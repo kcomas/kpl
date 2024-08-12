@@ -70,7 +70,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
 
 #define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
 
-static code_gen_lst(code_st *const cs, const lst_node *const lst, code *c) {
+static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code *c) {
     code_stat cstat;
     lst_itm *h = lst->h;
     while (h) {
@@ -103,9 +103,9 @@ static code_stat p_int(const code_st *const cs, type t, const ast *const a, code
     return CODE_STAT(OK);
 }
 
-#define OP_P_INT(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT)) if ((cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
+#define OP_P_INT(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT) && (cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
 
-static code_gen_op(code_st *const cs, const ast *const a, code *c) {
+static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     op_node *opn = a->n.op;
     var_node *var;
@@ -113,6 +113,7 @@ static code_gen_op(code_st *const cs, const ast *const a, code *c) {
     if (opn->ot != OP_TYPE(CST)) if (opn->r) IFCGEN(code_gen, cs, opn->r, c);
     switch (opn->ot) {
         case OP_TYPE(ASS):
+            if (opn->l->at != AST_TYPE(VAR)) return CODE_STAT(INV_L_ASS);
             var = opn->l->n.var;
             switch (var->vt) {
                 case VAR_TYPE(U): return CODE_STAT(VAR_TYPE_U);
