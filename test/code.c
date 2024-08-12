@@ -18,9 +18,18 @@ int main(int argc, char *argv[]) {
     }
     type_stat tstat;
     if ((tstat = type_chk_fn(m->fns)) != TYPE_STAT(OK)) return tstat;
-    tkn t = {TKN_TYPE(NB), 0, 0, 0, 0};
-    m->afns = ast_i(AST_TYPE(FN), (node) { .fn = m->fns }, &t);
-    ast_f(m->afns);
+    code_st cs;
+    code_stat cstat;
+    code_st_i(&cs, m->src.str);
+    m->c = code_i(CODE_I_SIZE);
+    if ((cstat = code_gen_fn(&cs, m->fns, m->c)) != CODE_STAT(OK)) {
+        code_p(&cs, m->c, 0);
+        printf("EC: %d\n", cstat);
+        return cstat;
+    }
+    code_p(&cs, m->c, 0);
+    code_f(m->c);
+    fn_node_f(m->fns);
     mod_f(m);
     return 0;
 }

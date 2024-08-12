@@ -17,14 +17,21 @@ typedef struct {
     const char *str;
 } code_st;
 
+inline void code_st_i(code_st *const cs, const char *str) {
+    cs->str = str;
+}
+
 #define OP_C(N) OP_C_##N
 
 typedef enum {
     // data
+    OP_C(EFN), // enter fn
+    OP_C(RFN), // return fn
+    OP_C(AG), // allocate globals
     OP_C(SG), // store global
     OP_C(LG), // load global
-    OP_C(EFNAL), // enter fn, allocate locals
-    OP_C(RFNFL), // return fn, free loacls
+    OP_C(AL), // allocate locals
+    OP_C(FL), // free loacls
     OP_C(SL), // store local
     OP_C(LL), // load local
     OP_C(SA), // store arg
@@ -38,7 +45,11 @@ typedef enum {
     OP_C(CST)
 } op_c;
 
+const char *op_c_get_str(op_c oc);
+
 typedef struct _code code;
+
+#define OP_D_V(N) OP_D_V_##N
 
 typedef union {
     type t;
@@ -71,8 +82,8 @@ typedef struct _code {
     op ops[];
 } code;
 
-#ifndef REC_CODE_I_SIZE
-    #define REC_CODE_I_SIZE 30
+#ifndef CODE_I_SIZE
+    #define CODE_I_SIZE 50
 #endif
 
 inline code *code_i(size_t size) {
@@ -81,15 +92,31 @@ inline code *code_i(size_t size) {
     return c;
 }
 
+#ifndef CODE_R_SIZE
+    #define CODE_R_SIZE 2
+#endif
+
 inline void code_a(code **c, op o) {
-    if ((*c)->len + 1 == (*c)->size) {
-        // TODO resize
+    if ((*c)->len == (*c)->size) {
+        code *tmp = *c;
+        size_t ns = (*c)->size * CODE_R_SIZE;
+        *c = calloc(1, sizeof(code) + sizeof(op) * ns);
+        memcpy(*c, tmp, sizeof(code) + sizeof(op) * tmp->size);
+        (*c)->size = ns;
+        free(tmp);
     }
     (*c)->ops[(*c)->len++] = o;
 }
+
+inline void code_f(code *c) {
+    // TODO free ptrs
+    free(c);
+}
+
+void code_p(const code_st *const st, const code *const c, size_t idnt);
 
 #define OP_A(C, OC, OT, OD, A) code_a(&C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
 
 code_stat code_gen(code_st *const cs, const ast *const a, code *c);
 
-code_stat code_gen_fn(code_st *const cs, const ast *const afn, code *c);
+code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code *c);
