@@ -10,7 +10,9 @@
 typedef enum {
     CODE_STAT(OK),
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
-    CODE_STAT(ARG_LEN_GT_LOCAL_LEN) // should not happen
+    CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
+    CODE_STAT(VAR_TYPE_U),
+    CODE_STAT(INV_INT_CST_PUSH)
 } code_stat;
 
 typedef struct {
@@ -42,7 +44,8 @@ typedef enum {
     // control
     OP_C(JMPF), // jmp if false
     // ops
-    OP_C(CST)
+    OP_C(CST),
+    OP_C(ADD)
 } op_c;
 
 const char *op_c_get_str(op_c oc);
@@ -109,7 +112,9 @@ inline void code_a(code **c, op o) {
 }
 
 inline void code_f(code *c) {
-    // TODO free ptrs
+    for (size_t i = 0; i < c->len; i++) {
+        if (c->ops[i].ot == TYPE(FN)) code_f(c->ops[i].od.c);
+    }
     free(c);
 }
 
