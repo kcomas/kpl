@@ -61,6 +61,10 @@ typedef enum {
     TYPE_STAT(INV_RET_T), // inv ret type
     TYPE_STAT(INV_RET_FNS), // return type for fn not found
     TYPE_STAT(RET_T_NEQ), // ret type not eq to fn type
+    // implicit ret
+    TYPE_STAT(INV_IRET_T),
+    TYPE_STAT(INV_IRET_FNS),
+    TYPE_STAT(IRET_T_NEQ),
     TYPE_STAT(VAR_UT) // var not typed
 } type_stat;
 

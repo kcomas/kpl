@@ -227,6 +227,7 @@ type_stat type_chk_ret(fn_node *const fns, ret_node *const ret) {
     type_node *tmpr, *tmpf;
     ASTGTN(tmpr, ret->a, INV_RET_T);
     if (!(tmpf = fn_node_ret_type(fns))) return TYPE_STAT(INV_RET_FNS);
+    if (tmpf->t == TYPE(VD)) return TYPE_STAT(OK);
     if (type_int_cor(&ret->tn, tmpr, tmpf)) return TYPE_STAT(OK);
     if (!type_eq(tmpf, tmpr)) return TYPE_STAT(RET_T_NEQ);
     ret->tn = type_node_c(tmpf);
@@ -259,5 +260,13 @@ type_stat type_chk_fn(fn_node *const fn) {
     type_stat tstat;
     IFTCHK(type_chk_lst, fn, fn->args);
     IFTCHK(type_chk_lst, fn, fn->body);
+    // TODO check last stmt type
+    if (fn->par) {
+        type_node *tmpr, *tmpf;
+        ASTGTN(tmpr, fn->body->t->a, INV_IRET_T);
+        if (!(tmpf = fn_node_ret_type(fn))) return TYPE_STAT(INV_IRET_FNS);
+        if (tmpf->t == TYPE(VD)) return TYPE_STAT(OK);
+        if (!type_eq(tmpf, tmpr)) return TYPE_STAT(IRET_T_NEQ);
+    }
     return TYPE_STAT(OK);
 }

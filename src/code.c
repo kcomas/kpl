@@ -21,8 +21,6 @@ static const char *op_c_str[] = {
     "LL",
     "SA",
     "LA",
-    "PG",
-    "PL",
     "PV",
     "JMPF",
     "CST",
@@ -80,6 +78,16 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     return CODE_STAT(OK);
 }
 
+static code_stat code_gen_if(code_st *const cs, const if_node *const in, code *c) {
+    code_stat cstat;
+    if_itm *h = in->h;
+    while (h) {
+        size_t jfi = c->len; // TODO update jmp pos
+        h = h->next;
+    }
+    return CODE_STAT(OK);
+}
+
 #ifndef MAX_INT_LEN
     #define MAX_INT_LEN 20
 #endif
@@ -97,6 +105,10 @@ static code_stat p_int(const code_st *const cs, type t, const ast *const a, code
         // TODO
         case TYPE(U6):
             OP_A(c, PV, U6, { .u6 = (uint64_t) i }, a);
+            break;
+        // TODO
+        case TYPE(I6):
+            OP_A(c, PV, I6, { .i6 = i }, a);
             break;
         default: return CODE_STAT(INV_INT_CST_PUSH);
     }
@@ -126,7 +138,6 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
                 case VAR_TYPE(A):
                     OP_A(c, SA, U3, { .u3 = a->n.var->id }, a);
                     break;
-
             }
             break;
         case OP_TYPE(CST):
@@ -138,6 +149,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             OP_P_INT(opn, cs, l, c);
             OP_P_INT(opn, cs, r, c);
             OP_A(c, ADD, STMT, { .t = opn->ret->t }, a);
+            break;
+        case OP_TYPE(NOT):
             break;
     }
     return CODE_STAT(OK);
@@ -168,15 +181,17 @@ code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
             break;
         case AST_TYPE(OP): return code_gen_op(cs, a, c);
         case AST_TYPE(LST): return code_gen_lst(cs, a->n.lst, c);
-        case AST_TYPE(IF):
-            // TODO
-            break;
+        case AST_TYPE(IF): return code_gen_if(cs, a->n.in, c);
         case AST_TYPE(FN):
             cfn = code_i(CODE_I_SIZE);
             IFCGEN(code_gen_fn, cs, a->n.fn, cfn);
             OP_A(c, PV, FN, { .c = cfn }, a);
             break;
         // TODO
+        case AST_TYPE(RET):
+            IFCGEN(code_gen, cs, a->n.ret->a, c);
+            OP_A(c, RFN, VD, {}, a);
+            break;
         case AST_TYPE(VAR):
             switch (a->n.var->vt) {
                 case VAR_TYPE(U): return CODE_STAT(VAR_TYPE_U);
