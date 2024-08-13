@@ -58,6 +58,8 @@ extern inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs);
 
 static const char *const tgs[] = {
     "STMT",
+    "OP",
+    "COND",
     "MOD",
     "INT",
     "FLT",

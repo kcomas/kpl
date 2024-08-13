@@ -13,7 +13,8 @@ typedef enum {
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
-    CODE_STAT(INV_INT_CST_PUSH)
+    CODE_STAT(INV_INT_CST_PUSH),
+    CODE_STAT(OP_NO_T_R)
 } code_stat;
 
 typedef struct {
@@ -41,17 +42,22 @@ typedef enum {
     OP_C(LA), // load arg
     OP_C(PV), // push value
     // control
-    OP_C(JMPF), // jmp if false
+    OP_C(COND), // jmp if false
+    // coalesce
+    OP_C(ZOO), // convert to zero or one
     // ops
     OP_C(CST),
-    OP_C(ADD)
+    OP_C(ADD),
+    OP_C(NOT)
 } op_c;
 
 const char *op_c_get_str(op_c oc);
 
 typedef struct _code code;
 
-#define OP_D_V(N) OP_D_V_##N
+typedef struct {
+   code *cond, *body;
+} op_if;
 
 typedef union {
     type t;
@@ -66,9 +72,8 @@ typedef union {
     float f;
     double d;
     code *c;
+    op_if *of;
 } op_d;
-
-#define OP_D(T, V) (op_d) { .T = V }
 
 typedef struct {
     op_c oc;
@@ -85,7 +90,7 @@ typedef struct _code {
 } code;
 
 #ifndef CODE_I_SIZE
-    #define CODE_I_SIZE 50
+    #define CODE_I_SIZE 20
 #endif
 
 inline code *code_i(size_t size) {
@@ -110,11 +115,19 @@ inline void code_a(code **c, op o) {
     (*c)->ops[(*c)->len++] = o;
 }
 
-inline void code_f(code *c) {
-    for (size_t i = 0; i < c->len; i++) {
-        if (c->ops[i].ot == TYPE(FN)) code_f(c->ops[i].od.c);
-    }
-    free(c);
+void code_f(code *c);
+
+inline op_if *op_if_i(size_t size) {
+    op_if *of = calloc(1, sizeof(op_if));
+    of->cond = code_i(size);
+    of->body = code_i(size);
+    return of;
+}
+
+inline void op_if_f(op_if *of) {
+    code_f(of->cond);
+    code_f(of->body);
+    free(of);
 }
 
 void code_p(const code_st *const st, const code *const c, size_t idnt);

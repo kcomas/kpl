@@ -168,7 +168,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             return TYPE_STAT(INV_CNCT);
         case OP_TYPE(RW):
             ASTGTNBOP(RW);
-                if (lt->t == TYPE(FD)) {
+            if (lt->t == TYPE(FD)) {
                 op->ret = type_node_i(TYPE(VD), NULL);
                 break;
             }
