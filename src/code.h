@@ -20,6 +20,7 @@ typedef enum {
     CODE_STAT(NO_TYPE_COR_INT),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
@@ -61,7 +62,8 @@ typedef enum {
     OP_C(SUB),
     OP_C(EQ),
     OP_C(NOT),
-    OP_C(OR)
+    OP_C(OR),
+    OP_C(WFD) // OP_T is type to be written
 } op_c;
 
 const char *op_c_get_str(op_c oc);
@@ -84,6 +86,7 @@ typedef union {
     int64_t i6;
     float f;
     double d;
+    int fd;
     code *c;
     op_if *of;
 } op_d;

@@ -41,13 +41,13 @@ static const char *op_c_str[] = {
     "SUB",
     "EQ",
     "NOT",
-    "OR"
-
+    "OR",
+    "WFD"
 };
 
 const char *op_c_get_str(op_c oc) {
     const char *s = "INVALID";
-    if (oc >= OP_C(EFN) && oc <= OP_C(OR)) s = op_c_str[oc];
+    if (oc >= OP_C(EFN) && oc <= OP_C(WFD)) s = op_c_str[oc];
     return s;
 };
 
@@ -71,6 +71,9 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 break;
             case TYPE(U6):
                 printf(",%lu", c->ops[i].od.u6);
+                break;
+            case TYPE(FD):
+                printf(",%d", c->ops[i].od.fd);
                 break;
             case TYPE(FN):
                 putchar('\n');
@@ -99,6 +102,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         IFCGEN(code_gen, cs, h->a, c);
         h = h->next;
     }
+    // TODO chk lst type
     return CODE_STAT(OK);
 }
 
@@ -201,9 +205,9 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
                             i6 = tkn_to_int64_t(&opn->r->t, cs->str);
                             if (i6 >= 0 && i6 <= 2) {
-                                OP_A(c, PV, I5, { .i5 = (int32_t) i6 }, opn->r);
-                            return CODE_STAT(OK);
-                        }
+                                OP_A(c, PV, FD, { .fd = (int) i6 }, opn->r);
+                                return CODE_STAT(OK);
+                            }
                         return CODE_STAT(INV_CST_INT_TO_FD);
                     }
                     return CODE_STAT(INV_CST_FD);
@@ -247,8 +251,17 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             OP_ZOO(tr);
             OP_A(c, OR, OP, { .t = TYPE(BL) }, a);
             break;
-        case OP_TYPE(RW):
+        case OP_TYPE(CNCT):
             // TODO
+            break;
+        case OP_TYPE(RW):
+            IFCGEN(code_gen, cs, opn->l, c);
+            if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
+            IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
+            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
+                OP_A(c, WFD, OP, { .t = tr->t }, a);
+            } else return CODE_STAT(INV_FD_OP);
             break;
     }
     return CODE_STAT(OK);
