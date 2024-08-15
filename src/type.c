@@ -138,7 +138,8 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_int_cor(NULL, lt, rt) || type_int_cor(NULL, rt, lt)) {
-                op->ret = type_node_i(TYPE(BL), NULL);
+                if (lt->t != TYPE(INT)) op->ret = type_node_i(lt->t, NULL);
+                else op->ret = type_node_i(rt->t, NULL);
                 break;
             }
             // TODO
