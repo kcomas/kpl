@@ -89,6 +89,7 @@ typedef union {
     int fd;
     code *c;
     op_if *of;
+    char *sg; // null term
 } op_d;
 
 typedef struct {
