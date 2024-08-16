@@ -20,6 +20,7 @@ typedef enum {
     CODE_STAT(NO_TYPE_COR_INT),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
     CODE_STAT(INV_CALL_TGT),
@@ -52,17 +53,20 @@ typedef enum {
     OP_C(SA), // store arg
     OP_C(LA), // load arg
     OP_C(PV), // push value
+    OP_C(CTE), // create tuple from stack u6 is length
     // control
     OP_C(COND), // jmp if false
     // coalesce
     OP_C(ZOO), // convert to zero or one
     // ops
     OP_C(CST),
+    OP_C(CSTSG), // cast type to string
     OP_C(ADD),
     OP_C(SUB),
     OP_C(EQ),
     OP_C(NOT),
     OP_C(OR),
+    OP_C(SGCNCT), // sg cnct op type is ethier sg or te
     OP_C(WFD) // OP_T is type to be written
 } op_c;
 
@@ -74,7 +78,9 @@ typedef struct {
    code *cond, *body;
 } op_if;
 
-typedef union {
+typedef struct _op_d_te op_d_te;
+
+typedef union _op_d {
     type t;
     uint8_t u3;
     uint16_t u4;
@@ -90,7 +96,13 @@ typedef union {
     code *c;
     op_if *of;
     char *sg; // null term
+    op_d_te *te;
 } op_d;
+
+typedef struct _op_d_te {
+    size_t size; // fixed
+    op_d d[];
+} op_d_te;
 
 typedef struct {
     op_c oc;
