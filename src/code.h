@@ -20,9 +20,11 @@ typedef enum {
     CODE_STAT(NO_TYPE_COR_INT),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(INV_SG_CNCT),
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
+    CODE_STAT(CALL_VAR_N_FN),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
 } code_stat;
@@ -42,6 +44,7 @@ typedef enum {
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
+    OP_C(CALL),
     // data
     OP_C(AG), // allocate globals
     OP_C(SG), // store global
@@ -71,8 +74,6 @@ typedef enum {
 } op_c;
 
 const char *op_c_get_str(op_c oc);
-
-typedef struct _code code;
 
 typedef struct {
    code *cond, *body;
@@ -134,12 +135,10 @@ inline code *code_i(size_t size) {
 
 inline void code_a(code **c, op o) {
     if ((*c)->len == (*c)->size) {
-        code *tmp = *c;
-        size_t ns = (*c)->size * CODE_R_SIZE;
-        *c = calloc(1, sizeof(code) + sizeof(op) * ns);
-        memcpy(*c, tmp, sizeof(code) + sizeof(op) * tmp->size);
-        (*c)->size = ns;
-        free(tmp);
+        code *nc = code_i((*c)->size * CODE_R_SIZE);
+        for (size_t i = 0; i < (*c)->len; i++) nc->ops[nc->len++] = (*c)->ops[i];
+        free(*c);
+        *c = nc;
     }
     (*c)->ops[(*c)->len++] = o;
 }
@@ -161,8 +160,8 @@ inline void op_if_f(op_if *of) {
 
 void code_p(const code_st *const st, const code *const c, size_t idnt);
 
-#define OP_A(C, OC, OT, OD, A) code_a(&C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
+#define OP_A(C, OC, OT, OD, A) code_a(C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
 
-code_stat code_gen(code_st *const cs, const ast *const a, code *c);
+code_stat code_gen(code_st *const cs, const ast *const a, code **c);
 
-code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code *c);
+code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c);
