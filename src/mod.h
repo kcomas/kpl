@@ -17,7 +17,7 @@ typedef struct {
     } src;
     fn_node *fns; // ast root
     code *c;
-    uint8_t *jit; // size is getpagesize
+    jit *j;
 } mod;
 
 inline mod *mod_i(void) {
