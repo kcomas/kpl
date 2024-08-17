@@ -279,8 +279,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
             switch  (opn->ret->t) {
                 case TYPE(SG):
-                    if (tr->t == TYPE(TE)) OP_A(c, SGCNCT, OP, { .t = TYPE(TE) }, a);
-                    else if (tr->t == TYPE(SG)) OP_A(c, SGCNCT, OP, { .t = TYPE(SG) }, a);
+                    if (tr->t == TYPE(TE) || tr->t == TYPE(SG)) OP_A(c, SGCNCT, OP, { .t = tr->t }, a);
                     else return CODE_STAT(INV_SG_CNCT);
                     break;
                 default: return CODE_STAT(INV_CNCT_OP);
