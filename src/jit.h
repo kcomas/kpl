@@ -55,3 +55,7 @@ inline void fn_stk_a(fn_stk **stk, const code *const c) {
 }
 
 void fn_stk_b(fn_stk **stk, const code *const c); // create stack from code scan
+
+inline void fn_stk_f(fn_stk *f) {
+    free(f);
+}
