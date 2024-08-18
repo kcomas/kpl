@@ -23,6 +23,9 @@ int main(int argc, char *argv[]) {
     code_st_i(&cs, m->src.str);
     m->c = code_i(CODE_I_SIZE);
     if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) return cstat;
+    fn_stk *stk = fn_stk_i(FN_STK_SIZE);
+    fn_stk_b(&stk, m->c);
+    fn_stk_f(stk);
     code_f(m->c);
     fn_node_f(m->fns);
     mod_f(m);
