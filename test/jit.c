@@ -27,10 +27,8 @@ int main(int argc, char *argv[]) {
     fn_stk_b(&stk, m->c);
     jit *j = jit_i(JIT_NUM_PAGE);
     jit_stat jstat;
-    if ((jstat = jit_stk(m, stk, &j)) != JIT_STAT(OK)) {
-        code_p(&cs, m->c, 0);
-        return jstat;
-    }
+    if ((jstat = jit_stk(m, stk, &j)) != JIT_STAT(OK)) return jstat;
+    code_p(&cs, m->c, 0);
     jit_f(j);
     fn_stk_f(stk);
     code_f(m->c);
