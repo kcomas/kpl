@@ -40,6 +40,10 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
 #define SET_BUF(BUF, DATA, SIZE) memset(BUF, 0, sizeof(void*)); \
     memcpy(BUF, DATA, SIZE)
 
+#define OPPVT(T, D, CT) case TYPE(T): \
+    SET_BUF(buf, &o->od.D, sizeof(CT)); \
+    break
+
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
     jit_stat jstat;
     op *o;
@@ -89,7 +93,14 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             // TODO
             case OP_C(PV):
                 op_set_jidx(*j, o);
-                // TODO
+                switch (o->ot) {
+                    OPPVT(U6, u6, uint64_t);
+                    OPPVT(I6, i6, int64_t);
+                    default:
+                        return JIT_STAT(PV_T_INV);
+                }
+                mov_reg(j, true, 0x01, buf); // mov r9 buf
+                jit_b(j, 2, 0x4C, 0x51); // push r9
                 op_set_jlen(*j, o);
                 break;
             default:

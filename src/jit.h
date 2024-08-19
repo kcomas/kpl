@@ -9,6 +9,7 @@
 
 typedef enum {
     JIT_STAT(OK),
+    JIT_STAT(PV_T_INV), // no push for type
     JIT_STAT(INV_CODE)
 } jit_stat;
 
