@@ -84,6 +84,13 @@ inline void jit_a(jit **j, uint8_t b) {
     (*j)->a[(*j)->len++] = b;
 }
 
+inline void jit_b(jit **j, size_t len, ...) {
+    va_list args;
+    va_start(args, len);
+    for (size_t i = 0; i < len; i++) jit_a(j, (uint8_t) va_arg(args, int));
+    va_end(args);
+}
+
 jit_stat jit_code(mod *const m, code *const c, jit **j);
 
 jit_stat jit_stk(mod *const m, fn_stk *const stk, jit **j);

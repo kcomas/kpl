@@ -10,6 +10,10 @@ typedef enum {
     MOD_STAT(FLF) // file load fail
 } mod_stat;
 
+typedef union {
+
+} dt; // data type
+
 typedef struct {
     struct {
         struct stat sb;
@@ -18,6 +22,8 @@ typedef struct {
     fn_node *fns; // ast root
     code *c;
     jit *j;
+    size_t ng; // number of globals
+    dt *g; // globals
 } mod;
 
 inline mod *mod_i(void) {
