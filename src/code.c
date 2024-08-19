@@ -102,7 +102,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
             tkn_p(&c->ops[i].a->t, cs->str);
             putchar('|');
         }
-        // TODO jit
+        if (c->ops[i].jlen > 0) printf("$%d,%d", c->ops[i].jidx, c->ops[i].jlen);
         putchar('\n');
     }
 }
