@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     jit_stat jstat;
     if ((jstat = jit_stk(m, stk, &j)) != JIT_STAT(OK)) return jstat;
     code_p(&cs, m->c, 0);
+    m->c->jf();
     jit_f(j);
     fn_stk_f(stk);
     code_f(m->c);
