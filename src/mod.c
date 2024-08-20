@@ -35,10 +35,6 @@ int64_t mod_lg_i6(mod *const m, size_t i) {
     return m->g[i].i6;
 }
 
-void mod_fg(mod *const m) {
-    free(m->g);
-}
-
 extern inline void mod_psrc(const mod *const m);
 
 extern inline void mod_f(mod *m);

@@ -187,22 +187,24 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     switch (opn->ot) {
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
-            if (opn->l->at != AST_TYPE(VAR)) return CODE_STAT(INV_L_ASS);
-            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(INV_R_ASS);
-            var = opn->l->n.var;
-            switch (var->vt) {
-                case VAR_TYPE(U): return CODE_STAT(VAR_TYPE_U);
-                case VAR_TYPE(G):
-                    OP_A(c, SG, VAR, { SLV(var->id, tr->t) }, opn->l);
-                    break;
-                case VAR_TYPE(L):
-                    OP_A(c, SL, VAR, { SLV(a->n.var->fns->idc - a->n.var->id, tr->t) }, a);
-                    break;
-                case VAR_TYPE(A):
-                    OP_A(c, SA, VAR, { SLV(a->n.var->id, tr->t) }, a);
-                    break;
+            if (opn->l->at == AST_TYPE(VAR)) {
+                if (!(tr = ast_gtn(opn->r))) return CODE_STAT(INV_R_ASS);
+                var = opn->l->n.var;
+                switch (var->vt) {
+                    case VAR_TYPE(U): return CODE_STAT(VAR_TYPE_U);
+                    case VAR_TYPE(G):
+                        OP_A(c, SG, VAR, { SLV(var->id, tr->t) }, opn->l);
+                        break;
+                    case VAR_TYPE(L):
+                        OP_A(c, SL, VAR, { SLV(a->n.var->fns->idc - a->n.var->id, tr->t) }, a);
+                        break;
+                    case VAR_TYPE(A):
+                        OP_A(c, SA, VAR, { SLV(a->n.var->id, tr->t) }, a);
+                        break;
+                }
+                break;
             }
-            break;
+            return CODE_STAT(INV_L_ASS);
         case OP_TYPE(CST):
             IFCGEN(code_gen, cs, opn->l, c);
             if (opn->r->at == AST_TYPE(FN)) return code_gen(cs, opn->r, c);
