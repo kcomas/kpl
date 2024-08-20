@@ -38,10 +38,18 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
 }
 
 #define SET_BUF(BUF, DATA, SIZE) memset(BUF, 0, sizeof(void*)); \
-    memcpy(BUF, DATA, SIZE)
+    memcpy(BUF, &DATA, SIZE)
+
+#define SET_REG(TGT, SIZEOF, REXRW, REGN) SET_BUF(buf, TGT, sizeof(SIZEOF)); \
+    mov_reg(j, REXRW, 0x0##REGN, buf)
+
+#define SET_FP(FN) fp = (void*) &FN
+
+#define SET_REG_CALL(REXRW, REGN) SET_REG(fp, void*, REXRW, REGN); \
+    jit_b(j, 2, 0xFF, 0xD##REGN);
 
 #define OPPVT(T, D, CT) case TYPE(T): \
-    SET_BUF(buf, &o->od.D, sizeof(CT)); \
+    SET_BUF(buf, o->od.D, sizeof(CT)); \
     break
 
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
@@ -70,51 +78,39 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(AG):
                 op_set_jidx(*j, o);
-                SET_BUF(buf, &m, sizeof(mod*));
-                mov_reg(j, false, 0x07, buf); // mov rdi m
-                SET_BUF(buf, &o->od.u3, sizeof(uint8_t));
-                mov_reg(j, false, 0x06, buf); // mov rsi &o->od.u3
-                fp = (void*) &mod_ag;
-                SET_BUF(buf, &fp, sizeof(void*));
-                mov_reg(j, false, 0x00, buf); // mov rag mod_ag
-                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->od.u3, uint8_t, false, 6);
+                SET_FP(mod_ag);
+                SET_REG_CALL(false, 0);
                 op_set_jlen(*j, o);
                 break;
             case OP_C(SG):
                 op_set_jidx(*j, o);
-                SET_BUF(buf, &m, sizeof(mod*));
-                mov_reg(j, false, 0x07, buf); // mov rdi m
-                SET_BUF(buf, &o->od.v.id, sizeof(uint8_t));
-                mov_reg(j, false, 0x06, buf); // mov rsi &o->od.v.id
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->od.v.id, uint8_t, false, 6);
                 jit_a(j, 0x5A); // pop rdx
                 switch (o->od.v.t) {
                     case TYPE(I6):
-                        fp = (void*) &mod_sg_i6;
+                        SET_FP(mod_sg_i6);
                         break;
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
-                SET_BUF(buf, &fp, sizeof(void*));
-                mov_reg(j, false, 0x00, buf); // mov rax fn
-                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                SET_REG_CALL(false, 0);
                 op_set_jlen(*j, o);
                 break;
             case OP_C(LG):
                 op_set_jidx(*j, o);
-                SET_BUF(buf, &m, sizeof(mod*));
-                mov_reg(j, false, 0x07, buf); // mov rdi m
-                SET_BUF(buf, &o->od.v.id, sizeof(uint8_t));
-                mov_reg(j, false, 0x06, buf); // mov rsi &o->od.v.id
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->od.v.id, uint8_t, false, 6);
                 switch (o->od.v.t) {
                     case TYPE(I6):
-                        fp = (void*) &mod_lg_i6;
+                        SET_FP(mod_lg_i6);
                         break;
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
-                SET_BUF(buf, &fp, sizeof(void*));
-                mov_reg(j, false, 0x00, buf); // mov rax fn
-                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(*j, o);
                 break;

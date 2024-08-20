@@ -22,12 +22,12 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
     return MOD_STAT(OK);
 }
 
-void mod_ag(mod *const m, size_t ng) {
+void mod_ag(mod *const m, uint8_t ng) {
     m->g = calloc(ng, sizeof(dt));
     m->ng = ng;
 }
 
-void mod_sg_i6(mod *const m, size_t i, int64_t i6) {
+void mod_sg_i6(mod *const m, uint8_t i, int64_t i6) {
     m->g[i].i6 = i6;
 }
 
