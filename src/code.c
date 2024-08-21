@@ -375,7 +375,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                             break;
                         } else sg[sgi++] = cs->str[a->t.pos + 1 + i];
                     }
-                    OP_A(c, PV, SG, { .sg = sg }, a);
+                    OP_A(c, PV, STR, { .sg = sg }, a);
                     break;
                 default:
                     return CODE_STAT(NO_OP_FOR_VAL_T);

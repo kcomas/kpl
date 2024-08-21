@@ -13,6 +13,7 @@ typedef enum {
     JIT_STAT(PV_T_INV), // no push for type
     JIT_STAT(ADD_T_INV),
     JIT_STAT(SUB_T_INV),
+    JIT_STAT(WFD_T_INV),
     JIT_STAT(INV_CODE)
 } jit_stat;
 

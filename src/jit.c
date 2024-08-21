@@ -54,6 +54,9 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
 
 #define OPPVT(T, D, CT) case TYPE(T): \
     SET_BUF(buf, o->od.D, sizeof(CT)); \
+    mov_reg(j, true, 0x01, buf); \
+    jit_b(j, 2, 0x4C, 0x51); \
+    op_set_jlen(*j, o); \
     break
 
 #define C_OP_C_BOP(N, FN) case OP_C(N): \
@@ -107,7 +110,9 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 jit_a(j, 0x5A); // pop rdx
                 switch (o->od.v.t) {
+                    CT_SET_FN(STR, mod_sg_var_sg);
                     CT_SET_FN(I6, mod_sg_i6);
+                    CT_SET_FN(SG, mod_sg_var_sg);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -119,7 +124,9 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 switch (o->od.v.t) {
+                    CT_SET_FN(STR, mod_lg_var_sg);
                     CT_SET_FN(I6, mod_lg_i6);
+                    CT_SET_FN(SG, mod_lg_var_sg);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -131,18 +138,62 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             case OP_C(PV):
                 op_set_jidx(*j, o);
                 switch (o->ot) {
+                    // TODO
                     OPPVT(U6, u6, uint64_t);
+                    // TODO
                     OPPVT(I6, i6, int64_t);
+                    // TODO
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        SET_REG(o->od.sg, char*, false, 7);
+                        SET_FP(var_sg_i);
+                        SET_REG_CALL(false, 0);
+                        jit_a(j, 0x50); // push rax
+                        op_set_jlen(*j, o);
+                        break;
+                    OPPVT(FD, fd, int);
                     default:
                         return JIT_STAT(PV_T_INV);
                 }
-                mov_reg(j, true, 0x01, buf); // mov r9 buf
-                jit_b(j, 2, 0x4C, 0x51); // push r9
-                op_set_jlen(*j, o);
                 break;
-            // TODO
+                // TODO
             C_OP_C_BOP(ADD, add);
             C_OP_C_BOP(SUB, sub);
+            // TODO
+            case OP_C(WFD):
+                op_set_jidx(*j, o);
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        jit_b(j, 2, 0x4c, 0x59); // sg ptr in r9
+                        jit_b(j, 0x49, 0x89, 0xF9); // mov rdi r9
+                        SET_FP(var_sg_str);
+                        SET_REG_CALL(false, 0);
+                        jit_a(j, 0x50); // push rax
+                        SET_FP(var_sg_len);
+                        SET_REG_CALL(false, 0);
+                        jit_a(j, 0x50); // push rax
+                        jit_a(j, 0x5E); // str in rsi
+                        jit_a(j, 0x5A); // len in rdx
+                        break;
+                    default:
+                        return JIT_STAT(WFD_T_INV);
+                }
+                jit_a(j, 0x5F); // fd in rdi
+                SET_FP(write);
+                SET_REG_CALL(false, 0);
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        jit_b(j, 0x49, 0x89, 0xF9); // mov rdi r9
+                        SET_FP(var_sg_f);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        break;
+                }
+                op_set_jlen(*j, o);
+                break;
             default:
                 return JIT_STAT(INV_CODE);
         }
