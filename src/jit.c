@@ -61,9 +61,7 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     jit_a(j, 0x5E); \
     jit_a(j, 0x5F); \
     switch (o->od.t) { \
-        case TYPE(I6): \
-            SET_FP(var_##FN##_i6); \
-            break; \
+        CT_SET_FN(I6, var_##FN##_i6); \
         default: \
             return JIT_STAT(N##_T_INV); \
     } \

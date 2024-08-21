@@ -31,11 +31,9 @@ static const char *op_c_str[] = {
     "SG",
     "LG",
     "AL",
-    "GCL",
     "FL",
     "SL",
     "LL",
-    "GCA",
     "SA",
     "LA",
     "PV",
@@ -291,6 +289,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             switch  (opn->ret->t) {
                 case TYPE(SG):
                     if (tr->t == TYPE(TE) || tr->t == TYPE(SG)) OP_A(c, SGCNCT, OP, { .t = tr->t }, a);
+                    // TODO GC TE or SG
                     else return CODE_STAT(INV_SG_CNCT);
                     break;
                 default: return CODE_STAT(INV_CNCT_OP);
@@ -345,6 +344,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     code *cfn;
     char *sg;
+    size_t sgi = 0;
     switch (a->at) {
         case AST_TYPE(TYPE): break;
         case AST_TYPE(RES):
@@ -361,8 +361,20 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(FLT):
                     break; // TODO
                 case TYPE(STR):
-                    sg = calloc(1, a->t.len - 1);
-                    memcpy(sg, cs->str + a->t.pos + 1, a->t.len - 2);
+                    sg = calloc(sizeof(char), a->t.len - 1);
+                    for (size_t i = 0; i < a->t.len - 2; i++) {
+                        if (cs->str[a->t.pos + 1 + i] == '\\') {
+                            i++;
+                            switch (cs->str[a->t.pos + 1 + i]) {
+                                case 'n':
+                                    sg[sgi++] = '\n';
+                                    break;
+                                default:
+                                    return CODE_STAT(INV_STR_ESC);
+                            }
+                            break;
+                        } else sg[sgi++] = cs->str[a->t.pos + 1 + i];
+                    }
                     OP_A(c, PV, SG, { .sg = sg }, a);
                     break;
                 default:
