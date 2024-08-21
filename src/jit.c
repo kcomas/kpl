@@ -110,7 +110,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 jit_a(j, 0x5A); // pop rdx
                 switch (o->od.v.t) {
-                    CT_SET_FN(STR, mod_sg_var_sg);
                     CT_SET_FN(I6, mod_sg_i6);
                     CT_SET_FN(SG, mod_sg_var_sg);
                     default:
@@ -124,7 +123,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 switch (o->od.v.t) {
-                    CT_SET_FN(STR, mod_lg_var_sg);
                     CT_SET_FN(I6, mod_lg_i6);
                     CT_SET_FN(SG, mod_lg_var_sg);
                     default:
@@ -143,7 +141,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     // TODO
                     OPPVT(I6, i6, int64_t);
                     // TODO
-                    case TYPE(STR):
                     case TYPE(SG):
                         SET_REG(o->od.sg, char*, false, 7);
                         SET_FP(var_sg_i);
@@ -163,7 +160,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             case OP_C(WFD):
                 op_set_jidx(*j, o);
                 switch (o->od.t) {
-                    case TYPE(STR):
                     case TYPE(SG):
                         jit_b(j, 2, 0x4c, 0x59); // sg ptr in r9
                         jit_b(j, 0x49, 0x89, 0xF9); // mov rdi r9
@@ -183,7 +179,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_FP(write);
                 SET_REG_CALL(false, 0);
                 switch (o->od.t) {
-                    case TYPE(STR):
                     case TYPE(SG):
                         jit_b(j, 0x49, 0x89, 0xF9); // mov rdi r9
                         SET_FP(var_sg_f);
