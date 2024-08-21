@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "var.h"
 
 #define MOD_STAT(N) MOD_STAT_##N
 
@@ -9,11 +10,6 @@ typedef enum {
     MOD_STAT(OK),
     MOD_STAT(FLF) // file load fail
 } mod_stat;
-
-typedef union {
-    int64_t i6;
-    uint64_t u6;
-} dt; // data type
 
 typedef struct {
     uint8_t ng; // number of globals
@@ -24,7 +20,7 @@ typedef struct {
     fn_node *fns; // ast root
     code *c;
     jit *j;
-    dt *g; // globals
+    var *g; // globals
 } mod;
 
 inline mod *mod_i(void) {

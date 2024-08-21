@@ -31,9 +31,11 @@ static const char *op_c_str[] = {
     "SG",
     "LG",
     "AL",
+    "GCL",
     "FL",
     "SL",
     "LL",
+    "GCA",
     "SA",
     "LA",
     "PV",
@@ -119,7 +121,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         IFCGEN(code_gen, cs, h->a, c);
         h = h->next;
     }
-    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U6, { .t = (uint64_t) lst->len }, NULL);
+    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U6, { .u6 = (uint64_t) lst->len }, NULL);
     return CODE_STAT(OK);
 }
 
@@ -331,6 +333,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             if (cn->tgt->n.var->tn->t != TYPE(FN)) return CODE_STAT(CALL_VAR_N_FN);
             IFCGEN(code_gen, cs, cn->tgt, c);
             OP_A(c, CFN, OP, { .t = cn->ret->t }, a);
+            // TODO remove args off stack
             break;
         default:
             return CODE_STAT(INV_CALL_TGT);
@@ -418,7 +421,10 @@ code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
         else OP_A(c, AL, U3, { .u3 = ngl }, NULL);
     }
     IFCGEN(code_gen_lst, cs, fn->body, c);
-    if (ngl && fn->par) OP_A(c, FL, U3, { .u3 = ngl }, NULL);
+    if (ngl && fn->par) {
+        // TODO gc locals
+        OP_A(c, FL, U3, { .u3 = ngl }, NULL);
+    }
     OP_A(c, RFN, VD, {}, NULL);
     return CODE_STAT(OK);
 }
