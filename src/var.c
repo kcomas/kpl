@@ -4,7 +4,6 @@
 var_sg *var_sg_i(const char *const str) {
     size_t len = strlen(str);
     var_sg *sg = calloc(1, sizeof(var_sg) + sizeof(char) * len + sizeof(char));
-    sg->rc = 1;
     sg->len = len;
     strcpy(sg->str, str);
     return sg;
