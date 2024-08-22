@@ -1,5 +1,5 @@
 
 // write a string to stdout
 
-a: "Hello World\n"
-// $(FD;1) << a
+//a: "Hello World\n"
+$(FD;1) << "Hello World\n"
