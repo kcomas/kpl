@@ -30,7 +30,7 @@ void mod_ag(mod *const m, uint8_t ng) {
 void mod_sg_i6(mod *const m, uint8_t i, int64_t i6) { m->g[i].i6 = i6; }
 int64_t mod_lg_i6(mod *const m, uint8_t i) { return m->g[i].i6; }
 
-void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { m->g[i].sg = sg; }
+void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { var_sg_rc(sg); m->g[i].sg = sg; }
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { return m->g[i].sg; }
 
 extern inline void mod_psrc(const mod *const m);

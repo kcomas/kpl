@@ -156,7 +156,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                         return JIT_STAT(PV_T_INV);
                 }
                 break;
-                // TODO
+            // TODO
             C_OP_C_BOP(ADD, add);
             C_OP_C_BOP(SUB, sub);
             // TODO
