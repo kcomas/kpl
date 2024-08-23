@@ -24,6 +24,8 @@ typedef void jit_fn(void);
 
 typedef struct _jit jit;
 
+typedef union _var var;
+
 // free not null w fn
 #define FNNF(V, F) if (V) F(V)
 

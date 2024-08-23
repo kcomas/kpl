@@ -59,6 +59,7 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     op_set_jlen(*j, o); \
     break
 
+// TODO float and double xmm regs
 #define C_OP_C_BOP(N, FN) case OP_C(N): \
     op_set_jidx(*j, o); \
     jit_a(j, 0x5E); \
@@ -73,10 +74,48 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     op_set_jlen(*j, o); \
     break
 
+#ifndef IF_STK_LEN
+    #define IF_STK_LEN 10
+#endif
+
+static jit_stat jit_if(mod *const m, code *const c, jit **j) {
+    jit_stat jstat;
+    op *o;
+    int jmpp, jmpl;
+    int stki = 0;
+    static int stk[IF_STK_LEN];
+    memset(stk, 0, sizeof(int) * IF_STK_LEN);
+    for (size_t i = 0; i < c->len; i++) {
+        o = &c->ops[i];
+        op_set_jidx(*j, o);
+        if ((jstat = jit_code(m, o->od.of->cond, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+        jit_b(j, 2, 0x41, 0x5B); // pop r11
+        jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
+        jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
+        jit_b(j, 2, 0x0F, 0x84); // je
+        jmpp = (*j)->len;
+        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body
+        if ((jstat = jit_code(m, o->od.of->body, j)) != JIT_STAT(OK)) return jstat;
+        jit_a(j, 0xE9);
+        stk[stki++] = (*j)->len;
+        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if
+        jmpl = (*j)->len - jmpp - 4;
+        memcpy((*j)->a + jmpp, &jmpl, sizeof(int));
+        op_set_jlen(*j, o);
+    }
+    while (stki > 0) {
+        jmpl = (*j)->len - stk[stki - 1] - 4;
+        memcpy((*j)->a + stk[stki - 1], &jmpl, sizeof(int));
+        stki--;
+    }
+    return JIT_STAT(OK);
+}
+
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
+    jit_stat jstat;
     op *o;
     void *fp;
-    uint8_t buf[sizeof(void*)];
+    static uint8_t buf[sizeof(void*)];
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
         switch (o->oc) {
@@ -146,7 +185,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(STR):
                     case TYPE(SG):
                         SET_REG(o->od.sg, char*, false, 7);
-                        SET_FP(var_sg_i);
+                        SET_FP(var_sg_i_str);
                         SET_REG_CALL(false, 0);
                         jit_a(j, 0x50); // push rax
                         op_set_jlen(*j, o);
@@ -157,8 +196,51 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 }
                 break;
             // TODO
+            case OP_C(IF):
+                op_set_jidx(*j, o);
+                if ((jstat = jit_if(m, o->od.c, j)) != JIT_STAT(OK)) return jstat;
+                op_set_jlen(*j, o);
+            case OP_C(COND):
+                // INTERNAL IN IF
+                break;
+            case OP_C(ZOO):
+                op_set_jidx(*j, o);
+                jit_a(j, 0x5F); // pop rdi
+                switch (o->od.t) {
+                    CT_SET_FN(U6, var_zoo_u6);
+                    CT_SET_FN(I6, var_zoo_i6);
+                    default:
+                        return JIT_STAT(ZOO_T_INV);
+                }
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(*j, o);
+                break;
+            // TODO
+            case OP_C(CSTSG):
+                op_set_jidx(*j, o);
+                jit_a(j, 0x5F); // pop rdi
+                switch (o->od.t) {
+                    CT_SET_FN(U6, var_u6_sg);
+                    CT_SET_FN(I6, var_i6_sg);
+                    default:
+                        return JIT_STAT(CSTSG_T_INV);
+                }
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(*j, o);
+                break;
             C_OP_C_BOP(ADD, add);
             C_OP_C_BOP(SUB, sub);
+            // TODO
+            case OP_C(NOT):
+                op_set_jidx(*j, o);
+                jit_a(j, 0x5F); // pop rdi
+                SET_FP(var_not);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(*j, o);
+                break;
             // TODO
             case OP_C(WFD):
                 op_set_jidx(*j, o);
