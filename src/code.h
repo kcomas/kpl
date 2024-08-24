@@ -72,8 +72,12 @@ typedef enum {
     OP_C(EQ),
     OP_C(NOT),
     OP_C(OR),
-    OP_C(SGCNCT), // sg cnct op type is ethier sg or te
-    OP_C(WFD) // OP_T is type to be written
+    OP_C(CNCTSG), // sg cnct op type is ethier sg or te
+    OP_C(WFD), // OP_T is type to be written
+    // GC
+    OP_C(GCL), // left side type is base type
+    OP_C(GCR), // right side type is base type
+    OP_C(GCTEI) //
 } op_c;
 
 const char *op_c_get_str(op_c oc);
