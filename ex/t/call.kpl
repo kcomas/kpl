@@ -1,0 +1,6 @@
+
+// call test
+
+f:FN(I6;I6;I6)${(x;y) x + y }
+
+$(FD;1) << SG$f(5;6)

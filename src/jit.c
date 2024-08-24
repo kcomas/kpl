@@ -285,7 +285,13 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                         return JIT_STAT(WFD_T_INV);
                 }
                 jit_a(j, 0x5F); // fd in rdi
-                jit_b(j, 2, 0x41, 0x52); // push r10
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        jit_b(j, 2, 0x41, 0x52); // push r10
+                    default:
+                        break;
+                }
                 SET_FP(write);
                 SET_REG_CALL(false, 0);
                 op_set_jlen(*j, o);

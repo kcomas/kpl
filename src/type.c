@@ -212,7 +212,7 @@ type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
             while (ah) {
                 ASTGTN(tt, th->a, INV_CALL_TGT_ARG_T);
                 ASTGTN(ta, ah->a, INV_CALL_ARG_T);
-                if (!type_eq(tt, ta)) return TYPE_STAT(CALL_ARG_T_NEQ);
+                if (!((ta->t == TYPE(INT) && type_int_is(tt, NULL)) || (type_eq(tt, ta)))) return TYPE_STAT(CALL_ARG_T_NEQ);
                 th = th->next;
                 ah = ah->next;
             }
