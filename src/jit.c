@@ -93,20 +93,20 @@ static jit_stat jit_if(mod *const m, code *const c, jit **j) {
         jit_b(j, 2, 0x41, 0x5B); // pop r11
         jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
         jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
-        jit_b(j, 2, 0x0F, 0x84); // je
+        jit_b(j, 2, 0x0F, 0x84); // je 0
         jmpp = (*j)->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body
         if ((jstat = jit_code(m, o->od.of->body, j)) != JIT_STAT(OK)) return jstat;
-        jit_a(j, 0xE9);
+        jit_a(j, 0xE9); // jmp
         stk[stki++] = (*j)->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if
-        jmpl = (*j)->len - jmpp - 4;
-        memcpy((*j)->a + jmpp, &jmpl, sizeof(int));
+        jmpl = (*j)->len - jmpp - sizeof(int);
+        memcpy((*j)->a + jmpp, &jmpl, sizeof(int)); // fill cond skip
         op_set_jlen(*j, o);
     }
     while (stki > 0) {
-        jmpl = (*j)->len - stk[stki - 1] - 4;
-        memcpy((*j)->a + stk[stki - 1], &jmpl, sizeof(int));
+        jmpl = (*j)->len - stk[stki - 1] - sizeof(int);
+        memcpy((*j)->a + stk[stki - 1], &jmpl, sizeof(int)); // fill body skip
         stki--;
     }
     return JIT_STAT(OK);
