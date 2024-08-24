@@ -2,7 +2,7 @@
 #include "var.h"
 
 var_sg *var_sg_i(size_t size) {
-    var_sg *sg = calloc(1, sizeof(var_sg) + sizeof(char) * size);
+    var_sg *sg = calloc(1, sizeof(var_sg) + size * sizeof(char));
     sg->size = size;
     return sg;
 }
@@ -25,6 +25,15 @@ size_t var_sg_len(var_sg *const sg) {
 
 const char *var_sg_str(var_sg *const sg) {
     return sg->str;
+}
+
+var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r) {
+    var_sg *sg = var_sg_i(l->len + r->len + sizeof(char));
+    memcpy(sg->str, l->str, l->len * sizeof(char));
+    sg->len += l->len;
+    memcpy(sg->str + l->len * sizeof(char), r->str, r->len * sizeof(char));
+    sg->len += r->len;
+    return sg;
 }
 
 void var_sg_f(var_sg *sg) {

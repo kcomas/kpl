@@ -27,6 +27,8 @@ size_t var_sg_len(var_sg *const sg);
 
 const char *var_sg_str(var_sg *const sg);
 
+var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r);
+
 void var_sg_f(var_sg *sg);
 
 typedef union _var {
