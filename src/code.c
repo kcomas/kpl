@@ -86,6 +86,9 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 printf(",%d", c->ops[i].od.v.id);
                 printf(",%s", type_get_str(c->ops[i].od.v.t));
                 break;
+            case TYPE(CODE):
+                printf(",%s", type_get_str(c->ops[i].od.t));
+                break;
             case TYPE(U3):
                 printf(",%d", c->ops[i].od.u3);
                 break;
@@ -338,6 +341,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     lst_itm *ch, *ah;
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
+            // TODO get fn type sig for self
             if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_STAT(CALL_RES_NOT_SELF);
             IFCGEN(code_gen_lst, cs, cn->args, c);
             OP_A(c, CS, OP, { .t = cn->ret->t }, a);
@@ -446,7 +450,8 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                     OP_A(c, LL, VAR, { SLV(a->n.var->fns->idc - a->n.var->id, a->n.var->tn->t) }, a);
                     break;
                 case VAR_TYPE(A):
-                    OP_A(c, LA, VAR, { SLV(a->n.var->id, a->n.var->tn->t) }, a);
+                    // reverse count to get stack
+                    OP_A(c, LA, VAR, { SLV(a->n.var->fns->args->len - 1 - a->n.var->id, a->n.var->tn->t) }, a);
                     break;
             }
             break;
@@ -457,7 +462,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
 code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
     code_stat cstat;
     if (fn->idc < fn->args->len) return CODE_STAT(ARG_LEN_GT_LOCAL_LEN);
-    OP_A(c, EFN, VD, {}, NULL);
+    OP_A(c, EFN, CODE, { .t = TYPE(VD) }, NULL);
     uint8_t ngl = fn->idc - fn->args->len;
     if (ngl) {
         if (!fn->par) OP_A(c, AG, U3, { .u3 = ngl }, NULL);
@@ -468,6 +473,12 @@ code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
         // TODO gc locals
         OP_A(c, FL, U3, { .u3 = ngl }, NULL);
     }
-    OP_A(c, RFN, VD, {}, NULL);
+    type t = TYPE(VD);
+    type_node *tn;
+    if (fn->sig->t == TYPE(FN)) {
+        if (!(tn = ast_gtn(fn->sig->a->n.lst->t->a))) return CODE_STAT(FN_RET_T_INV);
+        t = tn->t;
+    }
+    OP_A(c, RFN, CODE, { .t = t }, NULL);
     return CODE_STAT(OK);
 }

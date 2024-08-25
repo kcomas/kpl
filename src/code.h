@@ -15,6 +15,7 @@ typedef enum {
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(NO_T_FOR_IF_COND), // cannot not get if conds type
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
+    CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
     CODE_STAT(INV_CST_INT_TO_FD),
