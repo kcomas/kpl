@@ -134,7 +134,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         IFCGEN(code_gen, cs, h->a, c);
         h = h->next;
     }
-    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U6, { .u6 = (uint64_t) lst->len }, NULL);
+    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U3, { .u3 = (uint8_t) lst->len }, NULL);
     return CODE_STAT(OK);
 }
 

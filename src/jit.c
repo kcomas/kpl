@@ -188,7 +188,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             case OP_C(LA):
                 op_set_jidx(*j, o);
                 vsp = (o->od.v.id + 2) * sizeof(void*);
-                jit_b(j, 7, 0x4C, 0x8B, 0x8D, vsp, 0x00, 0x00, 0x00); // mov r9 rbp+asp
+                jit_b(j, 7, 0x4C, 0x8B, 0x8D, vsp, 0x00, 0x00, 0x00); // mov r9 rbp+vsp
                 jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(*j, o);
                 break;
@@ -214,7 +214,11 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                         return JIT_STAT(PV_T_INV);
                 }
                 break;
-            // TODO
+            case OP_C(CTE):
+                op_set_jidx(*j, o);
+                // TODO
+                op_set_jlen(*j, o);
+                break;
             case OP_C(IF):
                 op_set_jidx(*j, o);
                 if ((jstat = jit_if(m, o->od.c, j)) != JIT_STAT(OK)) return jstat;
