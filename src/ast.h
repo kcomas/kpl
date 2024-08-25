@@ -287,7 +287,8 @@ inline lst_node *lst_node_i(type t) {
 }
 
 inline void lst_node_a(lst_node *const lst, ast *const a) {
-    LST_A(lst, lst_itm_i(a));
+    lst_itm *li = lst_itm_i(a);
+    LST_A(lst, li);
 }
 
 inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt) {
@@ -341,7 +342,8 @@ inline if_node *if_node_i(void) {
 }
 
 inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) {
-    LST_A(in, if_itm_i(cond, body));
+    if_itm *ii = if_itm_i(cond, body);
+    LST_A(in, ii);
 }
 
 inline void if_node_p(const ast_st *const as, const if_node *const in, size_t idnt) {
