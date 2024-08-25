@@ -126,6 +126,11 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 jit_b(j, 4, 0x55, 0x48, 0x89, 0xE5); // push rbp, mov rbp rsp
                 op_set_jlen(*j, o);
                 break;
+            case OP_C(PUSH):
+                op_set_jidx(*j, o);
+                jit_a(j, 0x50 + o->od.u3);
+                op_set_jlen(*j, o);
+                break;
             case OP_C(RFN):
                 op_set_jidx(*j, o);
                 if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
@@ -137,8 +142,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             case OP_C(CFN):
                 op_set_jidx(*j, o);
                 jit_b(j, 3, 0x58, 0xFF, 0xD0); // pop rax, call rax
-                // TODO pop args
-                if (o->od.t != TYPE(VD)) jit_a(j, 0x50); // push rax TODO xmm
                 op_set_jlen(*j, o);
                 break;
             case OP_C(AG):
@@ -315,6 +318,17 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 op_set_jidx(*j, o);
                 jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
+                    case TYPE(INT):
+                    case TYPE(FLT):
+                    case TYPE(U3):
+                    case TYPE(U4):
+                    case TYPE(U5):
+                    case TYPE(U6):
+                    case TYPE(I3):
+                    case TYPE(I4):
+                    case TYPE(I5):
+                    case TYPE(I6):
+                        break;
                     case TYPE(STR):
                     case TYPE(SG):
                         SET_FP(var_sg_f);

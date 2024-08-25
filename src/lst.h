@@ -4,7 +4,7 @@
 // link list macros
 
 typedef struct _lst_itm_ex {
-    struct _lst_itm_ex *next;
+    struct _lst_itm_ex *prev, *next;
     void *data;
     // your data
 } lst_itm_ex;
@@ -16,13 +16,19 @@ typedef struct _lst_ex {
 } lst_ex;
 
 #define LST_A(L, I) if (!L->h) L->t = L->h = I; \
-    else L->t = L->t->next = I; \
+    else { \
+        (I)->prev = L->t; \
+        L->t = L->t->next = I; \
+    } \
     L->len++
 
 #define LST_R(L, ITT, RTGT, ITMF, DATAF) ITT *h = L->h; \
-    if (RTGT == h) L->h = h->next; \
-    else { \
+    if (RTGT == h) { \
+        L->h = h->next; \
+        L->h->prev = NULL; \
+    } else { \
         while (RTGT != h->next) h = h->next; \
+        if (RTGT->next) RTGT->next->prev = h; \
         h->next = RTGT->next; \
     } \
     tbl_itm_f(RTGT, DATAF); \

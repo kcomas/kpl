@@ -26,6 +26,7 @@ extern inline void op_if_f(op_if *of);
 
 static const char *op_c_str[] = {
     "EFN",
+    "PUSH",
     "RFN",
     "CFN",
     "CS",
@@ -337,7 +338,8 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
-    lst_itm *ch, *ah;
+    type_node *tn;
+    lst_itm *ch, *ah, *ct;
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
             // TODO get fn type sig for self
@@ -367,6 +369,13 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             }
             IFCGEN(code_gen, cs, cn->tgt, c);
             OP_A(c, CFN, OP, { .t = cn->ret->t }, a);
+            ct = cn->tgt->n.var->tn->a->n.lst->t->prev;
+            while (ct) {
+                if (!(tn = ast_gtn(ct->a))) return CODE_STAT(CALL_CT_ARG_T_GC_INV);
+                OP_A(c, GC, OP, { .t = tn->t }, ct->a);
+                ct = ct->prev;
+            }
+            if (cn->ret->t != TYPE(VD)) OP_A(c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
             break;
         default:
             return CODE_STAT(INV_CALL_TGT);
