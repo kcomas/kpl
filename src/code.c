@@ -43,6 +43,7 @@ static const char *op_c_str[] = {
     "CTE",
     "IF",
     "COND",
+    "LOP",
     "ZOO",
     "CST",
     "CSTSG",
@@ -50,6 +51,8 @@ static const char *op_c_str[] = {
     "SUB",
     "EQ",
     "NOT",
+    "GT",
+    "LT",
     "OR",
     "CNCTSG",
     "WFD",
@@ -78,6 +81,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 PCX(' ', idnt + 1);
                 break;
             case TYPE(COND):
+            case TYPE(LOP):
                 putchar('\n');
                 code_p(cs, c->ops[i].od.of->cond, idnt + 1);
                 code_p(cs, c->ops[i].od.of->body, idnt + 2);
@@ -160,6 +164,17 @@ static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
         h = h->next;
     }
     OP_A(c, IF, IF, { .c = ifc }, a);
+    return CODE_STAT(OK);
+}
+
+static code_stat code_gen_lop(code_st *const cs, const ast *const a, code **c) {
+    code_stat cstat;
+    op_if *of = op_if_i(CODE_I_SIZE);
+    type_node *tc;
+    IFCGEN(code_gen, cs, a->n.lop->cond, &of->cond);
+    if (!(tc = ast_gtn(a->n.lop->cond))) return CODE_STAT(NO_T_FOR_LOP_COND);
+    IFCGEN(code_gen_lst, cs, a->n.lop->body, &of->body);
+    OP_A(c, LOP, LOP, { .of = of }, a);
     return CODE_STAT(OK);
 }
 
@@ -317,6 +332,20 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             OP_ZOO(tr, c);
             OP_A(c, NOT, OP, { .t = TYPE(BL) }, a);
             break;
+        case OP_TYPE(GT):
+            IFCGEN(code_gen, cs, opn->l, c);
+            OP_P_INT_RET(opn, cs, l, c);
+            IFCGEN(code_gen, cs, opn->r, c);
+            OP_P_INT_RET(opn, cs, r, c);
+            OP_A(c, GT, OP, { .t = opn->ret->t }, a);
+            break;
+        case OP_TYPE(LT):
+            IFCGEN(code_gen, cs, opn->l, c);
+            OP_P_INT_RET(opn, cs, l, c);
+            IFCGEN(code_gen, cs, opn->r, c);
+            OP_P_INT_RET(opn, cs, r, c);
+            OP_A(c, LT, OP, { .t = opn->ret->t }, a);
+            break;
         case OP_TYPE(OR):
             IFCGEN(code_gen, cs, opn->l, c);
             if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
@@ -453,6 +482,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
         case AST_TYPE(OP): return code_gen_op(cs, a, c);
         case AST_TYPE(LST): return code_gen_lst(cs, a->n.lst, c);
         case AST_TYPE(IF): return code_gen_if(cs, a, c);
+        case AST_TYPE(LOP): return code_gen_lop(cs, a, c);
         case AST_TYPE(FN):
             cfn = code_i(CODE_I_SIZE);
             IFCGEN(code_gen_fn, cs, a->n.fn, &cfn);
