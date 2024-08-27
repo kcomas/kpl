@@ -151,7 +151,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
             T_ONE_C('=', EQ);
             T_ONE_C('!', NOT);
             T_ONE_C('>', GT);
-            T_TWO_C('<', LN, '<', RW);
+            T_TWO_C('<', LT, '<', RW);
             T_ONE_C('|', OR);
             T_ONE_C(',', CNCT);
             default:
@@ -223,7 +223,7 @@ static const char *const tkn_type_str[] = {
     "NOT",
     "NEQ",
     "GT",
-    "LN",
+    "LT",
     "GTEQ",
     "LTEQ",
     "AND",
