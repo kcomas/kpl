@@ -54,6 +54,14 @@ VAR_BOP_T(add, +, u6, uint64_t)
 VAR_BOP_T(sub, -, i6, int64_t)
 VAR_BOP_T(sub, -, u6, uint64_t)
 
+// gt
+VAR_BOP_T(gt, >, i6, int64_t)
+VAR_BOP_T(gt, >, u6, uint64_t)
+
+// lt
+VAR_BOP_T(lt, <, i6, int64_t)
+VAR_BOP_T(lt, <, u6, uint64_t)
+
 #ifndef NUM_TO_SG_SIZE
     #define NUM_TO_SG_SIZE 30
 #endif
