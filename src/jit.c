@@ -95,11 +95,11 @@ static jit_stat jit_if(mod *const m, code *const c, jit **j) {
         jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
         jit_b(j, 2, 0x0F, 0x84); // je 0
         jmpp = (*j)->len;
-        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body
+        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to next cond
         if ((jstat = jit_code(m, o->od.of->body, j)) != JIT_STAT(OK)) return jstat;
         jit_a(j, 0xE9); // jmp
         stk[stki++] = (*j)->len;
-        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if
+        jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if jmp to end of if
         jmpl = (*j)->len - jmpp - sizeof(int);
         memcpy((*j)->a + jmpp, &jmpl, sizeof(int)); // fill cond skip
         op_set_jlen(*j, o);
@@ -121,11 +121,11 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit **j) {
     jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
     jit_b(j, 2, 0x0F, 0x84); // je 0
     bs = (*j)->len;
-    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
     if ((jstat = jit_code(m, of->body, j)) != JIT_STAT(OK)) return jstat;
     jit_a(j, 0xE9); // jmp
     lope = (*j)->len;
-    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
     jmpl = lops - (*j)->len;
     memcpy((*j)->a + lope, &jmpl, sizeof(int));
     jmpl = (*j)->len - bs - sizeof(int);
