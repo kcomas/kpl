@@ -13,6 +13,7 @@ typedef enum {
     CODE_STAT(INV_R_ASS), // right side : invalid
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
+    CODE_STAT(NO_T_FOR_TE_IDX),
     CODE_STAT(NO_T_FOR_IF_COND), // cannot not get if conds type
     CODE_STAT(NO_T_FOR_LOP_COND),
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
@@ -94,14 +95,31 @@ typedef struct {
    code *cond, *body;
 } op_if;
 
-typedef struct _slv {
+typedef struct {
     uint8_t id;
     type t;
 } slv; // store load var
 
 #define SLV(ID, T) .v = (slv) {ID, T}
 
-typedef struct _op_d_te op_d_te;
+typedef struct {
+    size_t len;
+    code *gc;
+} cte; // create tuple
+
+inline cte *cte_i(size_t len, code *const gc) {
+    cte *te = calloc(1, sizeof(cte));
+    te->len = len;
+    te->gc = gc;
+    return te;
+}
+
+void code_f(code *c);
+
+inline void cte_f(cte *te) {
+    code_f(te->gc);
+    free(te);
+}
 
 typedef union _op_d {
     type t;
@@ -121,13 +139,8 @@ typedef union _op_d {
     code *c;
     op_if *of;
     char *sg; // null term
-    op_d_te *te;
+    cte *te;
 } op_d;
-
-typedef struct _op_d_te {
-    size_t size; // fixed
-    op_d d[];
-} op_d_te;
 
 typedef struct {
     op_c oc;
@@ -166,8 +179,6 @@ inline void code_a(code **c, op o) {
     }
     (*c)->ops[(*c)->len++] = o;
 }
-
-void code_f(code *c);
 
 inline op_if *op_if_i(size_t size) {
     op_if *of = calloc(1, sizeof(op_if));

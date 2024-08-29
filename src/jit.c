@@ -156,7 +156,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 op_set_jidx(*j, o);
                 if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
                 //jit_b(j, 2, 0xC9, 0xC3); // leave, ret
-                jit_b(j, 2, 0x5D, 0xC3); // leave, ret
+                jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
                 op_set_jlen(*j, o);
                 break;
             // TODO
