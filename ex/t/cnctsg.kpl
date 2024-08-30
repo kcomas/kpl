@@ -1,7 +1,7 @@
 
 // contact sg
 
-//$(FD;1) << "O","_","O","\n"
+//$(FD;1) << "A","_","B","\n"
 
 a: "Hello"
 b: "World"
