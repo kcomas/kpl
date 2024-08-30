@@ -14,7 +14,7 @@ TNAME = _test
 
 all: $(NAME)
 
-MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o
+MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o $(SRC)/kpl.o
 mod$(TNAME): $(MOD_OBJS) $(TEST)/mod.o
 > $(CCOBJ)
 

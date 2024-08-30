@@ -85,8 +85,10 @@ typedef enum {
     OP_C(CNCTSG), // sg cnct op type is ethier sg or te
     OP_C(WFD), // OP_T is type to be written
     // GC
+    OP_C(RCD), // dec ref count of type ret if gt 0
     OP_C(GC), // type is base type
-    OP_C(GCTEI) //
+    OP_C(GCTEI), //
+    OP_C(DEL) // delete top of stack free ptr
 } op_c;
 
 const char *op_c_get_str(op_c oc);
