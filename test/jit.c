@@ -25,9 +25,9 @@ int main(int argc, char *argv[]) {
     if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) return cstat;
     fn_stk *stk = fn_stk_i(FN_STK_SIZE);
     fn_stk_b(&stk, m->c);
-    m->j = jit_i(JIT_NUM_PAGE);
+    m->j = jit_i(stk->nops);
     jit_stat jstat;
-    if ((jstat = jit_stk(m, stk, &m->j)) != JIT_STAT(OK)) return jstat;
+    if ((jstat = jit_stk(m, stk, m->j)) != JIT_STAT(OK)) return jstat;
     code_p(&cs, m->c, 0);
     m->c->jf();
     jit_f(m->j);
