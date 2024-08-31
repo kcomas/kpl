@@ -67,6 +67,7 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     jit_a(j, 0x5E); \
     jit_a(j, 0x5F); \
     switch (o->od.t) { \
+        CT_SET_FN(BL, var_##FN##_bl); \
         CT_SET_FN(I6, var_##FN##_i6); \
         CT_SET_FN(U6, var_##FN##_u6); \
         default: \
@@ -313,6 +314,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             // TODO
             C_OP_C_BOP(GT, gt);
             C_OP_C_BOP(LT, lt);
+            C_OP_C_BOP(OR, or);
             case OP_C(CNCTSG):
                 op_set_jidx(*j, o);
                 jit_b(j, 5, 0x48, 0x8B, 0x7C, 0x24, 0x08); // mov rdi qword ptr [rsp+8] sg

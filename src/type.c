@@ -257,7 +257,10 @@ type_stat type_chk(fn_node *const fns, ast *const a) {
     switch (a->at) {
         case AST_TYPE(TYPE): break;
         case AST_TYPE(RES):
-            if (a->n.rn->rt == RES_TYPE(SELF) && !a->n.rn->tn) a->n.rn->tn = type_node_c(fns->sig);
+            if (a->n.rn->rt == RES_TYPE(SELF) && !a->n.rn->tn) {
+                // TODO do not allow in mod
+                a->n.rn->tn = type_node_c(fns->sig);
+            }
             break;
         case AST_TYPE(VAL):
             if (a->n.val->tn->t >= TYPE(STMT) && a->n.val->tn->t <= TYPE(MOD)) return TYPE_STAT(VAL_UT);
