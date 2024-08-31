@@ -6,8 +6,10 @@ extern inline fn_stk *fn_stk_i(size_t size);
 extern inline void fn_stk_a(fn_stk **stk, code *const c);
 
 void fn_stk_b(fn_stk **stk, code *const c) {
-    for (size_t i = 0; i < c->len; i++)
+    for (size_t i = 0; i < c->len; i++) {
         if (c->ops[i].oc == OP_C(PV) && c->ops[i].ot == TYPE(FN)) fn_stk_b(stk, c->ops[i].od.c);
+        if (c->ops[i].oc == OP_C(CTE) && c->ops[i].ot == TYPE(TE)) fn_stk_b(stk, c->ops[i].od.te->gc);
+    }
     fn_stk_a(stk, c);
 }
 
@@ -237,7 +239,19 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(CTE):
                 op_set_jidx(*j, o);
-                // TODO
+                SET_REG(o->od.te->len, size_t, false, 7);
+                SET_REG(o->od.te->gc->jf, jit_fn*, false, 6);
+                SET_FP(var_te_i);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                for (ssize_t i = (ssize_t) o->od.te->len - 1; i >= 0; i--) { // TODO better algo for underflow
+                    jit_a(j, 0x5F); // pop rdi
+                    SET_REG(i, ssize_t, false, 6);
+                    jit_a(j, 0x5A); // pop rdx
+                    jit_a(j, 0x57); // push rdi
+                    SET_FP(var_te_vr_sidx);
+                    SET_REG_CALL(false, 0);
+                }
                 op_set_jlen(*j, o);
                 break;
             case OP_C(IF):
@@ -301,6 +315,10 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(SG):
                         SET_FP(var_sg_cnct_sg_sg);
                         break;
+                    case TYPE(TE):
+                    case TYPE(VR):
+                        SET_FP(var_sg_cnct_sg_te_vr);
+                        break;
                     default:
                         return JIT_STAT(CNCTSG_T_INV);
                 }
@@ -359,8 +377,60 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(GC):
                 op_set_jidx(*j, o);
-                jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
+                    case TYPE(U3):
+                    case TYPE(U4):
+                    case TYPE(U5):
+                    case TYPE(U6):
+                    case TYPE(I3):
+                    case TYPE(I4):
+                    case TYPE(I5):
+                    case TYPE(I6):
+                        jit_a(j, 0x5F); // pop rdi
+                        break;
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        jit_a(j, 0x5F); // pop rdi
+                        SET_FP(var_sg_f);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(TE):
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                        SET_FP(var_te_vr_gc);
+                        SET_REG_CALL(false, 0);
+                        SET_REG_CALL(false, 0); // call rax with gc fn
+                        jit_a(j, 0x5F); // pop rdi
+                        break;
+                    default:
+                        return JIT_STAT(GC_T_INV);
+                }
+                op_set_jlen(*j, o);
+                break;
+            case OP_C(GCTEI):
+                op_set_jidx(*j, o);
+                switch (o->od.v.t) {
+                    case TYPE(U3):
+                    case TYPE(U4):
+                    case TYPE(U5):
+                    case TYPE(U6):
+                    case TYPE(I3):
+                    case TYPE(I4):
+                    case TYPE(I5):
+                    case TYPE(I6):
+                        break;
+                    case TYPE(STR):
+                    case TYPE(SG):
+                    case TYPE(TE):
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                        SET_REG(o->od.v.id, uint8_t, false, 6);
+                        SET_FP(var_te_vr_gidx);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        return JIT_STAT(GCTEI_T_INV);
+                }
+                jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+                switch (o->od.v.t) {
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -373,19 +443,30 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(STR):
                     case TYPE(SG):
                         SET_FP(var_sg_f);
-                        SET_REG_CALL(false, 0);
+                        SET_REG_CALL(false, 0)
                         break;
                     case TYPE(TE):
-                        // TODO call fn
+                        SET_FP(var_te_vr_gc);
+                        SET_REG_CALL(false, 0);
+                        SET_REG_CALL(false, 0); // call rax with gc fn
                         break;
                     default:
-                        return JIT_STAT(GC_T_INV);
+                        return JIT_STAT(GCTEI_T_INV);
                 }
                 op_set_jlen(*j, o);
                 break;
-            case OP_C(GCTEI):
+            case OP_C(DEL):
                 op_set_jidx(*j, o);
-                // TODO
+                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                switch (o->od.t) {
+                    case TYPE(TE):
+                    case TYPE(VR):
+                        SET_FP(var_te_vr_f);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        return JIT_STAT(DEL_T_INV);
+                }
                 op_set_jlen(*j, o);
                 break;
             default:

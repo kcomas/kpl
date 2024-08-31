@@ -36,25 +36,24 @@ var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r) {
     return sg;
 }
 
+var_sg *var_sg_cnct_sg_te_vr(const var_sg *const l, const var_te_vr *const r) {
+    size_t size = l->len * (r->len - 1) + sizeof(char);
+    for (size_t i = 0; i < r->len; i++) size += r->v[i].sg->len;
+    var_sg *sg = var_sg_i(size);
+    for (size_t i = 0; i < r->len - 1; i++) {
+        memcpy(sg->str + sg->len * sizeof(char), r->v[i].sg->str, r->v[i].sg->len * sizeof(char));
+        sg->len += r->v[i].sg->len;
+        memcpy(sg->str + sg->len * sizeof(char), l->str, l->len * sizeof(char));
+        sg->len += l->len;
+    }
+    memcpy(sg->str + sg->len * sizeof(char), r->v[r->len - 1].sg->str, r->v[r->len - 1].sg->len * sizeof(char));
+    sg->len += r->v[r->len - 1].sg->len;
+    return sg;
+}
+
 void var_sg_f(var_sg *sg) {
     if (--sg->rc > 0) return;
     free(sg);
-}
-
-var_te_vr *var_te_vr_i(size_t size) {
-    var_te_vr *vtv = calloc(1, sizeof(var_te_vr) + size * sizeof(var));
-    vtv->size = size;
-    return vtv;
-}
-
-var_te_vr *var_te_i(size_t size) {
-    var_te_vr *te = var_te_vr_i(size);
-    te->len = size;
-    return te;
-}
-
-void var_te_vr_f(var_te_vr *vtv) {
-    free(vtv);
 }
 
 ssize_t var_rcd(var v, type t) {
@@ -106,3 +105,32 @@ var_sg *var_u6_sg(uint64_t u6) { INT_TO_SG("%lu", u6); }
 var_sg *var_i6_sg(uint64_t i6) { INT_TO_SG("%ld", i6); }
 
 bool var_not(bool v) { return !v; }
+
+var_te_vr *var_te_vr_i(size_t size, jit_fn *gc) {
+    var_te_vr *vtv = calloc(1, sizeof(var_te_vr) + size * sizeof(var));
+    vtv->size = size;
+    vtv->gc = gc;
+    return vtv;
+}
+
+var_te_vr *var_te_i(size_t size, jit_fn *gc) {
+    var_te_vr *te = var_te_vr_i(size, gc);
+    te->len = size;
+    return te;
+}
+
+jit_fn *var_te_vr_gc(var_te_vr *const vtv) {
+    return vtv->gc;
+}
+
+void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v) {
+    vtv->v[idx] = v;
+}
+
+var var_te_vr_gidx(var_te_vr *const vtv, size_t idx) {
+    return vtv->v[idx];
+}
+
+void var_te_vr_f(var_te_vr *vtv) {
+    free(vtv);
+}

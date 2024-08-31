@@ -3,20 +3,15 @@
 
 #include "kpl.h"
 
+typedef struct _var_te_vr var_te_vr;
+
 #define RC ssize_t rc
 
 typedef struct {
     RC;
-    size_t len, size;
+    size_t len, size; // len does not inc null term
     char str[]; // null term
 } var_sg;
-
-typedef struct {
-    RC;
-    size_t len, size;
-    jit_fn *gc;
-    var *v[];
-} var_te_vr;
 
 var_sg *var_sg_i(size_t size);
 
@@ -30,13 +25,9 @@ const char *var_sg_str(var_sg *const sg);
 
 var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r);
 
+var_sg *var_sg_cnct_sg_te_vr(const var_sg *const l, const var_te_vr *const r);
+
 void var_sg_f(var_sg *sg);
-
-var_te_vr *var_te_vr_i(size_t size);
-
-var_te_vr *var_te_i(size_t size);
-
-void var_te_vr_f(var_te_vr *vtv);
 
 typedef union _var {
     int64_t i6;
@@ -73,3 +64,22 @@ VAR_FN_BOP_T(lt, i6, int64_t);
 VAR_FN_BOP_T(lt, u6, uint64_t);
 
 bool var_not(bool v);
+
+typedef struct _var_te_vr {
+    RC;
+    size_t len, size;
+    jit_fn *gc;
+    var v[];
+} var_te_vr;
+
+var_te_vr *var_te_vr_i(size_t size, jit_fn *gc);
+
+var_te_vr *var_te_i(size_t size, jit_fn *gc);
+
+jit_fn *var_te_vr_gc(var_te_vr *const vtv);
+
+var var_te_vr_gidx(var_te_vr *const vtv, size_t idx);
+
+void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v);
+
+void var_te_vr_f(var_te_vr *vtv);

@@ -22,6 +22,8 @@ typedef enum {
     JIT_STAT(WFD_T_INV),
     JIT_STAT(RCD_T_INV),
     JIT_STAT(GC_T_INV),
+    JIT_STAT(GCTEI_T_INV),
+    JIT_STAT(DEL_T_INV),
     JIT_STAT(INV_CODE)
 } jit_stat;
 
