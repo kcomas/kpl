@@ -68,6 +68,7 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     jit_a(j, 0x5F); \
     switch (o->od.t) { \
         CT_SET_FN(I6, var_##FN##_i6); \
+        CT_SET_FN(U6, var_##FN##_u6); \
         default: \
             return JIT_STAT(N##_T_INV); \
     } \
@@ -157,14 +158,18 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             case OP_C(RFN):
                 op_set_jidx(*j, o);
                 if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
-                //jit_b(j, 2, 0xC9, 0xC3); // leave, ret
                 jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
                 op_set_jlen(*j, o);
                 break;
-            // TODO
             case OP_C(CFN):
                 op_set_jidx(*j, o);
                 jit_b(j, 3, 0x58, 0xFF, 0xD0); // pop rax, call rax
+                op_set_jlen(*j, o);
+                break;
+            case OP_C(CS):
+                op_set_jidx(*j, o);
+                SET_REG(c->jf, jit_fn*, false, 0);
+                jit_b(j, 2, 0xFF, 0xD0); // call rax
                 op_set_jlen(*j, o);
                 break;
             case OP_C(AG):
@@ -183,6 +188,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 switch (o->od.v.t) {
                     CT_SET_FN(STR, mod_sg_var_sg);
                     CT_SET_FN(I6, mod_sg_i6);
+                    CT_SET_FN(U6, mod_sg_u6);
                     CT_SET_FN(SG, mod_sg_var_sg);
                     CT_SET_FN(FN, mod_sg_jf);
                     default:
@@ -198,6 +204,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 switch (o->od.v.t) {
                     CT_SET_FN(STR, mod_lg_var_sg);
                     CT_SET_FN(I6, mod_lg_i6);
+                    CT_SET_FN(U6, mod_lg_u6);
                     CT_SET_FN(SG, mod_lg_var_sg);
                     CT_SET_FN(FN, mod_lg_jf);
                     default:
@@ -457,7 +464,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(DEL):
                 op_set_jidx(*j, o);
-                //jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                 jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
                     case TYPE(TE):

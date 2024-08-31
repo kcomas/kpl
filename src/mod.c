@@ -27,8 +27,14 @@ void mod_ag(mod *const m, uint8_t ng) {
     m->ng = ng;
 }
 
-void mod_sg_i6(mod *const m, uint8_t i, int64_t i6) { m->g[i].i6 = i6; }
-int64_t mod_lg_i6(mod *const m, uint8_t i) { return m->g[i].i6; }
+#define MOD_SG_FN(CT, T) MOD_SG(CT, T) { m->g[i].T = T; }
+#define MOD_LG_FN(CT, T) MOD_LG(CT, T) { return m->g[i].T; }
+
+MOD_SG_FN(int64_t, i6)
+MOD_LG_FN(int64_t, i6)
+
+MOD_SG_FN(uint64_t, u6)
+MOD_LG_FN(uint64_t, u6)
 
 void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { var_sg_rci(sg); m->g[i].sg = sg; }
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { var_sg_rci(m->g[i].sg); return m->g[i].sg; }
