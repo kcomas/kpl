@@ -55,6 +55,10 @@ VAR_FN_BOP_T(add, u6, uint64_t);
 VAR_FN_BOP_T(sub, i6, int64_t);
 VAR_FN_BOP_T(sub, u6, uint64_t);
 
+// eq
+VAR_FN_BOP_T(eq, i6, int64_t);
+VAR_FN_BOP_T(eq, u6, uint64_t);
+
 // gt
 VAR_FN_BOP_T(gt, i6, int64_t);
 VAR_FN_BOP_T(gt, u6, uint64_t);
