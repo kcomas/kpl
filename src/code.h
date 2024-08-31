@@ -153,7 +153,7 @@ typedef struct {
 } op;
 
 typedef struct _code {
-    size_t len, size;
+    size_t len, size, sidx; // self call idx
     jit_fn *jf; // jit fn
     op ops[];
 } code;

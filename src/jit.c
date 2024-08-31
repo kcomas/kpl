@@ -170,8 +170,8 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 break;
             case OP_C(CS):
                 op_set_jidx(j, o);
-                jit_b(j, 4, 0x48, 0x8B, 0x45, 0xF8); // mov rax qword ptr [rbp+0x08]
-                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                SET_FP(j->a[c->sidx]);
+                SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
             case OP_C(AG):
@@ -490,6 +490,7 @@ jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
     jit_stat jstat;
     for (size_t i = 0; i < stk->len; i++) {
         stk->fn[i]->jf = (jit_fn*) &j->a[j->len];
+        stk->fn[i]->sidx = j->a[j->len];
         if ((jstat = jit_code(m, stk->fn[i], j)) != JIT_STAT(OK)) return jstat;
     }
     return JIT_STAT(OK);
