@@ -22,6 +22,9 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
     return MOD_STAT(OK);
 }
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+
 void mod_ag(mod *const m, uint8_t ng) {
     m->g = calloc(ng, sizeof(var));
     m->ng = ng;
@@ -41,6 +44,8 @@ var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { var_sg_rci(m->g[i].sg); return 
 
 void mod_sg_jf(mod *const m, uint8_t i, jit_fn *const jf) { m->g[i].jf = jf; }
 jit_fn *mod_lg_jf(mod *const m, uint8_t i) { return m->g[i].jf; }
+
+#pragma GCC pop_options
 
 extern inline void mod_psrc(const mod *const m);
 

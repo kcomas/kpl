@@ -1,6 +1,9 @@
 
 #include "var.h"
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+
 var_sg *var_sg_i(size_t size) {
     var_sg *sg = calloc(1, sizeof(var_sg) + size * sizeof(char));
     sg->size = size;
@@ -153,3 +156,5 @@ var var_te_vr_gidx(var_te_vr *const vtv, size_t idx) {
 void var_te_vr_f(var_te_vr *vtv) {
     free(vtv);
 }
+
+#pragma GCC pop_options
