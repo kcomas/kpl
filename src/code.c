@@ -41,7 +41,6 @@ static const char *op_c_str[] = {
     "SG",
     "LG",
     "AL",
-    "FL",
     "SL",
     "LL",
     "SA",
@@ -297,10 +296,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         OP_A(c, SG, VAR, { SLV(var->id, opn->ret->t) }, opn->l);
                         break;
                     case VAR_TYPE(L):
-                        OP_A(c, SL, VAR, { SLV(a->n.var->fns->idc - a->n.var->id, opn->ret->t) }, a);
+                        OP_A(c, SL, VAR, { SLV(var->id - var->fns->args->len, opn->ret->t) }, a);
                         break;
                     case VAR_TYPE(A):
-                        OP_A(c, SA, VAR, { SLV(a->n.var->id, opn->ret->t) }, a);
+                        OP_A(c, SA, VAR, { SLV(var->fns->args->len - 1 - var->id, opn->ret->t) }, a);
                         break;
                 }
                 break;
@@ -562,7 +561,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                     OP_A(c, LG, VAR, { SLV(a->n.var->id, a->n.var->tn->t) }, a);
                     break;
                 case VAR_TYPE(L):
-                    OP_A(c, LL, VAR, { SLV(a->n.var->fns->idc - a->n.var->id, a->n.var->tn->t) }, a);
+                    OP_A(c, LL, VAR, { SLV(a->n.var->id - a->n.var->fns->args->len, a->n.var->tn->t) }, a);
                     break;
                 case VAR_TYPE(A):
                     // reverse count to get stack
@@ -584,15 +583,20 @@ code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
         else OP_A(c, AL, U3, { .u3 = ngl }, NULL);
     }
     IFCGEN(code_gen_lst, cs, fn->body, c);
-    if (ngl && fn->par) {
-        // TODO gc locals
-        OP_A(c, FL, U3, { .u3 = ngl }, NULL);
-    }
     type t = TYPE(VD);
     type_node *tn;
     if (fn->sig->t == TYPE(FN)) {
         if (!(tn = ast_gtn(fn->sig->a->n.lst->t->a))) return CODE_STAT(FN_RET_T_INV);
         t = tn->t;
+    }
+    if (ngl && fn->par) {
+        tbl_itm *ti = fn->tl->t;
+        while (ngl > 0) {
+            if (t != TYPE(VD)) OP_A(c, SWAP, VD, {}, NULL);
+            OP_GC(c, ((var_node*) ti->data)->tn, NULL);
+            ti = ti->prev;
+            ngl--;
+        }
     }
     OP_A(c, RFN, CODE, { .t = t }, NULL);
     return CODE_STAT(OK);
