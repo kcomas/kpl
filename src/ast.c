@@ -89,7 +89,7 @@ static const char *const op_type_str[] = {
     "CST",
     "ADD",
     "SUB",
-    "MUL"
+    "MUL",
     "EQ",
     "NOT",
     "GT",

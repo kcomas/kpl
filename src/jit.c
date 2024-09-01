@@ -90,7 +90,7 @@ static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
     #define IF_STK_LEN 10
 #endif
 
-static jit_stat jit_if(mod *const m, code *const c, jit *j) {
+static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
     // int for compat with getpagesize
@@ -101,14 +101,14 @@ static jit_stat jit_if(mod *const m, code *const c, jit *j) {
     for (size_t i = 0; i < c->len; i++) {
         o = &c->ops[i];
         op_set_jidx(j, o);
-        if ((jstat = jit_code(m, o->od.of->cond, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+        if ((jstat = jit_code(m, o->od.of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
         jit_b(j, 2, 0x41, 0x5B); // pop r11
         jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
         jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
         jit_b(j, 2, 0x0F, 0x84); // je 0
         jmpp = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to next cond
-        if ((jstat = jit_code(m, o->od.of->body, j)) != JIT_STAT(OK)) return jstat;
+        if ((jstat = jit_code(m, o->od.of->body, jf, j)) != JIT_STAT(OK)) return jstat;
         jit_a(j, 0xE9); // jmp
         stk[stki++] = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if jmp to end of if
@@ -124,17 +124,17 @@ static jit_stat jit_if(mod *const m, code *const c, jit *j) {
     return JIT_STAT(OK);
 }
 
-static jit_stat jit_lop(mod *const m, op_if *const of, jit *j) {
+static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     int lops = j->len, lope, bs, jmpl;
-    if ((jstat = jit_code(m, of->cond, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+    if ((jstat = jit_code(m, of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
     jit_b(j, 2, 0x41, 0x5B); // pop r11
     jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
     jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
     jit_b(j, 2, 0x0F, 0x84); // je 0
     bs = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
-    if ((jstat = jit_code(m, of->body, j)) != JIT_STAT(OK)) return jstat;
+    if ((jstat = jit_code(m, of->body, jf, j)) != JIT_STAT(OK)) return jstat;
     jit_a(j, 0xE9); // jmp
     lope = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
@@ -145,7 +145,7 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit *j) {
     return JIT_STAT(OK);
 }
 
-jit_stat jit_code(mod *const m, code *const c, jit *j) {
+jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
     void *fp;
@@ -164,6 +164,14 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 jit_a(j, 0x50 + o->od.u3);
                 op_set_jlen(j, o);
                 break;
+            case OP_C(SWAP):
+                op_set_jidx(j, o);
+                jit_b(j, 2, 0x41, 0x5A); // pop r10
+                jit_b(j, 2, 0x41, 0x59); // pop r9
+                jit_b(j, 2, 0x41, 0x52); // push r10
+                jit_b(j, 2, 0x41, 0x51); // push r9
+                op_set_jlen(j, o);
+                break;
             case OP_C(RFN):
                 op_set_jidx(j, o);
                 if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
@@ -177,8 +185,8 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 break;
             case OP_C(CS):
                 op_set_jidx(j, o);
-                SET_FP(j->a[c->sidx]);
-                SET_REG_CALL(false, 0);
+                SET_REG(jf, jit_fn*, false, 0);
+                jit_b(j, 2, 0xFF, 0xD0); // call rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(AG):
@@ -272,12 +280,12 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 break;
             case OP_C(IF):
                 op_set_jidx(j, o);
-                if ((jstat = jit_if(m, o->od.c, j)) != JIT_STAT(OK)) return jstat;
+                if ((jstat = jit_if(m, o->od.c, jf, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
             case OP_C(LOP):
                 op_set_jidx(j, o);
-                if ((jstat = jit_lop(m, o->od.of, j)) != JIT_STAT(OK)) return jstat;
+                if ((jstat = jit_lop(m, o->od.of, jf, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
             case OP_C(COND): return JIT_STAT(INV_CODE); // INTERNAL IN IF
@@ -498,8 +506,7 @@ jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
     jit_stat jstat;
     for (size_t i = 0; i < stk->len; i++) {
         stk->fn[i]->jf = (jit_fn*) &j->a[j->len];
-        stk->fn[i]->sidx = j->a[j->len];
-        if ((jstat = jit_code(m, stk->fn[i], j)) != JIT_STAT(OK)) return jstat;
+        if ((jstat = jit_code(m, stk->fn[i], stk->fn[i]->jf, j)) != JIT_STAT(OK)) return jstat;
     }
     return JIT_STAT(OK);
 }

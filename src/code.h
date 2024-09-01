@@ -51,6 +51,7 @@ inline void code_st_i(code_st *const cs, const char *str) {
 typedef enum {
     OP_C(EFN), // enter fn
     OP_C(PUSH),
+    OP_C(SWAP),
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
@@ -154,7 +155,7 @@ typedef struct {
 } op;
 
 typedef struct _code {
-    size_t len, size, sidx; // self call idx
+    size_t len, size;
     jit_fn *jf; // jit fn
     op ops[];
 } code;

@@ -101,6 +101,6 @@ inline void jit_c(jit *j, size_t len, uint8_t *b) {
     for (size_t i = 0; i < len; i++) jit_a(j, b[i]);
 }
 
-jit_stat jit_code(mod *const m, code *const c, jit *j);
+jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j);
 
 jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j);
