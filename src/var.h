@@ -3,9 +3,6 @@
 
 #include "kpl.h"
 
-#pragma GCC push_options
-#pragma GCC optimize ("O0")
-
 typedef struct _var_te_vr var_te_vr;
 
 #define RC ssize_t rc
@@ -105,5 +102,3 @@ var var_te_vr_gidx(var_te_vr *const vtv, size_t idx);
 void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v);
 
 void var_te_vr_f(var_te_vr *vtv);
-
-#pragma GCC pop_options
