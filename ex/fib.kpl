@@ -1,7 +1,7 @@
 
 // Calculate fibonacci to n
 
-n:U6$30
+n:U6$35
 c:U6$0
 
 fib:FN(U6;U6)${(x)
