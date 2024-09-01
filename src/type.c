@@ -142,6 +142,10 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
             // TODO
             return TYPE_STAT(INV_SUB);
+        case OP_TYPE(MUL):
+            ASTGTNBOP(MUL);
+            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
+            return TYPE_STAT(INV_MUL);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_int_cor(NULL, lt, rt) || type_int_cor(NULL, rt, lt)) {

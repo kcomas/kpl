@@ -183,6 +183,7 @@ typedef enum {
     OP_TYPE(CST), // $
     OP_TYPE(ADD),
     OP_TYPE(SUB),
+    OP_TYPE(MUL),
     // TODO OP
     OP_TYPE(EQ),
     OP_TYPE(NOT),

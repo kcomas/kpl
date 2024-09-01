@@ -303,6 +303,7 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 break;
             C_OP_C_BOP(ADD, add);
             C_OP_C_BOP(SUB, sub);
+            C_OP_C_BOP(MUL, mul);
             C_OP_C_BOP(EQ, eq);
             case OP_C(NOT):
                 op_set_jidx(j, o);

@@ -85,6 +85,11 @@ VAR_BOP_T(sub, -, bl, bool)
 VAR_BOP_T(sub, -, i6, int64_t)
 VAR_BOP_T(sub, -, u6, uint64_t)
 
+// mul
+VAR_BOP_T(mul, &&, bl, bool)
+VAR_BOP_T(mul, *, i6, int64_t)
+VAR_BOP_T(mul, *, u6, uint64_t)
+
 // eq
 VAR_BOP_T(eq, ==, bl, bool)
 VAR_BOP_T(eq, ==, i6, int64_t)

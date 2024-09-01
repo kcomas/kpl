@@ -32,7 +32,7 @@ typedef enum {
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
-    CODE_STAT(CALL_VAR_N_FN),
+    CODE_STAT(CALL_T_N_FN),
     CODE_STAT(CALL_CT_ARG_T_GC_INV),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
@@ -77,6 +77,7 @@ typedef enum {
     OP_C(CSTSG), // cast type to string
     OP_C(ADD),
     OP_C(SUB),
+    OP_C(MUL),
     OP_C(EQ),
     OP_C(NOT),
     OP_C(GT),

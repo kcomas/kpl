@@ -28,6 +28,10 @@ typedef enum {
     TYPE_STAT(INV_SUB_L_T_N),
     TYPE_STAT(INV_SUB_R_T_N),
     TYPE_STAT(INV_SUB),
+    // mul
+    TYPE_STAT(INV_MUL_L_T_N),
+    TYPE_STAT(INV_MUL_R_T_N),
+    TYPE_STAT(INV_MUL),
     // eq
     TYPE_STAT(INV_EQ_L_T_N),
     TYPE_STAT(INV_EQ_R_T_N),
@@ -42,7 +46,6 @@ typedef enum {
     TYPE_STAT(INV_LT),
     TYPE_STAT(INV_LT_L_T_N),
     TYPE_STAT(INV_LT_R_T_N),
-
     // or
     TYPE_STAT(INV_OR_L_T_N),
     TYPE_STAT(INV_OR_R_T_N),
