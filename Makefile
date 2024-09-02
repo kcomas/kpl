@@ -14,6 +14,10 @@ TNAME = _test
 
 all: $(NAME)
 
+AL_OBS = $(SRC)/al.o
+al$(TNAME): $(AL_OBS) $(TEST)/al.o
+> $(CCOBJ)
+
 MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o $(SRC)/kpl.o
 mod$(TNAME): $(MOD_OBJS) $(TEST)/mod.o
 > $(CCOBJ)
