@@ -31,7 +31,7 @@ typedef struct _lst_ex {
         if (RTGT->next) RTGT->next->prev = h; \
         h->next = RTGT->next; \
     } \
-    tbl_itm_f(RTGT, DATAF); \
+    ITMF(RTGT, DATAF); \
     L->len--
 
 #define LST_P(L, ITT, ITMP, STATE, DATAP, IDNT, SEP) ITT *h = L->h; \
