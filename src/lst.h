@@ -23,7 +23,11 @@ typedef struct _lst_ex {
     L->len++
 
 #define LST_R(L, ITT, RTGT, ITMF, DATAF) ITT *h = L->h; \
-    if (RTGT == h) { \
+    if (RTGT == L->h && L->h == L->t) L->h = L->t = NULL; \
+    else if (RTGT == L->t) { \
+        L->t = RTGT->prev; \
+        L->t->next = NULL; \
+    } else if (RTGT == h) { \
         L->h = h->next; \
         L->h->prev = NULL; \
     } else { \
