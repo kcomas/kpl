@@ -17,6 +17,8 @@
 
 #define KPLE 'k'+'p'+'l'
 
+#define OO0 __attribute__((optimize("O0")))
+
 #define TYPE(N) TYPE_##N
 
 typedef enum {
