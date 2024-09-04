@@ -13,9 +13,9 @@ typedef struct {
     char str[]; // null term
 } var_sg;
 
-var_sg *var_sg_i(size_t size);
+var_sg *var_sg_i(al *const a, size_t size);
 
-var_sg *var_sg_i_str(const char *const str);
+var_sg *var_sg_i_str(al *const a, const char *const str);
 
 void var_sg_rci(var_sg *const sg);
 
@@ -23,9 +23,9 @@ size_t var_sg_len(var_sg *const sg);
 
 const char *var_sg_str(var_sg *const sg);
 
-var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r);
+var_sg *var_sg_cnct_sg_sg(al *const a, const var_sg *const l, const var_sg *const r);
 
-var_sg *var_sg_cnct_sg_te_vr(const var_sg *const l, const var_te_vr *const r);
+var_sg *var_sg_cnct_sg_te_vr(al *const a, const var_sg *const l, const var_te_vr *const r);
 
 void var_sg_f(var_sg *sg);
 
@@ -42,8 +42,8 @@ ssize_t var_rcd(var v, type t);
 bool var_zoo_u6(uint64_t v);
 bool var_zoo_i6(int64_t v);
 
-var_sg *var_u6_sg(uint64_t u6);
-var_sg *var_i6_sg(uint64_t i6);
+var_sg *var_u6_sg(al *const a, uint64_t u6);
+var_sg *var_i6_sg(al *const a, uint64_t i6);
 
 #define VAR_FN_BOP_T(N, T, CT) CT var_##N##_##T(CT l, CT r)
 
@@ -91,9 +91,9 @@ typedef struct _var_te_vr {
     var v[];
 } var_te_vr;
 
-var_te_vr *var_te_vr_i(size_t size, jit_fn *gc);
+var_te_vr *var_te_vr_i(al *const a, size_t size, jit_fn *gc);
 
-var_te_vr *var_te_i(size_t size, jit_fn *gc);
+var_te_vr *var_te_i(al *const a, size_t size, jit_fn *gc);
 
 jit_fn *var_te_vr_gc(var_te_vr *const vtv);
 
