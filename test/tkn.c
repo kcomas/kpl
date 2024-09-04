@@ -4,7 +4,8 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
-    mod *m = mod_i();
+    al *a = al_i();
+    mod *m = mod_i(a);
     mod_lfile(m, argv[1]);
     tkn_st ts;
     tkn_st_i(&ts);
@@ -16,5 +17,6 @@ int main(int argc, char *argv[]) {
     tkn_p(&t, m->src.str);
     putchar('\n');
     mod_f(m);
+    al_f(a);
     return 0;
 }
