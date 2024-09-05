@@ -36,6 +36,9 @@ MOD_LG_FN(int64_t, i6)
 MOD_SG_FN(uint64_t, u6)
 MOD_LG_FN(uint64_t, u6)
 
+MOD_SG_FN(int, fd);
+MOD_LG_FN(int, fd);
+
 void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { var_sg_rci(sg); m->g[i].sg = sg; }
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { var_sg_rci(m->g[i].sg); return m->g[i].sg; }
 

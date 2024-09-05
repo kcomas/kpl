@@ -45,6 +45,9 @@ MOD_LG(int64_t, i6);
 MOD_SG(uint64_t, u6);
 MOD_LG(uint64_t, u6);
 
+MOD_SG(int, fd);
+MOD_LG(int, fd);
+
 void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg);
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
 
@@ -60,6 +63,6 @@ inline void mod_psrc(const mod *const m) {
 inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
-    alf(m->g);
+    FNNF(m->g, alf);
     free(m);
 }
