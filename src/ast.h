@@ -88,14 +88,14 @@ typedef struct {
     ast *a;
 } type_node;
 
-inline type_node *type_node_i(type t, ast *const a) {
-    type_node *tn = calloc(1, sizeof(type_node));
+inline type_node *type_node_i(al *const am, type t, ast *const a) {
+    type_node *tn = ala(am, sizeof(type_node));
     tn->t = t;
     tn->a = a;
     return tn;
 }
 
-type_node *type_node_c(const type_node *const tn);
+type_node *type_node_c(al *const a, const type_node *const tn);
 
 inline void type_node_p(const ast_st *const as, const type_node *const tn, size_t idnt) {
     if (tn) {
@@ -116,7 +116,7 @@ inline void type_node_p(const ast_st *const as, const type_node *const tn, size_
 
 inline void type_node_f(type_node *tn) {
     FNNF(tn->a, ast_f);
-    free(tn);
+    alf(tn);
 }
 
 #define RES_TYPE(N) RES_TYPE_##N
@@ -132,8 +132,8 @@ typedef struct {
     type_node *tn;
 } res_node; // reserved keywords
 
-inline res_node *res_node_i(res_type rt, type_node *tn) {
-    res_node *rn = calloc(1, sizeof(res_node));
+inline res_node *res_node_i(al *const a, res_type rt, type_node *tn) {
+    res_node *rn = ala(a, sizeof(res_node));
     rn->rt = rt;
     rn->tn = tn;
     return rn;
@@ -156,16 +156,16 @@ inline void res_node_p(const ast_st *const as, const res_node *const rn, size_t 
 
 inline void res_node_f(res_node *rn) {
     FNNF(rn->tn, type_node_f);
-    free(rn);
+    alf(rn);
 }
 
 typedef struct {
     type_node *tn;
 } val_node; // val is tkn str
 
-inline val_node *val_node_i(type t) {
-    val_node *v = calloc(1, sizeof(val_node));
-    v->tn = type_node_i(t, NULL);
+inline val_node *val_node_i(al *const a, type t) {
+    val_node *v = ala(a, sizeof(val_node));
+    v->tn = type_node_i(a, t, NULL);
     return v;
 }
 
@@ -175,7 +175,7 @@ inline void val_node_p(const ast_st *const as, const val_node *const v, size_t i
 
 inline void val_node_f(val_node *v) {
     type_node_f(v->tn);
-    free(v);
+    alf(v);
 }
 
 #define OP_TYPE(N) OP_TYPE_##N
@@ -203,8 +203,8 @@ typedef struct {
     ast *l, *r;
 } op_node;
 
-inline op_node *op_node_i(op_type ot) {
-    op_node *on = calloc(1, sizeof(op_node));
+inline op_node *op_node_i(al *const a, op_type ot) {
+    op_node *on = ala(a, sizeof(op_node));
     on->ot = ot;
     return on;
 }
@@ -215,7 +215,7 @@ inline void op_node_f(op_node *on) {
     FNNF(on->ret, type_node_f);
     FNNF(on->l, ast_f);
     FNNF(on->r, ast_f);
-    free(on);
+    alf(on);
 }
 
 typedef struct _lst_itm {
@@ -223,8 +223,8 @@ typedef struct _lst_itm {
     struct _lst_itm *prev, *next;
 } lst_itm;
 
-inline lst_itm *lst_itm_i(ast *const a) {
-    lst_itm *itm = calloc(1, sizeof(lst_itm));
+inline lst_itm *lst_itm_i(al *const am, ast *const a) {
+    lst_itm *itm = ala(am, sizeof(lst_itm));
     itm->a = a;
     return itm;
 }
@@ -237,7 +237,7 @@ inline void lst_itm_p(const ast_st *const as, const lst_itm *const li, void *fn,
 inline void lst_itm_f(lst_itm *li, void *fn) {
     (void) fn;
     FNNF(li->a, ast_f);
-    free(li);
+    alf(li);
 }
 typedef struct _lst_node {
     size_t len;
@@ -245,14 +245,14 @@ typedef struct _lst_node {
     lst_itm *h, *t;
 } lst_node;
 
-inline lst_node *lst_node_i(type t) {
-    lst_node *ln = calloc(1, sizeof(lst_node));
-    ln->tn = type_node_i(t, NULL);
+inline lst_node *lst_node_i(al *const a, type t) {
+    lst_node *ln = ala(a, sizeof(lst_node));
+    ln->tn = type_node_i(a, t, NULL);
     return ln;
 }
 
-inline void lst_node_a(lst_node *const lst, ast *const a) {
-    lst_itm *li = lst_itm_i(a);
+inline void lst_node_a(al *const am, lst_node *const lst, ast *const a) {
+    lst_itm *li = lst_itm_i(am, a);
     LST_A(lst, li);
 }
 
@@ -265,6 +265,7 @@ inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t
 inline void lst_node_f(lst_node *lst) {
     type_node_f(lst->tn);
     LST_F(lst, lst_itm, lst_itm_f, NULL);
+    alf(lst);
 }
 
 typedef struct _if_itm {
@@ -273,8 +274,8 @@ typedef struct _if_itm {
     lst_node *body;
 } if_itm;
 
-inline if_itm *if_itm_i(ast *const cond, lst_node *const body) {
-    if_itm *im = calloc(1, sizeof(if_itm));
+inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body) {
+    if_itm *im = ala(a, sizeof(if_itm));
     im->cond = cond;
     im->body = body;
     return im;
@@ -300,7 +301,7 @@ inline void if_itm_f(if_itm *im, void *fn) {
     (void) fn;
     ast_f(im->cond);
     lst_node_f(im->body);
-    free(im);
+    alf(im);
 }
 
 inline void if_itm_lop_f(if_itm *im) {
@@ -312,12 +313,12 @@ typedef struct {
     if_itm *h, *t;
 } if_node;
 
-inline if_node *if_node_i(void) {
-    return calloc(1, sizeof(if_node));
+inline if_node *if_node_i(al *const a) {
+    return ala(a, sizeof(if_node));
 }
 
-inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) {
-    if_itm *ii = if_itm_i(cond, body);
+inline void if_node_a(al *const a, if_node *const in, ast* const cond, lst_node *const body) {
+    if_itm *ii = if_itm_i(a, cond, body);
     LST_A(in, ii);
 }
 
@@ -328,6 +329,7 @@ inline void if_node_p(const ast_st *const as, const if_node *const in, size_t id
 
 inline void if_node_f(if_node *in) {
     LST_F(in, if_itm, if_itm_f, NULL);
+    alf(in);
 }
 
 #define FN_VIM(N) FN_VIM_##N
@@ -349,10 +351,10 @@ typedef struct _fn_node {
 
 inline fn_node *fn_node_i(al *const a, fn_node *const par) {
     fn_node *fn = ala(a, sizeof(fn_node));
-    fn->tl = tbl_i(TBL_I_SIZE);
+    fn->tl = tbl_i(a, TBL_I_SIZE);
     fn->par = par;
-    fn->args = lst_node_i(TYPE(STMT));
-    fn->body = lst_node_i(TYPE(STMT));
+    fn->args = lst_node_i(a, TYPE(STMT));
+    fn->body = lst_node_i(a, TYPE(STMT));
     return fn;
 }
 
@@ -364,7 +366,7 @@ void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data);
 
-inline void fn_node_f(al *const a, fn_node *fn) {
+inline void fn_node_f(fn_node *fn) {
     tbl_f(fn->tl, &fn_node_tbl_data_f);
     FNNF(fn->sig, type_node_f);
     lst_node_f(fn->args);
@@ -378,8 +380,8 @@ typedef struct {
     lst_node *args;
 } call_node;
 
-inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
-    call_node *cn = calloc(1, sizeof(call_node));
+inline call_node *call_node_i(al *const a, ast *const tgt, lst_node *const args) {
+    call_node *cn = ala(a, sizeof(call_node));
     cn->tgt = tgt;
     cn->args = args;
     return cn;
@@ -401,7 +403,7 @@ inline void call_node_f(call_node *cn) {
     ast_f(cn->tgt);
     FNNF(cn->ret, type_node_f);
     lst_node_f(cn->args);
-    free(cn);
+    alf(cn);
 }
 
 typedef struct {
@@ -409,8 +411,8 @@ typedef struct {
     ast *a;
 } ret_node; // takes next stmt
 
-inline ret_node *ret_node_i(void) {
-    return calloc(1, sizeof(ret_node));
+inline ret_node *ret_node_i(al *const a) {
+    return ala(a, sizeof(ret_node));
 }
 
 inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt) {
@@ -423,7 +425,7 @@ inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t i
 inline void ret_node_f(ret_node *r) {
     FNNF(r->tn, type_node_f);
     ast_f(r->a);
-    free(r);
+    alf(r);
 }
 
 #define VAR_TYPE(N) VAR_TYPE_##N
@@ -445,7 +447,7 @@ typedef struct {
     char str[]; // null term
 } var_node; // tbl itm data TODO struct padding
 
-var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
+var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const char *const str);
 
 inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
     printf("%p,(%s),%d,%s", var->fns, var_type_str(var->vt), var->id, var->str);
@@ -454,7 +456,7 @@ inline void var_node_p(const ast_st *const as, const var_node *const var, size_t
 
 inline void var_node_f(var_node *vn) {
     FNNF(vn->tn, type_node_f);
-    free(vn);
+    alf(vn);
 }
 
 #define AST_TYPE(N) AST_TYPE_##N
@@ -494,8 +496,8 @@ typedef struct _ast {
     tkn t;
 } ast;
 
-inline ast *ast_i(ast_type at, node const n, const tkn *const t) {
-    ast *a = calloc(1, sizeof(ast));
+inline ast *ast_i(al *const am, ast_type at, node const n, const tkn *const t) {
+    ast *a = ala(am, sizeof(ast));
     a->at = at;
     a->rc = 1;
     a->n = n;
