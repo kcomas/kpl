@@ -25,7 +25,7 @@ typedef struct {
 } mod;
 
 inline mod *mod_i(al *const a) {
-    mod *m = calloc(1, sizeof(mod));
+    mod *m = ala(a, sizeof(mod));
     m->a = a;
     return m;
 }
@@ -61,8 +61,8 @@ inline void mod_psrc(const mod *const m) {
 }
 
 inline void mod_f(mod *m) {
-    FNN(m->src.path);
-    FNN(m->src.str);
+    FNNF(m->src.path, alf);
+    FNNF(m->src.str, alf);
     FNNF(m->g, alf);
-    free(m);
+    alf(m);
 }

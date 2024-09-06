@@ -10,13 +10,13 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
         close(fd);
         return MOD_STAT(FLF);
     }
-    m->src.str = calloc(m->src.sb.st_size + 1, sizeof(char));
+    m->src.str = ala(m->a, m->src.sb.st_size * sizeof(char) + sizeof(char));
     if (read(fd, m->src.str, m->src.sb.st_size) != m->src.sb.st_size) {
         free(m->src.str);
         close(fd);
         return MOD_STAT(FLF);
     }
-    m->src.path = calloc(strlen(path) + 1, sizeof(char));
+    m->src.path = ala(m->a, strlen(path) * sizeof(char) + sizeof(char));
     strcpy(m->src.path, path);
     close(fd);
     return MOD_STAT(OK);
