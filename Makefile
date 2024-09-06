@@ -2,7 +2,8 @@
 .PHONY: clean
 .RECIPEPREFIX = >
 CC = gcc
-CFLAGS = -g -Og -Wall -Wextra # TODO specify std
+# DFLAGS
+CFLAGS = $(DFLAGS) -g -Og -Wall -Wextra # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)
