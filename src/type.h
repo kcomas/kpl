@@ -20,6 +20,9 @@ typedef enum {
     TYPE_STAT(INV_FN_CST), // invalid case for fn
     TYPE_STAT(FN_CST_T_NN), // fn node type defined
     TYPE_STAT(INV_FN_CST_ARGS_LEN), // length of args does not match type
+    // del
+    TYPE_STAT(INV_DEL_R_NN),
+    TYPE_STAT(INV_DEL_L_NG),
     // add
     TYPE_STAT(INV_ADD_L_T_N),
     TYPE_STAT(INV_ADD_R_T_N),
