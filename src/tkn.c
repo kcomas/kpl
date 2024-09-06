@@ -139,6 +139,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 break;
             T_ONE_C(':', ASS);
             T_ONE_C('$', CST);
+            T_TWO_C('\\', INV, 'd', DEL);
             T_ONE_C('+', ADD);
             T_ONE_C('-', SUB);
             T_ONE_C('*', MUL);
@@ -214,6 +215,7 @@ static const char *const tkn_type_str[] = {
     "RET",
     "ASS",
     "CST",
+    "DEL",
     "ADD",
     "SUB",
     "MUL",
@@ -227,13 +229,14 @@ static const char *const tkn_type_str[] = {
     "AND",
     "OR",
     "CNCT",
-    "RW"
+    "RW",
+    "INV"
 };
 
  // line, char, type, str
 void tkn_p(const tkn *const t, const char *const str) {
     const char *type = "INVALID";
-    if (t->type >= TKN_TYPE(NB) && t->type <= TKN_TYPE(RW)) type = tkn_type_str[t->type];
+    if (t->type >= TKN_TYPE(NB) && t->type < TKN_TYPE(INV)) type = tkn_type_str[t->type];
     printf("%lu,%lu,%s,", t->lno, t->cno, type);
     if (t->type == TKN_TYPE(NB)) printf("\\0");
     else if (t->type == TKN_TYPE(NL)) printf("\\n");

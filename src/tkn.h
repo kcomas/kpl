@@ -59,6 +59,7 @@ typedef enum {
     // general ops
     TKN_TYPE(ASS), // :
     TKN_TYPE(CST), // $
+    TKN_TYPE(DEL), // \d
     // arith
     TKN_TYPE(ADD),
     TKN_TYPE(SUB),
@@ -76,6 +77,7 @@ typedef enum {
     // type specific
     TKN_TYPE(CNCT), //,
     TKN_TYPE(RW), // <<
+    TKN_TYPE(INV)
 } tkn_type;
 
 typedef struct {
