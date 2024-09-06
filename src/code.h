@@ -39,10 +39,12 @@ typedef enum {
 } code_stat;
 
 typedef struct {
+    al *a;
     const char *str;
 } code_st;
 
-inline void code_st_i(code_st *const cs, const char *str) {
+inline void code_st_i(code_st *const cs, al *const a, const char *str) {
+    cs->a = a;
     cs->str = str;
 }
 
@@ -110,8 +112,8 @@ typedef struct {
     code *gc;
 } cte; // create tuple
 
-inline cte *cte_i(size_t len, code *const gc) {
-    cte *te = calloc(1, sizeof(cte));
+inline cte *cte_i(al *const a, size_t len, code *const gc) {
+    cte *te = ala(a, sizeof(cte));
     te->len = len;
     te->gc = gc;
     return te;
@@ -121,7 +123,7 @@ void code_f(code *c);
 
 inline void cte_f(cte *te) {
     code_f(te->gc);
-    free(te);
+    alf(te);
 }
 
 typedef union _op_d {
@@ -163,8 +165,8 @@ typedef struct _code {
     #define CODE_I_SIZE 20
 #endif
 
-inline code *code_i(size_t size) {
-    code *c = calloc(1, sizeof(code) + sizeof(op) * size);
+inline code *code_i(al *const a, size_t size) {
+    code *c = ala(a, sizeof(code) + sizeof(op) * size);
     c->size = size;
     return c;
 }
@@ -173,32 +175,32 @@ inline code *code_i(size_t size) {
     #define CODE_R_SIZE 2
 #endif
 
-inline void code_a(code **c, op o) {
+inline void code_a(al *const a, code **c, op o) {
     if ((*c)->len == (*c)->size) {
-        code *nc = code_i((*c)->size * CODE_R_SIZE);
+        code *nc = code_i(a, (*c)->size * CODE_R_SIZE);
         for (size_t i = 0; i < (*c)->len; i++) nc->ops[nc->len++] = (*c)->ops[i];
-        free(*c);
+        alf(*c);
         *c = nc;
     }
     (*c)->ops[(*c)->len++] = o;
 }
 
-inline op_if *op_if_i(size_t size) {
-    op_if *of = calloc(1, sizeof(op_if));
-    of->cond = code_i(size);
-    of->body = code_i(size);
+inline op_if *op_if_i(al *const a, size_t size) {
+    op_if *of = ala(a, sizeof(op_if));
+    of->cond = code_i(a, size);
+    of->body = code_i(a, size);
     return of;
 }
 
 inline void op_if_f(op_if *of) {
     code_f(of->cond);
     code_f(of->body);
-    free(of);
+    alf(of);
 }
 
-void code_p(const code_st *const st, const code *const c, size_t idnt);
+void code_p(const code_st *const cs, const code *const c, size_t idnt);
 
-#define OP_A(C, OC, OT, OD, A) code_a(C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
+#define OP_A(CS, C, OC, OT, OD, A) code_a(CS->a, C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
 
 code_stat code_gen(code_st *const cs, const ast *const a, code **c);
 
