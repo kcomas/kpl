@@ -36,11 +36,13 @@ typedef struct {
     tkn_stat tstat;
     tkn_st ts;
     tkn next, peek;
+    al *a;
     const char *str;
 } ast_st;
 
-inline void ast_st_i(ast_st *const as, char *const str) {
+inline void ast_st_i(ast_st *const as, al *const a, char *const str) {
     tkn_st_i(&as->ts);
+    as->a = a;
     as->str = str;
 }
 
@@ -345,8 +347,8 @@ typedef struct _fn_node {
     lst_node *args, *body;
 } fn_node;
 
-inline fn_node *fn_node_i(fn_node *const par) {
-    fn_node *fn = calloc(1, sizeof(fn_node));
+inline fn_node *fn_node_i(al *const a, fn_node *const par) {
+    fn_node *fn = ala(a, sizeof(fn_node));
     fn->tl = tbl_i(TBL_I_SIZE);
     fn->par = par;
     fn->args = lst_node_i(TYPE(STMT));
@@ -362,12 +364,12 @@ void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data);
 
-inline void fn_node_f(fn_node *fn) {
+inline void fn_node_f(al *const a, fn_node *fn) {
     tbl_f(fn->tl, &fn_node_tbl_data_f);
     FNNF(fn->sig, type_node_f);
     lst_node_f(fn->args);
     lst_node_f(fn->body);
-    free(fn);
+    alf(fn);
 }
 
 typedef struct {

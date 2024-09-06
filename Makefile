@@ -14,11 +14,11 @@ TNAME = _test
 
 all: $(NAME)
 
-AL_OBS = $(SRC)/al.o
+AL_OBJS = $(SRC)/al.o $(SRC)/kpl.o
 al$(TNAME): $(AL_OBS) $(TEST)/al.o
 > $(CCOBJ)
 
-MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o $(SRC)/kpl.o $(AL_OBS)
+MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o $(AL_OBJS)
 mod$(TNAME): $(MOD_OBJS) $(TEST)/mod.o
 > $(CCOBJ)
 
@@ -26,7 +26,7 @@ TKN_OBJS = $(SRC)/tkn.o $(MOD_OBJS)
 tkn$(TNAME): $(TKN_OBJS) $(TEST)/tkn.o
 > $(CCOBJ)
 
-TBL_OBJS = $(SRC)/tbl.o
+TBL_OBJS = $(SRC)/tbl.o $(AL_OBJS)
 tbl$(TNAME): $(TBL_OBJS) $(TEST)/tbl.o
 > $(CCOBJ)
 

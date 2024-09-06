@@ -1,7 +1,7 @@
 
 #include "ast.h"
 
-extern inline void ast_st_i(ast_st *const as, char *const str);
+extern inline void ast_st_i(ast_st *const as, al *const a, char *const str);
 
 static tkn *inc_tkn(ast_st *const as, bool inc) {
     return inc ? &as->next : &as->peek;
@@ -148,7 +148,7 @@ extern inline void if_node_p(const ast_st *const as, const if_node *const in, si
 
 extern inline void if_node_f(if_node *in);
 
-extern inline fn_node *fn_node_i(fn_node *const par);
+extern inline fn_node *fn_node_i(al *const a, fn_node *const par);
 
 type_node *fn_node_ret_type(const fn_node *const fn) {
     type_node *tmpt = NULL;
@@ -191,7 +191,7 @@ void fn_node_tbl_data_f(void *data) {
     var_node_f((var_node*) data);
 }
 
-extern inline void fn_node_f(fn_node *fn);
+extern inline void fn_node_f(al *const a, fn_node *fn);
 
 extern inline call_node *call_node_i(ast *const tgt, lst_node *const args);
 

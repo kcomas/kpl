@@ -9,8 +9,8 @@ typedef struct _tbl_itm {
     char str[]; // null term
 } tbl_itm;
 
-inline tbl_itm *tbl_itm_i(const char *const str, void *const data) {
-    tbl_itm *ti = calloc(1, sizeof(tbl_itm) + sizeof(void*) + strlen(str) + 1);
+inline tbl_itm *tbl_itm_i(al *const a, const char *const str, void *const data) {
+    tbl_itm *ti = ala(a, sizeof(tbl_itm) + sizeof(void*) + strlen(str) + 1);
     strcpy(ti->str, str);
     ti->data = data;
     return ti;
@@ -27,7 +27,7 @@ typedef void tbl_itm_data_f(void *data);
 
 inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
     FNNF(ti->data, fn);
-    free(ti);
+    alf(ti);
 }
 
 #ifndef TBL_I_SIZE
@@ -39,8 +39,8 @@ typedef struct {
     tbl_itm *h, *t, *bucks[];
 } tbl; // open address
 
-inline tbl* tbl_i(size_t size) {
-    tbl* tl = calloc(1, sizeof(tbl) + sizeof(tbl_itm*) * size);
+inline tbl* tbl_i(al *const a, size_t size) {
+    tbl* tl = ala(a, sizeof(tbl) + sizeof(tbl_itm*) * size);
     tl->size = size;
     return tl;
 }
@@ -62,7 +62,7 @@ typedef enum {
     TBL_OP_FLG(RM) = (1 << 2) // remove
 } tbl_op_flg;
 
-tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);
+tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);
 
 inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
     for (size_t i = 0; i < tl->size; i++) {
@@ -94,4 +94,5 @@ inline void tbl_lstpr(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
 
 inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
     LST_F(tl, tbl_itm, tbl_itm_f, fn);
+    alf(tl);
 }
