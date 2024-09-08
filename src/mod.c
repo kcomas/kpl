@@ -16,20 +16,22 @@ extern inline mod *mod_i(al *const a, er *const e);
 
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 
+#define MOD_ER(M, MS) mod_er(m, __func__, MOD_STAT(MS))
+
 mod_stat mod_lfile(mod *const m, const char *const path) {
     m->src.path = ala(m->a, strlen(path) * sizeof(char) + sizeof(char));
     strcpy(m->src.path, path);
     int fd = open(path, O_RDONLY);
-    if (fd == -1) return mod_er(m, __func__, MOD_STAT(FLF));
+    if (fd == -1) return MOD_ER(m, FLF);
     if (fstat(fd, &m->src.sb) == -1) {
         close(fd);
-        return mod_er(m, __func__, MOD_STAT(FLF));
+        return MOD_ER(m, FLF);
     }
     m->src.str = ala(m->a, m->src.sb.st_size * sizeof(char) + sizeof(char));
     if (read(fd, m->src.str, m->src.sb.st_size) != m->src.sb.st_size) {
         alf(m->src.str);
         close(fd);
-        return mod_er(m, __func__, MOD_STAT(FLF));
+        return MOD_ER(m, FLF);
     }
     close(fd);
     return MOD_STAT(OK);
