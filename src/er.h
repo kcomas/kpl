@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "var.h"
 
 #define ER(N) ER_##N
 
@@ -15,38 +16,48 @@ typedef enum {
     ER(RUN)
 } er_type;
 
-typedef union {
-    char *mod;
-} er_data;
-
 typedef struct _er_itm {
     er_type et;
-    const char *stat;
     struct _er_itm *prev, *next;
-    er_data *ed;
+    size_t lno, cno;
+    const char *stat;
+    char *path;
+    var_sg *msg;
 } er_itm;
 
-inline er_itm *er_itm_i(er_type et, const char *stat, er_data *ed) {
-    er_itm *ei = calloc(1, sizeof(er_itm);
+inline er_itm *er_itm_i(al *const a, er_type et, const char *const stat) {
+    er_itm *ei = ala(a, sizeof(er_itm));
     ei->et = et;
     ei->stat = stat;
-    ei->ed = ed;
     return ei;
 }
+
+void er_itm_p(er_itm *const ei);
+
+void er_itm_f(er_itm *ei, void *fn);
 
 typedef struct {
     size_t len;
     er_itm *h, *t;
 } er;
 
-inline er *er_i(void) {
-    return calloc(1, sizeof(er));
+inline er *er_i(al *const a) {
+    return ala(a, sizeof(er));
 }
 
-inline void er_a(er *const e, er_itm *const ei) {
-    LST_A(e, ei);
+void er_a(er *const e, er_itm *const ei);
+
+inline void er_p(er *const e) {
+    er_itm *h = e->h;
+    while (h) {
+        er_itm_p(h);
+        h = h->next;
+    }
 }
+
+void er_c(er *const e);
 
 inline void er_f(er *e) {
-    // TODO
+    er_c(e);
+    alf(e);
 }
