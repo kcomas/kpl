@@ -12,6 +12,8 @@ typedef enum {
     MOD_STAT(FLF) // file load fail
 } mod_stat;
 
+const char *mod_stat_str(mod_stat ms);
+
 typedef struct {
     uint8_t ng; // number of globals
     struct {
@@ -33,7 +35,13 @@ inline mod *mod_i(al *const a, er *const e) {
     return m;
 }
 
-mod_stat mod_er(mod *const m, mod_stat ms);
+inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms) {
+    if (ms == MOD_STAT(OK)) return ms;
+    er_itm *ei = er_itm_i(m->a, ER(MOD), fnn, mod_stat_str(ms));
+    ei->path = m->src.path;
+    er_a(m->e, ei);
+    return ms;
+}
 
 // load file
 mod_stat mod_lfile(mod *const m, const char *const path);
