@@ -16,22 +16,17 @@ typedef enum {
     ER(RUN)
 } er_type;
 
-#ifndef ER_FNN_SIZE
-    #define ER_FNN_SIZE 30
-#endif
-
 typedef struct _er_itm {
     er_type et;
     struct _er_itm *prev, *next;
     size_t lno, cno;
-    const char *stat; // status code
-    char *path;
+    const char *stat, *path; // status code, file path
     var_sg *msg;
-    char fnn[ER_FNN_SIZE]; // function name
+    char fnn[]; // function name
 } er_itm;
 
 inline er_itm *er_itm_i(al *const a, er_type et, const char *const fnn, const char *const stat) {
-    er_itm *ei = ala(a, sizeof(er_itm));
+    er_itm *ei = ala(a, sizeof(er_itm) + strlen(fnn) * sizeof(char) + sizeof(char));
     ei->et = et;
     strcpy(ei->fnn, fnn);
     ei->stat = stat;
