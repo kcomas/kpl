@@ -67,6 +67,7 @@ inline code_stat code_er(code_st *const cs, const char *const fnn, code_stat cst
 typedef enum {
     OP_C(EFN), // enter fn
     OP_C(PUSH),
+    OP_C(POP),
     OP_C(SWAP),
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn

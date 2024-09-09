@@ -1,5 +1,5 @@
 
 // call a fn not void and ensure gc is called TODO
 
-f:FN(STR)${() "Hi\n" }
-f:()
+f:FN(SG)${() "Hi\n" }
+f()
