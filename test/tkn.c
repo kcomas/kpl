@@ -11,9 +11,14 @@ int main(int argc, char *argv[]) {
     tkn_st ts;
     tkn_st_i(&ts, a, e);
     tkn t;
-    while (tkn_next(&ts, &t, m->src.str) == TKN_STAT(OK)) {
+    tkn_stat tstat;
+    while ((tstat = tkn_next(&ts, &t, m->src.str)) == TKN_STAT(OK)) {
         tkn_p(&t, m->src.str);
         putchar('\n');
+    }
+    if (tstat != TKN_STAT(END)) {
+        er_p(e);
+        return 1;
     }
     tkn_p(&t, m->src.str);
     putchar('\n');
