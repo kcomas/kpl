@@ -30,6 +30,8 @@ typedef enum {
     JIT_STAT(INV_CODE)
 } jit_stat;
 
+const char *jit_stat_str(jit_stat jstat);
+
 #ifndef FN_STK_SIZE
     #define FN_STK_SIZE 10
 #endif
@@ -81,6 +83,17 @@ inline jit *jit_i(al *const a, size_t nops) {
     j->size = size <= ps ? ps : (size / ps + 1) * ps;
     j->h = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     return j;
+}
+
+inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o) {
+    if (jstat == JIT_STAT(OK)) return jstat;
+    er_itm *ei = er_itm_i(m->a, ER(JIT), fnn, jit_stat_str(jstat));
+    if (o && o->a) {
+        ei->lno = o->a->t.lno;
+        ei->cno = o->a->t.cno;
+    }
+    er_a(m->e, ei);
+    return jstat;
 }
 
 inline void jit_f(jit *j) {
