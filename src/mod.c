@@ -34,7 +34,7 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
         return MOD_ER(m, FLF);
     }
     close(fd);
-    return MOD_STAT(OK);
+    return MOD_ER(m, OK);
 }
 
 void mod_ag(mod *const m, uint8_t ng) {

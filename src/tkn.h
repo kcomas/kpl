@@ -112,7 +112,7 @@ inline void tkn_st_i(tkn_st *const ts, al *const a, er *const e) {
 }
 
 inline tkn_stat tkn_er(tkn_st *const ts, const char *const fnn, tkn_stat tstat) {
-    if (tstat == TKN_STAT(OK)) return tstat;
+    if (tstat == TKN_STAT(OK) || tstat == TKN_STAT(END)) return tstat;
     er_itm *ei = er_itm_i(ts->a, ER(TKN), fnn, tkn_stat_str(tstat));
     ei->lno = ts->lno;
     ei->cno = ts->cno;

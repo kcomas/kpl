@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     ast_st_i(&as, m->a, m->e, m->src.str);
     if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFLS, TKN_FLG(NB))) != AST_STAT(OK)) {
         if (astat != AST_STAT(END)) {
+            er_p(e);
             return astat;
         }
     }
