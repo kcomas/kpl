@@ -4,7 +4,6 @@
 #include "kpl.h"
 #include "tbl.h"
 #include "tkn.h"
-#include "er.h"
 
 #define AST_STAT(N) AST_STAT_##N
 
