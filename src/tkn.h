@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "er.h"
 
 #define TKN_TYPE(N) TKN_TYPE_##N
 
@@ -95,13 +96,26 @@ typedef enum {
     TKN_STAT(END) // no more tkns
 } tkn_stat;
 
+const char *tkn_stat_str(tkn_stat tstat);
+
 typedef struct {
     size_t lno, cno, pos; // line, char, pos to get next tkn
+    al *a;
+    er *e;
 } tkn_st;
 
-inline void tkn_st_i(tkn_st *const ts) {
+inline void tkn_st_i(tkn_st *const ts, al *const a, er *const e) {
     ts->lno = ts->cno = 1;
     ts->pos = 0;
+    ts->a = a;
+    ts->e = e;
+}
+
+inline tkn_stat tkn_er(tkn_st *const ts, const char *const fnn, tkn_stat tstat) {
+    if (tstat == TKN_STAT(OK)) return tstat;
+    er_itm *ei = er_itm_i(ts->a, ER(TKN), fnn, tkn_stat_str(tstat));
+    er_a(ts->e, ei);
+    return tstat;
 }
 
 inline void tkn_st_u(tkn_st *const ts, const tkn *const t) {

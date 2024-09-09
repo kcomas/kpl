@@ -9,13 +9,17 @@ static const char *const tss[] = {
     "END"
 };
 
-static const char *tkn_stat_str(tkn_stat tstat) {
+const char *tkn_stat_str(tkn_stat tstat) {
     const char *s = "INVALID_TKN_STAT";
-    if (tstat >= TKN_STAT(OK) && <= TKN_STAT(END)) s = tss[tstat];
+    if (tstat >= TKN_STAT(OK) && tstat <= TKN_STAT(END)) s = tss[tstat];
     return s;
 }
 
-extern inline void tkn_st_i(tkn_st *const ts);
+extern inline void tkn_st_i(tkn_st *const ts, al *const a, er *const e);
+
+extern inline tkn_stat tkn_er(tkn_st *const ts, const char *const fnn, tkn_stat tstat);
+
+#define TKN_ER(TS, TSTAT) tkn_er(TS, __func__, TKN_STAT(TSTAT))
 
 extern inline void tkn_st_u(tkn_st *const ts, const tkn *const t);
 
@@ -77,14 +81,14 @@ static tkn_stat tkn_var(tkn *const t, const char *const str) {
     return TKN_STAT(OK);
 }
 
-static tkn_stat tkn_num(tkn *const t, const char *const str) {
+static tkn_stat tkn_num(tkn_st *const ts, tkn *const t, const char *const str) {
     t->type = TKN_TYPE(INT);
     for (;;) {
         char c = str[t->pos + t->len];
         if (isdigit(c)) t->len++;
         else if (c == '.') {
             if (t->type == TKN_TYPE(FLT)) {
-                return TKN_STAT(FLT);
+                return TKN_ER(ts, FLT);
             } else {
                 t->type = TKN_TYPE(FLT);
                 t->len++;
@@ -118,7 +122,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
     if (isalpha(str[t->pos])) {
         if ((tsr = tkn_var(t, str)) != TKN_STAT(OK)) return tsr;
     } else if (isdigit(str[t->pos])) {
-        if ((tsr = tkn_num(t, str)) != TKN_STAT(OK)) return tsr;
+        if ((tsr = tkn_num(ts, t, str)) != TKN_STAT(OK)) return tsr;
     } else {
         switch (str[t->pos]) {
             case '\0':
@@ -148,7 +152,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                     T_ONE_C('@', LOP);
                     T_ONE_C(';', RET);
                     default:
-                        return TKN_STAT(CTRL);
+                        return TKN_ER(ts, CTRL);
                 }
                 break;
             T_ONE_C(':', ASS);
@@ -171,7 +175,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
             T_ONE_C('|', OR);
             T_ONE_C(',', CNCT);
             default:
-                return TKN_STAT(CHR);
+                return TKN_ER(ts, CHR);
         }
     }
     if (inc) tkn_st_u(ts, t);
