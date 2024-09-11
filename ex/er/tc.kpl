@@ -1,0 +1,11 @@
+
+// try catch example
+
+f:FN(I6;I6)${(x)
+    '"This is an error value passed: ", $(SG;x)
+    x}
+
+// catching
+[v;e]'f(123)
+
+// throwing TODO

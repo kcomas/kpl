@@ -118,6 +118,7 @@ extern inline void val_node_f(val_node *v);
 extern inline op_node *op_node_i(al *const a, op_type ot);
 
 static const char *const op_type_str[] = {
+    "TC",
     "ASS",
     "CST",
     "DEL",
@@ -135,7 +136,7 @@ static const char *const op_type_str[] = {
 
 void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     const char *type = "INVALID";
-    if (op->ot >= OP_TYPE(ASS) && op->ot <= OP_TYPE(RW)) type = op_type_str[op->ot];
+    if (op->ot >= OP_TYPE(TC) && op->ot <= OP_TYPE(RW)) type = op_type_str[op->ot];
     printf("%s", type);
     type_node_p(as, op->ret, idnt);
     putchar('\n');
@@ -546,6 +547,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(FN), atmp) }, &ttmp);
             return ast_parse_stmt(as, fns, a, stp_flgs);
         // TODO TYPES
+        OP_CASE(TC);
         OP_CASE(ASS);
         OP_CASE(CST);
         OP_CASE(DEL);

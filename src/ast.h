@@ -194,6 +194,7 @@ inline void val_node_f(val_node *v) {
 #define OP_TYPE(N) OP_TYPE_##N
 
 typedef enum {
+    OP_TYPE(TC), // '
     OP_TYPE(ASS), // :
     OP_TYPE(CST), // $
     OP_TYPE(DEL), // \d

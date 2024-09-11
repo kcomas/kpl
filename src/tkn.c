@@ -139,6 +139,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 while (str[t->pos + t->len] != '"') t->len++;
                 t->len++;
                 break;
+            T_ONE_C('\'', TC);
             T_ONE_C('{', LB);
             T_ONE_C('}', RB);
             T_ONE_C('[', LS);
@@ -222,6 +223,7 @@ static const char *const tkn_type_str[] = {
     "FN",
     "ER",
     "FD",
+    "TC",
     "LB",
     "RB",
     "LS",
