@@ -8,4 +8,6 @@ f:FN(I6;ER(I6))${(x)
 // catching
 [v;e]'f(123)
 
+$(FD;1) << ,(SG$v;"\n")
+
 // throwing TODO
