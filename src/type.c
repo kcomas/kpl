@@ -200,6 +200,8 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 } else if (lst->t->a->n.var->tn->t != TYPE(ER)) {
                     return TYPE_ER(ts, TC_VAR_LT_N_T_ER);
                 }
+                rt->ec = true;
+                op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }
             return TYPE_ER(ts, INV_TC);

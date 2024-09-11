@@ -98,6 +98,7 @@ void ast_f(ast *a);
 
 typedef struct {
     type t;
+    bool ec; // error caught
     ast *a;
 } type_node;
 
@@ -115,6 +116,7 @@ inline void type_node_p(const ast_st *const as, const type_node *const tn, size_
         putchar('\n');
         PCX(' ', idnt);
         printf("%s", type_get_str(tn->t));
+        if (tn->ec) printf(",EC");
         if (tn->a) {
             putchar('\n');
             PCX(' ', idnt);
