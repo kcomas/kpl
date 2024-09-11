@@ -492,7 +492,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     ast_stat astat;
     if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
     if (flg_mtch(as->next.type, stp_flgs)) return AST_ER(as, OK);
-    ast *atmp;
+    ast *atmp = NULL;
     var_node *var;
     tkn ttmp;
     switch (as->next.type) {
@@ -532,7 +532,6 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(SL);
         TYPE_NA_CASE(SG);
         // TODO TYPES
-        TYPE_NA_CASE(FD);
         // TODO TYPES
         case TKN_TYPE(FN):
             if (*a) return AST_ER(as, TYPE_A_NN);
@@ -546,6 +545,18 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             }
             *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(FN), atmp) }, &ttmp);
             return ast_parse_stmt(as, fns, a, stp_flgs);
+        case TKN_TYPE(ER):
+            if (*a) return AST_ER(as, TYPE_A_NN);
+            memcpy(&ttmp, &as->next, sizeof(tkn));
+            if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, INV_TYPE_LST_INIT);
+            if ((astat = ast_parse_stmt(as, fns, &atmp, TKN_FLG(RP))) != AST_STAT(OK)) {
+                ast_f(atmp);
+                return astat;
+            }
+            *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(ER), atmp) }, &ttmp);
+            return ast_parse_stmt(as, fns, a, stp_flgs);
+        TYPE_NA_CASE(FD);
         // TODO TYPES
         OP_CASE(TC);
         OP_CASE(ASS);

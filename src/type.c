@@ -244,7 +244,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             // TODO check for val
             op->ret = type_node_i(ts->a, TYPE(BL), NULL);
             break;
-            // TODO ops
+        // TODO ops
         case OP_TYPE(GT):
             ASTGTNBOP(GT);
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
