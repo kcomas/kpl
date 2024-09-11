@@ -246,7 +246,7 @@ extern inline void call_node_p(const ast_st *const as, const call_node *const cn
 
 extern inline void call_node_f(call_node *cn);
 
-extern inline ret_node *ret_node_i(al *const a);
+extern inline ret_node *ret_node_i(al *const a, fn_node *const fn);
 
 extern inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt);
 
@@ -630,7 +630,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             return ast_parse_lop(as, fns, a, stp_flgs, &ttmp);
         case TKN_TYPE(RET):
            if (*a) return AST_ER(as, RET_A_NN);
-           *a = ast_i(as->a, AST_TYPE(RET), (node) { .ret = ret_node_i(as->a) }, &as->next);
+           *a = ast_i(as->a, AST_TYPE(RET), (node) { .ret = ret_node_i(as->a, fns) }, &as->next);
            return ast_parse_stmt(as, fns, &(*a)->n.ret->a, stp_flgs);
         // TODO controls
         default:
