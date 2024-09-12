@@ -1,0 +1,10 @@
+
+// try catch with locals
+
+f:FN(ER(VD))${() '"This is an error"; }
+
+fx:FN(VD)${() [v;e]'f(); $(FD;1) << "Error f called\n" }
+
+//f()
+
+fx()

@@ -208,6 +208,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
     }
     switch (tn->t) {
         case TYPE(STR):
+        case TYPE(VD):
         case TYPE(U3):
         case TYPE(U4):
         case TYPE(U5):
@@ -336,6 +337,7 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
 
 static code_stat store_var(code_st *const cs, const ast *const a, code **c,  var_node *const var) {
+    if (var->tn->t == TYPE(VD)) return CODE_ER(cs, OK, a);
     switch (var->vt) {
         case VAR_TYPE(U):
             return CODE_ER(cs, VAR_TYPE_U, a);
@@ -527,24 +529,25 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
         ch = ch->next;
     }
     IFCGEN(code_gen, cs, cn->tgt, c);
-    if (cn->ret->t == TYPE(ER)) {
-        if (!(tn = ast_gtn(cn->ret->a))) return CODE_ER(cs, CALL_T_ER_T_INV, a);
+    tn = cn->ret;
+    if (tn->t == TYPE(ER)) {
+        if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, CALL_T_ER_T_INV, a);
         if (ires) OP_A(cs, c, CS, ER, { RER(tn->t, tn->ec) }, a);
         else OP_A(cs, c, CFN, ER, { RER(tn->t, tn->ec) }, a);
     } else {
-        if (ires) OP_A(cs, c, CS, OP, { .t = cn->ret->t }, a);
-        else OP_A(cs, c, CFN, OP, { .t = cn->ret->t }, a);
+        if (ires) OP_A(cs, c, CS, OP, { .t = tn->t }, a);
+        else OP_A(cs, c, CFN, OP, { .t = tn->t }, a);
     }
-    if (cn->ret->t != TYPE(VD)) {
+    if (tn->t != TYPE(VD)) {
         OP_A(cs, c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
         if (cn->gcr) {
-            OP_GC(cs, c, cn->ret, a);
+            OP_GC(cs, c, tn, a);
         }
     }
     ct = ftn->a->n.lst->t->prev;
     while (ct) {
         if (!(tn = ast_gtn(ct->a))) return CODE_ER(cs, CALL_CT_ARG_T_GC_INV, a);
-        if (cn->ret->t != TYPE(VD)) OP_A(cs, c, SWAP, VD, {}, a);
+        if (tn->t != TYPE(VD)) OP_A(cs, c, SWAP, VD, {}, a);
         OP_A(cs, c, GC, OP, { .t = tn->t }, ct->a);
         ct = ct->prev;
     }
@@ -597,11 +600,12 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
             ngl--;
         }
     }
-    if (t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
     if (t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, FN_RET_ER_T_INV, NULL);
+        if (tn->t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
         OP_A(cs, c, RFN, ER, { RER(tn->t, tn->ec) }, NULL);
     } else {
+        if (t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
         OP_A(cs, c, RFN, CODE, { .t = t }, NULL);
     }
     return CODE_ER(cs, OK, NULL);
