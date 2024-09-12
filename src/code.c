@@ -3,6 +3,7 @@
 
 static const char *const css[] = {
     "OK",
+    "ER_N_ER_T",
     "INV_TC",
     "INV_L_ASS",
     "INV_R_ASS",
@@ -99,6 +100,7 @@ static const char *op_c_str[] = {
     "ZOO",
     "TE",
     "CE",
+    "PE",
     "CST",
     "CSTSG",
     "ADD",
@@ -506,7 +508,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             else return CODE_ER(cs, INV_FD_OP, a);
             break;
     }
-    // TODO check errors
+    if (opn->ret->t == TYPE(ER) && !opn->ret->ec) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
     return CODE_ER(cs, OK, NULL);
 }
 
@@ -546,7 +548,7 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
         OP_A(cs, c, GC, OP, { .t = tn->t }, ct->a);
         ct = ct->prev;
     }
-    // TODO check errors
+    if (cn->ret->t == TYPE(ER) && !cn->ret->ec) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
     return CODE_ER(cs, OK, NULL);
 }
 

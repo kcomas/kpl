@@ -9,6 +9,7 @@
 
 typedef enum {
     CODE_STAT(OK),
+    CODE_STAT(ER_N_ER_T),
     CODE_STAT(INV_TC),
     CODE_STAT(INV_L_ASS), // left side : invalid
     CODE_STAT(INV_R_ASS), // right side : invalid
@@ -97,6 +98,7 @@ typedef enum {
     // error
     OP_C(TE), // throw error
     OP_C(CE), // catch error
+    OP_C(PE), // panic error
     // ops
     OP_C(CST),
     OP_C(CSTSG), // cast type to string

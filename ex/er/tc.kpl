@@ -10,4 +10,5 @@ f:FN(I6;ER(I6))${(x)
 
 $(FD;1) << ,(SG$v;"\n")
 
-// throwing TODO
+// throwing
+v:f(123)
