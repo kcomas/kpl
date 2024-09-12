@@ -3,6 +3,7 @@
 
 static const char *const css[] = {
     "OK",
+    "INV_TC",
     "INV_L_ASS",
     "INV_R_ASS",
     "INV_STR_ESC",
@@ -13,6 +14,7 @@ static const char *const css[] = {
     "ARG_LEN_GT_LOCAL_LEN",
     "FN_RET_T_INV",
     "FN_RET_ER_T_INV",
+    "TC_R_N",
     "VAR_TYPE_U",
     "INV_INT_CST_PUSH",
     "INV_CST_INT_TO_FD",
@@ -95,6 +97,8 @@ static const char *op_c_str[] = {
     "COND",
     "LOP",
     "ZOO",
+    "TE",
+    "CE",
     "CST",
     "CSTSG",
     "ADD",
@@ -212,6 +216,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(I6):
         case TYPE(SG):
         case TYPE(TE):
+        case TYPE(ER):
             code_a(cs->a, c, (op) {oc, t, 0, 0, od,  a});
             break;
         default:
@@ -328,29 +333,47 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
 
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
 
+static code_stat store_var(code_st *const cs, const ast *const a, code **c, op_node *const opn, var_node *const var) {
+    switch (var->vt) {
+        case VAR_TYPE(U):
+            return CODE_ER(cs, VAR_TYPE_U, a);
+        case VAR_TYPE(G):
+            OP_A(cs, c, SG, VAR, { SLV(var->id, opn->ret->t) }, a);
+            break;
+        case VAR_TYPE(L):
+            OP_A(cs, c, SL, VAR, { SLV(var->id - var->fns->args->len, opn->ret->t) }, a);
+            break;
+        case VAR_TYPE(A):
+            OP_A(cs, c, SA, VAR, { SLV(var->fns->args->len - 1 - var->id, opn->ret->t) }, a);
+            break;
+    }
+    return CODE_ER(cs, OK, a);
+}
+
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     op_node *opn = a->n.op;
-    var_node *var;
     type_node *tl, *tr;
     int64_t i6;
     switch (opn->ot) {
+        case OP_TYPE(TC):
+            if (!opn->l) { // throw
+                IFCGEN(code_gen, cs, opn->r, c);
+                if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, TC_R_N, opn->r);
+                OP_A(cs, c, TE, ER, { RER(tr->t, false) }, opn->r);
+                break;
+            } else { // catch
+                IFCGEN(code_gen, cs, opn->r, c);
+                if ((cstat = store_var(cs, a, c, opn, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
+                OP_A(cs, c, CE, ER, { RER(TYPE(ER), true) }, opn->r);
+                if ((cstat = store_var(cs, a, c, opn, opn->l->n.lst->t->a->n.var)) != CODE_STAT(OK)) return cstat;
+                break;
+            }
+            return CODE_ER(cs, INV_TC, a);
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
-                var = opn->l->n.var;
-                switch (var->vt) {
-                    case VAR_TYPE(U): return CODE_ER(cs, VAR_TYPE_U, a);
-                    case VAR_TYPE(G):
-                        OP_A(cs, c, SG, VAR, { SLV(var->id, opn->ret->t) }, opn->l);
-                        break;
-                    case VAR_TYPE(L):
-                        OP_A(cs, c, SL, VAR, { SLV(var->id - var->fns->args->len, opn->ret->t) }, a);
-                        break;
-                    case VAR_TYPE(A):
-                        OP_A(cs, c, SA, VAR, { SLV(var->fns->args->len - 1 - var->id, opn->ret->t) }, a);
-                        break;
-                }
+                if ((cstat = store_var(cs, a, c, opn, opn->l->n.var)) != CODE_STAT(OK)) return cstat;
                 break;
             }
             return CODE_ER(cs, INV_L_ASS, a);
@@ -478,7 +501,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
             if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
                 OP_A(cs, c, WFD, OP, { .t = tr->t }, a);
-                OP_GC(cs, c, tr, opn->r);
+                OP_GC(cs, c, tr, a);
             }
             else return CODE_ER(cs, INV_FD_OP, a);
             break;
