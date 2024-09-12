@@ -335,18 +335,18 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
 
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
 
-static code_stat store_var(code_st *const cs, const ast *const a, code **c, op_node *const opn, var_node *const var) {
+static code_stat store_var(code_st *const cs, const ast *const a, code **c,  var_node *const var) {
     switch (var->vt) {
         case VAR_TYPE(U):
             return CODE_ER(cs, VAR_TYPE_U, a);
         case VAR_TYPE(G):
-            OP_A(cs, c, SG, VAR, { SLV(var->id, opn->ret->t) }, a);
+            OP_A(cs, c, SG, VAR, { SLV(var->id, var->tn->t) }, a);
             break;
         case VAR_TYPE(L):
-            OP_A(cs, c, SL, VAR, { SLV(var->id - var->fns->args->len, opn->ret->t) }, a);
+            OP_A(cs, c, SL, VAR, { SLV(var->id - var->fns->args->len, var->tn->t) }, a);
             break;
         case VAR_TYPE(A):
-            OP_A(cs, c, SA, VAR, { SLV(var->fns->args->len - 1 - var->id, opn->ret->t) }, a);
+            OP_A(cs, c, SA, VAR, { SLV(var->fns->args->len - 1 - var->id, var->tn->t) }, a);
             break;
     }
     return CODE_ER(cs, OK, a);
@@ -366,16 +366,16 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 break;
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
-                if ((cstat = store_var(cs, a, c, opn, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
+                if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
                 OP_A(cs, c, CE, ER, { RER(TYPE(ER), true) }, opn->r);
-                if ((cstat = store_var(cs, a, c, opn, opn->l->n.lst->t->a->n.var)) != CODE_STAT(OK)) return cstat;
+                if ((cstat = store_var(cs, a, c, opn->l->n.lst->t->a->n.var)) != CODE_STAT(OK)) return cstat;
                 break;
             }
             return CODE_ER(cs, INV_TC, a);
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
-                if ((cstat = store_var(cs, a, c, opn, opn->l->n.var)) != CODE_STAT(OK)) return cstat;
+                if ((cstat = store_var(cs, a, c, opn->l->n.var)) != CODE_STAT(OK)) return cstat;
                 break;
             }
             return CODE_ER(cs, INV_L_ASS, a);

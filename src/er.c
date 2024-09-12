@@ -26,13 +26,13 @@ void er_itm_p(er_itm *const ei) {
     if (ei->stat) printf(",%s", ei->stat);
     if (ei->path) printf(",%s", ei->path);
     if (ei->lno > 0 && ei->cno > 0) printf(",l:%lu,c:%lu", ei->lno, ei->cno);
-    if (ei->msg) printf(",%s", ei->msg->str);
+    if (ei->sg) printf(",%s", ei->sg->str);
     printf("!!\n");
 }
 
 void er_itm_f(er_itm *ei, void *fn) {
     (void) fn;
-    if (ei->msg) var_sg_f(ei->msg);
+    if (ei->sg) var_sg_f(ei->sg);
     alf(ei);
 }
 
@@ -42,7 +42,19 @@ void er_a(er *const e, er_itm *const ei) {
     LST_A(e, ei);
 }
 
+er_itm *er_g(er *const e) {
+    er_itm *ei = e->h;
+    e->h = e->t = NULL;
+    return ei;
+}
+
 extern inline void er_p(er *const e);
+
+void er_e(er *const e) {
+    if (!e->h) return;
+    er_p(e);
+    exit(KPLE);
+}
 
 void er_c(er *const e) {
     LST_F(e, er_itm, er_itm_f, NULL);

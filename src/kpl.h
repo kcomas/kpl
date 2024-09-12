@@ -63,6 +63,8 @@ typedef enum {
 
 const char *type_get_str(type t);
 
+typedef struct _er er;
+
 typedef struct _ast ast;
 
 typedef struct _fn_node fn_node;
@@ -86,3 +88,27 @@ typedef union _var var;
 
 // print char x times
 #define PCX(C, X) for (size_t i = 0; i < X; i++) putchar(C)
+
+typedef struct {
+    uint8_t ng; // number of globals
+    struct {
+        struct stat sb;
+        char *path, *str;
+    } src;
+    al *a; // allocator
+    er *e; // error
+    fn_node *fns; // ast root
+    code *c;
+    jit *j;
+    var *g; // globals
+} mod;
+
+#define RC ssize_t rc
+
+typedef struct {
+    RC;
+    size_t len, size; // len does not inc null term
+    char str[]; // null term
+} var_sg;
+
+void var_sg_f(var_sg *sg);

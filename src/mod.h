@@ -14,20 +14,6 @@ typedef enum {
 
 const char *mod_stat_str(mod_stat ms);
 
-typedef struct {
-    uint8_t ng; // number of globals
-    struct {
-        struct stat sb;
-        char *path, *str;
-    } src;
-    al *a; // allocator
-    er *e; // error
-    fn_node *fns; // ast root
-    code *c;
-    jit *j;
-    var *g; // globals
-} mod;
-
 inline mod *mod_i(al *const a, er *const e) {
     mod *m = ala(a, sizeof(mod));
     m->a = a;
@@ -66,6 +52,9 @@ var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
 
 void mod_sg_jf(mod *const m, uint8_t i, jit_fn *const jf);
 jit_fn *mod_lg_jf(mod *const m, uint8_t i);
+
+void mod_sg_er(mod *const m, uint8_t i, er_itm *const ei);
+er_itm *mod_lg_er(mod *const m, uint8_t i);
 
 // print src
 inline void mod_psrc(const mod *const m) {

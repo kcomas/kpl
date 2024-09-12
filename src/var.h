@@ -2,16 +2,10 @@
 #pragma once
 
 #include "kpl.h"
+#include "ast.h"
+#include "er.h"
 
 typedef struct _var_te_vr var_te_vr;
-
-#define RC ssize_t rc
-
-typedef struct {
-    RC;
-    size_t len, size; // len does not inc null term
-    char str[]; // null term
-} var_sg;
 
 var_sg *var_sg_i(al *const a, size_t size);
 
@@ -27,9 +21,11 @@ var_sg *var_sg_cnct_sg_sg(al *const a, const var_sg *const l, const var_sg *cons
 
 var_sg *var_sg_cnct_sg_te_vr(al *const a, const var_sg *const l, const var_te_vr *const r);
 
-void var_sg_f(var_sg *sg);
+// var_sg_f in kpl.h
 
 void var_sg_d(var_sg *sg);
+
+void var_sg_er(mod *const m, ast *const a, var_sg *const sg);
 
 typedef union _var {
     int64_t i6;
@@ -38,6 +34,7 @@ typedef union _var {
     jit_fn *jf;
     var_sg *sg;
     var_te_vr *te, *vr;
+    er_itm *ei;
 } var;
 
 ssize_t var_rcd(var v, type t);
