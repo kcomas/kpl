@@ -49,7 +49,8 @@ JIT_OBJS = $(SRC)/jit.o $(CODE_OBJS)
 jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 > $(CCOBJ)
 
-$(NAME):
+$(NAME): $(SRC)/main.o $(JIT_OBJS)
+> $(CCOBJ)
 
 %.o: %.c
 > $(CC) $(CFLAGS) -c $< -o $@
