@@ -61,7 +61,7 @@ static const size_t tv_len = AL(tv);
     break
 
 static tkn_stat tkn_var(tkn *const t, const char *const str) {
-    char c = str[t->pos];
+    char c = str[t->pos + t->len];
     while (isalpha(c) || isdigit(c)) c = str[t->pos + ++t->len];
     t->type = TKN_TYPE(VAR);
     if (t->len == 2) {
@@ -139,6 +139,11 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 while (str[t->pos + t->len] != '"') t->len++;
                 t->len++;
                 break;
+            case '`':
+                t->len++;
+                if ((tsr = tkn_var(t, str)) != TKN_STAT(OK)) return tsr;
+                t->type = TKN_TYPE(SYM);
+                break;
             T_ONE_C('\'', TC);
             T_ONE_C('{', LB);
             T_ONE_C('}', RB);
@@ -194,6 +199,7 @@ static const char *const tkn_type_str[] = {
     "WS",
     "CMT",
     "VAR",
+    "SYM",
     "INT",
     "FLT",
     "STR",

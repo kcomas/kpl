@@ -13,6 +13,7 @@ typedef enum {
     TKN_TYPE(WS), // white space
     TKN_TYPE(CMT), // comment
     TKN_TYPE(VAR),
+    TKN_TYPE(SYM), // symbol literal
     TKN_TYPE(INT),
     TKN_TYPE(FLT),
     TKN_TYPE(STR), // "asdf"
