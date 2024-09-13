@@ -6,6 +6,7 @@ static const char *const tss[] = {
     "SELF_CALL_IN_MOD",
     "VAL_UT",
     "TC_FN_N_TC",
+    "BLTS_INV_T",
     "INV_TC_R",
     "TC_ER_N_STR_SG",
     "TC_ER_L_LST_INV",
@@ -112,12 +113,24 @@ static bool type_lst_contig(const lst_node *const lst, const type_node *const tn
 
 #define IFTCHK(FN, TS, FNS, N) if ((tstat = FN(TS, FNS, N)) != TYPE_STAT(OK)) return tstat
 
+#define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_ER(ts, E);
+
 static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *const lst) {
     type_stat tstat;
     lst_itm *h = lst->h;
+    bool blts = false; // build list type sig
+    type_node *bs;
+    if (lst->tn->t == TYPE(TE) && !lst->tn->a) {
+        blts = true;
+        lst->tn->a = ast_i(ts->a, AST_TYPE(LST), (node) { .lst = lst_node_i(ts->a, TYPE(STMT)) }, NULL);
+    }
     while (h) {
         if (lst->tn->t == TYPE(STMT) && h->a->at == AST_TYPE(CALL) && h != lst->t) h->a->n.cn->gcr = true; // top level call gc return type
         IFTCHK(type_chk, ts, fns, h->a);
+        if (blts) {
+            ASTGTN(bs, h->a, BLTS_INV_T);
+            lst_node_a(ts->a, lst->tn->a->n.lst, ast_i(ts->a, AST_TYPE(TYPE), (node) { .tn = type_node_c(ts->a, bs) }, NULL));
+        }
         h = h->next;
     }
     return TYPE_ER(ts, OK);
@@ -163,8 +176,6 @@ static bool type_str_is(const type_node *const tn, const type_node *const dnu) {
     (void) dnu;
     return tn->t == TYPE(STR) || tn->t == TYPE(SG);
 }
-
-#define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_ER(ts, E);
 
 #define ASTGTNBOP(OP) ASTGTN(lt, op->l, INV_##OP##_L_T_N); \
             ASTGTN(rt, op->r, INV_##OP##_R_T_N)

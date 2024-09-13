@@ -525,7 +525,7 @@ inline ast *ast_i(al *const am, ast_type at, node const n, const tkn *const t) {
     a->at = at;
     a->rc = 1;
     a->n = n;
-    memcpy(&a->t, t, sizeof(tkn));
+    if (t) memcpy(&a->t, t, sizeof(tkn));
     return a;
 }
 

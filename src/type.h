@@ -11,6 +11,7 @@ typedef enum {
     TYPE_STAT(SELF_CALL_IN_MOD), // cannot self call in mod
     TYPE_STAT(VAL_UT), // val is ast type
     TYPE_STAT(TC_FN_N_TC), // fn does not throw error
+    TYPE_STAT(BLTS_INV_T),
     // erros
     TYPE_STAT(INV_TC_R),
     TYPE_STAT(TC_ER_N_STR_SG),
