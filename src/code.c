@@ -16,6 +16,7 @@ static const char *const css[] = {
     "FN_RET_T_INV",
     "FN_RET_ER_T_INV",
     "TC_R_N",
+    "INV_TYPE_STORE_VD",
     "VAR_TYPE_U",
     "INV_INT_CST_PUSH",
     "INV_CST_INT_TO_FD",
@@ -247,6 +248,14 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         OP_A(cs, &gc, RCD, OP, { .t = TYPE(TE) }, NULL);
     }
     while (h) {
+        if (lst->tn->t == TYPE(STMT)) { // check for vars with only types
+            if (h->a->at == AST_TYPE(OP) && h->a->n.op->ot == OP_TYPE(ASS)) {
+                if (h->a->n.op->l->at == AST_TYPE(VAR) &&  h->a->n.op->r->at == AST_TYPE(TYPE)) {
+                    h = h->next;
+                    continue;
+                }
+            }
+        }
         IFCGEN(code_gen, cs, h->a, c);
         if (lst->tn->t == TYPE(TE)) {
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_TE_IDX, h->a);
@@ -336,7 +345,7 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
 
 static code_stat store_var(code_st *const cs, const ast *const a, code **c,  var_node *const var) {
-    if (var->tn->t == TYPE(VD)) return CODE_ER(cs, OK, a);
+    if (var->tn->t == TYPE(VD)) return CODE_ER(cs, INV_TYPE_STORE_VD, a);
     switch (var->vt) {
         case VAR_TYPE(U):
             return CODE_ER(cs, VAR_TYPE_U, a);
@@ -548,7 +557,7 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
     ct = ftn->a->n.lst->t->prev;
     while (ct) {
         if (!(tn = ast_gtn(ct->a))) return CODE_ER(cs, CALL_CT_ARG_T_GC_INV, a);
-        if (tn->t != TYPE(VD)) OP_A(cs, c, SWAP, VD, {}, a);
+        if (tn->t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = tn->t }, a);
         OP_A(cs, c, GC, OP, { .t = tn->t }, ct->a);
         ct = ct->prev;
     }

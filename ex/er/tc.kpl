@@ -1,7 +1,9 @@
 
 // try catch example
 
-i:U6
+i:U6 // TODO check if var has data
+
+//y: i + 1
 
 f:FN(i;ER(i))${(x)
     '"This is an error value passed: ", $(SG;x)

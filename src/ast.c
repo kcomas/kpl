@@ -389,7 +389,7 @@ void ast_f(ast *a) {
 
 static ast_stat ast_parse_call(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
     ast_stat astat;
-    lst_node *args = lst_node_i(as->a, TYPE(STMT));
+    lst_node *args = lst_node_i(as->a, TYPE(ARGS));
     if ((astat = ast_parse_stmts(as, fns, args, TFLS, TKN_FLG(RP))) != AST_STAT(OK)) {
         lst_node_f(args);
         return astat;

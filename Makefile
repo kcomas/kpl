@@ -3,7 +3,7 @@
 .RECIPEPREFIX = >
 CC = gcc
 # DFLAGS
-CFLAGS = $(DFLAGS) -g -Og -Wall -Wextra # TODO specify std
+CFLAGS = $(DFLAGS) -g -O0 -Wall -Wextra # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)
