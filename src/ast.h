@@ -19,6 +19,9 @@ typedef enum {
     AST_STAT(VAR_I_ERR), // failed to add var node
     AST_STAT(OP_CALL_A_NN), // prev op node for call not null
     AST_STAT(FH_A_NN), // prev node for fn/hash not null
+    AST_STAT(HSH_INV_KEY), // key not symbol
+    AST_STAT(HSH_INV_ASS), // inv key/value sep
+    AST_STAT(HSH_INV_VALUE), // key not symbol
     AST_STAT(VT_A_NN), // prev node for vec/tuple not null
     AST_STAT(CALL_A_N), // prev node for call null
     AST_STAT(IF_INV_BODY), // invalid if body
@@ -285,6 +288,62 @@ inline void lst_node_f(lst_node *lst) {
     alf(lst);
 }
 
+typedef struct _kv_itm {
+    size_t id;
+    struct _kv_itm *prev, *next;
+    ast *a;
+    char k[]; // null term
+} kv_itm;
+
+inline kv_itm *kv_itm_i(al *const am, size_t id, const char *const k, ast *const a) {
+    size_t kl = strlen(k);
+    kv_itm *kv = ala(am, sizeof(kv_itm) + sizeof(kl) + sizeof(char));
+    kv->id = id;
+    strcpy(kv->k, k);
+    kv->a = a;
+    return kv;
+}
+
+inline void kv_itm_p(const ast_st *const as, const kv_itm *const kv, void *fn, size_t idnt) {
+    (void) fn;
+    printf("%lu,%s:", kv->id, kv->k);
+    ast_p(as, kv->a, idnt);
+}
+
+inline void kv_itm_f(kv_itm *kv, void *fn) {
+    (void) fn;
+    FNNF(kv->a, ast_f);
+    alf(kv);
+}
+
+typedef struct {
+    size_t len;
+    type_node *tn;
+    kv_itm *h, *t;
+} hsh_node;
+
+inline hsh_node *hsh_node_i(al *const a, type t) {
+    hsh_node *hsh = ala(a, sizeof(hsh_node));
+    hsh->tn = type_node_i(a, t, NULL);
+    return hsh;
+}
+
+inline void hsh_node_a(al *const am, hsh_node *const hsh, const char *const k, ast *const a) {
+    kv_itm *kv = kv_itm_i(am, hsh->len, k, a);
+    LST_A(hsh, kv);
+}
+
+inline void hsh_node_p(const ast_st *const as, const hsh_node *const hsh, size_t idnt) {
+    printf("%lu,HSH", hsh->len);
+    LST_P(hsh, kv_itm, kv_itm_p, as, NULL, idnt, '\n');
+}
+
+inline void hsh_node_f(hsh_node *const hsh) {
+    FNNF(hsh->tn, type_node_f);
+    LST_F(hsh, kv_itm, kv_itm_f, NULL);
+    alf(hsh);
+}
+
 typedef struct _if_itm {
     struct _if_itm *prev, *next;
     ast *cond; // null for else
@@ -311,7 +370,7 @@ inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, s
 inline void if_itm_lop_p(const ast_st *const as, const if_itm *const ii, size_t idnt) {
     putchar('\n');
     PCX(' ', idnt);
-    if_itm_p(as, ii, 0, idnt);
+    if_itm_p(as, ii, NULL, idnt);
 }
 
 inline void if_itm_f(if_itm *im, void *fn) {
@@ -491,6 +550,7 @@ typedef enum {
     AST_TYPE(VAL),
     AST_TYPE(OP),
     AST_TYPE(LST),
+    AST_TYPE(HSH),
     AST_TYPE(IF),
     AST_TYPE(LOP),
     AST_TYPE(FN),
@@ -505,6 +565,7 @@ typedef union {
     val_node *val;
     op_node *op;
     lst_node *lst;
+    hsh_node *hsh;
     if_node *in;
     if_itm *lop;
     fn_node *fn;
@@ -536,6 +597,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(VAL): return a->n.val->tn;
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
+        case AST_TYPE(HSH): return a->n.hsh->tn;
         case AST_TYPE(IF): return NULL;
         case AST_TYPE(LOP): return NULL;
         case AST_TYPE(FN): return a->n.fn->sig;

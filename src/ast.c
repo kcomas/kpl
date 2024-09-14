@@ -13,6 +13,9 @@ static const char *const ass[] = {
     "VAR_I_ERR",
     "OP_CALL_A_NN",
     "FH_A_NN",
+    "HSH_INV_KEY",
+    "HSH_INV_ASS",
+    "HSH_INV_VALUE",
     "VT_A_NN",
     "CALL_A_N",
     "IF_INV_BODY",
@@ -165,6 +168,20 @@ extern inline void lst_node_p(const ast_st *const as, const lst_node *const lst,
 
 extern inline void lst_node_f(lst_node *lst);
 
+extern inline kv_itm *kv_itm_i(al *const am, size_t id, const char *const k, ast *const a);
+
+extern inline void kv_itm_p(const ast_st *const as, const kv_itm *const kv, void *fn, size_t idnt);
+
+extern inline void kv_itm_f(kv_itm *kv, void *fn);
+
+extern inline hsh_node *hsh_node_i(al *const a, type t);
+
+extern inline void hsh_node_a(al *const am, hsh_node *const hsh, const char *const k, ast *const a);
+
+extern inline void hsh_node_p(const ast_st *const as, const hsh_node *const hsh, size_t idnt);
+
+extern inline void hsh_node_f(hsh_node *const hsh);
+
 extern inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body);
 
 extern inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt);
@@ -266,7 +283,7 @@ const char *var_type_str(var_type vt) {
 }
 
 #ifndef MAX_VAR_LEN
-    #define MAX_VAR_LEN 20
+    #define MAX_VAR_LEN 21 // null term
 #endif
 
 // TODO better tbl errors
@@ -311,6 +328,7 @@ static const char *const ast_type_str[] = {
     "VAL",
     "OP",
     "LST",
+    "HSH",
     "IF",
     "LOP",
     "FN",
@@ -340,6 +358,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
         AST_P_CASE(VAL, val, val_node_p);
         AST_P_CASE(OP, op, op_node_p);
         AST_P_CASE(LST, lst, lst_node_p);
+        AST_P_CASE(HSH, hsh, hsh_node_p);
         AST_P_CASE(IF, in, if_node_p);
         AST_P_CASE(LOP, lop, if_itm_lop_p);
         AST_P_CASE(FN, fn, fn_node_p);
@@ -361,6 +380,7 @@ void ast_f(ast *a) {
         AST_F_CASE(VAL, val, val_node_f);
         AST_F_CASE(OP, op, op_node_f);
         AST_F_CASE(LST, lst, lst_node_f);
+        AST_F_CASE(HSH, hsh, hsh_node_f);
         AST_F_CASE(IF, in, if_node_f);
         AST_F_CASE(LOP, lop, if_itm_lop_f);
         AST_F_CASE(FN, fn, fn_node_f);
@@ -500,6 +520,36 @@ static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint
     return ast_parse_stmt(as, par, a, stp_flgs);
 }
 
+static ast_stat ast_parse_hsh(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
+    ast_stat astat;
+    hsh_node *hsh = hsh_node_i(as->a, TYPE(ST));
+    for (;;) {
+        ast *atmp = NULL;
+        char kstr[MAX_VAR_LEN + 1]; // for `
+        memset(kstr, '\0', MAX_VAR_LEN + 1);
+        if ((astat = ast_tkn_next(as, TKN_FLG(NL) | TFWC)) != AST_STAT(OK)) return astat;
+        if (as->next.type == TKN_TYPE(RB)) break;
+        if (as->next.type != TKN_TYPE(SYM)) {
+            hsh_node_f(hsh);
+            return AST_ER(as, HSH_INV_KEY);
+        }
+        memcpy(kstr, as->str + as->next.pos, as->next.len);
+        if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+        if (as->next.type != TKN_TYPE(ASS)) {
+            hsh_node_f(hsh);
+            return AST_ER(as, HSH_INV_ASS);
+        }
+        if ((astat = ast_parse_stmt(as, fns, &atmp, TFLS | TKN_FLG(RB))) != AST_STAT(OK)) {
+            hsh_node_f(hsh);
+            return AST_ER(as, HSH_INV_VALUE);
+        }
+        hsh_node_a(as->a, hsh, kstr, atmp);
+        if (as->next.type == TKN_TYPE(RB)) break;
+    }
+    *a = ast_i(as->a, AST_TYPE(HSH), (node) { .hsh = hsh }, tkn_s);
+    return ast_parse_stmt(as, fns, a, stp_flgs);
+}
+
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
     ast_stat astat;
     if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
@@ -596,7 +646,8 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
                 tkn_st_u(&as->ts, &as->peek);
                 return ast_parse_fn(as, fns, a, stp_flgs, &ttmp);
             }
-            // TODO hash
+            memcpy(&ttmp, &as->next, sizeof(tkn));
+            return ast_parse_hsh(as, fns, a, stp_flgs, &ttmp);
             break;
         case TKN_TYPE(RB):
             return AST_ER(as, TKN_INV);
