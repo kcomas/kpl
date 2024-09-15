@@ -2,6 +2,10 @@
 
 ## Typed/Jitted Scripting Language Written In C
 
+### Supported Platforms
+
+#### x64 Linux
+
 ### Dependencies
 
 #### GNU Make
