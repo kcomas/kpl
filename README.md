@@ -1,6 +1,11 @@
 # KPL (Work In Progress)
 
-### Typed/Jitted Scripting Language Written In C
+## Typed/Jitted Scripting Language Written In C
+
+### Dependencies
+
+#### GNU Make
+#### GCC
 
 ### Build
 
@@ -14,4 +19,4 @@ make
 ./kpl path/to/file
 ```
 
-#### Examples are in the ex folder
+##### Examples are in the ex folder
