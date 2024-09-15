@@ -67,7 +67,6 @@ tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, 
 inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
     for (size_t i = 0; i < tl->size; i++) {
         printf("%lu:", i);
-        // if (!tl->bucks[i]) printf("NULL");
         if (tl->bucks[i]) tbl_itm_p(tl->bucks[i], fn);
         if (i < tl->size - 1) putchar(sep);
     }

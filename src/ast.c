@@ -182,6 +182,16 @@ extern inline void hsh_node_p(const ast_st *const as, const hsh_node *const hsh,
 
 extern inline void hsh_node_f(hsh_node *const hsh);
 
+extern inline hsh_data *hsh_data_i(al *const a, size_t id, type_node *const tn);
+
+extern inline void hsh_data_p(const ast_st *const as, const tbl *const tl, size_t idnt);
+
+void hsh_data_f(void *data) {
+    hsh_data *hd = (hsh_data*) data;
+    FNNF(hd->tn, type_node_f);
+    alf(hd);
+}
+
 extern inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body);
 
 extern inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt);
@@ -329,6 +339,7 @@ static const char *const ast_type_str[] = {
     "OP",
     "LST",
     "HSH",
+    "TBL",
     "IF",
     "LOP",
     "FN",
@@ -359,6 +370,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
         AST_P_CASE(OP, op, op_node_p);
         AST_P_CASE(LST, lst, lst_node_p);
         AST_P_CASE(HSH, hsh, hsh_node_p);
+        AST_P_CASE(TBL, tl, hsh_data_p);
         AST_P_CASE(IF, in, if_node_p);
         AST_P_CASE(LOP, lop, if_itm_lop_p);
         AST_P_CASE(FN, fn, fn_node_p);
@@ -381,6 +393,9 @@ void ast_f(ast *a) {
         AST_F_CASE(OP, op, op_node_f);
         AST_F_CASE(LST, lst, lst_node_f);
         AST_F_CASE(HSH, hsh, hsh_node_f);
+        case AST_TYPE(TBL):
+            if (a->n.tl) tbl_f(a->n.tl, hsh_data_f);
+            break;
         AST_F_CASE(IF, in, if_node_f);
         AST_F_CASE(LOP, lop, if_itm_lop_f);
         AST_F_CASE(FN, fn, fn_node_f);

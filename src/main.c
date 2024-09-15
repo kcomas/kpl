@@ -3,6 +3,7 @@
 #include "jit.h"
 
 int main(int argc, char *argv[]) {
+    // TODO repl
     if (argc != 2) return 1;
     al *volatile a = al_i();
     er *volatile e = er_i(a);

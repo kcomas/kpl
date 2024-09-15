@@ -75,12 +75,13 @@ static const char *const tss[] = {
     "INV_IRET_T",
     "INV_IRET_FNS",
     "IRET_T_NEQ",
-    "VAR_UT"
+    "VAR_UT",
+    "TBL_FOUND"
 };
 
 const char *type_stat_str(type_stat tstat) {
     const char *s = "INVALID_TYPE_STAT";
-    if (tstat >= TYPE_STAT(OK) && tstat <= TYPE_STAT(VAR_UT)) s = tss[tstat];
+    if (tstat >= TYPE_STAT(OK) && tstat <= TYPE_STAT(TBL_FOUND)) s = tss[tstat];
     return s;
 }
 
@@ -133,6 +134,19 @@ static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *c
         }
         h = h->next;
     }
+    return TYPE_ER(ts, OK);
+}
+
+static type_stat type_chk_hsh(type_st *const ts, fn_node *const fns, hsh_node *const hsh) {
+    type_stat tstat;
+    kv_itm *h = hsh->h;
+    bool btts = false; // build table type sig
+    type_node *bs;
+    if (hsh->tn->t == TYPE(ST) && !hsh->tn->a) {
+        btts = true;
+        // TODO
+    }
+    // TODO
     return TYPE_ER(ts, OK);
 }
 
@@ -412,6 +426,8 @@ type_stat type_chk(type_st *const ts, fn_node *const fns, ast *const a) {
             break;
         case AST_TYPE(OP): return type_chk_op(ts, fns, a->n.op);
         case AST_TYPE(LST): return type_chk_lst(ts, fns, a->n.lst);
+        case AST_TYPE(HSH): return type_chk_hsh(ts, fns, a->n.hsh);
+        case AST_TYPE(TBL): return TYPE_ER(ts, TBL_FOUND);
         case AST_TYPE(IF): return type_chk_if(ts, fns, a->n.in);
         case AST_TYPE(LOP): return type_check_lop(ts, fns, a->n.lop);
         case AST_TYPE(FN): return type_chk_fn(ts, a->n.fn);
