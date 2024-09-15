@@ -296,8 +296,7 @@ typedef struct _kv_itm {
 } kv_itm;
 
 inline kv_itm *kv_itm_i(al *const am, size_t id, const char *const k, ast *const a) {
-    size_t kl = strlen(k);
-    kv_itm *kv = ala(am, sizeof(kv_itm) + sizeof(kl) + sizeof(char));
+    kv_itm *kv = ala(am, sizeof(kv_itm) + strlen(k) + sizeof(char));
     kv->id = id;
     strcpy(kv->k, k);
     kv->a = a;
