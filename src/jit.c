@@ -40,9 +40,9 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
             fn_stk_b(a, stk, c->ops[i].od.c);
             fn_stk_a(a, stk, c->ops[i].od.c);
         }
-        if (c->ops[i].oc == OP_C(CTE) && c->ops[i].ot == TYPE(TE)) {
-            fn_stk_b(a, stk, c->ops[i].od.te->gc);
-            fn_stk_a(a, stk, c->ops[i].od.te->gc);
+        if (c->ops[i].oc == OP_C(CTSV)) {
+            fn_stk_b(a, stk, c->ops[i].od.tsv->gc);
+            fn_stk_a(a, stk, c->ops[i].od.tsv->gc);
         }
         if (c->ops[i].oc == OP_C(IF) && c->ops[i].ot == TYPE(IF)) fn_stk_b(a, stk, c->ops[i].od.c);
         if ((c->ops[i].oc == OP_C(LOP) && c->ops[i].ot == TYPE(LOP)) || (c->ops[i].oc == OP_C(COND) && c->ops[i].ot == TYPE(COND))) fn_stk_b(a, stk, c->ops[i].od.of->body);
@@ -328,20 +328,20 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         return JIT_ER(m, PV_T_INV, o);
                 }
                 break;
-            case OP_C(CTE):
+            case OP_C(CTSV):
                 op_set_jidx(j, o);
                 SET_REG(m->a, al*, false, 7);
-                SET_REG(o->od.te->len, size_t, false, 6);
-                SET_REG(o->od.te->gc->jf, jit_fn*, false, 2);
-                SET_FP(var_te_i);
+                SET_REG(o->od.tsv->len, size_t, false, 6);
+                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 2);
+                SET_FP(var_ts_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
-                for (ssize_t i = (ssize_t) o->od.te->len - 1; i >= 0; i--) { // TODO better algo for underflow
+                for (ssize_t i = (ssize_t) o->od.tsv->len - 1; i >= 0; i--) { // TODO better algo for underflow
                     jit_a(j, 0x5F); // pop rdi
                     SET_REG(i, ssize_t, false, 6);
                     jit_a(j, 0x5A); // pop rdx
                     jit_a(j, 0x57); // push rdi
-                    SET_FP(var_te_vr_sidx);
+                    SET_FP(var_tsv_sidx);
                     SET_REG_CALL(false, 0);
                 }
                 op_set_jlen(j, o);
@@ -438,7 +438,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(TE):
                     case TYPE(VR):
-                        SET_FP(var_sg_cnct_sg_te_vr);
+                        SET_FP(var_sg_cnct_sg_tsv);
                         break;
                     default:
                         return JIT_ER(m, CNCTSG_T_INV, o);
@@ -518,7 +518,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(TE):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
-                        SET_FP(var_te_vr_gc);
+                        SET_FP(var_tsv_gc);
                         SET_REG_CALL(false, 0);
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         jit_a(j, 0x5F); // pop rdi
@@ -552,7 +552,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(ER):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_REG(o->od.v.id, uint8_t, false, 6);
-                        SET_FP(var_te_vr_gidx);
+                        SET_FP(var_tsv_gidx);
                         SET_REG_CALL(false, 0);
                         break;
                     default:
@@ -576,7 +576,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0)
                         break;
                     case TYPE(TE):
-                        SET_FP(var_te_vr_gc);
+                        SET_FP(var_tsv_gc);
                         SET_REG_CALL(false, 0);
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         break;
@@ -596,7 +596,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(TE):
                     case TYPE(VR):
-                        SET_FP(var_te_vr_d);
+                        SET_FP(var_tsv_d);
                         SET_REG_CALL(false, 0);
                         break;
                     case TYPE(ER):

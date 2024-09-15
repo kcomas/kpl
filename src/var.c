@@ -36,7 +36,7 @@ var_sg *var_sg_cnct_sg_sg(al *const a, const var_sg *const l, const var_sg *cons
     return sg;
 }
 
-var_sg *var_sg_cnct_sg_te_vr(al *const a, const var_sg *const l, const var_te_vr *const r) {
+var_sg *var_sg_cnct_sg_tsv(al *const a, const var_sg *const l, const var_tsv *const r) {
     size_t size = l->len * (r->len - 1) + sizeof(char);
     for (size_t i = 0; i < r->len; i++) size += r->v[i].sg->len;
     var_sg *sg = var_sg_i(a, size);
@@ -140,31 +140,31 @@ VAR_BOP_T(or, ||, u6, uint64_t)
 
 bool OO0 var_not(bool v) { return !v; }
 
-var_te_vr *var_te_vr_i(al *const a, size_t size, jit_fn *gc) {
-    var_te_vr *vtv = ala(a, sizeof(var_te_vr) + size * sizeof(var));
-    vtv->size = size;
-    vtv->gc = gc;
-    return vtv;
+var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc) {
+    var_tsv *vtsv = ala(a, sizeof(var_tsv) + size * sizeof(var));
+    vtsv->size = size;
+    vtsv->gc = gc;
+    return vtsv;
 }
 
-var_te_vr *var_te_i(al *const a, size_t size, jit_fn *gc) {
-    var_te_vr *te = var_te_vr_i(a, size, gc);
-    te->len = size;
-    return te;
+var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc) {
+    var_tsv *ts = var_tsv_i(a, size, gc);
+    ts->len = size;
+    return ts;
 }
 
-jit_fn *var_te_vr_gc(var_te_vr *const vtv) {
-    return vtv->gc;
+jit_fn *var_tsv_gc(var_tsv *const tsv) {
+    return tsv->gc;
 }
 
-void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v) {
-    vtv->v[idx] = v;
+void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
+    tsv->v[idx] = v;
 }
 
-var var_te_vr_gidx(var_te_vr *const vtv, size_t idx) {
-    return vtv->v[idx];
+var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
+    return tsv->v[idx];
 }
 
-void var_te_vr_d( var_te_vr *vtv) {
-    alf(vtv);
+void var_tsv_d(var_tsv *tsv) {
+    alf(tsv);
 }

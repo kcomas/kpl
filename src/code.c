@@ -50,7 +50,7 @@ extern inline code_stat code_er(code_st *const cs, const char *const fnn, code_s
 
 #define CODE_ER(CS, CSTAT, A) code_er(CS, __func__, CODE_STAT(CSTAT), A)
 
-extern inline cte *cte_i(al *const a, size_t len, code *const gc);
+extern inline ctsv *ctsv_i(al *const a, size_t len, code *const gc);
 
 #define CODE_F_T(T, FN, P) if (c->ops[i].ot == TYPE(T)) FN(c->ops[i].od.P)
 
@@ -62,12 +62,12 @@ void code_f(code *c) {
         CODE_F_T(LOP, op_if_f, of);
         CODE_F_T(SG, alf, sg);
         CODE_F_T(STR, alf, sg);
-        CODE_F_T(TE, cte_f, te);
+        CODE_F_T(TE, ctsv_f, tsv);
     }
     alf(c);
 }
 
-extern inline void cte_f(cte *te);
+extern inline void ctsv_f(ctsv *tsv);
 
 extern inline code *code_i(al *const a, size_t size);
 
@@ -94,7 +94,7 @@ static const char *op_c_str[] = {
     "SA",
     "LA",
     "PV",
-    "CTE",
+    "CTSV",
     "IF",
     "COND",
     "LOP",
@@ -169,9 +169,9 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 printf(",%s", c->ops[i].od.sg);
                 break;
             case TYPE(TE):
-                printf(",%lu", c->ops[i].od.te->len);
+                printf(",%lu", c->ops[i].od.tsv->len);
                 putchar('\n');
-                code_p(cs, c->ops[i].od.te->gc, idnt + 4);
+                code_p(cs, c->ops[i].od.tsv->gc, idnt + 4);
                 break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
@@ -266,7 +266,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     if (lst->tn->t == TYPE(TE)) {
         OP_A(cs, &gc, DEL, OP, { . t = TYPE(TE) }, NULL);
         OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-        OP_A(cs, c, CTE, TE, { .te = cte_i(cs->a, lst->len, gc) }, NULL);
+        OP_A(cs, c, CTSV, TE, { .tsv = ctsv_i(cs->a, lst->len, gc) }, NULL);
     }
     return CODE_ER(cs, OK, NULL);
 }

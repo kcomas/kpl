@@ -89,7 +89,7 @@ typedef enum {
     OP_C(SA), // store arg
     OP_C(LA), // load arg
     OP_C(PV), // push value
-    OP_C(CTE), // create tuple from stack u6 is length
+    OP_C(CTSV), // create tuple from stack u6 is length
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
@@ -136,20 +136,20 @@ typedef struct {
 typedef struct {
     size_t len;
     code *gc;
-} cte; // create tuple
+} ctsv; // create tuple, strut, vec
 
-inline cte *cte_i(al *const a, size_t len, code *const gc) {
-    cte *te = ala(a, sizeof(cte));
-    te->len = len;
-    te->gc = gc;
-    return te;
+inline ctsv *ctsv_i(al *const a, size_t len, code *const gc) {
+    ctsv *tsv = ala(a, sizeof(ctsv));
+    tsv->len = len;
+    tsv->gc = gc;
+    return tsv;
 }
 
 void code_f(code *c);
 
-inline void cte_f(cte *te) {
-    code_f(te->gc);
-    alf(te);
+inline void ctsv_f(ctsv *tsv) {
+    code_f(tsv->gc);
+    alf(tsv);
 }
 
 typedef struct {
@@ -178,7 +178,7 @@ typedef union _op_d {
     rer e;
     op_if *of;
     char *sg; // null term
-    cte *te;
+    ctsv *tsv;
 } op_d;
 
 typedef struct {
