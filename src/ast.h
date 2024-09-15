@@ -334,6 +334,7 @@ inline void hsh_node_a(al *const am, hsh_node *const hsh, const char *const k, a
 
 inline void hsh_node_p(const ast_st *const as, const hsh_node *const hsh, size_t idnt) {
     printf("%lu,HSH", hsh->len);
+    type_node_p(as, hsh->tn, idnt);
     LST_P(hsh, kv_itm, kv_itm_p, as, NULL, idnt, '\n');
 }
 
@@ -359,8 +360,10 @@ inline void hsh_data_p(const ast_st *const as, const tbl *const tl, size_t idnt)
     tbl_itm *h = tl->h;
     while (h) {
         hsh_data *hd = (hsh_data*) h->data;
-        printf("%lu,%s,", hd->id, h->str);
-        type_node_p(as, hd->tn, idnt);
+        putchar('\n');
+        PCX(' ', idnt);
+        printf("%lu,%s", hd->id, h->str);
+        type_node_p(as, hd->tn, idnt + 2);
         h = h->next;
     }
 }
