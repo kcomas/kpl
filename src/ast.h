@@ -370,6 +370,35 @@ inline void hsh_data_p(const ast_st *const as, const tbl *const tl, size_t idnt)
 
 void hsh_data_f(void *data);
 
+typedef struct {
+    type_node *tn;
+    ast *a; // left side
+    char s[]; // null term
+} sym_node;
+
+inline sym_node *sym_node_i(al *const am, ast *const a, const tkn *const t, const char *const str) {
+    sym_node *sym = ala(am, sizeof(sym_node) + t->len + sizeof(char));
+    sym->a = a;
+    memcpy(sym->s, str + t->pos, t->len);
+    return sym;
+}
+
+inline void sym_node_p(const ast_st *const as, const sym_node *const sym, size_t idnt) {
+    type_node_p(as, sym->tn, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    ast_p(as, sym->a, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    printf("%s", sym->s);
+}
+
+inline void sym_node_f(sym_node *const sym) {
+    FNNF(sym->tn, type_node_f);
+    FNNF(sym->a, ast_f);
+    alf(sym);
+}
+
 typedef struct _if_itm {
     struct _if_itm *prev, *next;
     ast *cond; // null for else
@@ -578,6 +607,7 @@ typedef enum {
     AST_TYPE(LST),
     AST_TYPE(HSH),
     AST_TYPE(TBL),
+    AST_TYPE(SYM),
     AST_TYPE(IF),
     AST_TYPE(LOP),
     AST_TYPE(FN),
@@ -594,6 +624,7 @@ typedef union {
     lst_node *lst;
     hsh_node *hsh;
     tbl *tl;
+    sym_node *sym;
     if_node *in;
     if_itm *lop;
     fn_node *fn;
@@ -627,6 +658,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(LST): return a->n.lst->tn;
         case AST_TYPE(HSH): return a->n.hsh->tn;
         case AST_TYPE(TBL): return NULL;
+        case AST_TYPE(SYM): return a->n.sym->tn;
         case AST_TYPE(IF): return NULL;
         case AST_TYPE(LOP): return NULL;
         case AST_TYPE(FN): return a->n.fn->sig;
