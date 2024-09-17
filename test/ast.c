@@ -7,7 +7,11 @@ int main(int argc, char *argv[]) {
     al *a = al_i();
     er *e = er_i(a);
     mod *m = mod_i(a, e);
-    mod_lfile(m, argv[1]);
+    mod_stat mstat;
+    if ((mstat = mod_lfile(m, argv[1])) != MOD_STAT(OK)) {
+        er_p(e);
+        return mstat;
+    }
     m->fns = fn_node_i(a, NULL);
     m->fns->sig = type_node_i(a, TYPE(MOD), NULL);
     ast_stat astat;
