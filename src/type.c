@@ -9,6 +9,10 @@ static const char *const tss[] = {
     "BLTS_INV_T",
     "BTTS_INV_T",
     "HSH_TBL_INS_F",
+    "SYM_INV",
+    "SYM_INV_A_T",
+    "SYM_INV_TBL_R",
+    "SYM_HSH_DATA_T_INV",
     "INV_TC_R",
     "TC_ER_N_STR_SG",
     "TC_ER_L_LST_INV",
@@ -164,8 +168,25 @@ static type_stat type_chk_hsh(type_st *const ts, fn_node *const fns, hsh_node *c
     return TYPE_ER(ts, OK);
 }
 
-static type_chk_sym(type_st *const st, fn_node *const fns, sym_node *const sym) {
-
+static type_stat type_chk_sym(type_st *const ts, fn_node *const fns, sym_node *const sym) {
+    if (!sym->a) {
+        sym->tn = type_node_i(ts->a, TYPE(SL), NULL);
+        return TYPE_ER(ts, OK);
+    }
+    type_stat tstat;
+    IFTCHK(type_chk, ts, fns, sym->a);
+    type_node *tn;
+    ASTGTN(tn, sym->a, SYM_INV_A_T);
+    if (tn->t == TYPE(ST) && tn->a && tn->a->at == AST_TYPE(TBL)) {
+        tbl_itm *ti;
+        if (tbl_op(ts->a, &tn->a->n.tl, sym->s, NULL, &ti, NULL, TBL_OP_FLG(FD)) != TBL_STAT(OK)) return TYPE_ER(ts, SYM_INV_TBL_R);
+        hsh_data *hd = (hsh_data*) ti->data;
+        if (!hd->tn) return TYPE_ER(ts, SYM_HSH_DATA_T_INV);
+        sym->tn = type_node_c(ts->a, hd->tn);
+        return TYPE_ER(ts, OK);
+    }
+    // TODO tuple index
+    return TYPE_ER(ts, SYM_INV);
 }
 
 static type_stat type_chk_if(type_st *const ts, fn_node *const fns, if_node *const in) {
