@@ -244,6 +244,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(I6, mod_sg_i6);
                     CT_SET_FN(U6, mod_sg_u6);
                     CT_SET_FN(SG, mod_sg_var_sg);
+                    CT_SET_FN(TE, mod_sg_var_tsv);
+                    CT_SET_FN(ST, mod_sg_var_tsv);
                     CT_SET_FN(FN, mod_sg_jf);
                     CT_SET_FN(FD, mod_sg_fd);
                     CT_SET_FN(ER, mod_sg_er);
@@ -262,6 +264,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(I6, mod_lg_i6);
                     CT_SET_FN(U6, mod_lg_u6);
                     CT_SET_FN(SG, mod_lg_var_sg);
+                    CT_SET_FN(TE, mod_lg_var_tsv);
+                    CT_SET_FN(ST, mod_lg_var_tsv);
                     CT_SET_FN(FN, mod_lg_jf);
                     CT_SET_FN(FD, mod_lg_fd);
                     CT_SET_FN(ER, mod_lg_er);
@@ -344,6 +348,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     SET_FP(var_tsv_sidx);
                     SET_REG_CALL(false, 0);
                 }
+                op_set_jlen(j, o);
+                break;
+            case OP_C(IDX):
+                op_set_jidx(j, o);
+                jit_a(j, 0x5F); // pop rdi
+                SET_REG(o->od.u6, size_t, false, 6);
+                SET_FP(var_tsv_gidx);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(IF):
@@ -482,8 +495,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
-                    case TYPE(TE):
                     case TYPE(VR):
+                    case TYPE(TE):
+                    case TYPE(ST):
                         break;
                     default:
                         return JIT_ER(m, RCD_T_INV, o);
@@ -596,6 +610,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(TE):
                     case TYPE(VR):
+                    case TYPE(ST):
                         SET_FP(var_tsv_d);
                         SET_REG_CALL(false, 0);
                         break;

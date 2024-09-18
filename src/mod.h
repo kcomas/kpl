@@ -50,6 +50,9 @@ MOD_LG(int, fd);
 void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg);
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
 
+void mod_sg_var_tsv(mod *const m, uint8_t i, var_tsv *const tsv);
+var_tsv *mod_lg_var_tsv(mod *const m, uint8_t i);
+
 void mod_sg_jf(mod *const m, uint8_t i, jit_fn *const jf);
 jit_fn *mod_lg_jf(mod *const m, uint8_t i);
 

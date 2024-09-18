@@ -33,7 +33,7 @@ typedef union _var {
     int fd;
     jit_fn *jf;
     var_sg *sg;
-    var_tsv *te, *vr;
+    var_tsv *tsv;
     er_itm *ei;
 } var;
 
@@ -94,6 +94,8 @@ typedef struct _var_tsv {
 var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc);
 
 var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc);
+
+void var_tsv_rci(var_tsv *const tsv);
 
 jit_fn *var_tsv_gc(var_tsv *const tsv);
 
