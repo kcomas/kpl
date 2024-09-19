@@ -122,7 +122,7 @@ static const char *op_c_str[] = {
     "CNCTSG",
     "WFD",
     "RCI",
-    "RCD",
+    "RCF",
     "GC",
     "GCTEI",
     "DEL"
@@ -271,7 +271,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         gc = code_i(cs->a, CODE_I_SIZE);
         OP_A(cs, &gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
         OP_A(cs, &gc, LA, VAR, { SLV(0, TYPE(TE)) }, NULL);
-        OP_A(cs, &gc, RCD, OP, { .t = TYPE(TE) }, NULL);
+        OP_A(cs, &gc, RCF, OP, { .t = TYPE(TE) }, NULL);
     }
     while (h) {
         if (lst->tn->t == TYPE(STMT)) { // check for vars with only types
@@ -307,7 +307,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
         gc = code_i(cs->a, CODE_I_SIZE);
         OP_A(cs, &gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
         OP_A(cs, &gc, LA, VAR, { SLV(0, TYPE(ST)) }, NULL);
-        OP_A(cs, &gc, RCD, OP, { .t = TYPE(ST) }, NULL);
+        OP_A(cs, &gc, RCF, OP, { .t = TYPE(ST) }, NULL);
     }
     while (h) {
         IFCGEN(code_gen, cs, h->a, c);

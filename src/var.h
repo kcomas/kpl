@@ -37,7 +37,7 @@ typedef union _var {
     er_itm *ei;
 } var;
 
-ssize_t var_rcd(var v, type t);
+ssize_t var_rcf(var v, type t);
 
 bool OO0 var_zoo_u6(uint64_t v);
 bool OO0 var_zoo_i6(int64_t v);
