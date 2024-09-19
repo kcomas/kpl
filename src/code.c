@@ -249,7 +249,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
             code_a(cs->a, c, (op) {oc, t, 0, 0, od,  a});
             break;
         default:
-            return CODE_ER(cs, GC_INV, NULL);
+            return CODE_ER(cs, GC_INV, a);
 
     }
     return CODE_ER(cs, OK, NULL);
@@ -594,7 +594,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             else return CODE_ER(cs, INV_FD_OP, a);
             break;
     }
-    if (opn->ret->t == TYPE(ER) && !opn->ret->ec) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+    if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+    else if (opn->ret->t != TYPE(ER) && opn->ret->t != TYPE(VD) && (opn->flgs & NODE_FLG(GCR))) OP_GC(cs, c, opn->ret, a);
     return CODE_ER(cs, OK, NULL);
 }
 
@@ -616,15 +617,15 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
     tn = cn->ret;
     if (tn->t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, CALL_T_ER_T_INV, a);
-        if (ires) OP_A(cs, c, CS, ER, { RER(tn->t, tn->ec) }, a);
-        else OP_A(cs, c, CFN, ER, { RER(tn->t, tn->ec) }, a);
+        if (ires) OP_A(cs, c, CS, ER, { RER(tn->t, NFEC(tn->flgs)) }, a);
+        else OP_A(cs, c, CFN, ER, { RER(tn->t, NFEC(tn->flgs)) }, a);
     } else {
         if (ires) OP_A(cs, c, CS, OP, { .t = tn->t }, a);
         else OP_A(cs, c, CFN, OP, { .t = tn->t }, a);
     }
     if (tn->t != TYPE(VD)) {
         OP_A(cs, c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
-        if (cn->gcr) {
+        if (cn->flgs & NODE_FLG(GCR)) {
             OP_GC(cs, c, tn, a);
         }
     }
@@ -635,7 +636,7 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
         OP_A(cs, c, GC, OP, { .t = tn->t }, ct->a);
         ct = ct->prev;
     }
-    if (cn->ret->t == TYPE(ER) && !cn->ret->ec) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+    if (cn->ret->t == TYPE(ER) && !NFEC(cn->ret->flgs)) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
     return CODE_ER(cs, OK, NULL);
 }
 
@@ -687,7 +688,7 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
     if (t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, FN_RET_ER_T_INV, NULL);
         if (tn->t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
-        OP_A(cs, c, RFN, ER, { RER(tn->t, tn->ec) }, NULL);
+        OP_A(cs, c, RFN, ER, { RER(tn->t, NFEC(tn->flgs)) }, NULL);
     } else {
         if (t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
         OP_A(cs, c, RFN, CODE, { .t = t }, NULL);
