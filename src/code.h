@@ -164,7 +164,7 @@ typedef struct {
     bool ec;
 } rer;
 
-#define RER(T, EC) .e = (rer) {T, EC}
+#define RER(T, EC) .e = (rer) {T, (bool) EC}
 
 typedef union _op_d {
     type t;

@@ -13,6 +13,8 @@ var_sg *var_sg_i_str(al *const a, const char *const str);
 
 void var_sg_rci(var_sg *const sg);
 
+void var_sg_rcd(var_sg *const sg);
+
 size_t var_sg_len(var_sg *const sg);
 
 const char *var_sg_str(var_sg *const sg);
@@ -96,6 +98,8 @@ var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc);
 var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc);
 
 void var_tsv_rci(var_tsv *const tsv);
+
+void var_tsv_rcd(var_tsv *const tsv);
 
 jit_fn *var_tsv_gc(var_tsv *const tsv);
 

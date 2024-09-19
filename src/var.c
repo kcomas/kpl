@@ -19,6 +19,10 @@ void var_sg_rci(var_sg *const sg) {
     sg->rc++;
 }
 
+void var_sg_rcd(var_sg *const sg) {
+    sg->rc--;
+}
+
 size_t var_sg_len(var_sg *const sg) {
     return sg->len;
 }
@@ -157,6 +161,10 @@ var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc) {
 
 void var_tsv_rci(var_tsv *const tsv) {
     tsv->rc++;
+}
+
+void var_tsv_rcd(var_tsv *const tsv) {
+    tsv->rc--;
 }
 
 jit_fn *var_tsv_gc(var_tsv *const tsv) {

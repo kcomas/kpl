@@ -60,7 +60,7 @@ inline void er_p(er *const e) {
     }
 }
 
-void er_e(er *const e);
+void er_e(al *const am, er *const e, size_t lno, size_t cno);
 
 void er_c(er *const e);
 
