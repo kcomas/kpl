@@ -132,7 +132,7 @@ static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *c
         lst->tn->a = ast_i(ts->a, AST_TYPE(LST), (node) { .lst = lst_node_i(ts->a, TYPE(STMT)) }, NULL);
     }
     while (h) {
-        if (lst->tn->t == TYPE(STMT) && h->a->at == AST_TYPE(CALL) && h != lst->t) h->a->n.cn->gcr = true; // top level call gc return type
+        if (lst->tn->t == TYPE(STMT) && h->a->at == AST_TYPE(CALL) && (h != lst->t || !fns->par)) h->a->n.cn->gcr = true; // top level call gc return type
         IFTCHK(type_chk, ts, fns, h->a);
         if (blts) {
             ASTGTN(bs, h->a, BLTS_INV_T);

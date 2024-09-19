@@ -54,11 +54,11 @@ MOD_LG_FN(uint64_t, u6)
 MOD_SG_FN(int, fd);
 MOD_LG_FN(int, fd);
 
-void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { var_sg_rci(sg); m->g[i].sg = sg; }
-var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { var_sg_rci(m->g[i].sg); return m->g[i].sg; }
+void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg) { m->g[i].sg = sg; }
+var_sg *mod_lg_var_sg(mod *const m, uint8_t i) { return m->g[i].sg; }
 
-void mod_sg_var_tsv(mod *const m, uint8_t i, var_tsv *const tsv) { var_tsv_rci(tsv); m->g[i].tsv = tsv; }
-var_tsv *mod_lg_var_tsv(mod *const m, uint8_t i) { var_tsv_rci(m->g[i].tsv); return m->g[i].tsv; }
+void mod_sg_var_tsv(mod *const m, uint8_t i, var_tsv *const tsv) { m->g[i].tsv = tsv; }
+var_tsv *mod_lg_var_tsv(mod *const m, uint8_t i) { return m->g[i].tsv; }
 
 void mod_sg_jf(mod *const m, uint8_t i, jit_fn *const jf) { m->g[i].jf = jf; }
 jit_fn *mod_lg_jf(mod *const m, uint8_t i) { return m->g[i].jf; }
