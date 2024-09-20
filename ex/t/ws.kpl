@@ -4,3 +4,7 @@
 a: "Hello World\n"
 $(FD;1) << a
 // $(FD;1) << "Hello World\n"
+a: "Hello Again\n"
+$(FD;1) << a
+\d a
+// check gc

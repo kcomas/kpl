@@ -90,9 +90,6 @@ typedef union _var var;
 // print char x times
 #define PCX(C, X) for (size_t i = 0; i < X; i++) putchar(C)
 
-// number as bool
-#define AB(V) ((V) != 0)
-
 typedef struct {
     uint8_t ng; // number of globals
     struct {
