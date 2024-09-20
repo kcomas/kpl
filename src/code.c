@@ -248,7 +248,9 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(I5):
         case TYPE(I6):
         case TYPE(SG):
+        case TYPE(VR):
         case TYPE(TE):
+        case TYPE(ST):
         case TYPE(ER):
             code_a(cs->a, c, (op) {oc, t, 0, 0, od,  a});
             break;
@@ -660,8 +662,8 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
     ct = ftn->a->n.lst->t->prev;
     while (ct) {
         if (!(tn = ast_gtn(ct->a))) return CODE_ER(cs, CALL_CT_ARG_T_GC_INV, a);
-        if (tn->t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = tn->t }, a);
-        OP_A(cs, c, GC, OP, { .t = tn->t }, ct->a);
+        if (cn->ret->t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = tn->t }, a); // swap ret and gc args
+        OP_GC(cs, c, tn, ct->a);
         ct = ct->prev;
     }
     if (cn->ret->t == TYPE(ER) && !NFEC(cn->ret->flgs)) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);

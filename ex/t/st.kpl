@@ -2,6 +2,9 @@
 // `key:value
 v:{`a:SG$I6$1;`b:SG$I6$2}
 
-$(FD;1) << " ", ["b:";v`b;"a:";v`a;"\n"]
+f:FN(v;VD)${(x)
+    $(FD;1) << " ", ["b:";x`b;"a:";x`a;"\n"]}
+
+f(v)
 
 \d v
