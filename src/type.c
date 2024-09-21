@@ -439,7 +439,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
         case TYPE(TE):
             if (cn->args->len != 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t != TYPE(INT)) return TYPE_ER(ts, INV_TE_CALL);
             tidx = tkn_to_int64_t(&cn->args->h->a->t, ts->str);
-            if (tidx < 0 || tidx > (int64_t) cn->tgt->n.lst->len - 1) return TYPE_ER(ts, INV_TE_CALL_IDX);
+            if (tidx < 0 || tidx > ((int64_t) tt->a->n.lst->len - 1)) return TYPE_ER(ts, INV_TE_CALL_IDX);
             th = tt->a->n.lst->h;
             while (tidx > 0) {
                tidx--;
