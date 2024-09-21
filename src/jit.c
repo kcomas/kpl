@@ -21,7 +21,7 @@ static const char *const jss[] = {
     "RCD_T_INV",
     "RCF_T_INV",
     "GC_T_INV",
-    "GCTEI_T_INV",
+    "GCTSV_T_INV",
     "DEL_T_INV",
     "INV_CODE"
 };
@@ -361,6 +361,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
+            case OP_C(SIDX):
+                op_set_jidx(j, o);
+                jit_a(j, 0x5F); // pop rdi
+                SET_REG(o->od.u6, size_t, false, 6);
+                jit_a(j, 0x5A); // pop rdx
+                SET_FP(var_tsv_sidx);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
             case OP_C(IF):
                 op_set_jidx(j, o);
                 if ((jstat = jit_if(m, o->od.c, jf, j)) != JIT_STAT(OK)) return jstat;
@@ -592,7 +601,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 op_set_jlen(j, o);
                 break;
-            case OP_C(GCTEI):
+            case OP_C(GCTSV):
                 op_set_jidx(j, o);
                 switch (o->od.v.t) {
                     case TYPE(U3):
@@ -617,7 +626,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0);
                         break;
                     default:
-                        return JIT_ER(m, GCTEI_T_INV, o);
+                        return JIT_ER(m, GCTSV_T_INV, o);
                 }
                 jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
                 switch (o->od.v.t) {
@@ -644,7 +653,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         break;
                     default:
-                        return JIT_ER(m, GCTEI_T_INV, o);
+                        return JIT_ER(m, GCTSV_T_INV, o);
                 }
                 op_set_jlen(j, o);
                 break;
