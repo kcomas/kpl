@@ -390,17 +390,6 @@ static code_stat code_gen_lop(code_st *const cs, const ast *const a, code **c) {
     return CODE_ER(cs, OK, NULL);
 }
 
-#ifndef MAX_INT_LEN
-    #define MAX_INT_LEN 20
-#endif
-
-static int64_t tkn_to_int64_t(const tkn *const t, const char *const str) {
-    char istr[MAX_INT_LEN], *eptr;
-    memset(istr, '\0', MAX_INT_LEN);
-    memcpy(istr, str + t->pos, t->len);
-    return strtoll(istr, &eptr, 10);
-}
-
 static code_stat p_int(code_st *const cs, type t, const ast *const a, code **c) {
     int64_t i = tkn_to_int64_t(&a->t, cs->str);
     switch (t) {

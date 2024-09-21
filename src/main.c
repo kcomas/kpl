@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     }
     type_stat tstat;
     type_st ts;
-    type_st_i(&ts, a, e);
+    type_st_i(&ts, a, e, m->src.str);
     if ((tstat = type_chk_fn(&ts, m->fns)) != TYPE_STAT(OK)) {
         fn_node_p(&as, m->fns, 0);
         putchar('\n');

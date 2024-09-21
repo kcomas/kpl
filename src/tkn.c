@@ -269,3 +269,14 @@ void tkn_p(const tkn *const t, const char *const str) {
     else if (t->type == TKN_TYPE(WS)) printf("\\s[%lu]", t->len);
     else for (size_t i = 0; i < t->len; i++) putchar(str[t->pos + i]);
 }
+
+#ifndef MAX_INT_LEN
+    #define MAX_INT_LEN 20
+#endif
+
+int64_t tkn_to_int64_t(const tkn *const t, const char *const str) {
+    char istr[MAX_INT_LEN], *eptr;
+    memset(istr, '\0', MAX_INT_LEN);
+    memcpy(istr, str + t->pos, t->len);
+    return strtoll(istr, &eptr, 10);
+}

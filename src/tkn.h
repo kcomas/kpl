@@ -144,3 +144,5 @@ inline tkn_stat tkn_peek(tkn_st *const ts, tkn *const t, const char *const str) 
 
 // print tkn
 void tkn_p(const tkn *const t, const char *const str);
+
+int64_t tkn_to_int64_t(const tkn *const t, const char *const str);
