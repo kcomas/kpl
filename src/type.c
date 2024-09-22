@@ -28,6 +28,7 @@ static const char *const tss[] = {
     "INV_VAR_ASS",
     "VAR_ASS_N_T_M",
     "INV_SYM_ASS",
+    "INV_CALL_ASS",
     "SYM_ASS_N_T_M",
     "INV_ASS_TO",
     "INV_CST",
@@ -301,6 +302,12 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 if (!type_eq(lt, rt)) return TYPE_ER(ts, SYM_ASS_N_T_M);
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
+            } else if (op->l->at == AST_TYPE(CALL)) {
+                ASTGTN(lt, op->l->n.cn->tgt, INV_CALL_ASS);
+                if (lt->t != TYPE(TE)) return TYPE_ER(ts, INV_CALL_ASS);
+                IFTCHK(type_chk_call, ts, fns, op->l->n.cn);
+                op->ret = type_node_i(ts->a, TYPE(VD), NULL);
+                break;
             }
             return TYPE_ER(ts, INV_ASS_TO);
         case OP_TYPE(CST):
@@ -467,7 +474,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
     return TYPE_ER(ts, OK);
 }
 
-type_stat type_chk_ret(type_st *const ts, fn_node *const fns, ret_node *const ret) {
+static type_stat type_chk_ret(type_st *const ts, fn_node *const fns, ret_node *const ret) {
     type_stat tstat;
     IFTCHK(type_chk, ts, fns, ret->a);
     type_node *tmpr, *tmpf;

@@ -37,6 +37,7 @@ typedef enum {
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
     TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
     TYPE_STAT(INV_SYM_ASS),
+    TYPE_STAT(INV_CALL_ASS),
     TYPE_STAT(SYM_ASS_N_T_M),
     TYPE_STAT(INV_ASS_TO), // cannot assign to node
     // cast
@@ -135,6 +136,8 @@ inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tst
     er_a(ts->e, ei);
     return tstat;
 }
+
+type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const cn);
 
 type_stat type_chk(type_st *const ts, fn_node *const fns, ast *const a);
 
