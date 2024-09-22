@@ -96,6 +96,7 @@ typedef enum {
     TKN_STAT(FLT), // bad float format
     TKN_STAT(CHR), // no tkn for char
     TKN_STAT(CTRL), // no # ctrl tkn
+    TKN_STAT(CMD), // no \ cmd tkn
     TKN_STAT(END) // no more tkns
 } tkn_stat;
 

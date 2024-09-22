@@ -6,6 +6,7 @@ static const char *const tss[] = {
     "FLT",
     "CHR",
     "CTRL",
+    "CMD",
     "END"
 };
 
@@ -163,7 +164,14 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 break;
             T_ONE_C(':', ASS);
             T_ONE_C('$', CST);
-            T_TWO_C('\\', INV, 'd', DEL);
+            case '\\':
+                t->len++;
+                switch (str[t->pos + t->len]) {
+                    T_ONE_C('d', DEL);
+                    default:
+                        return TKN_ER(ts, CMD);
+                }
+                break;
             T_ONE_C('+', ADD);
             T_ONE_C('-', SUB);
             T_ONE_C('*', MUL);
