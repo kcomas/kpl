@@ -28,8 +28,9 @@ static const char *const tss[] = {
     "INV_VAR_ASS",
     "VAR_ASS_N_T_M",
     "INV_SYM_ASS",
-    "INV_CALL_ASS",
     "SYM_ASS_N_T_M",
+    "INV_CALL_ASS",
+    "CALL_ASS_N_T_M",
     "INV_ASS_TO",
     "INV_CST",
     "INV_CST_L_A",
@@ -106,7 +107,7 @@ extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_s
 
 static bool type_eq(const type_node *const ta, const type_node *tb) {
     if (!ta || !tb) return false;
-    if (ta->t == TYPE(SG) && tb->t == TYPE(STR)) return true;
+    if ((ta->t == TYPE(SG) && tb->t == TYPE(STR)) || (ta->t == TYPE(STR) && tb->t == TYPE(SG))) return true;
     if (ta->t != tb->t) return false;
     // TODO deep check
     return true;
@@ -305,7 +306,8 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             } else if (op->l->at == AST_TYPE(CALL)) {
                 ASTGTN(lt, op->l->n.cn->tgt, INV_CALL_ASS);
                 if (lt->t != TYPE(TE)) return TYPE_ER(ts, INV_CALL_ASS);
-                IFTCHK(type_chk_call, ts, fns, op->l->n.cn);
+                IFTCHK(type_chk, ts, fns, op->l);
+                if (!type_eq(op->l->n.cn->ret, rt)) return TYPE_ER(ts, CALL_ASS_N_T_M);
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }

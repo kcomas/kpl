@@ -22,6 +22,7 @@ static const char *const css[] = {
     "FN_RET_ER_T_INV",
     "TC_R_N",
     "ASS_R_N",
+    "ASS_TE_INV",
     "INV_TYPE_STORE_VD",
     "VAR_TYPE_U",
     "INV_INT_CST_PUSH",
@@ -467,11 +468,18 @@ static code_stat load_var(code_st *const cs, const ast *const a, code **c, bool 
     return CODE_ER(cs, OK, a);
 }
 
+static int64_t te_call_idx(code_st *const cs, const call_node *const cn) {
+    if (cn->tgt->n.var->tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
+        return tkn_to_int64_t(&cn->args->h->a->t, cs->str);
+    }
+    return -1;
+}
+
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     op_node *opn = a->n.op;
     type_node *tl, *tr;
-    int64_t i6;
+    int64_t i6, tidx;
     hsh_data *hd;
     switch (opn->ot) {
         case OP_TYPE(TC):
@@ -506,6 +514,17 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_GC(cs, c, hd->tn, opn->l);
                 IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
                 OP_A(cs, c, SIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
+                break;
+            } else if (opn->l->at == AST_TYPE(CALL)) {
+                if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, ASS_R_N, opn->r);
+                OP_RCI(cs, c, tr);
+                if ((tidx = te_call_idx(cs, opn->l->n.cn)) < 0) return CODE_ER(cs, ASS_TE_INV, opn->l);
+                IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, opn->l);
+                OP_RCD(cs, c, opn->l->n.cn->ret);
+                OP_GC(cs, c, opn->l->n.cn->ret, opn->l);
+                IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                OP_A(cs, c, SIDX, U6, { .u6 = (uint64_t) tidx }, opn->l);
                 break;
             }
             return CODE_ER(cs, INV_L_ASS, a);
@@ -705,9 +724,8 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             opn->l = opn->r = NULL;
             break;
         case AST_TYPE(VAR):
-            if (cn->tgt->n.var->tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
+            if ((tidx = te_call_idx(cs, cn)) > -1) {
                 IFCGEN(code_gen, cs, cn->tgt, c);
-                tidx = tkn_to_int64_t(&cn->args->h->a->t, cs->str);
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, a);
                 OP_RCI(cs, c, cn->ret);
                 break;
