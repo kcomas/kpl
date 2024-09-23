@@ -125,6 +125,7 @@ static const char *const op_type_str[] = {
     "ASS",
     "CST",
     "DEL",
+    "LD",
     "ADD",
     "SUB",
     "MUL",
@@ -655,6 +656,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(ASS);
         OP_CASE(CST);
         OP_CASE(DEL);
+        OP_CASE(LD);
         OP_CASE(ADD);
         OP_CASE(SUB);
         OP_CASE(MUL);

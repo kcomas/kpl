@@ -1,0 +1,6 @@
+
+add:FN(I6;I6;I6)${(x;y) x + y }
+
+sub:FN(I6;I6;I6)${(x;y) x - y }
+
+$(FD;1) << "Loaded add and sub\n"

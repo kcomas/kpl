@@ -1,0 +1,8 @@
+
+as: \l "./ifns.kpl"
+
+x: 2
+y: 3
+
+$(FD;1) << " ", ["Add:";SG$x;SG$y;SG$as`add(x;y)]
+$(FD;1) << "\n"
