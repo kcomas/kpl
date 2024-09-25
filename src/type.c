@@ -102,7 +102,7 @@ const char *type_stat_str(type_stat tstat) {
     return s;
 }
 
-extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *pp, const char *str);
+extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp, const char *str);
 
 extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat);
 
@@ -359,7 +359,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (op->l) return TYPE_ER(ts, INV_LD_L_NN);
             if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
                 mod *m = mod_i(ts->a, ts->e);
-                if (mod_lfile_tkn(m, ts->pp, str_dir_len(ts->pp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
+                if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 // TODO
             }
             return TYPE_ER(ts, INV_LD);
