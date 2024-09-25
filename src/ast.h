@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "mod.h"
 #include "tbl.h"
 #include "tkn.h"
 
@@ -621,6 +622,7 @@ typedef enum {
     AST_TYPE(SYM),
     AST_TYPE(IF),
     AST_TYPE(LOP),
+    AST_TYPE(MOD),
     AST_TYPE(FN),
     AST_TYPE(CALL),
     AST_TYPE(RET),
@@ -638,6 +640,7 @@ typedef union {
     sym_node *sym;
     if_node *in;
     if_itm *lop;
+    mod *m;
     fn_node *fn;
     call_node *cn;
     ret_node *ret;

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "mod.h"
 #include "ast.h"
 
 #define TYPE_STAT(N) TYPE_STAT_##N
@@ -50,8 +51,12 @@ typedef enum {
     TYPE_STAT(FN_CST_T_NN), // fn node type defined
     TYPE_STAT(INV_FN_CST_ARGS_LEN), // length of args does not match type
     // del
-    TYPE_STAT(INV_DEL_R_NN),
-    TYPE_STAT(INV_DEL_L_NG),
+    TYPE_STAT(INV_DEL_L_NN),
+    TYPE_STAT(INV_DEL_R_NG),
+    // ld
+    TYPE_STAT(INV_LD_L_NN), // left not null
+    TYPE_STAT(INV_LD_ME),
+    TYPE_STAT(INV_LD),
     // add
     TYPE_STAT(INV_ADD_L_T_N),
     TYPE_STAT(INV_ADD_R_T_N),
@@ -122,12 +127,14 @@ const char *type_stat_str(type_stat tstat);
 typedef struct {
     al *a;
     er *e;
+    const char *pp; // parent path
     const char *str;
 } type_st;
 
-inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *str) {
+inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *pp, const char *str) {
     ts->a = a;
     ts->e = e;
+    ts->pp = pp;
     ts->str = str;
 }
 

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "kpl.h"
-#include "ast.h"
 #include "type.h"
 
 #define CODE_STAT(N) CODE_STAT_##N

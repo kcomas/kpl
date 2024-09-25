@@ -44,3 +44,5 @@ const char *type_get_str(type t) {
     if (t >= TYPE(STMT) && t <= TYPE(FD)) s = tgs[t];
     return s;
 }
+
+extern inline size_t str_dir_len(const char *const s);

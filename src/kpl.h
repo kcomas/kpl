@@ -76,18 +76,6 @@ typedef struct _jit jit;
 
 typedef union _var var;
 
-// free not null w fn
-#define FNNF(V, F) if (V) F(V)
-
-// free not null
-#define FNN(V) FNNF(V, free)
-
-// static array len
-#define AL(V) (sizeof(V) / sizeof(V[0]))
-
-// print char x times
-#define PCX(C, X) for (size_t i = 0; i < X; i++) putchar(C)
-
 typedef struct {
     uint8_t ng; // number of globals
     struct {
@@ -111,3 +99,27 @@ typedef struct {
 } var_sg;
 
 void var_sg_f(var_sg *sg);
+
+typedef struct _var_tsv var_tsv;
+
+// free not null w fn
+#define FNNF(V, F) if (V) F(V)
+
+// free not null
+#define FNN(V) FNNF(V, free)
+
+// static array len
+#define AL(V) (sizeof(V) / sizeof(V[0]))
+
+// print char x times
+#define PCX(C, X) for (size_t i = 0; i < X; i++) putchar(C)
+
+// return length of str to last /
+inline size_t str_dir_len(const char *const s) {
+    size_t len = strlen(s);
+    while (len > 1) {
+        if (s[len - 1] == '/') return len;
+        len--;
+    }
+    return 0;
+}

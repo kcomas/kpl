@@ -1,5 +1,5 @@
 
-as: \l "./ifns.kpl"
+as: \l "lfns.kpl"
 
 x: 2
 y: 3

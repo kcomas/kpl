@@ -18,10 +18,8 @@ extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 
 #define MOD_ER(M, MS) mod_er(m, __func__, MOD_STAT(MS))
 
-mod_stat mod_lfile(mod *const m, const char *const path) {
-    m->src.path = ala(m->a, strlen(path) * sizeof(char) + sizeof(char));
-    strcpy(m->src.path, path);
-    int fd = open(path, O_RDONLY);
+static mod_stat _mod_lfile(mod *const m) {
+    int fd = open(m->src.path, O_RDONLY);
     if (fd == -1) return MOD_ER(m, FLF);
     if (fstat(fd, &m->src.sb) == -1) {
         close(fd);
@@ -35,6 +33,19 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
     }
     close(fd);
     return MOD_ER(m, OK);
+}
+
+mod_stat mod_lfile(mod *const m, const char *const path) {
+    m->src.path = ala(m->a, strlen(path) * sizeof(char) + sizeof(char));
+    strcpy(m->src.path, path);
+    return _mod_lfile(m);
+}
+
+mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t, const char *const str) {
+    m->src.path = ala(m->a, dirl + (t->len - 1) * sizeof(char)); // null byte
+    memcpy(m->src.path, dirs, dirl);
+    memcpy(m->src.path + dirl, str + t->pos + 1, t->len - 2);
+    return _mod_lfile(m);
 }
 
 void mod_ag(mod *const m, uint8_t ng) {
