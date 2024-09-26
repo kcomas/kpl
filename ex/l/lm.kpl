@@ -1,8 +1,8 @@
 
 as: \l "lfns.kpl"
 
-x: 2
-y: 3
+x:I6$2
+y:I6$3
 
 $(FD;1) << " ", ["Add:";SG$x;SG$y;SG$as`add(x;y)]
 $(FD;1) << "\n"

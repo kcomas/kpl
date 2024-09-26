@@ -10,6 +10,7 @@ static const char *const css[] = {
     "INV_STR_ESC",
     "NO_OP_FOR_VAL_T",
     "TBL_FOUND",
+    "MOD_FOUND",
     "NO_T_FOR_TE_IDX",
     "NO_T_FOR_ST_IDX",
     "SYM_NO_T_FOR_A",
@@ -34,6 +35,7 @@ static const char *const css[] = {
     "GC_INV",
     "OP_NO_T_L",
     "OP_NO_T_R",
+    "LD_MOD_F",
     "INV_SG_CNCT",
     "INV_CNCT_OP",
     "INV_FD_OP",
@@ -96,6 +98,7 @@ static const char *op_c_str[] = {
     "AG",
     "SG",
     "LG",
+    "LM",
     "AL",
     "SL",
     "LL",
@@ -143,6 +146,9 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
         PCX(' ', idnt);
         printf("%lu: C:%s,T:%s", i, op_c_get_str(c->ops[i].oc), type_get_str(c->ops[i].ot));
         switch (c->ops[i].ot) {
+            case TYPE(MOD):
+                printf(",%p", c->ops[i].od.m);
+                break;
             // TODO
             case TYPE(OP):
                 printf(",%s", type_get_str(c->ops[i].od.t));
@@ -481,6 +487,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     type_node *tl, *tr;
     int64_t i6, tidx;
     hsh_data *hd;
+    code_st ldcs;
     switch (opn->ot) {
         case OP_TYPE(TC):
             if (!opn->l) { // throw
@@ -571,6 +578,13 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
             OP_A(cs, c, DEL, OP, { .t = tr->t }, a);
+            break;
+        case OP_TYPE(LD):
+            if (opn->r->at != AST_TYPE(MOD) || !opn->r->n.m) return CODE_ER(cs, LD_MOD_F, a);
+            code_st_i(&ldcs, cs->a, cs->e, opn->r->n.m->src.str);
+            opn->r->n.m->c = code_i(cs->a, CODE_I_SIZE);
+            if (code_gen_fn(&ldcs, opn->r->n.m->fns, &opn->r->n.m->c) != CODE_STAT(OK)) return CODE_ER(cs, LD_MOD_F, opn->r);
+            OP_A(cs, c, LM, MOD, { .m = opn->r->n.m }, opn->r);
             break;
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
@@ -814,6 +828,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
         case AST_TYPE(SYM): return code_gen_sym(cs, a->n.sym, c);
         case AST_TYPE(IF): return code_gen_if(cs, a, c);
         case AST_TYPE(LOP): return code_gen_lop(cs, a, c);
+        case AST_TYPE(MOD): return CODE_ER(cs, MOD_FOUND, a);
         case AST_TYPE(FN):
             cfn = code_i(cs->a, CODE_I_SIZE);
             IFCGEN(code_gen_fn, cs, a->n.fn, &cfn);
