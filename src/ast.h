@@ -111,7 +111,7 @@ typedef enum {
 
 #define NFEC(FLGS) (FLGS & NODE_FLG(EC))
 
-typedef struct {
+typedef struct _type_node {
     type t;
     uint8_t flgs;
     ast *a;
@@ -578,6 +578,10 @@ inline void ret_node_f(ret_node *r) {
     alf(r);
 }
 
+#ifndef MAX_VAR_LEN
+    #define MAX_VAR_LEN 21 // null term
+#endif
+
 #define VAR_TYPE(N) VAR_TYPE_##N
 
 typedef enum {
@@ -675,6 +679,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(SYM): return a->n.sym->tn;
         case AST_TYPE(IF): return NULL;
         case AST_TYPE(LOP): return NULL;
+        case AST_TYPE(MOD): return a->n.m->tn;
         case AST_TYPE(FN): return a->n.fn->sig;
         case AST_TYPE(CALL): return a->n.cn->ret;
         case AST_TYPE(RET): return ast_gtn(a->n.ret->a);

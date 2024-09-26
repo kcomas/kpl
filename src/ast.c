@@ -303,10 +303,6 @@ const char *var_type_str(var_type vt) {
     return s;
 }
 
-#ifndef MAX_VAR_LEN
-    #define MAX_VAR_LEN 21 // null term
-#endif
-
 // TODO better tbl errors
 var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const char *const str) {
     char vstr[MAX_VAR_LEN];
@@ -354,6 +350,7 @@ static const char *const ast_type_str[] = {
     "SYM",
     "IF",
     "LOP",
+    "MOD",
     "FN",
     "CALL",
     "RET",
@@ -386,6 +383,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
         AST_P_CASE(SYM, sym, sym_node_p);
         AST_P_CASE(IF, in, if_node_p);
         AST_P_CASE(LOP, lop, if_itm_lop_p);
+        AST_P_CASE(MOD, m->tn, type_node_p);
         AST_P_CASE(FN, fn, fn_node_p);
         AST_P_CASE(CALL, cn, call_node_p);
         AST_P_CASE(RET, ret, ret_node_p);
@@ -412,6 +410,11 @@ void ast_f(ast *a) {
         AST_F_CASE(SYM, sym, sym_node_f);
         AST_F_CASE(IF, in, if_node_f);
         AST_F_CASE(LOP, lop, if_itm_lop_f);
+        case AST_TYPE(MOD):
+            fn_node_f(a->n.m->fns);
+            FNNF(a->n.m->tn, type_node_f);
+            mod_f(a->n.m);
+            break;
         AST_F_CASE(FN, fn, fn_node_f);
         AST_F_CASE(CALL, cn, call_node_f);
         AST_F_CASE(RET, ret, ret_node_f);

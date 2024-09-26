@@ -68,6 +68,8 @@ typedef struct _ast ast;
 
 typedef struct _fn_node fn_node;
 
+typedef struct _type_node type_node;
+
 typedef struct _code code;
 
 typedef void jit_fn(void);
@@ -88,6 +90,7 @@ typedef struct {
     code *c;
     jit *j;
     var *g; // globals
+    type_node *tn;
 } mod;
 
 #define RC ssize_t rc
