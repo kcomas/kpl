@@ -61,18 +61,25 @@ extern inline code_stat code_er(code_st *const cs, const char *const fnn, code_s
 
 extern inline ctsv *ctsv_i(al *const a, size_t len, code *const gc);
 
-#define CODE_F_T(T, FN, P) if (c->ops[i].ot == TYPE(T)) FN(c->ops[i].od.P)
+#define CODE_F_T(T, FN, P) case TYPE(T): \
+    FN(c->ops[i].od.P); \
+    break
 
 void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
-        CODE_F_T(FN, code_f, c);
-        CODE_F_T(IF, code_f, c);
-        CODE_F_T(COND, op_if_f, of);
-        CODE_F_T(LOP, op_if_f, of);
-        CODE_F_T(SG, alf, sg);
-        CODE_F_T(STR, alf, sg);
-        CODE_F_T(TE, ctsv_f, tsv);
-        CODE_F_T(ST, ctsv_f, tsv);
+        switch (c->ops[i].ot) {
+            CODE_F_T(MOD, code_f, m->c);
+            CODE_F_T(FN, code_f, c);
+            CODE_F_T(IF, code_f, c);
+            CODE_F_T(COND, op_if_f, of);
+            CODE_F_T(LOP, op_if_f, of);
+            CODE_F_T(SG, alf, sg);
+            CODE_F_T(STR, alf, sg);
+            CODE_F_T(TE, ctsv_f, tsv);
+            CODE_F_T(ST, ctsv_f, tsv);
+            default:
+                break;
+        }
     }
     alf(c);
 }
@@ -676,7 +683,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     return CODE_ER(cs, OK, NULL);
 }
 
-static code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c, const type_node *const ftn, bool ires) {
+static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code **c, const type_node *const ftn, bool ires) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     type_node *tn;
@@ -725,7 +732,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
             if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_ER(cs, CALL_RES_NOT_SELF, a);
-            return code_gen_call_res_var(cs, a, c, cn->tgt->n.rn->tn, true);
+            return code_gen_call_ftn(cs, a, c, cn->tgt->n.rn->tn, true);
         case AST_TYPE(OP):
             opn = cn->tgt->n.op;
             if (cn->ret) opn->ret = cn->ret;
@@ -738,7 +745,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             opn->l = opn->r = NULL;
             break;
         case AST_TYPE(SYM):
-            return code_gen_call_res_var(cs, a, c, cn->tgt->n.sym->tn, false);
+            return code_gen_call_ftn(cs, a, c, cn->tgt->n.sym->tn, false);
         case AST_TYPE(VAR):
             if ((tidx = te_call_idx(cs, cn)) > -1) {
                 IFCGEN(code_gen, cs, cn->tgt, c);
@@ -746,7 +753,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
                 OP_RCI(cs, c, cn->ret);
                 break;
             }
-            return code_gen_call_res_var(cs, a, c, cn->tgt->n.var->tn, false);
+            return code_gen_call_ftn(cs, a, c, cn->tgt->n.var->tn, false);
         default:
             return CODE_ER(cs, INV_CALL_TGT, a);
     }
