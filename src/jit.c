@@ -43,7 +43,7 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
             fn_stk_b(a, stk, c->ops[i].od.c);
             fn_stk_a(a, stk, c->ops[i].od.c);
         }
-        if (c->ops[i].oc == OP_C(CTSV)) {
+        if (c->ops[i].oc == OP_C(CTSV) || c->ops[i].oc == OP_C(LM)) {
             fn_stk_b(a, stk, c->ops[i].od.tsv->gc);
             fn_stk_a(a, stk, c->ops[i].od.tsv->gc);
         }
@@ -281,13 +281,18 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(LM):
                 op_set_jidx(j, o);
                 stk = fn_stk_i(m->a, FN_STK_SIZE);
-                fn_stk_b(m->a, &stk, o->od.m->c);
-                fn_stk_a(m->a, &stk, o->od.m->c);
-                o->od.m->j = jit_i(m->a, stk->nops);
-                if (jit_stk(o->od.m, stk, o->od.m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
-                SET_REG(o->od.m->c->jf, jit_fn*, false, 0);
+                fn_stk_b(m->a, &stk, o->od.tsv->m->c);
+                fn_stk_a(m->a, &stk, o->od.tsv->m->c);
+                o->od.tsv->m->j = jit_i(m->a, stk->nops);
+                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
-                // TODO load mod as st
+                SET_REG(m->a, al*, false, 7);
+                SET_REG(o->od.tsv->m, mod*, false, 6);
+                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 2);
+                SET_FP(var_ts_fm);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(AL):

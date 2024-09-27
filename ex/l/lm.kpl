@@ -1,8 +1,6 @@
 
 as: \l "lfns.kpl"
 
-x:I6$2
-y:I6$3
+$(FD;1) << "Loaded lfns.kpl\n"
 
-$(FD;1) << " ", ["Add:";SG$x;SG$y;SG$as`add(x;y)]
-$(FD;1) << "\n"
+$(FD;1) << " ", ["Add:";SG$as`x;"+";SG$as`y;"=";$(SG;as`add(as`x;as`y));"\n"]
