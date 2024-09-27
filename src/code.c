@@ -68,7 +68,10 @@ extern inline ctsv *ctsv_i(al *const a, size_t len, code *const gc);
 void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
         switch (c->ops[i].ot) {
-            CODE_F_T(MOD, code_f, m->c);
+            case TYPE(MOD):
+                code_f(c->ops[i].od.m->c);
+                FNNF(c->ops[i].od.m->j, jit_f);
+                break;
             CODE_F_T(FN, code_f, c);
             CODE_F_T(IF, code_f, c);
             CODE_F_T(COND, op_if_f, of);

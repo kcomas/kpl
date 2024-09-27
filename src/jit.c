@@ -5,6 +5,7 @@ static const char *const jss[] = {
     "OK",
     "SG_T_INV",
     "LG_T_INV",
+    "LM_INV",
     "PV_T_INV",
     "ZOO_T_INV",
     "ADD_T_INV",
@@ -59,8 +60,6 @@ extern inline jit *jit_i(al *const a, size_t nops);
 extern inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o);
 
 #define JIT_ER(M, JSTAT, O) jit_er(M, __func__, JIT_STAT(JSTAT), O);
-
-extern inline void jit_f(jit *j);
 
 extern inline void jit_a(jit *j, uint8_t b);
 
@@ -186,6 +185,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     void *fp;
     uint32_t vsp; // var stack pos
     static uint8_t buf[sizeof(void*)];
+    fn_stk *stk;
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
         switch (o->oc) {
@@ -280,7 +280,14 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(LM):
                 op_set_jidx(j, o);
-                // TODO
+                stk = fn_stk_i(m->a, FN_STK_SIZE);
+                fn_stk_b(m->a, &stk, o->od.m->c);
+                fn_stk_a(m->a, &stk, o->od.m->c);
+                o->od.m->j = jit_i(m->a, stk->nops);
+                if (jit_stk(o->od.m, stk, o->od.m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                SET_REG(o->od.m->c->jf, jit_fn*, false, 0);
+                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                // TODO load mod as st
                 op_set_jlen(j, o);
                 break;
             case OP_C(AL):
