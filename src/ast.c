@@ -126,6 +126,7 @@ static const char *const op_type_str[] = {
     "CST",
     "DEL",
     "LD",
+    "VH",
     "ADD",
     "SUB",
     "MUL",
@@ -315,7 +316,7 @@ var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const 
         scope = scope->par;
     }
     if (!scope) {
-        var_node *vn = ala(a, sizeof(var_node) + t->len + 1);
+        var_node *vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
         vn->id = fns->idc++;
         if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
         else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);
@@ -660,6 +661,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(CST);
         OP_CASE(DEL);
         OP_CASE(LD);
+        OP_CASE(VH);
         OP_CASE(ADD);
         OP_CASE(SUB);
         OP_CASE(MUL);

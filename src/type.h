@@ -58,6 +58,9 @@ typedef enum {
     TYPE_STAT(INV_LD_ME),
     TYPE_STAT(LD_MOD_TBL_AD_F),
     TYPE_STAT(INV_LD),
+    // vh
+    TYPE_STAT(INV_VH_L_NN),
+    TYPE_STAT(INV_VH_R_NG),
     // add
     TYPE_STAT(INV_ADD_L_T_N),
     TYPE_STAT(INV_ADD_R_T_N),

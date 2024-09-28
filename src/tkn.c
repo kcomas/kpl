@@ -169,6 +169,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 switch (str[t->pos + t->len]) {
                     T_ONE_C('d', DEL);
                     T_ONE_C('l', LD);
+                    T_ONE_C('h', VH);
                     default:
                         return TKN_ER(ts, CMD);
                 }
