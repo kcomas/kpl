@@ -270,6 +270,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(VR):
         case TYPE(TE):
         case TYPE(ST):
+        case TYPE(FN):
         case TYPE(ER):
             code_a(cs->a, c, (op) {oc, t, 0, 0, od,  a});
             break;

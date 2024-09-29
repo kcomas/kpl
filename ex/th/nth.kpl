@@ -1,0 +1,12 @@
+
+// basic no thread example
+
+f: \l "fibp.kpl"
+
+n:U6$0
+
+#@ (n < 5) {
+    r:f`fibp(35)
+    $(FD;1) << " ", ["R:";SG$r;"\n"]
+    n: n + 1
+}
