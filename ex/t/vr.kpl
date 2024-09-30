@@ -1,0 +1,6 @@
+
+// vector example
+
+v:VR[SG]$["a";"b"]
+
+$(FD;1) << ,(" ";v),"\n"

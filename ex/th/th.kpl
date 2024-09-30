@@ -5,6 +5,8 @@ f: \l "fibp.kpl"
 
 n:U6$0
 
+t:VR[TD(TE[U6];f`fibp;U6)]$[]
+
 #@ (n < 5) {
 
     n: n + 1
