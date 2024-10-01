@@ -137,8 +137,7 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
         op_set_jidx(j, o);
         if ((jstat = jit_code(m, o->od.of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
         jit_b(j, 2, 0x41, 0x5B); // pop r11
-        jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
-        jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
+        jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
         jit_b(j, 2, 0x0F, 0x84); // je 0
         jmpp = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to next cond
@@ -163,8 +162,7 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     int lops = j->len, lope, bs, jmpl;
     if ((jstat = jit_code(m, of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
     jit_b(j, 2, 0x41, 0x5B); // pop r11
-    jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
-    jit_b(j, 3, 0x4D, 0x39, 0xE3); // cmp r11 r12
+    jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
     jit_b(j, 2, 0x0F, 0x84); // je 0
     bs = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
@@ -179,11 +177,16 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     return JIT_ER(m, OK, NULL);
 }
 
+#ifndef TSVML
+    #define TSVML 4 // vr mul
+#endif
+
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
     void *fp;
     uint32_t vsp; // var stack pos
+    size_t tsvs; // size of tsv
     static uint8_t buf[sizeof(void*)];
     fn_stk *stk;
     for (size_t i = 0;  i < c->len; i++) {
@@ -355,9 +358,12 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(CTSV):
                 op_set_jidx(j, o);
                 SET_REG(m->a, al*, false, 7);
-                SET_REG(o->od.tsv->len, size_t, false, 6);
-                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 2);
-                SET_FP(var_ts_i);
+                tsvs = o->od.tsv->len;
+                if (o->ot == TYPE(VR)) tsvs *= TSVML;
+                SET_REG(tsvs, size_t, false, 6);
+                SET_REG(o->od.tsv->len, size_t, false, 2);
+                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 1);
+                SET_FP(var_tsv_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
                 for (ssize_t i = (ssize_t) o->od.tsv->len - 1; i >= 0; i--) { // TODO better algo for underflow
@@ -619,7 +625,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 op_set_jlen(j, o);
                 break;
-            case OP_C(GCTSV):
+            case OP_C(GCTSVI):
                 op_set_jidx(j, o);
                 switch (o->od.v.t) {
                     case TYPE(U3):
