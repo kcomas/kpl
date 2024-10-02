@@ -17,6 +17,7 @@ typedef enum {
     CODE_STAT(TBL_FOUND),
     CODE_STAT(MOD_FOUND),
     CODE_STAT(NO_T_FOR_TE_IDX),
+    CODE_STAT(NO_T_FOR_VR_GC),
     CODE_STAT(NO_T_FOR_ST_IDX),
     CODE_STAT(SYM_NO_T_FOR_A),
     CODE_STAT(SYM_INV_TBL_R),
@@ -129,7 +130,8 @@ typedef enum {
     OP_C(RCD),
     OP_C(RCF), // dec ref count of type ret if gt 0
     OP_C(GC), // type is base type
-    OP_C(GCTSV), //
+    OP_C(GCTSVI), // gc idx in tsv
+    OP_C(GCVR), // gc vr of type
     OP_C(DEL) // delete top of stack free ptr
 } op_c;
 

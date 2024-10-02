@@ -146,21 +146,16 @@ VAR_BOP_T(or, ||, u6, uint64_t)
 
 bool var_not(bool v) { return !v; }
 
-var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc) {
+var_tsv *var_tsv_i(al *const a, size_t size, size_t len, jit_fn *gc) {
     var_tsv *vtsv = ala(a, sizeof(var_tsv) + size * sizeof(var));
     vtsv->size = size;
+    vtsv->len = len;
     vtsv->gc = gc;
     return vtsv;
 }
 
-var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc) {
-    var_tsv *ts = var_tsv_i(a, size, gc);
-    ts->len = size;
-    return ts;
-}
-
 var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc) {
-    var_tsv *ts = var_ts_i(a, (size_t) m->ng, gc);
+    var_tsv *ts = var_tsv_i(a, (size_t) m->ng, (size_t) m->ng, gc);
     for (uint8_t i = 0; i < m->ng; i++) ts->v[i] = m->g[i];
     return ts;
 }

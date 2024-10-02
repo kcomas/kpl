@@ -372,13 +372,12 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             if (op->r) IFTCHK(type_chk, ts, fns, op->r);
             ASTGTN(rt, op->r, INV_CST_R_T_N);
-            if (lt->t == TYPE(VR)) {
-                if (rt->t == TYPE(TE)) {
-                    ASTGTN(ltvr, lt->a, INV_VR_T);
-                    if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_2_VR);
-                    op->ret = type_node_c(ts->a, lt);
-                    break;
-                }
+            if (lt->t == TYPE(VR) && rt->t == TYPE(TE)) {
+                ASTGTN(ltvr, lt->a, INV_VR_T);
+                if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_2_VR);
+                rt->t = TYPE(VR);
+                op->ret = type_node_c(ts->a, lt);
+                break;
             }
             if (type_int_cor(ts, &op->ret, rt, lt)) break;
             if (lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
