@@ -466,8 +466,14 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (type_str_is(lt, NULL)) {
                 if (!type_str_is(rt, NULL)) {
                     // TODO check if vr of sg or cr
-                    if (rt->t == TYPE(TE))
+                    if (rt->t == TYPE(TE)) {
                         if (!type_lst_contig(rt, NULL, type_str_is)) return TYPE_ER(ts, INV_STR_CNCT);
+                    } else if (rt->t == TYPE(VR)) {
+                        ASTGTN(rt, rt->a, INV_STR_CNCT);
+                        if (rt->t != TYPE(SG)) return TYPE_ER(ts, INV_STR_CNCT);
+                    } else {
+                        return TYPE_ER(ts, INV_STR_CNCT);
+                    }
                 }
                 op->ret = type_node_i(ts->a, TYPE(SG), NULL);
                 break;
