@@ -587,7 +587,17 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     OP_A(cs, &gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
                     OP_A(cs, &gc, LA, VAR, { SLV(0, TYPE(VR)) }, NULL);
                     OP_A(cs, &gc, RCF, OP, { .t = TYPE(VR) }, NULL);
-                    OP_A(cs, &gc, GCVR, OP, { .t = tr->t }, NULL);
+                    switch (tr->t) {
+                        case TYPE(STR):
+                        case TYPE(SG):
+                        case TYPE(VR):
+                        case TYPE(TE):
+                        case TYPE(ST):
+                        case TYPE(ER):
+                            OP_A(cs, &gc, GCVR, OP, { .t = tr->t }, NULL);
+                        default:
+                            break; // no gc for these types
+                    }
                     OP_A(cs, &gc, DEL, OP, { . t = TYPE(VR) }, NULL);
                     OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
                     (*c)->ops[(*c)->len - 1].od.tsv->gc = gc;

@@ -56,7 +56,7 @@ var_sg *var_sg_cnct_sg_tsv(al *const a, const var_sg *const l, const var_tsv *co
 }
 
 void var_sg_f(var_sg *sg) {
-    if (--sg->rc > 0) return;
+    if (--sg->rc >= 0) return;
     alf(sg);
 }
 
@@ -158,6 +158,10 @@ var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc) {
     var_tsv *ts = var_tsv_i(a, (size_t) m->ng, (size_t) m->ng, gc);
     for (uint8_t i = 0; i < m->ng; i++) ts->v[i] = m->g[i];
     return ts;
+}
+
+size_t var_tsv_len(var_tsv *const tsv) {
+    return tsv->len;
 }
 
 void var_tsv_rci(var_tsv *const tsv) {

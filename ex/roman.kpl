@@ -1,0 +1,31 @@
+
+// convert int to roman
+
+r:""
+roman:FN(I6;SG)${(x)
+    r:""
+    sub:FN(I6;SG;I6;I6)${(x;c;n)
+       #@ (|(x > n;x = n)) {
+            x: x - n
+            r: r,c
+       }
+       x}
+    x:sub(x;"M";1000)
+    x:sub(x;"CM";900)
+    x:sub(x;"D";500)
+    x:sub(x;"CD";400)
+    x:sub(x;"C";100)
+    x:sub(x;"XC";90)
+    x:sub(x;"L";50)
+    x:sub(x;"XL";40)
+    x:sub(x;"X";10)
+    x:sub(x;"IX";9)
+    x:sub(x;"V";5)
+    x:sub(x;"IV";4)
+    x:sub(x;"I";1)
+    r}
+
+$(FD;1) << "3749: ",roman(3749),"\n"
+$(FD;1) << "58: ",roman(58),"\n"
+$(FD;1) << "1994: ",roman(1994),"\n"
+\d r

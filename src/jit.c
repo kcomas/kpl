@@ -159,7 +159,7 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
 
 static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
     jit_stat jstat;
-    int lops = j->len, lope, bs, jmpl;
+    int32_t lops = j->len, lope, bs, jmpl;
     if ((jstat = jit_code(m, of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
     jit_b(j, 2, 0x41, 0x5B); // pop r11
     jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
@@ -171,14 +171,22 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     lope = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
     jmpl = lops - j->len;
-    memcpy(j->h + lope, &jmpl, sizeof(int));
-    jmpl = j->len - bs - sizeof(int);
-    memcpy(j->h + bs, &jmpl, sizeof(int));
+    memcpy(j->h + lope, &jmpl, sizeof(int32_t));
+    jmpl = j->len - bs - sizeof(int32_t);
+    memcpy(j->h + bs, &jmpl, sizeof(int32_t));
     return JIT_ER(m, OK, NULL);
 }
 
 static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
+    void *fp;
+    static uint8_t buf[sizeof(void*)];
+    jit_b(j, 3, 0x48, 0x31, 0xF6); // xor rsi rsi, rsi=0
+    jit_a(j, 0x58); // push rsi
+    jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
+    SET_FP(var_tsv_len);
+    SET_REG_CALL(false, 0);
     // TODO
+    return JIT_ER(m, OK, NULL);
 }
 
 #ifndef TSVML
