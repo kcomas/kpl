@@ -18,6 +18,7 @@ typedef enum {
 
 typedef struct _er_itm {
     er_type et;
+    RC;
     struct _er_itm *prev, *next;
     size_t lno, cno;
     const char *stat, *path; // status code, file path
@@ -36,6 +37,10 @@ inline er_itm *er_itm_i(al *const a, er_type et, const char *const fnn, const ch
 void er_itm_p(er_itm *const ei);
 
 void er_itm_f(er_itm *ei, void *fn);
+
+void er_itm_rci(er_itm *const ei);
+
+void er_itm_rcd(er_itm *const ei);
 
 void er_itm_gc(er_itm *ei);
 
