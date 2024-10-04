@@ -81,6 +81,7 @@ void code_f(code *c) {
             CODE_F_T(LOP, op_if_f, of);
             CODE_F_T(SG, alf, sg);
             CODE_F_T(STR, alf, sg);
+            CODE_F_T(VR, ctsv_f, tsv);
             CODE_F_T(TE, ctsv_f, tsv);
             CODE_F_T(ST, ctsv_f, tsv);
             default:
@@ -313,13 +314,10 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
             }
         }
         IFCGEN(code_gen, cs, h->a, c);
-        if (lst->tn->t == TYPE(VR) || lst->tn->t == TYPE(TE)) {
+        if (lst->tn->t == TYPE(TE)) {
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_TE_IDX, h->a);
-            OP_RCI(cs, c, th);
-            if (lst->tn->t == TYPE(TE)) {
-                OP_RCD(cs, &gc, th);
-                OP_GCTSVI(cs, &gc, th, h->a, ++id); // h->a node tkn in gc fn
-            }
+            OP_RCD(cs, &gc, th);
+            OP_GCTSVI(cs, &gc, th, h->a, ++id); // h->a node tkn in gc fn
         }
         h = h->next;
     }

@@ -23,6 +23,7 @@ static const char *const jss[] = {
     "RCF_T_INV",
     "GC_T_INV",
     "GCTSV_T_INV",
+    "GCVR_T_INV",
     "DEL_T_INV",
     "INV_CODE"
 };
@@ -128,10 +129,10 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
     // int for compat with getpagesize
-    int jmpp, jmpl;
-    int stki = 0;
-    int stk[IF_STK_LEN];
-    memset(stk, 0, sizeof(int) * IF_STK_LEN);
+    int32_t jmpp, jmpl;
+    int32_t stki = 0;
+    int32_t stk[IF_STK_LEN];
+    memset(stk, 0, sizeof(int32_t) * IF_STK_LEN);
     for (size_t i = 0; i < c->len; i++) {
         o = &c->ops[i];
         op_set_jidx(j, o);
@@ -145,13 +146,13 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
         jit_a(j, 0xE9); // jmp
         stk[stki++] = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if jmp to end of if
-        jmpl = j->len - jmpp - sizeof(int);
-        memcpy(j->h + jmpp, &jmpl, sizeof(int)); // fill cond skip
+        jmpl = j->len - jmpp - sizeof(int32_t);
+        memcpy(j->h + jmpp, &jmpl, sizeof(int32_t)); // fill cond skip
         op_set_jlen(j, o);
     }
     while (stki > 0) {
-        jmpl = j->len - stk[stki - 1] - sizeof(int);
-        memcpy(j->h + stk[stki - 1], &jmpl, sizeof(int)); // fill body skip
+        jmpl = j->len - stk[stki - 1] - sizeof(int32_t);
+        memcpy(j->h + stk[stki - 1], &jmpl, sizeof(int32_t)); // fill body skip
         stki--;
     }
     return JIT_ER(m, OK, NULL);
@@ -180,12 +181,63 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
 static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     void *fp;
     static uint8_t buf[sizeof(void*)];
+    int32_t lops, lope, bs, jmpl;
     jit_b(j, 3, 0x48, 0x31, 0xF6); // xor rsi rsi, rsi=0
-    jit_a(j, 0x58); // push rsi
+    jit_a(j, 0x56); // push rsi
+    lops = j->len; // loop start
     jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
     SET_FP(var_tsv_len);
+    SET_REG_CALL(false, 0); // len in rax
+    jit_b(j, 7, 0x48, 0x8B, 0x34, 0x24, 0x48, 0x39, 0xC6); // mov rsi qword ptr [rsp], cmp rsi rax
+    jit_b(j, 2, 0x0F, 0x84); // je
+    bs = j->len;
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
+    jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
+    jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr rsp
+    SET_FP(var_tsv_gidx);
     SET_REG_CALL(false, 0);
-    // TODO
+    jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+    switch (o->od.t) {
+        case TYPE(STR):
+        case TYPE(SG):
+            SET_FP(var_sg_rcd);
+            jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
+            jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr rsp
+            SET_FP(var_tsv_gidx);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+            SET_FP(var_sg_f);
+            SET_REG_CALL(false, 0)
+            break;
+        case TYPE(VR):
+        case TYPE(TE):
+        case TYPE(ST):
+            SET_FP(var_tsv_rcd);
+            jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
+            jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr rsp
+            SET_FP(var_tsv_gidx);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+            SET_FP(var_tsv_gc);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            break;
+        case TYPE(ER):
+            SET_FP(er_itm_gc);
+            SET_REG_CALL(false, 0);
+            break;
+        default:
+            return JIT_ER(m, GCVR_T_INV, o);
+    }
+    jit_b(j, 5, 0x5E, 0x48, 0xFF, 0xC6, 0x56); // pop rsi, inc rsi, push rsi
+    jit_a(j, 0xE9); // jmp
+    lope = j->len;
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
+    jmpl = lops - j->len;
+    memcpy(j->h + lope, &jmpl, sizeof(int32_t));
+    jmpl = j->len - bs - sizeof(int32_t);
+    memcpy(j->h + bs, &jmpl, sizeof(int32_t));
+    jit_a(j, 0x5E); // pop rsi
     return JIT_ER(m, OK, NULL);
 }
 
@@ -689,6 +741,10 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_FP(var_tsv_gc);
                         SET_REG_CALL(false, 0);
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+                        break;
+                    case TYPE(ER):
+                        SET_FP(er_itm_gc);
+                        SET_REG_CALL(false, 0);
                         break;
                     default:
                         return JIT_ER(m, GCTSV_T_INV, o);
