@@ -106,7 +106,7 @@ typedef struct {
 typedef struct {
     RC;
     size_t len, size; // len does not inc null term
-    char str[]; // null term
+    char *str; // null term
 } var_sg;
 
 void var_sg_f(var_sg *sg);
@@ -135,3 +135,7 @@ inline size_t str_dir_len(const char *const s) {
     }
     return 0;
 }
+
+#ifndef TSVML
+    #define TSVML 4 // vr mul
+#endif

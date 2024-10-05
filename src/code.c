@@ -4,6 +4,7 @@
 static const char *const css[] = {
     "OK",
     "INV_ER_T",
+    "INV_ER_GCR",
     "ER_N_ER_T",
     "INV_TC",
     "INV_L_ASS",
@@ -106,37 +107,42 @@ extern inline op_if *op_if_i(al *const a, size_t size);
 extern inline void op_if_f(op_if *of);
 
 static const char *op_c_str[] = {
-    "EFN",
+    "EFN", // enter fn
     "PUSH",
     "POP",
     "SWAP",
-    "RFN",
-    "CFN",
-    "CS",
-    "AG",
-    "SG",
-    "LG",
-    "LM",
-    "AL",
-    "SL",
-    "LL",
-    "SA",
-    "LA",
-    "PV",
-    "CTSV",
-    "GIDX",
-    "SIDX",
-    "VRA",
-    "VRS",
+    "RFN", // return fn
+    "CFN", // call fn
+    "CS", // call self
+    // data
+    "AG", // allocate globals
+    "SG", // store global
+    "LG", // load global
+    "LM", // load module
+    "AL", // allocate locals
+    "SL", // store local
+    "LL", // load local
+    "SA", // store arg
+    "LA", // load arg
+    "PV", // push value
+    "CTSV", // create tuple from stack u6 is length
+    "GIDX", // get index te, vr, st u6 is i
+    "SIDX", // set idx te, vr, st u6 is i
+    "VRA", // vector add, push
+    "VRS", // vector sub, pop
+    // control
     "IF",
-    "COND",
+    "COND", // jmp if false
     "LOP",
-    "ZOO",
-    "TE",
-    "CE",
-    "PE",
+    // coalesce
+    "ZOO", // convert to zero or one
+    // error
+    "TE", // throw error
+    "CE", // catch error
+    "PE", // panic error
+    // ops
     "CST",
-    "CSTSG",
+    "CSTSG", // cast type to string
     "ADD",
     "SUB",
     "MUL",
@@ -145,15 +151,16 @@ static const char *op_c_str[] = {
     "GT",
     "LT",
     "OR",
-    "CNCTSG",
-    "WFD",
+    "CNCTSG", // sg cnct op type is either sg or te
+    "WFD", // OP_T is type to be written
+    // GC
     "RCI",
     "RCD",
-    "RCF",
-    "GC",
-    "GCTSVI",
-    "GCVR",
-    "DEL"
+    "RCF", // dec ref count of type ret if gt 0
+    "GC", // type is base type
+    "GCTSVI", // gc idx in tsv
+    "GCVR", // gc vr of type
+    "DEL" // delete top of stack free ptr
 };
 
 const char *op_c_get_str(op_c oc) {
@@ -746,7 +753,13 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             else return CODE_ER(cs, INV_FD_OP, a);
             break;
     }
-    if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+    if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) {
+        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+        if (opn->flgs & NODE_FLG(GCR)) {
+            if (!(tr = ast_gtn(opn->ret->a))) return CODE_ER(cs, INV_ER_GCR, a);
+            OP_GC(cs, c, tr, opn->ret->a);
+        }
+    }
     else if (opn->ret->t != TYPE(ER) && opn->ret->t != TYPE(VD) && (opn->flgs & NODE_FLG(GCR))) OP_GC(cs, c, opn->ret, a);
     return CODE_ER(cs, OK, NULL);
 }

@@ -244,10 +244,6 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-#ifndef TSVML
-    #define TSVML 4 // vr mul
-#endif
-
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
@@ -461,6 +457,25 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 jit_a(j, 0x5A); // pop rdx
                 SET_FP(var_tsv_sidx);
                 SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(VRA):
+                op_set_jidx(j, o);
+                SET_REG(m->a, al*, false, 7);
+                jit_a(j, 0x5A); // pop rdx value
+                jit_a(j, 0x5E); // pop rsi vr
+                SET_FP(var_tsv_add);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(VRS):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                jit_a(j, 0x5A); // pop rdx vr
+                SET_FP(var_tsv_sub);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(IF):

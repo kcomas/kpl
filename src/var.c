@@ -2,7 +2,8 @@
 #include "var.h"
 
 var_sg *var_sg_i(al *const a, size_t size) {
-    var_sg *sg = ala(a, sizeof(var_sg) + size * sizeof(char));
+    var_sg *sg = ala(a, sizeof(var_sg));
+    sg->str = ala(a, size * sizeof(char));
     sg->size = size;
     return sg;
 }
@@ -55,22 +56,28 @@ var_sg *var_sg_cnct_sg_tsv(al *const a, const var_sg *const l, const var_tsv *co
     return sg;
 }
 
+void var_sg_d(var_sg *sg) {
+    alf(sg->str);
+    alf(sg);
+}
+
 void var_sg_f(var_sg *sg) {
     if (--sg->rc >= 0) return;
-    alf(sg);
+    var_sg_d(sg);
 }
 
-void var_sg_d(var_sg *sg) {
-    alf(sg);
-}
-
-void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
-    er_itm *ei = er_itm_i(m->a, ER(RUN), __func__, NULL);
+static er_itm *er_var(mod *const m, ast *const a, const char *stat) {
+    er_itm *ei = er_itm_i(m->a, ER(RUN), __func__, stat);
     ei->path = m->src.path;
     if (a) {
         ei->lno = a->t.lno;
         ei->cno = a->t.cno;
     }
+    return ei;
+}
+
+void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
+    er_itm *ei = er_var(m, a, NULL);
     var_sg_rci(sg);
     ei->sg = sg;
     er_a(m->e, ei);
@@ -147,7 +154,8 @@ VAR_BOP_T(or, ||, u6, uint64_t)
 bool var_not(bool v) { return !v; }
 
 var_tsv *var_tsv_i(al *const a, size_t size, size_t len, jit_fn *gc) {
-    var_tsv *vtsv = ala(a, sizeof(var_tsv) + size * sizeof(var));
+    var_tsv *vtsv = ala(a, sizeof(var_tsv));
+    vtsv->v = ala(a, size * sizeof(var));
     vtsv->size = size;
     vtsv->len = len;
     vtsv->gc = gc;
@@ -184,6 +192,30 @@ void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
     tsv->v[idx] = v;
 }
 
+void var_tsv_add(al *const a, var_tsv *const tsv, var v) {
+    var_tsv_rcd(tsv);
+    if (tsv->len == tsv->size) {
+        size_t nsize = tsv->size * TSVML;
+        var *nv = ala(a, nsize * sizeof(var));
+        for (size_t i = 0; i < tsv->size; i++) nv[i] = tsv->v[i];
+        alf(tsv->v);
+        tsv->size = nsize;
+        tsv->v = nv;
+    }
+    tsv->v[tsv->len++] = v;
+}
+
+var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv) {
+    var_tsv_rcd(tsv);
+    if (tsv->len == 0) {
+        er_itm *ei = er_var(m, a, "VRS");
+        er_a(m->e, ei);
+        return (var) { .i6 = 0 };
+    }
+    return tsv->v[--tsv->len];
+}
+
 void var_tsv_d(var_tsv *tsv) {
+    alf(tsv->v);
     alf(tsv);
 }

@@ -203,19 +203,23 @@ extern inline tkn_stat tkn_next(tkn_st *const ts, tkn *const t, const char *cons
 extern inline tkn_stat tkn_peek(tkn_st *const ts, tkn *const t, const char *const str);
 
 static const char *const tkn_type_str[] = {
-    "NB",
-    "NL",
-    "SEMI",
-    "WS",
-    "CMT",
+    "NB", // \0
+    "NL", // \n
+    "SEMI", // ;
+    "WS", // white space
+    "CMT", // comment
     "VAR",
-    "SYM",
+    "SYM", // symbol literal
     "INT",
     "FLT",
-    "STR",
+    "STR", // "asdf"
+    // const
     "TRUE",
     "FALSE",
     "SELF",
+    // TODO LOCAL
+    // TODO DEBUGGER
+    // built in type names
     "VD",
     "BL",
     "U3",
@@ -239,41 +243,49 @@ static const char *const tkn_type_str[] = {
     "FN",
     "ER",
     "FD",
-    "TC",
-    "LB",
-    "RB",
-    "LS",
-    "RS",
-    "LP",
-    "RP",
+    // erros
+    "TC", // try / catch
+    // wraps
+    "LB", // {
+    "RB", // }
+    "LS", // [
+    "RS", // ]
+    "LP", // (
+    "RP", // )
+    // controls #
     "IF",
-    "LOP",
+    "LOP", // while and for
     "RET",
-    "ASS",
-    "CST",
-    "DEL",
-    "LD",
+    // general ops
+    "ASS", // :
+    "CST", // $
+    "DEL", // \d
+    "LD", // \l
+    "VH", // \h
+    // arith
     "ADD",
     "SUB",
     "MUL",
     "DIV",
     "EXP",
     "MOD",
+    // cmp
     "EQ",
     "NOT",
     "GT",
     "LT",
     "AND",
     "OR",
-    "CNCT",
-    "RW",
-    "INV"
+    // type specific
+    "CNCT", //,
+    "RW" // <<
+
 };
 
  // line, char, type, str
 void tkn_p(const tkn *const t, const char *const str) {
     const char *type = "INVALID";
-    if (t->type >= TKN_TYPE(NB) && t->type < TKN_TYPE(INV)) type = tkn_type_str[t->type];
+    if (t->type >= TKN_TYPE(NB) && t->type <= TKN_TYPE(RW)) type = tkn_type_str[t->type];
     printf("%lu,%lu,%s,", t->lno, t->cno, type);
     if (t->type == TKN_TYPE(NB)) printf("\\0");
     else if (t->type == TKN_TYPE(NL)) printf("\\n");

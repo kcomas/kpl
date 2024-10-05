@@ -11,6 +11,8 @@ f:FN(VD)${()
     -v
     -v
     $(FD;1) << ,(" ";v),"\n"
+    // errors throw
+    // -v; -v
 }
 
 f();
