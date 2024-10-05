@@ -8,6 +8,7 @@
 
 typedef enum {
     CODE_STAT(OK),
+    CODE_STAT(INV_ER_T),
     CODE_STAT(ER_N_ER_T),
     CODE_STAT(INV_TC),
     CODE_STAT(INV_L_ASS), // left side : invalid
@@ -43,6 +44,9 @@ typedef enum {
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
     CODE_STAT(LD_MOD_F),
+    CODE_STAT(INV_ADD_T_L),
+    CODE_STAT(INV_SUB_T_R),
+    CODE_STAT(INV_SUB_VR_T_R),
     CODE_STAT(INV_SG_CNCT),
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
@@ -103,6 +107,8 @@ typedef enum {
     OP_C(CTSV), // create tuple from stack u6 is length
     OP_C(GIDX), // get index te, vr, st u6 is i
     OP_C(SIDX), // set idx te, vr, st u6 is i
+    OP_C(VRA), // vector add, push
+    OP_C(VRS), // vector sub, pop
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
