@@ -47,7 +47,10 @@ typedef enum {
     TYPE_STAT(INV_CST_L_A), // invalid node for left side of cst
     TYPE_STAT(INV_CST_L_T_N), // left side type for cst null
     TYPE_STAT(INV_CST_R_T_N), // right side type for cst null
+    // vr
     TYPE_STAT(INV_VR_T),
+    TYPE_STAT(INV_VR_PUSH_R_T),
+    TYPE_STAT(INV_VR_PUSH_T_NEQ),
     TYPE_STAT(INV_TE_2_VR),
     TYPE_STAT(INV_FN_CST), // invalid case for fn
     TYPE_STAT(FN_CST_T_NN), // fn node type defined
@@ -68,6 +71,8 @@ typedef enum {
     TYPE_STAT(INV_ADD_R_T_N),
     TYPE_STAT(INV_ADD),
     // sub
+    TYPE_STAT(INV_UNARY_SUB_T),
+    TYPE_STAT(INV_UNARY_SUB),
     TYPE_STAT(INV_SUB_L_T_N),
     TYPE_STAT(INV_SUB_R_T_N),
     TYPE_STAT(INV_SUB),
