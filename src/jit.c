@@ -796,7 +796,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0);
                         break;
                     case TYPE(ER):
-                        SET_FP(er_itm_gc);
+                        SET_FP(er_itm_d);
                         SET_REG_CALL(false, 0);
                         break;
                     default:

@@ -43,7 +43,12 @@ void alf(void *ptr) {
     alc *ac = ai->ac;
     ac->aus -= ai->size;
 #ifdef ALD
+    if (ai->size == 0) {
+        printf("Double Free\n");
+        exit(1);
+    }
     ac->a->f++;
+    ai->size = 0;
 #endif
     if (ac->aus == 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
         al *a = ac->a;

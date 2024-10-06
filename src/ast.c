@@ -260,7 +260,9 @@ const char *fn_vim_str(fn_vim vim) {
 }
 
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
-    printf("%p,%s,%d,", fn, fn_vim_str(fn->vim), fn->idc);
+    printf("%p,%s,", fn, fn_vim_str(fn->vim));
+    if (fn->flgs & NODE_FLG(NT)) printf("NT,");
+    printf("%d,", fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
     putchar('\n');
     PCX(' ', idnt);
@@ -659,9 +661,11 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         // TODO TYPES
         // TODO TYPES
         TYPE_A_CASE(VR, LS, RS);
+        TYPE_A_LST_CASE(TE, LS, RS);
         TYPE_A_LST_CASE(FN, LP, RP);
         TYPE_A_CASE(ER, LP, RP);
         TYPE_NA_CASE(FD);
+        TYPE_A_LST_CASE(TD, LP, RP);
         // TODO TYPES
         OP_CASE(TC);
         OP_CASE(ASS);

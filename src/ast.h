@@ -108,7 +108,8 @@ typedef enum {
     NODE_FLG(EC) = (1 << 0), // error caught
     NODE_FLG(GCR) = (1 << 1), // gc ret value
     NODE_FLG(GCV) = (1 << 2), // gc var for storing new var
-    NODE_FLG(VH) = (1 << 3)  // var hidden does not get exported
+    NODE_FLG(VH) = (1 << 3),  // var hidden does not get exported
+    NODE_FLG(NT) = (1 << 4) // function cannot be run as thread
 } node_flg;
 
 #define NFEC(FLGS) (FLGS & NODE_FLG(EC))
@@ -487,7 +488,7 @@ typedef enum {
 } fn_vim; // fn var insert mode
 
 typedef struct _fn_node {
-    uint8_t idc; // var id counter
+    uint8_t idc, flgs; // var id counter, node flgs
     fn_vim vim;
     tbl *tl; // sym tbl
     struct _fn_node *par; // parent node
@@ -497,6 +498,7 @@ typedef struct _fn_node {
 
 inline fn_node *fn_node_i(al *const a, fn_node *const par) {
     fn_node *fn = ala(a, sizeof(fn_node));
+    if (!par) fn->flgs |= NODE_FLG(NT);
     fn->tl = tbl_i(a, TBL_I_SIZE);
     fn->par = par;
     fn->args = lst_node_i(a, TYPE(STMT));

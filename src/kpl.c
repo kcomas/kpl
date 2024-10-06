@@ -36,12 +36,13 @@ static const char *const tgs[] = {
     "ST",
     "FN",
     "ER",
-    "FD"
+    "FD",
+    "TD"
 };
 
 const char *type_get_str(type t) {
     const char *s = "INVALID";
-    if (t >= TYPE(STMT) && t <= TYPE(FD)) s = tgs[t];
+    if (t >= TYPE(STMT) && t <= TYPE(TD)) s = tgs[t];
     return s;
 }
 

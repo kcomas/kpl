@@ -42,6 +42,8 @@ void er_itm_rci(er_itm *const ei);
 
 void er_itm_rcd(er_itm *const ei);
 
+void er_itm_d(er_itm *ei);
+
 void er_itm_gc(er_itm *ei);
 
 typedef struct _er {

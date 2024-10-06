@@ -14,5 +14,7 @@ f:FN(i;ER(i))${(x)
 
 $(FD;1) << ,(SG$v;"\n")
 
+\d e
+
 // throwing
-v:f(123)
+//v:f(123)
