@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     }
     type_stat tstat;
     type_st ts;
-    type_st_i(&ts, a, e, m->src.path, m->src.str);
+    type_st_i(&ts, a, e, m->src.path);
     if ((tstat = type_chk_fn(&ts, m->fns)) != TYPE_STAT(OK)) {
         fn_node_p(&as, m->fns, 0);
         putchar('\n');
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     }
     code_st cs;
     code_stat cstat;
-    code_st_i(&cs, a, e, m->src.str);
+    code_st_i(&cs, a, e);
     m->c = code_i(a, CODE_I_SIZE);
     if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) {
         code_p(&cs, m->c, 0);

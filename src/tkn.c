@@ -120,6 +120,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
     t->cno = ts->cno;
     t->pos = ts->pos;
     t->len = 0;
+    t->str = str;
     tkn_stat tsr;
     if (isalpha(str[t->pos])) {
         if ((tsr = tkn_var(t, str)) != TKN_STAT(OK)) return tsr;
@@ -285,23 +286,23 @@ static const char *const tkn_type_str[] = {
 };
 
  // line, char, type, str
-void tkn_p(const tkn *const t, const char *const str) {
+void tkn_p(const tkn *const t) {
     const char *type = "INVALID";
     if (t->type >= TKN_TYPE(NB) && t->type <= TKN_TYPE(RW)) type = tkn_type_str[t->type];
     printf("%lu,%lu,%s,", t->lno, t->cno, type);
     if (t->type == TKN_TYPE(NB)) printf("\\0");
     else if (t->type == TKN_TYPE(NL)) printf("\\n");
     else if (t->type == TKN_TYPE(WS)) printf("\\s[%lu]", t->len);
-    else for (size_t i = 0; i < t->len; i++) putchar(str[t->pos + i]);
+    else for (size_t i = 0; i < t->len; i++) putchar(t->str[t->pos + i]);
 }
 
 #ifndef MAX_INT_LEN
     #define MAX_INT_LEN 20
 #endif
 
-int64_t tkn_to_int64_t(const tkn *const t, const char *const str) {
+int64_t tkn_to_int64_t(const tkn *const t) {
     char istr[MAX_INT_LEN], *eptr;
     memset(istr, '\0', MAX_INT_LEN);
-    memcpy(istr, str + t->pos, t->len);
+    memcpy(istr, t->str + t->pos, t->len);
     return strtoll(istr, &eptr, 10);
 }

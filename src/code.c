@@ -60,7 +60,7 @@ const char *code_stat_str(code_stat cstat) {
     return s;
 }
 
-extern inline void code_st_i(code_st *const cs, al *const a, er *const e, const char *str);
+extern inline void code_st_i(code_st *const cs, al *const a, er *const e);
 
 extern inline code_stat code_er(code_st *const cs, const char *const fnn, code_stat cstat, const ast *const a);
 
@@ -237,7 +237,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
         }
         if (c->ops[i].a) {
             putchar('|');
-            tkn_p(&c->ops[i].a->t, cs->str);
+            tkn_p(&c->ops[i].a->t);
             putchar('|');
         }
         if (c->ops[i].jlen > 0) printf("$%d,%d", c->ops[i].jidx, c->ops[i].jlen);
@@ -428,7 +428,7 @@ static code_stat code_gen_lop(code_st *const cs, const ast *const a, code **c) {
 }
 
 static code_stat p_int(code_st *const cs, type t, const ast *const a, code **c) {
-    int64_t i = tkn_to_int64_t(&a->t, cs->str);
+    int64_t i = tkn_to_int64_t(&a->t);
     switch (t) {
         // TODO
         case TYPE(U6):
@@ -504,9 +504,9 @@ static code_stat load_var(code_st *const cs, const ast *const a, code **c, bool 
     return CODE_ER(cs, OK, a);
 }
 
-static int64_t te_call_idx(code_st *const cs, const call_node *const cn) {
+static int64_t te_call_idx(const call_node *const cn) {
     if (cn->tgt->n.var->tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
-        return tkn_to_int64_t(&cn->args->h->a->t, cs->str);
+        return tkn_to_int64_t(&cn->args->h->a->t);
     }
     return -1;
 }
@@ -564,7 +564,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             } else if (opn->l->at == AST_TYPE(CALL)) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, ASS_R_N, opn->r);
                 OP_RCI(cs, c, tr);
-                if ((tidx = te_call_idx(cs, opn->l->n.cn)) < 0) return CODE_ER(cs, ASS_TE_INV, opn->l);
+                if ((tidx = te_call_idx(opn->l->n.cn)) < 0) return CODE_ER(cs, ASS_TE_INV, opn->l);
                 IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, opn->l);
                 OP_RCD(cs, c, opn->l->n.cn->ret);
@@ -623,7 +623,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
-                            i6 = tkn_to_int64_t(&opn->r->t, cs->str);
+                            i6 = tkn_to_int64_t(&opn->r->t);
                             if (i6 >= 0 && i6 <= 2) {
                                 OP_A(cs, c, PV, FD, { .fd = (int) i6 }, opn->r);
                                 return CODE_ER(cs, OK, a);
@@ -642,7 +642,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break;
         case OP_TYPE(LD):
             if (opn->r->at != AST_TYPE(MOD) || !opn->r->n.m) return CODE_ER(cs, LD_MOD_F, a);
-            code_st_i(&ldcs, cs->a, cs->e, opn->r->n.m->src.str);
+            code_st_i(&ldcs, cs->a, cs->e);
             opn->r->n.m->c = code_i(cs->a, CODE_I_SIZE);
             if (code_gen_fn(&ldcs, opn->r->n.m->fns, &opn->r->n.m->c) != CODE_STAT(OK)) return CODE_ER(cs, LD_MOD_F, opn->r);
             gc = code_i(cs->a, CODE_I_SIZE);
@@ -833,7 +833,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
         case AST_TYPE(SYM):
             return code_gen_call_ftn(cs, a, c, cn->tgt->n.sym->tn, false);
         case AST_TYPE(VAR):
-            if ((tidx = te_call_idx(cs, cn)) > -1) {
+            if ((tidx = te_call_idx(cn)) > -1) {
                 IFCGEN(code_gen, cs, cn->tgt, c);
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, a);
                 OP_RCI(cs, c, cn->ret);
@@ -898,9 +898,9 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(STR):
                     sg = ala(cs->a, (a->t.len - 1) * sizeof(char));
                     for (size_t i = 0; i < a->t.len - 2; i++) {
-                        if (cs->str[a->t.pos + 1 + i] == '\\') {
+                        if (a->t.str[a->t.pos + 1 + i] == '\\') {
                             i++;
-                            switch (cs->str[a->t.pos + 1 + i]) {
+                            switch (a->t.str[a->t.pos + 1 + i]) {
                                 case 'n':
                                     sg[sgi++] = '\n';
                                     break;
@@ -908,7 +908,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                                     return CODE_ER(cs, INV_STR_ESC, a);
                             }
                             break;
-                        } else sg[sgi++] = cs->str[a->t.pos + 1 + i];
+                        } else sg[sgi++] = a->t.str[a->t.pos + 1 + i];
                     }
                     OP_A(cs, c, PV, STR, { .sg = sg }, a);
                     break;

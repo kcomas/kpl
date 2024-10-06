@@ -34,7 +34,7 @@ inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms) {
 mod_stat mod_lfile(mod *const m, const char *const path);
 
 // load file from tkn
-mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t, const char *const str);
+mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t);
 
 // allocate globals
 void mod_ag(mod *const m, uint8_t ng);

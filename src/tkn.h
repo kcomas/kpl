@@ -89,6 +89,7 @@ typedef enum {
 typedef struct {
     tkn_type type;
     size_t lno, cno, pos, len; // line, char, start pos, len
+    const char *str;
 } tkn;
 
 #define TKN_STAT(N) TKN_STAT_##N
@@ -146,6 +147,6 @@ inline tkn_stat tkn_peek(tkn_st *const ts, tkn *const t, const char *const str) 
 }
 
 // print tkn
-void tkn_p(const tkn *const t, const char *const str);
+void tkn_p(const tkn *const t);
 
-int64_t tkn_to_int64_t(const tkn *const t, const char *const str);
+int64_t tkn_to_int64_t(const tkn *const t);
