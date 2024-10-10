@@ -611,6 +611,13 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
+            case OP_C(TDI):
+                op_set_jidx(j, o);
+                jit_a(j, 0x5E); // pop rsi fn code
+                jit_a(j, 0x5F); // pop rdi te with arhs and return
+                // TODO push te and code on to stack and call fn to create thread
+                op_set_jlen(j, o);
+                break;
             case OP_C(RCI):
                 op_set_jidx(j, o);
                 jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]

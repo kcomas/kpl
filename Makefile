@@ -4,7 +4,7 @@
 CC = gcc
 DFLAGS = -DALD=1
 OO = -g -Og
-CFLAGS = $(DFLAGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
+CFLAGS = $(DFLAGS) $(OO) -lpthread -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)

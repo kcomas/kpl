@@ -12,6 +12,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <pthread.h>
 #include "al.h"
 #include "lst.h"
 
@@ -86,6 +87,8 @@ inline void jit_f(jit *j) {
 }
 
 typedef union _var var;
+
+typedef struct _var_td var_td;
 
 typedef struct {
     uint8_t ng; // number of globals

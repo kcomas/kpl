@@ -3,14 +3,13 @@
 
 n:U6$0
 
-t:VR[TD(TE[U6;U6];FN(U6;U6))]$[]
-
-tf:FN(U6;U6)${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
+tf:FN(U6;U6)
+t:VR[TD(TE[U6;U6];tf)]$[]
 
 #@ (n < 5) {
-    t + [U6$35;U6$0]*tf
+    t + [U6$35;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
     n: n + 1
 }
