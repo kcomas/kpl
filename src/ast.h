@@ -693,6 +693,8 @@ inline type_node *ast_gtn(const ast *const a) {
     return NULL;
 }
 
+type_node *type_lst_i(al *const a, type t, size_t len, ...);
+
 // a must be init
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs);
 

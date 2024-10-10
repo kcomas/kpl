@@ -345,6 +345,19 @@ extern inline ast *ast_i(al *const am, ast_type as, node const n, const tkn *con
 
 extern inline type_node *ast_gtn(const ast *const a);
 
+type_node *type_lst_i(al *const a, type t, size_t len, ...) {
+    lst_node *lst = lst_node_i(a, TYPE(STMT));
+    va_list v;
+    va_start(v, len);
+    while (len > 0) {
+        type_node *tn = va_arg(v, type_node*);
+        lst_node_a(a, lst, ast_i(a, AST_TYPE(TYPE), (node) { .tn = type_node_c(a, tn) }, NULL));
+        len--;
+    }
+    va_end(v);
+    return type_node_i(a, t, ast_i(a, AST_TYPE(LST), (node) { .lst = lst }, NULL));
+}
+
 static const char *const ast_type_str[] = {
     "TYPE",
     "RES",
