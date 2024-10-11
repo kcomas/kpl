@@ -83,6 +83,7 @@ void code_f(code *c) {
                 ctsv_f(c->ops[i].od.tsv);
                 break;
             CODE_F_T(FN, code_f, c);
+            CODE_F_T(TD, code_f, c);
             CODE_F_T(IF, code_f, c);
             CODE_F_T(COND, op_if_f, of);
             CODE_F_T(LOP, op_if_f, of);
@@ -227,6 +228,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 printf(",%d", c->ops[i].od.fd);
                 break;
             case TYPE(FN):
+            case TYPE(TD):
                 putchar('\n');
                 code_p(cs, c->ops[i].od.c, idnt + 4);
                 PCX(' ', idnt + 4);
@@ -581,7 +583,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             }
             return CODE_ER(cs, INV_L_ASS, a);
         case OP_TYPE(CST):
-            IFCGEN(code_gen, cs, opn->l, c);
+            if (opn->l->at != AST_TYPE(VAR)) IFCGEN(code_gen, cs, opn->l, c);
             if (opn->r->at == AST_TYPE(FN)) return code_gen(cs, opn->r, c);
             // TODO dynamic cast
             switch (opn->l->n.tn->t) {
@@ -696,7 +698,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             ASTGLRTN(opn->l, opn->r, INV_MUL_T, a);
             if (tl->t == TYPE(TE) && tr->t == TYPE(FN)) {
                 if ((*c)->ops[(*c)->len - 1].oc != OP_C(PV) && (*c)->ops[(*c)->len - 1].ot != TYPE(FN)) return CODE_ER(cs, TD_NOT_FN_NODE, opn->r);
-                OP_A(cs, c, TDI, TD, {}, a);
+                (*c)->ops[(*c)->len - 1].ot = TYPE(TD);
+                OP_A(cs, c, TDI, VD, {}, a);
                 break;
             }
             OP_P_INT_RET(opn, cs, l, c);
