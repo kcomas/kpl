@@ -67,7 +67,7 @@ void var_sg_f(var_sg *sg) {
 }
 
 static er_itm *er_var(mod *const m, ast *const a, const char *stat) {
-    er_itm *ei = er_itm_i(m->a, ER(RUN), __func__, stat);
+    er_itm *ei = er_itm_i(m->r->a, ER(RUN), __func__, stat);
     ei->path = m->src.path;
     if (a) {
         ei->lno = a->t.lno;
@@ -79,7 +79,7 @@ static er_itm *er_var(mod *const m, ast *const a, const char *stat) {
 void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
     er_itm *ei = er_var(m, a, NULL);
     ei->sg = sg;
-    er_a(m->e, ei);
+    er_a(m->r->e, ei);
 }
 
 ssize_t var_rcf(var v, type t) {
@@ -206,7 +206,7 @@ void var_tsv_add(al *const a, var_tsv *const tsv, var v) {
 var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv) {
     if (tsv->len == 0) {
         er_itm *ei = er_var(m, a, "VRS");
-        er_a(m->e, ei);
+        er_a(m->r->e, ei);
         return (var) { .i6 = 0 };
     }
     return tsv->v[--tsv->len];

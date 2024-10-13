@@ -43,24 +43,22 @@ typedef struct {
     tkn_stat tstat;
     tkn_st ts;
     tkn next, peek;
-    al *a;
-    er *e;
+    tdr *r;
     const char *str;
 } ast_st;
 
-inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str) {
-    tkn_st_i(&as->ts, a, e);
-    as->a = a;
-    as->e = e;
+inline void ast_st_i(ast_st *const as, tdr *const r, char *const str) {
+    tkn_st_i(&as->ts, r);
+    as->r = r;
     as->str = str;
 }
 
 inline ast_stat ast_er(ast_st *const as, const char *const fnn, ast_stat astat) {
     if (astat == AST_STAT(OK) || astat == AST_STAT(END)) return astat;
-    er_itm *ei = er_itm_i(as->a, ER(AST), fnn, ast_stat_str(astat));
+    er_itm *ei = er_itm_i(as->r->a, ER(AST), fnn, ast_stat_str(astat));
     ei->lno = as->next.lno;
     ei->cno = as->next.cno;
-    er_a(as->e, ei);
+    er_a(as->r->e, ei);
     return astat;
 }
 

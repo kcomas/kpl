@@ -56,7 +56,7 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
 
 extern inline void fn_stk_f(fn_stk *f);
 
-extern inline jit *jit_i(al *const a, size_t nops);
+extern inline jit *jit_i(al *const a, size_t nops, jit *j);
 
 extern inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o);
 
@@ -69,11 +69,11 @@ extern inline void jit_b(jit *j, size_t len, ...);
 extern inline void jit_c(jit *j, size_t len, uint8_t *b);
 
 static void op_set_jidx(const jit *const j, op *const o) {
-    o->jidx = j->len;
+    if (!(j->flgs & JIT_FLG(TD))) o->jidx = j->len;
 }
 
 static void op_set_jlen(const jit *const j, op *const o) {
-    o->jlen = j->len - o->jidx;
+    if (!(j->flgs & JIT_FLG(TD))) o->jlen = j->len - o->jidx;
 }
 
 static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
@@ -244,7 +244,8 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-var_td jit_thread(mod *const m, var_tsv *const tsv, code *const c) {
+static var_td jit_thread(mod *const m, var_tsv *const tsv, code *const c) {
+    // TODO init new thread module
     exit(33);
 }
 
@@ -352,15 +353,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(LM):
                 op_set_jidx(j, o);
-                stk = fn_stk_i(m->a, FN_STK_SIZE);
-                fn_stk_b(m->a, &stk, o->od.tsv->m->c);
-                fn_stk_a(m->a, &stk, o->od.tsv->m->c);
-                o->od.tsv->m->j = jit_i(m->a, stk->nops);
+                stk = fn_stk_i(m->r->a, FN_STK_SIZE);
+                fn_stk_b(m->r->a, &stk, o->od.tsv->m->c);
+                fn_stk_a(m->r->a, &stk, o->od.tsv->m->c);
+                o->od.tsv->m->r->j = jit_i(m->r->a, stk->nops, o->od.tsv->m->r->j);
                 if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
                 SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
-                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->r->a, al*, false, 7);
                 SET_REG(o->od.tsv->m, mod*, false, 6);
                 SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 2);
                 SET_FP(var_ts_fm);
@@ -405,7 +406,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 op_set_jidx(j, o);
                 switch (o->ot) {
                     case TYPE(STR):
-                        SET_REG(m->a, al*, false, 7);
+                        SET_REG(m->r->a, al*, false, 7);
                         SET_REG(o->od.sg, char*, false, 6);
                         SET_FP(var_sg_i_str);
                         SET_REG_CALL(false, 0);
@@ -427,7 +428,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(CTSV):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->r->a, al*, false, 7);
                 tsvs = o->od.tsv->len;
                 if (o->ot == TYPE(VR)) tsvs *= TSVML;
                 SET_REG(tsvs, size_t, false, 6);
@@ -466,7 +467,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(VRA):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->r->a, al*, false, 7);
                 jit_a(j, 0x5A); // pop rdx value
                 jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr [rsp]
                 SET_FP(var_tsv_add);
@@ -518,8 +519,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(CE):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
-                SET_REG(m->e, er*, false, 6);
+                SET_REG(m->r->a, al*, false, 7);
+                SET_REG(m->r->e, er*, false, 6);
                 SET_FP(er_g);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -527,8 +528,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(PE):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
-                SET_REG(m->e, er*, false, 6);
+                SET_REG(m->r->a, al*, false, 7);
+                SET_REG(m->r->e, er*, false, 6);
                 SET_REG(o->a->t.lno, size_t, false, 2);
                 SET_REG(o->a->t.cno, size_t, false, 1);
                 SET_FP(er_e);
@@ -538,7 +539,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             // TODO
             case OP_C(CSTSG):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->r->a, al*, false, 7);
                 jit_a(j, 0x5E); // pop rsi
                 switch (o->od.t) {
                     CT_SET_FN(U6, var_u6_sg);
@@ -568,7 +569,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             C_OP_C_BOP(OR, or);
             case OP_C(CNCTSG):
                 op_set_jidx(j, o);
-                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->r->a, al*, false, 7);
                 jit_b(j, 5, 0x48, 0x8B, 0x74, 0x24, 0x08); // mov rsi qword ptr [rsp+8] sg
                 jit_b(j, 4, 0x48, 0x8B, 0x14, 0x24); // mov rdx qword ptr [rsp] sg/te
                 switch (o->od.t) {

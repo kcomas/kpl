@@ -107,23 +107,21 @@ const char *tkn_stat_str(tkn_stat tstat);
 
 typedef struct {
     size_t lno, cno, pos; // line, char, pos to get next tkn
-    al *a;
-    er *e;
+    tdr *r;
 } tkn_st;
 
-inline void tkn_st_i(tkn_st *const ts, al *const a, er *const e) {
+inline void tkn_st_i(tkn_st *const ts, tdr *const r) {
     ts->lno = ts->cno = 1;
     ts->pos = 0;
-    ts->a = a;
-    ts->e = e;
+    ts->r = r;
 }
 
 inline tkn_stat tkn_er(tkn_st *const ts, const char *const fnn, tkn_stat tstat) {
     if (tstat == TKN_STAT(OK) || tstat == TKN_STAT(END)) return tstat;
-    er_itm *ei = er_itm_i(ts->a, ER(TKN), fnn, tkn_stat_str(tstat));
+    er_itm *ei = er_itm_i(ts->r->a, ER(TKN), fnn, tkn_stat_str(tstat));
     ei->lno = ts->lno;
     ei->cno = ts->cno;
-    er_a(ts->e, ei);
+    er_a(ts->r->e, ei);
     return tstat;
 }
 

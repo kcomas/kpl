@@ -5,6 +5,7 @@
 #include "var.h"
 #include "er.h"
 #include "tkn.h"
+#include "td.h"
 
 #define MOD_STAT(N) MOD_STAT_##N
 
@@ -15,18 +16,18 @@ typedef enum {
 
 const char *mod_stat_str(mod_stat ms);
 
-inline mod *mod_i(al *const a, er *const e) {
-    mod *m = ala(a, sizeof(mod));
-    m->a = a;
-    m->e = e;
+inline mod *mod_i(tds *const s, tdr *const r) {
+    mod *m = ala(r->a, sizeof(mod));
+    m->s = s;
+    m->r = r;
     return m;
 }
 
 inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms) {
     if (ms == MOD_STAT(OK)) return ms;
-    er_itm *ei = er_itm_i(m->a, ER(MOD), fnn, mod_stat_str(ms));
+    er_itm *ei = er_itm_i(m->r->a, ER(MOD), fnn, mod_stat_str(ms));
     ei->path = m->src.path;
-    er_a(m->e, ei);
+    er_a(m->r->e, ei);
     return ms;
 }
 

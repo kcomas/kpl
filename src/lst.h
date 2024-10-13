@@ -22,6 +22,13 @@ typedef struct _lst_ex {
     } \
     L->len++
 
+// removed item in tmpv
+#define LST_S(L, TMPV) if (L->h) { \
+        TMPV = L->h; \
+        L->h = L->h->next; \
+        L->len--; \
+    }
+
 #define LST_R(L, ITT, RTGT, ITMF, DATAF) ITT *h = L->h; \
     if (RTGT == L->h && L->h == L->t) L->h = L->t = NULL; \
     else if (RTGT == L->t) { \
@@ -48,10 +55,10 @@ typedef struct _lst_ex {
 
 #define LST_F(L, ITT, ITMF, DATAF) do { \
     ITT *h = L->h; \
-        while (h) { \
-            ITT *tmp = h; \
-            h = h->next; \
-            ITMF(tmp, DATAF); \
-        } \
+    while (h) { \
+        ITT *tmp = h; \
+        h = h->next; \
+        ITMF(tmp, DATAF); \
+    } \
         L->h = L->t = NULL; \
     } while (0)
