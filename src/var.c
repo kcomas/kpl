@@ -216,3 +216,12 @@ void var_tsv_d(var_tsv *tsv) {
     alf(tsv->v);
     alf(tsv);
 }
+
+
+var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {
+    var_td *td = ala(m->r->a, sizeof(var_td));
+    td->m = m;
+    td->m->c = c;
+    td->te = te;
+    return td;
+}

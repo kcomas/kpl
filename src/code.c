@@ -78,7 +78,6 @@ void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
         switch (c->ops[i].ot) {
             case TYPE(MOD):
-                FNNF(c->ops[i].od.tsv->m->j, jit_f);
                 code_f(c->ops[i].od.tsv->m->c);
                 ctsv_f(c->ops[i].od.tsv);
                 break;
@@ -173,7 +172,7 @@ const char *op_c_get_str(op_c oc) {
     return s;
 };
 
-void code_p(const code_st *const cs, const code *const c, size_t idnt) {
+void code_p(const code *const c, size_t idnt) {
     for (size_t i = 0; i < c->len; i++) {
         PCX(' ', idnt);
         printf("%lu: C:%s,T:%s", i, op_c_get_str(c->ops[i].oc), type_get_str(c->ops[i].ot));
@@ -184,14 +183,14 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 break;
             case TYPE(IF):
                 putchar('\n');
-                code_p(cs, c->ops[i].od.c, idnt + 1);
+                code_p(c->ops[i].od.c, idnt + 1);
                 PCX(' ', idnt + 1);
                 break;
             case TYPE(COND):
             case TYPE(LOP):
                 putchar('\n');
-                code_p(cs, c->ops[i].od.of->cond, idnt + 1);
-                code_p(cs, c->ops[i].od.of->body, idnt + 2);
+                code_p(c->ops[i].od.of->cond, idnt + 1);
+                code_p(c->ops[i].od.of->body, idnt + 2);
                 PCX(' ', idnt + 1);
                 break;
             case TYPE(VAR):
@@ -222,7 +221,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 if (c->ops[i].od.tsv->len > 0) printf(",%lu", c->ops[i].od.tsv->len);
                 if (c->ops[i].od.tsv->m) printf(",%p", c->ops[i].od.tsv->m);
                 putchar('\n');
-                if (c->ops[i].od.tsv->gc) code_p(cs, c->ops[i].od.tsv->gc, idnt + 4);
+                if (c->ops[i].od.tsv->gc) code_p(c->ops[i].od.tsv->gc, idnt + 4);
                 break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
@@ -230,7 +229,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
             case TYPE(FN):
             case TYPE(TD):
                 putchar('\n');
-                code_p(cs, c->ops[i].od.c, idnt + 4);
+                code_p(c->ops[i].od.c, idnt + 4);
                 PCX(' ', idnt + 4);
                 break;
             case TYPE(ER):

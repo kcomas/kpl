@@ -114,7 +114,6 @@ typedef struct {
     tdr *r; // thread resource
     fn_node *fns; // ast root
     code *c;
-    jit *j;
     var *g; // globals
     type_node *tn;
 } mod;

@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     code_st_i(&cs, r);
     m->c = code_i(r->a, CODE_I_SIZE);
     if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) {
-        code_p(&cs, m->c, 0);
+        code_p(m->c, 0);
         er_p(r->e);
         return cstat;
     }
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     r->j = jit_i(r->a, stk->nops, r->j);
     jit_stat jstat;
     if ((jstat = jit_stk(m, stk, m->r->j)) != JIT_STAT(OK)) {
-        code_p(&cs, m->c, 0);
+        code_p(m->c, 0);
         er_p(r->e);
         return jstat;
     }

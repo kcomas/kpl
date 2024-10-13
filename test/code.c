@@ -39,11 +39,11 @@ int main(int argc, char *argv[]) {
     code_st_i(&cs, r);
     m->c = code_i(r->a, CODE_I_SIZE);
     if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) {
-        code_p(&cs, m->c, 0);
+        code_p(m->c, 0);
         er_p(r->e);
         return cstat;
     }
-    code_p(&cs, m->c, 0);
+    code_p(m->c, 0);
     code_f(m->c);
     fn_node_f(m->fns);
     FNNF(m->tn, type_node_f);

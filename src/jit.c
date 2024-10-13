@@ -180,7 +180,7 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
 
 static void jit_var_tsv_gidx(jit *j) {
     void *fp;
-    static uint8_t buf[sizeof(void*)];
+    uint8_t buf[sizeof(void*)];
     jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
     jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr rsp
     SET_FP(var_tsv_gidx);
@@ -190,7 +190,7 @@ static void jit_var_tsv_gidx(jit *j) {
 
 static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     void *fp;
-    static uint8_t buf[sizeof(void*)];
+    uint8_t buf[sizeof(void*)];
     int32_t lops, lope, bs, jmpl;
     jit_b(j, 3, 0x48, 0x31, 0xF6); // xor rsi rsi, rsi=0
     jit_a(j, 0x56); // push rsi
@@ -244,9 +244,50 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-static var_td jit_thread(mod *const m, var_tsv *const tsv, code *const c) {
-    // TODO init new thread module
-    exit(33);
+static void *thread_fn(void *arg) {
+    var_td *td = (var_td*) arg;
+    void *fp;
+    uint8_t buf[sizeof(void*)];
+    size_t i = 0;
+    fn_stk *stk = fn_stk_i(td->m->r->a, FN_STK_SIZE);
+    fn_stk_b(td->m->r->a, &stk, td->m->c);
+    fn_stk_a(td->m->r->a, &stk, td->m->c);
+    td->m->r->j = jit_i(td->m->r->a, stk->nops + (td->te->len * 3), td->m->r->j);
+    jit_stat jstat;
+    if ((jstat = jit_stk(td->m, stk, td->m->r->j)) != JIT_STAT(OK)) {
+        code_p(td->m->c, 0);
+        er_p(td->m->r->e);
+        printf("THREAD EXIT: %d\n", jstat);
+        exit(jstat);
+    }
+    fn_stk_f(stk);
+    jit *j = td->m->r->j;
+    jit_fn *jf = (jit_fn*) &j->h[j->len];
+    jit_b(j, 4, 0x55, 0x48, 0x89, 0xE5); // push rbp, mov rbp rsp
+    for (i = 0; i < td->te->len - 1; i++) {
+        SET_REG(td->te, var_tsv*, false, 7);
+        SET_REG(i, size_t, false, 6);
+        SET_FP(var_tsv_gidx);
+        SET_REG_CALL(false, 0);
+        jit_a(j, 0x50); // push rax
+    }
+    SET_REG(td->m->c->jf, jit_fn*, false, 0);
+    jit_b(j, 2, 0xFF, 0xD0); // call rax
+    SET_REG(td->te, var_tsv*, false, 7);
+    i = td->te->len - 1;
+    SET_REG(i, size_t, false, 6);
+    jit_b(j, 3, 0x48, 0x89, 0xC2); // mov rdx rax
+    SET_FP(var_tsv_sidx);
+    SET_REG_CALL(false, 0);
+    jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
+    jf();
+    return NULL;
+}
+
+static var_td *jit_thread(mod *const m, var_tsv *const te, code *const c) {
+    var_td *td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
+    pthread_create(&td->pt, NULL, &thread_fn, td); // TODO check if errors
+    return td;
 }
 
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
@@ -255,7 +296,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     void *fp;
     uint32_t vsp; // var stack pos
     size_t tsvs; // size of tsv
-    static uint8_t buf[sizeof(void*)];
+    uint8_t buf[sizeof(void*)];
     fn_stk *stk;
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
@@ -357,7 +398,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 fn_stk_b(m->r->a, &stk, o->od.tsv->m->c);
                 fn_stk_a(m->r->a, &stk, o->od.tsv->m->c);
                 o->od.tsv->m->r->j = jit_i(m->r->a, stk->nops, o->od.tsv->m->r->j);
-                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->r->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
                 SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
@@ -620,8 +661,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(TDI):
                 op_set_jidx(j, o);
                 SET_REG(m, mod*, false, 7);
-                jit_a(j, 0x5E); // pop rsi te
                 jit_a(j, 0x5A); // pop rdx fn
+                jit_a(j, 0x5E); // pop rsi te
                 SET_FP(jit_thread);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
