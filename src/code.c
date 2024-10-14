@@ -794,6 +794,7 @@ static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code *
         IFCGEN(code_gen, cs, cn->tgt, c);
         OP_A(cs, c, TDJ, OP, { .t = cn->ret->t }, a);
         OP_A(cs, c, SWAP, OP, { .t = ftn->t }, a);
+        OP_RCD(cs, c, ftn);
         OP_GC(cs, c, ftn, a);
         return CODE_ER(cs, OK, NULL);
     }

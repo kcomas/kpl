@@ -8,14 +8,15 @@ t:VR[TD(TE[U6;U6];tf)]$[]
 x:U6$35
 
 #@ (n < 5) {
-    vt: [x;U6$0]*tf${(x)
+    t + [x;U6$0]*tf${(x)
         f: \l "fibp.kpl"
         r:f`fibp(x)
         r}
     $(FD;1) << "Created: ",$(SG;n),"\n"
-    r:vt()
     $(FD;1) << " ", ["R:";SG$r;"\n"]
     n: n + 1
 }
 
 $(FD;1) << "Created: ",$(SG;n)," threads\n"
+
+n:U6$0

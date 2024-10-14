@@ -745,6 +745,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(VR):
                     case TYPE(TE):
                     case TYPE(ST):
+                    case TYPE(TD):
                         break;
                     default:
                         return JIT_ER(m, RCF_T_INV, o);
@@ -893,6 +894,10 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(ER):
                         SET_FP(er_itm_d);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(TD):
+                        SET_FP(var_td_d);
                         SET_REG_CALL(false, 0);
                         break;
                     default:
