@@ -258,6 +258,7 @@ static code_stat code_gen_rc(code_st *const cs, const type_node *const tn, code 
         case TYPE(TE):
         case TYPE(ST):
         case TYPE(ER):
+        case TYPE(TD):
             if (inc) OP_A(cs, c, RCI, OP, { .t = tn->t }, NULL);
             else OP_A(cs, c, RCD, OP, { .t = tn->t }, NULL);
             break;
