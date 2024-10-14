@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     }
     fn_stk_f(stk);
     clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    wait(NULL);
     while (!m->done) {
         wait(NULL);
     }
