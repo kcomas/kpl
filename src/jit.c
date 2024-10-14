@@ -244,7 +244,7 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-static void *thread_fn(void *arg) {
+static int thread_fn(void *arg) {
     var_td *td = (var_td*) arg;
     void *fp;
     uint8_t buf[sizeof(void*)];
@@ -279,15 +279,23 @@ static void *thread_fn(void *arg) {
     jit_b(j, 3, 0x48, 0x89, 0xC2); // mov rdx rax
     SET_FP(var_tsv_sidx);
     SET_REG_CALL(false, 0);
+    SET_REG(td->m, mod*, false, 7);
+    SET_FP(mod_done);
+    SET_REG_CALL(false, 0);
     jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
-    jf();
-    return NULL;
+    jf(NULL);
+    return 0;
 }
 
-static var_td *jit_thread(mod *const m, var_tsv *const te, code *const c) {
+static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
-    pthread_create(&td->pt, NULL, &thread_fn, td); // TODO check if errors
+    clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
     return td;
+}
+
+static var join_thrd(var_td *const td) {
+    while (!td->m->done) { wait(NULL); }
+    return td->te->v[td->te->len - 1];
 }
 
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
@@ -364,6 +372,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(FN, mod_sg_jf);
                     CT_SET_FN(FD, mod_sg_fd);
                     CT_SET_FN(ER, mod_sg_er);
+                    CT_SET_FN(TD, mod_sg_td);
                     default:
                         return JIT_ER(m, SG_T_INV, o);
                 }
@@ -385,6 +394,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(FN, mod_lg_jf);
                     CT_SET_FN(FD, mod_lg_fd);
                     CT_SET_FN(ER, mod_lg_er);
+                    CT_SET_FN(TD, mod_lg_td);
                     default:
                         return JIT_ER(m, LG_T_INV, o);
                 }
@@ -663,7 +673,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 SET_REG(m, mod*, false, 7);
                 jit_a(j, 0x5A); // pop rdx fn
                 jit_a(j, 0x5E); // pop rsi te
-                SET_FP(jit_thread);
+                SET_FP(jit_thrd);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
+            case OP_C(TDJ):
+                op_set_jidx(j, o);
+                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr rsp
+                SET_FP(join_thrd);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
@@ -766,6 +784,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_a(j, 0x5F); // pop rdi
                         SET_FP(er_itm_gc);
                         SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(TD):
+                        // TODO
                         break;
                     default:
                         return JIT_ER(m, GC_T_INV, o);

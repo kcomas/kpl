@@ -2,6 +2,17 @@
 #include "../src/mod.h"
 #include "../src/jit.h"
 
+int mt(void *args) {
+    mod *m = (mod*) args;
+    m->c->jf(NULL);
+    code_f(m->c);
+    fn_node_f(m->fns);
+    FNNF(m->tn, type_node_f);
+    tds_a(m->s, m->r);
+    mod_done(m);
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
     tds *volatile s = tds_i();
@@ -53,14 +64,13 @@ int main(int argc, char *argv[]) {
         er_p(r->e);
         return jstat;
     }
-    code_p(m->c, 0);
-    m->c->jf();
     fn_stk_f(stk);
-    code_f(m->c);
-    fn_node_f(m->fns);
-    FNNF(m->tn, type_node_f);
+    code_p(m->c, 0);
+    clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    while (!m->done) {
+        wait(NULL);
+    }
     mod_f(m);
-    tds_a(s, r);
     tds_f(s);
     return 0;
 }

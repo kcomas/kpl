@@ -119,7 +119,6 @@ void var_tsv_d(var_tsv *tsv);
 typedef struct _var_td {
     mod *m; // has code
     var_tsv *te; // te->v[te->len - 1] is return value
-    pthread_t pt;
 } var_td; // thread
 
 var_td *var_td_i(mod *const m, var_tsv *const te, code *const c);

@@ -97,6 +97,8 @@ static const char *const tss[] = {
     "INV_CALL_TGT_ARG_T",
     "INV_CALL_ARG_T",
     "CALL_ARG_T_NEQ",
+    "NO_ARGS_TD",
+    "INV_TD_T",
     "INV_RET_T",
     "INV_RET_FNS",
     "RET_T_NEQ",
@@ -605,6 +607,11 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
                 ah = ah->next;
             }
             break;
+            case TYPE(TD):
+                if (cn->args->len != 0) return TYPE_ER(ts, NO_ARGS_TD);
+                ASTGTN(ta, tt->a->n.lst->h->a->n.tn->a->n.lst->t->a, INV_TD_T);
+                cn->ret = type_node_c(ts->r->a, ta);
+                break;
         default:
             return TYPE_ER(ts, INV_CALL_TGT_T);
     }

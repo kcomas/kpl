@@ -14,6 +14,10 @@ const char *mod_stat_str(mod_stat ms) {
 
 extern inline mod *mod_i(tds *const s, tdr *const r);
 
+void mod_done(mod *const m) {
+    m->done = true;
+}
+
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 
 #define MOD_ER(M, MS) mod_er(m, __func__, MOD_STAT(MS))
@@ -76,6 +80,9 @@ jit_fn *mod_lg_jf(mod *const m, uint8_t i) { return m->g[i].jf; }
 
 void mod_sg_er(mod *const m, uint8_t i, er_itm *const ei) { m->g[i].ei = ei; }
 er_itm *mod_lg_er(mod *const m, uint8_t i) { return m->g[i].ei; }
+
+void mod_sg_td(mod *const m, uint8_t i, var_td *const td) { m->g[i].td = td; }
+var_td *mod_lg_td(mod *const m, uint8_t i) { return m->g[i].td; }
 
 extern inline void mod_psrc(const mod *const m);
 
