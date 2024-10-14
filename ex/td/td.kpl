@@ -7,16 +7,41 @@ tf:FN(U6;U6)
 t:VR[TD(TE[U6;U6];tf)]$[]
 x:U6$35
 
-#@ (n < 5) {
-    t + [x;U6$0]*tf${(x)
-        f: \l "fibp.kpl"
-        r:f`fibp(x)
-        r}
-    $(FD;1) << "Created: ",$(SG;n),"\n"
-    $(FD;1) << " ", ["R:";SG$r;"\n"]
-    n: n + 1
-}
+va: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
+vb: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
+vc: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
+vd: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
+ve: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
 
-$(FD;1) << "Created: ",$(SG;n)," threads\n"
+a:va()
+b:vb()
+c:vc()
+d:vd()
+e:ve()
 
-n:U6$0
+$(FD;1) << " ", ["A:";SG$a;"\n"]
+$(FD;1) << " ", ["B:";SG$b;"\n"]
+$(FD;1) << " ", ["C:";SG$c;"\n"]
+$(FD;1) << " ", ["D:";SG$d;"\n"]
+$(FD;1) << " ", ["E:";SG$e;"\n"]
+
+\d va
+\d vb
+\d vc
+\d vd
+\d ve
