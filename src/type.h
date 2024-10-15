@@ -120,6 +120,7 @@ typedef enum {
     TYPE_STAT(INV_TE_CALL_IDX),
     TYPE_STAT(INV_TE_CALL_IDX_T),
     TYPE_STAT(INV_CALL_ARGS_LEN), // too little or too many args
+    TYPE_STAT(INV_CALL_RET_T),
     TYPE_STAT(INV_CALL_TGT_ARG_T), // invalid arg type for call
     TYPE_STAT(INV_CALL_ARG_T), // arg type in call inv
     TYPE_STAT(CALL_ARG_T_NEQ), // ivalid type for call arg
