@@ -3,7 +3,6 @@ n:U6$0
 
 tf:FN(U6;U6)
 tt:TD(TE[U6;U6];tf)
-t:VR[tt]$[]
 x:U6$35
 
 gt:FN(U6;tt)${(x)
@@ -12,12 +11,7 @@ gt:FN(U6;tt)${(x)
         r:f`fibp(x)
         r}}
 
-#@ (n < 5) {
-    t + gt(x)
-    n: n + 1
-}
-
-n:U6$0
+t:VR[tt]$[gt(x);gt(x);gt(x);gt(x);gt(x)]
 
 #@ (n < 5) {
     v:-t
