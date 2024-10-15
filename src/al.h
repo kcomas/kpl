@@ -19,7 +19,6 @@ typedef struct {
 } al;
 
 inline al *al_i(void) {
-    //return calloc(1, sizeof(al));
     return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
 }
 
@@ -55,7 +54,6 @@ inline void al_f(al *a) {
     printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
 #endif
     LST_F(a, alc, alc_f, NULL);
-    //free(a);
     munmap(a, getpagesize());
 }
 
