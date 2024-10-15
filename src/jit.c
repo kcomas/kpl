@@ -58,11 +58,11 @@ extern inline void fn_stk_f(fn_stk *f);
 
 void jit_i(al *const a, size_t nops, jit **j) {
     size_t size = nops * BYTES_PER_OP;
-    if (*j && (*j)->size > 0) {
+    if ((*j)->size > 0) {
         if ((*j)->size >= size) {
             (*j)->len = 0;
             return;
-        } else if (*j && (*j)->size < size) {
+        } else if ((*j)->size < size) {
             jit_f(*j);
             *j = ala(a, sizeof(jit));
         }
