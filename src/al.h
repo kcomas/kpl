@@ -18,8 +18,8 @@ typedef struct {
     alc *h, *t;
 } al;
 
-inline al *al_i(void) {
-    return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+inline al *al_i(void *nal) {
+    return (al*) nal;
 }
 
 #ifndef ALC_USED_FREE_PCT
@@ -30,20 +30,31 @@ typedef struct _alc {
     al *a;
     alc *prev, *next;
     size_t aus, len, size; // active used size, total used, size of chunk
-    uint8_t *h; // memmap
+    void *h; // memmap
 } alc; // allocator chunk no frees filled then freed
+
+typedef struct {
+    size_t size;
+    alc *ac;
+} alci;
 
 #ifndef AL_PS_MUL
     #define AL_PS_MUL 2
 #endif
 
 inline alc *alc_i(al *const a, size_t size) {
-    alc *ac = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    size += sizeof(alc) + sizeof(alci);
+    size_t mo = size = size % sizeof(alci);
+    if (mo) size = size - mo + sizeof(alci);
+    size_t ps = (size_t) getpagesize() * AL_PS_MUL;
+    size = size <= ps ? ps : (size / ps + 1) * ps;
+    alc *ac = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     ac->a = a;
     LST_A(a, ac);
-    size_t ps = (size_t) getpagesize() * AL_PS_MUL;
+    ac->size = size;
     ac->size = size <= ps ? ps : (size / ps + 1) * ps;
-    ac->h = mmap(NULL, ac->size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    ac->h = ac + sizeof(alc) + sizeof(alci);
+    posix_memalign(&ac->h, sizeof(alci), size);
     return ac;
 }
 
@@ -54,13 +65,7 @@ inline void al_f(al *a) {
     printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
 #endif
     LST_F(a, alc, alc_f, NULL);
-    munmap(a, getpagesize());
 }
-
-typedef struct {
-    size_t size;
-    alc *ac;
-} alci;
 
 void *ala(al *const a, size_t size);
 

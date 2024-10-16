@@ -486,7 +486,15 @@ static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_
     return CODE_ER(cs, OK, a);
 }
 
-static code_stat load_var(code_st *const cs, const ast *const a, code **c, bool gc) {
+#define LD_V_M(N) LD_V_M_##N
+
+typedef enum {
+    LD_V_M(RCI),
+    LD_V_M(GC),
+    LD_V_M(NK) // null
+} ld_v_m;
+
+static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_m lvm) {
     code_stat cstat;
     switch (a->n.var->vt) {
         case VAR_TYPE(U):
@@ -502,11 +510,17 @@ static code_stat load_var(code_st *const cs, const ast *const a, code **c, bool 
             OP_A(cs, c, LA, VAR, { SLV(a->n.var->fns->args->len - 1 - a->n.var->id, a->n.var->tn->t) }, a);
             break;
     }
-    if (gc) {
-        OP_RCD(cs, c, a->n.var->tn);
-        OP_GC(cs, c, a->n.var->tn, a);
-    } else {
-        OP_RCI(cs, c, a->n.var->tn);
+    switch (lvm) {
+        case LD_V_M(RCI):
+            OP_RCI(cs, c, a->n.var->tn);
+            break;
+        case LD_V_M(GC):
+            OP_RCD(cs, c, a->n.var->tn);
+            OP_GC(cs, c, a->n.var->tn, a);
+            break;
+        case LD_V_M(NK):
+            // TODO
+            break;
     }
     return CODE_ER(cs, OK, a);
 }
@@ -557,7 +571,23 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
-                if ((opn->flgs & NODE_FLG(GCV)) && (cstat = load_var(cs, opn->l, c, true)) != CODE_STAT(OK)) return cstat;
+                if ((opn->flgs & NODE_FLG(GCV)) && (cstat = load_var(cs, opn->l, c, LD_V_M(GC))) != CODE_STAT(OK)) {
+                    return cstat;
+                }  else {
+                    switch (opn->l->n.var->tn->t) {
+                        case TYPE(STR):
+                        case TYPE(SG):
+                        case TYPE(VR):
+                        case TYPE(TE):
+                        case TYPE(ST):
+                        case TYPE(ER):
+                        case TYPE(TD):
+                            // TODO gc with null check
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 if ((cstat = store_var(cs, a, c, opn->l->n.var, true)) != CODE_STAT(OK)) return cstat;
                 break;
             } else if (opn->l->at == AST_TYPE(SYM)) {
@@ -917,6 +947,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(FLT):
                     break; // TODO
                 case TYPE(STR):
+                    // TODO redo
                     sg = ala(cs->r->a, (a->t.len - 1) * sizeof(char));
                     for (size_t i = 0; i < a->t.len - 2; i++) {
                         if (a->t.str[a->t.pos + 1 + i] == '\\') {
@@ -966,7 +997,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 }
             } else IFCGEN(code_gen, cs, a->n.ret->a, c);
             return code_gen_ret(cs, a->n.ret->fn, c);
-        case AST_TYPE(VAR): return load_var(cs, a, c, false);
+        case AST_TYPE(VAR): return load_var(cs, a, c, LD_V_M(RCI));
     }
     return CODE_ER(cs, OK, NULL);
 }

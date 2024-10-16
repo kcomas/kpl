@@ -1,7 +1,7 @@
 
 #include "td.h"
 
-extern inline tdr *tdr_i(void);
+extern inline tdr *tdr_i(tds *const s);
 
 extern inline void tdr_f(tdr *r, void *fn);
 
