@@ -27,7 +27,7 @@ inline void tdr_f(tdr *r, void *fn) {
     al_f(a);
 }
 
-inline tds *tds_i() {
+inline tds *tds_i(void) {
     return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
 }
 

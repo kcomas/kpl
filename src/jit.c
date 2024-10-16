@@ -304,7 +304,7 @@ int thread_fn(void *volatile arg) {
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
     td->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
-    nanosleep((const struct timespec[]){{0, 5e4L}}, NULL);
+    nanosleep((const struct timespec[]){{0, 1e5L}}, NULL);
     return td;
 }
 
@@ -700,7 +700,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(TDJ):
                 op_set_jidx(j, o);
-                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr rsp
+                jit_a(j, 0x5F); // pop rdi
                 SET_FP(join_thrd);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
