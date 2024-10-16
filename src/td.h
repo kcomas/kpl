@@ -4,7 +4,7 @@
 
 #define THREAD_STACK_PAGE_MUL 100
 
-inline tdr *tdr_i(tds *const s) {
+inline tdr *tdr_i(tds *volatile s) {
     al *a = al_i(s->nal);
     s->nal += sizeof(al);
     er *e = er_i(a);
@@ -30,22 +30,21 @@ inline void tdr_f(tdr *r, void *fn) {
 
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    s->nal = s + sizeof(tds);
+    sem_init(&s->l, -1, 1);
+    s->nal = s + sizeof(tds) + sizeof(al);
     posix_memalign(&s->nal, sizeof(al), getpagesize());
     return s;
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
-    while (s->lock) {}
-    s->lock = true;
+    sem_wait(&s->l);
     er_c(r->e);
     LST_A(s, r);
-    s->lock = false;
+    sem_post(&s->l);
 }
 
 inline tdr *tds_g(tds *volatile s) {
-    while (s->lock) {}
-    s->lock = true;
+    sem_wait(&s->l);
     tdr *r = NULL;
     if (!s->h) {
         s->total++;
@@ -53,14 +52,15 @@ inline tdr *tds_g(tds *volatile s) {
     } else {
         LST_S(s, r);
     }
-    s->lock = false;
+    sem_post(&s->l);
     return r;
 }
 
 inline void tds_f(tds *s) {
-#ifdef ALD // thread resources taken and returned
+#if KPL_ALD // thread resources taken and returned
     printf("**RT: %lu, RR: %lu**\n", s->total, s->len);
 #endif
     LST_F(s, tdr, tdr_f, NULL);
+    sem_destroy(&s->l);
     munmap(s, getpagesize());
 }

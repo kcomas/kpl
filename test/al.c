@@ -4,7 +4,8 @@
 #include <string.h>
 
 int main(void) {
-    al *a = al_i();
+    al als;
+    al *a = al_i(&als);
     char *x = ala(a, 100);
     strcpy(x, "Hello Word");
     printf("%s\n", x);

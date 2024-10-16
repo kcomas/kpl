@@ -2,9 +2,12 @@
 #pragma once
 
 #define _GNU_SOURCE
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <sched.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -12,13 +15,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <time.h>
 #include "al.h"
 #include "lst.h"
+
+#ifndef KPL_ALD
+    #define KPL_ALD 0
+#endif
 
 #define KPLE 'k'+'p'+'l'
 
@@ -105,17 +110,17 @@ typedef struct _tdr {
 } tdr; // thread resource
 
 typedef struct _tds {
+    sem_t l; // lock
     size_t len, total; // len is number in lst, total is number used
-    bool lock;
     tdr *h, *t;
     void *nal; // pointer for next al
 } tds; // threads
 
 typedef struct {
-    bool done;
+    sem_t done;
     uint8_t ng; // number of globals
     struct {
-        struct stat sb;
+        struct statx sxb;
         char *path, *str;
     } src;
     tds *s;

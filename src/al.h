@@ -11,10 +11,7 @@
 typedef struct _alc alc;
 
 typedef struct {
-#ifdef ALD
-    size_t u, f; // used freed
-#endif
-    size_t len;
+    size_t len, u, f; // used freed
     alc *h, *t;
 } al;
 
@@ -61,7 +58,7 @@ inline alc *alc_i(al *const a, size_t size) {
 void alc_f(alc *ac, void *fn);
 
 inline void al_f(al *a) {
-#ifdef ALD
+#if KPL_ALD
     printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
 #endif
     LST_F(a, alc, alc_f, NULL);
