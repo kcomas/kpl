@@ -7,7 +7,7 @@ extern inline alc *alc_i(al *const a, size_t size);
 
 void alc_f(alc *ac, void *fn) {
     (void) fn;
-#if KPL_ALD
+#ifdef KPL_ALD
     if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
 #endif
     munmap(ac, ac->size);
@@ -16,9 +16,7 @@ void alc_f(alc *ac, void *fn) {
 extern inline void al_f(al *a);
 
 void *ala(al *const a, size_t size) {
-#if KPL_ALD
     a->u++;
-#endif
     size += sizeof(alci);
     size_t mo = size % sizeof(alci);
     if (mo) size = size - mo + sizeof(alci);
@@ -29,24 +27,26 @@ void *ala(al *const a, size_t size) {
     }
     if (!ac) ac = alc_i(a, size);
     void *ptr = ac->h + ac->len;
+    posix_memalign(&ptr, sizeof(alci), size);
     ac->aus += size;
     ac->len += size;
     alci *ai = (alci*) ptr;
     ai->size = size;
     ai->ac = ac;
-    return ptr + sizeof(alci);
+    ptr += sizeof(alci);
+    return ptr;
 }
 
 void alf(void *ptr) {
     alci *ai = ptr - sizeof(alci);
     alc *ac = ai->ac;
+    ac->a->f++;
     ac->aus -= ai->size;
-#if KPL_ALD
+#ifdef KPL_ALD
     if (ai->size == 0) {
         printf("Double Free\n");
         exit(1);
     }
-    ac->a->f++;
     ai->size = 0;
 #endif
     if (ac->aus == 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
