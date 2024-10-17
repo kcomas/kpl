@@ -51,4 +51,8 @@ void jit_f(jit *j) {
     alf(j);
 }
 
+void mod_done(mod *const m) {
+    sem_post(&m->done);
+}
+
 extern inline size_t str_dir_len(const char *const s);

@@ -24,8 +24,6 @@ inline mod *mod_i(tds *const s, tdr *const r) {
     return m;
 }
 
-void mod_done(mod *const m);
-
 inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms) {
     if (ms == MOD_STAT(OK)) return ms;
     er_itm *ei = er_itm_i(m->r->a, ER(MOD), fnn, mod_stat_str(ms));
