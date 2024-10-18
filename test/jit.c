@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     fn_stk *stk = fn_stk_i(r->a, FN_STK_SIZE);
     fn_stk_b(r->a, &stk, m->c);
     fn_stk_a(r->a, &stk, m->c);
-    jit_i(r->a, stk->nops, &r->j);
+    jit_i(r->a, stk->nops, &r->j, 0);
     jit_stat jstat;
     if ((jstat = jit_stk(m, stk, r->j, true)) != JIT_STAT(OK)) {
         code_p(m->c, 0);

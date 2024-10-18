@@ -78,6 +78,7 @@ static tkn_stat tkn_var(tkn *const t, const char *const str) {
             TKN_C('T', TRUE);
             TKN_C('F', FALSE);
             TKN_C('S', SELF);
+            TKN_C('D', DEB);
         }
     }
     return TKN_STAT(OK);
@@ -220,7 +221,7 @@ static const char *const tkn_type_str[] = {
     "FALSE",
     "SELF",
     // TODO LOCAL
-    // TODO DEBUGGER
+    "DEB",
     // built in type names
     "VD",
     "BL",
