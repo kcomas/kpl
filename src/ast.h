@@ -444,7 +444,7 @@ inline void if_itm_lop_p(const ast_st *const as, const if_itm *const ii, size_t 
 
 inline void if_itm_f(if_itm *im, void *fn) {
     (void) fn;
-    ast_f(im->cond);
+    FNNF(im->cond, ast_f);
     lst_node_f(im->body);
     alf(im);
 }

@@ -246,7 +246,9 @@ static type_stat type_chk_if(type_st *const ts, fn_node *const fns, if_node *con
     type_stat tstat;
     if_itm *h = in->h;
     while (h) {
-        IFTCHK(type_chk, ts, fns, h->cond);
+        if (h->cond) {
+            IFTCHK(type_chk, ts, fns, h->cond);
+        }
         IFTCHK(type_chk_lst, ts, fns, h->body);
         h = h->next;
     }

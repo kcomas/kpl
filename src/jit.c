@@ -25,12 +25,13 @@ static const char *const jss[] = {
     "GCTSV_T_INV",
     "GCVR_T_INV",
     "DEL_T_INV",
-    "INV_CODE"
+    "INV_CODE",
+    "IF_ELSE_INV"
 };
 
 const char *jit_stat_str(jit_stat jstat) {
     const char *s = "INVALID_JIT_STAT";
-    if (jstat >= JIT_STAT(OK) && jstat <= JIT_STAT(INV_CODE)) s = jss[jstat];
+    if (jstat >= JIT_STAT(OK) && jstat <= JIT_STAT(IF_ELSE_INV)) s = jss[jstat];
     return s;
 }
 
@@ -150,6 +151,11 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     for (size_t i = 0; i < c->len; i++) {
         o = &c->ops[i];
         op_set_jidx(j, o);
+        if (o->od.of->cond->len == 0) {
+            if (i != c->len - 1) return JIT_ER(m, IF_ELSE_INV, o);
+            if ((jstat = jit_code(m, o->od.of->body, jf, j, false)) != JIT_STAT(OK)) return jstat;
+            break;
+        }
         if ((jstat = jit_code(m, o->od.of->cond, jf, j, false)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
         jit_b(j, 2, 0x41, 0x5B); // pop r11
         jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
