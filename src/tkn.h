@@ -22,7 +22,7 @@ typedef enum {
     TKN_TYPE(FALSE),
     TKN_TYPE(SELF),
     // TODO LOCAL
-    TKN_TYPE(DEB),
+    // TODO DEBUGGER
     // built in type names
     TKN_TYPE(VD),
     TKN_TYPE(BL),
