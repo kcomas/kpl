@@ -60,7 +60,7 @@ extern inline void fn_stk_f(fn_stk *f);
 void jit_i(al *const a, size_t nops, jit **j, uint8_t flgs) {
     size_t size = nops * BYTES_PER_OP;
     if ((*j)->size > 0) {
-        if ((*j)->size >= size) {
+        if ((*j)->size <= size) {
             (*j)->len = 0;
             (*j)->flgs = flgs;
             return;
