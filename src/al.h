@@ -36,7 +36,7 @@ typedef struct {
 } alci;
 
 #ifndef AL_PS_MUL
-    #define AL_PS_MUL 2
+    #define AL_PS_MUL 10
 #endif
 
 inline alc *alc_i(al *const a, size_t size) {
@@ -51,6 +51,7 @@ inline alc *alc_i(al *const a, size_t size) {
     ac->size = size;
     ac->size = size <= ps ? ps : (size / ps + 1) * ps;
     ac->h = ac + sizeof(alc) + sizeof(alci);
+    ac->aus = ac->len = sizeof(alc) + sizeof(alci);
     posix_memalign(&ac->h, sizeof(alci), size);
     return ac;
 }
