@@ -51,6 +51,7 @@ void alf(void *ptr) {
 #endif
     if (ac->aus == 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
         al *a = ac->a;
+        a->size -= ac->size;
         LST_R(a, alc, ac, alc_f, NULL);
     }
     // TODO move small pieces

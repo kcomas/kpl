@@ -11,7 +11,7 @@
 typedef struct _alc alc;
 
 typedef struct {
-    size_t len, u, f; // used freed
+    size_t len, size, u, f; // used freed
     alc *h, *t;
 } al;
 
@@ -47,6 +47,7 @@ inline alc *alc_i(al *const a, size_t size) {
     size = size <= ps ? ps : (size / ps + 1) * ps;
     alc *ac = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     ac->a = a;
+    a->size += size;
     LST_A(a, ac);
     ac->size = size;
     ac->size = size <= ps ? ps : (size / ps + 1) * ps;
@@ -60,7 +61,7 @@ void alc_f(alc *ac, void *fn);
 
 inline void al_f(al *a) {
 #ifdef KPL_ALD
-    printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
+    printf("==Used: %lu, Freed: %lu, Total: %lub==\n", a->u, a->f, a->size);
 #endif
     LST_F(a, alc, alc_f, NULL);
 }
