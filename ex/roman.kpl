@@ -32,7 +32,7 @@ v:VR[I6]$[I6$1994;I6$58;I6$3749]
 n:U6$0
 
 #@ (n < 3) {
-    proman('-v)
+    proman('-v) // discard pop er
     n: n + 1
 }
 

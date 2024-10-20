@@ -364,7 +364,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(ASS):
             if (!op->r) return TYPE_ER(ts, INV_ASS);
             ASTGTN(rt, op->r, INV_ASS);
-            if (rt->t == TYPE(ER)) ASTGTN(rt, rt->a, INV_ASS_ER);
+            if (rt->t == TYPE(ER)) return TYPE_ER(ts, INV_ASS_ER);
             if (op->l->at == AST_TYPE(VAR)) {
                 if (op->l->n.var->tn) {
                     ASTGTN(lt, op->l, INV_VAR_ASS);
@@ -420,6 +420,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 break;
             }
             if (type_int_cor(ts, &op->ret, rt, lt)) break;
+            // TODO flt
             if (lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
                 op->ret = type_node_i(ts->r->a, lt->t, NULL);
                 break;
