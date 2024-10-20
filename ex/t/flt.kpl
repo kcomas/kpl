@@ -1,0 +1,4 @@
+
+// floating point numbers
+a: $(F6;3.33) + F6$2.22
+$(FD;1) << $(SG;a),"\n"

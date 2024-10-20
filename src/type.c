@@ -97,6 +97,7 @@ static const char *const tss[] = {
     "INV_CALL_RET_T",
     "INV_CALL_TGT_ARG_T",
     "INV_CALL_ARG_T",
+    "INV_CALL_ARG_ER",
     "CALL_ARG_T_NEQ",
     "NO_ARGS_TD",
     "INV_TD_T",
@@ -606,6 +607,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
             while (ah) {
                 ASTGTN(tt, th->a, INV_CALL_TGT_ARG_T);
                 ASTGTN(ta, ah->a, INV_CALL_ARG_T);
+                if (ta->t == TYPE(ER)) ASTGTN(ta, ta->a, INV_CALL_ARG_ER);
                 if (!((ta->t == TYPE(INT) && type_int_is(tt, NULL)) || (type_eq(tt, ta)))) return TYPE_ER(ts, CALL_ARG_T_NEQ);
                 th = th->next;
                 ah = ah->next;

@@ -8,7 +8,7 @@ extern inline alc *alc_i(al *const a, size_t size);
 void alc_f(alc *ac, void *fn) {
     (void) fn;
 #ifdef KPL_ALD
-    if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
+    if (ac->aus > 0) printf("==Lost: %lub==\n", ac->aus);
 #endif
     munmap(ac, ac->size);
 }

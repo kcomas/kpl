@@ -123,6 +123,7 @@ typedef enum {
     TYPE_STAT(INV_CALL_RET_T),
     TYPE_STAT(INV_CALL_TGT_ARG_T), // invalid arg type for call
     TYPE_STAT(INV_CALL_ARG_T), // arg type in call inv
+    TYPE_STAT(INV_CALL_ARG_ER), // arg is error but cannot get type
     TYPE_STAT(CALL_ARG_T_NEQ), // ivalid type for call arg
     TYPE_STAT(NO_ARGS_TD),
     TYPE_STAT(INV_TD_T),
