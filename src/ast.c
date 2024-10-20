@@ -148,6 +148,7 @@ void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     printf("%s", type);
     if (op->flgs & NODE_FLG(GCR)) printf(",GCR");
     if (op->flgs & NODE_FLG(GCV)) printf(",GCV");
+    if (op->flgs & NODE_FLG(DE)) printf(",DE");
     type_node_p(as, op->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);

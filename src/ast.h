@@ -107,7 +107,8 @@ typedef enum {
     NODE_FLG(GCR) = (1 << 1), // gc ret value
     NODE_FLG(GCV) = (1 << 2), // gc var for storing new var
     NODE_FLG(VH) = (1 << 3),  // var hidden does not get exported
-    NODE_FLG(NT) = (1 << 4) // function cannot be run as thread
+    NODE_FLG(NT) = (1 << 4), // function cannot be run as thread
+    NODE_FLG(DE) = (1 << 5) // discard error
 } node_flg;
 
 #define NFEC(FLGS) (FLGS & NODE_FLG(EC))

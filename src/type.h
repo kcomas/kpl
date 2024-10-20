@@ -12,6 +12,7 @@ typedef enum {
     TYPE_STAT(SELF_CALL_IN_MOD), // cannot self call in mod
     TYPE_STAT(VAL_UT), // val is ast type
     TYPE_STAT(TC_FN_N_TC), // fn does not throw error
+    TYPE_STAT(INV_TC_DISCARD_ER_T),
     TYPE_STAT(BLTS_INV_T),
     // tbls
     TYPE_STAT(BTTS_INV_T),
@@ -23,9 +24,7 @@ typedef enum {
     TYPE_STAT(SYM_HSH_DATA_T_INV),
     // erros
     TYPE_STAT(INV_TC_R),
-    TYPE_STAT(TC_ER_N_STR_SG),
     TYPE_STAT(TC_ER_L_LST_INV),
-    TYPE_STAT(TC_ER_R_NE),
     TYPE_STAT(INV_TC_NE_T),
     TYPE_STAT(TC_ER_L_H_N_VAR),
     TYPE_STAT(TC_VAR_FN_T_NEQ),
@@ -123,7 +122,6 @@ typedef enum {
     TYPE_STAT(INV_CALL_RET_T),
     TYPE_STAT(INV_CALL_TGT_ARG_T), // invalid arg type for call
     TYPE_STAT(INV_CALL_ARG_T), // arg type in call inv
-    TYPE_STAT(INV_CALL_ARG_ER), // arg is error but cannot get type
     TYPE_STAT(CALL_ARG_T_NEQ), // ivalid type for call arg
     TYPE_STAT(NO_ARGS_TD),
     TYPE_STAT(INV_TD_T),
