@@ -76,6 +76,11 @@ static er_itm *er_var(mod *const m, ast *const a, const char *stat) {
     return ei;
 }
 
+void er_rt(mod *const m, ast *const a, er_itm *const ei) {
+    er_a(m->r->e, ei);
+    er_a(m->r->e, er_var(m, a, "RETHROW"));
+}
+
 void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
     er_itm *ei = er_var(m, a, NULL);
     ei->sg = sg;
