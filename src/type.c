@@ -433,7 +433,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 break;
             }
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, &op->ret, rt, lt, &type_int_is)) break;
-            // TODO flt
+            if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, &op->ret, rt, lt, &type_flt_is)) break;
             if (lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
                 op->ret = type_node_i(ts->r->a, lt->t, NULL);
                 break;
@@ -481,6 +481,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 break;
             }
             TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             return TYPE_ER(ts, INV_ADD);
         case OP_TYPE(SUB):
             if (!op->l) {
@@ -495,6 +496,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             ASTGTNBOP(SUB);
             TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             // TODO
             return TYPE_ER(ts, INV_SUB);
         case OP_TYPE(MUL):
@@ -508,11 +510,16 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 return TYPE_ER(ts, FN_NO_TD);
             }
             TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             return TYPE_ER(ts, INV_MUL);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, lt, rt, &type_int_is) || type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, rt, lt, &type_int_is)) {
                 if (lt->t != TYPE(INT)) op->ret = type_node_i(ts->r->a, lt->t, NULL);
+                else op->ret = type_node_i(ts->r->a, rt->t, NULL);
+                break;
+            } else if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, lt, rt, &type_flt_is) || type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, rt, lt, &type_flt_is)) {
+                if (lt->t != TYPE(FLT)) op->ret = type_node_i(ts->r->a, lt->t, NULL);
                 else op->ret = type_node_i(ts->r->a, rt->t, NULL);
                 break;
             }
@@ -528,11 +535,13 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(GT):
             ASTGTNBOP(GT);
             TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
             return TYPE_ER(ts, INV_GT);
         case OP_TYPE(LT):
             ASTGTNBOP(LT);
             TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
             return TYPE_ER(ts, INV_LT);
         case OP_TYPE(OR):
@@ -649,6 +658,7 @@ static type_stat type_chk_ret(type_st *const ts, fn_node *const fns, ret_node *c
     if (!(tmpf = fn_node_ret_type(fns))) return TYPE_ER(ts, INV_RET_FNS);
     if (tmpf->t == TYPE(VD)) return TYPE_ER(ts, OK);
     if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, &ret->tn, tmpr, tmpf, &type_int_is)) return TYPE_ER(ts, OK);
+    if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, &ret->tn, tmpr, tmpf, &type_flt_is)) return TYPE_ER(ts, OK);
     if (!type_eq(tmpf, tmpr)) return TYPE_ER(ts, RET_T_NEQ);
     ret->tn = type_node_c(ts->r->a, tmpf);
     return TYPE_ER(ts, OK);
