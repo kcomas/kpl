@@ -4,6 +4,12 @@
 
 #define THREAD_STACK_PAGE_MUL 100
 
+inline void tdr_stk_i(tdr *const r) {
+    r->stks = getpagesize() * THREAD_STACK_PAGE_MUL;
+    r->stk = mmap(NULL, r->stks, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    r->stkp = r->stk + r->stks;
+}
+
 inline tdr *tdr_i(tds *const s) {
     al *a = al_i(s->nal);
     s->nal += sizeof(al);
@@ -12,9 +18,6 @@ inline tdr *tdr_i(tds *const s) {
     r->a = a;
     r->e = e;
     r->j = ala(a, sizeof(jit));
-    r->stks = getpagesize() * THREAD_STACK_PAGE_MUL;
-    r->stk = mmap(NULL, r->stks, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    r->stkp = r->stk + r->stks;
     return r;
 }
 
@@ -22,7 +25,7 @@ inline void tdr_f(tdr *r, void *fn) {
     (void) fn;
     er_f(r->e);
     jit_f(r->j);
-    munmap(r->stk, r->stks);
+    if(r->stk) munmap(r->stk, r->stks);
     al *a = r->a;
     alf(r);
     al_f(a);
@@ -43,14 +46,16 @@ inline void tds_a(tds *volatile s, tdr *const r) {
     sem_post(&s->l);
 }
 
-inline tdr *tds_g(tds *volatile s) {
+inline tdr *tds_g(tds *volatile s, bool stk) {
     sem_wait(&s->l);
     tdr *r = NULL;
     if (!s->h) {
         s->total++;
         r = tdr_i(s);
+        if (stk) tdr_stk_i(r);
     } else {
         LST_S(s, r);
+        if ((stk) && (!r->stk)) tdr_stk_i(r);
     }
     sem_post(&s->l);
     return r;

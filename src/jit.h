@@ -105,7 +105,7 @@ inline void jit_b(jit *j, size_t len, ...) {
     va_end(args);
 }
 
-inline void jit_c(jit *j, size_t len, uint8_t *b) {
+inline void jit_c(jit *j, size_t len, uint8_t b[]) {
     for (size_t i = 0; i < len; i++) jit_a(j, b[i]);
 }
 

@@ -296,13 +296,21 @@ void tkn_p(const tkn *const t) {
     else for (size_t i = 0; i < t->len; i++) putchar(t->str[t->pos + i]);
 }
 
-#ifndef MAX_INT_LEN
-    #define MAX_INT_LEN 20
+#ifndef MAX_NUM_LEN
+    #define MAX_NUM_LEN 20
 #endif
 
 int64_t tkn_to_int64_t(const tkn *const t) {
-    char istr[MAX_INT_LEN], *eptr;
-    memset(istr, '\0', MAX_INT_LEN);
+    char istr[MAX_NUM_LEN], *eptr;
+    memset(istr, '\0', MAX_NUM_LEN);
     memcpy(istr, t->str + t->pos, t->len);
     return strtoll(istr, &eptr, 10);
 }
+
+double tkn_to_double(const tkn *const t) {
+    char istr[MAX_NUM_LEN], *eptr;
+    memset(istr, '\0', MAX_NUM_LEN);
+    memcpy(istr, t->str + t->pos, t->len);
+    return strtod(istr, &eptr);
+}
+

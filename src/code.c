@@ -30,6 +30,7 @@ static const char *const css[] = {
     "INV_TYPE_STORE_VD",
     "VAR_TYPE_U",
     "INV_INT_CST_PUSH",
+    "INV_FLT_CST_PUSH",
     "INV_CST_INT_TO_FD",
     "INV_CST_SG",
     "NO_T_VR_GC",
@@ -450,6 +451,21 @@ static code_stat p_int(code_st *const cs, type t, const ast *const a, code **c) 
             break;
         default:
             return CODE_ER(cs, INV_INT_CST_PUSH, a);
+    }
+    return CODE_ER(cs, OK, NULL);
+}
+
+static code_stat p_flt(code_st *const cs, type t, const ast *const a, code **c) {
+    double d = tkn_to_double(&a->t);
+    switch (t) {
+        case TYPE(F5):
+            OP_A(cs, c, PV, F5, { .f5 = (float) d }, a);
+            break;
+        case TYPE(F6):
+            OP_A(cs, c, PV, F6, { .f6 = d }, a);
+            break;
+        default:
+            return CODE_ER(cs, INV_FLT_CST_PUSH, a);
     }
     return CODE_ER(cs, OK, NULL);
 }

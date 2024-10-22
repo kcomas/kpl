@@ -83,7 +83,7 @@ extern inline void jit_a(jit *j, uint8_t b);
 
 extern inline void jit_b(jit *j, size_t len, ...);
 
-extern inline void jit_c(jit *j, size_t len, uint8_t *b);
+extern inline void jit_c(jit *j, size_t len, uint8_t b[]);
 
 static void op_set_jidx(const jit *const j, op *const o) {
     if (!(j->flgs & JIT_FLG(TD))) o->jidx = j->len;
@@ -344,7 +344,7 @@ int thread_fn(void *volatile arg) {
 }
 
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
-    var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
+    var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s, true)), te, c);
     td->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
     nanosleep((const struct timespec[]){{0, 1e7L}}, NULL); // TODO find better way to start threads
     return td;
