@@ -37,6 +37,7 @@ static const char *const css[] = {
     "INV_CST_FD",
     "INV_CST",
     "NO_TYPE_COR_INT",
+    "NO_TYPE_COR_FLT",
     "GC_INV",
     "OP_NO_T_L", // op no left type
     "OP_NO_T_R", // op no right type
@@ -472,16 +473,29 @@ static code_stat p_flt(code_st *const cs, type t, const ast *const a, code **c) 
 
 #define OP_P_INT_RET(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT) && (cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
 
-static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const b, code **c) {
-    if (a->at != AST_TYPE(VAL)) return CODE_ER(cs, OK, NULL);
-    if (a->n.val->tn->t != TYPE(INT)) return CODE_ER(cs, OK, NULL);
-    if (b->at == AST_TYPE(VAL) && b->n.val->tn->t == TYPE(INT)) return p_int(cs, TYPE(I6), a, c);
+#define OP_P_FLT_RET(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(FLT) && (cstat = p_flt(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
+
+#define OP_P_NUM_RET(OPN, CS, TGT, C) do { \
+    OP_P_INT_RET(OPN, CS, TGT, C); \
+    OP_P_FLT_RET(OPN, CS, TGT, C); \
+} while (0)
+
+static code_stat cor_num(code_st *const cs, const ast *const a, const ast *const b, code **c) {
     type_node *tb;
-    if (!(tb = ast_gtn(b))) return CODE_ER(cs, NO_TYPE_COR_INT, a);
-    return p_int(cs, tb->t, a, c);
+    if (a->at != AST_TYPE(VAL)) return CODE_ER(cs, OK, NULL);
+    if (a->n.val->tn->t == TYPE(INT)) {
+        if (b->at == AST_TYPE(VAL) && b->n.val->tn->t == TYPE(INT)) return p_int(cs, TYPE(I6), a, c);
+        if (!(tb = ast_gtn(b))) return CODE_ER(cs, NO_TYPE_COR_INT, a);
+        return p_int(cs, tb->t, a, c);
+    } else if (a->n.val->tn->t == TYPE(FLT)) {
+        if (b->at == AST_TYPE(VAL) && b->n.val->tn->t == TYPE(FLT)) return p_int(cs, TYPE(F6), a, c);
+        if (!(tb = ast_gtn(b))) return CODE_ER(cs, NO_TYPE_COR_FLT, a);
+        return p_flt(cs, tb->t, a, c);
+    }
+    return CODE_ER(cs, OK, NULL);
 }
 
-#define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat
+#define OP_P_NUM_COR(CS, A, B, C) if ((cstat = cor_num(CS, A, B, C)) != CODE_STAT(OK)) return cstat
 
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a)
 
@@ -657,7 +671,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(I5):
                 case TYPE(I6):
                     if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) return p_int(cs, opn->l->n.tn->t, opn->r, c);
-                    // TODO dynamic case
+                    break;
+                case TYPE(F5):
+                case TYPE(F6):
+                    if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(FLT)) return p_flt(cs, opn->l->n.tn->t, opn->r, c);
                     break;
                 // TODO
                 case TYPE(SG):
@@ -732,8 +749,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_GC(cs, c, tl, opn->l);
                 break;
             }
-            OP_P_INT_RET(opn, cs, l, c);
-            OP_P_INT_RET(opn, cs, r, c);
+            OP_P_NUM_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, ADD, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(SUB):
@@ -749,8 +766,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             }
             IFCGEN(code_gen, cs, opn->l, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT_RET(opn, cs, l, c);
-            OP_P_INT_RET(opn, cs, r, c);
+            OP_P_NUM_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, SUB, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(MUL):
@@ -763,15 +780,15 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_A(cs, c, TDI, VD, {}, a);
                 break;
             }
-            OP_P_INT_RET(opn, cs, l, c);
-            OP_P_INT_RET(opn, cs, r, c);
+            OP_P_NUM_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, MUL, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(EQ):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_COR(cs, opn->l, opn->r, c);
+            OP_P_NUM_COR(cs, opn->l, opn->r, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT_COR(cs, opn->r, opn->l, c);
+            OP_P_NUM_COR(cs, opn->r, opn->l, c);
             OP_A(cs, c, EQ, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(NOT):
@@ -782,16 +799,16 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break;
         case OP_TYPE(GT):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT_RET(opn, cs, r, c);
+            OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, GT, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(LT):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT_RET(opn, cs, r, c);
+            OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, LT, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(OR):
@@ -860,7 +877,7 @@ static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code *
     ah = cn->args->h;
     while (ah) {
         IFCGEN(code_gen, cs, ah->a, c);
-        OP_P_INT_COR(cs, ah->a, ch->a, c);
+        OP_P_NUM_COR(cs, ah->a, ch->a, c);
         ah = ah->next;
         ch = ch->next;
     }
