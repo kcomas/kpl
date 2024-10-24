@@ -345,13 +345,13 @@ int thread_fn(void *volatile arg) {
 
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s, true)), te, c);
-    td->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
+    td->m->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
     nanosleep((const struct timespec[]){{0, 1e7L}}, NULL); // TODO find better way to start threads
     return td;
 }
 
 static var join_thrd(var_td *volatile td) {
-    waitpid(td->id, NULL, WEXITED);
+    //waitpid(td->m->id, NULL, WEXITED);
     sem_wait(&td->m->done);
     return td->te->v[td->te->len - 1];
 }

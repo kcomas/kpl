@@ -60,8 +60,8 @@ int main(int argc, char *argv[]) {
         return jstat;
     }
     fn_stk_f(stk);
-    pid_t id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
-    waitpid(id, NULL, WEXITED);
+    m->id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    //waitpid(id, NULL, WEXITED);
     sem_wait(&m->done);
     code_f(m->c);
     fn_node_f(m->fns);
