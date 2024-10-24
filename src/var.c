@@ -122,9 +122,38 @@ bool var_zoo_er(er_itm *const ei) { return ei->et != ER(OK); }
     sg->len = (size_t) snprintf(sg->str, sg->size, FMT, ARG); \
     return sg
 
-var_sg *var_u6_sg(al *const a, uint64_t u6) { NUM_TO_SG("%lu", u6); }
-var_sg *var_i6_sg(al *const a, uint64_t i6) { NUM_TO_SG("%ld", i6); }
+//var_sg *var_u6_sg(al *const a, uint64_t u6) { NUM_TO_SG("%lu", u6); }
+//var_sg *var_i6_sg(al *const a, uint64_t i6) { NUM_TO_SG("%ld", i6); }
 var_sg *var_f6_sg(al *const a, double f6) { NUM_TO_SG("%lf", f6); }
+
+static var_sg *int_sg(al *const a, bool neg, uint64_t num) {
+    uint64_t cpy = num;
+    size_t len = 0;
+    while (cpy) {
+        len++;
+        cpy /= 10;
+    }
+    if (neg) len++;
+    var_sg *sg = var_sg_i(a, len);
+    sg->len = len;
+    while (num) {
+        sg->str[--len] = num % 10 + '0';
+        num /= 10;
+    }
+    if (neg) sg->str[0] = '-';
+    return sg;
+}
+
+var_sg *var_i6_sg(al *const a, int64_t i6) {
+    if (i6 == 0) return var_sg_i_str(a, "0");
+    if (i6 > 0) return int_sg(a, false, (uint64_t) i6);
+    return int_sg(a, true, (uint64_t) ~i6 + 1);
+}
+
+var_sg *var_u6_sg(al *const a, uint64_t u6) {
+    if (u6 == 0) return var_sg_i_str(a, "0");
+    return int_sg(a, false, u6);
+}
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
 
