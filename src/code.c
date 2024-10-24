@@ -200,8 +200,7 @@ void code_p(const code *const c, size_t idnt) {
                 PCX(' ', idnt + 1);
                 break;
             case TYPE(VAR):
-                printf(",%d", c->ops[i].od.v.id);
-                printf(",%s", type_get_str(c->ops[i].od.v.t));
+                printf(",%d,%s", c->ops[i].od.v.id, type_get_str(c->ops[i].od.v.t));
                 break;
             case TYPE(CODE):
                 printf(",%s", type_get_str(c->ops[i].od.t));

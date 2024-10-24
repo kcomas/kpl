@@ -50,6 +50,9 @@ MOD_LG(int64_t, i6);
 MOD_SG(uint64_t, u6);
 MOD_LG(uint64_t, u6);
 
+MOD_SG(double, f6);
+MOD_LG(double, f6);
+
 MOD_SG(int, fd);
 MOD_LG(int, fd);
 

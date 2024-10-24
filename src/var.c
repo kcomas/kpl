@@ -118,12 +118,13 @@ bool var_zoo_er(er_itm *const ei) { return ei->et != ER(OK); }
 #endif
 
 // TODO check if output fails
-#define INT_TO_SG(FMT, ARG)  var_sg *sg = var_sg_i(a, NUM_TO_SG_SIZE); \
+#define NUM_TO_SG(FMT, ARG)  var_sg *sg = var_sg_i(a, NUM_TO_SG_SIZE); \
     sg->len = (size_t) snprintf(sg->str, sg->size, FMT, ARG); \
     return sg
 
-var_sg *var_u6_sg(al *const a, uint64_t u6) { INT_TO_SG("%lu", u6); }
-var_sg *var_i6_sg(al *const a, uint64_t i6) { INT_TO_SG("%ld", i6); }
+var_sg *var_u6_sg(al *const a, uint64_t u6) { NUM_TO_SG("%lu", u6); }
+var_sg *var_i6_sg(al *const a, uint64_t i6) { NUM_TO_SG("%ld", i6); }
+var_sg *var_f6_sg(al *const a, double f6) { NUM_TO_SG("%lf", f6); }
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
 
@@ -131,36 +132,43 @@ var_sg *var_i6_sg(al *const a, uint64_t i6) { INT_TO_SG("%ld", i6); }
 VAR_BOP_T(add, +, bl, bool)
 VAR_BOP_T(add, +, i6, int64_t)
 VAR_BOP_T(add, +, u6, uint64_t)
+VAR_BOP_T(add, +, f6, double)
 
 // sub
 VAR_BOP_T(sub, -, bl, bool)
 VAR_BOP_T(sub, -, i6, int64_t)
 VAR_BOP_T(sub, -, u6, uint64_t)
+VAR_BOP_T(sub, -, f6, double)
 
 // mul
 VAR_BOP_T(mul, &&, bl, bool)
 VAR_BOP_T(mul, *, i6, int64_t)
 VAR_BOP_T(mul, *, u6, uint64_t)
+VAR_BOP_T(mul, *, f6, double)
 
 // eq
 VAR_BOP_T(eq, ==, bl, bool)
 VAR_BOP_T(eq, ==, i6, int64_t)
 VAR_BOP_T(eq, ==, u6, uint64_t)
+VAR_BOP_T(eq, ==, f6, double)
 
 // gt
 VAR_BOP_T(gt, >, bl, bool)
 VAR_BOP_T(gt, >, i6, int64_t)
 VAR_BOP_T(gt, >, u6, uint64_t)
+VAR_BOP_T(gt, >, f6, double)
 
 // lt
 VAR_BOP_T(lt, <, bl, bool)
 VAR_BOP_T(lt, <, i6, int64_t)
 VAR_BOP_T(lt, <, u6, uint64_t)
+VAR_BOP_T(lt, <, f6, double)
 
 // or
 VAR_BOP_T(or, ||, bl, bool)
 VAR_BOP_T(or, ||, i6, int64_t)
 VAR_BOP_T(or, ||, u6, uint64_t)
+VAR_BOP_T(or, ||, f6, double)
 
 bool var_not(bool v) { return !v; }
 
