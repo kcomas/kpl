@@ -714,7 +714,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                         return JIT_ER(m, CSTSG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
-                j_push(j, o->od.t, 0, 0);
+                jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             C_OP_C_BOP(ADD, add);

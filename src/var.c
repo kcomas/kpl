@@ -113,33 +113,27 @@ bool var_zoo_u6(uint64_t v) { return v != 0; }
 bool var_zoo_i6(int64_t v) { return v != 0; }
 bool var_zoo_er(er_itm *const ei) { return ei->et != ER(OK); }
 
-#ifndef NUM_TO_SG_SIZE
-    #define NUM_TO_SG_SIZE 30
-#endif
+static void dig_len(size_t *len, uint64_t num) {
+    while (num) {
+        ++*len;
+        num /= 10;
+    }
+}
 
-// TODO check if output fails
-#define NUM_TO_SG(FMT, ARG)  var_sg *sg = var_sg_i(a, NUM_TO_SG_SIZE); \
-    sg->len = (size_t) snprintf(sg->str, sg->size, FMT, ARG); \
-    return sg
-
-//var_sg *var_u6_sg(al *const a, uint64_t u6) { NUM_TO_SG("%lu", u6); }
-//var_sg *var_i6_sg(al *const a, uint64_t i6) { NUM_TO_SG("%ld", i6); }
-var_sg *var_f6_sg(al *const a, double f6) { NUM_TO_SG("%lf", f6); }
+static void str_w_dig(var_sg *const sg, size_t *len, uint64_t num) {
+    while (num) {
+        sg->str[--*len] = num % 10 + '0';
+        num /= 10;
+    }
+}
 
 static var_sg *int_sg(al *const a, bool neg, uint64_t num) {
-    uint64_t cpy = num;
     size_t len = 0;
-    while (cpy) {
-        len++;
-        cpy /= 10;
-    }
+    dig_len(&len, num);
     if (neg) len++;
     var_sg *sg = var_sg_i(a, len);
     sg->len = len;
-    while (num) {
-        sg->str[--len] = num % 10 + '0';
-        num /= 10;
-    }
+    str_w_dig(sg, &len, num);
     if (neg) sg->str[0] = '-';
     return sg;
 }
@@ -147,12 +141,37 @@ static var_sg *int_sg(al *const a, bool neg, uint64_t num) {
 var_sg *var_i6_sg(al *const a, int64_t i6) {
     if (i6 == 0) return var_sg_i_str(a, "0");
     if (i6 > 0) return int_sg(a, false, (uint64_t) i6);
-    return int_sg(a, true, (uint64_t) ~i6 + 1);
+    return int_sg(a, true, (uint64_t) 0 - i6);
 }
 
 var_sg *var_u6_sg(al *const a, uint64_t u6) {
     if (u6 == 0) return var_sg_i_str(a, "0");
     return int_sg(a, false, u6);
+}
+
+#ifndef FLT_DEC_PREC
+    #define FLT_DEC_PREC 6
+#endif
+
+var_sg *var_f6_sg(al *const a, double f6) {
+    size_t len = 0;
+    bool neg = false;
+    if (f6 < 0) {
+        neg = true;
+        len++;
+        f6 = 0 - f6;
+    }
+    int64_t up = (int64_t) f6;
+    dig_len(&len, up);
+    len += FLT_DEC_PREC + 1; // for .
+    var_sg *sg = var_sg_i(a, len);
+    sg->len = len;
+    int64_t tmp = (f6 - up) * pow(10, FLT_DEC_PREC);
+    str_w_dig(sg, &len, tmp);
+    sg->str[--len] = '.';
+    str_w_dig(sg, &len, up);
+    if (neg) sg->str[0] = '-';
+    return sg;
 }
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
