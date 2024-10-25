@@ -295,6 +295,8 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(I4):
         case TYPE(I5):
         case TYPE(I6):
+        case TYPE(F5):
+        case TYPE(F6):
         case TYPE(SG):
         case TYPE(VR):
         case TYPE(TE):
@@ -893,7 +895,7 @@ static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code *
         else OP_A(cs, c, CFN, OP, { .t = tn->t }, a);
     }
     if (tn->t != TYPE(VD)) {
-        OP_A(cs, c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
+        OP_A(cs, c, PUSH, VAR, { SLV(0, tn->t) }, a);
         if (cn->flgs & NODE_FLG(GCR)) {
             OP_GC(cs, c, tn, a);
         }
@@ -966,11 +968,11 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
     if (t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, FN_RET_ER_T_INV, NULL);
         OP_A(cs, c, DONE, VD, {}, NULL);
-        if (tn->t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
+        if (tn->t != TYPE(VD)) OP_A(cs, c, POP, VAR, { SLV(0, tn->t) }, NULL);
         OP_A(cs, c, RFN, ER, { RER(tn->t, NFEC(tn->flgs)) }, NULL);
     } else {
         OP_A(cs, c, DONE, VD, {}, NULL);
-        if (t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
+        if (t != TYPE(VD)) OP_A(cs, c, POP, VAR, { SLV(0, t) }, NULL);
         OP_A(cs, c, RFN, CODE, { .t = t }, NULL);
     }
     return CODE_ER(cs, OK, NULL);

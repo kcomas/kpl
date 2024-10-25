@@ -403,12 +403,12 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(PUSH):
                 op_set_jidx(j, o);
-                jit_a(j, 0x50 + o->od.u3);
+                j_push(j, o->od.v.t, o->od.v.id, o->od.v.id);
                 op_set_jlen(j, o);
                 break;
             case OP_C(POP):
                 op_set_jidx(j, o);
-                jit_a(j, 0x58 + o->od.u3);
+                j_pop(j, o->od.v.t, o->od.v.id, o->od.v.id);
                 op_set_jlen(j, o);
                 break;
             case OP_C(SWAP):
@@ -892,6 +892,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(F5):
+                    case TYPE(F6):
                     case TYPE(FN):
                         jit_a(j, 0x5F); // pop rdi
                         break;
@@ -934,6 +936,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(F5):
+                    case TYPE(F6):
                     case TYPE(FN):
                         break;
                     case TYPE(STR):
@@ -960,6 +964,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(F5):
+                    case TYPE(F6):
                     case TYPE(FN):
                         break;
                     case TYPE(TD):
@@ -978,6 +984,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(F5):
+                    case TYPE(F6):
                     case TYPE(FN):
                         break;
                     case TYPE(STR):

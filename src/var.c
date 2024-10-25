@@ -164,14 +164,16 @@ var_sg *var_f6_sg(al *const a, double f6) {
         f6 = 0 - f6;
     }
     int64_t up = (int64_t) f6;
-    dig_len(&len, up);
+    if (up == 0) len++;
+    else dig_len(&len, up);
     len += FLT_DEC_PREC + 1; // for .
     var_sg *sg = var_sg_i(a, len);
     sg->len = len;
     int64_t frac = (f6 - up) * flp10[FLT_DEC_PREC];
     str_w_dig(sg, &len, frac);
     sg->str[--len] = '.';
-    str_w_dig(sg, &len, up);
+    if (up == 0) sg->str[--len] = '0';
+    else str_w_dig(sg, &len, up);
     if (neg) sg->str[0] = '-';
     return sg;
 }
