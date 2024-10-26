@@ -46,6 +46,7 @@ static const char *const css[] = {
     "INV_SUB_T_R",
     "INV_SUB_VR_T_R",
     "INV_MUL_T",
+    "INV_DIV_T",
     "TD_NOT_FN_NODE",
     "INV_SG_CNCT",
     "INV_CNCT_OP",
@@ -152,6 +153,7 @@ static const char *op_c_str[] = {
     "ADD",
     "SUB",
     "MUL",
+    "DIV",
     "EQ",
     "NOT",
     "GT",
@@ -786,6 +788,14 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             OP_P_NUM_RET(opn, cs, l, c);
             OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, MUL, OP, { .t = opn->ret->t }, a);
+            break;
+        case OP_TYPE(DIV):
+            IFCGEN(code_gen, cs, opn->l, c);
+            IFCGEN(code_gen, cs, opn->r, c);
+            ASTGLRTN(opn->l, opn->r, INV_DIV_T, a);
+            OP_P_NUM_RET(opn, cs, l, c);
+            OP_P_NUM_RET(opn, cs, r, c);
+            OP_A(cs, c, DIV, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(EQ):
             IFCGEN(code_gen, cs, opn->l, c);

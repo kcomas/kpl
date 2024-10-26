@@ -11,6 +11,7 @@ static const char *const jss[] = {
     "ADD_T_INV",
     "SUB_T_INV",
     "MUL_T_INV",
+    "DIV_T_INV",
     "EQ_T_INV",
     "GT_T_INV",
     "LT_T_INV",
@@ -720,6 +721,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             C_OP_C_BOP(ADD, add);
             C_OP_C_BOP(SUB, sub);
             C_OP_C_BOP(MUL, mul);
+            C_OP_C_BOP(DIV, div);
             C_OP_C_BOP(EQ, eq);
             case OP_C(NOT):
                 op_set_jidx(j, o);

@@ -222,6 +222,7 @@ typedef enum {
     OP_TYPE(ADD),
     OP_TYPE(SUB),
     OP_TYPE(MUL),
+    OP_TYPE(DIV),
     // TODO OP
     OP_TYPE(EQ),
     OP_TYPE(NOT),
