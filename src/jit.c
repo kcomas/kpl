@@ -375,7 +375,7 @@ int thread_fn(void *volatile arg) {
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s, true)), te, c);
     td->m->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
-    nanosleep((const struct timespec[]){{0, 1e7L}}, NULL); // TODO find better way to start threads
+    nanosleep((const struct timespec[]){{0, 1e6L}}, NULL); // TODO find better way to start threads
     return td;
 }
 
