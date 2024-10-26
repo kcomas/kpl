@@ -156,7 +156,8 @@ inline void type_node_f(type_node *tn) {
 typedef enum {
     RES_TYPE(TRUE),
     RES_TYPE(FALSE),
-    RES_TYPE(SELF)
+    RES_TYPE(SELF),
+    RES_TYPE(DEB)
 } res_type;
 
 typedef struct {
@@ -181,6 +182,9 @@ inline void res_node_p(const ast_st *const as, const res_node *const rn, size_t 
             break;
         case RES_TYPE(SELF):
             printf("S SELF");
+            break;
+        case RES_TYPE(DEB):
+            printf("D DEB");
             break;
     }
     type_node_p(as, rn->tn, idnt);

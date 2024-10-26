@@ -120,6 +120,7 @@ static const char *op_c_str[] = {
     "RFN", // return fn
     "CFN", // call fn
     "CS", // call self
+    "DEB", // debugger
     // data
     "AG", // allocate globals
     "SG", // store global
@@ -1001,6 +1002,9 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 case RES_TYPE(FALSE):
                 case RES_TYPE(SELF):
                     break; // TODO
+                case RES_TYPE(DEB):
+                    OP_A(cs, c, DEB, VD, {}, a);
+                    break;
             }
             break;
         case AST_TYPE(VAL):
