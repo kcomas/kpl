@@ -915,6 +915,7 @@ static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code *
     while (ct) {
         if (!(tn = ast_gtn(ct->a))) return CODE_ER(cs, CALL_CT_ARG_T_GC_INV, a);
         if (cn->ret->t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = tn->t }, a); // swap ret and gc args
+        OP_RCD(cs, c, tn);
         OP_GC(cs, c, tn, ct->a);
         ct = ct->prev;
     }
