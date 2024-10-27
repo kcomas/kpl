@@ -32,7 +32,9 @@ OO=-g -Og - Set optimization level (-O2 currently will segfault)
 
 ##### Debug Flags (DFLAGS=)
 
--DALD=1 - Track allocations and frees
+-DKPL_ALD=1 - Track allocations and frees
+
+##### Option Flags (FLAGS=)
 
 ### Run
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# use D in .kpl file to place debug call in runtime
 # access stack in gdb with
 # p *((var*)($rbp - (8 * 2))).sg
 
