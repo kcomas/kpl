@@ -12,8 +12,8 @@ typedef enum {
     CODE_STAT(INV_ER_GCR),
     CODE_STAT(ER_N_ER_T),
     CODE_STAT(INV_TC),
-    CODE_STAT(INV_L_ASS), // left side : invalid
-    CODE_STAT(INV_R_ASS), // right side : invalid
+    CODE_STAT(INV_L_AGN), // left side : invalid
+    CODE_STAT(INV_R_AGN), // right side : invalid
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(TBL_FOUND),
@@ -30,8 +30,8 @@ typedef enum {
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
     CODE_STAT(TC_R_N), // right side for try catch null
-    CODE_STAT(ASS_R_N),
-    CODE_STAT(ASS_TE_INV),
+    CODE_STAT(AGN_R_N),
+    CODE_STAT(AGN_TE_INV),
     CODE_STAT(INV_TYPE_STORE_VD),
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),

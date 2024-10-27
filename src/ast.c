@@ -14,7 +14,7 @@ static const char *const ass[] = {
     "OP_CALL_A_NN",
     "FH_A_NN",
     "HSH_INV_KEY",
-    "HSH_INV_ASS",
+    "HSH_INV_AGN",
     "HSH_INV_VALUE",
     "VT_A_NN",
     "CALL_A_N",
@@ -123,7 +123,7 @@ extern inline op_node *op_node_i(al *const a, op_type ot);
 
 static const char *const op_type_str[] = {
     "TC", // '
-    "ASS", // :
+    "AGN", // :
     "CST", // $
     "DEL", // \d
     "LD", // \l
@@ -618,9 +618,9 @@ static ast_stat ast_parse_hsh(ast_st *const as, fn_node *const fns, ast **a, uin
         }
         memcpy(kstr, as->str + as->next.pos, as->next.len);
         if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-        if (as->next.type != TKN_TYPE(ASS)) {
+        if (as->next.type != TKN_TYPE(AGN)) {
             hsh_node_f(hsh);
-            return AST_ER(as, HSH_INV_ASS);
+            return AST_ER(as, HSH_INV_AGN);
         }
         if ((astat = ast_parse_stmt(as, fns, &atmp, TFLS | TKN_FLG(RB))) != AST_STAT(OK)) {
             hsh_node_f(hsh);
@@ -690,7 +690,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_A_LST_CASE(TD, LP, RP);
         // TODO TYPES
         OP_CASE(TC);
-        OP_CASE(ASS);
+        OP_CASE(AGN);
         OP_CASE(CST);
         OP_CASE(DEL);
         OP_CASE(LD);

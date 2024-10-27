@@ -21,7 +21,7 @@ typedef enum {
     AST_STAT(OP_CALL_A_NN), // prev op node for call not null
     AST_STAT(FH_A_NN), // prev node for fn/hash not null
     AST_STAT(HSH_INV_KEY), // key not symbol
-    AST_STAT(HSH_INV_ASS), // inv key/value sep
+    AST_STAT(HSH_INV_AGN), // inv key/value sep
     AST_STAT(HSH_INV_VALUE), // key not symbol
     AST_STAT(VT_A_NN), // prev node for vec/tuple not null
     AST_STAT(CALL_A_N), // prev node for call null
@@ -218,7 +218,7 @@ inline void val_node_f(val_node *v) {
 
 typedef enum {
     OP_TYPE(TC), // '
-    OP_TYPE(ASS), // :
+    OP_TYPE(AGN), // :
     OP_TYPE(CST), // $
     OP_TYPE(DEL), // \d
     OP_TYPE(LD), // \l

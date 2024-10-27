@@ -62,7 +62,7 @@ typedef enum {
     TKN_TYPE(LOP), // while and for
     TKN_TYPE(RET),
     // general ops
-    TKN_TYPE(ASS), // :
+    TKN_TYPE(AGN), // :
     TKN_TYPE(CST), // $
     TKN_TYPE(DEL), // \d
     TKN_TYPE(LD), // \l
