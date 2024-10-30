@@ -37,6 +37,7 @@ typedef enum {
     TYPE(CODE),
     // ast types
     TYPE(MOD), // file
+    TYPE(REPL),
     TYPE(INT),
     TYPE(FLT),
     TYPE(STR),
