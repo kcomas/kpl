@@ -38,8 +38,16 @@ OO=-g -Og - Set optimization level (-O2 currently will segfault)
 
 ### Run
 
+File
+
 ```bash
 ./kpl path/to/file
+```
+
+REPL
+
+```bash
+./kpl
 ```
 
 ##### Examples are in the ex folder
