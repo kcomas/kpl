@@ -112,8 +112,8 @@ int main(int argc, char *argv[]) {
     }
     m->fns = fn_node_i(r->a, NULL);
     m->fns->sig = type_node_i(r->a, TYPE(MOD), NULL);
-    int stat;
-    if ((stat = run(m, false)) != 0) return stat;
+    int stat = run(m, false);
+    if (stat != 0) return stat;
     code_f(m->c);
     fn_node_f(m->fns);
     FNNF(m->tn, type_node_f);
