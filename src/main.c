@@ -63,7 +63,7 @@ int run(mod *volatile m, bool repl) {
     #define REPL_BUF_SIZE 200
 #endif
 
-#define KPL_REPL_MSG " > KPL 0.0.0 CTRL-D to exit"
+#define KPL_REPL_MSG "KPL 0.0.0\n"
 
 int repl(void) {
     ssize_t rlen = 0;
@@ -77,10 +77,10 @@ int repl(void) {
     m->c = code_i(r->a, CODE_I_SIZE);
     mod_ag(m, 255);
     jit_i(r->a, 100, &r->j, 0);
-    printf("%s\n", KPL_REPL_MSG);
+    write(STDOUT_FILENO, KPL_REPL_MSG, strlen(KPL_REPL_MSG));
     for (;;) {
         memset(rbuf, '\0', REPL_BUF_SIZE);
-        write(STDOUT_FILENO, " > ", 3);
+        write(STDOUT_FILENO, " ", 1);
         rlen = read(STDIN_FILENO, rbuf, REPL_BUF_SIZE);
         if (rlen == 0) break;
         run(m, true);
