@@ -119,6 +119,8 @@ typedef enum {
     TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
     TYPE_STAT(INV_CALL_TGT), // cannot get type for call tgt
     TYPE_STAT(INV_CALL_TGT_T), // invalid call target type
+    TYPE_STAT(INV_VR_CALL),
+    TYPE_STAT(INV_VR_CALL_INT),
     TYPE_STAT(INV_TE_CALL),
     TYPE_STAT(INV_TE_CALL_IDX),
     TYPE_STAT(INV_TE_CALL_IDX_T),
