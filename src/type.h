@@ -39,6 +39,7 @@ typedef enum {
     TYPE_STAT(INV_SYM_AGN),
     TYPE_STAT(SYM_AGN_N_T_M),
     TYPE_STAT(INV_CALL_AGN),
+    TYPE_STAT(INV_CALL_AGN_T),
     TYPE_STAT(CALL_AGN_N_T_M),
     TYPE_STAT(INV_AGN_TO), // cannot assign to node
     // cast

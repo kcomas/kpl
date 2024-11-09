@@ -22,8 +22,11 @@ v:VR[SG]$[]
 #@ (n < 5) {
     v + SG$n * 2
     n: n + 1
-    $(FD;1) << ,('v(n - 1);"\n")
+    [x;e]'v(n - 1)
+    $(FD;1) << " ",["Catch:";x;",Ignore:";'v(n - 1);"\n"]
 }
+
+//v(3):"Hello World"
 
 pv:FN(VD)${() $(FD;1) << ,(" ",v;"\n") }
 

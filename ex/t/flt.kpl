@@ -12,6 +12,8 @@ po:FN(U6;F6;F6;SG)${(o;x;y)
     p:FN(SG;F6;F6;F6;SG)${(so;sx;sy;sr) " ",[SG$sx;so;SG$sy;"=";SG$sr;"\n"]}
     s:"?"
     r:F6$0.0
+    // with no-omit-frame-pointer current frame pointer is at D and must go up stack (+) to view locals
+    //D
     #? (o=1) {
         s:"+";r:x+y
     } (o=2) {
