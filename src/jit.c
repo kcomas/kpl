@@ -620,6 +620,26 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
+            case OP_C(VRGIDX):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                if (o->ot == TYPE(I6)) {
+                    jit_a(j, 0x5A); // pop rdx
+                    SET_REG(o->od.i6, int64_t, false, 2);
+                    SET_FP(var_tsv_vr_gidx_i6);
+                } else {
+                    if (o->ot != TYPE(OP)) return JIT_ER(m, INV_VR_IDX_T, o);
+                    jit_a(j, 0x59); // pop rcx
+                    jit_a(j, 0x5A); // pop rdx
+                    if (o->od.t == TYPE(I6)) SET_FP(var_tsv_vr_gidx_i6);
+                    else if (o->od.t == TYPE(U6)) SET_FP(var_tsv_vr_gidx_u6);
+                    else return JIT_ER(m, INV_VR_IDX_T, o);
+                }
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
             case OP_C(SIDX):
                 op_set_jidx(j, o);
                 jit_a(j, 0x5F); // pop rdi

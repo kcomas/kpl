@@ -272,7 +272,42 @@ var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
     return tsv->v[idx];
 }
 
+#define VAR_ER_RET return (var) { .i6 = 0 }
+
+#define VAR_VR_IDX_ER(STR, RET) er_itm *ei = er_var(m, a, STR); \
+    er_a(m->r->e, ei); \
+    RET
+
+#define VAR_VR_I6(STR, RET) if (idx < 0) idx = tsv->len + idx; \
+    if (idx < 0 || (size_t) idx > tsv->len - 1) { \
+        VAR_VR_IDX_ER(STR, RET); \
+    }
+
+#define VAR_VR_U6(STR, RET) if ((size_t) idx > tsv->len - 1) { \
+        VAR_VR_IDX_ER(STR, RET); \
+    }
+
+var var_tsv_vr_gidx_i6(mod *const m, ast *const a, var_tsv *const tsv, int64_t idx) {
+    VAR_VR_I6("VR_GIDX_I6", VAR_ER_RET)
+    return tsv->v[idx];
+}
+
+var var_tsv_vr_gidx_u6(mod *const m, ast *const a, var_tsv *const tsv, uint64_t idx) {
+    VAR_VR_U6("VR_GIDX_U6", VAR_ER_RET)
+    return tsv->v[idx];
+}
+
 void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
+    tsv->v[idx] = v;
+}
+
+void var_tsv_vr_sidx_i6(mod *const m, ast *const a, var_tsv *const tsv, int64_t idx, var v) {
+    VAR_VR_I6("VR_SIDX_I6", )
+    tsv->v[idx] = v;
+}
+
+void var_tsv_vr_sidx_u6(mod *const m, ast *const a, var_tsv *const tsv, uint64_t idx, var v) {
+    VAR_VR_U6("VR_SIDX_U6", )
     tsv->v[idx] = v;
 }
 
@@ -301,7 +336,6 @@ void var_tsv_d(var_tsv *tsv) {
     alf(tsv->v);
     alf(tsv);
 }
-
 
 var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {
     var_td *td = ala(m->r->a, sizeof(var_td));
