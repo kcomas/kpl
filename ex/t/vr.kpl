@@ -26,7 +26,7 @@ v:VR[SG]$[]
     $(FD;1) << " ",["Catch:";x;",Ignore:";'v(n - 1);"\n"]
 }
 
-//v(3):"Hello World"
+v(3):"Hello World"
 
 pv:FN(VD)${() $(FD;1) << ,(" ",v;"\n") }
 

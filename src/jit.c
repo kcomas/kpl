@@ -7,6 +7,8 @@ static const char *const jss[] = {
     "LG_T_INV",
     "LM_INV",
     "PV_T_INV",
+    "INV_VR_GIDX_T",
+    "INV_VR_SIDX_T",
     "ZOO_T_INV",
     "ADD_T_INV",
     "SUB_T_INV",
@@ -626,15 +628,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 SET_REG(o->a, ast*, false, 6);
                 if (o->ot == TYPE(I6)) {
                     jit_a(j, 0x5A); // pop rdx
-                    SET_REG(o->od.i6, int64_t, false, 2);
+                    SET_REG(o->od.i6, int64_t, false, 1);
                     SET_FP(var_tsv_vr_gidx_i6);
                 } else {
-                    if (o->ot != TYPE(OP)) return JIT_ER(m, INV_VR_IDX_T, o);
+                    if (o->ot != TYPE(OP)) return JIT_ER(m, INV_VR_GIDX_T, o);
                     jit_a(j, 0x59); // pop rcx
                     jit_a(j, 0x5A); // pop rdx
                     if (o->od.t == TYPE(I6)) SET_FP(var_tsv_vr_gidx_i6);
                     else if (o->od.t == TYPE(U6)) SET_FP(var_tsv_vr_gidx_u6);
-                    else return JIT_ER(m, INV_VR_IDX_T, o);
+                    else return JIT_ER(m, INV_VR_GIDX_T, o);
                 }
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -646,6 +648,27 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 SET_REG(o->od.u6, size_t, false, 6);
                 jit_a(j, 0x5A); // pop rdx
                 SET_FP(var_tsv_sidx);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(VRSIDX):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                if (o->ot == TYPE(I6)) {
+                    jit_a(j, 0x5A); // pop rdx
+                    SET_REG(o->od.i6, int64_t, false, 1);
+                    jit_b(j, 2, 0x41, 0x58); // pop r8
+                    SET_FP(var_tsv_vr_sidx_i6);
+                } else {
+                    if (o->ot != TYPE(OP)) return JIT_ER(m, INV_VR_SIDX_T, o);
+                    jit_a(j, 0x59); // pop rcx
+                    jit_a(j, 0x5A); // pop rdx
+                    jit_b(j, 2, 0x41, 0x58); // pop r8
+                    if (o->od.t == TYPE(I6)) SET_FP(var_tsv_vr_sidx_i6);
+                    else if (o->od.t == TYPE(U6)) SET_FP(var_tsv_vr_sidx_u6);
+                    else return JIT_ER(m, INV_VR_SIDX_T, o);
+                }
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;

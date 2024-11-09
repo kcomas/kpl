@@ -26,6 +26,9 @@ static const char *const css[] = {
     "FN_RET_ER_T_INV", // cannot get ret type of fn
     "TC_R_N", // right side for try catch null
     "AGN_R_N",
+    "AGN_CALL_ARGS_LEN",
+    "AGN_CALL_IDX_N",
+    "AGN_L_N",
     "AGN_TE_INV",
     "INV_TYPE_STORE_VD",
     "VAR_TYPE_U",
@@ -43,6 +46,7 @@ static const char *const css[] = {
     "OP_NO_T_R", // op no right type
     "LD_MOD_F",
     "INV_ADD_T_L",
+    "INV_ADD_T_R",
     "INV_SUB_T_R",
     "INV_SUB_VR_T_R",
     "INV_MUL_T",
@@ -588,7 +592,9 @@ static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_
 }
 
 static int64_t te_call_idx(const call_node *const cn) {
-    if (cn->tgt->n.var->tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
+    type_node *tn;
+    if (!(tn = ast_gtn(cn->tgt))) return -1;
+    if (tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
         return tkn_to_int64_t(&cn->args->h->a->t);
     }
     return -1;
@@ -657,8 +663,40 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             } else if (opn->l->at == AST_TYPE(CALL)) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, AGN_R_N, opn->r);
                 OP_RCI(cs, c, tr);
+                if (opn->l->n.cn->args->len != 1) return CODE_ER(cs, AGN_CALL_ARGS_LEN, opn->l);
+                if (!(tl = ast_gtn(opn->l->n.cn->tgt))) return CODE_ER(cs, AGN_L_N, opn->l);
+                if (tl->t == TYPE(VR)) {
+                    if (!(tr = ast_gtn(opn->l->n.cn->args->h->a))) return CODE_ER(cs, AGN_CALL_IDX_N, opn->l);
+                    if (tr->t == TYPE(INT)) {
+                        IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                        OP_RCD(cs, c, tl);
+                        OP_A(cs, c, VRGIDX, I6, { .i6 = tkn_to_int64_t(&opn->l->n.cn->args->h->a->t) }, opn->l->n.cn->args->h->a);
+                        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                        if (!(tl = ast_gtn(tl->a))) return CODE_ER(cs, AGN_L_N, opn->l);
+                        OP_RCD(cs, c, tl);
+                        OP_GC(cs, c, tl, opn->l);
+                        IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                        OP_A(cs, c, VRSIDX, I6, { .i6 = tkn_to_int64_t(&opn->l->n.cn->args->h->a->t) }, opn->l->n.cn->args->h->a);
+                        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                    } else {
+                        IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                        OP_RCD(cs, c, tl);
+                        IFCGEN(code_gen, cs, opn->l->n.cn->args->h->a, c);
+                        OP_A(cs, c, VRGIDX, OP, { .t = tr->t }, opn->l->n.cn->args->h->a);
+                        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                        if (!(tl = ast_gtn(tl->a))) return CODE_ER(cs, AGN_L_N, opn->l);
+                        OP_RCD(cs, c, tl);
+                        OP_GC(cs, c, tl, opn->l);
+                        IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                        IFCGEN(code_gen, cs, opn->l->n.cn->args->h->a, c);
+                        OP_A(cs, c, VRSIDX, OP, { .t = tr->t }, opn->l->n.cn->args->h->a);
+                        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                    }
+                    break;
+                }
                 if ((tidx = te_call_idx(opn->l->n.cn)) < 0) return CODE_ER(cs, AGN_TE_INV, opn->l);
                 IFCGEN(code_gen, cs, opn->l->n.cn->tgt, c);
+                OP_RCD(cs, c, tl);
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, opn->l);
                 OP_RCD(cs, c, opn->l->n.cn->ret);
                 OP_GC(cs, c, opn->l->n.cn->ret, opn->l);
@@ -755,14 +793,17 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break; // no code
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
-            IFCGEN(code_gen, cs, opn->r, c);
             if (!(tl = ast_gtn(opn->l))) return CODE_ER(cs, INV_ADD_T_L, opn->r);
             if (tl->t == TYPE(VR)) {
+                IFCGEN(code_gen, cs, opn->r, c);
+                if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, INV_ADD_T_R, opn->r);
+                OP_RCI(cs, c, tr);
                 OP_A(cs, c, VRA, OP, { .t = opn->ret->t }, a);
                 OP_GC(cs, c, tl, opn->l);
                 break;
             }
             OP_P_NUM_RET(opn, cs, l, c);
+            IFCGEN(code_gen, cs, opn->r, c);
             OP_P_NUM_RET(opn, cs, r, c);
             OP_A(cs, c, ADD, OP, { .t = opn->ret->t }, a);
             break;

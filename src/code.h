@@ -31,6 +31,9 @@ typedef enum {
     CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
     CODE_STAT(TC_R_N), // right side for try catch null
     CODE_STAT(AGN_R_N),
+    CODE_STAT(AGN_CALL_ARGS_LEN),
+    CODE_STAT(AGN_CALL_IDX_N),
+    CODE_STAT(AGN_L_N),
     CODE_STAT(AGN_TE_INV),
     CODE_STAT(INV_TYPE_STORE_VD),
     CODE_STAT(VAR_TYPE_U),
@@ -48,6 +51,7 @@ typedef enum {
     CODE_STAT(OP_NO_T_R), // op no right type
     CODE_STAT(LD_MOD_F),
     CODE_STAT(INV_ADD_T_L),
+    CODE_STAT(INV_ADD_T_R),
     CODE_STAT(INV_SUB_T_R),
     CODE_STAT(INV_SUB_VR_T_R),
     CODE_STAT(INV_MUL_T),
