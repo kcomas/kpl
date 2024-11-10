@@ -51,7 +51,8 @@ typedef enum {
     TYPE_STAT(INV_VR_T),
     TYPE_STAT(INV_VR_PUSH_R_T),
     TYPE_STAT(INV_VR_PUSH_T_NEQ),
-    TYPE_STAT(INV_TE_2_VR),
+    TYPE_STAT(TE_VR_NUM_CST_INV),
+    TYPE_STAT(INV_TE_TO_VR),
     TYPE_STAT(INV_FN_CST), // invalid case for fn
     TYPE_STAT(FN_CST_T_NN), // fn node type defined
     TYPE_STAT(INV_FN_CST_ARGS_LEN), // length of args does not match type
