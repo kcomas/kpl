@@ -9,6 +9,7 @@ static const char *const css[] = {
     "INV_TC",
     "INV_L_AGN", // left side : invalid
     "INV_R_AGN", // right side : invalid
+    "BL_T_INV",
     "INV_STR_ESC", /* invalid \ */
     "NO_OP_FOR_VAL_T", // no type for val, should not happen
     "TBL_FOUND",
@@ -710,6 +711,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (opn->r->at == AST_TYPE(FN)) return code_gen(cs, opn->r, c);
             // TODO dynamic cast
             switch (opn->l->n.tn->t) {
+                case TYPE(BL):
+                    IFCGEN(code_gen, cs, opn->r, c);
+                    if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, BL_T_INV, opn->r);
+                    OP_ZOO(cs, tr, c);
+                    return CODE_ER(cs, OK, NULL);
                 case TYPE(U3):
                 case TYPE(U4):
                 case TYPE(U5):

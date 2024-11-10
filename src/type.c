@@ -475,7 +475,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, &op->ret, rt, lt, &type_int_is)) break;
             if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, &op->ret, rt, lt, &type_flt_is)) break;
-            if (lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
+            if (lt->t == TYPE(BL) || lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
                 op->ret = type_node_i(ts->r->a, lt->t, NULL);
                 break;
             }

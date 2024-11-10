@@ -14,6 +14,7 @@ typedef enum {
     CODE_STAT(INV_TC),
     CODE_STAT(INV_L_AGN), // left side : invalid
     CODE_STAT(INV_R_AGN), // right side : invalid
+    CODE_STAT(BL_T_INV),
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(TBL_FOUND),
