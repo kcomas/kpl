@@ -1,20 +1,47 @@
 
-m:VR[VR[F6]]$[VR[F6]$[0.1;0.2;0.3];VR[F6]$[1.1;1.2;1.3];VR[F6]$[2.1;2.2;3.3]]
+//m:VR[VR[F6]]$[VR[F6]$[0.1;0.2;0.3];VR[F6]$[1.1;1.2;1.3];VR[F6]$[2.1;2.2;3.3]]
 
-g:FN(U6;U6;ER(F6))${(y;x)
-    t:'m(y)
+m:VR[VR[F6]]$[]
+
+columns:U6$10
+rows:U6$10
+
+gen:FN(U6;U6;VD)${(c;r)
+    y:U6$0
+    yi:F6$0.0
+    #@ (y < c) {
+        nr:VR[F6]$[]
+        x:U6$0
+        xi:F6$0.0
+        #@ (x < r) {
+            nr + yi + xi
+            x: x + 1
+            xi: xi + 0.1
+        }
+        y: y + 1
+        yi: yi + 1.0
+        m + nr
+    }}
+
+gen(columns;rows)
+
+get:FN(U6;U6;ER(F6))${(y;x)
+    [t;e]'m(y)
+    #? (BL$e) { 'e }
     [v;e]'t(x)
     #? (BL$e) { 'e }
-    v
-}
+    v}
 
-y:U6$0
-#@ (y < 3) {
-    x:U6$0
-    #@ (x < 3) {
-        $(FD;1) << " ",[" ";SG$'g(y;x);" "]
-        x: x + 1
-    }
-    y: y + 1
-    $(FD;1) << "\n"
-}
+printm:FN(U6;U6;VD)${(c;r)
+    y:U6$0
+    #@ (y < c) {
+        x:U6$0
+        #@ (x < r) {
+            $(FD;1) << " ",[" ";SG$'get(y;x);" "]
+            x: x + 1
+        }
+        y: y + 1
+        $(FD;1) << "\n"
+    }}
+
+printm(columns;rows)
