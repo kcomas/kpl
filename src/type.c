@@ -15,6 +15,8 @@ static const char *const tss[] = {
     "SYM_INV_TBL_R",
     "SYM_HSH_DATA_T_INV",
     "INV_TC_R",
+    "INV_COND_T",
+    "COND_N_BL",
     "TC_ER_L_LST_INV",
     "INV_TC_NE_T",
     "TC_ER_L_H_N_VAR",
@@ -251,9 +253,12 @@ static type_stat type_chk_sym(type_st *const ts, fn_node *const fns, sym_node *c
 static type_stat type_chk_if(type_st *const ts, fn_node *const fns, if_node *const in) {
     type_stat tstat;
     if_itm *h = in->h;
+    type_node *tn;
     while (h) {
         if (h->cond) {
             IFTCHK(type_chk, ts, fns, h->cond);
+            ASTGTN(tn, h->cond, INV_COND_T);
+            if (tn->t != TYPE(BL)) return TYPE_ER(ts, COND_N_BL);
         }
         IFTCHK(type_chk_lst, ts, fns, h->body);
         h = h->next;
@@ -561,12 +566,10 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, lt, rt, &type_int_is) || type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, rt, lt, &type_int_is)) {
-                if (lt->t != TYPE(INT)) op->ret = type_node_i(ts->r->a, lt->t, NULL);
-                else op->ret = type_node_i(ts->r->a, rt->t, NULL);
+                op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
                 break;
             } else if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, lt, rt, &type_flt_is) || type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, rt, lt, &type_flt_is)) {
-                if (lt->t != TYPE(FLT)) op->ret = type_node_i(ts->r->a, lt->t, NULL);
-                else op->ret = type_node_i(ts->r->a, rt->t, NULL);
+                op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
                 break;
             }
             // TODO
