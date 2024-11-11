@@ -3,10 +3,13 @@
 
 m:VR[VR[F6]]$[]
 
-columns:U6$10
-rows:U6$10
+d:{`columns:U6$12;`rows:U6$12}
 
-gen:FN(U6;U6;VD)${(c;r)
+sc:FN(U6;VD)${(v) d`columns:v}
+sr:FN(U6;VD)${(v) d`rows:v}
+
+genm:FN(U6;U6;VD)${(c;r)
+    m:VR[VR[F6]]$[]
     y:U6$0
     yi:F6$0.0
     #@ (y < c) {
@@ -16,16 +19,14 @@ gen:FN(U6;U6;VD)${(c;r)
         #@ (x < r) {
             nr + yi + xi
             x: x + 1
-            xi: xi + 0.1
+            xi: xi + 0.001
         }
         y: y + 1
         yi: yi + 1.0
         m + nr
     }}
 
-gen(columns;rows)
-
-get:FN(U6;U6;ER(F6))${(y;x)
+getm:FN(U6;U6;ER(F6))${(y;x)
     [t;e]'m(y)
     #? (BL$e) { 'e }
     [v;e]'t(x)
@@ -37,11 +38,16 @@ printm:FN(U6;U6;VD)${(c;r)
     #@ (y < c) {
         x:U6$0
         #@ (x < r) {
-            $(FD;1) << " ",[" ";SG$'get(y;x);" "]
+            $(FD;1) << " ",[" ";SG$'getm(y;x);" "]
             x: x + 1
         }
         y: y + 1
         $(FD;1) << "\n"
     }}
 
-printm(columns;rows)
+run:FN(VD)${()
+    $(FD;1) << " ", ["C:";SG$d`columns;"R:";SG$d`rows;"\n"]
+    genm(d`columns;d`rows)
+    printm(d`columns;d`rows)}
+
+run()
