@@ -64,6 +64,7 @@ typedef enum {
     // general ops
     TKN_TYPE(AGN), // :
     TKN_TYPE(CST), // $
+    TKN_TYPE(CLSE), // \c
     TKN_TYPE(DEL), // \d
     TKN_TYPE(LD), // \l
     TKN_TYPE(VH), // \h

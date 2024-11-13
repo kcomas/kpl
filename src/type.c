@@ -34,6 +34,7 @@ static const char *const tss[] = {
     "INV_CALL_AGN_T",
     "CALL_AGN_N_T_M",
     "INV_AGN_TO",
+    "INV_FD_CST",
     "INV_CST",
     "INV_CST_L_A",
     "INV_CST_L_T_N",
@@ -46,6 +47,9 @@ static const char *const tss[] = {
     "INV_FN_CST",
     "FN_CST_T_NN",
     "INV_FN_CST_ARGS_LEN",
+    "INV_CLSE_L_NN",
+    "INV_CLSE_T",
+    "INV_CLSE_T_N_FD",
     "INV_DEL_L_NN",
     "INV_DEL_R_NG",
     "INV_LD_L_NN",
@@ -480,13 +484,32 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, &op->ret, rt, lt, &type_int_is)) break;
             if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, &op->ret, rt, lt, &type_flt_is)) break;
-            if (lt->t == TYPE(BL) || lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
+            if (lt->t == TYPE(FD)) {
+                switch (rt->t) {
+                    case TYPE(INT):
+                        op->ret = type_node_i(ts->r->a, lt->t, NULL);
+                        return TYPE_ER(ts, OK);
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        op->ret = type_node_i(ts->r->a, TYPE(ER), ast_i(ts->r->a, AST_TYPE(TYPE), (node) { .tn = type_node_c(ts->r->a, lt) }, &op->l->t));
+                    return TYPE_ER(ts, OK);
+                    default:
+                        return TYPE_ER(ts, INV_FD_CST);
+                }
+            }
+            if (lt->t == TYPE(BL) || lt->t == TYPE(SG)) {
                 op->ret = type_node_i(ts->r->a, lt->t, NULL);
                 break;
             }
             // TODO cst
             return TYPE_ER(ts, INV_CST);
         // TODO ops
+        case OP_TYPE(CLSE):
+            if (op->l) return TYPE_ER(ts, INV_CLSE_L_NN);
+            ASTGTN(rt, op->r, INV_CLSE_T);
+            if (rt->t != TYPE(FD)) return TYPE_ER(ts, INV_CLSE_T_N_FD);
+            op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
+            break;
         case OP_TYPE(DEL):
             if (op->l) return TYPE_ER(ts, INV_DEL_L_NN);
             if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_ER(ts, INV_DEL_R_NG);
@@ -618,7 +641,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             return TYPE_ER(ts, INV_CNCT);
         case OP_TYPE(RW):
             ASTGTNBOP(RW);
-            if (lt->t == TYPE(FD)) {
+            if ((lt->t == TYPE(FD) && type_str_is(rt, NULL)) || (type_str_is(lt, NULL) && rt->t == TYPE(FD))) {
                 op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
                 break;
             }

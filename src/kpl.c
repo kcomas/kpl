@@ -48,7 +48,7 @@ const char *type_get_str(type t) {
 }
 
 void jit_f(jit *j) {
-    //munmap(j->h, j->size);
+    munmap(j->h, j->size);
     alf(j);
 }
 

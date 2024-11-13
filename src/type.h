@@ -46,6 +46,7 @@ typedef enum {
     TYPE_STAT(CALL_AGN_N_T_M),
     TYPE_STAT(INV_AGN_TO), // cannot assign to node
     // cast
+    TYPE_STAT(INV_FD_CST),
     TYPE_STAT(INV_CST), // invalid cast
     TYPE_STAT(INV_CST_L_A), // invalid node for left side of cst
     TYPE_STAT(INV_CST_L_T_N), // left side type for cst null
@@ -59,6 +60,10 @@ typedef enum {
     TYPE_STAT(INV_FN_CST), // invalid case for fn
     TYPE_STAT(FN_CST_T_NN), // fn node type defined
     TYPE_STAT(INV_FN_CST_ARGS_LEN), // length of args does not match type
+    // clse
+    TYPE_STAT(INV_CLSE_L_NN),
+    TYPE_STAT(INV_CLSE_T),
+    TYPE_STAT(INV_CLSE_T_N_FD),
     // del
     TYPE_STAT(INV_DEL_L_NN),
     TYPE_STAT(INV_DEL_R_NG),

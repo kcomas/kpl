@@ -170,6 +170,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
             case '\\':
                 t->len++;
                 switch (str[t->pos + t->len]) {
+                    T_ONE_C('c', CLSE);
                     T_ONE_C('d', DEL);
                     T_ONE_C('l', LD);
                     T_ONE_C('h', VH);
@@ -263,6 +264,7 @@ static const char *const tkn_type_str[] = {
     // general ops
     "AGN", // :
     "CST", // $
+    "CLSE",
     "DEL", // \d
     "LD", // \l
     "VH", // \h
