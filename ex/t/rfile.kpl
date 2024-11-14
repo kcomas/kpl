@@ -1,0 +1,13 @@
+
+// read file into string run out side of ex folder
+
+fd: 'FD$"./ex/t/rfile.kpl"
+
+s:SG
+
+// TODO sendfile
+s << fd
+
+$(FD;1) << s
+
+\c fd
