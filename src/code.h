@@ -146,9 +146,9 @@ typedef enum {
     OP_C(LT),
     OP_C(OR),
     OP_C(CNCTSG), // sg cnct op type is either sg or te
+    OP_C(OFD), // open fd
     OP_C(WFD), // OP_T is type to be written
     OP_C(RFD), // OP_T is type to be read
-    OP_C(OFD), // open fd
     // thread
     OP_C(TDI), // thread init
     OP_C(TDJ), // thread join

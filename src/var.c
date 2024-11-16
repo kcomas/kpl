@@ -113,82 +113,22 @@ bool var_zoo_u6(uint64_t v) { return v != 0; }
 bool var_zoo_i6(int64_t v) { return v != 0; }
 bool var_zoo_er(er_itm *const ei) { return ei->et != ER(OK); }
 
-static void dig_len(size_t *len, uint64_t num) {
-    while (num) {
-        ++*len;
-        num /= 10;
-    }
-}
+#define NUM_SG_SIZE 20
 
-static void str_w_dig(var_sg *const sg, size_t *len, uint64_t num) {
-    while (num) {
-        sg->str[--*len] = num % 10 + '0';
-        num /= 10;
-    }
-}
-
-static var_sg *int_sg(al *const a, bool neg, uint64_t num) {
-    size_t len = 0;
-    dig_len(&len, num);
-    if (neg) len++;
-    var_sg *sg = var_sg_i(a, len);
-    sg->len = len;
-    str_w_dig(sg, &len, num);
-    if (neg) sg->str[0] = '-';
+#define NUM_TO_SG(FMT, VAL) var_sg *sg = var_sg_i(a, NUM_SG_SIZE * sizeof(char) + sizeof(char)); \
+    sg->len = snprintf(sg->str, NUM_SG_SIZE, FMT, VAL); \
     return sg;
-}
 
 var_sg *var_i6_sg(al *const a, int64_t i6) {
-    if (i6 == 0) return var_sg_i_str(a, "0");
-    if (i6 > 0) return int_sg(a, false, (uint64_t) i6);
-    return int_sg(a, true, (uint64_t) 0 - i6);
+    NUM_TO_SG("%ld", i6);
 }
 
 var_sg *var_u6_sg(al *const a, uint64_t u6) {
-    if (u6 == 0) return var_sg_i_str(a, "0");
-    return int_sg(a, false, u6);
+    NUM_TO_SG("%lu", u6);
 }
 
-#ifndef FLT_DEC_PREC
-    #define FLT_DEC_PREC 6
-#endif
-
-#ifndef FLT_ROUND
-    #define FLT_ROUND 1
-#endif
-
-static const uint64_t flp10[] = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9};
-
 var_sg *var_f6_sg(al *const a, double f6) {
-    size_t len = 0;
-    bool neg = false;
-    if (f6 < 0) {
-        neg = true;
-        len++;
-        f6 = 0 - f6;
-    }
-    int64_t up = (int64_t) f6;
-    if (up == 0) len++;
-    else dig_len(&len, up);
-    len += FLT_DEC_PREC + 1; // for .
-    var_sg *sg = var_sg_i(a, len);
-    sg->len = len;
-    double tmp = (f6 - up) * flp10[FLT_DEC_PREC];
-    uint64_t frac = (uint64_t) tmp;
-    if (FLT_ROUND && (double) (tmp - frac) > 0.5) frac++;
-    if (frac == 0) sg->str[--len] = '0';
-    else {
-        for (size_t i = FLT_DEC_PREC; i > 0; i--) {
-            tmp = (f6 - up) * flp10[i];
-            frac = (uint64_t) tmp;
-            sg->str[--len] = frac % 10 + '0';
-        }
-    }
-    sg->str[--len] = '.';
-    if (up == 0) sg->str[--len] = '0';
-    else str_w_dig(sg, &len, up);
-    if (neg) sg->str[0] = '-';
-    return sg;
+    NUM_TO_SG("%lf", f6);
 }
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
@@ -372,4 +312,40 @@ void var_td_d(var_td *td) {
 void var_td_f(var_td *td) {
     if (--td->rc >= 0) return;
     var_td_d(td);
+}
+
+#define VAR_FD_SG_ER(STR) ei = er_var(m, a, STR); \
+    er_a(m->r->e, ei);
+
+var var_fd_i(mod *const m, ast *const a, var_sg *const sg) {
+    er_itm *ei;
+    int fd = open(sg->str, O_RDONLY);
+    if (fd == -1) {
+        VAR_FD_SG_ER("OFD_OPEN");
+        ei->sg = sg;
+        return (var) { .fd = -1 };
+    }
+    return (var) { .fd = fd };
+}
+
+void var_fd_sg(mod *const m, ast *const a, int fd, var_sg *const sg) {
+    er_itm *ei;
+    struct statx sxb;
+    if (statx(fd, "", AT_EMPTY_PATH, STATX_SIZE, &sxb) == -1) {
+        close(fd);
+        VAR_FD_SG_ER("RFD_STATX");
+        return;
+    }
+    char *str = ala(m->r->a, sxb.stx_size * sizeof(char) + sizeof(char));
+    if (read(fd, str, sxb.stx_size) != (ssize_t) sxb.stx_size) {
+        alf(str);
+        close(fd);
+        VAR_FD_SG_ER("RFD_READ");
+        return;
+    }
+    close(fd);
+    alf(sg->str);
+    sg->len = sxb.stx_size;
+    sg->size = sg->len + sizeof(char);
+    sg->str = str;
 }

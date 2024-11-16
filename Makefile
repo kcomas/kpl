@@ -4,7 +4,7 @@
 CC = gcc
 DFLAGS = -DKPL_ALD
 OO = -g -Og
-FFLAGS = -fstack-protector-all -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
+FFLAGS = -fstack-protector-all -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
 CFLAGS = $(DFLAGS) $(FLAGS) $(OO) $(FFLAGS) $(WFLAGS) # TODO specify std
 SRC = ./src
