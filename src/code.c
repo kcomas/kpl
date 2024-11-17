@@ -189,7 +189,7 @@ static const char *op_c_str[] = {
 
 const char *op_c_get_str(op_c oc) {
     const char *s = "INVALID";
-    if (oc >= OP_C(EFN) && oc <= OP_C(DEL)) s = op_c_str[oc];
+    if (oc >= OP_C(EFN) && oc <= OP_C(CLSE)) s = op_c_str[oc];
     return s;
 };
 
@@ -802,6 +802,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         case TYPE(STR):
                         case TYPE(SG):
                             OP_A(cs, c, OFD, OP, { .t = tr->t }, a);
+                            OP_A(cs, c, SWAP, VD, {}, NULL);
                             OP_GC(cs, c, tr, a);
                             return op_chk_er(cs, a, c);
                         default:
@@ -953,7 +954,6 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_GC(cs, c, tr, a);
             } else if  (tl->t != TYPE(FD) && tr->t == TYPE(FD)) { // read
                 OP_A(cs, c, RFD, OP, { .t = tl->t }, a);
-                OP_GC(cs, c, tl, a);
             }
             else return CODE_ER(cs, INV_FD_OP, a);
             break;

@@ -3,10 +3,10 @@
 
 static const char *const jss[] = {
     "OK",
-    "SG_T_INV",
-    "LG_T_INV",
+    "SG_T_INV", // inv type for sg
+    "LG_T_INV", // inv type for lg
     "LM_INV",
-    "PV_T_INV",
+    "PV_T_INV", // no push for type
     "INV_VR_GIDX_T",
     "INV_VR_SIDX_T",
     "ZOO_T_INV",
@@ -20,6 +20,7 @@ static const char *const jss[] = {
     "OR_T_INV",
     "CSTSG_T_INV",
     "CNCTSG_T_INV",
+    "OFD_T_INV",
     "WFD_T_INV",
     "RCI_T_INV",
     "RCD_T_INV",
@@ -815,6 +816,23 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(j, o);
                 break;
+            case OP_C(OFD):
+                op_set_jidx(j, o);
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        SET_REG(m, mod*, false, 7);
+                        SET_REG(o->a, ast*, false, 6);
+                        jit_b(j, 4, 0x48, 0x8B, 0x14, 0x24); // mov rdx qword ptr [rsp]
+                        SET_FP(var_fd_i);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        return JIT_ER(m, OFD_T_INV, o);
+                }
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
             case OP_C(WFD):
                 op_set_jidx(j, o);
                 switch (o->od.t) {
@@ -837,6 +855,16 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 jit_a(j, 0x5F); // fd in rdi
                 jit_b(j, 2, 0x41, 0x52); // push r10
                 SET_FP(write);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(RFD):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                jit_a(j, 0x5A); // pop rdx fd
+                jit_a(j, 0x59); // pop rcx sg
+                SET_FP(var_fd_sg);
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
@@ -1100,6 +1128,13 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     default:
                         return JIT_ER(m, DEL_T_INV, o);
                 }
+                op_set_jlen(j, o);
+                break;
+            case OP_C(CLSE):
+                op_set_jidx(j, o);
+                jit_a(j, 0x5F); // pop rdi
+                SET_FP(close);
+                SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
             default:
