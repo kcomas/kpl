@@ -22,6 +22,7 @@ static const char *const jss[] = {
     "CNCTSG_T_INV",
     "OFD_T_INV",
     "WFD_T_INV",
+    "RFD_T_INV",
     "RCI_T_INV",
     "RCD_T_INV",
     "RCF_T_INV",
@@ -861,12 +862,19 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(RFD):
                 op_set_jidx(j, o);
-                SET_REG(m, mod*, false, 7);
-                SET_REG(o->a, ast*, false, 6);
-                jit_a(j, 0x5A); // pop rdx fd
-                jit_a(j, 0x59); // pop rcx sg
-                SET_FP(var_fd_sg);
-                SET_REG_CALL(false, 0);
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        SET_REG(m, mod*, false, 7);
+                        SET_REG(o->a, ast*, false, 6);
+                        jit_a(j, 0x5A); // pop rdx fd
+                        jit_a(j, 0x59); // pop rcx sg
+                        SET_FP(var_fd_sg);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        return JIT_ER(m, RFD_T_INV, o);
+                }
                 op_set_jlen(j, o);
                 break;
             case OP_C(TDI):

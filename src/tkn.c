@@ -319,9 +319,8 @@ double tkn_to_double(const tkn *const t) {
 
 char *tkn_to_c_str(al *const a, const tkn *const t) {
     size_t len = t->len - 1;
-    char *str = ala(a, len-- * sizeof(char));
+    char c, *str = ala(a, len-- * sizeof(char));
     size_t tpos = 0, spos = 0;
-    char c;
     while (tpos < len) {
         c = t->str[t->pos + 1 + tpos];
         if (c == '\\') {
