@@ -319,7 +319,7 @@ void var_td_f(var_td *td) {
 
 var var_fd_i(mod *const m, ast *const a, var_sg *const sg) {
     er_itm *ei;
-    int fd = open(sg->str, O_RDONLY);
+    int fd = open(sg->str, O_RDWR | O_CREAT | O_APPEND);
     if (fd == -1) {
         VAR_FD_SG_ER("OFD_OPEN");
         ei->sg = sg;
