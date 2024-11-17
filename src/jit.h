@@ -34,6 +34,7 @@ typedef enum {
     JIT_STAT(GCTSV_T_INV),
     JIT_STAT(GCVR_T_INV),
     JIT_STAT(DEL_T_INV),
+    JIT_STAT(CLSE_T_INV),
     JIT_STAT(IF_ELSE_INV),
     JIT_STAT(INV_CODE)
 } jit_stat;
