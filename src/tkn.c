@@ -317,3 +317,31 @@ double tkn_to_double(const tkn *const t) {
     return strtod(istr, &eptr);
 }
 
+char *tkn_to_c_str(al *const a, const tkn *const t) {
+    char *str = ala(a, (t->len - 1) * sizeof(char));
+    size_t tpos = 0, spos = 0;
+    char c;
+    while (tpos < (t->len - 2)) {
+        c = t->str[t->pos + 1 + tpos];
+        if (c == '\\') {
+            if (++tpos >= (t->len - 2)) {
+                alf(str);
+                return NULL;
+            }
+            c = t->str[t->pos + 1 + tpos];
+            switch (c) {
+                case 'n':
+                    str[spos++] = '\n';
+                    break;
+                case 't':
+                    str[spos++] = '\t';
+                    break;
+                default:
+                    alf(str);
+                    return NULL;
+            }
+        } else str[spos++] = c;
+        tpos++;
+    }
+    return str;
+}

@@ -151,3 +151,5 @@ void tkn_p(const tkn *const t);
 int64_t tkn_to_int64_t(const tkn *const t);
 
 double tkn_to_double(const tkn *const t);
+
+char *tkn_to_c_str(al *const a, const tkn *const t);

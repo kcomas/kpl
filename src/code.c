@@ -10,7 +10,7 @@ static const char *const css[] = {
     "INV_L_AGN", // left side : invalid
     "INV_R_AGN", // right side : invalid
     "BL_T_INV",
-    "INV_STR_ESC", /* invalid \ */
+    "INV_TKN_C_STR", /* invalid \ */
     "NO_OP_FOR_VAL_T", // no type for val, should not happen
     "TBL_FOUND",
     "MOD_FOUND",
@@ -1099,7 +1099,6 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     code *cfn;
     char *sg;
-    size_t sgi = 0;
     switch (a->at) {
         case AST_TYPE(TYPE): break;
         case AST_TYPE(RES):
@@ -1119,21 +1118,8 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(FLT):
                     break; // TODO
                 case TYPE(STR):
-                    // TODO redo
-                    sg = ala(cs->r->a, (a->t.len - 1) * sizeof(char));
-                    for (size_t i = 0; i < a->t.len - 2; i++) {
-                        if (a->t.str[a->t.pos + 1 + i] == '\\') {
-                            i++;
-                            switch (a->t.str[a->t.pos + 1 + i]) {
-                                case 'n':
-                                    sg[sgi++] = '\n';
-                                    break;
-                                default:
-                                    return CODE_ER(cs, INV_STR_ESC, a);
-                            }
-                            break;
-                        } else sg[sgi++] = a->t.str[a->t.pos + 1 + i];
-                    }
+                    sg = tkn_to_c_str(cs->r->a, &a->t);
+                    if (!sg) return CODE_ER(cs, INV_TKN_C_STR, a);
                     OP_A(cs, c, PV, STR, { .sg = sg }, a);
                     break;
                 default:
