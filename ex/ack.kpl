@@ -10,6 +10,6 @@ ack:FN(U6;U6;U6)${(m;n)
     S(m - 1;S(m;n - 1))}
 
 pack:FN(U6;U6;VD)${(m;n)
-    $(FD;1) << " ",["m:";SG$m;"n:";SG$n;"ack:";SG$ack(m;n);"\n"] }
+    $(FD;1) << " ",["m:";SG$m;"\nn:";SG$n;"\nack:";SG$ack(m;n);"\n"] }
 
 pack(3;10)
