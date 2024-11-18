@@ -108,9 +108,8 @@ typedef struct _tdr {
 
 typedef struct _tds {
     sem_t l; // lock
-    size_t len, total; // len is number in lst, total is number used
+    size_t size, len, total; // len is number in lst, total is number used
     tdr *h, *t;
-    void *nal; // pointer for next al
 } tds; // threads
 
 typedef struct {
@@ -130,6 +129,8 @@ typedef struct {
 } mod;
 
 void mod_done(mod *const m);
+
+void mod_f(mod *m);
 
 #define RC ssize_t rc
 

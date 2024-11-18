@@ -63,6 +63,10 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
 
 extern inline void fn_stk_f(fn_stk *f);
 
+#ifndef NUM_JIT_STK_PAGES
+    #define NUM_JIT_STK_PAGES 5
+#endif
+
 void jit_i(al *const a, size_t nops, jit **j, uint8_t flgs) {
     size_t size = nops * BYTES_PER_OP;
     if ((*j)->size > 0) {
@@ -76,7 +80,7 @@ void jit_i(al *const a, size_t nops, jit **j, uint8_t flgs) {
             (*j)->flgs = flgs;
         }
     }
-    size_t ps = (size_t) getpagesize() * 5;
+    size_t ps = (size_t) getpagesize() * NUM_JIT_STK_PAGES;
     (*j)->size = (size / ps + 1) * ps;
     (*j)->h = mmap(NULL, (*j)->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
 }

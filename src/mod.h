@@ -76,10 +76,3 @@ inline void mod_psrc(const mod *const m) {
     if (m->src.path != NULL) printf("%s\n", m->src.path);
     printf("%s", m->src.str);
 }
-
-inline void mod_f(mod *m) {
-    FNNF(m->src.path, alf);
-    FNNF(m->src.str, alf);
-    FNNF(m->g, alf);
-    alf(m);
-}

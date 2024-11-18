@@ -15,12 +15,14 @@ typedef struct _lst_ex {
     // your data
 } lst_ex;
 
-#define LST_A(L, I) if (!L->h) L->t = L->h = I; \
-    else { \
+#define LST_A(L, I) if (!L->h) { \
+        L->t = L->h = I; \
+        L->len++; \
+    } else { \
         (I)->prev = L->t; \
         L->t = L->t->next = I; \
-    } \
-    L->len++
+        L->len++; \
+    }
 
 // removed item in tmpv
 #define LST_S(L, TMPV) if (L->h) { \

@@ -56,4 +56,11 @@ void mod_done(mod *const m) {
     sem_post(&m->done);
 }
 
+void mod_f(mod *m) {
+    FNNF(m->src.path, alf);
+    FNNF(m->src.str, alf);
+    FNNF(m->g, alf);
+    alf(m);
+}
+
 extern inline size_t str_dir_len(const char *const s);

@@ -8,6 +8,16 @@
 #include <stdint.h>
 #include "lst.h"
 
+#ifndef DEFALGN
+    #define DEFALGN 16
+#endif
+
+inline size_t algn(size_t size, size_t an) {
+    size_t mo = size % an;
+    if (mo) size = size - mo + an;
+    return size;
+}
+
 typedef struct _alc alc;
 
 typedef struct {
@@ -30,7 +40,6 @@ typedef struct _alc {
     al *a;
     alc *prev, *next;
     size_t aus, len, size; // active used size, total used, size of chunk
-    void *h; // memmap
 } alc; // allocator chunk no frees filled then freed
 
 typedef struct {
@@ -43,7 +52,7 @@ typedef struct {
 #endif
 
 inline alc *alc_i(al *const a, size_t size) {
-    size += sizeof(alc);
+    size = algn(size + sizeof(alc), DEFALGN);
     size_t ps = (size_t) getpagesize() * AL_PS_MUL;
     size = size <= ps ? ps : (size / ps + 1) * ps;
     alc *ac = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
@@ -51,9 +60,7 @@ inline alc *alc_i(al *const a, size_t size) {
     a->size += size;
     LST_A(a, ac);
     ac->size = size;
-    ac->h = ac + sizeof(alc);
-    ac->len = sizeof(alc);
-    posix_memalign(&ac->h, sizeof(alci), size);
+    ac->len = algn(sizeof(alc), DEFALGN);
     return ac;
 }
 
