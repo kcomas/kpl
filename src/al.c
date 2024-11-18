@@ -26,13 +26,12 @@ void *ala(al *const a, size_t size) {
         ac = ac->next;
     }
     if (!ac) ac = alc_i(a, size);
-    void *ptr = (void*) ac + ac->len;
+    alci *ai = (void*) ac + ac->len;
     ac->aus += size;
     ac->len += size;
-    alci *ai = (alci*) ptr;
     ai->size = size;
     ai->ac = ac;
-    return (void*) ptr + sizeof(alci);
+    return (void*) ai + sizeof(alci);
 }
 
 void alf(void *ptr) {
