@@ -3,6 +3,7 @@
 
 fd: 'FD$"./ex/t/rfile.kpl"
 
+// TODO check s is init
 s:""
 
 // TODO sendfile
