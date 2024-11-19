@@ -15,8 +15,8 @@ f:FN(VD)${()
     // errors throw
     // -v; -v
 }
-
-f();
+//
+//f();
 n:I6$0
 v:VR[SG]$[]
 #@ (n < 5) {
