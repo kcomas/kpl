@@ -21,13 +21,13 @@ const char *er_type_str(er_type et) {
 extern inline er_itm *er_itm_i(al *const a, er_type et, const char *const fnn, const char *const stat);
 
 void er_itm_p(er_itm *const ei) {
-    printf("!!%s", er_type_str(ei->et));
-    if (ei->fnn[0]) printf(",%s", ei->fnn);
-    if (ei->stat) printf(",%s", ei->stat);
-    if (ei->path) printf(",%s", ei->path);
-    if (ei->lno > 0 && ei->cno > 0) printf(",l:%lu,c:%lu", ei->lno, ei->cno);
-    if (ei->sg) printf(",%s", ei->sg->str);
-    printf("!!\n");
+    fprintf(stderr, "!!%s", er_type_str(ei->et));
+    if (ei->fnn[0]) fprintf(stderr, ",%s", ei->fnn);
+    if (ei->stat) fprintf(stderr, ",%s", ei->stat);
+    if (ei->path) fprintf(stderr, ",%s", ei->path);
+    if (ei->lno > 0 && ei->cno > 0) fprintf(stderr, ",l:%lu,c:%lu", ei->lno, ei->cno);
+    if (ei->sg) fprintf(stderr, ",%s", ei->sg->str);
+    fprintf(stderr, "!!\n");
 }
 
 void er_itm_f(er_itm *ei, void *fn) {
