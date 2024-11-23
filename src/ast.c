@@ -686,6 +686,8 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         // TODO TYPES
         TYPE_A_CASE(VR, LS, RS);
         TYPE_A_LST_CASE(TE, LS, RS);
+        TYPE_A_CASE(HH, LB, RB);
+        TYPE_A_LST_CASE(ST, LB, RB);
         TYPE_A_LST_CASE(FN, LP, RP);
         TYPE_A_CASE(ER, LP, RP);
         TYPE_NA_CASE(FD);
