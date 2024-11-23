@@ -272,6 +272,9 @@ static type_stat type_chk_sym(type_st *const ts, fn_node *const fns, sym_node *c
         if (!hd->tn) return TYPE_ER(ts, SYM_HSH_DATA_T_INV);
         sym->tn = type_node_c(ts->r->a, hd->tn);
         return TYPE_ER(ts, OK);
+    } else if (tn->t == TYPE(HH) && tn->a && tn->a->at == AST_TYPE(TYPE)) {
+        sym->tn = type_node_i(ts->r->a, TYPE(ER), ast_i(ts->r->a, AST_TYPE(TYPE), (node) { .tn = type_node_c(ts->r->a, tn->a->n.tn) }, &sym->a->t));
+        return TYPE_ER(ts, OK);
     }
     // TODO tuple index
     return TYPE_ER(ts, SYM_INV);
