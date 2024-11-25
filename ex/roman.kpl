@@ -28,7 +28,7 @@ roman:FN(I6;SG)${(x)
 proman:FN(I6;VD)${(i)
     $(FD;1) << $(SG;i),": ",roman(i),"\n"}
 
-v:VR[I6]$[I6$1994;I6$58;I6$3749]
+v:VR[I6]$[1994;58;3749]
 n:U6$0
 
 #@ (n < 3) {
