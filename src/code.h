@@ -11,6 +11,7 @@ typedef enum {
     CODE_STAT(INV_ER_T),
     CODE_STAT(INV_ER_GCR),
     CODE_STAT(ER_N_ER_T),
+    CODE_STAT(INV_GEN_GC_T),
     CODE_STAT(INV_TC),
     CODE_STAT(INV_L_AGN), // left side : invalid
     CODE_STAT(INV_R_AGN), // right side : invalid
@@ -43,6 +44,7 @@ typedef enum {
     CODE_STAT(INV_CST_INT_TO_FD),
     CODE_STAT(INV_CST_SG),
     CODE_STAT(NO_T_VR_GC),
+    CODE_STAT(NO_T_HH_GC),
     CODE_STAT(INV_CST_FD),
     CODE_STAT(INV_CST),
     CODE_STAT(NO_TYPE_COR_INT),
@@ -122,6 +124,9 @@ typedef enum {
     OP_C(VRSIDX),  // vr get idx
     OP_C(VRA), // vector add, push
     OP_C(VRS), // vector sub, pop
+    OP_C(CHH), // create runtime hash
+    OP_C(HHSK), // hash set key
+    OP_C(HHGK), // hash get key
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
@@ -160,6 +165,7 @@ typedef enum {
     OP_C(GC), // type is base type
     OP_C(GCTSVI), // gc idx in tsv
     OP_C(GCVR), // gc vr of type
+    OP_C(GCHH), // gc hh of type
     OP_C(DEL), // delete top of stack free ptr
     OP_C(CLSE) // general close eg file descriptor
 } op_c;

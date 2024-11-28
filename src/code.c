@@ -6,6 +6,7 @@ static const char *const css[] = {
     "INV_ER_T",
     "INV_ER_GCR",
     "ER_N_ER_T",
+    "INV_GEN_GC_T",
     "INV_TC",
     "INV_L_AGN", // left side : invalid
     "INV_R_AGN", // right side : invalid
@@ -38,6 +39,7 @@ static const char *const css[] = {
     "INV_CST_INT_TO_FD",
     "INV_CST_SG",
     "NO_T_VR_GC",
+    "NO_T_HH_GC",
     "INV_CST_FD",
     "INV_CST",
     "NO_TYPE_COR_INT",
@@ -146,6 +148,9 @@ static const char *op_c_str[] = {
     "VRSIDX",  // vr get idx
     "VRA", // vector add, push
     "VRS", // vector sub, pop
+    "CHH", // create runtime hash
+    "HHSK", // hash set key
+    "HHGK", // hash get key
     // control
     "IF",
     "COND", // jmp if false
@@ -183,6 +188,7 @@ static const char *op_c_str[] = {
     "GC", // type is base type
     "GCTSVI", // gc idx in tsv
     "GCVR", // gc vr of type
+    "GCHH",
     "DEL", // delete top of stack free ptr
     "CLSE" // general close eg file descriptor
 };
@@ -316,6 +322,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(VR):
         case TYPE(TE):
         case TYPE(ST):
+        case TYPE(HH):
         case TYPE(FN):
         case TYPE(ER):
         case TYPE(TD):
@@ -402,9 +409,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     return CODE_ER(cs, OK, NULL);
 }
 
-static code_stat sym_get_hd(code_st *const cs, const sym_node *const sym, hsh_data **hd) {
-    type_node *tn;
-    if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
+static code_stat sym_get_hd(code_st *const cs, const type_node *const tn, const sym_node *const sym, hsh_data **hd) {
     if (tn->t == TYPE(ST) && tn->a && tn->a->at == AST_TYPE(TBL)) {
         tbl_itm *ti;
         if (tbl_op(cs->r->a, &tn->a->n.tl, sym->s, NULL, &ti, NULL, TBL_OP_FLG(FD)) != TBL_STAT(OK)) return CODE_ER(cs, SYM_INV_TBL_R, sym->a);
@@ -416,10 +421,17 @@ static code_stat sym_get_hd(code_st *const cs, const sym_node *const sym, hsh_da
 
 static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code **c) {
     code_stat cstat;
+    type_node *tn;
     // TODO no ast with symbol
     IFCGEN(code_gen, cs, sym->a, c);
+    if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
+    if (tn->t == TYPE(HH)) {
+        // TODO check for HH
+        // runtime look up and error
+        exit(13);
+    }
     hsh_data *hd;
-    if ((cstat = sym_get_hd(cs, sym, &hd)) != CODE_STAT(OK)) return cstat;
+    if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
     OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
     OP_RCI(cs, c, hd->tn);
     return CODE_ER(cs, OK, NULL);
@@ -634,6 +646,33 @@ static code_stat op_chk_er(code_st *const cs, const ast *const a, code **c) {
     return CODE_ER(cs, OK, NULL);
 }
 
+static code_stat gen_vr_hh_gc(code_st *const cs, code **gc, type t, const type_node *const gct) {
+    OP_A(cs, gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
+    OP_A(cs, gc, LA, VAR, { SLV(0, TYPE(VR)) }, NULL);
+    OP_A(cs, gc, RCF, OP, { .t = TYPE(VR) }, NULL);
+    switch (gct->t) {
+        case TYPE(STR):
+        case TYPE(SG):
+        case TYPE(VR):
+        case TYPE(TE):
+        case TYPE(ST):
+        case TYPE(ER):
+            if (t == TYPE(VR)) {
+                OP_A(cs, gc, GCVR, OP, { .t = gct->t }, NULL);
+            } else if (t == TYPE(HH)) {
+                OP_A(cs, gc, GCHH, OP, { .t = gct->t }, NULL);
+            } else {
+                return CODE_ER(cs, INV_GEN_GC_T, NULL);
+            }
+            break;
+        default:
+            break; // no gc for these types
+    }
+    OP_A(cs, gc, DEL, OP, { .t = t }, NULL);
+    OP_A(cs, gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
+    return CODE_ER(cs, OK, NULL);
+}
+
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     op_node *opn = a->n.op;
@@ -677,7 +716,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, AGN_R_N, opn->r);
                 OP_RCI(cs, c, tr);
                 IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
-                if ((cstat = sym_get_hd(cs, opn->l->n.sym, &hd)) != CODE_STAT(OK)) return cstat;
+                if (!(tl = ast_gtn(opn->l->n.sym->a))) return CODE_ER(cs, AGN_L_N, opn->l);
+                if ((cstat = sym_get_hd(cs, tl, opn->l->n.sym, &hd)) != CODE_STAT(OK)) return cstat;
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
                 OP_RCD(cs, c, hd->tn);
                 OP_GC(cs, c, hd->tn, opn->l);
@@ -768,24 +808,16 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     IFCGEN(code_gen, cs, opn->r, c);
                     if (!(tr = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_VR_GC, opn->l);
                     gc = code_i(cs->r->a, CODE_I_SIZE);
-                    OP_A(cs, &gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
-                    OP_A(cs, &gc, LA, VAR, { SLV(0, TYPE(VR)) }, NULL);
-                    OP_A(cs, &gc, RCF, OP, { .t = TYPE(VR) }, NULL);
-                    switch (tr->t) {
-                        case TYPE(STR):
-                        case TYPE(SG):
-                        case TYPE(VR):
-                        case TYPE(TE):
-                        case TYPE(ST):
-                        case TYPE(ER):
-                            OP_A(cs, &gc, GCVR, OP, { .t = tr->t }, NULL);
-                            break;
-                        default:
-                            break; // no gc for these types
-                    }
-                    OP_A(cs, &gc, DEL, OP, { . t = TYPE(VR) }, NULL);
-                    OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
+                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(VR), tr)) != CODE_STAT(OK)) return cstat;
                     (*c)->ops[(*c)->len - 1].od.tsvm->gc = gc;
+                    return CODE_ER(cs, OK, NULL);
+                case TYPE(HH):
+                    // TODO convert st to hh
+                    // TODO push key then value on to stack
+                    if (!(tr = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_HH_GC, opn->l);
+                    gc = code_i(cs->r->a, CODE_I_SIZE);
+                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(HH), tr)) != CODE_STAT(OK)) return cstat;
+                    OP_A(cs, c, CHH, FN, { .c = gc }, opn->l);
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
