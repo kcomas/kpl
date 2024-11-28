@@ -806,17 +806,17 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     return CODE_ER(cs, INV_CST_SG, a);
                 case TYPE(VR):
                     IFCGEN(code_gen, cs, opn->r, c);
-                    if (!(tr = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_VR_GC, opn->l);
+                    if (!(tl = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_VR_GC, opn->l);
                     gc = code_i(cs->r->a, CODE_I_SIZE);
-                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(VR), tr)) != CODE_STAT(OK)) return cstat;
+                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(VR), tl)) != CODE_STAT(OK)) return cstat;
                     (*c)->ops[(*c)->len - 1].od.tsvm->gc = gc;
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(HH):
                     // TODO convert st to hh
                     // TODO push key then value on to stack
-                    if (!(tr = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_HH_GC, opn->l);
+                    if (!(tl = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_HH_GC, opn->l);
                     gc = code_i(cs->r->a, CODE_I_SIZE);
-                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(HH), tr)) != CODE_STAT(OK)) return cstat;
+                    if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(HH), tl)) != CODE_STAT(OK)) return cstat;
                     OP_A(cs, c, CHH, FN, { .c = gc }, opn->l);
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
