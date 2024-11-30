@@ -382,12 +382,17 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     return CODE_ER(cs, OK, NULL);
 }
 
+static char* sym_get_str(al *const a, const char *const s) {
+    char *sg = ala(a, strlen(s)); // remove ` and for null byte
+    strcpy(sg, s + 1);
+    return sg;
+}
+
 static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code **c) {
     code_stat cstat;
     kv_itm *h = hsh->h;
     code *gc;
     type_node *th;
-    char *sg;
     int16_t id = -1;
     if (hsh->tn->t == TYPE(ST)) {
         gc = code_i(cs->r->a, CODE_I_SIZE);
@@ -396,11 +401,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
         OP_A(cs, &gc, RCF, OP, { .t = TYPE(ST) }, NULL);
     }
     while (h) {
-        if (hsh->tn->t == TYPE(HH)) {
-            sg = ala(cs->r->a, strlen(h->k - 1) + sizeof(char)); // remove ` and + for null byte
-            strcpy(sg, h->k + 1);
-            OP_A(cs, c, PV, STR, { .sg = sg }, h->a);
-        }
+        if (hsh->tn->t == TYPE(HH)) OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, h->k) }, h->a);
         IFCGEN(code_gen, cs, h->a, c);
         if (hsh->tn->t == TYPE(ST)) {
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_ST_IDX, h->a);
@@ -436,8 +437,8 @@ static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code
     if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
     if (tn->t == TYPE(HH)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
-        // TODO check for HH
         // runtime look up and error
+        OP_A(cs, c, HHGK, STR, { .sg = sym_get_str(cs->r->a, sym->s) }, sym->a);
         OP_RCI(cs, c, tn);
     } else {
         if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
@@ -696,7 +697,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
         case OP_TYPE(TC):
             if (!opn->l) {
                 IFCGEN(code_gen, cs, opn->r, c);
-                if (opn->flgs & NODE_FLG(DE)) return CODE_ER(cs, OK, NULL); // discard
+                if (opn->flgs & NODE_FLG(DE)) { // discard and panic
+                    OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                    return CODE_ER(cs, OK, NULL); // stop panic
+                }
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, TC_R_N, opn->r);
                 if (tr->t == TYPE(ER)) {
                     OP_A(cs, c, RTE, ER, { RER(tr->t, false) }, opn->r); // re throw
