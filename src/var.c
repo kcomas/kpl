@@ -96,6 +96,8 @@ ssize_t var_rcf(var v, type t) {
         case TYPE(TE):
         case TYPE(ST):
             return --v.tsv->rc;
+        case TYPE(HH):
+            return --v.hh->rc;
         case TYPE(ER):
             return --v.ei->rc;
         case TYPE(TD):
@@ -281,6 +283,13 @@ var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv) {
 void var_tsv_d(var_tsv *tsv) {
     alf(tsv->v);
     alf(tsv);
+}
+
+var_hh *var_hh_i(al *const a, jit_fn *gc) {
+    var_hh *hh = ala(a, sizeof(var_hh));
+    hh->gc = gc;
+    hh->tl = tbl_i(a, TBL_I_SIZE);
+    return hh;
 }
 
 var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {

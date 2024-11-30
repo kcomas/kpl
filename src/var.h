@@ -3,9 +3,12 @@
 
 #include "kpl.h"
 #include "ast.h"
+#include "tbl.h"
 #include "er.h"
 
 typedef struct _var_tsv var_tsv;
+
+typedef struct _var_hh var_hh;
 
 typedef struct _var_fd var_fd;
 
@@ -42,6 +45,7 @@ typedef union _var {
     jit_fn *jf;
     var_sg *sg;
     var_tsv *tsv;
+    var_hh *hh;
     er_itm *ei;
     var_td *td;
 } var;
@@ -146,6 +150,14 @@ void var_tsv_add(al *const a, var_tsv *const tsv, var v);
 var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv);
 
 void var_tsv_d(var_tsv *tsv);
+
+typedef struct _var_hh {
+    RC;
+    jit_fn *gc;
+    tbl *tl; // data freed in git with gc fn
+} var_hh;
+
+var_hh *var_hh_i(al *const a, jit_fn *gc);
 
 typedef struct _var_td {
     RC;
