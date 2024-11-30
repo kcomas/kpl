@@ -186,6 +186,11 @@ static bool type_eq(const type_node *const ta, const type_node *tb) {
         case TYPE(TE):
         case TYPE(TD):
             return lst_node_eq(ta->a->n.lst, tb->a->n.lst);
+        case TYPE(ST):
+            exit(KPLE); // TODO
+        case TYPE(VR):
+        case TYPE(HH):
+            return type_eq(ta->a->n.tn, tb->a->n.tn);
         default:
             break; // TODO specify all types
     }
