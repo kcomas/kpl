@@ -440,7 +440,10 @@ static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code
     if (tn->t == TYPE(HH)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
         // runtime look up and error
-        OP_A(cs, c, HHGK, STR, { .sg = sym_get_str(cs->r->a, sym->s) }, sym->a);
+        OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, sym->s) }, sym->a);
+        OP_A(cs, c, HHGK, BL, { .bl = true }, sym->a);
+        OP_A(cs, c, SWAP, VD, {}, NULL);
+        OP_A(cs, c, GC, OP, { .t = TYPE(STR) }, sym->a);
         OP_RCI(cs, c, tn);
     } else {
         if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
@@ -833,6 +836,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     gc = code_i(cs->r->a, CODE_I_SIZE);
                     if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(HH), tl)) != CODE_STAT(OK)) return cstat;
                     OP_A(cs, c, CHH, HH, { .tsvm = ctsvm_i(cs->r->a, opn->r->n.hsh->len, NULL, gc) }, opn->l);
+                    for (size_t i = 0; i < opn->r->n.hsh->len; i++) {
+                        OP_A(cs, c, HHSK, OP, { .t = TYPE(STR) }, opn->l);
+                        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                        OP_A(cs, c, GC, OP, { .t = TYPE(STR) }, opn->l);
+                    }
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {

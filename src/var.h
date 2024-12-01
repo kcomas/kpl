@@ -167,7 +167,7 @@ jit_fn *var_hh_gc(var_hh *const hh);
 
 var var_hh_gk(mod *const m, ast *const a, var_sg *sg, var_hh *const hh, bool throw); // if throw error
 
-void var_hh_sk(mod *const m, ast *const a, var_sg *sg, var v, var_hh *const hh, bool throw);
+void var_hh_sk(mod *const m, ast *const a, var_sg *sg, var v, var_hh *const hh);
 
 void var_hh_d(var_hh *hh);
 

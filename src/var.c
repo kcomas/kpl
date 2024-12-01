@@ -317,23 +317,23 @@ var var_hh_gk(mod *const m, ast *const a, var_sg *sg, var_hh *const hh, bool thr
     return *(var*) ti->data;
 }
 
-static void var_hh_rm(void *data) {
+static void var_hh_tbl_rm(void *data) {
     FNNF(data, alf);
 }
 
-void var_hh_sk(mod *const m, ast *const a, var_sg *sg, var v, var_hh *const hh, bool throw) {
+void var_hh_sk(mod *const m, ast *const a, var_sg *sg, var v, var_hh *const hh) {
     tbl_itm *ti;
     var *data = ala(m->r->a, sizeof(var));
     *data = v;
-    tbl_stat tstat = tbl_op(m->r->a, &hh->tl, sg->str, data, &ti, &var_hh_rm, TBL_OP_FLG(UT));
-    if (tstat != TBL_STAT(OK) && throw) {
+    tbl_stat tstat = tbl_op(m->r->a, &hh->tl, sg->str, data, &ti, &var_hh_tbl_rm, TBL_OP_FLG(UT));
+    if (tstat != TBL_STAT(OK)) {
         er_itm *ei = er_var(m, a, "HHSK");
         er_a(m->r->e, ei);
     }
 }
 
 void var_hh_d(var_hh *hh) {
-    tbl_f(hh->tl, var_hh_rm);
+    tbl_f(hh->tl, var_hh_tbl_rm);
     alf(hh);
 }
 
