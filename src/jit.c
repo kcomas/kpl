@@ -51,7 +51,7 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
             fn_stk_b(a, stk, c->ops[i].od.c);
             fn_stk_a(a, stk, c->ops[i].od.c);
         }
-        if (c->ops[i].oc == OP_C(CTSV) || c->ops[i].oc == OP_C(LM)) {
+        if (c->ops[i].oc == OP_C(CTSV) || c->ops[i].oc == OP_C(LM) || c->ops[i].oc == OP_C(CHH)) {
             fn_stk_b(a, stk, c->ops[i].od.tsvm->gc);
             fn_stk_a(a, stk, c->ops[i].od.tsvm->gc);
         }
@@ -698,6 +698,30 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
+            case OP_C(CHH):
+                op_set_jidx(j, o);
+                SET_REG(m->r->a, al*, false, 7);
+                SET_REG(o->od.tsvm->gc->jf, jit_fn*, false, 6);
+                SET_FP(var_hh_i);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                for (size_t i = 0; i < o->od.tsvm->len; i++) {
+                    SET_REG(m, mod*, false, 7);
+                    SET_REG(o->a, ast*, false, 6);
+                    jit_b(j, 2, 0x41, 0x58); // pop r8 hh
+                    jit_a(j, 0x59); // pop rcx value
+                    jit_a(j, 0x5A); // pop rdx key
+                    jit_b(j, 3, 0x4D, 0x31, 0xC9); // xor r9 r9
+                    jit_b(j, 2, 0x41, 0x50); // push r8 hh
+                    jit_a(j, 0x52); // push rdx key
+                    SET_FP(var_hh_sk);
+                    SET_REG_CALL(false, 0);
+                    jit_a(j, 0x5F); // pop rdi
+                    SET_FP(var_sg_f); // gc key
+                    SET_REG_CALL(false, 0);
+                }
+                op_set_jlen(j, o);
+                break;
             case OP_C(IF):
                 op_set_jidx(j, o);
                 if ((jstat = jit_if(m, o->od.c, jf, j)) != JIT_STAT(OK)) return jstat;
@@ -920,6 +944,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(ST):
                         SET_FP(var_tsv_rci);
                         break;
+                    case TYPE(HH):
+                        SET_FP(var_hh_rci);
+                        break;
                     case TYPE(ER):
                         SET_FP(er_itm_rci);
                         break;
@@ -945,6 +972,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(ST):
                         SET_FP(var_tsv_rcd);
                         break;
+                    case TYPE(HH):
+                        SET_FP(var_hh_rcd);
+                        break;
                     case TYPE(ER):
                         SET_FP(er_itm_rcd);
                         break;
@@ -966,6 +996,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(VR):
                     case TYPE(TE):
                     case TYPE(ST):
+                    case TYPE(HH):
                     case TYPE(TD):
                         break;
                     default:
@@ -1006,6 +1037,13 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(ST):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_FP(var_tsv_gc);
+                        SET_REG_CALL(false, 0);
+                        jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+                        jit_a(j, 0x5F); // pop rdi
+                        break;
+                    case TYPE(HH):
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                        SET_FP(var_hh_gc);
                         SET_REG_CALL(false, 0);
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         jit_a(j, 0x5F); // pop rdi
@@ -1128,6 +1166,10 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(TE):
                     case TYPE(ST):
                         SET_FP(var_tsv_d);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(HH):
+                        SET_FP(var_hh_d);
                         SET_REG_CALL(false, 0);
                         break;
                     case TYPE(ER):

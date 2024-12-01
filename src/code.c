@@ -150,8 +150,8 @@ static const char *op_c_str[] = {
     "VRA", // vector add, push
     "VRS", // vector sub, pop
     "CHH", // create runtime hash
-    "HHSK", // hash set key
     "HHGK", // hash get key
+    "HHSK", // hash set key
     // control
     "IF",
     "COND", // jmp if false
@@ -284,6 +284,7 @@ static code_stat code_gen_rc(code_st *const cs, const type_node *const tn, code 
         case TYPE(VR):
         case TYPE(TE):
         case TYPE(ST):
+        case TYPE(HH):
         case TYPE(ER):
         case TYPE(TD):
             if (inc) OP_A(cs, c, RCI, OP, { .t = tn->t }, NULL);
@@ -391,6 +392,7 @@ static char* sym_get_str(al *const a, const char *const s) {
 static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code **c) {
     code_stat cstat;
     kv_itm *h = hsh->h;
+    if (hsh->tn->t == TYPE(HH)) h = hsh->t;
     code *gc;
     type_node *th;
     int16_t id = -1;
@@ -408,7 +410,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
             OP_RCD(cs, &gc, th);
             OP_GCTSVI(cs, &gc, th, h->a, ++id); // h->a node tkn in gc fn
         }
-        h = h->next;
+        h = hsh->tn->t == TYPE(ST) ? h->next : h->prev;
     }
     if (hsh->tn->t == TYPE(ST)) {
         OP_A(cs, &gc, DEL, OP, { . t = TYPE(ST) }, NULL);
