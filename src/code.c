@@ -227,6 +227,9 @@ void code_p(const code *const c, size_t idnt) {
             case TYPE(CODE):
                 printf(",%s", type_get_str(c->ops[i].od.t));
                 break;
+            case TYPE(BL):
+                printf(c->ops[i].od.bl ? ",T" : ",F");
+                break;
             case TYPE(U3):
                 printf(",%d", c->ops[i].od.u3);
                 break;
@@ -403,9 +406,11 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
         OP_A(cs, &gc, RCF, OP, { .t = TYPE(ST) }, NULL);
     }
     while (h) {
-        if (hsh->tn->t == TYPE(HH)) OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, h->k) }, h->a);
-        IFCGEN(code_gen, cs, h->a, c);
-        if (hsh->tn->t == TYPE(ST)) {
+        if (hsh->tn->t == TYPE(HH)) {
+            IFCGEN(code_gen, cs, h->a, c);
+            OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, h->k) }, h->a);
+        } else if (hsh->tn->t == TYPE(ST)) {
+            IFCGEN(code_gen, cs, h->a, c);
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_ST_IDX, h->a);
             OP_RCD(cs, &gc, th);
             OP_GCTSVI(cs, &gc, th, h->a, ++id); // h->a node tkn in gc fn
@@ -432,19 +437,21 @@ static code_stat sym_get_hd(code_st *const cs, const type_node *const tn, const 
 
 static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code **c) {
     code_stat cstat;
-    type_node *tn;
+    type_node *th, *tn;
     hsh_data *hd;
     // TODO no ast with symbol
     IFCGEN(code_gen, cs, sym->a, c);
     if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
     if (tn->t == TYPE(HH)) {
-        if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
+        if (!(th = ast_gtn(tn->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
         // runtime look up and error
         OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, sym->s) }, sym->a);
         OP_A(cs, c, HHGK, BL, { .bl = true }, sym->a);
         OP_A(cs, c, SWAP, VD, {}, NULL);
         OP_A(cs, c, GC, OP, { .t = TYPE(STR) }, sym->a);
-        OP_RCI(cs, c, tn);
+        OP_A(cs, c, SWAP, VD, {}, NULL);
+        OP_A(cs, c, GC, OP, { .t = tn->t }, sym->a);
+        OP_RCI(cs, c, th);
     } else {
         if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
         OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
@@ -588,9 +595,20 @@ typedef enum {
         break; \
 }
 
+static code_stat nk(code_st *const cs, const type_node *const tn, const ast *const a, code **c) {
+    code_stat cstat;
+    op_if *of = op_if_i(cs->r->a, 5); // null chck
+    LOAD_VAR(&of->cond);
+    OP_A(cs, &of->cond, NK, VD, {}, a);
+    LOAD_VAR(&of->body);
+    OP_RCD(cs, &of->body, tn);
+    OP_GC(cs, &of->body, tn, a);
+    OP_A(cs, c, COND, COND, { .of = of }, a);
+    return CODE_ER(cs, OK, a);
+}
+
 static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_m lvm) {
     code_stat cstat;
-    op_if *of;
     switch (lvm) {
         case LD_V_M(RCI):
             LOAD_VAR(c);
@@ -610,13 +628,7 @@ static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_
                 case TYPE(ST):
                 case TYPE(ER):
                 case TYPE(TD):
-                    of = op_if_i(cs->r->a, 5); // null chck
-                    LOAD_VAR(&of->cond);
-                    OP_A(cs, &of->cond, NK, VD, {}, a);
-                    LOAD_VAR(&of->body);
-                    OP_RCD(cs, &of->body, a->n.var->tn);
-                    OP_GC(cs, &of->body, a->n.var->tn, a);
-                    OP_A(cs, c, COND, COND, { .of = of }, a);
+                    if ((cstat = nk(cs, a->n.var->tn, a, c)) != CODE_STAT(OK)) return cstat;
                     break;
                 default:
                     break;
@@ -726,25 +738,42 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             }
             return CODE_ER(cs, INV_TC, a);
         case OP_TYPE(AGN):
-            IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
+                IFCGEN(code_gen, cs, opn->r, c);
                 if ((cstat = load_var(cs, opn->l, c, (opn->flgs & NODE_FLG(GCV)) ? LD_V_M(GC) : LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                 if ((cstat = store_var(cs, a, c, opn->l->n.var, true)) != CODE_STAT(OK)) return cstat;
                 break;
             } else if (opn->l->at == AST_TYPE(SYM)) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, AGN_R_N, opn->r);
-                OP_RCI(cs, c, tr);
-                IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
                 if (!(tl = ast_gtn(opn->l->n.sym->a))) return CODE_ER(cs, AGN_L_N, opn->l);
-                if ((cstat = sym_get_hd(cs, tl, opn->l->n.sym, &hd)) != CODE_STAT(OK)) return cstat;
-                OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
-                OP_RCD(cs, c, hd->tn);
-                OP_GC(cs, c, hd->tn, opn->l);
-                IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
-                OP_A(cs, c, SIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
+                if (tl->t == TYPE(HH)) {
+                    if (!(tr = ast_gtn(tl->a))) return CODE_ER(cs, AGN_L_N, opn->l);
+                    IFCGEN(code_gen, cs, opn->r, c);
+                    OP_RCI(cs, c, tr);
+                    IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
+                    OP_A(cs, c, PV, STR, { .sg = sym_get_str(cs->r->a, opn->l->n.sym->s) }, opn->l);
+                    OP_A(cs, c, HHGK, BL, { .bl = false }, opn->l);
+                    if ((cstat != nk(cs, tr, opn->l, c)) != CODE_STAT(OK)) return cstat;
+                    OP_A(cs, c, SWAP, VD, {}, NULL);
+                    OP_A(cs, c, HHSK, OP, { .t = TYPE(STR) }, opn->l);
+                    OP_A(cs, c, GC, OP, { .t = TYPE(STR) }, opn->l);
+                    OP_GC(cs, c, tl, opn->l);
+                } else {
+                    IFCGEN(code_gen, cs, opn->r, c);
+                    OP_RCI(cs, c, tr);
+                    IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
+                    if ((cstat = sym_get_hd(cs, tl, opn->l->n.sym, &hd)) != CODE_STAT(OK)) return cstat;
+                    OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
+                    OP_RCD(cs, c, hd->tn);
+                    OP_GC(cs, c, hd->tn, opn->l);
+                    IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
+                    OP_A(cs, c, SIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
+                    // TODO gc bug?
+                }
                 break;
             } else if (opn->l->at == AST_TYPE(CALL)) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, AGN_R_N, opn->r);
+                IFCGEN(code_gen, cs, opn->r, c);
                 OP_RCI(cs, c, tr);
                 if (opn->l->n.cn->args->len != 1) return CODE_ER(cs, AGN_CALL_ARGS_LEN, opn->l);
                 if (!(tl = ast_gtn(opn->l->n.cn->tgt))) return CODE_ER(cs, AGN_L_N, opn->l);
@@ -841,6 +870,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
                         OP_A(cs, c, GC, OP, { .t = TYPE(STR) }, opn->l);
                     }
+                    OP_RCI(cs, c, opn->l->n.tn);
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {

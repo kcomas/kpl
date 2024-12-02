@@ -504,6 +504,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 if (!op->l->n.sym->a) return TYPE_ER(ts, INV_SYM_AGN);
                 IFTCHK(type_chk, ts, fns, op->l);
                 ASTGTN(lt, op->l, INV_SYM_AGN);
+                if (lt->t == TYPE(ER)) ASTGTN(lt, lt->a, INV_SYM_AGN); // hash insert never "should" error
                 if (!type_eq(lt, rt)) return TYPE_ER(ts, SYM_AGN_N_T_M);
                 op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
                 break;
