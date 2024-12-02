@@ -701,7 +701,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(CHH):
                 op_set_jidx(j, o);
                 SET_REG(m->r->a, al*, false, 7);
-                SET_REG(o->od.tsvm->gc->jf, jit_fn*, false, 6);
+                SET_REG(o->od.tsvm->len, size_t, false, 6);
+                SET_REG(o->od.tsvm->gc->jf, jit_fn*, false, 2);
                 SET_FP(var_hh_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax

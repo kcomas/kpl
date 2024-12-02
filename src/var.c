@@ -285,10 +285,10 @@ void var_tsv_d(var_tsv *tsv) {
     alf(tsv);
 }
 
-var_hh *var_hh_i(al *const a, jit_fn *gc) {
+var_hh *var_hh_i(al *const a, size_t len, jit_fn *gc) {
     var_hh *hh = ala(a, sizeof(var_hh));
     hh->gc = gc;
-    hh->tl = tbl_i(a, TBL_I_SIZE);
+    hh->tl = tbl_i(a, len > TBL_I_SIZE ? len : TBL_I_SIZE);
     return hh;
 }
 
