@@ -81,6 +81,9 @@ jit_fn *mod_lg_jf(mod *const m, uint8_t i) { return m->g[i].jf; }
 void mod_sg_er(mod *const m, uint8_t i, er_itm *const ei) { m->g[i].ei = ei; }
 er_itm *mod_lg_er(mod *const m, uint8_t i) { return m->g[i].ei; }
 
+void mod_sg_var_hh(mod *const m, uint8_t i, var_hh *const hh) { m->g[i].hh = hh; }
+var_hh *mod_lg_var_hh(mod *const m, uint8_t i) { return m->g[i].hh; }
+
 void mod_sg_td(mod *const m, uint8_t i, var_td *const td) { m->g[i].td = td; }
 var_td *mod_lg_td(mod *const m, uint8_t i) { return m->g[i].td; }
 

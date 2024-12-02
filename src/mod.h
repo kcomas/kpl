@@ -68,6 +68,9 @@ jit_fn *mod_lg_jf(mod *const m, uint8_t i);
 void mod_sg_er(mod *const m, uint8_t i, er_itm *const ei);
 er_itm *mod_lg_er(mod *const m, uint8_t i);
 
+void mod_sg_var_hh(mod *const m, uint8_t i, var_hh *const hh);
+var_hh *mod_lg_var_hh(mod *const m, uint8_t i);
+
 void mod_sg_td(mod *const m, uint8_t i, var_td *const td);
 var_td *mod_lg_td(mod *const m, uint8_t i);
 
