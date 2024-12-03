@@ -310,6 +310,14 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
             break;
+        case TYPE(HH):
+            SET_FP(var_hh_rcd);
+            SET_REG_CALL(false, 0);
+            jit_var_tsv_gidx(j, false);
+            SET_FP(var_hh_gc);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            break;
         case TYPE(ER):
             SET_FP(er_itm_rcd);
             SET_REG_CALL(false, 0);
@@ -335,6 +343,81 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     jmpl = j->len - bs - sizeof(int32_t);
     memcpy(j->h + bs, &jmpl, sizeof(int32_t));
     jit_a(j, 0x5E); // pop rsi
+    return JIT_ER(m, OK, NULL);
+}
+
+static var gc_hh_g_datap(tbl_itm *ti) {
+    var v = *(var*) ti->data;
+    tbl_itm_f(ti, alf);
+    return v;
+}
+
+static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
+    void *fp;
+    uint8_t buf[sizeof(void*)];
+    int32_t lops, lope, bs, jmpl;
+    lops = j->len; // loop start
+    jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
+    SET_FP(var_hh_tl_s);
+    SET_REG_CALL(false, 0); // tbl_itm in rax
+    jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+    jit_b(j, 6, 0X48, 0X31, 0XF6, 0X48, 0X39, 0XFE); // xor rsi rsi, cmp rsi rdi
+    jit_b(j, 2, 0x0F, 0x84); // je
+    bs = j->len;
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
+    SET_FP(gc_hh_g_datap);
+    SET_REG_CALL(false, 0);
+    jit_a(j, 0x50); // push rax
+    jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+    switch (o->od.t) {
+        case TYPE(STR):
+        case TYPE(SG):
+            SET_FP(var_sg_rcd);
+            SET_REG_CALL(false, 0);
+            jit_a(j, 0x5F); // pop rdi
+            SET_FP(var_sg_f);
+            SET_REG_CALL(false, 0)
+            break;
+        case TYPE(VR):
+        case TYPE(TE):
+        case TYPE(ST):
+            SET_FP(var_tsv_rcd);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            SET_FP(var_tsv_gc);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            break;
+        case TYPE(HH):
+            SET_FP(var_hh_rcd);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            SET_FP(var_hh_gc);
+            SET_REG_CALL(false, 0);
+            jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            break;
+        case TYPE(ER):
+            SET_FP(er_itm_rcd);
+            SET_REG_CALL(false, 0);
+            jit_a(j, 0x5F); // pop rdi
+            SET_FP(er_itm_gc);
+            SET_REG_CALL(false, 0);
+            break;
+        case TYPE(TD):
+            SET_FP(var_td_rcd);
+            SET_REG_CALL(false, 0);
+            JIT_TD_GC();
+            break;
+        default:
+            return JIT_ER(m, GCVR_T_INV, o);
+    }
+    jit_a(j, 0xE9); // jmp
+    lope = j->len;
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
+    jmpl = lops - j->len;
+    memcpy(j->h + lope, &jmpl, sizeof(int32_t));
+    jmpl = j->len - bs - sizeof(int32_t);
+    memcpy(j->h + bs, &jmpl, sizeof(int32_t));
     return JIT_ER(m, OK, NULL);
 }
 
@@ -1164,6 +1247,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(GCVR):
                 op_set_jidx(j, o);
                 if ((jstat = jit_gc_vr(m, o, j)) != JIT_STAT(OK)) return jstat;
+                op_set_jlen(j, o);
+                break;
+            case OP_C(GCHH):
+                op_set_jidx(j, o);
+                if ((jstat = jit_gc_hh(m, o, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
             case OP_C(DEL):

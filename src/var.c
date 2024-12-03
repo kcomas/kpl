@@ -292,6 +292,14 @@ var_hh *var_hh_i(al *const a, size_t len, jit_fn *gc) {
     return hh;
 }
 
+tbl_itm* var_hh_tl_s(var_hh *const hh) {
+    if (!hh->tl->h) return NULL;
+    hh->tl->len--;
+    tbl_itm *h = hh->tl->h;
+    hh->tl->h = h->next;
+    return h;
+}
+
 void var_hh_rci(var_hh *const hh) {
     hh->rc++;
 }

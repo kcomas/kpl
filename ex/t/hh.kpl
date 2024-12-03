@@ -21,3 +21,10 @@ ph(g)
 \d g
 
 // TODO hh with gc
+
+s:FN(VD)${()
+    h:HH{SG}${`a:"a";`b:"b"}
+    $(FD;1) << "b ",,('h`b;"\n")
+    }
+
+s()
