@@ -366,7 +366,6 @@ var_tsv *var_td_te(var_td *const td) {
 }
 
 void var_td_d(var_td *td) {
-    tds_a(td->m->s, td->m->r);
     mod_f(td->m);
     alf(td);
 }

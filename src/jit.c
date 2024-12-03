@@ -417,6 +417,10 @@ int thread_fn(void *volatile arg) {
     SET_REG(i, size_t, false, 6);
     SET_FP(var_tsv_sidx);
     SET_REG_CALL(false, 0);
+    SET_REG(td->m->s, tds*, false, 7);
+    SET_REG(td->m->r, tdr*, false, 6);
+    SET_FP(tds_a);
+    SET_REG_CALL(false, 0);
     SET_REG(td->m, mod*, false, 7);
     SET_FP(mod_done);
     SET_REG_CALL(false, 0);
