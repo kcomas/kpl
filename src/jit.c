@@ -299,7 +299,7 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
         case TYPE(ST):
             SET_FP(var_tsv_rcd);
             SET_REG_CALL(false, 0);
-            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
             SET_FP(var_tsv_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
@@ -308,7 +308,7 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
         case TYPE(HH):
             SET_FP(var_hh_rcd);
             SET_REG_CALL(false, 0);
-            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
             SET_FP(var_hh_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
@@ -356,7 +356,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
     SET_FP(var_hh_tl_s);
     SET_REG_CALL(false, 0); // tbl_itm in rax
     jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
-    jit_b(j, 6, 0X48, 0X31, 0XF6, 0X48, 0X39, 0XFE); // xor rsi rsi, cmp rsi rdi
+    jit_b(j, 6, 0x48, 0x31, 0xF6, 0x48, 0x39, 0xFE); // xor rsi rsi, cmp rsi rdi
     jit_b(j, 2, 0x0F, 0x84); // je
     bs = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
@@ -378,7 +378,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
         case TYPE(ST):
             SET_FP(var_tsv_rcd);
             SET_REG_CALL(false, 0);
-            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
             SET_FP(var_tsv_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
@@ -387,7 +387,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
         case TYPE(HH):
             SET_FP(var_hh_rcd);
             SET_REG_CALL(false, 0);
-            jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); // mov rdi qword ptr [rsp]
+            jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
             SET_FP(var_hh_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
