@@ -395,7 +395,7 @@ int thread_fn(void *volatile arg) {
         fn_stk_f(stk);
         code_p(td->m->c, 0);
         er_p(td->m->r->e);
-        printf("THREAD EXIT: %d\n", jstat);
+        fprintf(stderr, "THREAD EXIT: %d\n", jstat);
         exit(jstat);
     }
     fn_stk_f(stk);
