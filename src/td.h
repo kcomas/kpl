@@ -46,19 +46,17 @@ inline void tds_a(tds *volatile s, tdr *const r) {
 }
 
 inline tdr *tds_g(tds *volatile s, bool stk) {
+    sem_wait(&s->l);
     tdr *r = NULL;
     if (!s->h) {
-        sem_wait(&s->l);
         s->total++;
         r = tdr_i(s);
         if (stk) tdr_stk_i(r);
-        sem_post(&s->l);
     } else {
-        sem_wait(&s->l);
         LST_S(s, r);
         if ((stk) && (!r->stk)) tdr_stk_i(r);
-        sem_post(&s->l);
     }
+    sem_post(&s->l);
     return r;
 }
 
