@@ -33,28 +33,26 @@ inline void tdr_f(tdr *r, void *fn) {
 
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    sem_init(&s->a, -1, 1);
-    sem_init(&s->l, -1, 0);
+    sem_init(&s->l, -1, 1);
     s->size = algn(sizeof(tds), DEFALGN);
     return s;
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
-    sem_wait(&s->a);
+    sem_wait(&s->l);
     er_c(r->e);
     LST_A(s, r);
     sem_post(&s->l);
-    sem_post(&s->a);
 }
 
 inline tdr *tds_g(tds *volatile s, bool stk) {
     tdr *r = NULL;
     if (!s->h) {
-        sem_wait(&s->a);
+        sem_wait(&s->l);
         s->total++;
         r = tdr_i(s);
         if (stk) tdr_stk_i(r);
-        sem_post(&s->a);
+        sem_post(&s->l);
     } else {
         sem_wait(&s->l);
         LST_S(s, r);
