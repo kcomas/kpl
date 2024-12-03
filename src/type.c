@@ -43,8 +43,9 @@ static const char *const tss[] = {
     "INV_CST_L_A", // invalid node for left side of cst
     "INV_CST_L_T_N", // left side type for cst null
     "INV_CST_R_T_N", // right side type for cst null
+    // hh
     "INV_HH_T",
-    "INV_TE_TO_VR",
+    "INV_ST_TO_HH",
     // vr
     "INV_VR_T",
     "INV_VR_PUSH_R_T",
