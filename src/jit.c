@@ -432,7 +432,7 @@ static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     SET_REG_CALL(false, 0);
     jit_b(j, 3, 0x48, 0x31, 0xC0); // xor rax rax
     jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
-    td->m->id = clone(jf, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
+    td->m->id = clone(jf, td->m->r->stk + td->m->r->stks, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
     return td;
 }
 

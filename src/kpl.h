@@ -103,7 +103,6 @@ typedef struct _tdr {
     er *e;
     jit *j;
     void *stk;
-    void *stkp;
 } tdr; // thread resource
 
 typedef struct _tds {

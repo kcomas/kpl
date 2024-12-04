@@ -7,7 +7,6 @@
 inline void tdr_stk_i(tdr *const r) {
     r->stks = getpagesize() * THREAD_STACK_PAGE_MUL;
     r->stk = mmap(NULL, r->stks, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    r->stkp = r->stk + r->stks;
 }
 
 inline tdr *tdr_i(tds *const s) {
