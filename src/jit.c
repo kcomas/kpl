@@ -402,9 +402,6 @@ static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     jit *j = td->m->r->j;
     jit_fn *jf = (jit_fn*) &j->h[j->len];
     jit_b(j, 4, 0x55, 0x48, 0x89, 0xE5); // push rbp, mov rbp rsp
-    SET_REG(td->m->s->mtdp, sem_t*, false, 7);
-    SET_FP(sem_wait);
-    SET_REG_CALL(false, 0);
     for (i = 0; i < td->te->len - 1; i++) {
         SET_REG(td->te, var_tsv*, false, 7);
         SET_REG(i, size_t, false, 6);
@@ -420,15 +417,12 @@ static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     SET_REG(i, size_t, false, 6);
     SET_FP(var_tsv_sidx);
     SET_REG_CALL(false, 0);
+    SET_REG(td->m->donep, sem_t*, false, 7);
+    SET_FP(sem_post);
+    SET_REG_CALL(false, 0);
     SET_REG(td->m->s, tds*, false, 7);
     SET_REG(td->m->r, tdr*, false, 6);
     SET_FP(tds_a);
-    SET_REG_CALL(false, 0);
-    SET_REG(td->m->s->mtdp, sem_t*, false, 7);
-    SET_FP(sem_post);
-    SET_REG_CALL(false, 0);
-    SET_REG(td->m->donep, sem_t*, false, 7);
-    SET_FP(sem_post);
     SET_REG_CALL(false, 0);
     jit_b(j, 3, 0x48, 0x31, 0xC0); // xor rax rax
     jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret

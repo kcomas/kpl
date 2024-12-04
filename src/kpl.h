@@ -106,8 +106,7 @@ typedef struct _tdr {
 } tdr; // thread resource
 
 typedef struct _tds {
-    sem_t l, mtd; // lock
-    sem_t *mtdp;
+    sem_t l; // lock
     size_t size, len, total; // len is number in lst, total is number used
     tdr *h, *t;
 } tds; // threads
