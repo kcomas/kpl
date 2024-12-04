@@ -6,6 +6,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <semaphore.h>
 #include "lst.h"
 
 #ifndef DEFALGN
@@ -23,12 +24,14 @@ typedef struct _alc alc;
 typedef struct {
     size_t len, size, u, f; // used freed
     alc *h, *t;
+    sem_t l;
 } al;
 
 inline al *al_i(void *nal) { // zero for tests
     al *a = (al*) nal;
     a->len = a->size = a->u = a->f = 0;
     a->h = a->t = NULL;
+    sem_init(&a->l, -1, 1);
     return a;
 }
 

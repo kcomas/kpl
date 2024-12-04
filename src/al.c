@@ -18,6 +18,7 @@ void alc_f(alc *ac, void *fn) {
 extern inline void al_f(al *a);
 
 void *ala(al *const a, size_t size) {
+    sem_wait(&a->l);
     a->u++;
     size = algn(size + sizeof(alci), DEFALGN);
     alc *ac = a->h;
@@ -27,8 +28,8 @@ void *ala(al *const a, size_t size) {
     }
     if (!ac) {
         ac = alc_i(size);
-        ac->a = a;
         LST_A(a, ac);
+        ac->a = a;
         a->size += ac->size;
     }
     alci *ai = (void*) ac + ac->len;
@@ -36,6 +37,7 @@ void *ala(al *const a, size_t size) {
     ac->len += size;
     ai->size = size;
     ai->ac = ac;
+    sem_post(&a->l);
     return (void*) ai + sizeof(alci);
 }
 
@@ -43,6 +45,7 @@ void alf(void *ptr) {
     alci *ai = (void*) ptr - sizeof(alci);
     alc *ac = ai->ac;
     al *a = ac->a;
+    sem_wait(&a->l);
     ac->a->f++;
     ac->aus -= ai->size;
 #ifdef KPL_ALD
@@ -57,4 +60,5 @@ void alf(void *ptr) {
         LST_R(a, alc, ac, alc_f, NULL);
     }
     // TODO move small pieces
+    sem_post(&a->l);
 }
