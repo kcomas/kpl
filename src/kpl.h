@@ -108,7 +108,7 @@ typedef struct _tdr {
 typedef struct _tds {
     size_t size, len, total; // len is number in lst, total is number used
     tdr *h, *t;
-    sem_t l; // lock
+    sem_t rl; // r lock
 } tds; // threads
 
 #define KPL_SIGCHLD signal(SIGCHLD, SIG_IGN);
