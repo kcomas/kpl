@@ -79,7 +79,7 @@ void er_e(mod *const m, er *const e, size_t lno, size_t cno) {
     ei->cno = cno;
     er_a(e, ei);
     er_p(e);
-    mod_done(m);
+    sem_post(m->donep);
     exit(KPLE);
 }
 

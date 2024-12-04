@@ -20,7 +20,8 @@ inline mod *mod_i(tds *const s, tdr *const r) {
     mod *m = ala(r->a, sizeof(mod));
     m->s = s;
     m->r = r;
-    sem_init(&m->done, -1, 0);
+    m->donep = &m->done;
+    sem_init(m->donep, -1, 0);
     return m;
 }
 

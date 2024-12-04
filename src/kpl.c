@@ -52,10 +52,6 @@ void jit_f(jit *j) {
     alf(j);
 }
 
-void mod_done(mod *const m) {
-    sem_post(&m->done);
-}
-
 void mod_f(mod *m) {
     FNNF(m->src.path, alf);
     FNNF(m->src.str, alf);
