@@ -51,14 +51,11 @@ typedef struct {
     #define AL_PS_MUL 10
 #endif
 
-inline alc *alc_i(al *const a, size_t size) {
+inline alc *alc_i(size_t size) {
     size = algn(size + sizeof(alc), DEFALGN);
     size_t ps = (size_t) getpagesize() * AL_PS_MUL;
     size = size <= ps ? ps : (size / ps + 1) * ps;
     alc *ac = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    ac->a = a;
-    a->size += size;
-    LST_A(a, ac);
     ac->size = size;
     ac->len = algn(sizeof(alc), DEFALGN);
     return ac;

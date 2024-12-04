@@ -5,7 +5,7 @@ extern inline size_t algn(size_t size, size_t an);
 
 extern inline al *al_i(void *nal);
 
-extern inline alc *alc_i(al *const a, size_t size);
+extern inline alc *alc_i(size_t size);
 
 void alc_f(alc *ac, void *fn) {
     (void) fn;
@@ -25,7 +25,12 @@ void *ala(al *const a, size_t size) {
         if (ac->size - ac->len >= size) break;
         ac = ac->next;
     }
-    if (!ac) ac = alc_i(a, size);
+    if (!ac) {
+        ac = alc_i(size);
+        ac->a = a;
+        LST_A(a, ac);
+        a->size += ac->size;
+    }
     alci *ai = (void*) ac + ac->len;
     ac->aus += size;
     ac->len += size;
@@ -37,6 +42,7 @@ void *ala(al *const a, size_t size) {
 void alf(void *ptr) {
     alci *ai = (void*) ptr - sizeof(alci);
     alc *ac = ai->ac;
+    al *a = ac->a;
     ac->a->f++;
     ac->aus -= ai->size;
 #ifdef KPL_ALD
@@ -47,7 +53,6 @@ void alf(void *ptr) {
     ai->size = 0;
 #endif
     if (ac->aus == 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
-        al *a = ac->a;
         a->size -= ac->size;
         LST_R(a, alc, ac, alc_f, NULL);
     }
