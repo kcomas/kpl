@@ -71,6 +71,9 @@ static const char *const tss[] = {
     // vh
     "INV_VH_L_NN",
     "INV_VH_R_NG",
+    // ms
+    "INV_MS_L_NN",
+    "INV_MS_T",
     // add
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
@@ -624,6 +627,12 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (op->l) return TYPE_ER(ts, INV_VH_L_NN);
             if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_ER(ts, INV_VH_R_NG);
             op->r->n.var->flgs |= NODE_FLG(VH);
+            op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
+            break;
+        case OP_TYPE(MS):
+            if (op->l) return TYPE_ER(ts, INV_MS_L_NN);
+            ASTGTN(rt, op->r, INV_MS_T);
+            if (!(rt->t >= TYPE(U3) && rt->t <= TYPE(U6))) return TYPE_ER(ts, INV_MS_T);
             op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
             break;
         case OP_TYPE(ADD):
