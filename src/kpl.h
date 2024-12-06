@@ -116,8 +116,6 @@ typedef struct _tds {
 typedef struct {
     uint8_t ng; // number of globals
     pid_t id;
-    sem_t done;
-    sem_t *donep;
     struct {
         struct statx sxb;
         char *path, *str;
