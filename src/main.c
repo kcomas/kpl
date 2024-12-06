@@ -41,7 +41,7 @@ int run(mod *volatile m, bool repl) {
     fn_stk_a(m->r->a, &stk, m->c);
     jit_i(m->r->a, stk->nops, &m->r->j, 0);
     jit_stat jstat;
-    if ((jstat = jit_stk(m, stk, m->r->j, true)) != JIT_STAT(OK)) {
+    if ((jstat = jit_stk(m, stk, m->r->j)) != JIT_STAT(OK)) {
         if (!repl) code_p(m->c, 0);
         er_p(m->r->e);
         return jstat;
