@@ -28,7 +28,7 @@ run:FN(VD)${()
 n:U6$0
 b:U6$10
 #@ (n < b) {
-    $(FD;1) << " &&&& Batch: ",$(SG;n + 1)," &&&&\n"
+    $(FD;1) << "&&&& Batch: ",$(SG;n + 1)," &&&&\n"
     run()
     //\s *(U6$1000000;1) // seconds
     //\s /(U6$1000000;4) // quarter second
