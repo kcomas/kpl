@@ -7,7 +7,6 @@
 #include <sched.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
-#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -108,7 +107,6 @@ typedef struct _tdr {
 typedef struct _tds {
     size_t size, len, total; // len is number in lst, total is number used
     tdr *h, *t;
-    sem_t rl; // r lock
 } tds; // threads
 
 #define KPL_SIGCHLD signal(SIGCHLD, SIG_IGN);
