@@ -50,9 +50,12 @@ typedef struct _var_fn var_fn;
 
 typedef struct {
     char a, b, c, d;
-} u8;
+} c4;
 
-#define U8(A, B, C, D) ((u8) { .a = A, .b = B, .c = C, .d = D })
+#define C4(A, B, C, D) ((c4) { .a = A, .b = B, .c = C, .d = D })
+#define C1(A) C4(A, '\0', '\0', '\0')
+#define C2(A, B) C4(A, B, '\0', '\0')
+#define C3(A, B, C) C4(A, B, C, '\0')
 
 typedef struct {
     var *v;
@@ -68,7 +71,7 @@ typedef struct {
     uint64_t u6;
     float f5;
     double f6;
-    u8 cr;
+    c4 cr;
     char *sg;
     var_lst *lst;
     var_vr *vr;
@@ -92,7 +95,7 @@ var *var_i(var_type t, var_data d);
 
 var *var_c(var *v);
 
-void var_p(var *const v, size_t idnt);
+void var_p(const var *const v, const var *const s, const var *const e, const var *const sep);
 
 void var_f(var *v);
 
@@ -108,9 +111,9 @@ typedef struct _var_lst {
 
 var_lst *var_lst_i(void);
 
-void var_lst_a(var *v);
+void var_lst_a(var_lst *const lst, var *v);
 
-void var_lst_p(var_lst *lst, size_t idnt);
+void var_lst_p(const var_lst *const lst, const var *const sep);
 
 void var_lst_f(var_lst *v);
 
