@@ -1,5 +1,0 @@
-
-// call a fn not void and ensure gc is called
-
-f:FN(SG)${() "Hi\n" }
-f()

@@ -1,7 +1,0 @@
-
-// add and sub test
-
-a:I6$3
-b: a + 1
-c: a - 5
-$(FD;1) << $(SG;c),"\n"
