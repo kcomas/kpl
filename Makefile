@@ -20,6 +20,9 @@ VAR_OBJS = $(SRC)/var.o
 var$(TNAME): $(VAR_OBJS) $(TEST)/var.o
 > $(CCOBJ)
 
+JIT_OBJS = $(SRC)/jit.o
+jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
+
 %.o: %.c %.h
 > $(CC) $(CFLAGS) -c $< -o $@
 

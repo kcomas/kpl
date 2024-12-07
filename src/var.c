@@ -108,10 +108,16 @@ void var_f(var *v) {
         case VAR_TYPE(U6):
         case VAR_TYPE(F5):
         case VAR_TYPE(F6):
+        case VAR_TYPE(CR):
             break;
-        // TODO cr sg
+        case VAR_TYPE(SG):
+            free(v->d.sg);
+            break;
         case VAR_TYPE(LST):
             var_lst_f(v->d.lst);
+            break;
+        case VAR_TYPE(FN):
+            var_fn_f(v->d.fn);
             break;
     }
     free(v);
@@ -149,4 +155,18 @@ void var_lst_f(var_lst *lst) {
         free(tmp);
     }
     free(lst);
+}
+
+var_fn *var_fn_i(uint8_t na, size_t size) {
+    if (na > 6) return NULL;
+    var_fn *fn = calloc(1, sizeof(fn));
+    fn->na = na;
+    fn->size = (size / getpagesize() + 1) * getpagesize();
+    fn->m = mmap(NULL, fn->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    return fn;
+}
+
+void var_fn_f(var_fn *fn) {
+    munmap(fn->m, fn->size);
+    free(fn);
 }
