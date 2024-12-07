@@ -10,5 +10,9 @@ int main(void) {
     putchar('\n');
     var_f(a);
     var_f(b);
+    var *c = VAR_I(CR, cr, U8(0xCE, 0xA9, '\0', '\0'));
+    var_p(c, 0);
+    putchar('\n');
+    var_f(c);
     return 0;
 }

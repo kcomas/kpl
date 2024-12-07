@@ -49,6 +49,12 @@ typedef struct _var_hh var_hh;
 typedef struct _var_fn var_fn;
 
 typedef struct {
+    char a, b, c, d;
+} u8;
+
+#define U8(A, B, C, D) ((u8) { .a = A, .b = B, .c = C, .d = D })
+
+typedef struct {
     var *v;
     void *vd;
     bool bl;
@@ -62,7 +68,7 @@ typedef struct {
     uint64_t u6;
     float f5;
     double f6;
-    uint8_t cr[4];
+    u8 cr;
     char *sg;
     var_lst *lst;
     var_vr *vr;
@@ -70,7 +76,7 @@ typedef struct {
     var_fn *fn;
 } var_data;
 
-#define VAR_DATA(D, V) (var_data) { .D = V }
+#define VAR_DATA(D, V) ((var_data) { .D = V })
 
 typedef uint32_t RC;
 
