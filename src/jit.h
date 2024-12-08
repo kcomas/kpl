@@ -62,6 +62,8 @@ typedef enum {
     REX(R) = 0x49
 } rex;
 
+uint8_t modrm(uint8_t mod, reg d, reg s);
+
 #define JIT_STAT(N) JIT_STAT_##N
 
 typedef enum {
@@ -75,16 +77,41 @@ jit_stat jit_b(size_t *p, uint8_t *m, size_t len, ...);
 
 jit_stat jit_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
+// ret
 jit_stat jit_ret(size_t *p, uint8_t *m);
 
+// leave
 jit_stat jit_leave(size_t *p, uint8_t *m);
 
+// push rax
 jit_stat jit_push(size_t *p, uint8_t *m, reg r);
 
+// pop rax
 jit_stat jit_pop(size_t *p, uint8_t *m, reg r);
 
+// mov rax, rdi
 jit_stat jit_movrr(size_t *p, uint8_t *m, reg d, reg s);
 
+// mov qword ptr[rdi], rax
+jit_stat jit_movrar(size_t *p, uint8_t *m, reg d, reg s);
+
+// mov qword ptr[rdi+dsp8], rax
+jit_stat jit_movrabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+
+// mov rax, qword ptr [rdi]
+jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s);
+
+// mov rax, qword ptr[rdi+dsp8]
+jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+
+// add rax, b
 jit_stat jit_addrb(size_t *p, uint8_t *m, reg r, int8_t b);
 
+// add rax, rdi
+jit_stat jit_addrr(size_t *p, uint8_t *m, reg d, reg s);
+
+// sub rax, b
 jit_stat jit_subrb(size_t *p, uint8_t *m, reg r, int8_t b);
+
+// sub rax, rdi
+jit_stat jit_subrr(size_t *p, uint8_t *m, reg d, reg s);
