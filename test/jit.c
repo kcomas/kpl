@@ -144,7 +144,6 @@ int main(void) {
     rsub(m);
     rloop(m);
     rfib(m);
-    size_t p = 0;
     munmap(m, getpagesize());
     return 0;
 }
