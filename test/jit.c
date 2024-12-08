@@ -36,6 +36,15 @@ int main(void) {
     jit_ret(&p, m);
     printj(p, m);
     printf("add: %ld\n", ((add*) m)(1, 3));
+    p = 0;
+    jit_push(&p, m, R(BP));
+    jit_movrr(&p, m, R(BP), R(SP));
+    jit_movrr(&p, m, R(AX), R(DI));
+    jit_subrr(&p, m, R(AX), R(SI));
+    jit_pop(&p, m, R(BP));
+    jit_ret(&p, m);
+    printj(p, m);
+    printf("sub: %ld\n", ((sub*) m)(20, 9));
     munmap(m, getpagesize());
     return 0;
 }
