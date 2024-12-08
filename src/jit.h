@@ -48,8 +48,6 @@ typedef enum {
     XMM(15)
 } reg;
 
-bool reg_is_upper(reg r);
-
 // 0-7 gen lower, 8-15 // gen upper
 // 16-23 xmm lower 24-32 xmm upper
 
@@ -61,8 +59,6 @@ typedef enum {
     REX(W) = 0x48,
     REX(R) = 0x49
 } rex;
-
-uint8_t modrm(uint8_t mod, reg d, reg s);
 
 #define JIT_STAT(N) JIT_STAT_##N
 

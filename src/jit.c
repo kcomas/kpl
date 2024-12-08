@@ -1,11 +1,11 @@
 
 #include "jit.h"
 
-bool reg_is_upper(reg r) {
+static bool reg_is_upper(reg r) {
     return (r >= R(8) && r <= R(15)) || (r >= XMM(8) && r <= XMM(0));
 }
 
-uint8_t modrm(uint8_t mod, reg d, reg s) {
+static uint8_t modrm(uint8_t mod, reg d, reg s) {
     return mod + 8 * s + d;
 }
 
