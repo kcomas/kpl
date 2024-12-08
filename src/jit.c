@@ -38,6 +38,10 @@ jit_stat jit_d(size_t *p, uint8_t *m, void *v) {
     return JIT_STAT(OK);
 }
 
+jit_stat jit_nop(size_t *p, uint8_t *m) {
+    return jit_a(p, m, 0x90);
+}
+
 jit_stat jit_ret(size_t *p, uint8_t *m) {
     return jit_a(p, m, 0xC3);
 }
@@ -93,23 +97,21 @@ jit_stat jit_movrabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
     return jit_b(p, m, 4, rex, 0x89, modrm(0x40, d, s), dsp);
 }
 
+#define SWAP_REG reg t = s; \
+    s = d; \
+    d = t
+
 jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s) {
+    SWAP_REG;
     SET_REX2;
-    if (s == R(SP)) {
-        rex = REX(W);
-        if (reg_is_upper(d)) rex |= REX(R);
-        return jit_b(p, m, 4, rex, 0x8B, 0x04 + rid(d) * 8, 0x24);
-    }
+    if (d == R(SP)) return jit_b(p, m, 4, rex, 0x8B, 0x04 + rid(s) * 8, 0x24);
     return jit_b(p, m, 3, rex, 0x8B, modrm(0x00, d, s));
 }
 
 jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+    SWAP_REG;
     SET_REX2;
-    if (s == R(SP)) {
-        rex = REX(W);
-        if (reg_is_upper(d)) rex |= REX(R);
-        return jit_b(p, m, 5, rex, 0x8B, 0x44 + rid(d) * 8, 0x24, dsp);
-    }
+    if (d == R(SP)) return jit_b(p, m, 5, rex, 0x8B, 0x44 + rid(s) * 8, 0x24, dsp);
     return jit_b(p, m, 4, rex, 0x8B, modrm(0x40, d, s), dsp);
 }
 
@@ -158,11 +160,26 @@ jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s) {
     return jit_b(p, m, 3, rex, 0x85, modrm(0xC0, d, s));
 }
 
-uint8_t jit_jmp_lblb(size_t from, size_t to) {
-    if (from > to) return to - from - 2;
-    return (uint8_t) from - to;
+uint8_t jit_jmpu_lblb(size_t from, size_t to) {
+    return to - from - 2;
+}
+
+void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to) {
+    *byte = (uint8_t) to - from;
+}
+
+jit_stat jit_jmpb(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0xEB, b);
+}
+
+jit_stat jit_jcb(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0x72, b);
 }
 
 jit_stat jit_jneb(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x75, b);
+}
+
+jit_stat jit_jnab(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0x76, b);
 }

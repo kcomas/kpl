@@ -4,7 +4,7 @@
 static void printj(size_t len, uint8_t *m) {
     printf("- %lu - ", len);
     for (size_t i = 0; i < len; i++) {
-        if (i % 20 == 0) putchar('\n');
+        if (i % 30 == 0 || m[i] == 0x90) putchar('\n');
         printf("0x%X ", m[i]);
     }
     putchar('\n');
@@ -79,7 +79,7 @@ static void rloop(uint8_t *m) {
     jit_movrar(&p, m, R(SP), R(10));
     jit_movrrab(&p, m, R(8), R(SP), 8);
     jit_cmprr(&p, m, R(10), R(8));
-    jit_jneb(&p, m, jit_jmp_lblb(p, lbl));
+    jit_jneb(&p, m, jit_jmpu_lblb(p, lbl));
     jit_movrr(&p, m, R(AX), R(10));
     jit_leave(&p, m);
     jit_ret(&p, m);
@@ -88,12 +88,63 @@ static void rloop(uint8_t *m) {
     printf("%ld\n", ((loop*) m)(a));
 }
 
+typedef uint64_t fib(uint64_t n);
+
+static void rfib(uint8_t *m) {
+    size_t p = 0;
+    jit_push(&p, m, R(BP));
+    jit_movrr(&p, m, R(BP), R(SP));
+    jit_push(&p, m, R(DI)); // push n
+    // if n == 0
+    jit_movrq(&p, m, R(9), (void*) 0);
+    jit_movrra(&p, m, R(DI), R(SP));
+    jit_cmprr(&p, m, R(9), R(DI));
+    jit_jneb(&p, m, 0);
+    size_t lbl = p;
+    uint8_t *byte = &m[lbl - 1];
+    jit_movrq(&p, m, R(AX), (void*) 0);
+    jit_leave(&p, m);
+    jit_ret(&p, m);
+    jit_jmpd_lblb(byte, lbl, p);
+    // if n <= 2
+    jit_movrq(&p, m, R(9), (void*) 2);
+    jit_movrra(&p, m, R(DI), R(SP));
+    jit_cmprr(&p, m, R(9), R(DI));
+    jit_jcb(&p, m, 0);
+    lbl = p;
+    byte = &m[lbl - 1];
+    jit_movrq(&p, m, R(AX), (void*) 1);
+    jit_leave(&p, m);
+    jit_ret(&p, m);
+    jit_jmpd_lblb(byte, lbl, p);
+    // fib(n - 1)
+    jit_movrra(&p, m, R(DI), R(SP));
+    jit_subrb(&p, m, R(DI), 1);
+    jit_movrq(&p, m, R(AX), m);
+    jit_callr(&p, m, R(AX));
+    jit_push(&p, m, R(AX));
+    // fib(n - 2)
+    jit_movrrab(&p, m, R(DI), R(BP), -8);
+    jit_subrb(&p, m, R(DI), 2);
+    jit_movrq(&p, m, R(AX), m);
+    jit_callr(&p, m, R(AX));
+    jit_pop(&p, m, R(DI));
+    jit_addrr(&p, m, R(AX), R(DI));
+    jit_leave(&p, m);
+    jit_ret(&p, m);
+    uint64_t n = 35;
+    printj(p, m);
+    printf("fib(%lu): %lu\n", n, ((fib*) m)(n));
+}
+
 int main(void) {
     uint8_t *m = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     radd3(m);
     radd(m);
     rsub(m);
     rloop(m);
+    rfib(m);
+    size_t p = 0;
     munmap(m, getpagesize());
     return 0;
 }
