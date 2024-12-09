@@ -13,6 +13,18 @@ static uint8_t modrm(uint8_t mod, reg d, reg s) {
     return mod + 8 * rid(s) + rid(d);
 }
 
+static size_t pg_align(size_t size) {
+    return (size / getpagesize() + 1) * getpagesize();
+}
+
+uint8_t *jit_mmap(size_t size) {
+    return mmap(NULL, pg_align(size), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+}
+
+void jit_munmap(size_t size, uint8_t *m) {
+    munmap(m, pg_align(size));
+}
+
 jit_stat jit_a(size_t *p, uint8_t *m, uint8_t b) {
     m[(*p)++] = b;
     return JIT_STAT(OK);
