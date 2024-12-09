@@ -1,6 +1,6 @@
 
-#include "../src/jit.h"
 #include <stdio.h>
+#include "../src/jit.h"
 
 static void printj(size_t len, uint8_t *m) {
     printf("- %lu - ", len);

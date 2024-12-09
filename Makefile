@@ -22,6 +22,10 @@ JIT_OBJS = $(SRC)/jit.o
 jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 > $(CCOBJ)
 
+VR_OBS = $(SRC)/vr.o
+vr$(TNAME): $(VR_OBS) $(TEST)/vr.o
+> $(CCOBJ)
+
 %.o: %.c %.h
 > $(CC) $(CFLAGS) -c $< -o $@
 
