@@ -137,10 +137,13 @@ jit_stat jit_cmprr(size_t *p, uint8_t *m, reg d, reg s);
 // test rax, rdi
 jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s);
 
+// jump down
 uint8_t jit_jmpu_lblb(size_t from, size_t to);
 
+// get current btye
 uint8_t *jit_lb(size_t p, uint8_t *m);
 
+// jump up
 void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
 
 // jmp byte

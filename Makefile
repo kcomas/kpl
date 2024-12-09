@@ -18,10 +18,6 @@ TNAME = _test
 
 all: $(NAME)
 
-VAR_OBJS = $(SRC)/var.o
-var$(TNAME): $(VAR_OBJS) $(TEST)/var.o
-> $(CCOBJ)
-
 JIT_OBJS = $(SRC)/jit.o
 jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 > $(CCOBJ)
