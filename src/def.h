@@ -9,8 +9,13 @@ typedef void *alfn(size_t s);
 
 typedef void frfn(void *v);
 
+typedef struct {
+    uint8_t a, b, c, d;
+} c4;
+
 typedef union {
     bool b;
+    c4 c;
     uint8_t u3;
     uint16_t u4;
     uint32_t u5;
@@ -27,6 +32,10 @@ typedef union {
 #define VAR(T, D) ((var) { .T = D })
 
 #define B(D) VAR(b, D)
+#define C4(A, B, C, D) VAR(c, (c4) { .a = A, .b = B, .c = C, .d = D })
+#define C1(A) C4(A, '\0', '\0', '\0')
+#define C2(A, B) C4(A, B, '\0', '\0')
+#define C3(A, B, C) C4(A, B, C, '\0')
 #define U3(D) VAR(u3, D)
 #define U4(D) VAR(u4, D)
 #define U5(D) VAR(u5, D)
