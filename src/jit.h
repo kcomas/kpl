@@ -139,6 +139,8 @@ jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s);
 
 uint8_t jit_jmpu_lblb(size_t from, size_t to);
 
+uint8_t *jit_lb(size_t p, uint8_t *m);
+
 void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
 
 // jmp byte

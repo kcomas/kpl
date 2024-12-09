@@ -162,6 +162,10 @@ uint8_t jit_jmpu_lblb(size_t from, size_t to) {
     return to - from - 2;
 }
 
+uint8_t *jit_lb(size_t p, uint8_t *m) {
+    return &m[p - 1];
+}
+
 void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to) {
     *byte = (uint8_t) to - from;
 }
