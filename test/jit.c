@@ -91,48 +91,52 @@ static void rloop(uint8_t *m) {
 
 typedef uint64_t fib(uint64_t n);
 
+static void bfib(size_t *p, uint8_t *m) {
+    jit_push(p, m, R(BP));
+    jit_movrr(p, m, R(BP), R(SP));
+    jit_push(p, m, R(DI)); // push n
+    // if n == 0
+    jit_movrq(p, m, R(9), (void*) 0);
+    jit_movrra(p, m, R(DI), R(SP));
+    jit_cmprr(p, m, R(9), R(DI));
+    jit_jneb(p, m, 0);
+    uint8_t *byte = jit_lb(*p, m);
+    size_t lbl = *p;
+    jit_movrq(p, m, R(AX), (void*) 0);
+    jit_leave(p, m);
+    jit_ret(p, m);
+    jit_jmpd_lblb(byte, lbl, *p);
+    // if n <= 2
+    jit_movrq(p, m, R(9), (void*) 2);
+    jit_movrra(p, m, R(DI), R(SP));
+    jit_cmprr(p, m, R(9), R(DI));
+    jit_jcb(p, m, 0);
+    byte = jit_lb(*p, m);
+    lbl = *p;
+    jit_movrq(p, m, R(AX), (void*) 1);
+    jit_leave(p, m);
+    jit_ret(p, m);
+    jit_jmpd_lblb(byte, lbl, *p);
+    // fib(n - 1)
+    jit_movrra(p, m, R(DI), R(SP));
+    jit_subrb(p, m, R(DI), 1);
+    jit_movrq(p, m, R(AX), m);
+    jit_callr(p, m, R(AX));
+    jit_push(p, m, R(AX));
+    // fib(n - 2)
+    jit_movrrab(p, m, R(DI), R(BP), -8);
+    jit_subrb(p, m, R(DI), 2);
+    jit_movrq(p, m, R(AX), m);
+    jit_callr(p, m, R(AX));
+    jit_pop(p, m, R(DI));
+    jit_addrr(p, m, R(AX), R(DI));
+    jit_leave(p, m);
+    jit_ret(p, m);
+}
+
 static void rfib(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
-    jit_movrr(&p, m, R(BP), R(SP));
-    jit_push(&p, m, R(DI)); // push n
-    // if n == 0
-    jit_movrq(&p, m, R(9), (void*) 0);
-    jit_movrra(&p, m, R(DI), R(SP));
-    jit_cmprr(&p, m, R(9), R(DI));
-    jit_jneb(&p, m, 0);
-    uint8_t *byte = jit_lb(p, m);
-    size_t lbl = p;
-    jit_movrq(&p, m, R(AX), (void*) 0);
-    jit_leave(&p, m);
-    jit_ret(&p, m);
-    jit_jmpd_lblb(byte, lbl, p);
-    // if n <= 2
-    jit_movrq(&p, m, R(9), (void*) 2);
-    jit_movrra(&p, m, R(DI), R(SP));
-    jit_cmprr(&p, m, R(9), R(DI));
-    jit_jcb(&p, m, 0);
-    byte = jit_lb(p, m);
-    lbl = p;
-    jit_movrq(&p, m, R(AX), (void*) 1);
-    jit_leave(&p, m);
-    jit_ret(&p, m);
-    jit_jmpd_lblb(byte, lbl, p);
-    // fib(n - 1)
-    jit_movrra(&p, m, R(DI), R(SP));
-    jit_subrb(&p, m, R(DI), 1);
-    jit_movrq(&p, m, R(AX), m);
-    jit_callr(&p, m, R(AX));
-    jit_push(&p, m, R(AX));
-    // fib(n - 2)
-    jit_movrrab(&p, m, R(DI), R(BP), -8);
-    jit_subrb(&p, m, R(DI), 2);
-    jit_movrq(&p, m, R(AX), m);
-    jit_callr(&p, m, R(AX));
-    jit_pop(&p, m, R(DI));
-    jit_addrr(&p, m, R(AX), R(DI));
-    jit_leave(&p, m);
-    jit_ret(&p, m);
+    bfib(&p, m);
     uint64_t n = 35;
     printj(p, m);
     printf("fib(%lu): %lu\n", n, ((fib*) m)(n));
