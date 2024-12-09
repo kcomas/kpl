@@ -12,7 +12,7 @@ vr *vr_i(size_t s, alfn *af, frfn *df, frfn *ff) {
     return v;
 }
 
-vr_stat vr_a(vr **v, var d) {
+vr_stat vr_a(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
     if ((*v)->l == (*v)->s) {
         vr *nv = vr_i((*v)->s * VR_RES, (*v)->af, (*v)->df, (*v)->ff);
@@ -26,7 +26,7 @@ vr_stat vr_a(vr **v, var d) {
     return vstat;
 }
 
-vr_stat vr_s(vr *const v, var *d) {
+vr_stat vr_s(vr *const v, un *d) {
     if (v->l == 0) return VR_STAT(SUB);
      *d = v->d[--v->l];
      return VR_STAT(OK);

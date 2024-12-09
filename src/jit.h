@@ -1,13 +1,11 @@
 
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include "def.h"
 
 #define R(N) R_##N
 
@@ -78,7 +76,7 @@ jit_stat jit_b(size_t *p, uint8_t *m, size_t len, ...);
 
 jit_stat jit_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
-jit_stat jit_d(size_t *p, uint8_t *m, void *v);
+jit_stat jit_d(size_t *p, uint8_t *m, un u);
 
 // nop
 jit_stat jit_nop(size_t *p, uint8_t *m);
@@ -95,7 +93,7 @@ jit_stat jit_push(size_t *p, uint8_t *m, reg r);
 // pop rax
 jit_stat jit_pop(size_t *p, uint8_t *m, reg r);
 
-jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, void *v);
+jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, un u);
 
 // call rax
 jit_stat jit_callr(size_t *p, uint8_t *m, reg r);

@@ -27,23 +27,23 @@ typedef union {
     float f;
     double d;
     void *p;
-} var;
+} un;
 
-#define VAR(T, D) ((var) { .T = D })
+#define UN(T, D) ((un) { .T = D })
 
-#define B(D) VAR(b, D)
-#define C4(A, B, C, D) VAR(c, (c4) { .a = A, .b = B, .c = C, .d = D })
+#define B(D) UN(b, D)
+#define C4(A, B, C, D) UN(c, (c4) { .a = A, .b = B, .c = C, .d = D })
 #define C1(A) C4(A, '\0', '\0', '\0')
 #define C2(A, B) C4(A, B, '\0', '\0')
 #define C3(A, B, C) C4(A, B, C, '\0')
-#define U3(D) VAR(u3, D)
-#define U4(D) VAR(u4, D)
-#define U5(D) VAR(u5, D)
-#define U6(D) VAR(u6, D)
-#define I3(D) VAR(i3, D)
-#define I4(D) VAR(i4, D)
-#define I5(D) VAR(i5, D)
-#define I6(D) VAR(i6, D)
-#define F(D) VAR(f, D)
-#define D(D) VAR(d, D)
-#define P(D) VAR(p, (void*) D)
+#define U3(D) UN(u3, D)
+#define U4(D) UN(u4, D)
+#define U5(D) UN(u5, D)
+#define U6(D) UN(u6, D)
+#define I3(D) UN(i3, D)
+#define I4(D) UN(i4, D)
+#define I5(D) UN(i5, D)
+#define I6(D) UN(i6, D)
+#define F(D) UN(f, D)
+#define D(D) UN(d, D)
+#define P(D) UN(p, (void*) D)
