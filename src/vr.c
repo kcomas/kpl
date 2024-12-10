@@ -25,6 +25,12 @@ size_t vr_g_l(const vr *const v) {
     return v->l;
 }
 
+vr_stat vr_g_i(vr *const v, size_t i, un *d) {
+    if (i >= v->l) return VR_STAT(IDX);
+    *d = v->d[i];
+    return VR_STAT(OK);
+}
+
 vr_stat vr_a(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
     if ((*v)->l == (*v)->s) {

@@ -42,6 +42,9 @@ void stest(void) {
         vr_a(&v, P(s));
     }
     for (size_t i = 0; i < 9; i++) printf("%s\n", (char*) v->d[i].p);
+    un u;
+    if (vr_g_i(v, 2, &u) != VR_STAT(OK)) exit(14);
+    printf("2: %s\n", (char*) u.p);
     vr_f(v);
 }
 
