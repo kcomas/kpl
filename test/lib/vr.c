@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "../src/vr.h"
+#include "../../src/lib/vr.h"
 
 void itest(void) {
     vr *v = vr_i(2, &malloc, NULL, &free);
