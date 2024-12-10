@@ -1,24 +1,37 @@
 
 #include "vr.h"
 
-vr *vr_i(size_t s, alfn *af, frfn *df, frfn *ff) {
-    vr *v = af(sizeof(vr) + s * sizeof(void*));
+vr *vr_i(size_t s, alfn *va, frfn *df, frfn *vf) {
+    vr *v = va(sizeof(vr) + s * sizeof(void*));
     v->r = 1;
     v->s = s;
     v->l = 0;
-    v->af = af;
+    v->va = va;
     v->df = df;
-    v->ff = ff;
+    v->vf = vf;
     return v;
+}
+
+vr *vr_c(vr *v) {
+    v->r++;
+    return v;
+}
+
+size_t vr_g_s(const vr *const v) {
+    return v->s;
+}
+
+size_t vr_g_l(const vr *const v) {
+    return v->l;
 }
 
 vr_stat vr_a(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
     if ((*v)->l == (*v)->s) {
-        vr *nv = vr_i((*v)->s * VR_RES, (*v)->af, (*v)->df, (*v)->ff);
+        vr *nv = vr_i((*v)->s * VR_RES, (*v)->va, (*v)->df, (*v)->vf);
         nv->l = (*v)->l;
         for (size_t i = 0; i < (*v)->l; i++) nv->d[i] = (*v)->d[i];
-        nv->ff(*v);
+        nv->vf(*v);
         (*v) = nv;
         vstat = VR_STAT(RES);
     }
@@ -35,5 +48,5 @@ vr_stat vr_s(vr *const v, un *d) {
 void vr_f(vr *v) {
     if (--v->r > 0) return;
     if (v->df) for (size_t i = 0; i < v->l; i++) v->df(v->d[i].p);
-    v->ff(v);
+    v->vf(v);
 }

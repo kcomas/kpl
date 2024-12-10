@@ -11,17 +11,22 @@ typedef enum {
     VR_STAT(SUB)
 } vr_stat;
 
-typedef struct _vr vr;
-
-typedef struct _vr {
-    ssize_t r;
-    size_t s, l;
-    alfn *af;
-    frfn *df, *ff;
-    un d[];
+// vector
+typedef struct {
+    ssize_t r; // ref count
+    size_t s, l; // size, len
+    alfn *va; // allocate
+    frfn *df, *vf; // data free, free
+    un d[]; // data
 } vr;
 
-vr *vr_i(size_t s, alfn *af, frfn *df, frfn *ff);
+vr *vr_i(size_t s, alfn *al, frfn *df, frfn *vf);
+
+vr *vr_c(vr *v);
+
+size_t vr_g_s(const vr *const v);
+
+size_t vr_g_l(const vr *const v);
 
 #ifndef VR_RES
     #define VR_RES 2
