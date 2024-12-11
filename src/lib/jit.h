@@ -57,6 +57,15 @@ typedef enum {
     REX(W) = 0x48
 } rex;
 
+#define MOD(N) MOD_##N
+
+typedef enum {
+    MOD(00) = 0x0,
+    MOD(01) = 0x40,
+    MOD(10) = 0x80,
+    MOD(11) = 0xC0
+} mod;
+
 #define JIT_STAT(N) JIT_STAT_##N
 
 typedef enum {

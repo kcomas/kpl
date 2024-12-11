@@ -157,11 +157,11 @@ static void daddsub(uint8_t *m) {
 
 int main(void) {
     uint8_t *m = jit_mmap(1);
-    //radd3(m);
-    //radd(m);
-    //rsub(m);
-    //rloop(m);
-    //rfib(m);
+    radd3(m);
+    radd(m);
+    rsub(m);
+    rloop(m);
+    rfib(m);
     daddsub(m);
     jit_munmap(1, m);
     return 0;
