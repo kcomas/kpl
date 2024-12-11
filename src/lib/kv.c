@@ -10,6 +10,11 @@ kv *kv_i(alfn *a, frfm *kf, frfn *vf, frfn *f) {
     return p;
 }
 
+kv *kc_c(kv *p) {
+    p->r++;
+    return p;
+}
+
 un kv_g_k(kv *const p) {
     return p->k;
 }

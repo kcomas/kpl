@@ -93,52 +93,53 @@ jit_stat jit_push(size_t *p, uint8_t *m, reg r);
 // pop rax
 jit_stat jit_pop(size_t *p, uint8_t *m, reg r);
 
-jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, un u);
-
 // call rax
-jit_stat jit_callr(size_t *p, uint8_t *m, reg r);
+jit_stat jit_call_r(size_t *p, uint8_t *m, reg r);
+
+// mov rax, 64bit value
+jit_stat jit_mov_rq(size_t *p, uint8_t *m, reg r, un u);
 
 // mov rax, rdi
-jit_stat jit_movrr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_mov_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // mov qword ptr[rdi], rax
-jit_stat jit_movrar(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_mov_rar(size_t *p, uint8_t *m, reg d, reg s);
 
 // mov qword ptr[rdi+dsp8], rax
-jit_stat jit_movrabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+jit_stat jit_movr_abr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
 // mov rax, qword ptr [rdi]
-jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s);
 
 // mov rax, qword ptr[rdi+dsp8]
-jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
 // inc rax
-jit_stat jit_incr(size_t *p, uint8_t *m, reg r);
+jit_stat jit_inc_r(size_t *p, uint8_t *m, reg r);
 
 // add rax, byte
-jit_stat jit_addrb(size_t *p, uint8_t *m, reg r, int8_t b);
+jit_stat jit_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // add rax, rdi
-jit_stat jit_addrr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // dec rax
-jit_stat jit_decr(size_t *p, uint8_t *m, reg r);
+jit_stat jit_dec_r(size_t *p, uint8_t *m, reg r);
 
 // sub rax, byte
-jit_stat jit_subrb(size_t *p, uint8_t *m, reg r, int8_t b);
+jit_stat jit_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // sub rax, rdi
-jit_stat jit_subrr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // xor rax, rdi
-jit_stat jit_xorrr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // cmp rax, rdi
-jit_stat jit_cmprr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // test rax, rdi
-jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s);
+jit_stat jit_test_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // jump down
 uint8_t jit_jmpu_lblb(size_t from, size_t to);
@@ -150,13 +151,13 @@ uint8_t *jit_lb(size_t p, uint8_t *m);
 void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
 
 // jmp byte
-jit_stat jit_jmpb(size_t *p, uint8_t *m, uint8_t b);
+jit_stat jit_jmp_b(size_t *p, uint8_t *m, uint8_t b);
 
 // jc byte
-jit_stat jit_jcb(size_t *p, uint8_t *m, uint8_t b);
+jit_stat jit_jc_b(size_t *p, uint8_t *m, uint8_t b);
 
 // jne byte
-jit_stat jit_jneb(size_t *p, uint8_t *m, uint8_t b);
+jit_stat jit_jne_b(size_t *p, uint8_t *m, uint8_t b);
 
 // jna byte
-jit_stat jit_jnab(size_t *p, uint8_t *m, uint8_t b);
+jit_stat jit_jna_b(size_t *p, uint8_t *m, uint8_t b);
