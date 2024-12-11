@@ -123,6 +123,9 @@ jit_stat jit_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 // add rax, rdi
 jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 
+// addsd xmm0, xmm1
+jit_stat jit_addsd_rr(size_t *p, uint8_t *m, reg d, reg s);
+
 // dec rax
 jit_stat jit_dec_r(size_t *p, uint8_t *m, reg r);
 
@@ -131,6 +134,9 @@ jit_stat jit_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // sub rax, rdi
 jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
+
+// subsd xmm0, xmm1
+jit_stat jit_subsd_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // xor rax, rdi
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s);

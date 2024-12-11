@@ -142,13 +142,27 @@ static void rfib(uint8_t *m) {
     printf("fib(%lu): %lu\n", n, ((fib*) m)(n));
 }
 
+static void daddsub(uint8_t *m) {
+    size_t p = 0;
+    jit_push(&p, m, R(BP));
+    jit_mov_rr(&p, m, R(BP), R(SP));
+    jit_addsd_rr(&p, m, XMM(0), XMM(1));
+    jit_subsd_rr(&p, m, XMM(0), XMM(2));
+    jit_pop(&p, m, R(BP));
+    jit_ret(&p, m);
+    printj(p, m);
+    double a = 1.2, b = 3.4, c = 0.15;
+    printf("dasf(%f + %f - %f): %f\n", a, b, c, ((double(*)(double, double, double)) m)(a, b, c));
+}
+
 int main(void) {
     uint8_t *m = jit_mmap(1);
-    radd3(m);
-    radd(m);
-    rsub(m);
-    rloop(m);
-    rfib(m);
+    //radd3(m);
+    //radd(m);
+    //rsub(m);
+    //rloop(m);
+    //rfib(m);
+    daddsub(m);
     jit_munmap(1, m);
     return 0;
 }

@@ -9,6 +9,7 @@ static uint8_t rid(reg r) {
     return r % 8;
 }
 
+// if the source can be memory address they need to be swapped
 static uint8_t modrm(uint8_t mod, reg d, reg s) {
     return mod + 8 * rid(s) + rid(d);
 }
@@ -160,6 +161,13 @@ jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return jit_b(p, m, 3, rex, 0x01, modrm(0xC0, d, s));
 }
 
+jit_stat jit_addsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_X(s);
+    SET_REX2(d, s);
+    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x58, modrm(0xC0, s, d));
+}
+
 jit_stat jit_dec_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     SET_REX(r);
@@ -177,6 +185,13 @@ jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x29, modrm(0xC0, d, s));
+}
+
+jit_stat jit_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_X(s);
+    SET_REX2(d, s);
+    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x5C, modrm(0xC0, s, d));
 }
 
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
