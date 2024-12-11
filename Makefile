@@ -22,6 +22,10 @@ LJIT_OBJS = $(LSRC)/jit.o
 jit$(LTNAME): $(LJIT_OBJS) $(LTEST)/jit.o
 > $(CCOBJ)
 
+LTE_OBJS = $(LSRC)/te.o
+te$(LTNAME): $(LTE_OBJS) $(LTEST)/te.o
+> $(CCOBJ)
+
 LVR_OBS = $(LSRC)/vr.o
 vr$(LTNAME): $(LVR_OBS) $(LTEST)/vr.o
 > $(CCOBJ)
