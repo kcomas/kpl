@@ -150,7 +150,7 @@ jit_stat jit_add_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
 }
 
 jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
+    VALID_R(d)
     VALID_R(s);
     return jit_b(p, m, 3, set_rex2(d, s), 0x01, modrm(MOD(11), d, s));
 }
@@ -227,4 +227,9 @@ jit_stat jit_jne_b(size_t *p, uint8_t *m, uint8_t b) {
 
 jit_stat jit_jna_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x76, b);
+}
+
+jit_stat jit_setl_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return jit_b(p, m, 4, set_rex(r), 0x0F, 0x9C, MOD(11) + rid(r));
 }
