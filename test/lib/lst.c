@@ -3,10 +3,10 @@
 #include <stdio.h>
 
 static void lst_i6_p(const lst * const l) {
-    lst_itm *h = l->h;
+    te *h = l->h;
     while (h) {
-        printf("%ld ", h->d.i6);
-        h = h->n;
+        printf("%ld ", h->d[0].i6);
+        h = h->d[2].p;
     }
     putchar('\n');
 }

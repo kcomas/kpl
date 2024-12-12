@@ -1,13 +1,6 @@
 
 #include "lst.h"
 
-static lst_itm *lst_itm_i(alfn *ta, un d) {
-    lst_itm *li = ta(sizeof(lst_itm));
-    li->p = li->n = NULL;
-    li->d = d;
-    return li;
-}
-
 lst *lst_i(alfn *la, alfn *ta, frfn *tf, frfn *df, frfn *lf) {
     lst *l = la(sizeof(lst));
     l->r = 1;
@@ -31,22 +24,24 @@ size_t lst_g_l(const lst *const l) {
 }
 
 lst_stat lst_ab(lst *const l, un d) {
-    lst_itm *li = lst_itm_i(l->ta, d);
+    te *li = te_i(3, l->ta, l->tf);
+    li->d[0] = d;
     if (!l->h) l->h = l->t = li;
     else {
-        li->p = l->t;
-        l->t = l->t->n = li;
+        li->d[1].p = l->t;
+        l->t = l->t->d[2].p = li;
     }
     l->l++;
     return LST_STAT(OK);
 }
 
 lst_stat lst_af(lst *const l, un d) {
-    lst_itm *li = lst_itm_i(l->ta, d);
+    te *li = te_i(3, l->ta, l->tf);
+    li->d[0] = d;
     if (!l->t) l->t = l->h = li;
     else {
-        li->n = l->h;
-        l->h = l->h->p = li;
+        li->d[2].p = l->h;
+        l->h = l->h->d[1].p = li;
     }
     l->l++;
     return LST_STAT(OK);
@@ -54,34 +49,34 @@ lst_stat lst_af(lst *const l, un d) {
 
 lst_stat lst_sb(lst *const l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
-    lst_itm *li = l->t;
-    l->t = l->t->p;
-    l->t->n = NULL;
-    *d = li->d;
-    l->tf(li);
+    te *li = l->t;
+    l->t = l->t->d[1].p;
+    l->t->d[2] = P(NULL);
+    *d = li->d[0];
+    te_f(li);
     l->l--;
     return LST_STAT(OK);
 }
 
 lst_stat lst_sf(lst *const l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
-    lst_itm *li = l->h;
-    l->h = l->h->n;
-    l->h->p = NULL;
-    *d = li->d;
-    l->tf(li);
+    te *li = l->h;
+    l->h = l->h->d[2].p;
+    l->h->d[1] = P(NULL);
+    *d = li->d[0];
+    te_f(li);
     l->l--;
     return LST_STAT(OK);
 }
 
 void lst_f(lst *l) {
     if (!l || --l->r > 0) return;
-    lst_itm *h = l->h;
+    te *h = l->h;
     while (h) {
-        lst_itm *tmp = h;
-        h = h->n;
-        if (l->df) l->df(tmp->d.p);
-        l->tf(tmp);
+        te *tmp = h;
+        h = h->d[2].p;
+        if (l->df) l->df(tmp->d[0].p);
+        te_f(tmp);
     }
     l->lf(l);
 }

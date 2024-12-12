@@ -27,6 +27,8 @@ vr *vr_c(vr *v);
 
 size_t vr_g_s(const vr *const v);
 
+vr_stat vr_s_i(vr *const v, size_t i, un d);
+
 size_t vr_g_l(const vr *const v);
 
 vr_stat vr_g_i(vr *const v, size_t i, un *d);
