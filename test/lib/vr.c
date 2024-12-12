@@ -21,9 +21,10 @@ void dtest(void) {
     vr_ab(&v, D(2.2));
     vr_ab(&v, D(3.3));
     vr_ab(&v, D(4.4));
+    vr_af(&v, D(5.5));
     for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].d);
     un u;
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 5; i++) {
         if (vr_sb(v, &u) != VR_STAT(OK)) exit(12);
         printf("%f ", u.d);
     }
@@ -42,7 +43,7 @@ void stest(void) {
         s[ml - 1] = i + '0';
         vr_ab(&v, P(s));
     }
-    for (size_t i = 0; i < 9; i++) printf("%s, ", (char*) v->d[i].p);
+    for (size_t i = 0; i < v->l; i++) printf("%s, ", (char*) v->d[i].p);
     putchar('\n');
     un u;
     if (vr_g_i(v, 2, &u) != VR_STAT(OK)) exit(14);
@@ -52,7 +53,9 @@ void stest(void) {
     char *s2 = calloc(ml + sizeof(char), sizeof(char));
     strcpy(s2, hw);
     vr_s_i(v, 2, P(s2));
-    for (size_t i = 0; i < 9; i++) printf("%s, ", (char*) v->d[i].p);
+    vr_sf(v, &u);
+    free(u.p);
+    for (size_t i = 0; i < v->l; i++) printf("%s, ", (char*) v->d[i].p);
     putchar('\n');
     vr_f(v);
 }
