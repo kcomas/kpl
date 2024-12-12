@@ -42,10 +42,18 @@ void stest(void) {
         s[ml - 1] = i + '0';
         vr_a(&v, P(s));
     }
-    for (size_t i = 0; i < 9; i++) printf("%s\n", (char*) v->d[i].p);
+    for (size_t i = 0; i < 9; i++) printf("%s, ", (char*) v->d[i].p);
+    putchar('\n');
     un u;
     if (vr_g_i(v, 2, &u) != VR_STAT(OK)) exit(14);
     printf("2: %s\n", (char*) u.p);
+    char *hw = "Hello World";
+    ml = strlen(hw);
+    char *s2 = calloc(ml + sizeof(char), sizeof(char));
+    strcpy(s2, hw);
+    vr_s_i(v, 2, P(s2));
+    for (size_t i = 0; i < 9; i++) printf("%s, ", (char*) v->d[i].p);
+    putchar('\n');
     vr_f(v);
 }
 
