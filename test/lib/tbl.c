@@ -7,7 +7,7 @@ static size_t sh(un u) {
     char *s = u.p;
     size_t h = 11;
     char c;
-    while ((c = *s++)) h = c + (h << 4);
+    while ((c = *s++)) h += c;
     return h;
 }
 
@@ -30,7 +30,12 @@ static te *kv_i(const char *s, int64_t v) {
 
 static void pt(tbl *t) {
     for (size_t i = 0; i < t->b->l; i++) {
-        printf("%lu:%p", i, t->b->d[i].p);
+        te *li = t->b->d[i].p;
+        printf("%lu:%p", i, li);
+        if (li) {
+            te *kv = li->d[0].p;
+            printf(" %s,%lu", (char*) kv->d[0].p, kv->d[1].i6);
+        }
         if (i < t->b->l - 1) printf(", ");
     }
     putchar('\n');
@@ -38,21 +43,29 @@ static void pt(tbl *t) {
 
 void btable(void) {
     lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
-    te *b = te_i(10, &malloc, &free);
+    te *b = te_i(1, &malloc, &free);
     tbl *t = tbl_i(&malloc, &free, &sh, &cmp, tl, b);
-    tbl_a(t, kv_i("Hello", 123));
-    tbl_a(t, kv_i("World", 345));
+    tbl_stat tstat;
+    if ((tstat = tbl_a(t, kv_i("Hello", 123))) != TBL_STAT(RES)) exit(tstat);
     pt(t);
+    if ((tstat = tbl_a(t, kv_i("World", 345))) != TBL_STAT(RES)) exit(tstat);
+    pt(t);
+    te *h = t->i->h;
+    while (h) {
+        printf("%s\n", (char*) ((te*) h->d[0].p)->d[0].p);
+        h = h->d[2].p;
+    }
     te *kv;
-    if (tbl_g_i(t, P("World"), &kv) != TBL_STAT(OK)) exit(11);
+    if ((tstat = tbl_g_i(t, P("World"), &kv)) != TBL_STAT(OK)) exit(tstat);
     printf("%lu\n", kv->d[1].i6);
-    tbl_a(t, kv_i("World", 789));
-    if (tbl_g_i(t, P("World"), &kv) != TBL_STAT(OK)) exit(11);
+    if ((tstat = tbl_a(t, kv_i("World", 789))) != TBL_STAT(OK)) exit(tstat);
+    if ((tstat = tbl_g_i(t, P("World"), &kv)) != TBL_STAT(OK)) exit(tstat);
     printf("%lu\n", kv->d[1].i6);
-    if (tbl_s(t, P("Hello"), &kv) != TBL_STAT(OK)) exit(11);
+    pt(t);
+    if ((tstat = tbl_s(t, P("Hello"), &kv)) != TBL_STAT(OK)) exit(tstat);
     printf("%lu\n", kv->d[1].i6);
     kv_f(kv);
-    te *h = t->i->h;
+    h = t->i->h;
     while (h) {
         printf("%s\n", (char*) ((te*) h->d[0].p)->d[0].p);
         h = h->d[2].p;
