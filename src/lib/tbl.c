@@ -36,7 +36,10 @@ static tbl_stat fdrm(tbl *t, un k, te **kv, bool rm) {
         if (t->b->d[i].p == NULL) return TBL_STAT(NF);
         else if (t->cf(TBIT(t, i)->d[0], k)) {
             *kv = TBIT(t, i);
-            if (rm) ((te*) TBI(t, i))->d[0] = P(NULL);
+            if (rm) {
+                lst_li_r(t->i, TBI(t, i));
+                t->b->d[i] = P(NULL);
+            }
             return TBL_STAT(OK);
         }
         i = (i + 1) % t->b->l;
