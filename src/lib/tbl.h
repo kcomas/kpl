@@ -7,19 +7,21 @@
 #define TBL_STAT(N) TBL_STAT_##N
 
 typedef enum {
-    TBL_STAT(OK)
+    TBL_STAT(OK),
+    TBL_STAT(RES),
+    TBL_STAT(OAE), // open address error
+    TBL_STAT(NF) // not found
 } tbl_stat;
 
-typedef size_t hhfn(un u); // hash
+typedef size_t hhfn(un k); // hash
 
 typedef bool cmpfn(un a, un b); // compare
 
-// hashmap
+// hashmap open address
 typedef struct {
     ssize_t r;
-    size_t u; // used
-    alfn *at;
-    frfn *ft;
+    alfn *ta;
+    frfn *tf;
     hhfn *hf;
     cmpfn *cf;
     lst *i; // items
@@ -28,10 +30,16 @@ typedef struct {
 
 tbl *tbl_i(alfn *at, frfn *ft, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
-tbl_stat tbl_g_i(tbl *t, un k, un *v);
+tbl *tbl_c(tbl *t);
 
-tbl_stat tbl_a(tbl **t, un k, un v);
+size_t tbl_g_l(const tbl *const t);
 
-tbl_stat tbl_s(tbl *t, un k, un *v);
+size_t tbl_g_s(const tbl *const t);
+
+tbl_stat tbl_g_i(tbl *t, un k, te **kv);
+
+tbl_stat tbl_a(tbl **t, te *kv);
+
+tbl_stat tbl_s(tbl *t, un k, te **kv);
 
 void tbl_f(tbl *t);
