@@ -15,14 +15,13 @@ bool cmp(un a, un b) {
     return strcmp(a.p, b.p) == 0;
 }
 
-void kv_free(void *p) {
-    te *t = (te*) p;
+void kv_free(te *t) {
     free(t->d[0].p);
     free(t);
 }
 
 te *kv_i(const char *s, int64_t v) {
-    te *t = te_i(2, &malloc, &kv_free);
+    te *t = te_i(2, &malloc, (void*) &kv_free);
     t->d[0].p = malloc(strlen(s) + sizeof(char));
     strcpy(t->d[0].p, s);
     t->d[1].i6 = v;
@@ -40,6 +39,12 @@ void btable(void) {
         if (i < t->b->l - 1) printf(", ");
     }
     putchar('\n');
+    te *kv;
+    if (tbl_g_i(t, P("World"), &kv) != TBL_STAT(OK)) exit(11);
+    printf("%lu\n", kv->d[1].i6);
+    tbl_a(t, kv_i("World", 789));
+    if (tbl_g_i(t, P("World"), &kv) != TBL_STAT(OK)) exit(11);
+    printf("%lu\n", kv->d[1].i6);
     tbl_f(t);
 }
 
