@@ -33,8 +33,13 @@ void btable(void) {
     lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
     te *b = te_i(10, &malloc, &free);
     tbl *t = tbl_i(&malloc, &free, &sh, &cmp, tl, b);
-    tbl_a(&t, kv_i("Hello", 123));
-    tbl_a(&t, kv_i("World", 345));
+    tbl_a(t, kv_i("Hello", 123));
+    tbl_a(t, kv_i("World", 345));
+    for (size_t i = 0; i < t->b->l; i++) {
+        printf("%lu:%p", i, t->b->d[i].p);
+        if (i < t->b->l - 1) printf(", ");
+    }
+    putchar('\n');
     tbl_f(t);
 }
 
