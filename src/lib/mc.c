@@ -20,18 +20,22 @@ mc *mc_c(mc *m) {
     #define MC_RESIZE 2
 #endif
 
-void mc_wb(mc **m, uint8_t b) {
+void mc_wa(mc **m, uint8_t b) {
     if ((*m)->l == (*m)->s) {
         mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->ma, (*m)->mf);
-        nm->l = nm->l;
+        nm->l = (*m)->l;
         memcpy(nm->d, (*m)->d, nm->l);
-        nm->mf(m);
+        nm->mf(*m);
         *m = nm;
     }
     (*m)->d[(*m)->l++] = b;
 }
 
-void mv_f(mc *m) {
+void mc_wb(mc **m, uint8_t *b, size_t l) {
+    for (size_t i = 0; i < l; i++) mc_wa(m, b[i]);
+}
+
+void mc_f(mc *m) {
     if (!m || --m->r > 0) return;
     m->mf(m);
 }
