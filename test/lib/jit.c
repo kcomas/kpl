@@ -170,21 +170,32 @@ static void cmp(uint8_t *m) {
     printf("cmp(%ld < %ld): %d\n", b, a, ((bool(*)(int64_t, int64_t)) m)(b, a));
 }
 
+static void printp(int64_t **a) {
+    printf("%p, %ld\n", a, **a);
+}
+
 static void p2p(uint8_t *m) {
     size_t p = 0;
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
-    printf("%p, %ld\n", a, *a);
+    printp(&a);
     jit_push(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
-    jit_mov_rra(&p, m, R(DI), R(DI));
+    jit_mov_rr(&p, m, R(DX), R(DI));
+    jit_mov_rq(&p, m, R(DI), I6(0));
+    jit_mov_rra(&p, m, R(CX), R(DX));
     jit_mov_rq(&p, m, R(SI), I6(23));
-    jit_mov_rar(&p, m, R(DI), R(SI));
+    jit_mov_rar(&p, m, R(CX), R(SI));
+    jit_push(&p, m, R(CX));
+    jit_mov_rr(&p, m, R(DI), R(SP));
+    jit_mov_rq(&p, m, R(AX), P(&printp));
+    jit_call_r(&p, m, R(AX));
+    jit_pop(&p, m, R(CX));
     jit_pop(&p, m, R(BP));
     jit_ret(&p, m);
-    ((void(*)(int64_t**)) m)(&a);
     printj(p, m);
-    printf("%p, %ld\n", a, *a);
+    ((void(*)(int64_t**)) m)(&a);
+    printp(&a);
     free(a);
 }
 

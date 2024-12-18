@@ -133,10 +133,19 @@ jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s) {
 }
 
 jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+    VALID_R(d);
     VALID_R(s);
     jit_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(01), s, d));
     if (s == R(SP)) jit_a(p, m, 0x24);
     return jit_a(p, m, dsp);
+}
+
+jit_stat jit_lea_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
+    jit_b(p, m, 3, set_rex2(s, d), 0x8D, modrm(MOD(00), s, d));
+    if (s == R(SP)) jit_a(p, m, 0x24);
+    return JIT_STAT(OK);
 }
 
 jit_stat jit_inc_r(size_t *p, uint8_t *m, reg r) {
