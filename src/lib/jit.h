@@ -115,7 +115,7 @@ jit_stat jit_mov_rr(size_t *p, uint8_t *m, reg d, reg s);
 jit_stat jit_mov_rar(size_t *p, uint8_t *m, reg d, reg s);
 
 // mov qword ptr[rdi+dsp8], rax
-jit_stat jit_movr_abr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+jit_stat jit_mov_rabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
 // mov rax, qword ptr [rdi]
 jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s);
