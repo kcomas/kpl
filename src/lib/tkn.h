@@ -19,15 +19,16 @@ typedef struct {
 
 void tkn_st_i(tkn_st *const ts, const char *str, tbl *t);
 
-void tkn_st_inc(tkn_st *const ts, bool incl);
+void tkn_st_n(tkn_st *const ts, bool incl);
 
 typedef struct _tkn_d tkn_d;
 
-typedef tkn_stat tkn_g(tkn_st *const ts, const te *const tkn, size_t *const l);
+typedef tkn_stat tkn_g(tkn_st *const ts, const te *const tkn, size_t *const pos);
 
 // tkn te[sg;tkn_d]
 typedef struct _tkn_d {
-    size_t id, l;
+    size_t id;
+    ssize_t l; // -1 for variable
     tkn_g *pf; // parse
 } tkn_d;
 

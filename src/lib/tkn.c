@@ -8,7 +8,7 @@ void tkn_st_i(tkn_st *const ts, const char *str, tbl *t) {
     ts->t = t;
 }
 
-void tkn_st_inc(tkn_st *const ts, bool incl) {
+void tkn_st_n(tkn_st *const ts, bool incl) {
     if (incl) {
         ts->lno++;
         ts->cno = 1;

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 typedef void *alfn(size_t s);
 
@@ -33,7 +34,7 @@ typedef union {
 
 #define UN(T, D) ((un) { .T = D })
 #define B(D) UN(b, D)
-#define C4(A, B, C, D) UN(c, (c4) { .a = A, .b = B, .c = C, .d = D })
+#define C4(A, B, C, D) UN(c, ((c4) { .a = A, .b = B, .c = C, .d = D }))
 #define C3(A, B, C) C4(A, B, C, '\0')
 #define C2(A, B) C3(A, B, '\0')
 #define C1(A) C2(A, '\0')
@@ -48,3 +49,6 @@ typedef union {
 #define F(D) UN(f, D)
 #define D(D) UN(d, D)
 #define P(D) UN(p, (void*) D)
+
+// get next utf8 char starting at s
+un c4_g(const char *const str, size_t s, size_t *e);
