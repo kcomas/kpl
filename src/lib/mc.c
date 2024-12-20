@@ -11,6 +11,14 @@ mc *mc_i(size_t s, alfn *ma, frfn *mf) {
     return m;
 }
 
+mc *mc_i_cstr(const char *const s, alfn *ma, frfn *mf) {
+    size_t l = strlen(s);
+    mc *m = mc_i(l, ma, mf);
+    m->l = l;
+    memcpy(m->d, s, l);
+    return m;
+}
+
 mc *mc_c(mc *m) {
     m->r++;
     return m;

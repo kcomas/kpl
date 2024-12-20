@@ -52,3 +52,5 @@ typedef union {
 
 // get next utf8 char starting at s
 un c4_g(const char *const str, size_t s, size_t *e);
+
+bool c4_eq(un a, un b);
