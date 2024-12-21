@@ -18,25 +18,24 @@ typedef tbl *tkn_tbl_i(void);
 
 typedef struct _tkn tkn;
 
-typedef struct {
-    size_t id, lno, cno, pos;
-} tkn_m;
+// on match
+typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 
-typedef tkn_stat tkn_pf(tkn *const t, tkn_m *const m);
+// match te[id;lno;cno;pos;len]
 
 typedef struct _tkn {
     ssize_t r;
     size_t lno, cno, pos;
     alfn *ta;
-    frfn *tf;
+    frfn *tf, *ef; // entry free
     tkn_tbl_i *ttif;
     tkn_pf *df; // called when nothing matches
     tbl *t; // trie
     mc *s;
 } tkn;
 
-tkn *tkn_i(alfn *ta, frfn *tf, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
+tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
-void tkn_a(tkn *const t, const char *const s, size_t id, tkn_pf *pf);
+void tkn_a(tkn *const t, const char *const s, ssize_t id, tkn_pf *pf);
 
 void tkn_f(tkn *t);
