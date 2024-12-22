@@ -40,4 +40,6 @@ void tkn_a(tkn *const t, const char *const s, ssize_t id, tkn_pf *pf);
 
 tkn_stat tkn_n(tkn *const t, te *const m);
 
+void tkn_s(tkn *const t, te *const m);
+
 void tkn_f(tkn *t);
