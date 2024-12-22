@@ -1,5 +1,6 @@
 
 #include "../../src/lib/tkn.h"
+#include <ctype.h>
 #include <stdio.h>
 
 #define TOKEN(N) TOKEN_##N
@@ -10,7 +11,9 @@ typedef enum {
     TOKEN(SC),
     TOKEN(SCOC),
     TOKEN(SIG),
-    TOKEN(NL)
+    TOKEN(NL),
+    TOKEN(VAR),
+    TOKEN(NUM)
 } token;
 
 static size_t sh(un v) {
@@ -31,9 +34,26 @@ static void entry_free(void *v) {
 }
 
 static tkn_stat df(tkn *const t, te *const m) {
-    (void) t;
-    (void) m;
-    return TKN_STAT(INV);
+    t->cno = m->d[2].u6;
+    t->pos = m->d[3].u6;
+    size_t e = 0;
+    un c = c4_g((char*) t->s->d, t->pos, &e);
+    while (isalnum(c.c.a)) {
+        t->cno++;
+        t->pos = e + 1;
+        c = c4_g((char*) t->s->d, t->pos, &e);
+    }
+    m->d[4].u6 = t->pos;
+    m->d[0].i6 = TOKEN(VAR);
+    return TKN_STAT(OK);
+}
+
+static tkn_stat num(tkn *const t, te *const m) {
+    while (isdigit(t->s->d[t->pos])) {
+        t->pos++;
+        m->d[4].u6++;
+    }
+    return TKN_STAT(OK);
 }
 
 static tkn_stat nl(tkn *const t, te *const m) {
@@ -73,9 +93,20 @@ static void tkn_p(tbl *tl, size_t idnt) {
 }
 
 static void btest(void) {
-    const char *pgm = "sigma Σ   \n   sig ΣΩ";
+    const char *pgm = "sigma 123 Σ  si \n   sig ΣΩ";
+    printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     tkn_a(t, " ", TOKEN(WS), &ws);
+    tkn_a(t, "0", TOKEN(NUM), &num);
+    tkn_a(t, "1", TOKEN(NUM), &num);
+    tkn_a(t, "2", TOKEN(NUM), &num);
+    tkn_a(t, "3", TOKEN(NUM), &num);
+    tkn_a(t, "4", TOKEN(NUM), &num);
+    tkn_a(t, "5", TOKEN(NUM), &num);
+    tkn_a(t, "6", TOKEN(NUM), &num);
+    tkn_a(t, "7", TOKEN(NUM), &num);
+    tkn_a(t, "8", TOKEN(NUM), &num);
+    tkn_a(t, "9", TOKEN(NUM), &num);
     tkn_a(t, "sigma", TOKEN(SWORD), &ft);
     tkn_a(t, "sig", TOKEN(SIG), &ft);
     tkn_a(t, "Σ", TOKEN(SC), &ft);
