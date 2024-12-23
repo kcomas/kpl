@@ -12,7 +12,7 @@ mc *mc_i(size_t s, alfn *ma, frfn *mf) {
 }
 
 mc *mc_i_cstr(const char *const s, alfn *ma, frfn *mf) {
-    size_t l = strlen(s);
+    size_t l = strlen(s) + sizeof(uint8_t); // len of string incs null byte
     mc *m = mc_i(l, ma, mf);
     m->l = l;
     memcpy(m->d, s, l);

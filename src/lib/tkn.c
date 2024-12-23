@@ -58,7 +58,6 @@ tkn_stat tkn_n(tkn *const t, te *const m) {
     m->d[2].u6 = t->cno;
     m->d[3].u6 = t->pos;
     m->d[4].u6 = 0;
-    if (t->pos >= t->s->l) return TKN_STAT(END);
     un c = c4_g((char*) t->s->d, t->pos, &e);
     if (c.c.a == '\0') return TKN_STAT(END);
     tbl *tl = t->t;
@@ -69,12 +68,11 @@ tkn_stat tkn_n(tkn *const t, te *const m) {
         tl = (tbl*) kv->d[3].p;
         t->pos = e + 1;
         t->cno++;
-        if ((tkn_pf*) kv->d[2].p) {
+        if (kv->d[2].p) {
             pf = (tkn_pf*) kv->d[2].p;
             m->d[0] = kv->d[1];
             m->d[4].u6 = t->pos;
         }
-        if (t->pos >= t->s->l) break;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
     return pf(t, m);
