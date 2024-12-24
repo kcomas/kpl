@@ -31,8 +31,8 @@ static tkn_stat df(tkn *const t, te *const m) {
         t->pos = e + 1;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
+    m->d[0].u6 = TOKEN(VAR);
     m->d[4].u6 = t->pos;
-    m->d[0].i6 = TOKEN(VAR);
     return TKN_STAT(OK);
 }
 

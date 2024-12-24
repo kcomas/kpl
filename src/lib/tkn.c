@@ -3,8 +3,9 @@
 
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
     tkn *t = ta(sizeof(tkn));
+    t->idc = TOKEN(USR);
     t->r = t->lno = t->cno = 1;
-    t->idc = t->pos = 0;
+    t->pos = 0;
     t->ta = ta;
     t->tf = tf;
     t->ef = ef;
@@ -21,7 +22,7 @@ static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, tkn_pf 
     for (;;) {
         te *kv = te_i(4, t->ta, t->ef);
         kv->d[0] = c;
-        kv->d[1] = I6(-1);
+        kv->d[1] = I6(TOKEN(NF));
         kv->d[3].p = t->ttif();
         tbl_a(tl, kv);
         tl = kv->d[3].p;
@@ -33,7 +34,7 @@ static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, tkn_pf 
             return kv->d[1].i6;
         }
     }
-    return -1;
+    return TOKEN(NF);
 }
 
 // tbl entry te[c4;id(-1 for inv);tkn_pf;tbl]
@@ -48,14 +49,15 @@ ssize_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf) {
         p = e + 1;
         c = c4_g(s, p, &e);
     }
-    kv->d[1] = I6(t->idc++);
+    if (kv->d[1].u6) return kv->d[1].u6;
+    kv->d[1] = U6(t->idc++);
     kv->d[2].p = pf;
-    return kv->d[1].i6;
+    return kv->d[1].u6;
 }
 
 tkn_stat tkn_n(tkn *const t, te *const m) {
     size_t e = 0;
-    m->d[0].i6 = -1;
+    m->d[0].u6 = 0;
     m->d[1].u6 = t->lno;
     m->d[2].u6 = t->cno;
     m->d[3].u6 = t->pos;
