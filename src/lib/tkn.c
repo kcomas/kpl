@@ -37,8 +37,8 @@ static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, tkn_pf 
     return TOKEN(NF);
 }
 
-// tbl entry te[c4;id(-1 for inv);tkn_pf;tbl]
-ssize_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf) {
+// tbl entry te[c4;id(0 for nf);tkn_pf;tbl]
+size_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf) {
     tbl *tl = t->t;
     size_t p = 0, e = 0;
     un c = c4_g(s, p, &e);
