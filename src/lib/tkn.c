@@ -16,35 +16,35 @@ tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
     return t;
 }
 
-static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, tkn_pf *pf) {
+static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, size_t id, tkn_pf *pf) {
     size_t e = 0;
     un c = c4_g(s, p, &e);
     for (;;) {
         te *kv = te_i(4, t->ta, t->ef);
         kv->d[0] = c;
-        kv->d[1] = I6(TOKEN(NF));
+        kv->d[1] = I6(TOKEN(UN));
         kv->d[3].p = t->ttif();
         tbl_a(tl, kv);
         tl = kv->d[3].p;
         p = e + 1;
         c = c4_g(s, p, &e);
         if (c.c.a == '\0') {
-            kv->d[1] = I6(t->idc++);
+            kv->d[1] = id ? U6(id) : U6(t->idc++);
             kv->d[2].p = pf;
             return kv->d[1].i6;
         }
     }
-    return TOKEN(NF);
+    return TOKEN(UN);
 }
 
 // tbl entry te[c4;id(0 for nf);tkn_pf;tbl]
-size_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf) {
+size_t tkn_a(tkn *const t, const char *const s, size_t id, tkn_pf *pf) {
     tbl *tl = t->t;
     size_t p = 0, e = 0;
     un c = c4_g(s, p, &e);
     te *kv;
     while (c.c.a != '\0') {
-        if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) return entry_add(t, tl, p, s, pf);
+        if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) return entry_add(t, tl, p, s, id, pf);
         tl = (tbl*) kv->d[3].p;
         p = e + 1;
         c = c4_g(s, p, &e);
