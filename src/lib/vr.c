@@ -63,17 +63,13 @@ vr_stat vr_ab(vr **v, un d) {
 
 vr_stat vr_af(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
-    if ((*v)->l == (*v)->s) {
+    if ((*v)->l + 1 >= (*v)->s) {
         *v = resize(*v);
         vstat = VR_STAT(RES);
     }
-    un n;
-    for (size_t i = 1; i < (*v)->l; i++) {
-        n = (*v)->d[i];
-        (*v)->d[i] = (*v)->d[i - 1];
-    }
-    (*v)->d[(*v)->l++] = n;
+    for (size_t i = (*v)->l; i > 0; i--) (*v)->d[i] = (*v)->d[i - 1];
     (*v)->d[0] = d;
+    (*v)->l++;
     return vstat;
 }
 
@@ -89,6 +85,15 @@ vr_stat vr_sf(vr *const v, un *d) {
     v->l--;
     for (size_t i = 0; i < v->l; i++) v->d[i] = v->d[i + 1];
     return VR_STAT(OK);
+}
+
+void vr_r(vr *const v) {
+    un d;
+    for (size_t i = 0; i < v->l / 2; i++) {
+        d = v->d[i];
+        v->d[i] = v->d[v->l - 1 - i];
+        v->d[v->l - 1 - i] = d;
+    }
 }
 
 void vr_f(vr *v) {
