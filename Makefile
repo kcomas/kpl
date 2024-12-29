@@ -47,7 +47,7 @@ tbl$(LTNAME): $(LTBL_OBJS) $(LTEST)/tbl.o
 > $(CCOBJ)
 
 LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
-tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o
+tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
 LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS)

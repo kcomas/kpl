@@ -51,7 +51,7 @@ size_t tkn_a(tkn *const t, size_t id, const char *const s, tkn_pf *pf) {
     }
     if (kv->d[1].u6) return kv->d[1].u6;
     kv->d[1] = U6(t->idc++);
-    kv->d[2].p = pf;
+    kv->d[2] = P(pf);
     return kv->d[1].u6;
 }
 
