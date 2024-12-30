@@ -50,8 +50,8 @@ LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
 tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
-LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS)
-psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o
+LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
+psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
 clean:

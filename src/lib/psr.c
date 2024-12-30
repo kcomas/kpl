@@ -25,7 +25,18 @@ size_t psr_a(psr *const p, size_t id, psr_pf *pf, size_t l, ...) {
     while (l > 0) {
         tkn_id = va_arg(a, size_t);
         if (tbl_g_i(tl, U6(tkn_id), &kv) == TBL_STAT(NF)) {
-            // TODO add
+            for (size_t i = 0; i <= l; i++) {
+                kv = te_i(3, p->pa, p->ef);
+                kv->d[0] = U6(PARSER(UN));
+                kv->d[2].p = p->prti();
+                tbl_a(tl, kv);
+                tl = kv->d[2].p;
+                if (i < l) tkn_id = va_arg(a, size_t);
+            }
+            va_end(a);
+            kv->d[0] = id ? U6(id) : U6(p->idc++);
+            kv->d[1].p = pf;
+            return kv->d[0].u6;
         }
         tl = kv->d[2].p;
         l--;
