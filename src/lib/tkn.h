@@ -26,12 +26,8 @@ typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 
 typedef enum {
     TOKEN(UN) = 0, // unknown
-    TOKEN(VAR),
-    TOKEN(NUM),
-    TOKEN(WS),
-    TOKEN(NL),
-    TOKEN(SEMI),
-    TOKEN(USR)
+    TOKEN(_),
+    TOKEN(USR) = 1000
 } token;
 
 typedef struct _tkn {

@@ -9,6 +9,7 @@
 
 typedef enum {
     PSR_STAT(OK), // continue success
+    PSR_STAT(IGN), // continue and ignore
     PSR_STAT(INV), // exit error
     PSR_STAT(END) // exit success
 } psr_stat;
@@ -18,7 +19,7 @@ typedef struct _psr psr;
 // on match
 typedef psr_stat psr_pf(psr *const p, te **const n);
 
-// pt match te[tkn id;fn;tbl]
+// pt match te[tkn id;psr id;fn;tbl]
 
 // node te[id;data;parent;left;right;te[tkn]]
 
@@ -26,7 +27,8 @@ typedef psr_stat psr_pf(psr *const p, te **const n);
 
 typedef enum {
     PARSER(UN) = 0,
-    PARSER(USR)
+    PARSER(_),
+    PARSER(USR) = 1000
 } parser;
 
 typedef tbl* psr_tbl_i(void);

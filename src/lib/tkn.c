@@ -3,7 +3,7 @@
 
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
     tkn *t = ta(sizeof(tkn));
-    t->idc = TOKEN(USR);
+    t->idc = TOKEN(_);
     t->r = t->lno = t->cno = 1;
     t->pos = 0;
     t->ta = ta;
@@ -29,7 +29,8 @@ static size_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, size_t i
         p = e + 1;
         c = c4_g(s, p, &e);
         if (c.c.a == '\0') {
-            kv->d[1] = id ? U6(id) : U6(t->idc++);
+            if (id) kv->d[1] = U6(id);
+            else kv->d[1] = U6(t->idc++);
             kv->d[2].p = pf;
             return kv->d[1].u6;
         }
