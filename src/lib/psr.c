@@ -1,59 +1,53 @@
 
 #include "psr.h"
 
-psr *psr_i(alfn *pa, frfn *pf, frfn *ef, psr_tbl_i *prti, psr_pf *df, tkn *tt, vr *ts) {
+psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt) {
     psr *p = pa(sizeof(psr));
     p->r = 1;
-    p->idc = PARSER(_);
     p->pa = pa;
     p->pf = pf;
-    p->ef = ef;
-    p->prti = prti;
-    p->df = df;
+    p->pef = pef;
+    p->pti = pti;
     p->tt = tt;
-    p->ts = ts;
-    p->pt = prti();
+    p->pt = pti();
     return p;
 }
 
-size_t psr_a(psr *const p, size_t id, psr_pf *pf, size_t l, ...) {
-    tbl *tl = p->pt;
+size_t psr_a(psr *const p, size_t id, te *st, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...) {
+    tbl *pt = p->pt;
     te *kv;
-    va_list a;
-    size_t tkn_id;
-    va_start(a, l);
-    while (l > 0) {
-        tkn_id = va_arg(a, size_t);
-        if (tbl_g_i(tl, U6(tkn_id), &kv) == TBL_STAT(NF)) {
-            for (size_t i = 0; i < l; i++) {
-                kv = te_i(4, p->pa, p->ef);
-                kv->d[0] = U6(tkn_id);
-                kv->d[1] = U6(PARSER(UN));
-                kv->d[3] = P(p->prti());
-                tbl_a(tl, kv);
-                tl = kv->d[3].p;
-                if (i + 1 < l) tkn_id = va_arg(a, size_t);
+    size_t nid = 0;
+    va_list tkns;
+    va_start(tkns, nt);
+    while (nt > 0) {
+        size_t iid = va_arg(tkns, size_t);
+        if (tbl_g_i(pt, U6(iid), &kv) == TBL_STAT(NF)) {
+            while (nt > 0) {
+                kv = te_i(6, p->pa, p->pef);
+                kv->d[0] = U6(iid);
+                kv->d[5] = P(p->pti());
+                tbl_a(pt, kv);
+                pt = kv->d[5].p;
+                nt--;
             }
-            va_end(a);
-            if (id) kv->d[1] = U6(id);
-            else kv->d[1] = U6(p->idc++);
-            kv->d[2].p = pf;
-            return kv->d[1].u6;
+            kv->d[1] = U6(id);
+            kv->d[2] = P(st);
+            kv->d[3] = P(mf);
+            kv->d[4] = P(nf);
+            va_end(tkns);
+            return id;
         }
-        tl = kv->d[3].p;
-        l--;
+        nid = kv->d[0].u6;
+        pt = kv->d[4].p;
+        nt--;
     }
-    va_end(a);
-    if (kv->d[1].u6) return kv->d[1].u6;
-    kv->d[1] = U6(p->idc++);
-    kv->d[2] = P(pf);
-    return kv->d[1].u6;
+    va_end(tkns);
+    return nid;
 }
 
 void psr_f(psr *p) {
     if (!p || --p->r > 0) return;
     tkn_f(p->tt);
-    vr_f(p->ts);
     tbl_f(p->pt);
     p->pf(p);
 }

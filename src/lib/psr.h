@@ -9,19 +9,9 @@
 
 typedef enum {
     PSR_STAT(OK), // continue success
-    PSR_STAT(IGN), // continue and ignore
     PSR_STAT(INV), // exit error
     PSR_STAT(END) // exit success
 } psr_stat;
-
-typedef struct _psr psr;
-
-// on match
-typedef psr_stat psr_pf(psr *const p, te **const n);
-
-// pt match te[tkn id;psr id;fn;tbl]
-
-// node te[id;data;parent;left;right;te[tkn]]
 
 #define PARSER(N) PARSER_##N
 
@@ -31,23 +21,30 @@ typedef enum {
     PARSER(USR) = 1000
 } parser;
 
-typedef tbl* psr_tbl_i(void);
+typedef struct _psr psr;
+
+typedef tbl *psr_tbl_i(void);
+
+// m tkn match
+typedef te *psr_node_fn(psr *const p, const te *const m);
+
+// current node, next node
+typedef psr_stat psr_megre_fn(psr *const p, te **c, te *const n);
+
+// psr entry te[tkn_id;psr_id;te[stop tkn id](null for tknend);merge_fn;node_fn(null for none);tbl]
 
 typedef struct _psr {
     ssize_t r;
-    size_t idc;
     alfn *pa;
-    frfn *pf, *ef; // entry free
-    psr_tbl_i *prti;
-    psr_pf *df; // no match
-    tkn *tt; // token tree
-    vr *ts; // token stack
-    tbl *pt; // parse tree
+    frfn *pf, *pef;
+    psr_tbl_i *pti;
+    tkn *tt;
+    tbl *pt;
 } psr;
 
-psr *psr_i(alfn *pa, frfn *pf, frfn *ef, psr_tbl_i *prti, psr_pf *df, tkn *tt, vr *ts);
+psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt);
 
-// give zero for assigned id, llen ....token ids
-size_t psr_a(psr *const p, size_t id, psr_pf *pf, size_t l, ...);
+// returns 0 for insert fail
+size_t psr_a(psr *const p, size_t id, te *st, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
 
 void psr_f(psr *p);

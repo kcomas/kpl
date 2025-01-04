@@ -8,9 +8,9 @@
 #define TKN_STAT(N) TKN_STAT_##N
 
 typedef enum {
-    TKN_STAT(OK),
+    TKN_STAT(OK), // found tkn
     TKN_STAT(INV),
-    TKN_STAT(END)
+    TKN_STAT(END) // end of str
 } tkn_stat;
 
 typedef tbl *tkn_tbl_i(void);

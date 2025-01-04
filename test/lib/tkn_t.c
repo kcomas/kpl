@@ -1,6 +1,11 @@
 
 #include "tkn_t.h"
 
+void tkn_m_p(const te *const m, const mc *const s) {
+        printf("id:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
+    for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(s->d[i]);
+}
+
 size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
