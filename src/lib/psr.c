@@ -30,6 +30,7 @@ size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_megre_fn *
                 kv->d[6] = P(p->pti());
                 tbl_a(pt, kv);
                 pt = kv->d[6].p;
+                iid = va_arg(tkns, size_t);
                 nt--;
             }
             kv->d[1] = pid ? U6(pid) : U6(p->idc++);
@@ -70,7 +71,10 @@ psr_stat psr_n(psr *const p, te *const nh) {
             if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         }
         if (pm == PSR_MODE(NONE)) return PSR_STAT(INV);
-        if (nf) {
+        else if (pm == PSR_MODE(LOOP)) {
+            if (!nf) return PSR_STAT(INV);
+            // sub loop
+        } else if (nf) {
             te *pn;
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
             if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
