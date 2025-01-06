@@ -7,7 +7,7 @@ void psr_p(tbl *t, size_t idnt) {
         for (size_t i = 0; i < idnt; i++) putchar(' ');
         te *kv = h->d[0].p;
         printf("tid:%lu,pid:%lu\n", kv->d[0].u6, kv->d[1].u6);
-        psr_p(kv->d[6].p, idnt + 1);
+        psr_p(kv->d[7].p, idnt + 1);
         h = h->d[2].p;
     }
 }
@@ -22,7 +22,7 @@ tbl *psr_mktbl(void) {
 void psr_entry_free(void *p) {
     te *t = (te*) p;
     te_f(t->d[3].p);
-    tbl_f(t->d[6].p);
+    tbl_f(t->d[7].p);
     free(t);
 }
 
@@ -79,30 +79,53 @@ psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
     return PSR_STAT(OK);
 }
 
+psr_stat psr_lst_i(psr *const p, te **n) {
+    *n = node_i(p, NODE_TYPE(LST), 3);
+    (*n)->d[2].p = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
+    return PSR_STAT(OK);
+}
+
+psr_stat psr_lst_e(psr *const p, te *const e, te *const n) {
+    (void) p;
+    lst_ab(e->d[2].p, P(n));
+    return PSR_STAT(OK);
+}
+
 void node_p(const te *const n, const mc *const s, size_t idnt) {
+    te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
     printf("type:%lu,", n->d[0].u6);
     switch (n->d[0].u6) {
         case NODE_TYPE(INT):
-            putchar('[');
+            putchar('|');
             tkn_m_p(n->d[1].p, s);
-            printf("]\n");
+            printf("|\n");
             break;
         case NODE_TYPE(FLT):
-            putchar('[');
+            putchar('|');
             tkn_m_p(n->d[1].p, s);
             putchar(',');
             tkn_m_p(n->d[2].p, s);
             putchar(',');
             tkn_m_p(n->d[3].p, s);
-            printf("]\n");
+            printf("|\n");
             break;
         case NODE_TYPE(OP):
-            putchar('[');
+            putchar('|');
             tkn_m_p(n->d[1].p, s);
-            printf("]\n");
+            printf("|\n");
             node_p(n->d[2].p, s, idnt + 1);
             node_p(n->d[3].p, s, idnt + 1);
+            break;
+        case NODE_TYPE(LST):
+            putchar('|');
+            tkn_m_p(n->d[1].p, s);
+            printf("|\n");
+            h = ((lst*) n->d[2].p)->h;
+            while (h) {
+                node_p(h->d[0].p, s, idnt + 1);
+                h = h->d[2].p;
+            }
             break;
     }
 }
@@ -119,9 +142,13 @@ void node_f(void *p) {
             te_f(n->d[3].p);
             break;
         case NODE_TYPE(OP):
+            te_f(n->d[1].p);
             node_f(n->d[2].p);
             node_f(n->d[3].p);
+            break;
+        case NODE_TYPE(LST):
             te_f(n->d[1].p);
+            lst_f(n->d[2].p);
             break;
     }
     free(n);

@@ -1,6 +1,21 @@
 
 #include "tkn_t.h"
 
+void tkn_p(tbl *tl, size_t idnt) {
+    te *h = tl->i->h;
+    while (h) {
+        for (size_t i = 0; i < idnt; i++) putchar(' ');
+        te *kv = h->d[0].p;
+        c4 c = kv->d[0].c;
+        printf("%c%c%c%c,", c.a, c.b, c.c, c.d);
+        ssize_t id = kv->d[1].i6;
+        if (id > -1) printf("%ld", id);
+        putchar('\n');
+        if (kv->d[3].p) tkn_p(kv->d[3].p, idnt + 1);
+        h = h->d[2].p;
+    }
+}
+
 void tkn_m_p(const te *const m, const mc *const s) {
         printf("id:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
     for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(s->d[i]);

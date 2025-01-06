@@ -9,7 +9,6 @@ typedef enum {
     PCUST(FLT),
     PCUST(SUM),
     PCUST(SUB),
-    PCUST(WS)
 } pust;
 
 #define NODE_TYPE(N) NODE_TYPE_##N
@@ -17,7 +16,8 @@ typedef enum {
 typedef enum {
     NODE_TYPE(INT),
     NODE_TYPE(FLT),
-    NODE_TYPE(OP)
+    NODE_TYPE(OP),
+    NODE_TYPE(LST)
 } node_type;
 
 void psr_p(tbl *t, size_t idnt);
@@ -40,6 +40,11 @@ psr_stat psr_val_m(psr *const p, te *const nh, te *const n);
 psr_stat psr_op_i(psr *const p, te **n);
 
 psr_stat psr_op_m(psr *const p, te *const nh, te *const n);
+
+// node te[type;tkn_s;lst[node]]
+psr_stat psr_lst_i(psr *const p, te **n);
+
+psr_stat psr_lst_e(psr *const p, te *const e, te *const n);
 
 void node_p(const te *const n, const mc *const s, size_t idnt);
 
