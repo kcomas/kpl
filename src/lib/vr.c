@@ -96,8 +96,13 @@ void vr_r(vr *const v) {
     }
 }
 
+void vr_d(vr *v) {
+    if (v->df) for (size_t i = 0; i < v->l; i++) v->df(v->d[i].p);
+    v->l = 0;
+}
+
 void vr_f(vr *v) {
     if (!v || --v->r > 0) return;
-    if (v->df) for (size_t i = 0; i < v->l; i++) v->df(v->d[i].p);
+    vr_d(v);
     v->vf(v);
 }
