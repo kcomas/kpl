@@ -7,6 +7,7 @@
 typedef enum {
     PCUST(INT) = PARSER(USR),
     PCUST(SUM),
+    PCUST(SUB),
     PCUST(WS)
 } pust;
 
@@ -26,12 +27,12 @@ void psr_entry_free(void *p);
 // node te[type;tkn;....]
 psr_stat psr_val_i(psr *const p, te **n);
 
-psr_stat psr_val_m(psr *const p, te **h, void ***c, te *const n);
+psr_stat psr_val_m(psr *const p, te *const nh, te *const n);
 
 // node te[....left;right]
 psr_stat psr_op_i(psr *const p, te **n);
 
-psr_stat psr_op_m(psr *const p, te **h, void ***c, te *const n);
+psr_stat psr_op_m(psr *const p, te *const nh, te *const n);
 
 void node_p(const te *const n, const mc *const s, size_t idnt);
 
