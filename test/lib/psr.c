@@ -2,7 +2,7 @@
 #include "psr_t.h"
 
 void btest(void) {
-    const char *pgm = "0 Σ [12;5.4;5 - 4]";
+    const char *pgm = "0 Σ [12;5.4;5 - 4;15]";
     printf("%s\n", pgm);
     psr_stat pstat;
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
@@ -26,6 +26,7 @@ void btest(void) {
     if ((pstat = psr_n(p, nh, NULL)) != PSR_STAT(END)) exit(pstat);
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
     node_p(n, t->s, 0);
+    putchar('\n');
     te_f(stmt_stop);
     te_f(lst_stop);
     psr_f(p);

@@ -94,12 +94,12 @@ psr_stat psr_lst_e(psr *const p, te *const e, te *const n) {
 void node_p(const te *const n, const mc *const s, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
-    printf("type:%lu,", n->d[0].u6);
+    printf("(type:%lu,", n->d[0].u6);
     switch (n->d[0].u6) {
         case NODE_TYPE(INT):
             putchar('|');
             tkn_m_p(n->d[1].p, s);
-            printf("|\n");
+            printf("|)");
             break;
         case NODE_TYPE(FLT):
             putchar('|');
@@ -108,14 +108,16 @@ void node_p(const te *const n, const mc *const s, size_t idnt) {
             tkn_m_p(n->d[2].p, s);
             putchar(',');
             tkn_m_p(n->d[3].p, s);
-            printf("|\n");
+            printf("|)");
             break;
         case NODE_TYPE(OP):
             putchar('|');
             tkn_m_p(n->d[1].p, s);
             printf("|\n");
             node_p(n->d[2].p, s, idnt + 1);
+            putchar('\n');
             node_p(n->d[3].p, s, idnt + 1);
+            putchar(')');
             break;
         case NODE_TYPE(LST):
             putchar('|');
@@ -125,7 +127,9 @@ void node_p(const te *const n, const mc *const s, size_t idnt) {
             while (h) {
                 node_p(h->d[0].p, s, idnt + 1);
                 h = h->d[2].p;
+                if (h) putchar('\n');
             }
+            putchar(')');
             break;
     }
 }
