@@ -3,8 +3,6 @@
 
 void btest(void) {
     const char *pgm = "0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]";
-    //const char *pgm = "[1;2]";
-    //const char *pgm = "1 - 2";
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     tkn_standard(t);
     vr *v = vr_i(10, &malloc, (void*) &te_f, &free);
