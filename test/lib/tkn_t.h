@@ -8,6 +8,8 @@
 typedef enum {
     TCUST(NL) = TOKEN(USR),
     TCUST(WS),
+    TCUST(LS),
+    TCUST(RS),
     TCUST(NUM),
     TCUST(SEMI),
     TCUST(VAR)

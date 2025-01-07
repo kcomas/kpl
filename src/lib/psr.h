@@ -9,7 +9,6 @@
 
 typedef enum {
     PSR_STAT(OK), // continue success
-    PSR_STAT(NF), // exists with no action exit tkn
     PSR_STAT(INV), // exit error
     PSR_STAT(END) // exit success
 } psr_stat;
@@ -19,6 +18,7 @@ typedef enum {
 typedef enum {
     PSR_MODE(NONE), // no mode
     PSR_MODE(ONCE), // keep going if no stop tkns
+    PSR_MODE(STOP),
     PSR_MODE(LOOP) // until stop tkns
 } psr_mode;
 
@@ -62,6 +62,6 @@ psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
 size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
 
 // node holder, tkn match
-psr_stat psr_n(psr *const p, te *const nh, te *m);
+psr_stat psr_n(psr *const p, te *const nh);
 
 void psr_f(psr *p);
