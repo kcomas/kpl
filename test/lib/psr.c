@@ -30,21 +30,33 @@ static psr *ppsr(psr *p) {
     return p;
 }
 
-static void rpsr(psr *p) {
+static void phn_f(te *h) {
+    psr_f(h->d[0].p);
+    node_f(h->d[1].p);
+    free(h);
+}
+
+static te *rpsr(psr *p) {
     psr_stat pstat;
     te *nh = te_i(3, &malloc, &free);
     if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) exit(pstat);
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
-    printf("%s\n", p->tt->s->d);
-    node_p(n, p->tt->s, 0);
-    putchar('\n');
-    psr_f(p);
-    node_f(n);
     te_f(nh);
+    te *h = te_i(2, &malloc, (void*) &phn_f);
+    h->d[0] = P(p);
+    h->d[1] = P(n);
+    return h;
+}
+
+static te *ppnode(te *h) {
+    printf("%s\n", ((psr*) h->d[0].p)->tt->s->d);
+    node_p(h->d[1].p, ((psr*) h->d[0].p)->tt->s, 0);
+    putchar('\n');
+    return h;
 }
 
 int main(void) {
-    rpsr(ppsr(bpsr("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]")));
-    rpsr(bpsr("{3.2 - 2.1\n1 Σ [1;2;3]}"));
+    te_f(ppnode(rpsr(ppsr(bpsr("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]")))));
+    te_f(ppnode(rpsr(bpsr("{3.2 - 2.1\n1 Σ [1;2;3]}"))));
     return 0;
 }
