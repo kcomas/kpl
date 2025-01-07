@@ -30,27 +30,21 @@ static psr *ppsr(psr *p) {
     return p;
 }
 
-static void phn_f(te *h) {
-    psr_f(h->d[0].p);
-    node_f(h->d[1].p);
-    free(h);
-}
-
 static te *rpsr(psr *p) {
     psr_stat pstat;
-    te *nh = te_i(3, &malloc, &free);
+    te *nh = te_i(3, &malloc, &node_f);
     if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) exit(pstat);
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
-    te_f(nh);
-    te *h = te_i(2, &malloc, (void*) &phn_f);
-    h->d[0] = P(p);
-    h->d[1] = P(n);
-    return h;
+    nh->d[0] = P(p);
+    nh->d[1] = U6(NODE_TYPE(ROOT));
+    nh->d[2] = P(n);
+    n->d[0] = P(nh);
+    return nh;
 }
 
 static te *ppnode(te *h) {
     printf("%s\n", ((psr*) h->d[0].p)->tt->s->d);
-    node_p(h->d[1].p, ((psr*) h->d[0].p)->tt->s, 0);
+    node_p(h->d[2].p, 0);
     putchar('\n');
     return h;
 }
