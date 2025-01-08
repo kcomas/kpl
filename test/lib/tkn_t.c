@@ -25,7 +25,7 @@ size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
 
-void tkn_entry_free(void *v) {
+void tkn_entry_f(void *v) {
     te *t = (te*) v;
     tbl_f(t->d[3].p);
     free(t);

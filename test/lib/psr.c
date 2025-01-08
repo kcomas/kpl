@@ -2,10 +2,10 @@
 #include "psr_t.h"
 
 static psr *bpsr(const char *const pgm) {
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     tkn_standard(t);
     vr *v = vr_i(10, &malloc, (void*) &te_f, &free);
-    psr *p = psr_i(&malloc, &free, &psr_entry_free, &psr_mktbl, t, v);
+    psr *p = psr_i(&malloc, &free, &psr_entry_f, &psr_mktbl, t, v);
     te *lst_stp = te_i(1, &malloc, &free);
     lst_stp->d[0] = U6(tkn_a(t, TCUST(RS), "]", &tkn_ft));
     te *blk_stp = te_i(1, &malloc, &free);

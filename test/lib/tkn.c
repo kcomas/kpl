@@ -15,7 +15,7 @@ static void tknize(tkn *const t) {
 static void btest(void) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     tkn_standard(t);
     tkn_a(t, TOKEN(UN), "sigma", &tkn_ft);
     tkn_a(t, TOKEN(UN), "sig", &tkn_ft);
@@ -31,7 +31,7 @@ static void btest(void) {
 static void stest(void) {
     const char *pgm = "0 Σ [12;44;67]\n";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     tkn_standard(t);
     tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
     tkn_a(t, TCUST(SEMI), ";", &tkn_ft);

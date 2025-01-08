@@ -25,7 +25,7 @@ size_t tkn_sh(un v);
 
 tbl *tkn_mktbl(void);
 
-void tkn_entry_free(void *v);
+void tkn_entry_f(void *v);
 
 tkn_stat tkn_df(tkn *const t, te *const m);
 
