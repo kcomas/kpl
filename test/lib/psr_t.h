@@ -8,31 +8,41 @@ typedef enum {
     PCUST(INT) = PARSER(USR),
     PCUST(FLT),
     PCUST(VAR),
+    PCUST(TYPE),
     PCUST(SUM),
     PCUST(SUB),
     PCUST(ADD),
-    PCUST(EFN)
+    PCUST(EFN),
+    PCUST(AGN),
+    PCUST(CST)
 } pust;
 
 #define NODE_TYPE(N) NODE_TYPE_##N
 
 typedef enum {
     NODE_TYPE(ROOT),
+    NODE_TYPE(VAR),
+    NODE_TYPE(TYPE),
     NODE_TYPE(INT),
     NODE_TYPE(FLT),
     NODE_TYPE(OP),
-    NODE_TYPE(LST)
+    NODE_TYPE(LST),
+    NODE_TYPE(APLY)
 } node_type;
 
 psr *psr_b(const char *const pgm);
 
 void psr_p(tbl *t, size_t idnt);
 
-void node_f(void *p);
-
 tbl *psr_mktbl(void);
 
 void psr_entry_f(void *p);
+
+// node te[par;type;tkn;....]
+psr_stat psr_var_i(psr *const p, te **n);
+
+// node te[par;type;tkn;....]
+psr_stat psr_type_i(psr *const p, te **n);
 
 // node te[par;type;tkn;....]
 psr_stat psr_int_i(psr *const p, te **n);
@@ -51,6 +61,13 @@ psr_stat psr_op_m(psr *const p, te *const nh, te *const n);
 psr_stat psr_lst_i(psr *const p, te **n);
 
 psr_stat psr_lst_e(psr *const p, te *const e, te *const n);
+
+// node te[par;type;tkn_s;tgt;lst[node]]
+psr_stat psr_aply_i(psr *const p, te **n);
+
+psr_stat psr_aply_m(psr *const p, te *const nh, te *const n);
+
+psr_stat psr_aply_e(psr *const p, te *const e, te *const n);
 
 void node_p(const te *const n, size_t idnt);
 

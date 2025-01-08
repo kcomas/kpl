@@ -10,6 +10,8 @@ typedef enum {
     TCUST(WS),
     TCUST(LB),
     TCUST(RB),
+    TCUST(LP),
+    TCUST(RP),
     TCUST(LS),
     TCUST(RS),
     TCUST(NUM),
