@@ -7,8 +7,11 @@
 typedef enum {
     PCUST(INT) = PARSER(USR),
     PCUST(FLT),
+    PCUST(VAR),
     PCUST(SUM),
     PCUST(SUB),
+    PCUST(ADD),
+    PCUST(EFN)
 } pust;
 
 #define NODE_TYPE(N) NODE_TYPE_##N
@@ -20,6 +23,8 @@ typedef enum {
     NODE_TYPE(OP),
     NODE_TYPE(LST)
 } node_type;
+
+psr *psr_b(const char *const pgm);
 
 void psr_p(tbl *t, size_t idnt);
 
