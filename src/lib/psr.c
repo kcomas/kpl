@@ -62,7 +62,7 @@ psr_stat psr_n(psr *const p, te *const nh) {
         psr_megre_fn *mf = NULL;
         psr_node_fn *nf = NULL;
         tbl *pt = p->pt;
-        te *kv, *pn;
+        te *kv, *pn = NULL;
         while (tbl_g_i(pt, m->d[0], &kv) == TBL_STAT(OK)) {
             vr_ab(&p->ts, P(m));
             pm = kv->d[2].u6;
@@ -89,7 +89,8 @@ psr_stat psr_n(psr *const p, te *const nh) {
                 lnh->d[1] = P(NULL);
                 lnh->d[2] = P(NULL);
                 if ((pstat = psr_n(p, lnh)) != PSR_STAT(END)) return pstat;
-                if ((pstat = ef(p, pn, lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p)) != PSR_STAT(OK)) return pstat;
+                te *ln = lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p;
+                if (ln) if ((pstat = ef(p, pn, ln)) != PSR_STAT(OK)) return pstat;
                 for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
                 vr_d(p->ts);
             }
@@ -101,9 +102,9 @@ psr_stat psr_n(psr *const p, te *const nh) {
             m = te_i(5, p->pa, p->pf);
         } else if (nf && mf) {
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
-            vr_d(p->ts);
-            if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
+            if (pn) if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
         }
+        vr_d(p->ts);
     }
     te_f(m);
     return tstat == TKN_STAT(END) ? PSR_STAT(END) : PSR_STAT(INV);
