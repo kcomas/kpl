@@ -46,6 +46,7 @@ typedef psr_stat psr_each_fn(psr *const p, te *const en, te *const n);
 // psr entry te[tkn_id;psr_id;mode;te[stop_tkns];each_fn;merge_fn;node_fn(null for none);tbl]
 
 typedef struct _psr {
+    tkn_stat tstat;
     ssize_t r;
     size_t idc;
     alfn *pa;
