@@ -43,6 +43,6 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)${a;b;c}#{a+b+c}"))));
     te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
     te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
-    te_f(ppnode(rpsr(psr_b("{a`b`c\nd:[`x;`y;`z]}"))));
+    te_f(ppnode(rpsr(psr_b("{a`b`c\nd:#[1`x;2`y;3`z]}"))));
     return 0;
 }
