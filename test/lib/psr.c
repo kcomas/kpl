@@ -39,8 +39,10 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("{\n3.2 - 2.1\n1 Σ [1;2;3]\n}"))));
     te_f(ppnode(rpsr(psr_b("FN(I6;I6;FN(I6;I6))"))));
     te_f(ppnode(rpsr(psr_b("+(1;2)"))));
+    te_f(ppnode(rpsr(psr_b("-1+2"))));
+    te_f(ppnode(rpsr(psr_b("{-+4;-(+4)}"))));
     //te_f(ppnode(rpsr(psr_b("+(1;2"))));
-    te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)$[a;b;c]#{d:a+b+c;-(d)}"))));
+    te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)$[a;b;c]#{-a+b+c}"))));
     te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
     te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
     te_f(ppnode(rpsr(psr_b("{a`b`c\nd:#{1`x;{1+5-4}`y;3`z}}"))));

@@ -116,7 +116,7 @@ psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (!nh->d[1].p && !nh->d[2].p) {
-        nh->d[2].p = n;
+        nh->d[0] = nh->d[1] = P(n);
         return PSR_STAT(OK);
     }
     if (!nh->d[0].p) nh->d[0] = P(n);
@@ -163,9 +163,13 @@ psr_stat psr_aply_m(psr *const p, te *const nh, te *const n) {
     } else if (nh->d[1].p) {
         if (((te*) nh->d[1].p)->d[3].p || ((te*) nh->d[1].p)->d[4].p) return PSR_STAT(INV);
         n->d[3] = nh->d[1];
-        n->d[0] = ((te*) nh->d[1].p)->d[0];
-        ((te*) ((te*) nh->d[1].p)->d[0].p)->d[4] = P(n);
-        nh->d[1] = ((te*) nh->d[1].p)->d[0];
+        if (((te*) nh->d[1].p)->d[0].p) {
+            nh->d[1] = n->d[0] = ((te*) nh->d[1].p)->d[0];
+            ((te*) n->d[3].p)->d[0] = ((te*) n->d[0].p)->d[4] = P(n);
+        } else {
+            ((te*) nh->d[1].p)->d[0] = nh->d[2] = P(n);
+            nh->d[0] = nh->d[1] = P(NULL);
+        }
     } else {
         n->d[0] = ((te*) nh->d[2].p)->d[0];
         ((te*) nh->d[2].p)->d[0] = P(n);
