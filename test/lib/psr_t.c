@@ -191,6 +191,10 @@ psr_stat psr_sym_i(psr *const p, te **n) {
 psr_stat psr_sym_m(psr *const p, te *const nh, te *const n) {
     (void) p;
     if ((nh->d[1].p && nh->d[2].p) || (nh->d[1].p && !((te*) nh->d[1].p)->d[4].p)) return PSR_STAT(INV);
+    if (!nh->d[1].p && !nh->d[2].p) {
+        nh->d[2].p = n;
+        return PSR_STAT(OK);
+    }
     if (nh->d[1].p) {
         n->d[3] = ((te*) nh->d[1].p)->d[4];
         ((te*) nh->d[1].p)->d[4] = P(n);
@@ -272,8 +276,11 @@ void node_p(const te *const n, size_t idnt) {
        case NODE_TYPE(SYM):
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
-            printf("|\n");
-            node_p(n->d[3].p, idnt + 1);
+            printf("|");
+            if (n->d[3].p) {
+                putchar('\n');
+                node_p(n->d[3].p, idnt + 1);
+            }
             putchar(')');
             break;
     }
