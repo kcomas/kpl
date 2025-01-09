@@ -83,6 +83,21 @@ tkn_stat tkn_ws(tkn *const t, te *const m) {
     return TKN_STAT(OK);
 }
 
+tkn_stat tkn_sym(tkn *const t, te *const m) {
+    size_t e = 0;
+    un c = c4_g((char*) t->s->d, t->pos, &e); // `
+    c = c4_g((char*) t->s->d, t->pos, &e);
+    if (!isalnum(c.c.a)) return TKN_STAT(INV);
+    while (isalnum(c.c.a)) {
+        t->cno++;
+        t->pos = e + 1;
+        c = c4_g((char*) t->s->d, t->pos, &e);
+    }
+    m->d[0].u6 = TCUST(SYM);
+    m->d[4].u6 = t->pos;
+    return TKN_STAT(OK);
+}
+
 void tkn_standard(tkn *const t) {
     tkn_a(t, TCUST(WS), " ", &tkn_ws);
     tkn_a(t, TCUST(NL), "\n", &tkn_nl);
@@ -96,4 +111,5 @@ void tkn_standard(tkn *const t) {
     tkn_a(t, TCUST(NUM), "7", &tkn_num);
     tkn_a(t, TCUST(NUM), "8", &tkn_num);
     tkn_a(t, TCUST(NUM), "9", &tkn_num);
+    tkn_a(t, TCUST(SYM), "`", &tkn_sym);
 }

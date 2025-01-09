@@ -16,7 +16,8 @@ typedef enum {
     TCUST(RS),
     TCUST(NUM),
     TCUST(SEMI),
-    TCUST(VAR)
+    TCUST(VAR),
+    TCUST(SYM)
 } tcust;
 
 void tkn_p(tbl *tl, size_t idnt);
@@ -38,5 +39,7 @@ tkn_stat tkn_nl(tkn *const t, te *const m);
 tkn_stat tkn_ft(tkn *const t, te *const m);
 
 tkn_stat tkn_ws(tkn *const t, te *const m);
+
+tkn_stat tkn_sym(tkn *const t, te *const m);
 
 void tkn_standard(tkn *const t);

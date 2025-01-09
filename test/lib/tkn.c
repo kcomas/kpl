@@ -30,8 +30,8 @@ static void btest(void) {
 
 static void stest(void) {
     const char *pgm = "0 Σ [12;44;67]\n";
-    printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    printf("%s\n", pgm);
     tkn_standard(t);
     tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
     tkn_a(t, TCUST(SEMI), ";", &tkn_ft);
@@ -42,8 +42,19 @@ static void stest(void) {
     tkn_f(t);
 }
 
+static void symtest(void) {
+    const char *pgm = "a`b asdf`1234";
+    printf("%s\n", pgm);
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn_standard(t);
+    tkn_p(t->t, 0);
+    tknize(t);
+    tkn_f(t);
+}
+
 int main(void) {
     btest();
     stest();
+    symtest();
     return 0;
 }
