@@ -32,6 +32,7 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LS), "[", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LB), "{", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, &psr_aply_e, &psr_aply_m, &psr_aply_i, 1, tkn_a(t, TCUST(LP), "(", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, &psr_sym_m, &psr_sym_i, 1, TCUST(SYM));
     return p;
 }
 
@@ -182,6 +183,26 @@ psr_stat psr_aply_e(psr *const p, te *const e, te *const n) {
     return PSR_STAT(OK);
 }
 
+psr_stat psr_sym_i(psr *const p, te **n) {
+    *n = node_i(p, NODE_TYPE(SYM), 4);
+    return PSR_STAT(OK);
+}
+
+psr_stat psr_sym_m(psr *const p, te *const nh, te *const n) {
+    (void) p;
+    if ((nh->d[1].p && nh->d[2].p) || (nh->d[1].p && !((te*) nh->d[1].p)->d[4].p)) return PSR_STAT(INV);
+    if (nh->d[1].p) {
+        n->d[3] = ((te*) nh->d[1].p)->d[4];
+        ((te*) nh->d[1].p)->d[4] = P(n);
+        n->d[0] = nh->d[1];
+    } else {
+        n->d[3] = nh->d[2];
+        ((te*) n->d[3].p)->d[0] = P(n);
+        nh->d[2] = P(n);
+    }
+    return PSR_STAT(OK);
+}
+
 static const mc *node_root_mc(const te *const n) {
     if (n->d[1].u6 != NODE_TYPE(ROOT)) return node_root_mc(n->d[0].p);
     return ((psr*) n->d[0].p)->tt->s;
@@ -248,6 +269,13 @@ void node_p(const te *const n, size_t idnt) {
             }
             putchar(')');
             break;
+       case NODE_TYPE(SYM):
+            putchar('|');
+            tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
+            printf("|\n");
+            node_p(n->d[3].p, idnt + 1);
+            putchar(')');
+            break;
     }
 }
 
@@ -277,6 +305,9 @@ void node_f(void *p) {
         case NODE_TYPE(APLY):
             node_f(n->d[3].p);
             lst_f(n->d[4].p);
+            break;
+        case NODE_TYPE(SYM):
+            node_f(n->d[3].p);
             break;
     }
     free(n);
