@@ -46,7 +46,7 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
     te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
     te_f(ppnode(rpsr(psr_b("{a`b`c\nd:#![1`x;{1+5-4}`y;3`z]}"))));
-    te_f(ppnode(rpsr(psr_b("#?[{a #? 1}(a);{2}(b)]"))));
+    te_f(ppnode(rpsr(psr_b("#?[{c:2;a#?c:1;c}(a);{2}(b)]"))));
     te_f(ppnode(rpsr(psr_b("d#=[{x}(x`v);{0}`e]"))));
     return 0;
 }
