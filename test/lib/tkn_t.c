@@ -94,6 +94,7 @@ tkn_stat tkn_sym(tkn *const t, te *const m) {
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
     m->d[0].u6 = TCUST(SYM);
+    if (t->pos - m->d[3].u6 < 2) return TKN_STAT(INV);
     m->d[4].u6 = t->pos;
     return TKN_STAT(OK);
 }
