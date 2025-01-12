@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "te.h"
-
 #define TYPE(N) TYPE_##N
 
 typedef enum {
@@ -19,6 +17,7 @@ typedef enum {
     TYPE(SG),
     TYPE(TE),
     TYPE(ST),
+    TYPE(UN),
     TYPE(LL),
     TYPE(VR),
     TYPE(HH),
@@ -26,8 +25,3 @@ typedef enum {
     TYPE(FD),
     TYPE(TD)
 } type_id;
-
-typedef struct {
-
-
-} type;
