@@ -13,6 +13,8 @@ typedef enum {
     TYPE(I4),
     TYPE(I5),
     TYPE(I6),
+    TYPE(F5),
+    TYPE(F6),
     TYPE(C4),
     TYPE(SG),
     TYPE(TE),

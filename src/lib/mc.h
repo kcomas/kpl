@@ -20,6 +20,6 @@ mc *mc_c(mc *m);
 
 void mc_wa(mc **m, uint8_t b);
 
-void mc_wb(mc **m, uint8_t *b, size_t l);
+void mc_wb(mc **m, size_t l, uint8_t *b);
 
 void mc_f(mc *m);
