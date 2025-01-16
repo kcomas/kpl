@@ -7,13 +7,14 @@
 
 typedef enum {
     AS_STAT(OK),
-    AS_STAT(INV)
+    AS_STAT(INV),
+    AS_STAT(END)
 } as_stat;
 
 #define ARG_ID(N) ARG_ID_##N
 
 typedef enum {
-    ARG_ID(N), // none
+    ARG_ID(N), // none passed as NULL
     ARG_ID(R), // reg
     ARG_ID(RM), // reg mem
     ARG_ID(L), // label

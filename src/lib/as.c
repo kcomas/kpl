@@ -37,11 +37,11 @@ static te *add_code(as *const a, code_id cid, size_t op_lbl_id, te *arg1, te *ar
     // 8 pos
     // 9 len
     lst_ab(a->code, P(c));
-    return te_c(c);
+    return c;
 }
 
 static size_t add_lbl(as *const a, size_t lbl_id) {
-    te *c = add_code(a, CODE_ID(L), lbl_id, NULL, NULL, NULL, NULL, NULL, NULL);
+    te *c = te_c(add_code(a, CODE_ID(L), lbl_id, NULL, NULL, NULL, NULL, NULL, NULL));
     te *lbl = te_i(3, a->aa, a->lef);
     lbl->d[0] = c->d[1];
     lbl->d[1] = P(c);
