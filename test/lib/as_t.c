@@ -27,12 +27,44 @@ tbl *as_mktbl(void) {
     return t;
 }
 
+static const char *arg_id_str(size_t id) {
+    switch (id) {
+        case ARG_ID(N): return "N";
+        case ARG_ID(R): return "R";
+        case ARG_ID(RM): return "RM";
+        case ARG_ID(L): return "L";
+        case ARG_ID(M): return "M";
+        case ARG_ID(B): return "B";
+        case ARG_ID(W): return "W";
+        case ARG_ID(DW): return "DW";
+        case ARG_ID(QW): return "QW";
+        default:
+            break;
+    }
+    return "INV";
+}
+
+static const char *as_inst_str(size_t id) {
+    switch (id) {
+        case AS_INST(NOP): return "NOP";
+        case AS_INST(RET): return "RET";
+        case AS_INST(LEAVE): return "LEAVE";
+        case AS_INST(PUSH): return "PUSH";
+        case AS_INST(POP): return "POP";
+        case AS_INST(MOV): return "MOV";
+        default:
+            break;
+    }
+    return "INV";
+}
+
 void as_op_p(tbl *const ot, bool args, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
         for (size_t i = 0; i < idnt; i++) putchar(' ');
         te *o = h->d[0].p;
-        printf("%c(%lu)\n", args ? 'A' : 'O', o->d[0].u6);
+        if (args) printf("A(%s)\n", arg_id_str(o->d[0].u6));
+        else printf("O(%s)\n", as_inst_str(o->d[0].u6));
         if (o->d[3].p) as_op_p(o->d[3].p, true, idnt + 1);
         h = h->d[2].p;
     }
@@ -44,11 +76,11 @@ void as_code_p(const as *const a) {
         te *c = (te*) h->d[0].p;
         if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
         else {
-            printf("O(%lu) ", c->d[1].u6);
+            printf("O(%s) ", as_inst_str(c->d[1].u6));
             for (size_t i = 2; i < 6; i++) {
                 te *a = c->d[i].p;
                 if (!a) printf("A(N) ");
-                else printf("A(%lu):%lu ", a->d[0].u6, a->d[1].u6);
+                else printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
             }
             putchar('\n');
         }
