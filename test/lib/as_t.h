@@ -26,6 +26,12 @@ void as_code_p(const as *const a);
 
 void as_op_p(tbl *const ot, bool args, size_t idnt);
 
+bool as_ret(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+
+bool as_push_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+
+bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+
 bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
 
 void label_entry_f(void *p);

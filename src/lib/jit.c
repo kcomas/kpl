@@ -81,12 +81,12 @@ static uint8_t set_rex2(reg s, reg d) {
     return rex;
 }
 
-jit_stat jit_push(size_t *p, uint8_t *m, reg r) {
+jit_stat jit_push_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     return jit_b(p, m, 2, set_rex(r), 0x50 + rid(r));
 }
 
-jit_stat jit_pop(size_t *p, uint8_t *m, reg r) {
+jit_stat jit_pop_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     return jit_b(p, m, 2, set_rex(r), 0x58 + rid(r));
 }
