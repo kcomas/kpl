@@ -226,15 +226,15 @@ jit_stat jit_jmp_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0xEB, b);
 }
 
-jit_stat jit_jc_b(size_t *p, uint8_t *m, uint8_t b) {
+jit_stat jit_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x72, b);
 }
 
-jit_stat jit_jne_b(size_t *p, uint8_t *m, uint8_t b) {
+jit_stat jit_jnzjne_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x75, b);
 }
 
-jit_stat jit_jna_b(size_t *p, uint8_t *m, uint8_t b) {
+jit_stat jit_jbejna_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x76, b);
 }
 

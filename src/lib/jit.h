@@ -171,14 +171,14 @@ void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
 // jmp byte
 jit_stat jit_jmp_b(size_t *p, uint8_t *m, uint8_t b);
 
-// jc byte
-jit_stat jit_jc_b(size_t *p, uint8_t *m, uint8_t b);
+// jb jnae jc byte
+jit_stat jit_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b);
 
-// jne byte
-jit_stat jit_jne_b(size_t *p, uint8_t *m, uint8_t b);
+// jnz jne byte
+jit_stat jit_jnzjne_b(size_t *p, uint8_t *m, uint8_t b);
 
-// jna byte
-jit_stat jit_jna_b(size_t *p, uint8_t *m, uint8_t b);
+// jbe jna byte
+jit_stat jit_jbejna_b(size_t *p, uint8_t *m, uint8_t b);
 
 // setl rax
 jit_stat jit_setl_r(size_t *p, uint8_t *m, reg r);
