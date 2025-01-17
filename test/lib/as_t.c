@@ -4,7 +4,7 @@
 te *as_arg_r(size_t rid) {
     te *a = te_i(2, &malloc, &free);
     a->d[0] = U6(ARG_ID(R));
-    a->d[1] = I6(rid);
+    a->d[1] = U6(rid);
     return a;
 }
 
@@ -70,7 +70,7 @@ void as_op_p(tbl *const ot, bool args, size_t idnt) {
     }
 }
 
-void as_code_p(const as *const a) {
+void as_code_p(const as *const a, const uint8_t *const m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
@@ -79,8 +79,15 @@ void as_code_p(const as *const a) {
             printf("O(%s) ", as_inst_str(c->d[1].u6));
             for (size_t i = 2; i < 6; i++) {
                 te *a = c->d[i].p;
-                if (a) printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
-                else break;
+                if (!a) break;
+                printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
+
+            }
+            if (m) {
+                putchar('\n');
+                for (size_t x = 0; x < c->d[9].u6; x++) {
+                    printf("%X ", m[c->d[8].u6 + x]);
+                }
             }
             putchar('\n');
         }
@@ -102,7 +109,7 @@ bool as_push_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3,
     (void) arg2;
     (void) arg3;
     (void) arg4;
-    return jit_push_r(p, m, arg1->d[0].u6) == JIT_STAT(OK);
+    return jit_push_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
 }
 
 bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
@@ -110,14 +117,14 @@ bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, 
     (void) arg2;
     (void) arg3;
     (void) arg4;
-    return jit_pop_r(p, m, arg1->d[0].u6) == JIT_STAT(OK);
+    return jit_pop_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
 }
 
 bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
     (void) a;
     (void) arg3;
     (void) arg4;
-    return jit_mov_rr(p, m, arg1->d[0].u6, arg2->d[1].u6) == JIT_STAT(OK);
+    return jit_mov_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
 }
 
 void label_entry_f(void *p) {

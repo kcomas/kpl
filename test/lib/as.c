@@ -14,7 +14,11 @@ static void btest(void) {
     as_a(a, AS_INST(MOV), as_arg_r(R(AX)), as_arg_r(R(DI)), NULL, NULL);
     as_a(a, AS_INST(POP), as_arg_r(R(BP)), NULL, NULL, NULL);
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
-    as_code_p(a);
+    uint8_t *m = jit_mmap(1);
+    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    as_code_p(a, m);
+    printf("%ld\n", ((int64_t(*)(int64_t)) m)(1337));
+    jit_munmap(1, m);
     as_f(a);
 }
 
