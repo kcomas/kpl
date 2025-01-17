@@ -26,18 +26,16 @@ size_t tbl_g_s(const tbl* const t) {
     return t->b->l;
 }
 
-#define TBI(T, I) T->b->d[I].p
-#define TBIT(T, I) ((te*) ((te*) TBI(T, I))->d[0].p)
-
 static tbl_stat fdrm(tbl *t, un k, te **kv, bool rm) {
     size_t idx = t->hf(k) % t->b->l;
     size_t i = idx;
     do {
-        if (t->b->d[i].p == NULL) return TBL_STAT(NF);
-        else if (t->cf(TBIT(t, i)->d[0], k)) {
-            *kv = TBIT(t, i);
+        te *li = t->b->d[i].p;
+        if (li == NULL) return TBL_STAT(NF);
+        else if (t->cf(((te*) li->d[0].p)->d[0], k)) {
+            *kv = li->d[0].p;
             if (rm) {
-                lst_li_d(t->i, TBI(t, i));
+                lst_li_d(t->i, li);
                 t->b->d[i] = P(NULL);
             }
             return TBL_STAT(OK);
@@ -55,12 +53,12 @@ static bool ins(tbl *t, te *kv) {
     size_t idx = t->hf(kv->d[0]) % t->b->l;
     size_t i = idx;
     do {
-        if (t->b->d[i].p == NULL) {
+        te *li = t->b->d[i].p;
+        if (li == NULL) {
             lst_ab(t->i, P(kv));
             t->b->d[i].p = t->i->t; // weak ref
             return true;
-        } else if (t->cf(TBIT(t, i)->d[0], kv->d[0])) {
-            te *li = TBI(t, i);
+        } else if (t->cf(((te*) li->d[0].p)->d[0], kv->d[0])) {
             te_f(li->d[0].p);
             li->d[0].p = kv;
             return true;
