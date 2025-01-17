@@ -2,12 +2,9 @@
 #include "as_t.h"
 
 static void btest(void) {
-    as *a = as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst());
-    as_op_a(a, AS_INST(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
-    as_op_a(a, AS_INST(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
-    as_op_a(a, AS_INST(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
-    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
+    as *a = as_b();
     as_op_p(a->ops, false, 0);
+    as_a(a, AS_INST(NOP), NULL, NULL, NULL, NULL);
     as_lbl_a(a, 1);
     as_a(a, AS_INST(PUSH), as_arg_r(R(BP)), NULL, NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(BP)), as_arg_r(R(SP)), NULL, NULL);
@@ -17,7 +14,10 @@ static void btest(void) {
     uint8_t *m = jit_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
-    printf("%ld\n", ((int64_t(*)(int64_t)) m)(1337));
+    te *l1;
+    if (as_lbl_g_i(a, 1, &l1) == AS_STAT(INV)) exit(66);
+    l1 = l1->d[1].p;
+    printf("%ld\n", ((int64_t(*)(int64_t)) &m[l1->d[8].u6])(1337));
     jit_munmap(1, m);
     as_f(a);
 }

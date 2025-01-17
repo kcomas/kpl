@@ -8,7 +8,7 @@
 #define AS_INST(N) AS_INST_##N
 
 typedef enum {
-    AS_INST(NOP),
+    AS_INST(NOP) = 1,
     AS_INST(RET),
     AS_INST(LEAVE),
     AS_INST(PUSH),
@@ -33,6 +33,8 @@ bool as_push_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3,
 bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
 
 bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+
+as *as_b(void);
 
 void label_entry_f(void *p);
 

@@ -95,6 +95,15 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     }
 }
 
+bool as_nop(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg1;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    return jit_nop(p, m) == JIT_STAT(OK);
+}
+
 bool as_ret(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
     (void) a;
     (void) arg1;
@@ -125,6 +134,16 @@ bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3,
     (void) arg3;
     (void) arg4;
     return jit_mov_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
+}
+
+as *as_b(void) {
+    as *a = as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst());
+    as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
+    as_op_a(a, AS_INST(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
+    as_op_a(a, AS_INST(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
+    as_op_a(a, AS_INST(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
+    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
+    return a;
 }
 
 void label_entry_f(void *p) {
