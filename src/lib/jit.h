@@ -174,11 +174,32 @@ jit_stat jit_jmp_b(size_t *p, uint8_t *m, uint8_t b);
 // jb jnae jc byte
 jit_stat jit_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b);
 
+// jnb jae jnc byte
+jit_stat jit_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jz je btye
+jit_stat jit_jzje_b(size_t *p, uint8_t *m, uint8_t b);
+
 // jnz jne byte
 jit_stat jit_jnzjne_b(size_t *p, uint8_t *m, uint8_t b);
 
 // jbe jna byte
 jit_stat jit_jbejna_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jnbe ja byte
+jit_stat jit_jnbeja_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jl jnge byte
+jit_stat jit_jljnge_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jnl jge byte
+jit_stat jit_jnljge_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jle jng byte
+jit_stat jit_jlejng_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jnle jg
+jit_stat jit_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
 
 // setl rax
 jit_stat jit_setl_r(size_t *p, uint8_t *m, reg r);

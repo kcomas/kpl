@@ -8,6 +8,17 @@ te *as_arg_r(size_t rid) {
     return a;
 }
 
+static te *as_arg_v(arg_id id, un v) {
+    te *a = te_i(2, &malloc, &free);
+    a->d[0] = U6(id);
+    a->d[1] = v;
+    return a;
+}
+
+te *as_arg_qw(un v) {
+    return as_arg_v(ARG_ID(QW), v);
+}
+
 static size_t no_hsh(un d) {
     return d.u6;
 }
@@ -52,6 +63,8 @@ static const char *as_inst_str(size_t id) {
         case AS_INST(PUSH): return "PUSH";
         case AS_INST(POP): return "POP";
         case AS_INST(MOV): return "MOV";
+        case AS_INST(CALL): return "CALL";
+        case AS_INST(XOR): return "XOR";
         default:
             break;
     }
@@ -136,6 +149,29 @@ bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3,
     return jit_mov_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
 }
 
+bool as_mov_rv(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg3;
+    (void) arg4;
+    return jit_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == JIT_STAT(OK);
+}
+
+bool as_call_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    return jit_call_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
+}
+
+bool as_xor_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg3;
+    (void) arg4;
+    return jit_xor_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
+}
+
+
 as *as_b(void) {
     as *a = as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst());
     as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
@@ -143,6 +179,9 @@ as *as_b(void) {
     as_op_a(a, AS_INST(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
     as_op_a(a, AS_INST(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
     as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
+    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
+    as_op_a(a, AS_INST(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
+    as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
     return a;
 }
 

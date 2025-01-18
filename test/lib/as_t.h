@@ -13,10 +13,14 @@ typedef enum {
     AS_INST(LEAVE),
     AS_INST(PUSH),
     AS_INST(POP),
-    AS_INST(MOV)
+    AS_INST(MOV),
+    AS_INST(CALL),
+    AS_INST(XOR)
 } as_inst;
 
 te *as_arg_r(size_t rid);
+
+te *as_arg_qw(un v);
 
 lst *as_mklst(void);
 
