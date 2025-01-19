@@ -8,6 +8,13 @@ te *as_arg_r(size_t rid) {
     return a;
 }
 
+te *as_arg_l(size_t lid) {
+    te *a = te_i(2, &malloc, &free);
+    a->d[0] = U6(ARG_ID(L));
+    a->d[1] = U6(lid);
+    return a;
+}
+
 static te *as_arg_v(arg_id id, un v) {
     te *a = te_i(2, &malloc, &free);
     a->d[0] = U6(id);
@@ -17,6 +24,10 @@ static te *as_arg_v(arg_id id, un v) {
 
 te *as_arg_qw(un v) {
     return as_arg_v(ARG_ID(QW), v);
+}
+
+te *as_arg_b(uint8_t b) {
+    return as_arg_v(ARG_ID(B), U3(b));
 }
 
 static size_t no_hsh(un d) {
@@ -56,19 +67,26 @@ static const char *arg_id_str(size_t id) {
 }
 
 static const char *as_inst_str(size_t id) {
-    switch (id) {
-        case AS_INST(NOP): return "NOP";
-        case AS_INST(RET): return "RET";
-        case AS_INST(LEAVE): return "LEAVE";
-        case AS_INST(PUSH): return "PUSH";
-        case AS_INST(POP): return "POP";
-        case AS_INST(MOV): return "MOV";
-        case AS_INST(CALL): return "CALL";
-        case AS_INST(XOR): return "XOR";
-        default:
-            break;
-    }
-    return "INV";
+    static const char *insts[] = {
+        "_START",
+        "NOP",
+        "RET",
+        "LEAVE",
+        "PUSH",
+        "POP",
+        "MOV",
+        "CALL",
+        "XOR",
+        "CMP",
+        // jmps
+        "JMP",
+        "JNL",
+        "JGE",
+        "_END"
+    };
+    const char *s = "INV";
+    if (id > AS_INST(_START) && id < AS_INST(_END)) s = insts[id];
+    return s;
 }
 
 void as_op_p(tbl *const ot, bool args, size_t idnt) {
@@ -87,6 +105,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
+        printf("%lu:", c->d[8].u6);
         if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
         else {
             printf("O(%s) ", as_inst_str(c->d[1].u6));
@@ -97,7 +116,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
 
             }
             if (m) {
-                putchar('\n');
+                printf("\n ");
                 for (size_t x = 0; x < c->d[9].u6; x++) {
                     printf("%X ", m[c->d[8].u6 + x]);
                 }
@@ -108,80 +127,106 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     }
 }
 
-bool as_nop(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg1;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    return jit_nop(p, m) == JIT_STAT(OK);
+#define INST(N) static bool as_##N(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg1; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    return jit_##N(p, m) == JIT_STAT(OK); \
 }
 
-bool as_ret(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg1;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    return jit_ret(p, m) == JIT_STAT(OK);
+INST(nop);
+INST(ret);
+INST(leave);
+
+#define INST_R(N) static bool as_##N##_r(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    return jit_##N##_r(p, m, arg1->d[1].u6) == JIT_STAT(OK); \
 }
 
-bool as_push_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    return jit_push_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
+INST_R(push);
+INST_R(pop);
+INST_R(call);
+
+#define INST_RR(N) static bool as_##N##_rr(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    return jit_##N##_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK); \
 }
 
-bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    return jit_pop_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
-}
+INST_RR(mov);
+INST_RR(xor);
+INST_RR(cmp);
 
-bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
     (void) a;
-    (void) arg3;
-    (void) arg4;
-    return jit_mov_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
-}
-
-bool as_mov_rv(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
+    (void) ci;
     (void) arg3;
     (void) arg4;
     return jit_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == JIT_STAT(OK);
 }
 
-bool as_call_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    return jit_call_r(p, m, arg1->d[1].u6) == JIT_STAT(OK);
+#define INST_J_B(N, M) static bool as_##N##_b(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    return jit_##M##_b(p, m, arg1->d[1].u3) == JIT_STAT(OK); \
 }
 
-bool as_xor_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
-    (void) a;
-    (void) arg3;
-    (void) arg4;
-    return jit_xor_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK);
+//INST_J_B(jmp, jmp);
+
+#define INST_J_L(N, M) static bool as_##N##_l(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+    (void) a; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    te *lblc = as_lbl_g_c(a, arg1->d[1].u6); \
+    if (!lblc) return false; \
+    if (lblc->d[9].u6) return jit_##M##_b(p, m, lblc->d[8].u6 - *p - 2) == JIT_STAT(OK); /* TODO check distance */ \
+    else if (as_lbl_s_c(a, 1, ci) != AS_STAT(OK)) return false; \
+    for (size_t i = 0; i < 6; i++) jit_nop(p, m); \
+    return true; \
 }
 
+// label code, fill code
+#define INST_J_F(N, M) static bool as_##N##_f(as *const a, uint8_t *m, te *const lc, te *const fc) { \
+    (void) a; \
+    size_t p = fc->d[8].u6; \
+    return jit_##M##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == JIT_STAT(OK); \
+}
+
+INST_J_L(jnl, jnljge);
+INST_J_F(jnl, jnljge);
+
+static void jmps(as *a) {
+    //as_op_a(a, AS_INST(JMP), ARG_ID(B), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_b, NULL);
+    as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnl_l, &as_jnl_f);
+}
 
 as *as_b(void) {
     as *a = as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst());
     as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
     as_op_a(a, AS_INST(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
+    as_op_a(a, AS_INST(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_leave, NULL);
     as_op_a(a, AS_INST(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
     as_op_a(a, AS_INST(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
     as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
     as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
+    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
     as_op_a(a, AS_INST(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
     as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
+    as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
+    jmps(a);
     return a;
 }
 

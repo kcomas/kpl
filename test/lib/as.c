@@ -1,42 +1,65 @@
 
 #include "as_t.h"
 
+static void as_printf(as *const a, const char *fmt) {
+    as_a(a, AS_INST(XOR), as_arg_r(R(AX)), as_arg_r(R(AX)), NULL, NULL);
+    as_a(a, AS_INST(MOV), as_arg_r(R(DI)), as_arg_qw(P(fmt)), NULL, NULL);
+    as_a(a, AS_INST(MOV), as_arg_r(R(10)), as_arg_qw(P(&printf)), NULL, NULL);
+    as_a(a, AS_INST(CALL), as_arg_r(R(10)), NULL, NULL, NULL);
+}
+
 static void btest(void) {
     as *a = as_b();
     as_op_p(a->ops, false, 0);
+    printf(">>>> BTEST\n");
     as_a(a, AS_INST(NOP), NULL, NULL, NULL, NULL);
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
     as_lbl_a(a, 1);
     as_a(a, AS_INST(PUSH), as_arg_r(R(BP)), NULL, NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(BP)), as_arg_r(R(SP)), NULL, NULL);
     as_a(a, AS_INST(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
-    as_a(a, AS_INST(XOR), as_arg_r(R(AX)), as_arg_r(R(AX)), NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)), NULL, NULL);
-    as_a(a, AS_INST(MOV), as_arg_r(R(DI)), as_arg_qw(P("Jit Value: %ld\n")), NULL, NULL);
-    as_a(a, AS_INST(MOV), as_arg_r(R(10)), as_arg_qw(P(&printf)), NULL, NULL);
-    as_a(a, AS_INST(CALL), as_arg_r(R(10)), NULL, NULL, NULL);
+    as_printf(a, "Jit Value %ld\n");
     as_a(a, AS_INST(POP), as_arg_r(R(AX)), NULL, NULL, NULL);
     as_a(a, AS_INST(POP), as_arg_r(R(BP)), NULL, NULL, NULL);
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
     uint8_t *m = jit_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
-    te *l1;
-    if (as_lbl_g_i(a, 1, &l1) == AS_STAT(INV)) exit(66);
-    l1 = l1->d[1].p;
+    te *l1c = as_lbl_g_c(a, 1);
+    if (!l1c) exit(66);
     printf("Call At Start: %ld\n", ((int64_t(*)(int64_t)) m)(1337));
-    printf("Call at L(1): %ld\n", ((int64_t(*)(int64_t)) &m[l1->d[8].u6])(1337));
+    printf("Call at L(1): %ld\n", ((int64_t(*)(int64_t)) &m[l1c->d[8].u6])(1337));
     jit_munmap(1, m);
     as_f(a);
+    printf("<<<< BTEST\n");
 }
 
-static void ltest(void) {
+static void iftest(void) {
+    printf(">>>> IFTEST\n");
     as *a = as_b();
+    as_a(a, AS_INST(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
+    as_a(a, AS_INST(MOV), as_arg_r(R(CX)), as_arg_b(5), NULL, NULL);
+    as_a(a, AS_INST(CMP), as_arg_r(R(DI)), as_arg_r(R(CX)), NULL, NULL);
+    as_a(a, AS_INST(JNL), as_arg_l(1), NULL, NULL, NULL);
+    as_a(a, AS_INST(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_printf(a, "%d Less then 5\n");
+    as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
+    as_lbl_a(a, 1);
+    as_a(a, AS_INST(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_printf(a, "%d Greater/Equal To 5\n");
+    as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
+    uint8_t *m = jit_mmap(1);
+    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    as_code_p(a, m);
+    ((void(*)(uint8_t)) m)(6);
+    jit_munmap(1, m);
     as_f(a);
+    printf("<<<< IFTEST\n");
 }
 
 int main(void) {
     btest();
-    ltest();
+    iftest();
     return 0;
 }

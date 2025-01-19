@@ -68,7 +68,9 @@ typedef struct _as {
     lst *code;
 } as;
 
-typedef bool as_code_fn(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+typedef bool as_code_fn(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+
+typedef bool as_lbl_fn(as *const a, uint8_t *m, te *lc, te *fc);
 
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code);
 
@@ -76,10 +78,13 @@ as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl 
 size_t as_lbl_a(as *const a, size_t lbl_id);
 
 // get lbl entry
-as_stat as_lbl_g_i(as *const a, size_t lbl_id, te **lbl);
+te *as_lbl_g_c(as *const a, size_t lbl_id);
+
+// set lbl code
+as_stat as_lbl_s_c(as *const a, size_t lbl_id, te *const c);
 
 // register op, not using varardic to avoid extra checks
-as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn);
+as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
 
 // add op
 as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
