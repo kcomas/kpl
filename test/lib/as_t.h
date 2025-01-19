@@ -2,7 +2,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "../../src/lib/jit.h"
+#include "../../src/lib/x64.h"
 #include "../../src/lib/as.h"
 
 #define AS_INST(N) AS_INST_##N

@@ -23,14 +23,14 @@ static void btest(void) {
     as_a(a, AS_INST(POP), as_arg_r(R(AX)), NULL, NULL, NULL);
     as_a(a, AS_INST(POP), as_arg_r(R(BP)), NULL, NULL, NULL);
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
-    uint8_t *m = jit_mmap(1);
+    uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
     te *l1c = as_lbl_g_c(a, 1);
     if (!l1c) exit(66);
     printf("Call At Start: %ld\n", ((int64_t(*)(int64_t)) m)(1337));
     printf("Call at L(1): %ld\n", ((int64_t(*)(int64_t)) &m[l1c->d[8].u6])(1337));
-    jit_munmap(1, m);
+    x64_munmap(1, m);
     as_f(a);
     printf("<<<< BTEST\n");
 }
@@ -49,12 +49,12 @@ static void iftest(void) {
     as_a(a, AS_INST(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
     as_printf(a, "%d Greater/Equal To 5\n");
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
-    uint8_t *m = jit_mmap(1);
+    uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
     ((void(*)(uint8_t)) m)(2);
     ((void(*)(uint8_t)) m)(7);
-    jit_munmap(1, m);
+    x64_munmap(1, m);
     as_f(a);
     printf("<<<< IFTEST\n");
 }

@@ -26,8 +26,8 @@ LMC_OBJS = $(LSRC)/mc.o
 mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o
 > $(CCOBJ)
 
-LJIT_OBJS = $(LSRC)/jit.o
-jit$(LTNAME): $(LJIT_OBJS) $(LTEST)/jit.o
+LX64_OBJS = $(LSRC)/x64.o
+x64$(LTNAME): $(LX64_OBJS) $(LTEST)/x64.o
 > $(CCOBJ)
 
 LTE_OBJS = $(LSRC)/te.o
@@ -55,7 +55,7 @@ psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
 LAS_OBJS = $(LSRC)/as.o $(LTBL_OBJS)
-as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LJIT_OBJS)
+as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LX64_OBJS)
 > $(CCOBJ)
 
 clean:
