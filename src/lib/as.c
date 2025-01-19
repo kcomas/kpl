@@ -1,7 +1,7 @@
 
 #include "as.h"
 
-te *arg_i(arg_id id, un d, alfn *aa, frfn *af) {
+te *arg_i(size_t id, un d, alfn *aa, frfn *af) {
     te *a = te_i(2, aa, af);
     a->d[0] = U6(id);
     a->d[1] = d;
@@ -84,15 +84,15 @@ static tbl *add_op_entry(as *const a, tbl *const co, te **kv, size_t id) {
     return (*kv)->d[3].p;
 }
 
-as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_lbl_fn *lbl_fn) {
+as_stat as_op_a(as *const a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn) {
     if (op_id == LABEL(UN)) return AS_STAT(INV);
     tbl *co = a->ops;
     te *kv;
     if (tbl_g_i(co, U6(op_id), &kv) == TBL_STAT(NF)) co = add_op_entry(a, co, &kv, op_id);
     else co = kv->d[3].p;
-    const arg_id args[] = {ai1, ai2, ai3, ai4};
+    const size_t args[] = {ai1, ai2, ai3, ai4};
     for (size_t i = 0; i < 4; i++) {
-        if (args[i] == ARG_ID(N)) break;
+        if (!args[i]) break;
         if (tbl_g_i(co, U6(args[i]), &kv) == TBL_STAT(NF)) co = add_op_entry(a, co, &kv, args[i]);
         else co = kv->d[3].p;
     }

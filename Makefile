@@ -55,7 +55,8 @@ psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
 LAS_OBJS = $(LSRC)/as.o $(LTBL_OBJS)
-as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LX64_OBJS)
+LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS)
+as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
 > $(CCOBJ)
 
 clean:

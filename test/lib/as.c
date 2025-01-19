@@ -9,7 +9,7 @@ static void as_printf(as *const a, const char *fmt) {
 }
 
 static void btest(void) {
-    as *a = as_b();
+    as *a = as_b(as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst()));
     as_op_p(a->ops, false, 0);
     printf(">>>> BTEST\n");
     as_a(a, AS_INST(NOP), NULL, NULL, NULL, NULL);
@@ -36,8 +36,8 @@ static void btest(void) {
 }
 
 static void iftest(void) {
+    as *a = as_b(as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst()));
     printf(">>>> IFTEST\n");
-    as *a = as_b();
     as_a(a, AS_INST(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(CX)), as_arg_b(5), NULL, NULL);
     as_a(a, AS_INST(CMP), as_arg_r(R(DI)), as_arg_r(R(CX)), NULL, NULL);
