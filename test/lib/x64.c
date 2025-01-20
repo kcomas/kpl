@@ -13,7 +13,7 @@ static void printj(size_t len, uint8_t *m) {
 
 typedef int64_t add3(int64_t a);
 
-static void radd3(uint8_t *m) {
+static void rmdd3(uint8_t *m) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -30,7 +30,7 @@ static void radd3(uint8_t *m) {
 
 typedef int64_t add(int64_t a, int64_t b);
 
-static void radd(uint8_t *m) {
+static void rmdd(uint8_t *m) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -66,7 +66,7 @@ static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
     x64_xor_rr(p, m, R(AX), R(AX));
     x64_mov_rq(p, m, R(15), P(&printf));
     x64_mov_rq(p, m, R(DI), P(fmt));
-    x64_mov_rra(p, m, R(SI), R(SP));
+    x64_mov_rrm(p, m, R(SI), R(SP));
     x64_call_r(p, m, R(15));
 }
 
@@ -80,10 +80,10 @@ static void rloop(uint8_t *m) {
     x64_push_r(&p, m, R(10));
     size_t lbl = p;
     x64_printf(&p, m, "V: %ld\n");
-    x64_mov_rra(&p, m, R(10), R(SP));
+    x64_mov_rrm(&p, m, R(10), R(SP));
     x64_inc_r(&p, m, R(10));
-    x64_mov_rar(&p, m, R(SP), R(10));
-    x64_mov_rrab(&p, m, R(8), R(SP), 8);
+    x64_mov_rmr(&p, m, R(SP), R(10));
+    x64_mov_rrmb(&p, m, R(8), R(SP), 8);
     x64_cmp_rr(&p, m, R(10), R(8));
     x64_jnzjne_b(&p, m, x64_jmpu_lblb(p, lbl));
     x64_mov_rr(&p, m, R(AX), R(10));
@@ -102,7 +102,7 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_push_r(p, m, R(DI)); // push n
     // if n == 0
     x64_mov_rq(p, m, R(9), U6(0));
-    x64_mov_rra(p, m, R(DI), R(SP));
+    x64_mov_rrm(p, m, R(DI), R(SP));
     x64_cmp_rr(p, m, R(9), R(DI));
     x64_jnzjne_b(p, m, 0);
     uint8_t *byte = x64_lb(*p, m);
@@ -113,7 +113,7 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_jmpd_lblb(byte, lbl, *p);
     // if n <= 2
     x64_mov_rq(p, m, R(9), U6(2));
-    x64_mov_rra(p, m, R(DI), R(SP));
+    x64_mov_rrm(p, m, R(DI), R(SP));
     x64_cmp_rr(p, m, R(9), R(DI));
     x64_jbjnaejc_b(p, m, 0);
     byte = x64_lb(*p, m);
@@ -123,13 +123,13 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_ret(p, m);
     x64_jmpd_lblb(byte, lbl, *p);
     // fib(n - 1)
-    x64_mov_rra(p, m, R(DI), R(SP));
+    x64_mov_rrm(p, m, R(DI), R(SP));
     x64_sub_rb(p, m, R(DI), 1);
     x64_mov_rq(p, m, R(AX), P(m));
     x64_call_r(p, m, R(AX));
     x64_push_r(p, m, R(AX));
     // fib(n - 2)
-    x64_mov_rrab(p, m, R(DI), R(BP), -8);
+    x64_mov_rrmb(p, m, R(DI), R(BP), -8);
     x64_sub_rb(p, m, R(DI), 2);
     x64_mov_rq(p, m, R(AX), P(m));
     x64_call_r(p, m, R(AX));
@@ -188,9 +188,9 @@ static void p2p(uint8_t *m) {
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_mov_rr(&p, m, R(DX), R(DI));
     x64_mov_rq(&p, m, R(DI), I6(0));
-    x64_mov_rra(&p, m, R(CX), R(DX));
+    x64_mov_rrm(&p, m, R(CX), R(DX));
     x64_mov_rq(&p, m, R(SI), I6(23));
-    x64_mov_rar(&p, m, R(CX), R(SI));
+    x64_mov_rmr(&p, m, R(CX), R(SI));
     x64_push_r(&p, m, R(CX));
     x64_lea_rrb(&p, m, R(DI), R(BP), -8);
     x64_mov_rq(&p, m, R(AX), P(&printp));
@@ -210,7 +210,7 @@ static void rskiploop(uint8_t *m) {
     x64_push_r(&p, m, R(AX));
     x64_mov_rr(&p, m, R(SI), R(DI));
     uint32_t loop = p;
-    x64_mov_rra(&p, m, R(AX), R(SP));
+    x64_mov_rrm(&p, m, R(AX), R(SP));
     x64_cmp_rr(&p, m, R(SI), R(AX));
     x64_jbjnaejc_dw(&p, m, 0);
     uint32_t test = p;
@@ -229,8 +229,8 @@ static void rskiploop(uint8_t *m) {
 
 int main(void) {
     uint8_t *m = x64_mmap(1);
-    radd3(m);
-    radd(m);
+    rmdd3(m);
+    rmdd(m);
     rsub(m);
     rloop(m);
     rfib(m);

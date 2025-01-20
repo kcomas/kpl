@@ -99,73 +99,73 @@ x64_stat x64_ret(size_t *p, uint8_t *m);
 // leave
 x64_stat x64_leave(size_t *p, uint8_t *m);
 
-// push rax
+// push rmx
 x64_stat x64_push_r(size_t *p, uint8_t *m, reg r);
 
-// pop rax
+// pop rmx
 x64_stat x64_pop_r(size_t *p, uint8_t *m, reg r);
 
-// call rax
+// call rmx
 x64_stat x64_call_r(size_t *p, uint8_t *m, reg r);
 
-// mov rax, 64bit value
+// mov rmx, 64bit value
 x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u);
 
-// mov rax, rdi
+// mov rmx, rdi
 x64_stat x64_mov_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// mov qword ptr[rdi], rax
-x64_stat x64_mov_rar(size_t *p, uint8_t *m, reg d, reg s);
+// mov qword ptr[rdi], rmx
+x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s);
 
-// mov qword ptr[rdi+dsp8], rax
-x64_stat x64_mov_rabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+// mov qword ptr[rdi+dsp8], rmx
+x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
-// mov rax, qword ptr [rdi]
-x64_stat x64_mov_rra(size_t *p, uint8_t *m, reg d, reg s);
+// mov rmx, qword ptr [rdi]
+x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s);
 
-// mov rax, qword ptr[rdi+dsp8]
-x64_stat x64_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+// mov rmx, qword ptr[rdi+dsp8]
+x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
-// lea rax, [rax+dsp8]
+// lea rmx, [rmx+dsp8]
 x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
-// inc rax
+// inc rmx
 x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r);
 
-// add rax, byte
+// add rmx, byte
 x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
-// add rax, rdi
+// add rmx, rdi
 x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // addsd xmm0, xmm1
 x64_stat x64_addsd_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// dec rax
+// dec rmx
 x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r);
 
-// sub rax, byte
+// sub rmx, byte
 x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
-// sub rax, rdi
+// sub rmx, rdi
 x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // subsd xmm0, xmm1
 x64_stat x64_subsd_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// and rax, rdi
+// and rmx, rdi
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// xor rax, rdi
+// xor rmx, rdi
 x64_stat x64_xor_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// cmp rax, rdi
+// cmp rmx, rdi
 x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// cmp rax, qword ptr[rsp]
-x64_stat x64_cmp_rra(size_t *p, uint8_t *m, reg d, reg s);
+// cmp rmx, qword ptr[rsp]
+x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
 
-// test rax, rdi
+// test rmx, rdi
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // jump up byte
@@ -222,5 +222,5 @@ x64_stat x64_jlejng_b(size_t *p, uint8_t *m, uint8_t b);
 // jnle jg
 x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
 
-// setl rax
+// setl rmx
 x64_stat x64_setl_r(size_t *p, uint8_t *m, reg r);
