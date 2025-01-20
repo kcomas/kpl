@@ -73,7 +73,7 @@ as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c);
 as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
 
 // add op
-as_stat as_a(as *a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
+as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4);
 
 as_stat as_n(as *a, uint8_t *m);
 

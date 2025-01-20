@@ -101,7 +101,7 @@ psr_stat psr_flt_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_val_m(psr *p, te *nh, te *n) {
+psr_stat psr_val_m(psr *p, te *restrict nh, te *restrict n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (nh->d[1].p) {
@@ -117,7 +117,7 @@ psr_stat psr_op_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_op_m(psr *p, te *nh, te *n) {
+psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (!nh->d[1].p && !nh->d[2].p) {
@@ -144,7 +144,7 @@ psr_stat psr_lst_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_lst_e(psr *p, te *e, te *n) {
+psr_stat psr_lst_e(psr *p, te *restrict e, te *restrict n) {
     (void) p;
     n->d[0] = P(e);
     lst_ab(e->d[3].p, P(n));
@@ -158,7 +158,7 @@ psr_stat psr_aply_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_m(psr *p, te *nh, te *n) {
+psr_stat psr_aply_m(psr *p, te *restrict nh, te *restrict n) {
     (void) p;
     if (!nh->d[1].p && !nh->d[2].p) {
         nh->d[2] = P(n);
@@ -188,7 +188,7 @@ psr_stat psr_aply_m(psr *p, te *nh, te *n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_e(psr *p, te *e, te *n) {
+psr_stat psr_aply_e(psr *p, te *restrict e, te *restrict n) {
     (void) p;
     n->d[0] = P(e);
     lst_ab(e->d[4].p, P(n));

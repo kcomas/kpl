@@ -101,7 +101,7 @@ as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t 
     return AS_STAT(OK);
 }
 
-as_stat as_a(as *a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4) {
+as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     tbl *co = a->ops;
     te *kv;
     as_code_fn *fn = NULL, *lbl_fn = NULL;
