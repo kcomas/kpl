@@ -65,13 +65,10 @@ void as_code_p(const as *const a, const uint8_t *const m) {
                 te *a = c->d[i].p;
                 if (!a) break;
                 printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
-
             }
             if (m) {
                 printf("\n ");
-                for (size_t x = 0; x < c->d[9].u6; x++) {
-                    printf("%X ", m[c->d[8].u6 + x]);
-                }
+                for (size_t x = 0; x < c->d[9].u6; x++) printf("%02X ", m[c->d[8].u6 + x]);
             }
             putchar('\n');
         }
