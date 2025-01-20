@@ -14,7 +14,7 @@ te *node(const char *v) {
     return t;
 }
 
-void node_p(const te *const t, size_t idnt) {
+void node_p(const te *t, size_t idnt) {
     if (!t || !t->d[0].p) return;
     for (size_t i = 0; i < idnt; i++) putchar('-');
     printf(" %s |\n", (char*) t->d[0].p);

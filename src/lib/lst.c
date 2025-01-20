@@ -19,11 +19,11 @@ lst *lst_c(lst *l) {
     return l;
 }
 
-size_t lst_g_l(const lst *const l) {
+size_t lst_g_l(const lst *l) {
     return l->l;
 }
 
-lst_stat lst_ab(lst *const l, un d) {
+lst_stat lst_ab(lst *l, un d) {
     te *li = te_i(3, l->ta, l->tf);
     li->d[0] = d;
     if (!l->h) l->h = l->t = li;
@@ -35,7 +35,7 @@ lst_stat lst_ab(lst *const l, un d) {
     return LST_STAT(OK);
 }
 
-lst_stat lst_af(lst *const l, un d) {
+lst_stat lst_af(lst *l, un d) {
     te *li = te_i(3, l->ta, l->tf);
     li->d[0] = d;
     if (!l->t) l->t = l->h = li;
@@ -47,7 +47,7 @@ lst_stat lst_af(lst *const l, un d) {
     return LST_STAT(OK);
 }
 
-lst_stat lst_sb(lst *const l, un *d) {
+lst_stat lst_sb(lst *l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
     te *li = l->t;
     l->t = l->t->d[1].p;
@@ -58,7 +58,7 @@ lst_stat lst_sb(lst *const l, un *d) {
     return LST_STAT(OK);
 }
 
-lst_stat lst_sf(lst *const l, un *d) {
+lst_stat lst_sf(lst *l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
     te *li = l->h;
     l->h = l->h->d[2].p;
@@ -69,7 +69,7 @@ lst_stat lst_sf(lst *const l, un *d) {
     return LST_STAT(OK);
 }
 
-void lst_li_d(lst *const l, te *li) {
+void lst_li_d(lst *l, te *li) {
     if (li == l->h) l->h = l->h->d[2].p;
     else if (li == l->t) l->t = l->t->d[1].p;
     if (li->d[1].p && li->d[2].p) {

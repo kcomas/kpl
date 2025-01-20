@@ -32,9 +32,9 @@ tbl *tbl_i(alfn *at, frfn *ft, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
 tbl *tbl_c(tbl *t);
 
-size_t tbl_g_l(const tbl *const t);
+size_t tbl_g_l(const tbl *t);
 
-size_t tbl_g_s(const tbl *const t);
+size_t tbl_g_s(const tbl *t);
 
 tbl_stat tbl_g_i(tbl *t, un k, te **kv);
 

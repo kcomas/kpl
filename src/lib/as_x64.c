@@ -41,7 +41,7 @@ static const char *as_inst_str(size_t id) {
     return s;
 }
 
-void as_op_p(tbl *const ot, bool args, size_t idnt) {
+void as_op_p(tbl *ot, bool args, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
         for (size_t i = 0; i < idnt; i++) putchar(' ');
@@ -53,7 +53,7 @@ void as_op_p(tbl *const ot, bool args, size_t idnt) {
     }
 }
 
-void as_code_p(const as *const a, const uint8_t *const m) {
+void as_code_p(const as *a, const uint8_t *m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
@@ -76,7 +76,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     }
 }
 
-#define INST(N) static bool as_##N(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+#define INST(N) static bool as_##N(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg1; \
@@ -90,7 +90,7 @@ INST(nop);
 INST(ret);
 INST(leave);
 
-#define INST_R(N) static bool as_##N##_r(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+#define INST_R(N) static bool as_##N##_r(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg2; \
@@ -103,7 +103,7 @@ INST_R(push);
 INST_R(pop);
 INST_R(call);
 
-#define INST_RR(N) static bool as_##N##_rr(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+#define INST_RR(N) static bool as_##N##_rr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg3; \
@@ -115,7 +115,7 @@ INST_RR(mov);
 INST_RR(xor);
 INST_RR(cmp);
 
-bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
+bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
     (void) ci;
     (void) arg3;
@@ -123,7 +123,7 @@ bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict
     return x64_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == X64_STAT(OK);
 }
 
-#define INST_J_B(N, M) static bool as_##N##_b(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+#define INST_J_B(N, M) static bool as_##N##_b(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg2; \
@@ -134,7 +134,7 @@ bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict
 
 //INST_J_B(jmp, jmp);
 
-#define INST_J_L(N) static bool as_##N##_l(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+#define INST_J_L(N) static bool as_##N##_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) arg2; \
     (void) arg3; \
@@ -148,7 +148,7 @@ bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict
 }
 
 // label code, fill code
-#define INST_J_F(N) static bool as_##N##_f(as *const a, uint8_t *m, te *restrict lc, te *restrict fc) { \
+#define INST_J_F(N) static bool as_##N##_f(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
     return x64_##N##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == X64_STAT(OK); \
@@ -160,7 +160,7 @@ bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict
 INST_J_LF(jmp);
 INST_J_LF(jnljge);
 
-as *as_b(as *const a) {
+as *as_b(as *a) {
     as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
     as_op_a(a, AS_INST(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
     as_op_a(a, AS_INST(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_leave, NULL);

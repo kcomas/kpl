@@ -1,7 +1,7 @@
 
 #include "tkn_t.h"
 
-static void tknize(tkn *const t) {
+static void tknize(tkn *t) {
     tkn_stat tstat;
     te *m = te_i(5, &malloc, &free);
     while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {

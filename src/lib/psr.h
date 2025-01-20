@@ -35,13 +35,13 @@ typedef struct _psr psr;
 typedef tbl *psr_tbl_i(void);
 
 // m tkn match
-typedef psr_stat psr_node_fn(psr *const p, te **n);
+typedef psr_stat psr_node_fn(psr *p, te **n);
 
 // node holder, ok to continue end to stop
-typedef psr_stat psr_megre_fn(psr *const p, te *const nh, te *const n);
+typedef psr_stat psr_megre_fn(psr *p, te *nh, te *n);
 
 // node for each, next node
-typedef psr_stat psr_each_fn(psr *const p, te *const en, te *const n);
+typedef psr_stat psr_each_fn(psr *p, te *en, te *n);
 
 // psr entry te[tkn_id;psr_id;mode;te[stop_tkns];each_fn;merge_fn;node_fn(null for none);tbl]
 
@@ -60,9 +60,9 @@ typedef struct _psr {
 psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
 
 // returns 0 for insert fail
-size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
+size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
 
 // node holder, tkn match
-psr_stat psr_n(psr *const p, te *const nh);
+psr_stat psr_n(psr *p, te *nh);
 
 void psr_f(psr *p);

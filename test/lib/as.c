@@ -1,7 +1,7 @@
 
 #include "as_t.h"
 
-static void as_printf(as *const a, const char *fmt) {
+static void as_printf(as *a, const char *fmt) {
     as_a(a, AS_INST(XOR), as_arg_r(R(AX)), as_arg_r(R(AX)), NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(DI)), as_arg_qw(P(fmt)), NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(10)), as_arg_qw(P(&printf)), NULL, NULL);
