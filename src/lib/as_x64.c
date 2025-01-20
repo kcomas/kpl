@@ -68,10 +68,17 @@ static const char *as_inst_str(size_t id) {
         "POP",
         "MOV",
         "CALL",
+        "INC",
+        "DEC",
         "XOR",
         "CMP",
-        // jmps
         "JMP",
+        "JB",
+        "JNAE",
+        "JC",
+        "JNB",
+        "JAE",
+        "JNC",
         "JNL",
         "JGE",
         "_END"
@@ -153,6 +160,8 @@ INST(leave);
 INST_R(push);
 INST_R(pop);
 INST_R(call);
+INST_R(inc);
+INST_R(dec);
 
 #define INST_RR(N) static bool as_##N##_rr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -214,6 +223,8 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     INST_J_F(N)
 
 INST_J_LF(jmp);
+INST_J_LF(jbjnaejc);
+INST_J_LF(jnbjaejnc);
 INST_J_LF(jnljge);
 
 as *as_b(as *a) {
@@ -226,10 +237,18 @@ as *as_b(as *a) {
     as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
     as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
     as_op_a(a, AS_INST(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
+    as_op_a(a, AS_INST(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
+    as_op_a(a, AS_INST(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
     as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
     as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
-    // jmps
     as_op_a(a, AS_INST(JMP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_l, &as_jmp_f);
+    as_op_a(a, AS_INST(JB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
+    as_op_a(a, AS_INST(JNAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
+    as_op_a(a, AS_INST(JC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
+    as_op_a(a, AS_INST(JNB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
+    as_op_a(a, AS_INST(JAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
+    as_op_a(a, AS_INST(JNC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
+    // TODO
     as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
     as_op_a(a, AS_INST(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
     return a;

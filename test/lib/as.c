@@ -59,8 +59,24 @@ static void iftest(void) {
     printf("<<<< IFTEST\n");
 }
 
+static void looptest(void) {
+    as *a = as_b(as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst()));
+    printf(">>>> LOOPTEST\n");
+    as_a(a, AS_INST(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)), NULL, NULL);
+    as_a(a, AS_INST(INC), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_printf(a, "V: %d\n");
+    as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
+    uint8_t *m = x64_mmap(1);
+    as_code_p(a, NULL);
+    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    ((void(*)(int32_t)) m)(31);
+    as_f(a);
+    printf("<<<< LOOPTEST\n");
+}
+
 int main(void) {
     btest();
     iftest();
+    looptest();
     return 0;
 }

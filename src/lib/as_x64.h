@@ -30,10 +30,18 @@ typedef enum {
     AS_INST(POP),
     AS_INST(MOV),
     AS_INST(CALL),
+    AS_INST(INC),
+    AS_INST(DEC),
     AS_INST(XOR),
     AS_INST(CMP),
-    // jmps
     AS_INST(JMP),
+    AS_INST(JB),
+    AS_INST(JNAE),
+    AS_INST(JC),
+    AS_INST(JNB),
+    AS_INST(JAE),
+    AS_INST(JNC),
+    // TODO
     AS_INST(JNL),
     AS_INST(JGE),
     AS_INST(_END)
