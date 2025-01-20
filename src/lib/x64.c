@@ -53,6 +53,28 @@ x64_stat x64_d(size_t *p, uint8_t *m, un v) {
     return X64_STAT(OK);
 }
 
+x64_stat x64_e(size_t *p, uint8_t *m, uint8_t size, un v) {
+    memset(m + *p, 0, size);
+    switch (size) {
+        case sizeof(uint8_t):
+            memcpy(m + *p, &v.u3, size);
+            break;
+        case sizeof(uint16_t):
+            memcpy(m + *p, &v.u4, size);
+            break;
+        case sizeof(uint32_t):
+            memcpy(m + *p, &v.u5, size);
+            break;
+        case sizeof(uint64_t):
+            memcpy(m + *p, &v.u6, size);
+            break;
+        default:
+            return X64_STAT(INV_SIZE);
+    }
+    *p += size;
+    return X64_STAT(OK);
+}
+
 x64_stat x64_nop(size_t *p, uint8_t *m) {
     return x64_a(p, m, 0x90);
 }
@@ -230,6 +252,11 @@ void x64_jmpd_lblb(uint8_t *byte, size_t from, size_t to) {
 
 x64_stat x64_jmp_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0xEB, b);
+}
+
+x64_stat x64_jmp_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_a(p, m, 0xE9);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b) {

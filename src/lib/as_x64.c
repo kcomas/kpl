@@ -57,7 +57,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
-        printf("%lu:", c->d[8].u6);
+        printf("%05lu:", c->d[8].u6);
         if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
         else {
             printf("O(%s) ", as_inst_str(c->d[1].u6));
@@ -79,7 +79,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     }
 }
 
-#define INST(N) static bool as_##N(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+#define INST(N) static bool as_##N(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg1; \
@@ -93,7 +93,7 @@ INST(nop);
 INST(ret);
 INST(leave);
 
-#define INST_R(N) static bool as_##N##_r(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+#define INST_R(N) static bool as_##N##_r(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg2; \
@@ -106,7 +106,7 @@ INST_R(push);
 INST_R(pop);
 INST_R(call);
 
-#define INST_RR(N) static bool as_##N##_rr(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+#define INST_RR(N) static bool as_##N##_rr(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg3; \
@@ -118,7 +118,7 @@ INST_RR(mov);
 INST_RR(xor);
 INST_RR(cmp);
 
-bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+bool as_mov_rv(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
     (void) ci;
     (void) arg3;
@@ -126,7 +126,7 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
     return x64_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == X64_STAT(OK);
 }
 
-#define INST_J_B(N, M) static bool as_##N##_b(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+#define INST_J_B(N, M) static bool as_##N##_b(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
     (void) arg2; \
@@ -137,7 +137,7 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
 
 //INST_J_B(jmp, jmp);
 
-#define INST_J_L(N) static bool as_##N##_l(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
+#define INST_J_L(N) static bool as_##N##_l(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) arg2; \
     (void) arg3; \
@@ -151,20 +151,17 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
 }
 
 // label code, fill code
-#define INST_J_F(N) static bool as_##N##_f(as *const a, uint8_t *m, te *const lc, te *const fc) { \
+#define INST_J_F(N) static bool as_##N##_f(as *const a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
     return x64_##N##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == X64_STAT(OK); \
 }
 
-INST_J_L(jnljge);
-INST_J_F(jnljge);
+#define INST_J_LF(N) INST_J_L(N) \
+    INST_J_F(N)
 
-static void jmps(as *const a) {
-    //as_op_a(a, AS_INST(JMP), ARG_ID(B), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_b, NULL);
-    as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
-    as_op_a(a, AS_INST(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
-}
+INST_J_LF(jmp);
+INST_J_LF(jnljge);
 
 as *as_b(as *const a) {
     as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
@@ -178,7 +175,10 @@ as *as_b(as *const a) {
     as_op_a(a, AS_INST(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
     as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
     as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
-    jmps(a);
+    // jmps
+    as_op_a(a, AS_INST(JMP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_l, &as_jmp_f);
+    as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
+    as_op_a(a, AS_INST(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
     return a;
 }
 
