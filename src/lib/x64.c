@@ -232,6 +232,12 @@ x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return x64_b(p, m, 3, set_rex2(d, s), 0x39, modrm(MOD(11), d, s));
 }
 
+x64_stat x64_cmp_rra(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
+    return x64_b(p, m, 3, set_rex2(s, d), 0x3B, modrm(MOD(00), s, d));
+}
+
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
@@ -239,7 +245,11 @@ x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
 }
 
 uint8_t x64_jmpu_lblb(size_t from, size_t to) {
-    return to - from - 2;
+    return to - from - sizeof(uint8_t);
+}
+
+uint32_t x64_jmpu_lbldw(size_t from, size_t to) {
+    return to - from - sizeof(uint32_t);
 }
 
 uint8_t *x64_lb(size_t p, uint8_t *m) {
@@ -248,6 +258,11 @@ uint8_t *x64_lb(size_t p, uint8_t *m) {
 
 void x64_jmpd_lblb(uint8_t *byte, size_t from, size_t to) {
     *byte = (uint8_t) to - from;
+}
+
+void x64_jmpd_lbldw(uint8_t *m, size_t from, size_t to) {
+    size_t r = to - from;
+    memcpy(m + from - sizeof(uint32_t), &r, sizeof(uint32_t));
 }
 
 x64_stat x64_jmp_b(size_t *p, uint8_t *m, uint8_t b) {
@@ -261,6 +276,11 @@ x64_stat x64_jmp_dw(size_t *p, uint8_t *m, uint32_t dw) {
 
 x64_stat x64_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x72, b);
+}
+
+x64_stat x64_jbjnaejc_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x82);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b) {
