@@ -198,29 +198,56 @@ x64_stat x64_jbjnaejc_dw(size_t *p, uint8_t *m, uint32_t dw);
 // jnb jae jnc byte
 x64_stat x64_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b);
 
+// jnb jae jnc dword
+x64_stat x64_jnbjaejnc_dw(size_t *p, uint8_t *m, uint32_t dw);
+
 // jz je btye
 x64_stat x64_jzje_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jz je dword
+x64_stat x64_jzje_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jnz jne byte
 x64_stat x64_jnzjne_b(size_t *p, uint8_t *m, uint8_t b);
 
+// jnz jne dword
+x64_stat x64_jnzjne_dw(size_t *p, uint8_t *m, uint32_t dw);
+
 // jbe jna byte
 x64_stat x64_jbejna_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jbe jna dword
+x64_stat x64_jbejna_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jnbe ja byte
 x64_stat x64_jnbeja_b(size_t *p, uint8_t *m, uint8_t b);
 
+// jnbe ja dword
+x64_stat x64_jnbeja_dw(size_t *p, uint8_t *m, uint32_t dw);
+
 // jl jnge byte
 x64_stat x64_jljnge_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jl jnge dword
+x64_stat x64_jljnge_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jnl jge byte
 x64_stat x64_jnljge_b(size_t *p, uint8_t *m, uint8_t b);
 
+// jnl jge dword
+x64_stat x64_jnljge_dw(size_t *p, uint8_t *m, uint32_t dw);
+
 // jle jng byte
 x64_stat x64_jlejng_b(size_t *p, uint8_t *m, uint8_t b);
 
-// jnle jg
+// jle jng dword
+x64_stat x64_jlejng_dw(size_t *p, uint8_t *m, uint8_t dw);
+
+// jnle jg byte
 x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jnle jg dword
+x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // setl rmx
 x64_stat x64_setl_r(size_t *p, uint8_t *m, reg r);

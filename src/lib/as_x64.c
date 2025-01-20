@@ -141,8 +141,11 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     (void) arg4; \
     te *lblc = as_lbl_g_c(a, arg1->d[1].u6); \
     if (!lblc) return false; \
-    if (lblc->d[9].u6) return x64_##N##_b(p, m, lblc->d[8].u6 - *p - 2) == X64_STAT(OK); /* TODO check distance */ \
-    else if (as_lbl_s_c(a, 1, ci) != AS_STAT(OK)) return false; \
+    if (lblc->d[9].u6) { \
+        ssize_t diff = lblc->d[8].u6 - *p - sizeof(uint8_t); \
+        if (diff > INT8_MIN && diff < INT8_MAX) return x64_##N##_b(p, m, diff) == X64_STAT(OK); \
+        return x64_##N##_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK); \
+    } else if (as_lbl_s_c(a, 1, ci) != AS_STAT(OK)) return false; \
     for (size_t i = 0; i < 6; i++) x64_nop(p, m); \
     return true; \
 }
@@ -151,7 +154,9 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
 #define INST_J_F(N) static bool as_##N##_f(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
-    return x64_##N##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == X64_STAT(OK); \
+    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t); \
+    if (diff > INT8_MIN && diff < INT8_MAX) return x64_##N##_b(&p, m, diff) == X64_STAT(OK); \
+    return x64_##N##_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint32_t)) == X64_STAT(OK); \
 }
 
 #define INST_J_LF(N) INST_J_L(N) \

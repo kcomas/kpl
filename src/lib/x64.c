@@ -287,36 +287,81 @@ x64_stat x64_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x73, b);
 }
 
+x64_stat x64_jnbjaejnc_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x83);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+}
+
 x64_stat x64_jzje_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x74, b);
+}
+
+x64_stat x64_jzje_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x84);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_jnzjne_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x75, b);
 }
 
+x64_stat x64_jnzjne_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x85);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+}
+
 x64_stat x64_jbejna_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x76, b);
+}
+
+x64_stat x64_jbejna_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x86);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_jnbeja_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x77, b);
 }
 
+x64_stat x64_jnbeja_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x87);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+}
+
 x64_stat x64_jljnge_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x7C, b);
+}
+
+x64_stat x64_jljnge_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x8C);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_jnljge_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x7D, b);
 }
 
+x64_stat x64_jnljge_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x8D);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+}
+
 x64_stat x64_jlejng_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x7E, b);
 }
 
+x64_stat x64_jlejng_dw(size_t *p, uint8_t *m, uint8_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x8E);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+}
+
 x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b) {
     return x64_b(p, m, 2, 0x7F, b);
+}
+
+x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw) {
+    x64_b(p, m, 2, 0x0F, 0x8F);
+    return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
 x64_stat x64_setl_r(size_t *p, uint8_t *m, reg r) {
