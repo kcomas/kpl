@@ -1,25 +1,23 @@
 
 #include "as_t.h"
 
-te *as_arg_r(size_t rid) {
-    te *a = te_i(2, &malloc, &free);
-    a->d[0] = U6(ARG_ID(R));
-    a->d[1] = U6(rid);
-    return a;
-}
-
-te *as_arg_l(size_t lid) {
-    te *a = te_i(2, &malloc, &free);
-    a->d[0] = U6(ARG_ID(L));
-    a->d[1] = U6(lid);
-    return a;
-}
-
 static te *as_arg_v(arg_id id, un v) {
     te *a = te_i(2, &malloc, &free);
     a->d[0] = U6(id);
     a->d[1] = v;
     return a;
+}
+
+te *as_arg_r(size_t rid) {
+    return as_arg_v(ARG_ID(R), U6(rid));
+}
+
+te *as_arg_rm(size_t rmid) {
+    return as_arg_v(ARG_ID(RM), U6(rmid));
+}
+
+te *as_arg_l(size_t lid) {
+    return as_arg_v(ARG_ID(L), U6(lid));
 }
 
 te *as_arg_qw(un v) {

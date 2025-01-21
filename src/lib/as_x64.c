@@ -104,7 +104,7 @@ void as_code_p(const as *a, const uint8_t *m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
-        printf("%05lu:", c->d[8].u6);
+        if (m) printf("%05lu:", c->d[8].u6);
         if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
         else {
             printf("O(%s) ", as_inst_str(c->d[1].u6));
@@ -175,6 +175,16 @@ INST_RR(mov);
 INST_RR(xor);
 INST_RR(cmp);
 
+#define INST_RRM(N) static bool as_##N##_rrm(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_rrm(p, m, arg1->d[1].u6, arg2->d[1].u6) == X64_STAT(OK); \
+}
+
+INST_RRM(cmp);
+
 bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
     (void) ci;
@@ -241,6 +251,7 @@ as *as_b(as *a) {
     as_op_a(a, AS_INST(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
     as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
     as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
+    as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_cmp_rrm, NULL);
     as_op_a(a, AS_INST(JMP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_l, &as_jmp_f);
     as_op_a(a, AS_INST(JB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
     as_op_a(a, AS_INST(JNAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);

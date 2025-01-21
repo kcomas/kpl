@@ -235,7 +235,9 @@ x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
 x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(s, d), 0x3B, modrm(MOD(00), s, d));
+    x64_b(p, m, 3, set_rex2(s, d), 0x3B, modrm(MOD(00), s, d));
+    if (s == R(SP)) return x64_a(p, m, 0x24);
+    return X64_STAT(OK);
 }
 
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
