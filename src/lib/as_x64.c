@@ -79,12 +79,26 @@ static const char *as_inst_str(size_t id) {
         "JNB",
         "JAE",
         "JNC",
+        "JZ",
+        "JE",
+        "JNZ",
+        "JNE",
+        "JBE",
+        "JNA",
+        "JNBE",
+        "JA",
+        "JL",
+        "JNGE",
         "JNL",
         "JGE",
+        "JLE",
+        "JNG",
+        "JNLE",
+        "JG",
         "_END"
     };
     const char *s = "INV";
-    if (id > AS_INST(_START) && id < AS_INST(_END)) s = insts[id];
+    if (id > AS_X64(_START) && id < AS_X64(_END)) s = insts[id];
     return s;
 }
 
@@ -220,8 +234,8 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return true; \
 }
 
-// label code, fill code
-#define INST_J_F(N) static bool as_##N##_f(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
+// label code, end fill code
+#define INST_J_E(N) static bool as_##N##_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
     ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t); \
@@ -229,39 +243,58 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_##N##_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint32_t)) == X64_STAT(OK); \
 }
 
-#define INST_J_LF(N) INST_J_L(N) \
-    INST_J_F(N)
+#define INST_J_LE(N) INST_J_L(N) \
+    INST_J_E(N)
 
-INST_J_LF(jmp);
-INST_J_LF(jbjnaejc);
-INST_J_LF(jnbjaejnc);
-INST_J_LF(jnljge);
+INST_J_LE(jmp);
+INST_J_LE(jbjnaejc);
+INST_J_LE(jnbjaejnc);
+INST_J_LE(jzje);
+INST_J_LE(jnzjne);
+INST_J_LE(jbejna);
+INST_J_LE(jnbeja);
+INST_J_LE(jljnge);
+INST_J_LE(jnljge);
+INST_J_LE(jlejng);
+INST_J_LE(jnlejg);
 
 as *as_b(as *a) {
-    as_op_a(a, AS_INST(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
-    as_op_a(a, AS_INST(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
-    as_op_a(a, AS_INST(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_leave, NULL);
-    as_op_a(a, AS_INST(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
-    as_op_a(a, AS_INST(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
-    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
-    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
-    as_op_a(a, AS_INST(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
-    as_op_a(a, AS_INST(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
-    as_op_a(a, AS_INST(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
-    as_op_a(a, AS_INST(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
-    as_op_a(a, AS_INST(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
-    as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
-    as_op_a(a, AS_INST(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_cmp_rrm, NULL);
-    as_op_a(a, AS_INST(JMP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_l, &as_jmp_f);
-    as_op_a(a, AS_INST(JB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
-    as_op_a(a, AS_INST(JNAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
-    as_op_a(a, AS_INST(JC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_f);
-    as_op_a(a, AS_INST(JNB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
-    as_op_a(a, AS_INST(JAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
-    as_op_a(a, AS_INST(JNC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_f);
-    // TODO
-    as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
-    as_op_a(a, AS_INST(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
+    as_op_a(a, AS_X64(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_nop, NULL);
+    as_op_a(a, AS_X64(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_ret, NULL);
+    as_op_a(a, AS_X64(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_leave, NULL);
+    as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
+    as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
+    as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
+    as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
+    as_op_a(a, AS_X64(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
+    as_op_a(a, AS_X64(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
+    as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
+    as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_cmp_rrm, NULL);
+    as_op_a(a, AS_X64(JMP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_l, &as_jmp_e);
+    as_op_a(a, AS_X64(JB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_e);
+    as_op_a(a, AS_X64(JNAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_e);
+    as_op_a(a, AS_X64(JC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbjnaejc_l, &as_jbjnaejc_e);
+    as_op_a(a, AS_X64(JNB), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_e);
+    as_op_a(a, AS_X64(JAE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_e);
+    as_op_a(a, AS_X64(JNC), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbjaejnc_l, &as_jnbjaejnc_e);
+    as_op_a(a, AS_X64(JZ), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jzje_l, &as_jzje_e);
+    as_op_a(a, AS_X64(JE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jzje_l, &as_jzje_e);
+    as_op_a(a, AS_X64(JNZ), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnzjne_l, &as_jnzjne_e);
+    as_op_a(a, AS_X64(JNE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnzjne_l, &as_jnzjne_e);
+    as_op_a(a, AS_X64(JBE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jbejna_l, &as_jbejna_e);
+    as_op_a(a, AS_X64(JNBE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbeja_l, &as_jnbeja_e);
+    as_op_a(a, AS_X64(JA), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnbeja_l, &as_jnbeja_e);
+    as_op_a(a, AS_X64(JL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jljnge_l, &as_jljnge_e);
+    as_op_a(a, AS_X64(JNGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jljnge_l, &as_jljnge_e);
+    as_op_a(a, AS_X64(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_e);
+    as_op_a(a, AS_X64(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_e);
+    as_op_a(a, AS_X64(JLE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jlejng_l, &as_jlejng_e);
+    as_op_a(a, AS_X64(JNG), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jlejng_l, &as_jlejng_e);
+    as_op_a(a, AS_X64(JNLE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnlejg_l, &as_jnlejg_e);
+    as_op_a(a, AS_X64(JG), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnlejg_l, &as_jnlejg_e);
     return a;
 }
 

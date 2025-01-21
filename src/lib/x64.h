@@ -249,5 +249,5 @@ x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
 // jnle jg dword
 x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw);
 
-// setl rmx
-x64_stat x64_setl_r(size_t *p, uint8_t *m, reg r);
+// setl rax
+x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r);
