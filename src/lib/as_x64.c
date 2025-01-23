@@ -66,10 +66,11 @@ static const char *as_inst_str(size_t id) {
         "LEAVE",
         "PUSH",
         "POP",
-        "MOV",
         "CALL",
+        "MOV",
         "INC",
         "DEC",
+        "AND",
         "XOR",
         "CMP",
         "JMP",
@@ -102,6 +103,13 @@ static const char *as_inst_str(size_t id) {
     return s;
 }
 
+te *as_arg(alfn *aa, frfn *af, arg_id id, un v) {
+    te *a = te_i(2, aa, af);
+    a->d[0] = U6(id);
+    a->d[1] = v;
+    return a;
+}
+
 void as_op_p(tbl *ot, bool args, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
@@ -131,10 +139,11 @@ void as_code_p(const as *a, const uint8_t *m) {
                         printf("%s", reg_str(a->d[1].u6));
                         break;
                     case ARG_ID(RM):
-                        printf("(%s)", reg_str(a->d[1].u6));
+                        printf("[%s]", reg_str(a->d[1].u6));
                         break;
                     default:
                         printf("%lu", a->d[1].u6);
+                        break;
                 }
                 putchar(' ');
             }
@@ -186,8 +195,39 @@ INST_R(dec);
 }
 
 INST_RR(mov);
+INST_RR(and);
 INST_RR(xor);
 INST_RR(cmp);
+
+#define INST_DW(N) static bool as_##N##_dw(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_dw(p, m, arg1->d[1].u5) == X64_STAT(OK); \
+}
+
+INST_DW(call);
+
+#define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_rmr(p, m, arg1->d[1].u6, arg2->d[1].u6) == X64_STAT(OK); \
+}
+
+INST_RMR(mov);
+
+#define INST_RMBR(N) static bool as_##N##_rmbr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg4; \
+    return x64_##N##_rmbr(p, m, arg1->d[1].u6, arg2->d[1].u3, arg3->d[1].u6) == X64_STAT(OK); \
+}
+
+INST_RMBR(mov);
 
 #define INST_RRM(N) static bool as_##N##_rrm(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -197,7 +237,17 @@ INST_RR(cmp);
     return x64_##N##_rrm(p, m, arg1->d[1].u6, arg2->d[1].u6) == X64_STAT(OK); \
 }
 
+INST_RRM(mov);
 INST_RRM(cmp);
+
+#define INST_RRMB(N) static bool as_##N##_rrmb(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg4; \
+    return x64_##N##_rrmb(p, m, arg1->d[1].u6, arg2->d[1].u6, arg3->d[1].u3) == X64_STAT(OK); \
+}
+
+INST_RRMB(mov);
 
 bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
@@ -264,12 +314,18 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_leave, NULL);
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
+    as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
+    as_op_a(a, AS_X64(CALL), ARG_ID(DW), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_dw, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
-    as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rmr, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), &as_mov_rmbr, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_mov_rrm, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), &as_mov_rrmb, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
+    as_op_a(a, AS_X64(AND), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_and_rr, NULL);
     as_op_a(a, AS_X64(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_xor_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_cmp_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_cmp_rrm, NULL);

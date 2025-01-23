@@ -2,10 +2,7 @@
 #include "as_t.h"
 
 static te *as_arg_v(arg_id id, un v) {
-    te *a = te_i(2, &malloc, &free);
-    a->d[0] = U6(id);
-    a->d[1] = v;
-    return a;
+    return as_arg(&malloc, &free, id, v);
 }
 
 te *as_arg_r(size_t rid) {
@@ -40,9 +37,13 @@ lst *as_mklst(void) {
     return lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
 }
 
-tbl *as_mktbl(void) {
+tbl *as_arg_tbl(void) {
+    return as_op_tbl(6);
+}
+
+tbl *as_op_tbl(size_t bcks) {
     lst *tl = as_mklst();
-    te *b = te_i(10, &malloc, &free);
+    te *b = te_i(bcks, &malloc, &free);
     tbl *t = tbl_i(&malloc, &free, &no_hsh, &id_eq, tl, b);
     return t;
 }

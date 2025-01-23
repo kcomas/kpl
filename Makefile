@@ -59,5 +59,8 @@ LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS)
 as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
 > $(CCOBJ)
 
+GEN_OBJS = $(LSRC)/gen.o $(LAS_OBJS)
+gen$(LTNAME): $(GEN_OBJS) $(LTEST)/gen.o
+
 clean:
 > rm -fv $(SRC)/**/*.o $(TEST)/**/*.o $(NAME) *$(TNAME)
