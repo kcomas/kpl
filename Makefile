@@ -60,7 +60,9 @@ as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
 > $(CCOBJ)
 
 GEN_OBJS = $(LSRC)/gen.o $(LAS_OBJS)
-gen$(LTNAME): $(GEN_OBJS) $(LTEST)/gen.o
+GENX64_OBJS = $(GEN_OBJS) $(LSRC)/gen_x64.o $(LX64_OBJS)
+gen$(LTNAME): $(GENX64_OBJS) $(LTEST)/gen.o $(LTEST)/gen_t.o
+> $(CCOBJ)
 
 clean:
 > rm -fv $(SRC)/**/*.o $(TEST)/**/*.o $(NAME) *$(TNAME)
