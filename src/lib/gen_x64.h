@@ -25,6 +25,8 @@ typedef enum {
     X64_TYPE(F6)
 } x64_type;
 
+const char *x64_type_str(x64_type xt);
+
 typedef struct {
     ssize_t r;
     alfn *sa;
@@ -35,6 +37,6 @@ typedef struct {
 // pass 1 - try to give everything a reg and avoid stack
 gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *imm);
 
-void as_gen_p(tbl *ot, bool args, size_t idnt);
+void gen_op_p(tbl *ot, bool args, size_t idnt);
 
 gen *gen_b(gen *g);
