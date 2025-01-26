@@ -18,6 +18,14 @@ tbl *tbl_c(tbl *t) {
     return t;
 }
 
+size_t tbl_no_hsh(un d) {
+    return d.u6;
+}
+
+bool tbl_un_eq(un a, un b) {
+    return a.u6 == b.u6;
+}
+
 size_t tbl_g_l(const tbl *t) {
     return t->i->l;
 }

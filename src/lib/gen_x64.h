@@ -35,4 +35,6 @@ typedef struct {
 // pass 1 - try to give everything a reg and avoid stack
 gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *imm);
 
+void as_gen_p(tbl *ot, bool args, size_t idnt);
+
 gen *gen_b(gen *g);

@@ -1,7 +1,7 @@
 
 #include "gen_x64.h"
 
-gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *imm) {
+void as_gen_p(tbl *ot, bool args, size_t idnt) {
 
 }
 

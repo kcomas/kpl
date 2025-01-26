@@ -32,6 +32,10 @@ tbl *tbl_i(alfn *at, frfn *ft, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
 tbl *tbl_c(tbl *t);
 
+size_t tbl_no_hsh(un d);
+
+bool tbl_un_eq(un a, un b);
+
 size_t tbl_g_l(const tbl *t);
 
 size_t tbl_g_s(const tbl *t);
