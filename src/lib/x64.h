@@ -74,15 +74,6 @@ typedef enum {
     MOD(11) = 0xC0
 } mod;
 
-#define SS(N) SS_##N
-
-typedef enum {
-    SS(00) = 0x00,
-    SS(01) = 0x40,
-    SS(10) = 0x80,
-    SS(11) = 0xC0
-} ss;
-
 // map page aligned
 uint8_t *x64_mmap(size_t size);
 

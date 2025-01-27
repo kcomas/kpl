@@ -1,6 +1,18 @@
 
 #include "gen_x64.h"
 
+const char *gen_op_str(gen_op go) {
+    static const char *gos[] = {
+        "_START",
+        "ADD",
+        "RET",
+        "_END"
+    };
+    const char *s = "INV";
+    if (go > GEN_OP(_START) && go < GEN_OP(_END)) s = gos[go];
+    return s;
+}
+
 const char *x64_type_str(x64_type xt) {
     switch (xt) {
         case X64_TYPE(N): return "N";
@@ -21,11 +33,35 @@ const char *x64_type_str(x64_type xt) {
     return "INV";
 }
 
-void gen_op_p(tbl *ot, bool args, size_t idnt) {
+void gen_op_p(tbl *ot, bool ci, size_t idnt) {
+    te *h = ot->i->h;
+    while (h) {
+        te *o = h->d[0].p;
+        if (!ci) {
+            printf("(%s", gen_op_str(o->d[0].u6));
+            gen_op_p(o->d[2].p, true, idnt + 1);
+            printf(")\n");
+        } else {
+            putchar('\n');
+            for (size_t i = 0; i < idnt; i++) putchar(' ');
+            printf("(%s %s)", gen_cls_str(o->d[1].u3), x64_type_str(o->d[2].u3));
+            gen_op_p(o->d[4].p, true, idnt + 1);
+            if (h->d[2].p) putchar('\n');
+        }
+        h = h->d[2].p;
+    }
+}
 
+void gen_p(gen *g, uint8_t *m) {
+    te *h = g->code->h;
+    while (h) {
+
+        h = h->d[2].p;
+    }
 }
 
 gen *gen_b(gen *g) {
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), U6(X64_TYPE(U6)), GEN_CLS(A), U6(X64_TYPE(U6)), GEN_CLS(A), U6(X64_TYPE(U6)), NULL);
     GEN_OP_A1(g, GEN_OP(RET), GEN_CLS(A), U6(X64_TYPE(U6)), NULL);
     return g;
 }

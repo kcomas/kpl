@@ -14,8 +14,8 @@ static uint8_t modrm(mod m, reg d, reg s) {
     return m | rid(s) << 3 | rid(d);
 }
 
-static uint8_t sib(ss s2, reg d, reg s) {
-    return s2 | rid(s) << 3 | rid(d);
+static uint8_t sib(mod m, reg d, reg s) {
+    return m | rid(d) << 3 | rid(s);
 }
 
 static size_t pg_algn(size_t size) {
@@ -143,7 +143,7 @@ x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(00), d, s));
-    if (d == R(SP)) return x64_a(p, m, sib(SS(00), d, d));
+    if (d == R(SP)) return x64_a(p, m, sib(MOD(00), d, d));
     return X64_STAT(OK);
 }
 
@@ -151,7 +151,7 @@ x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(01), d, s));
-    if (d == R(SP)) return x64_a(p, m, sib(SS(00), d, d));
+    if (d == R(SP)) return x64_a(p, m, sib(MOD(00), d, d));
     return x64_a(p, m, dsp);
 }
 
@@ -159,7 +159,7 @@ x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(00), s, d));
-    if (s == R(SP)) x64_a(p, m, sib(SS(00), s, s));
+    if (s == R(SP)) x64_a(p, m, sib(MOD(00), s, s));
     return X64_STAT(OK);
 }
 
@@ -167,7 +167,7 @@ x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(01), s, d));
-    if (s == R(SP)) x64_a(p, m, sib(SS(00), s, s));
+    if (s == R(SP)) x64_a(p, m, sib(MOD(00), s, s));
     return x64_a(p, m, dsp);
 }
 
@@ -175,7 +175,7 @@ x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(s, d), 0x8D, modrm(MOD(01), s, d));
-    if (s == R(SP)) x64_a(p, m, sib(SS(00), s, s));
+    if (s == R(SP)) x64_a(p, m, sib(MOD(00), s, s));
     return x64_a(p, m, dsp);
 }
 
@@ -245,7 +245,7 @@ x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(s, d), 0x3B, modrm(MOD(00), s, d));
-    if (s == R(SP)) return x64_a(p, m, sib(SS(00), s, s));
+    if (s == R(SP)) return x64_a(p, m, sib(MOD(00), s, s));
     return X64_STAT(OK);
 }
 
