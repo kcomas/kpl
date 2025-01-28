@@ -19,6 +19,10 @@ tbl *gen_op_tbl(size_t bcks) {
     return t;
 }
 
+te *gen_arg(x64_type t, size_t id) {
+    return gen_var(&malloc, &free, GEN_CLS(A), U3(t), id);
+}
+
 void gen_entry_f(void *p) {
     te *t = (te*) p;
     if (t->l == 3) tbl_f(t->d[2].p);
