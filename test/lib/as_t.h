@@ -19,8 +19,8 @@ tbl *as_arg_tbl(void);
 
 tbl *as_op_tbl(size_t bcks);
 
-void label_entry_f(void *p);
+void as_label_entry_f(void *p);
 
-void op_entry_f(void *p);
+void as_op_entry_f(void *p);
 
-void code_entry_f(void *p);
+void as_code_entry_f(void *p);

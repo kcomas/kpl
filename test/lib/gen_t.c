@@ -30,7 +30,7 @@ void gen_entry_f(void *p) {
     free(t);
 }
 
-void code_entry_f(void *p) {
+void gen_code_entry_f(void *p) {
     te *t = (te*) p;
     te_f(t->d[1].p);
     te_f(t->d[2].p);

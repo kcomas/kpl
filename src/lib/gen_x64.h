@@ -38,11 +38,15 @@ typedef struct {
     alfn *sa;
     frfn *sf;
     tbl *args, *tmp; // map args, tmp to regs
-    vr *rstk, *xstk;
+    vr *rstk, *xstk; // available regs and xmm
 } gen_st;
 
-// pass 1 - try to give everything a reg and avoid stack
-gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *tmp, vr *rstk, vr *xstk);
+gen_st *gen_st_i(alfn *sa, frfn *sf, tbl *args, tbl *tmp, vr *rstk, vr *xstk);
+
+// pass 1
+gen_stat gen_st_p1(gen *g, gen_st *s, as *a);
+
+void gen_st_f(gen_st *st);
 
 void gen_op_p(tbl *ot, bool ci, size_t idnt);
 
