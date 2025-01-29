@@ -65,6 +65,6 @@ typedef enum {
 
 void as_code_p(const as *a, const uint8_t *m);
 
-void as_op_p(tbl *ot, bool args, size_t idnt);
+void as_op_p(const tbl *ot, bool args, size_t idnt);
 
 as *as_b(as *a);
