@@ -37,3 +37,16 @@ void gen_code_entry_f(void *p) {
     te_f(t->d[3].p);
     free(t);
 }
+
+void gen_st_atmf(void *p) {
+    te *t = (te*) p;
+    te_f(t->d[1].p);
+    free(t);
+}
+
+void gen_st_latf(void *p) {
+    te *t = (te*) p;
+    te_f(t->d[1].p);
+    te_f(t->d[2].p);
+    free(t);
+}

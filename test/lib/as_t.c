@@ -6,15 +6,15 @@ static te *as_arg_v(arg_id id, un v) {
 }
 
 te *as_arg_r(size_t rid) {
-    return as_arg_v(ARG_ID(R), U6(rid));
+    return as_arg_v(ARG_ID(R), U3(rid));
 }
 
 te *as_arg_rm(size_t rmid) {
-    return as_arg_v(ARG_ID(RM), U6(rmid));
+    return as_arg_v(ARG_ID(RM), U3(rmid));
 }
 
 te *as_arg_l(size_t lid) {
-    return as_arg_v(ARG_ID(L), U6(lid));
+    return as_arg_v(ARG_ID(L), U3(lid));
 }
 
 te *as_arg_qw(un v) {

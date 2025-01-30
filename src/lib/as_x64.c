@@ -1,7 +1,7 @@
 
 #include "as_x64.h"
 
-static const char *reg_str(size_t rid) {
+const char *reg_str(size_t rid) {
     switch (rid) {
         case R(AX): return "RAX";
         case R(CX): return "RCX";

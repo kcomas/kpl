@@ -15,3 +15,7 @@ te *gen_arg(x64_type t, size_t id);
 void gen_entry_f(void *p);
 
 void gen_code_entry_f(void *p);
+
+void gen_st_atmf(void *p);
+
+void gen_st_latf(void *p);
