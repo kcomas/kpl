@@ -35,6 +35,8 @@ void gen_code_entry_f(void *p) {
     te_f(t->d[1].p);
     te_f(t->d[2].p);
     te_f(t->d[3].p);
+    te_f(t->d[5].p);
+    te_f(t->d[6].p);
     free(t);
 }
 

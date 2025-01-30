@@ -34,6 +34,8 @@ typedef enum {
     AS_X64(POP),
     AS_X64(CALL),
     AS_X64(MOV),
+    AS_X64(ADD),
+    AS_X64(SUB),
     AS_X64(INC),
     AS_X64(DEC),
     AS_X64(AND),
@@ -64,6 +66,8 @@ typedef enum {
     AS_X64(JG),
     AS_X64(_END)
 } as_inst;
+
+void as_code_i_p(const te *c, const uint8_t *m);
 
 void as_code_p(const as *a, const uint8_t *m);
 

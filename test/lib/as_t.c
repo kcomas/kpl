@@ -14,7 +14,7 @@ te *as_arg_rm(size_t rmid) {
 }
 
 te *as_arg_l(size_t lid) {
-    return as_arg_v(ARG_ID(L), U3(lid));
+    return as_arg_v(ARG_ID(L), U6(lid));
 }
 
 te *as_arg_qw(un v) {
