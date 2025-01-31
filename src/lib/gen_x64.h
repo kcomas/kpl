@@ -34,9 +34,9 @@ typedef enum {
 
 const char *x64_type_str(x64_type xt);
 
-// atm entry te[(cls << 8) + id;te[cls;info;id];reg]
+// atm entry te[(id << 8) + cls;te[cls;info;id];reg]
 
-// lat entry te[(cls << 8) + id];te[cls;info;id];code]
+// lat entry te[(id << 8) + cls;te[cls;info;id];code]
 
 typedef struct {
     uint8_t vc, rac, xac; // var count for stk alloc, arg count
@@ -52,7 +52,7 @@ gen_st *gen_st_i(alfn *sa, frfn *sf, frfn *atmf, frfn *latf, tbl *atm, tbl *lat,
 void gen_st_p(const gen_st *st);
 
 // pass 1
-gen_stat gen_st_p1(gen *g, gen_st *st, as *a);
+gen_stat gen_st_p1(gen *g, gen_st *st);
 
 void gen_st_f(gen_st *st);
 

@@ -30,8 +30,7 @@ gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, 
     g->gf = gf;
     g->ocef = ocef;
     g->cef = cef;
-    g->cti = cti;
-    g->oci = oci;
+    g->cti = cti; g->oci = oci;
     g->code = code;
     return g;
 }
@@ -95,8 +94,16 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     return GEN_STAT(OK);
 }
 
-gen_stat gen_n(gen *g, void *st, as *a) {
-
+gen_stat gen_n(alfn *al, frfn *fr, gen *g, void *st, as *a) {
+    gen_stat stat;
+    te *h = g->code->h;
+    while (h) {
+        te *c = h->d[0].p;
+        gen_fn *fn = c->d[4].p;
+        if ((stat = fn(al, fr, g, st, c, a)) != GEN_STAT(OK)) return stat;
+        h = h->d[2].p;
+    }
+    return GEN_STAT(OK);
 }
 
 void gen_f(gen *g) {

@@ -59,7 +59,7 @@ void gen_st_p(const gen_st *st) {
 }
 
 static un ovt_hsh(te *ovt) {
-    return U6((ovt->d[0].u3  << 8) + ovt->d[2].u3);
+    return U6((ovt->d[2].u6  << 8) + ovt->d[2].u3);
 }
 
 static void update_lat(gen_st *st, te *ovt, te *o) {
@@ -92,12 +92,11 @@ static gen_stat reg_map(gen_st *st, te *ovt) {
         if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) kv->d[2] = U3(st->rstk->l - 1 - ovt->d[2].u3);
         else kv->d[2] = U3(st->xstk->l - 1 - ovt->d[2].u3);
         tbl_a(st->atm, kv);
-
     }
     return GEN_STAT(OK);
 }
 
-gen_stat gen_st_p1(gen *g, gen_st *st, as *a) {
+gen_stat gen_st_p1(gen *g, gen_st *st) {
     gen_stat stat = GEN_STAT(OK);
     // swap R(DX) with R(10), R(CX) with R(11), XMM(0) with XMM(7)
     static reg r[] = {R(12),  R(13), R(14), R(15), R(BX), R(9), R(8), R(11), R(10), R(SI), R(DI)};
@@ -189,10 +188,10 @@ void gen_p(const gen *g, const uint8_t *m) {
         te *cli = o->d[5].p;
         if (cli) {
             while (cli != o->d[6].p) {
-                as_code_i_p(cli, m);
+                as_code_i_p(cli->d[0].p, m);
                 cli = cli->d[2].p;
             }
-            as_code_i_p(cli, m);
+            as_code_i_p(((te*) o->d[6].p)->d[0].p, m);
         }
         h = h->d[2].p;
     }
@@ -208,7 +207,6 @@ static void set_code_e(te *ci, as *a) {
 
 static gen_stat enter_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a) {
     (void) g;
-    set_code_s(ci, a);
     as_a(a, AS_X64(PUSH), as_arg(al, af, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL);
     set_code_s(ci, a);
     as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(BP))), as_arg(al, af, ARG_ID(R), U3(R(SP))), NULL, NULL);
@@ -216,7 +214,7 @@ static gen_stat enter_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a) {
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
-        // TODO allocate stk
+        as_a(a, AS_X64(SUB), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), NULL, NULL);
     }
     if (st->rac >= 3) as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(10))), as_arg(al, af, ARG_ID(R), U3(R(DX))), NULL, NULL);
     if (st->xac >= 4) as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(11))), as_arg(al, af, ARG_ID(R), U3(R(CX))), NULL, NULL);
@@ -226,7 +224,9 @@ static gen_stat enter_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a) {
 }
 
 static gen_stat add_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
-
+    (void) g;
+    // TODO
+    return GEN_STAT(OK);
 }
 
 static gen_stat leave_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
@@ -234,6 +234,12 @@ static gen_stat leave_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
     te *ar = ci->d[1].p;
     if (ar) {
         // TODO check if returning arg
+    }
+    gen_st *st = (gen_st*) s;
+    if (st->vc > 0) {
+        size_t stks = st->vc * sizeof(void*);
+        if (stks > UINT8_MAX) return GEN_STAT(INV);
+        as_a(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), NULL, NULL);
     }
     as_a(a, AS_X64(POP), as_arg(al, af, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL);
     set_code_s(ci, a);
