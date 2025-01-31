@@ -34,6 +34,10 @@ typedef enum {
 
 const char *x64_type_str(x64_type xt);
 
+void gen_op_p(const tbl *ot, bool ci, size_t idnt);
+
+void gen_p(const gen *g, const uint8_t *m);
+
 // atm entry te[(id << 8) + cls;te[cls;info;id];reg]
 
 // lat entry te[(id << 8) + cls;te[cls;info;id];code]
@@ -55,9 +59,5 @@ void gen_st_p(const gen_st *st);
 gen_stat gen_st_p1(gen *g, gen_st *st);
 
 void gen_st_f(gen_st *st);
-
-void gen_op_p(const tbl *ot, bool ci, size_t idnt);
-
-void gen_p(const gen *g, const uint8_t *m);
 
 gen *gen_b(gen *g);

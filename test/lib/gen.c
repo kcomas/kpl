@@ -15,6 +15,8 @@ int main(void) {
     if (gen_st_p1(g, st) != GEN_STAT(OK)) exit(33);
     gen_st_p(st);
     if (gen_n(&malloc, &free, g, st, a) != GEN_STAT(OK)) exit(44);
+    printf("STATE AFTER\n");
+    gen_st_p(st);
     gen_p(g, NULL);
     gen_st_f(st);
     gen_f(g);
