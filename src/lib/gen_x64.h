@@ -69,6 +69,12 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci);
 
 void gen_st_f(gen_st *st);
 
-as_stat gen_sas(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci);
+as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci);
+
+#define AS(a, op_id, arg1, arg2, arg3, arg4, ci) gen_as(a, op_id, arg1, arg2, arg3, arg4, ci)
+#define AS3(a, op_id, arg1, arg2, arg3, ci) AS(a, op_id, arg1, arg2, arg3, NULL, ci)
+#define AS2(a, op_id, arg1, arg2, ci) AS3(a, op_id, arg1, arg2, NULL, ci)
+#define AS1(a, op_id, arg1, ci) AS2(a, op_id, arg1, NULL, ci)
+#define AS0(a, op_id, ci) AS1(a, op_id, NULL, ci)
 
 gen *gen_b(gen *g);

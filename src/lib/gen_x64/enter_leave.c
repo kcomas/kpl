@@ -3,17 +3,16 @@
 
 static gen_stat enter_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a) {
     (void) g;
-    as_a(a, AS_X64(PUSH), as_arg(al, af, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL);
-    set_code_s(ci, a);
-    as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(BP))), as_arg(al, af, ARG_ID(R), U3(R(SP))), NULL, NULL);
+    AS1(a, AS_X64(PUSH), as_arg(al, af, ARG_ID(R), U3(R(BP))), ci);
+    AS2(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(BP))), as_arg(al, af, ARG_ID(R), U3(R(SP))), ci);
     gen_st *st = (gen_st*) s;
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
-        as_a(a, AS_X64(SUB), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), NULL, NULL);
+        AS2(a, AS_X64(SUB), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), ci);
     }
-    if (st->rac >= 3) as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(10))), as_arg(al, af, ARG_ID(R), U3(R(DX))), NULL, NULL);
-    if (st->xac >= 4) as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(11))), as_arg(al, af, ARG_ID(R), U3(R(CX))), NULL, NULL);
+    if (st->rac >= 3) AS2(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(10))), as_arg(al, af, ARG_ID(R), U3(R(DX))), ci);
+    if (st->xac >= 4) AS2(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(11))), as_arg(al, af, ARG_ID(R), U3(R(CX))), ci);
     // TODO swap xmm
     set_code_e(ci, a);
     return GEN_STAT(OK);
@@ -25,18 +24,15 @@ static gen_stat leave_au_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a) 
     te *ovt = ci->d[1].p, *kv;
     if (!ovt) return GEN_STAT(INV);
     if (tbl_g_i(st->atm, ovt_hsh(ovt), &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
-    as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(AX))), as_arg(al, af, ARG_ID(R), U3(kv->d[2].u3)), NULL, NULL);
-    set_code_s(ci, a);
+    AS2(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(AX))), as_arg(al, af, ARG_ID(R), U3(kv->d[2].u3)), ci);
     drop_atm_kv(st, kv, ci);
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
-        as_a(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), NULL, NULL);
-        set_code_s(ci, a);
+        AS2(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(R(SP))), as_arg(al, af, ARG_ID(B), U3(stks)), ci);
     }
-    as_a(a, AS_X64(POP), as_arg(al, af, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL);
-    set_code_s(ci, a);
-    as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
+    AS1(a, AS_X64(POP), as_arg(al, af, ARG_ID(R), U3(R(BP))), ci);
+    AS0(a, AS_X64(RET), ci);
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
