@@ -65,4 +65,4 @@ gen$(LTNAME): $(GENX64_OBJS) $(LTEST)/gen.o $(LTEST)/gen_t.o $(LTEST)/as_t.o
 > $(CCOBJ)
 
 clean:
-> find -type f -regex "^.*\.o$$" | xargs rm -fv; rm -fv $(NAME) *$(TNAME)
+> find -type f -regex "\($(SRC)\|$(TEST)\).*\.o$$" | xargs rm -fv; rm -fv $(NAME) *$(TNAME)
