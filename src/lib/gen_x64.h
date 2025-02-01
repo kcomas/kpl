@@ -55,9 +55,20 @@ gen_st *gen_st_i(alfn *sa, frfn *sf, frfn *atmf, frfn *latf, tbl *atm, tbl *lat,
 
 void gen_st_p(const gen_st *st);
 
+un ovt_hsh(const te *ovt);
+
 // pass 1
 gen_stat gen_st_p1(gen *g, gen_st *st);
 
+void set_code_s(te *ci, as *a);
+
+void set_code_e(te *ci, as *a);
+
+// check if reg can be freed
+void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci);
+
 void gen_st_f(gen_st *st);
+
+as_stat gen_sas(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci);
 
 gen *gen_b(gen *g);
