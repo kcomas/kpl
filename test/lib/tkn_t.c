@@ -17,7 +17,7 @@ void tkn_p(tbl *tl, size_t idnt) {
 }
 
 void tkn_m_p(const te *m, const mc *s) {
-        printf("id:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,str:", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
+        printf("tid:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,str:", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
     for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(s->d[i]);
 }
 

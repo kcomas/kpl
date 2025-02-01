@@ -24,7 +24,7 @@ psr *psr_b(const char *pgm) {
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "F6", &tkn_ft));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "FN", &tkn_ft));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "UN", &tkn_ft));
-    psr_a(p, PCUST(SELF), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "S", &tkn_ft));
+    psr_a(p, PCUST(SELF), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_key_i, 1, tkn_a(t, TOKEN(UN), "S", &tkn_ft));
     psr_a(p, PCUST(SUM), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "Σ", &tkn_ft));
     psr_a(p, PCUST(SUB), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "-", &tkn_ft));
     psr_a(p, PCUST(ADD), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "+", &tkn_ft));
@@ -86,6 +86,11 @@ psr_stat psr_var_i(psr *p, te **n) {
 
 psr_stat psr_id_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(TYPE), 3);
+    return PSR_STAT(OK);
+}
+
+psr_stat psr_key_i(psr *p, te **n) {
+    *n = node_i(p, NODE_TYPE(KEY), 3);
     return PSR_STAT(OK);
 }
 
@@ -212,12 +217,13 @@ static const mc *node_root_mc(const te *n) {
 void node_p(const te *n, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
-    printf("(id:%lu", n->d[1].u6);
+    printf("(nid:%lu", n->d[1].u6);
     switch (n->d[1].u6) {
         case NODE_TYPE(ROOT):
             break;
-        case NODE_TYPE(TYPE):
         case NODE_TYPE(VAR):
+        case NODE_TYPE(TYPE):
+        case NODE_TYPE(KEY):
         case NODE_TYPE(INT):
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
@@ -294,8 +300,9 @@ void node_f(void *p) {
         case NODE_TYPE(ROOT):
             psr_f(n->d[0].p);
             break;
-        case NODE_TYPE(TYPE):
         case NODE_TYPE(VAR):
+        case NODE_TYPE(TYPE):
+        case NODE_TYPE(KEY):
         case NODE_TYPE(INT):
             break;
         case NODE_TYPE(FLT):
