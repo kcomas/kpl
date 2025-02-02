@@ -43,7 +43,8 @@ void fibtest(void) {
     A(gen_a(g, GEN_OP(UGT), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U6), U6(2)), gen_lbl(3)));
     A(gen_a(g, GEN_OP(LEAVE), gen_data(X64_TYPE(U6), U6(1)), NULL, NULL));
     A(gen_a(g, GEN_OP(LBL), gen_lbl(3), NULL, NULL));
-    A(gen_a(g, GEN_OP(LEAVE), gen_arg(X64_TYPE(U6), 0), NULL, NULL));
+    A(gen_a(g, GEN_OP(SUB), gen_tmp(X64_TYPE(U6), 0), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U3), U3(1))));
+    A(gen_a(g, GEN_OP(LEAVE), gen_tmp(X64_TYPE(U6), 0), NULL, NULL));
     gen_st *st = gen_st_i(&malloc, &free, &gen_st_atmf, &gen_st_latf, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &malloc, NULL, &free), vr_i(16, &malloc, NULL, &free));
     as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     if (gen_st_p1(g, st) != GEN_STAT(OK)) exit(33);
