@@ -12,7 +12,7 @@ typedef enum {
     GEN_OP(LEAVE),
     GEN_OP(ADD),
     GEN_OP(NE),
-    GEN_OP(ULTE), // unsigned lte
+    GEN_OP(UGT),
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 

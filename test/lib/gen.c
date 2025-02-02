@@ -40,7 +40,7 @@ void fibtest(void) {
     A(gen_a(g, GEN_OP(NE), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U6), U6(0)), gen_lbl(2)));
     A(gen_a(g, GEN_OP(LEAVE), gen_data(X64_TYPE(U6), U6(0)), NULL, NULL));
     A(gen_a(g, GEN_OP(LBL), gen_lbl(2), NULL, NULL));
-    A(gen_a(g, GEN_OP(ULTE), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U6), U6(2)), gen_lbl(3)));
+    A(gen_a(g, GEN_OP(UGT), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U6), U6(2)), gen_lbl(3)));
     A(gen_a(g, GEN_OP(LEAVE), gen_data(X64_TYPE(U6), U6(1)), NULL, NULL));
     A(gen_a(g, GEN_OP(LBL), gen_lbl(3), NULL, NULL));
     A(gen_a(g, GEN_OP(LEAVE), gen_arg(X64_TYPE(U6), 0), NULL, NULL));
@@ -54,7 +54,7 @@ void fibtest(void) {
     uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     gen_p(g, m);
-    uint64_t n = 35;
+    uint64_t n = 8;
     printf("Fib(%lu): %lu\n", n, ((uint64_t(*)(uint64_t)) m)(n));
     gen_st_f(st);
     gen_f(g);
