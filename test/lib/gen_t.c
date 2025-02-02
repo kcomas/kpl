@@ -19,8 +19,16 @@ tbl *gen_op_tbl(size_t bcks) {
     return t;
 }
 
+te *gen_lbl(size_t id) {
+    return gen_var(&malloc, &free, GEN_CLS(L), U3(X64_TYPE(N)), U6(id));
+}
+
 te *gen_arg(x64_type t, size_t id) {
-    return gen_var(&malloc, &free, GEN_CLS(A), U3(t), id);
+    return gen_var(&malloc, &free, GEN_CLS(A), U3(t), U6(id));
+}
+
+te *gen_data(x64_type t, un d) {
+    return gen_var(&malloc, &free, GEN_CLS(D), U3(t), d);
 }
 
 void gen_entry_f(void *p) {

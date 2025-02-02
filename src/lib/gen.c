@@ -15,11 +15,11 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, size_t id) {
+te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, un id) {
     te *v = te_i(3, ga, gf);
     v->d[0] = U3(cls);
     v->d[1] = info;
-    v->d[2] = U6(id);
+    v->d[2] = id;
     return v;
 }
 

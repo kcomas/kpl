@@ -25,7 +25,7 @@ const char* gen_cls_str(gen_cls cls);
 
 // var te[cls;info;id]
 
-te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, size_t id);
+te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, un id);
 
 typedef tbl *cls_tbl_i(void);
 
