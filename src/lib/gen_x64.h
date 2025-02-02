@@ -10,6 +10,7 @@ typedef enum {
     GEN_OP(LBL),
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
+    GEN_OP(CALL),
     GEN_OP(ADD),
     GEN_OP(SUB),
     GEN_OP(NE),

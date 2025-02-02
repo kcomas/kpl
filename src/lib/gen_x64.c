@@ -7,6 +7,7 @@ const char *gen_op_str(gen_op go) {
         "LBL",
         "ENTER",
         "LEAVE",
+        "CALL",
         "ADD",
         "SUB",
         "NE",
@@ -56,6 +57,38 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
     }
 }
 
+static void ovt_p(const te *ovt) {
+    vr *m;
+    printf("(%s ", gen_cls_str(ovt->d[0].u3));
+    switch (ovt->d[0].u3) {
+        case GEN_CLS(M):
+            putchar('[');
+            m = (vr*) ovt->d[2].p;
+            for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
+            printf("])");
+            break;
+        case GEN_CLS(A):
+        case GEN_CLS(V):
+        case GEN_CLS(T):
+        case GEN_CLS(L):
+        case GEN_CLS(D):
+            printf("%s ", x64_type_str(ovt->d[1].u3));
+            break;
+        default:
+            printf("N ");
+            break;
+    }
+    if (ovt->d[0].u3 == GEN_CLS(M)) return;
+    switch (ovt->d[1].u6) {
+        case X64_TYPE(M):
+            printf("%p)", ovt->d[2].p);
+            break;
+        default:
+            printf("%lu)", ovt->d[2].u6);
+            break;
+    }
+}
+
 void gen_p(const gen *g, const uint8_t *m) {
     te *h = g->code->h;
     while (h) {
@@ -67,19 +100,8 @@ void gen_p(const gen *g, const uint8_t *m) {
                 printf(" (N)");
                 continue;
             }
-            printf(" (%s ", gen_cls_str(ovt->d[0].u3));
-            switch (ovt->d[0].u3) {
-                case GEN_CLS(A):
-                case GEN_CLS(V):
-                case GEN_CLS(T):
-                case GEN_CLS(D):
-                    printf("%s ", x64_type_str(ovt->d[1].u3));
-                    break;
-                default:
-                    printf("N ");
-                    break;
-            }
-            printf("%lu)", ovt->d[2].u6);
+            putchar(' ');
+            ovt_p(ovt);
         }
         printf(")\n");
         te *cli = o->d[5].p;
@@ -141,14 +163,20 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
     }
 }
 
-static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv) {
+static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool ds) {
     if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
     else if (st->xstk->l == 0) return GEN_STAT(INV);
     *kv = te_i(3, st->sa, st->atmf);
     (*kv)->d[0] = hsh;
     (*kv)->d[1] = P(te_c(ovt));
-    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
-    else (*kv)->d[2] = U3(st->xstk->d[st->xstk->l - 1 - ovt->d[2].u3].u3);
+    un d;
+    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) {
+        (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
+        if (ds) vr_sb(st->rstk, &d);
+    } else {
+        (*kv)->d[2] = U3(st->xstk->d[st->xstk->l - 1 - ovt->d[2].u3].u3);
+        if (ds) vr_sb(st->xstk, &d);
+    }
     tbl_a(st->atm, *kv);
     return GEN_STAT(OK);
 }
@@ -159,7 +187,7 @@ static gen_stat reg_map(gen_st *st, te *ovt) {
     te *kv;
     if (tbl_g_i(st->atm, hsh, &kv) == TBL_STAT(OK)) {
         if (ovt->d[1].u3 != ((te*) kv->d[1].p)->d[1].u3) return GEN_STAT(INV);
-    } else set_reg(st, hsh, ovt, &kv);
+    } else set_reg(st, hsh, ovt, &kv, false);
     return GEN_STAT(OK);
 }
 
@@ -223,7 +251,7 @@ gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
     un hsh = ovt_hsh(ovt);
     if (tbl_g_i(st->atm, hsh, kv) == TBL_STAT(NF)) {
         if (ovt->d[0].u3 != GEN_CLS(T)) return GEN_STAT(INV);
-        return set_reg(st, hsh, ovt, kv);
+        return set_reg(st, hsh, ovt, kv, true);
     }
     return GEN_STAT(OK);
 }
@@ -263,7 +291,9 @@ static gen_stat lbl_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     (void) s;
     te *lbl = ci->d[1].p;
-    as_lbl_a(a, lbl->d[2].u6);
+    if (lbl->d[1].u3 == X64_TYPE(M)) {
+        *(size_t*) lbl->d[2].p = as_lbl_a(a, LABEL(UN));
+    } else as_lbl_a(a, lbl->d[2].u6);
     set_code_s(ci, a);
     set_code_e(ci, a);
     return GEN_STAT(OK);
@@ -273,11 +303,14 @@ static gen_stat lbl_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
 void gen_enter_leave(gen *g);
 void gen_arith(gen *g);
 void gen_cond(gen *g);
+void gen_call(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), &lbl_fn);
+    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(M)), &lbl_fn);
     gen_enter_leave(g);
     gen_arith(g);
     gen_cond(g);
+    gen_call(g);
     return g;
 }

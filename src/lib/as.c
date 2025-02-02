@@ -11,7 +11,7 @@ te *arg_i(size_t id, un d, alfn *aa, frfn *af) {
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
     as *a = aa(sizeof(as));
     a->r = 1;
-    a->lc = LABEL(_);
+    a->lc = LABEL(USER);
     a->aa = aa;
     a->af = af;
     a->lef = lef;

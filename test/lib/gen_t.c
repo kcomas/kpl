@@ -19,8 +19,30 @@ tbl *gen_op_tbl(size_t bcks) {
     return t;
 }
 
+void gen_call_m_f(void *p) {
+    te *t = (te*) p;
+    vr_f(t->d[2].p);
+    free(t);
+}
+
+te *gen_call_m(size_t n, ...) {
+    vr *v = vr_i(n, &malloc, (void*) &te_f, &free);
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        vr_ab(&v, P(va_arg(args, te*)));
+        n--;
+    }
+    va_end(args);
+    return gen_var(&malloc, &gen_call_m_f, GEN_CLS(M), U3(X64_TYPE(N)), P(v));
+}
+
 te *gen_lbl(size_t id) {
     return gen_var(&malloc, &free, GEN_CLS(L), U3(X64_TYPE(N)), U6(id));
+}
+
+te *gen_lbl_m(size_t *id) {
+    return gen_var(&malloc, &free, GEN_CLS(L), U3(X64_TYPE(M)), P(id));
 }
 
 te *gen_arg(x64_type t, size_t id) {
