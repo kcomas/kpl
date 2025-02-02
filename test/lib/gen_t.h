@@ -14,8 +14,6 @@ te *gen_call_m(size_t n, ...);
 
 te *gen_lbl(size_t id);
 
-te *gen_lbl_m(size_t *id);
-
 te *gen_arg(x64_type t, size_t id);
 
 te *gen_tmp(x64_type t, size_t id);

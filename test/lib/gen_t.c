@@ -41,10 +41,6 @@ te *gen_lbl(size_t id) {
     return gen_var(&malloc, &free, GEN_CLS(L), U3(X64_TYPE(N)), U6(id));
 }
 
-te *gen_lbl_m(size_t *id) {
-    return gen_var(&malloc, &free, GEN_CLS(L), U3(X64_TYPE(M)), P(id));
-}
-
 te *gen_arg(x64_type t, size_t id) {
     return gen_var(&malloc, &free, GEN_CLS(A), U3(t), U6(id));
 }

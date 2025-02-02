@@ -11,7 +11,6 @@ te *arg_i(size_t id, un d, alfn *aa, frfn *af) {
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
     as *a = aa(sizeof(as));
     a->r = 1;
-    a->lc = LABEL(USER);
     a->aa = aa;
     a->af = af;
     a->lef = lef;
@@ -41,7 +40,7 @@ static te *add_code(as *a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te
 }
 
 static size_t add_lbl(as *a, size_t lbl_id) {
-    te *c = te_c(add_code(a, CODE_ID(L), lbl_id == LABEL(UN) ? a->lc++ : lbl_id, NULL, NULL, NULL, NULL, NULL, NULL));
+    te *c = te_c(add_code(a, CODE_ID(L), lbl_id, NULL, NULL, NULL, NULL, NULL, NULL));
     te *lbl = te_i(3, a->aa, a->lef);
     lbl->d[0] = c->d[1];
     lbl->d[1] = P(c);
@@ -52,7 +51,6 @@ static size_t add_lbl(as *a, size_t lbl_id) {
 
 size_t as_lbl_a(as *a, size_t lbl_id) {
     te *kv;
-    if (lbl_id == LABEL(UN)) return add_lbl(a, lbl_id);
     if (tbl_g_i(a->lbls, U6(lbl_id), &kv) == TBL_STAT(OK)) return ((te*) kv->d[1].p)->d[0].u6;
     return add_lbl(a, lbl_id);
 }
@@ -85,7 +83,6 @@ static tbl *add_op_entry(as *a, tbl *co, te **kv, size_t id) {
 }
 
 as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn) {
-    if (op_id == LABEL(UN)) return AS_STAT(INV);
     tbl *co = a->ops;
     te *kv;
     if (tbl_g_i(co, U6(op_id), &kv) == TBL_STAT(NF)) co = add_op_entry(a, co, &kv, op_id);

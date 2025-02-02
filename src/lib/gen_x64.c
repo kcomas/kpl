@@ -291,9 +291,7 @@ static gen_stat lbl_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     (void) s;
     te *lbl = ci->d[1].p;
-    if (lbl->d[1].u3 == X64_TYPE(M)) {
-        *(size_t*) lbl->d[2].p = as_lbl_a(a, LABEL(UN));
-    } else as_lbl_a(a, lbl->d[2].u6);
+    as_lbl_a(a, lbl->d[2].u6);
     set_code_s(ci, a);
     set_code_e(ci, a);
     return GEN_STAT(OK);
@@ -307,7 +305,6 @@ void gen_call(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), &lbl_fn);
-    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(M)), &lbl_fn);
     gen_enter_leave(g);
     gen_arith(g);
     gen_cond(g);
