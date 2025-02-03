@@ -20,7 +20,7 @@ tbl *gen_op_tbl(size_t bcks) {
 }
 
 void gen_call_m_f(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     vr_f(t->d[2].p);
     free(t);
 }
@@ -54,14 +54,14 @@ te *gen_data(x64_type t, un d) {
 }
 
 void gen_entry_f(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     if (t->l == 3) tbl_f(t->d[2].p);
     else tbl_f(t->d[4].p);
     free(t);
 }
 
 void gen_code_entry_f(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     te_f(t->d[1].p);
     te_f(t->d[2].p);
     te_f(t->d[3].p);
@@ -71,13 +71,13 @@ void gen_code_entry_f(void *p) {
 }
 
 void gen_st_atmf(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     te_f(t->d[1].p);
     free(t);
 }
 
 void gen_st_latf(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     te_f(t->d[1].p);
     te_f(t->d[2].p);
     free(t);

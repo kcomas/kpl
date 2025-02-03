@@ -64,7 +64,7 @@ tbl *psr_mktbl(void) {
 }
 
 void psr_entry_f(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     te_f(t->d[3].p);
     tbl_f(t->d[7].p);
     free(t);
@@ -294,7 +294,7 @@ void node_p(const te *n, size_t idnt) {
 
 void node_f(void *p) {
     if (!p) return;
-    te *n = (te*) p;
+    te *n = p;
     te_f(n->d[2].p);
     switch (n->d[1].u6) {
         case NODE_TYPE(ROOT):

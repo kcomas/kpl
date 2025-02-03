@@ -157,7 +157,7 @@ void as_code_i_p(const te *c, const uint8_t *m) {
 void as_code_p(const as *a, const uint8_t *m) {
     te *h = a->code->h;
     while (h) {
-        te *c = (te*) h->d[0].p;
+        te *c = h->d[0].p;
         as_code_i_p(c, m);
         h = h->d[2].p;
     }

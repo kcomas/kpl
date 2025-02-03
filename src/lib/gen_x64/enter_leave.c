@@ -5,7 +5,7 @@ static gen_stat enter_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a) {
     (void) g;
     AS1(a, AS_X64(PUSH), as_arg(al, fr, ARG_ID(R), U3(R(BP))), ci);
     AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(BP))), as_arg(al, fr, ARG_ID(R), U3(R(SP))), ci);
-    gen_st *st = (gen_st*) s;
+    gen_st *st = s;
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
@@ -33,7 +33,7 @@ static gen_stat leave_e(alfn *al, frfn *fr, gen_st *st, te *ci, as *a)  {
 static gen_stat leave_au_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     gen_stat stat;
-    gen_st *st = (gen_st*) s;
+    gen_st *st = s;
     te *ovt = ci->d[1].p, *kv;
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat;
     AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(R), U3(kv->d[2].u3)), ci);
@@ -43,7 +43,7 @@ static gen_stat leave_au_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a) 
 
 static gen_stat leave_du_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
-    gen_st *st = (gen_st*) s;
+    gen_st *st = s;
     AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(QW), ((te*) ci->d[1].p)->d[2]), ci);
     return leave_e(al, fr, st, ci, a);
 }
