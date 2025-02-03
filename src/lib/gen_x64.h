@@ -13,8 +13,9 @@ typedef enum {
     GEN_OP(CALL),
     GEN_OP(ADD),
     GEN_OP(SUB),
+    GEN_OP(EQ),
     GEN_OP(NE),
-    GEN_OP(UGT),
+    GEN_OP(GT),
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 
