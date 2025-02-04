@@ -36,7 +36,7 @@ String: "Hello World\n"
 
 UTF8 alpha numeric, first character cannot be numeric
 
-#### : - Assign
+#### : Assign
 
 ```
 a: 1
@@ -148,7 +148,7 @@ Create a function by casting a deferred list to a function
 ##### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
 ```
-f: FN(I6`a;I6`b;I6)${x+b}
+f: FN(I6`x;I6`y;I6)${x+y}
 f(1;2) -> 3
 ```
 
