@@ -56,19 +56,25 @@ A list of statements of which the context it is used determines how it's evaluat
 
 #### [] Value
 
-### SL - Symbols
+### Symbols
+
+##### SL
 
 ```
 `key
 ```
 
-### TYPE\`SYMBOL Tag
+### Tag
+
+##### TYPE\`SYMBOL
 
 ```
 value`key
 ```
 
-### UN(...) Unions
+### Unions
+
+##### UN(TYPE`key;TAG;....)
 
 Tagged Union
 
@@ -123,7 +129,9 @@ Operations on these types result in a union of value and error to check for unde
 
 ##### F5 - 32bit floating point
 
-### Casting $
+### Casting
+
+#### TO$FROM
 
 Convert data from one type to another
 
@@ -137,7 +145,7 @@ a: F6$1 -> a = 1.0
 
 Create a function by casting a deferred list to a function
 
-#### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
+##### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
 ```
 f: FN(I6`a;I6`b;I6)${x+b}
