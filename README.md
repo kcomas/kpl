@@ -4,9 +4,15 @@
 
 ## Supported Platforms and Dependencies
 
-x64 Linux
+X86-64 Linux
+
 GCC
+
 GNU Make
+
+## Build TODO
+
+## Usage TODO
 
 ## Tour
 
@@ -38,6 +44,8 @@ All statements in lists are separated by ; or \n
 
 #### {} Deferred
 
+A list of statements of which the context it is used determines how it's evaluated
+
 #### () Apply
 
 #### [] Value
@@ -59,11 +67,23 @@ a\`b:2.2 -> UN(I6\`a;F6\`b;\`b)
 
 #### Match ?
 
-Get a floating value from a because the \`a is an int it must be changed
+Get a floating value from var a because the a\`a tag is an int it must be changed
 
 c: a?{1.0\`a;a\`b\`b}
 
 ### Numbers
+
+#### Number Ops
+
+\+ Add
+
+\- Sub
+
+\* Mul
+
+/ Div
+
+% Rem
 
 #### Number Types
 
@@ -91,4 +111,24 @@ Operations on these types result in a union of value and error to check for unde
 
 ##### F5 - 32bit floating point
 
+### Casting $
+
+Convert data from one type to another
+
+###### Int To Float Example
+
+a: F6$1 -> a = 1.0
+
 ### Functions
+
+Create a function by casting a deferred list to a function
+
+#### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
+
+f: FN(I6\`a;I6\`b;I6)${x+b}
+
+f(1;2) -> 3
+
+Functions are curried by default
+
+f(1) -> FN(I6\`b)${1+b} -> f(2) -> 3
