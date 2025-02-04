@@ -25,7 +25,9 @@ Double slash until end of line
 ### Values
 
 Integer: 1, 234, -123
+
 Float: 0.1, 3.14
+
 String: "Hello World\n"
 
 ### Variables
@@ -34,9 +36,11 @@ UTF8 alpha numeric, first character cannot be numeric
 
 #### : - Assign
 
+```
 a: 1
 Π: 3.14
 c: "Hello Word\n"
+```
 
 ### Lists
 
@@ -52,38 +56,44 @@ A list of statements of which the context it is used determines how it's evaluat
 
 ### SL - Symbols
 
+```
 \`key
+```
 
 ### TYPE\`SYMBOL Tag
 
+```
 value\`key
+```
 
 ### UN(...) Unions
 
 Tagged Union
 
+```
 a\`a: 1 -> UN(I6\`a;\`a)
 a\`b:2.2 -> UN(I6\`a;F6\`b;\`b)
+```
 
 #### Match ?
 
 Get a floating value from var a because the a\`a tag is an int it must be changed
 
+```
 c: a?{1.0\`a;a\`b\`b}
+```
 
 ### Numbers
 
 #### Number Ops
 
-\+ Add
-
-\- Sub
-
-\* Mul
-
-/ Div
-
+```
++ Add
+- Sub
+* Mul
+ Div
 % Rem
+```
 
 #### Number Types
 
@@ -117,7 +127,9 @@ Convert data from one type to another
 
 ###### Int To Float Example
 
+```
 a: F6$1 -> a = 1.0
+```
 
 ### Functions
 
@@ -125,10 +137,13 @@ Create a function by casting a deferred list to a function
 
 #### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
+```
 f: FN(I6\`a;I6\`b;I6)${x+b}
-
 f(1;2) -> 3
+```
 
 Functions are curried by default
 
+```
 f(1) -> FN(I6\`b)${1+b} -> f(2) -> 3
+```
