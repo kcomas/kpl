@@ -16,13 +16,15 @@ static bool cmp(un a, un b) {
 }
 
 static void kv_f(te *t) {
-    free(t->d[0].p);
-    free(t);
+    t->af->fr(t->d[0].p);
+    t->af->fr(t);
 }
 
+static const alfr tm = { .al = &malloc, .fr = &free };
+
 static te *kv_i(const char *s, int64_t v) {
-    te *t = te_i(2, &malloc, (void*) &kv_f);
-    t->d[0].p = malloc(strlen(s) + sizeof(char));
+    te *t = te_i(2, &tm, (void*) &kv_f);
+    t->d[0].p = tm.al(strlen(s) + sizeof(char));
     strcpy(t->d[0].p, s);
     t->d[1].i6 = v;
     return t;
@@ -41,10 +43,15 @@ static void pt(tbl *t) {
     putchar('\n');
 }
 
+static void td(void *p) {
+    te *t = p;
+    t->af->fr(t);
+}
+
 void btable(void) {
-    lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
-    te *b = te_i(1, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &sh, &cmp, tl, b);
+    lst *tl = lst_i(&tm, &tm, (void*) &te_f);
+    te *b = te_i(1, &tm, &td);
+    tbl *t = tbl_i(&tm, &sh, &cmp, tl, b);
     tbl_stat tstat;
     if ((tstat = tbl_a(t, kv_i("Hello", 123))) != TBL_STAT(RES)) exit(tstat);
     pt(t);

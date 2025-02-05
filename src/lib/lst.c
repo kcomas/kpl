@@ -22,7 +22,7 @@ size_t lst_g_l(const lst *l) {
 }
 
 static void td(void *p) {
-    te *t = (te*) p;
+    te *t = p;
     t->af->fr(t);
 }
 
