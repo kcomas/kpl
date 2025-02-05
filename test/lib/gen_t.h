@@ -10,15 +10,15 @@ tbl *gen_cls_info_tbl(void);
 
 tbl *gen_op_tbl(size_t bcks);
 
-te *gen_call_m(size_t n, ...);
+te *gen_call_m(gen *g, size_t n, ...);
 
-te *gen_lbl(size_t id);
+te *gen_lbl(gen *g, size_t id);
 
-te *gen_arg(x64_type t, size_t id);
+te *gen_arg(gen *g, x64_type t, size_t id);
 
-te *gen_tmp(x64_type t, size_t id);
+te *gen_tmp(gen *g, x64_type t, size_t id);
 
-te *gen_data(x64_type t, un d);
+te *gen_data(gen *g, x64_type t, un d);
 
 void gen_entry_f(void *p);
 

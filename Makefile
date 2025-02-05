@@ -2,12 +2,11 @@
 .RECIPEPREFIX = >
 .PHONY: clean
 CC = gcc
-STD = gnu99
 OO = -g -Og
 FFLAGS = -fstack-protector-all -fno-omit-frame-pointer
 MFLAGS = -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
-CFLAGS = -std=$(STD) $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
+CFLAGS = -std=gnu99 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 SRC = ./src
 LSRC = $(SRC)/lib
 TEST = ./test

@@ -16,8 +16,8 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-te *gen_var(const alfr *af, frfn *fr, gen_cls cls, un info, un id) {
-    te *v = te_i(3, af, fr);
+te *gen_var_i(gen *g, frfn *fr, gen_cls cls, un info, un id) {
+    te *v = te_i(3, g->ta, fr);
     v->d[0] = U3(cls);
     v->d[1] = info;
     v->d[2] = id;
