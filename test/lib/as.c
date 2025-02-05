@@ -8,8 +8,10 @@ static void as_printf(as *a, const char *fmt) {
     as_a(a, AS_X64(CALL), as_arg_r(R(10)), NULL, NULL, NULL);
 }
 
+extern const alfr am;
+
 static void btest(void) {
-    as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_op_p(a->ops, false, 0);
     printf(">>>> BTEST\n");
     as_a(a, AS_X64(NOP), NULL, NULL, NULL, NULL);
@@ -36,8 +38,8 @@ static void btest(void) {
 }
 
 static void iftest(void) {
+    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> IFTEST\n");
-    as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_a(a, AS_X64(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
     as_a(a, AS_X64(MOV), as_arg_r(R(CX)), as_arg_b(5), NULL, NULL);
     as_a(a, AS_X64(CMP), as_arg_r(R(DI)), as_arg_r(R(CX)), NULL, NULL);
@@ -60,8 +62,8 @@ static void iftest(void) {
 }
 
 static void looptest(void) {
+    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> LOOPTEST\n");
-    as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(R(AX)), as_arg_qw(U6(2)));
     AS_A1(a, AS_X64(PUSH), as_arg_r(R(AX)));
     AS_A2(a, AS_X64(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)));
@@ -84,8 +86,8 @@ static void looptest(void) {
 }
 
 static void calltest(void) {
+    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> CALLTEST\n");
-    as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(R(AX)), as_arg_r(R(DI)));
     AS_A1(a, AS_X64(JMP), as_arg_l(2));
     as_lbl_a(a, 1);

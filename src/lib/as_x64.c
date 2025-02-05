@@ -105,13 +105,6 @@ static const char *as_inst_str(size_t id) {
     return s;
 }
 
-te *as_arg(alfn *aa, frfn *af, arg_id id, un v) {
-    te *a = te_i(2, aa, af);
-    a->d[0] = U6(id);
-    a->d[1] = v;
-    return a;
-}
-
 void as_op_p(const tbl *ot, bool args, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
