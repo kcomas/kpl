@@ -15,7 +15,7 @@ static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a) {
         if (r->d[2].u3 != kvr->d[2].u3) rsaves[rsl++] = r->d[2].u3;
         h = h->d[2].p;
     }
-    for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(g->aa, ARG_ID(R), U3(rsaves[i])), ci);
+    for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci);
     static reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
     size_t iri = 0, xri = 0;
     vr *args = ((te*) ci->d[2].p)->d[2].p;
@@ -32,7 +32,7 @@ static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a) {
                         // TODO xmm
                         break;
                     default:
-                        AS2(a, AS_X64(MOV), as_arg_i(g->aa, ARG_ID(R), U3(ir[iri++])), as_arg_i(g->aa, ARG_ID(R), kv->d[2]), ci);
+                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
                         drop_atm_kv(st, kv, ci);
                         break;
                 }
@@ -50,7 +50,7 @@ static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a) {
                     case X64_TYPE(M):
                     case X64_TYPE(U6):
                     case X64_TYPE(I6):
-                        AS2(a, AS_X64(MOV), as_arg_i(g->aa, ARG_ID(R), U3(ir[iri++])), as_arg_i(g->aa, ARG_ID(QW), ovt->d[2]), ci);
+                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[2]), ci);
                         break;
                     default:
                         return GEN_STAT(INV);
@@ -60,9 +60,9 @@ static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a) {
                 return GEN_STAT(INV);
         }
     }
-    AS1(a, AS_X64(CALL), as_arg_i(g->aa, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci);
+    AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci);
     while (rsl > 0) {
-        AS1(a, AS_X64(POP), as_arg_i(g->aa, ARG_ID(R), U3(rsaves[rsl - 1])), ci);
+        AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), ci);
         rsl--;
     }
     switch (((te*) ci->d[1].p)->d[1].u3) {
@@ -71,7 +71,7 @@ static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a) {
             // TODO
             break;
         default:
-            AS2(a, AS_X64(MOV), as_arg_i(g->aa, ARG_ID(R), kvr->d[2]), as_arg_i(g->aa, ARG_ID(R), U3(R(AX))), ci);
+            AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kvr->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
             break;
     }
     drop_atm_kv(st, kvr, ci);

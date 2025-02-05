@@ -24,12 +24,11 @@ te *gen_var(const alfr *af, frfn *fr, gen_cls cls, un info, un id) {
     return v;
 }
 
-gen *gen_i(const alfr *af, const alfr *ta, const alfr *aa, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code) {
+gen *gen_i(const alfr *af, const alfr *ta, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code) {
     gen *g = af->a(sizeof(gen));
     g->r = 1;
     g->af = af;
     g->ta = ta;
-    g->aa = aa;
     g->ocef = ocef;
     g->cef = cef;
     g->cti = cti; g->oci = oci;

@@ -2,10 +2,10 @@
 #include "as_t.h"
 
 static void as_printf(as *a, const char *fmt) {
-    as_a(a, AS_X64(XOR), as_arg_r(R(AX)), as_arg_r(R(AX)), NULL, NULL);
-    as_a(a, AS_X64(MOV), as_arg_r(R(DI)), as_arg_qw(P(fmt)), NULL, NULL);
-    as_a(a, AS_X64(MOV), as_arg_r(R(10)), as_arg_qw(P(&printf)), NULL, NULL);
-    as_a(a, AS_X64(CALL), as_arg_r(R(10)), NULL, NULL, NULL);
+    as_a(a, AS_X64(XOR), as_arg_r(a, R(AX)), as_arg_r(a, R(AX)), NULL, NULL);
+    as_a(a, AS_X64(MOV), as_arg_r(a, R(DI)), as_arg_qw(a, P(fmt)), NULL, NULL);
+    as_a(a, AS_X64(MOV), as_arg_r(a, R(10)), as_arg_qw(a, P(&printf)), NULL, NULL);
+    as_a(a, AS_X64(CALL), as_arg_r(a, R(10)), NULL, NULL, NULL);
 }
 
 extern const alfr am;
@@ -17,13 +17,13 @@ static void btest(void) {
     as_a(a, AS_X64(NOP), NULL, NULL, NULL, NULL);
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
     as_lbl_a(a, 1);
-    as_a(a, AS_X64(PUSH), as_arg_r(R(BP)), NULL, NULL, NULL);
-    as_a(a, AS_X64(MOV), as_arg_r(R(BP)), as_arg_r(R(SP)), NULL, NULL);
-    as_a(a, AS_X64(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
-    as_a(a, AS_X64(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)), NULL, NULL);
+    as_a(a, AS_X64(PUSH), as_arg_r(a, R(BP)), NULL, NULL, NULL);
+    as_a(a, AS_X64(MOV), as_arg_r(a, R(BP)), as_arg_r(a, R(SP)), NULL, NULL);
+    as_a(a, AS_X64(PUSH), as_arg_r(a, R(DI)), NULL, NULL, NULL);
+    as_a(a, AS_X64(MOV), as_arg_r(a, R(SI)), as_arg_r(a, R(DI)), NULL, NULL);
     as_printf(a, "Jit Value %ld\n");
-    as_a(a, AS_X64(POP), as_arg_r(R(AX)), NULL, NULL, NULL);
-    as_a(a, AS_X64(POP), as_arg_r(R(BP)), NULL, NULL, NULL);
+    as_a(a, AS_X64(POP), as_arg_r(a, R(AX)), NULL, NULL, NULL);
+    as_a(a, AS_X64(POP), as_arg_r(a, R(BP)), NULL, NULL, NULL);
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
     uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
@@ -40,15 +40,15 @@ static void btest(void) {
 static void iftest(void) {
     as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> IFTEST\n");
-    as_a(a, AS_X64(PUSH), as_arg_r(R(DI)), NULL, NULL, NULL);
-    as_a(a, AS_X64(MOV), as_arg_r(R(CX)), as_arg_b(5), NULL, NULL);
-    as_a(a, AS_X64(CMP), as_arg_r(R(DI)), as_arg_r(R(CX)), NULL, NULL);
-    as_a(a, AS_X64(JNL), as_arg_l(1), NULL, NULL, NULL);
-    as_a(a, AS_X64(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_a(a, AS_X64(PUSH), as_arg_r(a, R(DI)), NULL, NULL, NULL);
+    as_a(a, AS_X64(MOV), as_arg_r(a, R(CX)), as_arg_b(a, 5), NULL, NULL);
+    as_a(a, AS_X64(CMP), as_arg_r(a, R(DI)), as_arg_r(a, R(CX)), NULL, NULL);
+    as_a(a, AS_X64(JNL), as_arg_l(a, 1), NULL, NULL, NULL);
+    as_a(a, AS_X64(POP), as_arg_r(a, R(SI)), NULL, NULL, NULL);
     as_printf(a, "%d Less then 5\n");
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
     as_lbl_a(a, 1);
-    as_a(a, AS_X64(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_a(a, AS_X64(POP), as_arg_r(a, R(SI)), NULL, NULL, NULL);
     as_printf(a, "%d Greater/Equal To 5\n");
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
     uint8_t *m = x64_mmap(1);
@@ -64,17 +64,17 @@ static void iftest(void) {
 static void looptest(void) {
     as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> LOOPTEST\n");
-    AS_A2(a, AS_X64(MOV), as_arg_r(R(AX)), as_arg_qw(U6(2)));
-    AS_A1(a, AS_X64(PUSH), as_arg_r(R(AX)));
-    AS_A2(a, AS_X64(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, U6(2)));
+    AS_A1(a, AS_X64(PUSH), as_arg_r(a, R(AX)));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(SI)), as_arg_r(a, R(DI)));
     as_lbl_a(a, 1);
-    AS_A1(a, AS_X64(PUSH), as_arg_r(R(SI)));
+    AS_A1(a, AS_X64(PUSH), as_arg_r(a, R(SI)));
     as_printf(a, "%d > 2: \n");
-    AS_A1(a, AS_X64(POP), as_arg_r(R(SI)));
-    AS_A1(a, AS_X64(DEC), as_arg_r(R(SI)));
-    AS_A2(a, AS_X64(CMP), as_arg_r(R(SI)), as_arg_rm(R(SP)));
-    AS_A1(a, AS_X64(JNB), as_arg_l(1));
-    AS_A1(a, AS_X64(POP), as_arg_r(R(AX)));
+    AS_A1(a, AS_X64(POP), as_arg_r(a, R(SI)));
+    AS_A1(a, AS_X64(DEC), as_arg_r(a, R(SI)));
+    AS_A2(a, AS_X64(CMP), as_arg_r(a, R(SI)), as_arg_rm(a, R(SP)));
+    AS_A1(a, AS_X64(JNB), as_arg_l(a, 1));
+    AS_A1(a, AS_X64(POP), as_arg_r(a, R(AX)));
     AS_A0(a, AS_X64(RET));
     uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
@@ -88,14 +88,14 @@ static void looptest(void) {
 static void calltest(void) {
     as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     printf(">>>> CALLTEST\n");
-    AS_A2(a, AS_X64(MOV), as_arg_r(R(AX)), as_arg_r(R(DI)));
-    AS_A1(a, AS_X64(JMP), as_arg_l(2));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
+    AS_A1(a, AS_X64(JMP), as_arg_l(a, 2));
     as_lbl_a(a, 1);
-    AS_A1(a, AS_X64(INC), as_arg_r(R(AX)));
+    AS_A1(a, AS_X64(INC), as_arg_r(a, R(AX)));
     AS_A0(a, AS_X64(RET));
     as_printf(a, "CALL SHOULD NOT SHOW\n");
     as_lbl_a(a, 2);
-    AS_A1(a, AS_X64(CALL), as_arg_l(1));
+    AS_A1(a, AS_X64(CALL), as_arg_l(a, 1));
     AS_A0(a, AS_X64(RET));
     uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);

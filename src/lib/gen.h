@@ -36,14 +36,14 @@ typedef tbl *cls_tbl_i(void);
 
 typedef struct {
     ssize_t r;
-    const alfr *af, *ta, *aa;
+    const alfr *af, *ta;
     frfn *ocef, *cef;
     cls_tbl_i *cti;
     tbl *oci; // op cls op tbl given at start
     lst *code;
 } gen;
 
-gen *gen_i(const alfr *af, const alfr *ta, const alfr *aa, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
+gen *gen_i(const alfr *af, const alfr *ta, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
 
 typedef gen_stat gen_fn(gen *g, void *s, te *ci, as *a); // state
 
