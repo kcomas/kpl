@@ -1,16 +1,18 @@
 
 #include "psr_t.h"
 
+const alfr pm = { .al = &malloc, .fr = &free };
+
 psr *psr_b(const char *pgm) {
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&pm, &pm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &pm));
     tkn_standard(t);
-    vr *v = vr_i(10, &malloc, (void*) &te_f, &free);
-    psr *p = psr_i(&malloc, &free, &psr_entry_f, &psr_mktbl, t, v);
-    te *lst_stp = te_i(1, &malloc, &free);
+    vr *v = vr_i(10, &pm, (void*) &te_f);
+    psr *p = psr_i(&pm, &pm, &pm, &psr_entry_f, &psr_mktbl, t, v);
+    te *lst_stp = te_i(1, &pm, NULL);
     lst_stp->d[0] = U6(tkn_a(t, TCUST(RS), "]", &tkn_ft));
-    te *blk_stp = te_i(1, &malloc, &free);
+    te *blk_stp = te_i(1, &pm, NULL);
     blk_stp->d[0] = U6(tkn_a(t, TCUST(RB), "}", &tkn_ft));
-    te *aply_stp = te_i(1, &malloc, &free);
+    te *aply_stp = te_i(1, &pm, NULL);
     aply_stp->d[0] = U6(tkn_a(t, TCUST(RP), ")", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, tkn_a(t, TCUST(SEMI), ";", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, tkn_a(t, TCUST(NL), "\n", &tkn_ft));
@@ -57,9 +59,9 @@ void psr_p(tbl *t, size_t idnt) {
 }
 
 tbl *psr_mktbl(void) {
-    lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
-    te *b = te_i(10, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &tkn_sh, &c4_eq, tl, b);
+    lst *tl = lst_i(&pm, &pm, (void*) &te_f);
+    te *b = te_i(10, &pm, NULL);
+    tbl *t = tbl_i(&pm, &tkn_sh, &c4_eq, tl, b);
     return t;
 }
 
@@ -67,11 +69,11 @@ void psr_entry_f(void *p) {
     te *t = p;
     te_f(t->d[3].p);
     tbl_f(t->d[7].p);
-    free(t);
+    t->af->fr(t);
 }
 
 static te *node_i(psr *p, node_id nt, size_t size) {
-    te *n = te_i(size, p->pa, &node_f);
+    te *n = te_i(size, p->ta, &node_f);
     n->d[1] = U6(nt);
     un m;
     vr_sb(p->ts, &m);
@@ -100,7 +102,7 @@ psr_stat psr_int_i(psr *p, te **n) {
 }
 
 psr_stat psr_flt_i(psr *p, te **n) {
-    *n = te_i(5, p->pa, &node_f);
+    *n = te_i(5, p->ta, &node_f);
     (*n)->d[1] = U6(NODE_TYPE(FLT));
     un m;
     for (size_t i = 4; i > 1; i--) {
@@ -149,7 +151,7 @@ psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n) {
 
 psr_stat psr_lst_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(LST), 4);
-    (*n)->d[3].p = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
+    (*n)->d[3].p = lst_i(p->la, p->ta, (void*) &te_f);
     return PSR_STAT(OK);
 }
 
@@ -163,7 +165,7 @@ psr_stat psr_lst_e(psr *p, te *restrict e, te *restrict n) {
 psr_stat psr_aply_i(psr *p, te **n) {
     (void) p;
     *n = node_i(p, NODE_TYPE(APLY), 5);
-    (*n)->d[4].p = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
+    (*n)->d[4].p = lst_i(p->la, p->ta, (void*) &te_f);
     return PSR_STAT(OK);
 }
 
@@ -324,5 +326,5 @@ void node_f(void *p) {
             node_f(n->d[3].p);
             break;
     }
-    free(n);
+    n->af->fr(n);
 }

@@ -7,9 +7,11 @@ static psr *ppsr(psr *p) {
     return p;
 }
 
+extern const alfr pm;
+
 static te *rpsr(psr *p) {
     psr_stat pstat;
-    te *nh = te_i(3, &malloc, &node_f);
+    te *nh = te_i(3, &pm, &node_f);
     if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) {
         printf("%s|", p->tt->s->d);
         printf("PSTAT: %u|", pstat);

@@ -43,14 +43,9 @@ static void pt(tbl *t) {
     putchar('\n');
 }
 
-static void td(void *p) {
-    te *t = p;
-    t->af->fr(t);
-}
-
 void btable(void) {
     lst *tl = lst_i(&tm, &tm, (void*) &te_f);
-    te *b = te_i(1, &tm, &td);
+    te *b = te_i(1, &tm, NULL);
     tbl *t = tbl_i(&tm, &sh, &cmp, tl, b);
     tbl_stat tstat;
     if ((tstat = tbl_a(t, kv_i("Hello", 123))) != TBL_STAT(RES)) exit(tstat);

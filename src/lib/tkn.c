@@ -1,13 +1,13 @@
 
 #include "tkn.h"
 
-tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
-    tkn *t = ta(sizeof(tkn));
+tkn *tkn_i(const alfr *af, const alfr *ta, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
+    tkn *t = af->al(sizeof(tkn));
     t->idc = TOKEN(_);
     t->r = t->lno = t->cno = 1;
     t->pos = 0;
+    t->af = af;
     t->ta = ta;
-    t->tf = tf;
     t->ef = ef;
     t->ttif = ttif;
     t->df = df;
@@ -93,5 +93,5 @@ void tkn_f(tkn *t) {
     if (!t || --t->r > 0) return;
     tbl_f(t->t);
     mc_f(t->s);
-    t->tf(t);
+    t->af->fr(t);
 }

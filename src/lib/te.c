@@ -1,12 +1,17 @@
 
 #include "te.h"
 
+static void td(void *p) {
+    te *t = p;
+    t->af->fr(t);
+}
+
 te *te_i(size_t l, const alfr *af, frfn *tf) {
     te *t = af->al(sizeof(te) + sizeof(un) * l);
     t->r = 1;
     t->l = l;
     t->af = af;
-    t->tf = tf;
+    t->tf = tf ? tf : &td;
     for (size_t i = 0; i < l; i++) t->d[i] = P(NULL);
     return t;
 }

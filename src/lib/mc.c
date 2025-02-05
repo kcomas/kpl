@@ -1,19 +1,18 @@
 
 #include "mc.h"
 
-mc *mc_i(size_t s, alfn *ma, frfn *mf) {
-    mc *m = ma(sizeof(mc) + sizeof(uint8_t) * s);
+mc *mc_i(size_t s, const alfr *af) {
+    mc *m = af->al(sizeof(mc) + sizeof(uint8_t) * s);
     m->r = 1;
     m->s = s;
     m->l = 0;
-    m->ma = ma;
-    m->mf = mf;
+    m->af = af;
     return m;
 }
 
-mc *mc_i_cstr(const char *s, alfn *ma, frfn *mf) {
+mc *mc_i_cstr(const char *s, const alfr *af) {
     size_t l = strlen(s) + sizeof(uint8_t); // len of string incs null byte
-    mc *m = mc_i(l, ma, mf);
+    mc *m = mc_i(l, af);
     m->l = l;
     memcpy(m->d, s, l);
     return m;
@@ -30,10 +29,10 @@ mc *mc_c(mc *m) {
 
 void mc_wa(mc **m, uint8_t b) {
     if ((*m)->l == (*m)->s) {
-        mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->ma, (*m)->mf);
+        mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->af);
         nm->l = (*m)->l;
         memcpy(nm->d, (*m)->d, nm->l);
-        nm->mf(*m);
+        nm->af->fr(*m);
         *m = nm;
     }
     (*m)->d[(*m)->l++] = b;
@@ -45,5 +44,5 @@ void mc_wb(mc **m, size_t l, uint8_t *b) {
 
 void mc_f(mc *m) {
     if (!m || --m->r > 0) return;
-    m->mf(m);
+    m->af->fr(m);
 }

@@ -1,9 +1,11 @@
 
 #include "tkn_t.h"
 
+extern const alfr tm;
+
 static void tknize(tkn *t) {
     tkn_stat tstat;
-    te *m = te_i(5, &malloc, &free);
+    te *m = te_i(5, &tm, NULL);
     while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
         tkn_m_p(m, t->s);
         putchar('\n');
@@ -15,7 +17,7 @@ static void tknize(tkn *t) {
 static void btest(void) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
     tkn_standard(t);
     tkn_a(t, TOKEN(UN), "sigma", &tkn_ft);
     tkn_a(t, TOKEN(UN), "sig", &tkn_ft);
@@ -30,7 +32,7 @@ static void btest(void) {
 
 static void stest(void) {
     const char *pgm = "0 Σ [12;44;67]\n";
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
     printf("%s\n", pgm);
     tkn_standard(t);
     tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
@@ -45,7 +47,7 @@ static void stest(void) {
 static void symtest(void) {
     const char *pgm = "a`b asdf`1234";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
     tkn_standard(t);
     tkn_p(t->t, 0);
     tknize(t);

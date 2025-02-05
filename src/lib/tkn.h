@@ -33,15 +33,15 @@ typedef enum {
 typedef struct _tkn {
     ssize_t r;
     size_t idc, lno, cno, pos; // id counter
-    alfn *ta;
-    frfn *tf, *ef; // entry free
+    const alfr *af, *ta;
+    frfn *ef; // entry free
     tkn_tbl_i *ttif;
     tkn_pf *df; // called when nothing matches
     tbl *t; // trie
     mc *s;
 } tkn;
 
-tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
+tkn *tkn_i(const alfr *af, const alfr *ta, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
 // give zero for an assigned id
 size_t tkn_a(tkn *t, size_t tid, const char *s, tkn_pf *pf);

@@ -26,15 +26,17 @@ size_t tkn_sh(un v) {
 }
 
 void tkn_entry_f(void *v) {
-    te *t = (te*) v;
+    te *t = v;
     tbl_f(t->d[3].p);
-    free(t);
+    t->af->fr(t);
 }
 
+const alfr tm = { .al = &malloc, .fr = &free };
+
 tbl *tkn_mktbl(void) {
-    lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
-    te *b = te_i(10, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &tkn_sh, &c4_eq, tl, b);
+    lst *tl = lst_i(&tm, &tm, (void*) &te_f);
+    te *b = te_i(10, &tm, NULL);
+    tbl *t = tbl_i(&tm, &tkn_sh, &c4_eq, tl, b);
     return t;
 }
 
