@@ -7,12 +7,12 @@
 typedef struct {
     ssize_t r;
     size_t l; // len
-    alfn *ta;
+    const alfr *af;
     frfn *tf;
     un d[];
 } te;
 
-te *te_i(size_t l, alfn *ta, frfn *tf);
+te *te_i(size_t l, const alfr *af, frfn *tf);
 
 te *te_c(te *t);
 

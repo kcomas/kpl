@@ -3,10 +3,10 @@
 
 static gen_stat enter_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a) {
     (void) g;
-    AS1(a, AS_X64(PUSH), as_arg(al, fr, ARG_ID(R), U3(R(BP))), ci);
-    AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(BP))), as_arg(al, fr, ARG_ID(R), U3(R(SP))), ci);
     gen_st *st = s;
+    AS1(a, AS_X64(PUSH), as_arg(al, fr, ARG_ID(R), U3(R(BP))), ci);
     if (st->vc > 0) {
+        AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(BP))), as_arg(al, fr, ARG_ID(R), U3(R(SP))), ci);
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
         AS2(a, AS_X64(SUB), as_arg(al, fr, ARG_ID(R), U3(R(SP))), as_arg(al, fr, ARG_ID(B), U3(stks)), ci);

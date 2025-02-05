@@ -1,11 +1,11 @@
 
 #include "te.h"
 
-te *te_i(size_t l, alfn *ta, frfn *tf) {
-    te *t = ta(sizeof(te) + sizeof(un) * l);
+te *te_i(size_t l, const alfr *af, frfn *tf) {
+    te *t = af->al(sizeof(te) + sizeof(un) * l);
     t->r = 1;
     t->l = l;
-    t->ta = ta;
+    t->af = af;
     t->tf = tf;
     for (size_t i = 0; i < l; i++) t->d[i] = P(NULL);
     return t;

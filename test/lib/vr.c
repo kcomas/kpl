@@ -3,8 +3,10 @@
 #include <string.h>
 #include "../../src/lib/vr.h"
 
+static const alfr vm = { .al = &malloc, .fr = &free };
+
 void itest(void) {
-    vr *v = vr_i(2, &malloc, NULL, &free);
+    vr *v = vr_i(2, &vm, NULL);
     vr_ab(&v, I5(1));
     vr_ab(&v, I5(2));
     vr_ab(&v, I5(3));
@@ -16,7 +18,7 @@ void itest(void) {
 }
 
 void dtest(void) {
-    vr *v = vr_i(10, &malloc, NULL, &free);
+    vr *v = vr_i(10, &vm, NULL);
     vr_ab(&v, D(1.1));
     vr_ab(&v, D(2.2));
     vr_ab(&v, D(3.3));
@@ -41,7 +43,7 @@ void dtest(void) {
 void stest(void) {
     char *msg = "Hi: 0";
     size_t ml = strlen(msg);
-    vr *v = vr_i(5, &malloc, &free, &free);
+    vr *v = vr_i(5, &vm, &free);
     for (size_t i = 0; i < 10; i++) {
         char *s = calloc(1, ml + sizeof(char));
         strcpy(s, msg);

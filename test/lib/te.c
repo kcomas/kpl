@@ -5,11 +5,13 @@
 void node_free(te *t) {
     if (t->d[1].p) te_f(t->d[1].p);
     if (t->d[2].p) te_f(t->d[2].p);
-    free(t);
+    t->af->fr(t);
 }
 
+static const alfr tm = { .al = &malloc, .fr = &free };
+
 te *node(const char *v) {
-    te *t = te_i(3, malloc, (void*) &node_free);
+    te *t = te_i(3, &tm, (void*) &node_free);
     t->d[0] = P(v);
     return t;
 }
