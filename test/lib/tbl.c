@@ -16,15 +16,15 @@ static bool cmp(un a, un b) {
 }
 
 static void kv_f(te *t) {
-    t->af->fr(t->d[0].p);
-    t->af->fr(t);
+    t->af->f(t->d[0].p);
+    t->af->f(t);
 }
 
-static const alfr tm = { .al = &malloc, .fr = &free };
+static const alfr tm = { .a = &malloc, .f = &free };
 
 static te *kv_i(const char *s, int64_t v) {
     te *t = te_i(2, &tm, (void*) &kv_f);
-    t->d[0].p = tm.al(strlen(s) + sizeof(char));
+    t->d[0].p = tm.a(strlen(s) + sizeof(char));
     strcpy(t->d[0].p, s);
     t->d[1].i6 = v;
     return t;

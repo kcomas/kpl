@@ -1,7 +1,7 @@
 
 #include "as_t.h"
 
-const alfr am = { .al = &malloc, .fr = &free };
+const alfr am = { .a = &malloc, .f = &free };
 
 static te *as_arg_v(arg_id id, un v) {
     return as_arg_i(&am, id, v);
@@ -46,13 +46,13 @@ void as_label_entry_f(void *p) {
     te *l = p;
     te_f(l->d[1].p);
     lst_f(l->d[2].p);
-    l->af->fr(l);
+    l->af->f(l);
 }
 
 void as_op_entry_f(void *p) {
     te *oe = p;
     tbl_f(oe->d[3].p);
-    oe->af->fr(oe);
+    oe->af->f(oe);
 }
 
 void as_code_entry_f(void *p) {
@@ -61,5 +61,5 @@ void as_code_entry_f(void *p) {
     te_f(o->d[3].p);
     te_f(o->d[4].p);
     te_f(o->d[5].p);
-    o->af->fr(o);
+    o->af->f(o);
 }

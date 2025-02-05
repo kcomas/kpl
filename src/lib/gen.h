@@ -26,7 +26,7 @@ const char* gen_cls_str(gen_cls cls);
 
 // var te[cls;info;id]
 
-te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, un id);
+te *gen_var(const alfr *af, frfn *fr, gen_cls cls, un info, un id);
 
 typedef tbl *cls_tbl_i(void);
 
@@ -36,16 +36,16 @@ typedef tbl *cls_tbl_i(void);
 
 typedef struct {
     ssize_t r;
-    alfn *ga;
-    frfn *gf, *ocef, *cef;
+    const alfr *af, *ta, *aa;
+    frfn *ocef, *cef;
     cls_tbl_i *cti;
     tbl *oci; // op cls op tbl given at start
     lst *code;
 } gen;
 
-gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
+gen *gen_i(const alfr *af, const alfr *ta, const alfr *aa, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
 
-typedef gen_stat gen_fn(alfn *aa, frfn *fr, gen *g, void *s, te *ci, as *a); // state
+typedef gen_stat gen_fn(gen *g, void *s, te *ci, as *a); // state
 
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn);
 
@@ -56,6 +56,6 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
-gen_stat gen_n(alfn *al, frfn *fr, gen *g, void *st, as *a);
+gen_stat gen_n(gen *g, void *st, as *a);
 
 void gen_f(gen *g);

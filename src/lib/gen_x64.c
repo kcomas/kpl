@@ -117,14 +117,12 @@ void gen_p(const gen *g, const uint8_t *m) {
     }
 }
 
-
-
-gen_st *gen_st_i(alfn *sa, frfn *sf, frfn *atmf, frfn *latf, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
-    gen_st *st = sa(sizeof(gen_st));
+gen_st *gen_st_i(const alfr *af, const alfr *ta, frfn *atmf, frfn *latf, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
+    gen_st *st = af->a(sizeof(gen_st));
     st->vc = st->rac = st->xac = 0;
     st->r = 1;
-    st->sa = sa;
-    st->sf = sf;
+    st->af = af;
+    st->ta = ta;
     st->atmf = atmf;
     st->latf = latf;
     st->atm = atm;
@@ -156,7 +154,7 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
         kv->d[1] = P(te_c(ovt));
         kv->d[2] = P(te_c(o));
     } else {
-        kv = te_i(3, st->sa, st->latf);
+        kv = te_i(3, st->ta, st->latf);
         kv->d[0] = hsh;
         kv->d[1] = P(te_c(ovt));
         kv->d[2] = P(te_c(o));
@@ -167,7 +165,7 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
 static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
     if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
     else if (st->xstk->l == 0) return GEN_STAT(INV);
-    *kv = te_i(3, st->sa, st->atmf);
+    *kv = te_i(3, st->ta, st->atmf);
     (*kv)->d[0] = hsh;
     (*kv)->d[1] = P(te_c(ovt));
     un d;
@@ -246,7 +244,7 @@ void gen_st_f(gen_st *st) {
     tbl_f(st->lat);
     vr_f(st->rstk);
     vr_f(st->xstk);
-    st->sf(st);
+    st->af->f(st);
 }
 
 void set_code_s(te *ci, as *a) {
@@ -296,9 +294,7 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
     return stat;
 }
 
-static gen_stat lbl_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
-    (void) al;
-    (void) fr;
+static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a)  {
     (void) g;
     (void) s;
     te *lbl = ci->d[1].p;

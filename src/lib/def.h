@@ -55,7 +55,7 @@ un c4_g(const char *str, size_t s, size_t *e);
 
 bool c4_eq(un a, un b);
 
-typedef struct _alfr {
-    alfn *al;
-    frfn *fr;
+typedef struct {
+    alfn *a;
+    frfn *f;
 } alfr;
