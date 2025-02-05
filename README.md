@@ -105,15 +105,37 @@ c: a?{1.0`a;a`b`b}
 
 #### Number Types
 
+```
+a: 1 -> I6
+Π: 3.14 -> F6
+```
+
 ##### U6 - Unsigned 64bit integer
 
 ##### I6 - Signed 64bit integer
 
 ##### F6 - 64bit floating point
 
+### Casting
+
+#### TO$FROM
+
+Convert data from one type to another
+
+###### Int To Float Example
+
+```
+a: F6$1 -> a = 1.0
+```
+
 #### Checked Number Types
 
 Operations on these types result in a union of value and error to check for underflow/overflow
+
+```
+a: I3$128 + I3$1 -> UN(I3`v;TODO`e)
+v: a?{a`v`v;0`e} -> v = 0
+```
 
 ##### U3 - Unsigned 8bit integer
 
@@ -129,18 +151,6 @@ Operations on these types result in a union of value and error to check for unde
 
 ##### F5 - 32bit floating point
 
-### Casting
-
-#### TO$FROM
-
-Convert data from one type to another
-
-###### Int To Float Example
-
-```
-a: F6$1 -> a = 1.0
-```
-
 ### Functions
 
 Create a function by casting a deferred list to a function
@@ -148,12 +158,15 @@ Create a function by casting a deferred list to a function
 ##### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
 ```
+
 f: FN(I6`x;I6`y;I6)${x+y}
 f(1;2) -> 3
+
 ```
 
 Functions are curried by default
 
 ```
 f(1) -> FN(I6`b)${1+b} -> f(2) -> 3
+
 ```
