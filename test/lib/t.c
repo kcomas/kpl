@@ -16,7 +16,7 @@ void _a(const char *name, _test_fn *tf) {
     } else __t = t;
 }
 
-int main(void) {
+int __attribute__((optimize("O0"))) main(void) {
     int p = 0, f = 0;
     printf("\e[3m%s\n\e[0m", __f);
     while (__t) {
@@ -24,7 +24,7 @@ int main(void) {
         __t = __t->n;
         ct->tf(ct);
         if (ct->m) {
-            printf("\e[1;31m%s\e[0m\e[1;90m:\e[1;96m%d\e[0m \e[1m%s\n\e[0m", ct->name, ct->ln, ct->m);
+            printf("\e[1;31m%s\e[0m\e[1;90m:\e[34m%d\e[0m \e[1m%s\n\e[0m", ct->name, ct->ln, ct->m);
             f++;
         } else {
             printf("\e[1;32m%s\n\e[0m", ct->name);
