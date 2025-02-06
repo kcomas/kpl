@@ -19,18 +19,18 @@ typedef struct __tests {
 
 void _a(const char *name, _test_fn *tf);
 
-#define I const char *_f = __FILE__; \
-    _tests *_t = NULL;
+#define I const char *__f = __FILE__; \
+    _tests *__t = NULL;
 
 #define A(S, M) do { \
     if (!(S)) { \
-        t->ln = __LINE__; \
-        t->m = M; \
+        _t->ln = __LINE__; \
+        _t->m = M; \
         return; \
     } \
 } while (0)
 
-#define T(N, B) __attribute__((constructor)) void N##__(void) { \
-    void N##_(__attribute__((unused)) _tests *t) B; \
-    _a(#N, N##_); \
+#define T(N, B) __attribute__((constructor)) void __##N(void) { \
+    void _##N(__attribute__((unused)) _tests *_t) B; \
+    _a(#N, _##N); \
 }
