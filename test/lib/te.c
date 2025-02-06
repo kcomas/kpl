@@ -1,6 +1,8 @@
 
 #include "../../src/lib/te.h"
-#include <stdio.h>
+#include "t.h"
+
+I;
 
 void node_free(te *t) {
     if (t->d[1].p) te_f(t->d[1].p);
@@ -25,7 +27,7 @@ void node_p(const te *t, size_t idnt) {
     node_p(t->d[2].p, idnt);
 }
 
-void ttest(void) {
+T(tree, {
     te *n = node("5");
     n->d[1].p = node("3");
     ((te*)n->d[1].p)->d[1].p = node("2");
@@ -34,10 +36,6 @@ void ttest(void) {
     ((te*)n->d[2].p)->d[1].p = node("6");
     ((te*)n->d[2].p)->d[2].p = node("8");
     node_p(n, 0);
+    A(strcmp(((te*)((te*)n->d[2].p)->d[2].p)->d[0].p, "8") == 0, "tree insert fail");
     te_f(n);
-}
-
-int main(void) {
-    ttest();
-    return 0;
-}
+});

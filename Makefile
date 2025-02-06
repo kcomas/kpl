@@ -35,7 +35,7 @@ x64$(LTNAME): $(LX64_OBJS) $(LTEST)/x64.o
 > $(CCOBJ)
 
 LTE_OBJS = $(LSRC)/te.o
-te$(LTNAME): $(LTE_OBJS) $(LTEST)/te.o
+te$(LTNAME): $(LTE_OBJS) $(LTEST)/te.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 LVR_OBS = $(LSRC)/vr.o
