@@ -43,7 +43,7 @@ vr$(LTNAME): $(LVR_OBS) $(LTEST)/vr.o
 > $(CCOBJ)
 
 LLST_OBJS = $(LSRC)/lst.o $(LTE_OBJS)
-lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o
+lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 LTBL_OBJS = $(LSRC)/tbl.o $(LLST_OBJS)
