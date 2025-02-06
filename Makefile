@@ -18,6 +18,10 @@ LTNAME = _lib$(TNAME)
 
 all: $(NAME)
 
+LTEST_OBJS = $(LTEST)/t.o
+test$(LTNAME): $(LTEST_OBJS) $(LTEST)/test.o
+> $(CCOBJ)
+
 LDEF_OBJS = $(LSRC)/def.o
 def$(LTNAME): $(LDEF_OBJS) $(LTEST)/def.o
 > $(CCOBJ)
