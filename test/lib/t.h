@@ -11,10 +11,10 @@ typedef void _test_fn(_tests *t);
 
 typedef struct __tests {
     int ln; // failed line
-    const char *m;
+    const char *m, *f; // msg, file
     _test_fn *tf;
-    struct __tests *n;
-    char name[];
+    struct __tests *nt;
+    char n[]; // name
 } _tests;
 
 void _a(const char *name, _test_fn *tf);
@@ -27,6 +27,7 @@ void _a(const char *name, _test_fn *tf);
         if (!_t->ln) { \
             _t->ln = __LINE__; \
             _t->m = M; \
+            _t->f = __FILE__; \
         } \
         return; \
     } \
