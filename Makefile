@@ -74,7 +74,7 @@ $(TKN): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
 PSR = psr$(LTNAME)
 LTT += $(PSR)
 LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
-$(PSR): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
+$(PSR): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 AS = as$(LTNAME)

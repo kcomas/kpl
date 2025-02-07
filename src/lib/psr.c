@@ -81,29 +81,61 @@ psr_stat psr_n(psr *p, te *nh) {
             return PSR_STAT(END);
         } else if (pm == PSR_MODE(LOOP)) {
             if (!st || !ef || !nf || !mf) return PSR_STAT(INV);
-            if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
+            if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) {
+                te_f(m);
+                te_f(pn);
+                return pstat;
+            }
             vr_d(p->ts);
             te *lnh = te_i(3, p->ta, NULL);
             for (;;) {
                 lnh->d[0] = P(NULL);
                 lnh->d[1] = P(NULL);
                 lnh->d[2] = P(NULL);
-                if ((pstat = psr_n(p, lnh)) != PSR_STAT(END)) return pstat;
+                if ((pstat = psr_n(p, lnh)) != PSR_STAT(END)) {
+                    te_f(m);
+                    te_f(pn);
+                    for (size_t i = 0; i < 3; i++) te_f(lnh->d[i].p);
+                    te_f(lnh);
+                    return pstat;
+                }
                 te *ln = lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p;
-                if (ln) if ((pstat = ef(p, pn, ln)) != PSR_STAT(OK)) return pstat;
+                if (ln && (pstat = ef(p, pn, ln)) != PSR_STAT(OK)) {
+                    te_f(m);
+                    te_f(pn);
+                    te_f(ln);
+                    te_f(lnh);
+                    return pstat;
+                }
                 for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
-                if (p->tstat != TKN_STAT(OK)) return PSR_STAT(INV);
+                if (p->tstat != TKN_STAT(OK)) {
+                    te_f(m);
+                    te_f(pn);
+                    te_f(lnh);
+                    return PSR_STAT(INV);
+                }
                 vr_d(p->ts);
             }
             el:
-            if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
             te_f(lnh);
             vr_d(p->ts);
             te_f(m);
+            if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) {
+                te_f(pn);
+                return pstat;
+            }
             m = te_i(5, p->ta, NULL);
         } else if (nf && mf) {
-            if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
-            if (pn) if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
+            if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) {
+                te_f(m);
+                te_f(pn);
+                return pstat;
+            }
+            if (pn && (pstat = mf(p, nh, pn)) != PSR_STAT(OK)) {
+                te_f(m);
+                te_f(pn);
+                return pstat;
+            }
         }
         vr_d(p->ts);
     }

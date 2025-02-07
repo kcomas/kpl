@@ -27,6 +27,7 @@ typedef enum {
 #define NODE_TYPE(N) NODE_TYPE_##N
 
 typedef enum {
+    NODE_TYPE(NONE),
     NODE_TYPE(ROOT),
     NODE_TYPE(VAR),
     NODE_TYPE(TYPE),
@@ -47,24 +48,24 @@ tbl *psr_mktbl(void);
 
 void psr_entry_f(void *p);
 
-// node te[par;id;tkn;....]
+// node te[par;id;tkn]
 psr_stat psr_var_i(psr *p, te **n);
 
-// node te[par;id;tkn;....]
-psr_stat psr_id_i(psr *p, te **n);
+// node te[par;id;tkn]
+psr_stat psr_type_i(psr *p, te **n);
 
-// node te[par;id;tkn;....]
+// node te[par;id;tkn]
 psr_stat psr_key_i(psr *p, te **n);
 
-// node te[par;id;tkn;....]
+// node te[par;id;tkn]
 psr_stat psr_int_i(psr *p, te **n);
 
-// node te[par;id;tkn;tkn;tkn;....]
+// node te[par;id;tkn;tkn;tkn]
 psr_stat psr_flt_i(psr *p, te **n);
 
 psr_stat psr_val_m(psr *p, te *nh, te *n);
 
-// node te[par;id;left;right]
+// node te[par;id;tkn;left;right]
 psr_stat psr_op_i(psr *p, te **n);
 
 psr_stat psr_op_m(psr *p, te *nh, te *n);
@@ -87,3 +88,33 @@ psr_stat psr_sym_i(psr *p, te **n);
 void node_p(const te *n, size_t idnt);
 
 void node_f(void *p);
+
+void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl);
+
+void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size_t vl);
+
+#define VS(VA) (sizeof(VA) / sizeof(VA[0]))
+
+#define V(H, ...)  const node_id v[] = __VA_ARGS__; \
+    size_t i = 0; \
+    psr_verify(_t, H, v, &i, VS(v)); \
+    A(i == VS(v), "vl")
+
+#define V2(N, VA, I, VL) psr_verify(_t, N, VA, I, VL); \
+    if (_t->m) return
+
+#define VN(V, I, VL, NT) A(V[*I] == NODE_TYPE(NT), #NT); \
+    A(++*I <= VL, "verify")
+
+#define VL(L, V, I, VL) psr_verify_lst(_t, L, V, I, VL); \
+    A(*I <= VL, "verify_lst")
+
+#define N(X) NODE_TYPE(X)
+
+#define OP(L, R) N(OP), L, R
+
+#define LST(...) N(LST), __VA_ARGS__
+
+#define APLY(...) N(APLY), __VA_ARGS__
+
+#define SYM(TGT) N(SYM), TGT

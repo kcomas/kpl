@@ -24,8 +24,10 @@ void _a(const char *name, _test_fn *tf);
 
 #define A(S, M) do { \
     if (!(S)) { \
-        _t->ln = __LINE__; \
-        _t->m = M; \
+        if (!_t->ln) { \
+            _t->ln = __LINE__; \
+            _t->m = M; \
+        } \
         return; \
     } \
 } while (0)
