@@ -32,5 +32,5 @@ void _a(const char *name, _test_fn *tf);
 
 #define T(N, ...) __attribute__((constructor)) void __##N(void) { \
     void _##N(__attribute__((unused)) _tests *_t) __VA_ARGS__; \
-    _a(#N, _##N); \
+    _a(#N, &_##N); \
 }
