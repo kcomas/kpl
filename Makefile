@@ -19,7 +19,6 @@ LTNAME = _lib$(TNAME)
 all: $(NAME)
 
 TT = test$(LTNAME)
-LTT += $(TT)
 LTEST_OBJS = $(LTEST)/t.o
 $(TT): $(LTEST_OBJS) $(LTEST)/test.o
 > $(CCOBJ)
