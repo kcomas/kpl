@@ -345,6 +345,9 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
         case NODE_TYPE(TYPE):
             VN(v, i, vl, TYPE);
             break;
+        case NODE_TYPE(KEY):
+            VN(v, i, vl, KEY);
+            break;
         case NODE_TYPE(INT):
             VN(v, i, vl, INT);
             break;
