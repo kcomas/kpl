@@ -16,6 +16,7 @@ NAME = kpl
 TNAME = _test
 LTNAME = _lib$(TNAME)
 
+all: OO = -O3
 all: $(NAME)
 
 TT = test$(LTNAME)
