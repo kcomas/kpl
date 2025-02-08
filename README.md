@@ -1,4 +1,4 @@
-# KPL (Work In Progress)
+# KPL (Work In Progress, check rewrite branch)
 
 ## Typed/Jitted Scripting Language Written In C
 
