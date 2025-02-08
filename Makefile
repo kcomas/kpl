@@ -81,7 +81,7 @@ AS = as$(LTNAME)
 LTT += $(AS)
 LAS_OBJS = $(LSRC)/as.o $(LTBL_OBJS)
 LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS)
-$(AS): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
+$(AS): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS) $(LTEST_OBJS)
 > $(CCOBJ)
 
 GEN = gen$(LTNAME)
