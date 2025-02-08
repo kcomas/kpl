@@ -20,7 +20,7 @@ typedef enum {
 #define XMM(N) X_##N
 
 typedef enum {
-    R(AX) = 0,
+    R(AX),
     R(CX),
     R(DX),
     R(BX),

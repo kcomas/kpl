@@ -329,6 +329,15 @@ void node_f(void *p) {
     n->af->f(n);
 }
 
+#define V(N, VA, I, VL) psr_verify(_t, N, VA, I, VL); \
+    if (_t->m) return
+
+#define VN(V, I, VL, NT) A(V[*I] == NODE_TYPE(NT), #NT); \
+    A(++*I <= VL, "verify")
+
+#define VL(L, V, I, VL) psr_verify_lst(_t, L, V, I, VL); \
+    A(*I <= VL, "verify_lst")
+
 void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl) {
     if (!n) {
         VN(v, i, vl, NONE);
@@ -337,7 +346,7 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
     switch (n->d[1].u6) {
         case NODE_TYPE(ROOT):
             VN(v, i, vl, ROOT);
-            V2(n->d[2].p, v, i, vl);
+            V(n->d[2].p, v, i, vl);
             break;
         case NODE_TYPE(VAR):
             VN(v, i, vl, VAR);
@@ -356,8 +365,8 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
             break;
         case NODE_TYPE(OP):
             VN(v, i, vl, OP);
-            V2(n->d[3].p, v, i, vl);
-            V2(n->d[4].p, v, i, vl);
+            V(n->d[3].p, v, i, vl);
+            V(n->d[4].p, v, i, vl);
             break;
         case NODE_TYPE(LST):
             VN(v, i, vl, LST);
@@ -365,12 +374,12 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
             break;
         case NODE_TYPE(APLY):
             VN(v, i, vl, APLY);
-            V2(n->d[3].p, v, i, vl);
+            V(n->d[3].p, v, i, vl);
             VL(n->d[4].p, v, i, vl);
             break;
         case NODE_TYPE(SYM):
             VN(v, i, vl, SYM);
-            V2(n->d[3].p, v, i, vl);
+            V(n->d[3].p, v, i, vl);
             break;
         default:
             A(0, "NODE");
@@ -382,7 +391,7 @@ void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size
     if (!l) return;
     te *h = l->h;
     while (h) {
-        V2(h->d[0].p, v, i, vl);
+        V(h->d[0].p, v, i, vl);
         h = h->d[2].p;
     }
 }
