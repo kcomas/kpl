@@ -18,6 +18,10 @@ static uint8_t sib(mod m, reg d, reg s) {
     return m | rid(d) << 3 | rid(s);
 }
 
+static uint8_t roe(mod m, reg r, uint8_t e) {
+    return m | e << 3 | r;
+}
+
 static size_t pg_algn(size_t size) {
     size_t mod = size % getpagesize();
     if (mod) size = size - mod + getpagesize();
@@ -181,12 +185,12 @@ x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
 
 x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xFF, MOD(11) + rid(r));
+    return x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(11), rid(r), 0));
 }
 
 x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
     VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x83, MOD(11) + rid(r), b);
+    return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), rid(r), 0), b);
 }
 
 x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
@@ -203,12 +207,12 @@ x64_stat x64_addsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
 
 x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xFF, 0xC8 + rid(r));
+    return x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(11), rid(r), 1));
 }
 
 x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
     VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x83, 0xE8 + rid(r), b);
+    return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), rid(r), 5), b);
 }
 
 x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
@@ -377,5 +381,5 @@ x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw) {
 
 x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x0F, 0x9C, MOD(11) + rid(r));
+    return x64_b(p, m, 4, set_rex(r), 0x0F, 0x9C, roe(MOD(11), rid(r), 0));
 }
