@@ -94,8 +94,8 @@ $(GEN): $(GENX64_OBJS) $(LTEST)/gen.o $(LTEST)/gen_t.o $(LTEST)/as_t.o $(LTEST_O
 
 AST = ast$(LTNAME)
 LTT += $(AST)
-AST_OBJS = $(LSRC)/ast.o $(LPSR_OBJS)
-$(AST): $(AST_OBJS) $(LTEST)/ast.o $(LTEST)/ast_t.o $(LTEST_OBJS)
+AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(LPSR_OBJS)
+$(AST): $(AST_OBJS) $(LTEST)/ast.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 lib_tests: $(LTT)
