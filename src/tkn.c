@@ -1,5 +1,5 @@
 
-#include "tkn_t.h"
+#include "tkn.h"
 
 void tkn_p(tbl *tl, size_t idnt) {
     te *h = tl->i->h;
@@ -17,7 +17,7 @@ void tkn_p(tbl *tl, size_t idnt) {
 }
 
 void tkn_m_p(const te *m, const mc *s) {
-        printf("tid:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,str:", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
+        printf("tid:%lu,lno:%lu,cno:%lu,start:%lu,end:%lu,str:", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
     for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(s->d[i]);
 }
 
@@ -29,15 +29,6 @@ void tkn_entry_f(void *v) {
     te *t = v;
     tbl_f(t->d[3].p);
     t->af->f(t);
-}
-
-const alfr tm = { .a = &malloc, .f = &free };
-
-tbl *tkn_mktbl(void) {
-    lst *tl = lst_i(&tm, &tm, (void*) &te_f);
-    te *b = te_i(10, &tm, NULL);
-    tbl *t = tbl_i(&tm, &tkn_sh, &c4_eq, tl, b);
-    return t;
 }
 
 tkn_stat tkn_df(tkn *t, te *m) {
@@ -101,9 +92,10 @@ tkn_stat tkn_sym(tkn *t, te *m) {
     return TKN_STAT(OK);
 }
 
-void tkn_standard(tkn *t) {
-    tkn_a(t, TCUST(WS), " ", &tkn_ws);
+void tkn_b(tkn *t) {
     tkn_a(t, TCUST(NL), "\n", &tkn_nl);
+    tkn_a(t, TCUST(SEMI), ";", &tkn_ft);
+    tkn_a(t, TCUST(WS), " ", &tkn_ws);
     tkn_a(t, TCUST(NUM), "0", &tkn_num);
     tkn_a(t, TCUST(NUM), "1", &tkn_num);
     tkn_a(t, TCUST(NUM), "2", &tkn_num);

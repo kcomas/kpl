@@ -68,14 +68,14 @@ $(TBL): $(LTBL_OBJS) $(LTEST)/tbl.o $(LTEST_OBJS)
 
 TKN = tkn$(LTNAME)
 LTT += $(TKN)
-LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
-$(TKN): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
+LTKN_OBJS = $(SRC)/tkn.o $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
+$(TKN): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 PSR = psr$(LTNAME)
 LTT += $(PSR)
-LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
-$(PSR): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
+LPSR_OBJS = $(SRC)/psr.o $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
+$(PSR): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 AS = as$(LTNAME)
