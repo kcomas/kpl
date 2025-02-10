@@ -8,6 +8,7 @@ const char *gen_op_str(gen_op go) {
         "ENTER",
         "LEAVE",
         "CALL",
+        "CALLNPR",
         "ADD",
         "SUB",
         "EQ",
