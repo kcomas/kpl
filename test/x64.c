@@ -1,5 +1,5 @@
 
-#include "../../src/lib/x64.h"
+#include "../src/lib/x64.h"
 #include "t.h"
 
 I;

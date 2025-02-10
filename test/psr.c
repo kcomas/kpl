@@ -1,5 +1,5 @@
 
-#include "../../src/psr.h"
+#include "../src/psr.h"
 #include "t.h"
 
 I;
