@@ -21,10 +21,10 @@ static void kv_f(te *t) {
     t->af->f(t);
 }
 
-static const alfr tm = { .a = &malloc, .f = &free };
+static const alfr tm = { .a = malloc, .f = free };
 
 static te *kv_i(const char *s, int64_t v) {
-    te *t = te_i(2, &tm, (void*) &kv_f);
+    te *t = te_i(2, &tm, (void*) kv_f);
     t->d[0].p = tm.a(strlen(s) + sizeof(char));
     strcpy(t->d[0].p, s);
     t->d[1].i6 = v;
@@ -45,9 +45,9 @@ static void pt(tbl *t) {
 }
 
 T(tbl, {
-    lst *tl = lst_i(&tm, &tm, (void*) &te_f);
+    lst *tl = lst_i(&tm, &tm, (void*) te_f);
     te *b = te_i(1, &tm, NULL);
-    tbl *t = tbl_i(&tm, &sh, &cmp, tl, b);
+    tbl *t = tbl_i(&tm, sh, cmp, tl, b);
     A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
     pt(t);
     A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");

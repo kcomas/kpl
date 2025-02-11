@@ -1,23 +1,23 @@
 
 #include "gen_t.h"
 
-const alfr gm = { .a = &malloc, .f = &free };
+const alfr gm = { .a = malloc, .f = free };
 
 lst *gen_mklst(void) {
-    return lst_i(&gm, &gm, (void*) &te_f);
+    return lst_i(&gm, &gm, (void*) te_f);
 }
 
 tbl *gen_cls_info_tbl(void) {
     lst *tl = gen_mklst();
     te *b = te_i(GEN_CLS(L) + 1 + X64_TYPE(F6) + 1, &gm, NULL);
-    tbl *t = tbl_i(&gm, &tbl_no_hsh, &tbl_un_eq, tl, b);
+    tbl *t = tbl_i(&gm, tbl_no_hsh, tbl_un_eq, tl, b);
     return t;
 }
 
 tbl *gen_op_tbl(size_t bcks) {
     lst *tl = gen_mklst();
     te *b = te_i(bcks, &gm, NULL);
-    tbl *t = tbl_i(&gm, &tbl_no_hsh, &tbl_un_eq, tl, b);
+    tbl *t = tbl_i(&gm, tbl_no_hsh, tbl_un_eq, tl, b);
     return t;
 }
 
@@ -28,7 +28,7 @@ void gen_call_m_f(void *p) {
 }
 
 te *gen_call_m(gen *g, size_t n, ...) {
-    vr *v = vr_i(n, g->af, (void*) &te_f);
+    vr *v = vr_i(n, g->af, (void*) te_f);
     va_list args;
     va_start(args, n);
     while (n > 0) {
@@ -36,7 +36,7 @@ te *gen_call_m(gen *g, size_t n, ...) {
         n--;
     }
     va_end(args);
-    return gen_var_i(g, &gen_call_m_f, GEN_CLS(M), U3(X64_TYPE(N)), P(v));
+    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), U3(X64_TYPE(N)), P(v));
 }
 
 te *gen_lbl(gen *g, size_t id) {

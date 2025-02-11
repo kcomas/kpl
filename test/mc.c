@@ -4,7 +4,7 @@
 
 I;
 
-static const alfr mm = { .a = &malloc, .f = &free };
+static const alfr mm = { .a = malloc, .f = free };
 
 T(mc_wb, {
     mc *m = mc_i(1, &mm);

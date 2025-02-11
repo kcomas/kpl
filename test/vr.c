@@ -4,7 +4,7 @@
 
 I;
 
-static const alfr vm = { .a = &malloc, .f = &free };
+static const alfr vm = { .a = malloc, .f = free };
 
 T(vr_ab_s_i, {
     vr *v = vr_i(2, &vm, NULL);

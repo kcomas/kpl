@@ -38,7 +38,7 @@ static size_t add_lbl(as *a, size_t lbl_id) {
     te *lbl = te_i(3, a->ta, a->lef);
     lbl->d[0] = c->d[1];
     lbl->d[1] = P(c);
-    lbl->d[2] = P(lst_i(a->la, a->ta, (void*) &te_f));
+    lbl->d[2] = P(lst_i(a->la, a->ta, (void*) te_f));
     tbl_a(a->lbls, lbl);
     return lbl->d[0].u6;
 }
