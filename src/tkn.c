@@ -93,18 +93,18 @@ tkn_stat tkn_sym(tkn *t, te *m) {
 }
 
 void tkn_b(tkn *t) {
-    tkn_a(t, TCUST(NL), "\n", &tkn_nl);
-    tkn_a(t, TCUST(SEMI), ";", &tkn_ft);
-    tkn_a(t, TCUST(WS), " ", &tkn_ws);
-    tkn_a(t, TCUST(NUM), "0", &tkn_num);
-    tkn_a(t, TCUST(NUM), "1", &tkn_num);
-    tkn_a(t, TCUST(NUM), "2", &tkn_num);
-    tkn_a(t, TCUST(NUM), "3", &tkn_num);
-    tkn_a(t, TCUST(NUM), "4", &tkn_num);
-    tkn_a(t, TCUST(NUM), "5", &tkn_num);
-    tkn_a(t, TCUST(NUM), "6", &tkn_num);
-    tkn_a(t, TCUST(NUM), "7", &tkn_num);
-    tkn_a(t, TCUST(NUM), "8", &tkn_num);
-    tkn_a(t, TCUST(NUM), "9", &tkn_num);
-    tkn_a(t, TCUST(SYM), "`", &tkn_sym);
+    tkn_a(t, TCUST(NL), "\n", tkn_nl);
+    tkn_a(t, TCUST(SEMI), ";", tkn_ft);
+    tkn_a(t, TCUST(WS), " ", tkn_ws);
+    tkn_a(t, TCUST(NUM), "0", tkn_num);
+    tkn_a(t, TCUST(NUM), "1", tkn_num);
+    tkn_a(t, TCUST(NUM), "2", tkn_num);
+    tkn_a(t, TCUST(NUM), "3", tkn_num);
+    tkn_a(t, TCUST(NUM), "4", tkn_num);
+    tkn_a(t, TCUST(NUM), "5", tkn_num);
+    tkn_a(t, TCUST(NUM), "6", tkn_num);
+    tkn_a(t, TCUST(NUM), "7", tkn_num);
+    tkn_a(t, TCUST(NUM), "8", tkn_num);
+    tkn_a(t, TCUST(NUM), "9", tkn_num);
+    tkn_a(t, TCUST(SYM), "`", tkn_sym);
 }

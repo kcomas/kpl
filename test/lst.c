@@ -13,7 +13,7 @@ static void lst_i6_p(const lst * const l) {
     putchar('\n');
 }
 
-static const alfr lm = { .a = &malloc, .f = &free };
+static const alfr lm = { .a = malloc, .f = free };
 
 T(lst_ab_af_sf_sb, {
     lst *l = lst_i(&lm, &lm, NULL);
