@@ -16,15 +16,7 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-te *gen_var_i(gen *g, frfn *fr, gen_cls cls, un info, un id) {
-    te *v = te_i(3, g->ta, fr);
-    v->d[0] = U3(cls);
-    v->d[1] = info;
-    v->d[2] = id;
-    return v;
-}
-
-gen *gen_i(const alfr *af, const alfr *ta, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code) {
+gen *gen_i(const alfr *af, const alfr *ta, frfn ocef, frfn cef, cls_tbl_i cti, tbl *oci, lst *code) {
     gen *g = af->a(sizeof(gen));
     g->r = 1;
     g->af = af;
@@ -93,6 +85,14 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     e->d[4] = P(fn);
     lst_ab(g->code, P(e));
     return GEN_STAT(OK);
+}
+
+te *gen_var_i(gen *g, frfn fr, gen_cls cls, un info, un id) {
+    te *v = te_i(3, g->ta, fr);
+    v->d[0] = U3(cls);
+    v->d[1] = info;
+    v->d[2] = id;
+    return v;
 }
 
 gen_stat gen_n(gen *g, void *st, as *a) {

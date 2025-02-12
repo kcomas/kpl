@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "tkn.h"
 #include "./lib/psr.h"
 
@@ -19,6 +21,8 @@ typedef enum {
 } node_id;
 
 psr *psr_b(psr *p);
+
+te *psr_r(psr *p);
 
 void psr_p(tbl *t, size_t idnt);
 
