@@ -1,2 +1,116 @@
 
 #include "type.h"
+
+const char *type_str(type t) {
+    static const char *ts[] = {
+        "_START",
+        "BL",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "U3",
+        "U4",
+        "U5",
+        "U6",
+        "F5",
+        "F6",
+        "C4",
+        "SG",
+        "TE",
+        "VR",
+        "LT",
+        "ST",
+        "HH",
+        "FN",
+        "SF",
+        "CF",
+        "BA",
+        "TD",
+        "_END"
+    };
+    const char *s = "INV";
+    if (t > TYPE(_START) && t < TYPE(_END)) s = ts[t];
+    return s;
+}
+
+type_cls type_c(type t) {
+    if (t >= TYPE(VD) && t <= TYPE(C4)) return TYPE_CLS(S);
+    if (t >= TYPE(SG) && t <= TYPE(LT)) return TYPE_CLS(V);
+    if (t >= TYPE(ST) && t <= TYPE(HH)) return TYPE_CLS(H);
+    if (t >= TYPE(FN) && t <= TYPE(CF)) return TYPE_CLS(F);
+    if (t >= TYPE(BA) && t <= TYPE(TD)) return TYPE_CLS(C);
+    return TYPE_CLS(I);
+}
+
+te *type_s_i(const alfr *af, type t) {
+    te *s = te_i(1, af, NULL);
+    s->d[0] = U6(t);
+    return s;
+}
+
+static void type_v_f(void *p) {
+    te *t = p;
+    te_f(t->d[1].p);
+    t->af->f(t);
+}
+
+te *type_v_i(const alfr *af, type v, te *t) {
+    te *vv = te_i(2, af, type_v_f);
+    vv->d[0] = U6(v);
+    vv->d[1] = P(t);
+    return vv;
+}
+
+static void type_h_f(void *p) {
+    te *t = p;
+    tbl_f(t->d[1].p);
+    t->af->f(t);
+}
+
+te *type_h_i(const alfr *af, type h, tbl *t) {
+    te *hh = te_i(2, af, type_h_f);
+    hh->d[0] = U6(h);
+    hh->d[1] = P(t);
+    return hh;
+}
+
+static void type_f_f(void *p) {
+    te *t = p;
+    tbl_f(t->d[1].p);
+    te_f(t->d[2].p);
+    t->af->f(t);
+}
+
+te *type_f_i(const alfr *af, type f, tbl *a, te *r) {
+    te *ff = te_i(3, af, type_f_f);
+    ff->d[0] = U6(f);
+    ff->d[1] = P(a);
+    ff->d[2] = P(r);
+    return ff;
+}
+
+void type_p(const te *t) {
+    type_cls cls = type_c(t->d[0].u6);
+    switch (cls) {
+        case TYPE_CLS(I):
+            printf("INV");
+            break;
+        case TYPE_CLS(S):
+            printf("%s", type_str(t->d[0].u6));
+            break;
+        case TYPE_CLS(V):
+            printf("%s", type_str(t->d[0].u6));
+            type_p(t->d[1].p);
+            break;
+        case TYPE_CLS(H):
+            // TODO
+            break;
+        case TYPE_CLS(F):
+            // TODO
+            break;
+        case TYPE_CLS(C):
+            // TODO
+            break;
+    }
+}

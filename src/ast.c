@@ -3,7 +3,7 @@
 
 static ast_stat root(ast *a, te *pn, te **an) {
     // TODO init root node
-    return AST_STAT(OK);
+    return AST_STAT(INV);
 }
 
 ast *ast_b(ast *a) {
