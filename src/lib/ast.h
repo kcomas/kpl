@@ -30,14 +30,17 @@ const char *ast_cls_str(ast_cls cls);
 
 typedef ssize_t psr_id_g(te *pn); // -1 for invalid
 
+typedef tbl *scope_tbl_i(void);
+
 typedef struct {
     ssize_t r;
     const alfr *af, *na;
     psr_id_g *pig;
+    scope_tbl_i *sti;
     tbl *t;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, tbl *t);
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sci, tbl *t);
 
 // ast t te[par;psr;cls;...]
 

@@ -21,8 +21,20 @@ size_t tbl_no_hsh(un d) {
     return d.u6;
 }
 
+size_t tbl_sdbm(un d) {
+    char *s = d.p;
+    size_t hsh = 0;
+    char c;
+    while ((c = *s++)) hsh = c + (hsh << 6) + (hsh << 16) - hsh;
+    return hsh;
+}
+
 bool tbl_un_eq(un a, un b) {
     return a.u6 == b.u6;
+}
+
+bool tbl_str_eq(un a, un b) {
+    return strcmp(a.p, b.p) == 0;
 }
 
 size_t tbl_g_l(const tbl *t) {

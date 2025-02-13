@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <string.h>
 #include "def.h"
 #include "lst.h"
 
@@ -33,7 +34,11 @@ tbl *tbl_c(tbl *t);
 
 size_t tbl_no_hsh(un d);
 
+size_t tbl_sdbm(un d);
+
 bool tbl_un_eq(un a, un b);
+
+bool tbl_str_eq(un a, un b);
 
 size_t tbl_g_l(const tbl *t);
 

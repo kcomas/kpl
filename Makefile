@@ -99,7 +99,7 @@ $(TYPE): $(TYPE_OBJS) $(TEST)/type.o $(TEST_OBJS)
 
 AST = ast$(LTNAME)
 LTT += $(AST)
-AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(PSR_OBJS)
+AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(TYPE_OBJS) $(PSR_OBJS)
 $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
