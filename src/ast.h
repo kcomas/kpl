@@ -6,3 +6,5 @@
 #include "psr.h"
 
 ast *ast_b(ast *a);
+
+void ast_p(const te *t);

@@ -17,19 +17,21 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV";
 }
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sci, tbl *t) {
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sti, tbl *t) {
     ast *a = af->a(sizeof(ast));
     a->af = af;
     a->na = na;
     a->pig = pig;
+    a->sti = sti;
     a->t = t;
     return a;
 }
 
 static void t_r_f(void *p) {
     te *n = p;
-    te_f(n->d[0].p); // free psr
+    te_f(n->d[1].p); // free psr
     tbl_f(n->d[3].p);
+    te_f(n->d[4].p);
     n->af->f(n);
 }
 
@@ -71,37 +73,33 @@ static void t_l_f(void *p) {
 }
 
 te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...) {
-    size_t len = 4;
+    size_t len = 5;
     frfn *nf = NULL;
     switch (cls) {
         case AST_CLS(R):
             nf = t_r_f;
             break;
         case AST_CLS(I):
-            len += 1;
             nf = t_i_f;
             break;
         case AST_CLS(S):
-            len += 1;
             break;
         case AST_CLS(V):
-            len += 1;
             nf = t_vl_f;
             break;
         case AST_CLS(O):
-            len += 3;
+            len += 2;
             nf = t_ot_f;
             break;
         case AST_CLS(T):
-            len += 2;
+            len += 1;
             nf = t_ot_f;
             break;
         case AST_CLS(A):
-            len += 2;
+            len += 1;
             nf = t_a_f;
             break;
         case AST_CLS(L):
-            len += 1;
             nf = t_l_f;
             break;
         default:
