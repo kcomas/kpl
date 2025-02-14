@@ -30,27 +30,30 @@ const char *ast_cls_str(ast_cls cls);
 
 typedef ssize_t psr_id_g(te *pn); // -1 for invalid
 
-typedef tbl *scope_tbl_i(void);
+typedef tbl *ast_tbl_i(void);
+
+typedef lst *ast_lst_i(void);
 
 typedef struct {
     ssize_t r;
     const alfr *af, *na;
     psr_id_g *pig;
-    scope_tbl_i *sti;
+    ast_tbl_i *ati;
+    ast_lst_i *ali;
     tbl *t;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sti, tbl *t);
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *t);
 
 // ast t te[par;psr;cls;...]
 
-te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...);
+te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...);
 
-typedef ast_stat ast_tf(ast *a, te *pn, te **an);
+typedef ast_stat ast_tf(ast *a, te *pn, void **vn);
 
 // do not allow dupes
 ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
-ast_stat ast_n(ast *a, te *pn, te **an);
+ast_stat ast_n(ast *a, te *pn, void **vn);
 
 void ast_f(ast *a);
