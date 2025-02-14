@@ -10,14 +10,14 @@ static ast_stat root(ast *a, te *pn, void **vn) {
 
 static ast_stat i(ast *a, te *pn, void **vn) {
     te **an = (te**) vn;
-    *an = ast_an_i(a, *an, pn, AST_CLS(S), P(type_s_i(a->na, TYPE(I6))), U6(0));
+    *an = ast_an_i(a, *an, pn, AST_CLS(S), P(type_s_i(a->na, TYPE(I6))), I6(tkn_g_i6(pn->d[2].p, node_root_mc(pn))));
     return AST_STAT(OK);
 }
 
 static ast_stat op(ast *a, te *pn, void **vn) {
     te **an = (te**) vn;
     // TODO
-    return AST_STAT(OK);
+    return AST_STAT(INV);
 }
 
 static ast_stat aply(ast *a, te *pn, void **vn) {
