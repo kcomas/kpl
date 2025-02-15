@@ -6,18 +6,24 @@
 #define TCUST(N) TCUST_##N
 
 typedef enum {
-    TCUST(NL) = TOKEN(USR),
+    TCUST(WS) = TOKEN(USR),
     TCUST(SEMI),
-    TCUST(WS),
+    TCUST(NL),
     TCUST(LB),
     TCUST(RB),
     TCUST(LP),
     TCUST(RP),
     TCUST(LS),
     TCUST(RS),
+    TCUST(SYM),
     TCUST(NUM),
     TCUST(VAR),
-    TCUST(SYM)
+    // types
+    // keys
+    // ops
+    TCUST(ADD),
+    TCUST(SUB),
+    TCUST(_END)
 } tcust;
 
 void tkn_p(tbl *tl, size_t idnt);

@@ -10,7 +10,9 @@ static ast_stat root(ast *a, te *pn, void **vn) {
 
 static ast_stat i(ast *a, te *pn, void **vn) {
     te **an = (te**) vn;
-    *an = ast_an_i(a, *an, pn, AST_CLS(S), P(type_s_i(a->na, TYPE(I6))), I6(tkn_g_i6(pn->d[2].p, node_root_mc(pn))));
+    int64_t i = tkn_g_i6(pn->d[2].p, node_root_mc(pn));
+    if (i < 0) return AST_STAT(INV);
+    *an = ast_an_i(a, *an, pn, AST_CLS(S), P(type_s_i(a->ta, TYPE(I6))), I6(i));
     return AST_STAT(OK);
 }
 
@@ -40,12 +42,18 @@ static ast_stat aply(ast *a, te *pn, void **vn) {
     return AST_STAT(OK);
 }
 
+static ast *ast_tkn(ast *a) {
+    ast_t_a(a, TCUST(ADD), OP(ADD));
+    ast_t_a(a, TCUST(SUB), OP(SUB));
+    return a;
+}
+
 ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(ROOT), root);
     ast_a(a, NODE_TYPE(INT), i);
     ast_a(a, NODE_TYPE(OP), op);
     ast_a(a, NODE_TYPE(APLY), aply);
-    return a;
+    return ast_tkn(a);
 }
 
 void ast_p(const te *an) {

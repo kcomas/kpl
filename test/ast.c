@@ -22,11 +22,14 @@ static lst *ali(void) {
     return lst_i(&am, &am, (void*) te_f);
 }
 
-static ast *ai(void) {
+static tbl *mktbl(size_t size) {
     lst *tl = lst_i(&am, &am, (void*) te_f);
-    te *b = te_i(NODE_TYPE(_END), &am, NULL);
-    tbl *t = tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
-    return ast_b(ast_i(&am, &am, pig, ati, ali, t));
+    te *b = te_i(size, &am, NULL);
+    return tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
+}
+
+static ast *ai(void) {
+    return ast_b(ast_i(&am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
 }
 
 T(aplyopadd, {

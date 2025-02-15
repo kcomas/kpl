@@ -37,14 +37,14 @@ typedef lst *ast_lst_i(void);
 
 typedef struct {
     ssize_t r;
-    const alfr *af, *na;
+    const alfr *af, *ta;
     psr_id_g *pig;
     ast_tbl_i *ati;
     ast_lst_i *ali;
-    tbl *t;
+    tbl *pt, *tt;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *t);
+ast *ast_i(const alfr *af, const alfr *ta, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *pt, tbl *tt);
 
 // ast t te[par;psr;cls;...]
 
@@ -56,5 +56,7 @@ typedef ast_stat ast_tf(ast *a, te *pn, void **vn);
 ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
 ast_stat ast_n(ast *a, te *pn, void **vn);
+
+ast_stat ast_t_a(ast *a, size_t tid, size_t id);
 
 void ast_f(ast *a);
