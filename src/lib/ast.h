@@ -59,4 +59,6 @@ ast_stat ast_n(ast *a, te *pn, void **vn);
 
 ast_stat ast_t_a(ast *a, size_t tid, size_t id);
 
+ast_stat ast_t_n(ast *a, size_t tid, size_t *id);
+
 void ast_f(ast *a);
