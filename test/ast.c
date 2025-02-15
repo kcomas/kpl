@@ -37,6 +37,7 @@ T(aplyopadd, {
     A(pn != NULL, "psr_r");
     ast *a = ai();
     A(ast_n(a, pn, (void**) &an) == AST_STAT(OK), "ast_n");
+    ast_p(an);
     ast_f(a);
     te_f(an);
 });
