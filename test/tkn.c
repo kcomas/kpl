@@ -83,7 +83,9 @@ T(inttest, {
         putchar('\n');
         A(m->d[0].u6 == tids[id++], "tid");
         if (m->d[0].u6 == TCUST(NUM)) {
-            A(nums[i++] == tkn_g_i6(m, t->s), "num");
+            int64_t v = 0;
+            A(tkn_g_i6(m, t->s, &v) == TKN_STAT(OK), "tkn_g_i6");
+            A(nums[i++] == v, "num");
         }
     }
     A(tstat == TKN_STAT(END), "END");

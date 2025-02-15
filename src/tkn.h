@@ -48,4 +48,4 @@ tkn_stat tkn_sym(tkn *t, te *m);
 
 void tkn_b(tkn *t);
 
-int64_t tkn_g_i6(const te *t, const mc *s);
+tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i);

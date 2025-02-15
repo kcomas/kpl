@@ -304,6 +304,9 @@ void node_p(const te *n, size_t idnt) {
             }
             putchar(')');
             break;
+      default:
+        printf("INV");
+        break;
     }
 }
 

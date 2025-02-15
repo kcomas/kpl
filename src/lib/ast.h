@@ -25,8 +25,6 @@ typedef enum {
     AST_CLS(L) // list tbl with scope [tbl;lst]
 } ast_cls;
 
-const char *ast_cls_str(ast_cls cls);
-
 // ast entry te[id;fn]
 
 typedef ssize_t psr_id_g(te *pn); // -1 for invalid

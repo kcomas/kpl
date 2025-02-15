@@ -14,6 +14,8 @@ typedef enum {
     OP(_END)
 } op;
 
+const char *ast_op_str(op o);
+
 ast *ast_b(ast *a);
 
-void ast_p(const te *an);
+void ast_p(const te *an, size_t idnt);
