@@ -122,7 +122,8 @@ void type_p(const te *t) {
 }
 
 bool type_eq(const te *a, const te *b) {
-    if (a->d[0].u6 != b->d[0].u6) return false;
+    if (!a && !b) return true;
+    if (!a || !b || a->d[0].u6 != b->d[0].u6) return false;
     type_cls cls = type_c(a->d[0].u6);
     switch (cls) {
         case TYPE_CLS(I):

@@ -130,3 +130,31 @@ void ast_p(const te *an, size_t idnt) {
             break;
     }
 }
+
+bool ast_eq(const te *a, const te *b) {
+    if (!a && !b) return true;
+    if (!a || !b || a->d[2].u6 != b->d[2].u6) return false;
+    switch (an->d[2].u6) {
+        case AST_CLS(R):
+            break;
+        case AST_CLS(T):
+            break;
+        case AST_CLS(I):
+            break;
+        case AST_CLS(S):
+            break;
+        case AST_CLS(V):
+            break;
+        case AST_CLS(O):
+            break;
+        case AST_CLS(Z):
+            break;
+        case AST_CLS(A):
+            break;
+        case AST_CLS(L):
+            break;
+        default:
+            break;
+    }
+   return false;
+}

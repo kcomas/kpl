@@ -46,9 +46,16 @@ psr *psr_b(psr *p) {
     return p;
 }
 
+static void p_r_f(void *p) {
+    te *n = p;
+    psr_f(n->d[0].p);
+    te_f(n->d[2].p);
+    n->af->f(n);
+}
+
 te *psr_r(psr *p) {
     psr_stat pstat;
-    te *nh = te_i(3, p->ta, node_f);
+    te *nh = te_i(3, p->ta, p_r_f);
     if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) {
         printf("%s|", p->tt->s->d);
         printf("PSTAT: %u|", pstat);
@@ -85,8 +92,10 @@ void psr_entry_f(void *p) {
     t->af->f(t);
 }
 
-static te *node_i(psr *p, node_id nt, size_t size) {
-    te *n = te_i(size, p->ta, node_f);
+typedef void node_f(te *n);
+
+static te *node_i(psr *p, node_id nt, size_t size, node_f f) {
+    te *n = te_i(size, p->ta, (void*) f);
     n->d[1] = U6(nt);
     un m;
     vr_sb(p->ts, &m);
@@ -94,28 +103,41 @@ static te *node_i(psr *p, node_id nt, size_t size) {
     return n;
 }
 
+static void p_vtki_f(te *n) {
+    te_f(n->d[2].p);
+    n->af->f(n);
+}
+
 psr_stat psr_var_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(VAR), 3);
+    *n = node_i(p, NODE_TYPE(VAR), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_type_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(TYPE), 3);
+    *n = node_i(p, NODE_TYPE(TYPE), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_key_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(KEY), 3);
+    *n = node_i(p, NODE_TYPE(KEY), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_int_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(INT), 3);
+    *n = node_i(p, NODE_TYPE(INT), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
+static void p_flt_f(void *p) {
+    te *n = p;
+    te_f(n->d[2].p);
+    te_f(n->d[3].p);
+    te_f(n->d[4].p);
+    n->af->f(n);
+}
+
 psr_stat psr_flt_i(psr *p, te **n) {
-    *n = te_i(5, p->ta, node_f);
+    *n = te_i(5, p->ta, p_flt_f);
     (*n)->d[1] = U6(NODE_TYPE(FLT));
     un m;
     for (size_t i = 4; i > 1; i--) {
@@ -136,8 +158,15 @@ psr_stat psr_val_m(psr *p, te *restrict nh, te *restrict n) {
     return PSR_STAT(OK);
 }
 
+static void p_op_f(te *n) {
+    te_f(n->d[2].p);
+    te_f(n->d[3].p);
+    te_f(n->d[4].p);
+    n->af->f(n);
+}
+
 psr_stat psr_op_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(OP), 5);
+    *n = node_i(p, NODE_TYPE(OP), 5, p_op_f);
     return PSR_STAT(OK);
 }
 
@@ -162,8 +191,14 @@ psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n) {
     return PSR_STAT(OK);
 }
 
+static void p_l_f(te *n) {
+    te_f(n->d[2].p);
+    lst_f(n->d[3].p);
+    n->af->f(n);
+}
+
 psr_stat psr_lst_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(LST), 4);
+    *n = node_i(p, NODE_TYPE(LST), 4, p_l_f);
     (*n)->d[3].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
@@ -175,9 +210,15 @@ psr_stat psr_lst_e(psr *p, te *restrict e, te *restrict n) {
     return PSR_STAT(OK);
 }
 
+static void p_a_f(te *n) {
+    te_f(n->d[2].p);
+    te_f(n->d[3].p);
+    lst_f(n->d[4].p);
+    n->af->f(n);
+}
+
 psr_stat psr_aply_i(psr *p, te **n) {
-    (void) p;
-    *n = node_i(p, NODE_TYPE(APLY), 5);
+    *n = node_i(p, NODE_TYPE(APLY), 5, p_a_f);
     (*n)->d[4].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
@@ -219,8 +260,14 @@ psr_stat psr_aply_e(psr *p, te *restrict e, te *restrict n) {
     return PSR_STAT(OK);
 }
 
+static void p_s_i(te *n) {
+    te_f(n->d[2].p);
+    te_f(n->d[3].p);
+    n->af->f(n);
+}
+
 psr_stat psr_sym_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(SYM), 4);
+    *n = node_i(p, NODE_TYPE(SYM), 4, p_s_i);
     return PSR_STAT(OK);
 }
 
@@ -308,39 +355,4 @@ void node_p(const te *n, size_t idnt) {
         printf("INV");
         break;
     }
-}
-
-void node_f(void *p) {
-    if (!p) return;
-    te *n = p;
-    te_f(n->d[2].p);
-    switch (n->d[1].u6) {
-        case NODE_TYPE(ROOT):
-            psr_f(n->d[0].p);
-            break;
-        case NODE_TYPE(VAR):
-        case NODE_TYPE(TYPE):
-        case NODE_TYPE(KEY):
-        case NODE_TYPE(INT):
-            break;
-        case NODE_TYPE(FLT):
-            te_f(n->d[3].p);
-            te_f(n->d[4].p);
-            break;
-        case NODE_TYPE(OP):
-            node_f(n->d[3].p);
-            node_f(n->d[4].p);
-            break;
-        case NODE_TYPE(LST):
-            lst_f(n->d[3].p);
-            break;
-        case NODE_TYPE(APLY):
-            node_f(n->d[3].p);
-            lst_f(n->d[4].p);
-            break;
-        case NODE_TYPE(SYM):
-            node_f(n->d[3].p);
-            break;
-    }
-    n->af->f(n);
 }
