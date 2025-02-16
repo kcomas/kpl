@@ -49,3 +49,23 @@ T(lst_abv, {
     }
     lst_f(l);
 });
+
+static bool vcmp(un a, un b) {
+    return a.u6 == b.u6;
+}
+
+T(cmp, {
+    size_t n = 5;
+    lst *a = lst_i(&lm, &lm, NULL);
+    A(lst_abv(a, n, ABV_NUMS) == LST_STAT(OK), "lst_abv");
+    lst *b = lst_i(&lm, &lm, NULL);
+    A(lst_abv(b, n, ABV_NUMS) == LST_STAT(OK), "lst_abv");
+    A(lst_eq(a, b, vcmp), "lst_eq");
+    lst *c = lst_i(&lm, &lm, NULL);
+    A(lst_abv(c, n, ABV_NUMS) == LST_STAT(OK), "lst_abv");
+    c->t->d[0].u6 = 10;
+    A(!lst_eq(b, c, vcmp), "!lst_eq");
+    lst_f(a);
+    lst_f(b);
+    lst_f(c);
+});

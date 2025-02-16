@@ -37,7 +37,18 @@ static ast *ai(void) {
 
 #define SCALAR(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_s_i(am, TYPE(T))), V)
 
-#define OP(C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), L, R, OP(C))
+#define OP(T, L, R, C) ast_an_i(a, NULL, NULL, AST_CLS(O), T, L, R, OP(C))
+
+static te *aply(ast *a, te *restrict type, te *restrict tgt, size_t n, ...) {
+    lst *l = ali();
+    va_list args;
+    va_start(args, n);
+    lst_abv(l, n, args);
+    va_end(args);
+    return ast_an_i(a, NULL, NULL, AST_CLS(A), P(type), tgt, l);
+}
+
+#define APLY(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
 
 T(aplyopadd, {
     printf("%s\n", aplyopadd);

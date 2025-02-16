@@ -27,6 +27,10 @@ lst *lst_c(lst *l);
 
 size_t lst_g_l(const lst *l);
 
+typedef bool lst_cmp_fn(un a, un b);
+
+bool lst_eq(const lst *restrict a, const lst *restrict b, lst_cmp_fn fn);
+
 lst_stat lst_ab(lst *l, un d);
 
 lst_stat lst_abv(lst *l, size_t n, ...);
