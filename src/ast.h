@@ -5,16 +5,16 @@
 #include "type.h"
 #include "psr.h"
 
-#define OP(N) OP_##N
+#define OC(N) OC_##N
 
 typedef enum {
-    OP(_START),
-    OP(ADD),
-    OP(SUB),
-    OP(_END)
-} op;
+    OC(_START),
+    OC(ADD),
+    OC(SUB),
+    OC(_END)
+} oc; // op code
 
-const char *ast_op_str(op o);
+const char *ast_op_str(oc o);
 
 ast *ast_b(ast *a);
 

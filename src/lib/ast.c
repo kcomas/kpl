@@ -17,7 +17,7 @@ static void t_r_f(void *p) {
     te *n = p;
     te_f(n->d[1].p); // free psr
     tbl_f(n->d[3].p); // alias/export tbl
-    te_f(n->d[5].p);
+    te_f(n->d[4].p);
     n->af->f(n);
 }
 

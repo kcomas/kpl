@@ -35,17 +35,20 @@ static ast *ai(void) {
 
 #define ROOT(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
 
-#define SCALAR(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_s_i(am, TYPE(T))), V)
+#define SCALAR(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_s_i(&am, TYPE(T))), V)
 
-#define OP(T, L, R, C) ast_an_i(a, NULL, NULL, AST_CLS(O), T, L, R, OP(C))
+#define OP(T, L, R, C) ast_an_i(a, NULL, NULL, AST_CLS(O), T, L, R, OC(C))
 
-static te *aply(ast *a, te *restrict type, te *restrict tgt, size_t n, ...) {
+static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
     lst *l = ali();
-    va_list args;
-    va_start(args, n);
-    lst_abv(l, n, args);
-    va_end(args);
-    return ast_an_i(a, NULL, NULL, AST_CLS(A), P(type), tgt, l);
+    va_list arg;
+    va_start(arg, n);
+    while (n > 0) {
+        lst_ab(l, P(va_arg(arg, te*)));
+        n--;
+    }
+    va_end(arg);
+    return ast_an_i(a, NULL, NULL, AST_CLS(A), type, tgt, l);
 }
 
 #define APLY(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
@@ -58,9 +61,11 @@ T(aplyopadd, {
     A(ast_n(a, pn, (void**) &an, &e) == AST_STAT(OK), "ast_n");
     ast_p(an, 0);
     putchar('\n');
-    te *cmp = ROOT(NULL);
-    A(ast_eq(an, cmp), "ast_eq");
+    te *cn = ROOT(APLY(P(NULL), OP(P(NULL), NULL, NULL, ADD), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2))));
+    ast_p(cn, 0);
+    putchar('\n');
+    A(ast_eq(an, cn), "ast_eq");
     ast_f(a);
     te_f(an);
-    te_f(cmp);
+    te_f(cn);
 });
