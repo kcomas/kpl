@@ -16,8 +16,8 @@ ast *ast_i(const alfr *af, const alfr *ta, psr_id_g pig, ast_tbl_i ati, ast_lst_
 static void t_r_f(void *p) {
     te *n = p;
     te_f(n->d[1].p); // free psr
-    tbl_f(n->d[3].p);
-    te_f(n->d[4].p);
+    tbl_f(n->d[3].p); // alias/export tbl
+    te_f(n->d[5].p);
     n->af->f(n);
 }
 
@@ -76,6 +76,7 @@ te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, 
     frfn *nf = NULL;
     switch (cls) {
         case AST_CLS(R):
+            len += 1;
             nf = t_r_f;
             break;
         case AST_CLS(T):
@@ -131,8 +132,9 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
 }
 
 ast_stat ast_n(ast *a, te *pn, void **vn, te **e) {
-    ssize_t pid = a->pig(pn);
-    if (pid < 0) return AST_STAT(INV);
+    ast_stat stat;
+    size_t pid;
+    if ((stat = a->pig(pn, &pid)) != AST_STAT(OK)) return stat;
     te *kv;
     if (tbl_g_i(a->pt, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
     ast_tf *atf = kv->d[1].p;

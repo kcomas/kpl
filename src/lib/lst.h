@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <stdarg.h>
 #include "def.h"
 #include "te.h"
 
@@ -27,6 +28,8 @@ lst *lst_c(lst *l);
 size_t lst_g_l(const lst *l);
 
 lst_stat lst_ab(lst *l, un d);
+
+lst_stat lst_abv(lst *l, size_t n, ...);
 
 lst_stat lst_af(lst *l, un d);
 

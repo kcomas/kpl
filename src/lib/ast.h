@@ -27,7 +27,7 @@ typedef enum {
 
 // ast entry te[id;fn]
 
-typedef ssize_t psr_id_g(te *pn); // -1 for invalid
+typedef ast_stat psr_id_g(te *pn, size_t *pid);
 
 typedef tbl *ast_tbl_i(void);
 

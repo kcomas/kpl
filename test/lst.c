@@ -31,3 +31,21 @@ T(lst_ab_af_sf_sb, {
     lst_i6_p(l);
     lst_f(l);
 });
+
+#define ABV_NUMS 1, 2, 3, 4, 5
+
+T(lst_abv, {
+    lst *l = lst_i(&lm, &lm, NULL);
+    const int64_t nums[] = {ABV_NUMS};
+    size_t n = 5;
+    A(lst_abv(l, n, ABV_NUMS) == LST_STAT(OK), "lst_abv");
+    A(l->l == n, "len");
+    lst_i6_p(l);
+    size_t i = 0;
+    te *h = l->h;
+    while (h) {
+        A(h->d[0].i6 == nums[i++], "nums_i");
+        h = h->d[2].p;
+    }
+    lst_f(l);
+});

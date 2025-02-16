@@ -33,6 +33,18 @@ lst_stat lst_ab(lst *l, un d) {
     return LST_STAT(OK);
 }
 
+lst_stat lst_abv(lst *l, size_t n, ...) {
+    lst_stat stat = LST_STAT(OK);
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        if ((stat = lst_ab(l, va_arg(args, un))) != LST_STAT(OK)) return stat;
+        n--;
+    }
+    va_end(args);
+    return stat;
+}
+
 lst_stat lst_af(lst *l, un d) {
     te *li = te_i(3, l->ta, NULL);
     li->d[0] = d;
