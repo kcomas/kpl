@@ -130,13 +130,13 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
     return AST_STAT(OK);
 }
 
-ast_stat ast_n(ast *a, te *pn, void **vn) {
+ast_stat ast_n(ast *a, te *pn, void **vn, te **e) {
     ssize_t pid = a->pig(pn);
     if (pid < 0) return AST_STAT(INV);
     te *kv;
     if (tbl_g_i(a->pt, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
     ast_tf *atf = kv->d[1].p;
-    return atf(a, pn, vn);
+    return atf(a, pn, vn, e);
 }
 
 ast_stat ast_t_a(ast *a, size_t tid, size_t id) {

@@ -48,12 +48,12 @@ ast *ast_i(const alfr *af, const alfr *ta, psr_id_g pig, ast_tbl_i ati, ast_lst_
 
 te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...);
 
-typedef ast_stat ast_tf(ast *a, te *pn, void **vn);
+typedef ast_stat ast_tf(ast *a, te *pn, void **vn, te **e);
 
 // do not allow dupes
 ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
-ast_stat ast_n(ast *a, te *pn, void **vn);
+ast_stat ast_n(ast *a, te *pn, void **vn, te **e);
 
 ast_stat ast_t_a(ast *a, size_t tid, size_t id);
 
