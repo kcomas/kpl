@@ -23,6 +23,13 @@ mc *mc_c(mc *m) {
     return m;
 }
 
+bool mc_eq(const mc *restrict a, const mc *restrict b) {
+    if (!a && !b) return true;
+    if (!a || !b || a->l != b->l) return false;
+    for (size_t i = 0; i < a->l; i++) if (a->d[i] != b->d[i]) return false;
+    return true;
+}
+
 #ifndef MC_RESIZE
     #define MC_RESIZE 2
 #endif
