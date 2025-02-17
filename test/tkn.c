@@ -77,6 +77,8 @@ T(tkn_symtest) {
             mc_f(v);
         }
     }
+    A(tstat == TKN_STAT(END), "END");
+    te_f(m);
     tkn_f(t);
 }
 
