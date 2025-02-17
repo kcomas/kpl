@@ -24,6 +24,7 @@ typedef enum {
     TYPE(C4),
     TYPE(SG),
     // vector
+    TYPE(SL),
     TYPE(VR),
     TYPE(LT),
     // hash
@@ -37,6 +38,7 @@ typedef enum {
     TYPE(TE),
     TYPE(BA),
     TYPE(TD),
+    TYPE(UN),
     TYPE(_END)
 } type;
 
@@ -62,6 +64,8 @@ te *type_v_i(const alfr *af, type v, te *t);
 te *type_h_i(const alfr *af, type h, tbl *t);
 
 te *type_f_i(const alfr *af, type f, tbl *a, te *r);
+
+te *type_i(const alfr *af, type t);
 
 void type_p(const te *t);
 

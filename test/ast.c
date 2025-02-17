@@ -29,15 +29,11 @@ static tbl *mktbl(size_t size) {
     return tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
-static ast *ai(void) {
-    return ast_b(ast_i(&am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
-}
-
 #define ROOT(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
 
 #define SCALAR(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_s_i(&am, TYPE(T))), V)
 
-#define OP(T, L, R, C) ast_an_i(a, NULL, NULL, AST_CLS(O), T, L, R, OC(C))
+#define OP(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
 
 static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
     lst *l = ali();
@@ -68,9 +64,13 @@ static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     te_f(cn);
 }
 
-#define V(PGM, AST) ast *a = ai(); \
+#define V(PGM, AST) ast *a = ast_b(ast_i(&am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     ast_verify(_t, a, PGM, AST)
 
 T(aplyopadd, {
-    V(aplyopadd, ROOT(APLY(P(NULL), OP(P(NULL), NULL, NULL, ADD), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2)))));
+    V(aplyopadd, ROOT(APLY(P(NULL), OP(P(NULL), ADD, NULL, NULL), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2)))));
+});
+
+T(typetype, {
+    V(typetype, NULL);
 });

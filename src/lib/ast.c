@@ -48,10 +48,18 @@ static void t_vl_f(void *p) {
     n->af->f(n);
 }
 
-static void t_oz_f(void *p) {
+static void t_o_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
-    te_f(n->d[4].p);
+    te_f(n->d[5].p);
+    te_f(n->d[6].p);
+    n->af->f(n);
+}
+
+static void t_z_f(void *p) {
+    te *n = p;
+    te_f(n->d[3].p);
+    mc_f(n->d[4].p);
     te_f(n->d[5].p);
     n->af->f(n);
 }
@@ -72,38 +80,42 @@ static void t_l_f(void *p) {
 }
 
 te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...) {
-    size_t len = 5;
+    size_t len = 4;
     frfn *nf = NULL;
     switch (cls) {
         case AST_CLS(R):
-            len += 1;
+            len += 2;
             nf = t_r_f;
             break;
         case AST_CLS(T):
             nf = t_t_f;
             break;
         case AST_CLS(I):
+            len += 1;
             nf = t_i_f;
             break;
         case AST_CLS(S):
+            len += 1;
             nf = t_s_f;
             break;
         case AST_CLS(V):
+            len += 1;
             nf = t_vl_f;
             break;
         case AST_CLS(O):
-            len += 2;
-            nf = t_oz_f;
+            len += 3;
+            nf = t_o_f;
             break;
         case AST_CLS(Z):
-            len += 1;
-            nf = t_oz_f;
+            len += 2;
+            nf = t_z_f;
             break;
         case AST_CLS(A):
-            len += 1;
+            len += 2;
             nf = t_a_f;
             break;
         case AST_CLS(L):
+            len += 1;
             nf = t_l_f;
             break;
         default:

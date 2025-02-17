@@ -5,4 +5,6 @@
 
 extern const char *aplyopadd;
 
+extern const char *typetype;
+
 psr *bpsr(const char *pgm);

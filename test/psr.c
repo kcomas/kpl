@@ -128,9 +128,9 @@ T(nl, {
     te_f(h);
 });
 
-T(type, {
-    te *h = ppnode(psr_r(tpsr("FN(I6;I6;FN(I6;I6))")));
-    V(h, {N(ROOT), APLY(N(TYPE), N(TYPE), N(TYPE), APLY(N(TYPE), N(TYPE), N(TYPE)))});
+T(typetype, {
+    te *h = ppnode(psr_r(tpsr(typetype)));
+    V(h, {N(ROOT), APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)))});
     te_f(h);
 });
 

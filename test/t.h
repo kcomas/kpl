@@ -33,7 +33,7 @@ void _a(const char *name, _test_fn *tf);
     } \
 } while (0)
 
-#define T(N, ...) __attribute__((constructor)) void __##N(void) { \
-    void _##N(__attribute__((unused)) _tests *_t) __VA_ARGS__; \
+#define T(N, ...)  void _##N(__attribute__((unused)) _tests *_t) __VA_ARGS__; \
+    __attribute__((constructor)) void __##N(void) { \
     _a(#N, &_##N); \
 }

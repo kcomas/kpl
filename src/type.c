@@ -18,6 +18,7 @@ const char *type_str(type t) {
         "F6",
         "C4",
         "SG",
+        "SL",
         "VR",
         "LT",
         "HH",
@@ -28,6 +29,7 @@ const char *type_str(type t) {
         "TE",
         "BA",
         "TD",
+        "UN",
         "_END"
     };
     const char *s = "INV";
@@ -36,11 +38,11 @@ const char *type_str(type t) {
 }
 
 type_cls type_c(type t) {
-    if (t >= TYPE(VD) && t <= TYPE(C4)) return TYPE_CLS(S);
-    if (t >= TYPE(SG) && t <= TYPE(LT)) return TYPE_CLS(V);
+    if (t >= TYPE(VD) && t <= TYPE(SG)) return TYPE_CLS(S);
+    if (t >= TYPE(SL) && t <= TYPE(LT)) return TYPE_CLS(V);
     if (t >= TYPE(ST) && t <= TYPE(HH)) return TYPE_CLS(H);
     if (t >= TYPE(FN) && t <= TYPE(CF)) return TYPE_CLS(F);
-    if (t >= TYPE(BA) && t <= TYPE(TD)) return TYPE_CLS(C);
+    if (t >= TYPE(BA) && t <= TYPE(UN)) return TYPE_CLS(C);
     return TYPE_CLS(I);
 }
 
@@ -91,6 +93,25 @@ te *type_f_i(const alfr *af, type f, tbl *a, te *r) {
     return ff;
 }
 
+te *type_i(const alfr *af, type t) {
+    switch (type_c(t)) {
+        case TYPE_CLS(I):
+            break;
+        case TYPE_CLS(S):
+            return type_s_i(af, t);
+        case TYPE_CLS(V):
+            return type_v_i(af, t, NULL);
+        case TYPE_CLS(H):
+            return type_h_i(af, t, NULL);
+        case TYPE_CLS(F):
+            return type_f_i(af, t, NULL, NULL);
+        // TODO
+        default:
+            break;
+    }
+    return NULL;
+}
+
 void type_p(const te *t) {
     if (!t) {
         printf("??");
@@ -113,7 +134,9 @@ void type_p(const te *t) {
             // TODO
             break;
         case TYPE_CLS(F):
+            printf("%s(", type_str(t->d[0].u6));
             // TODO
+            putchar(')');
             break;
         case TYPE_CLS(C):
             // TODO
