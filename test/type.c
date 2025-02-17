@@ -2,10 +2,9 @@
 #include "../src/type.h"
 #include "t.h"
 
+static const alfr tm = { .a = malloc, .f = free };
 
-const alfr tm = { .a = malloc, .f = free };
-
-T(scalar) {
+T(type_scalar) {
     te *a = type_s_i(&tm, TYPE(I6));
     te *b = type_s_i(&tm, TYPE(I6));
     type_p(b);
@@ -18,7 +17,7 @@ T(scalar) {
     te_f(c);
 }
 
-T(vector) {
+T(type_vector) {
     te *va = type_v_i(&tm, TYPE(VR), type_s_i(&tm, TYPE(U6)));
     type_p(va);
     putchar('\n');

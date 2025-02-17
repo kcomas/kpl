@@ -2,8 +2,7 @@
 #include "../src/tkn.h"
 #include "t.h"
 
-
-const alfr tm = { .a = malloc, .f = free };
+static const alfr tm = { .a = malloc, .f = free };
 
 static tbl *tkn_mktbl(void) {
     lst *tl = lst_i(&tm, &tm, (void*) te_f);
@@ -23,7 +22,7 @@ static tbl *tkn_mktbl(void) {
     A(tstat == TKN_STAT(END), "END"); \
     te_f(m);
 
-T(btest) {
+T(tkn_btest) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     const size_t tids[] = {1, TCUST(WS), TCUST(NUM), TCUST(WS), 3, TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NL), TCUST(WS), 5, TCUST(WS), 6, TCUST(WS), 2, TCUST(WS), 4};
     printf("%s\n", pgm);
@@ -40,7 +39,7 @@ T(btest) {
     tkn_f(t);
 }
 
-T(stest) {
+T(tkn_stest) {
     const char *pgm = "0 Σ [12;44;67]\n";
     const size_t tids[] = {TCUST(NUM), TCUST(WS), 1, TCUST(WS), TCUST(LS), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(RS), TCUST(NL)};
     tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
@@ -54,7 +53,7 @@ T(stest) {
     tkn_f(t);
 }
 
-T(symtest) {
+T(tkn_symtest) {
     const char *pgm = "a`b asdf`1234";
     const char *syms[] = {"b", "1234"};
     size_t i = 0;
@@ -73,6 +72,7 @@ T(symtest) {
         if (m->d[0].u6 == TCUST(SYM)) {
             mc *v;
             A(tkn_g_mc(m, t->s, 1, &tm, &v) == TKN_STAT(OK), "tkn_g_mc");
+            printf("%s\n", (char*) v->d);
             A(strcmp(syms[i++], (char*) v->d) == 0, "sym");
             mc_f(v);
         }
@@ -80,9 +80,9 @@ T(symtest) {
     tkn_f(t);
 }
 
-T(inttest) {
+T(tkn_inttest) {
     const char *pgm = "a 1 b 21 c 321";
-    int64_t nums[] = {1, 21, 321};
+    const int64_t nums[] = {1, 21, 321};
     size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM)};
     printf("%s\n", pgm);

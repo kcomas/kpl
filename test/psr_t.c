@@ -1,7 +1,7 @@
 
 #include "psr_t.h"
 
-const alfr pm = { .a = malloc, .f = free };
+static const alfr pm = { .a = malloc, .f = free };
 
 static tbl *mktbl(void) {
     lst *tl = lst_i(&pm, &pm, (void*) te_f);

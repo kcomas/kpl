@@ -7,6 +7,7 @@ mc *mc_i(size_t s, const alfr *af) {
     m->s = s;
     m->l = 0;
     m->af = af;
+    memset(m->d, 0, s);
     return m;
 }
 

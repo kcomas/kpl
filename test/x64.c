@@ -2,14 +2,13 @@
 #include "../src/lib/x64.h"
 #include "t.h"
 
-
 static uint8_t *m = NULL;
 
-__attribute__((constructor)) void c(void) {
+__attribute__((constructor)) void x64_con(void) {
     m = x64_mmap(1);
 }
 
-__attribute__((destructor)) void d(void) {
+__attribute__((destructor)) void x64_des(void) {
     x64_munmap(1, m);
 }
 
@@ -24,7 +23,7 @@ static void printj(size_t len, uint8_t *m) {
 
 typedef int64_t add3(int64_t a);
 
-T(radd3) {
+T(x64_radd3) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -43,7 +42,7 @@ T(radd3) {
 
 typedef int64_t add(int64_t a, int64_t b);
 
-T(radd) {
+T(x64_radd) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -59,7 +58,7 @@ T(radd) {
 }
 typedef int64_t sub(int64_t a, int64_t b);
 
-T(rsub) {
+T(x64_rsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -86,7 +85,7 @@ static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
     x64_call_r(p, m, R(15));
 }
 
-T(rloop) {
+T(x64_rloop) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -157,7 +156,7 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_ret(p, m);
 }
 
-T(rfib) {
+T(x64_rfib) {
     size_t p = 0;
     bfib(&p, m);
     uint64_t n = 35;
@@ -167,7 +166,7 @@ T(rfib) {
     A(r == 9227465, "fib");
 }
 
-T(daddsub) {
+T(x64_daddsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -182,7 +181,7 @@ T(daddsub) {
     A(d = a + b - c, "double");
 }
 
-T(cmp) {
+T(x64_cmp) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -204,7 +203,7 @@ static void printp(int64_t **a) {
     printf("%p, %ld\n", a, **a);
 }
 
-T(p2p) {
+T(x64_p2p) {
     size_t p = 0;
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
@@ -230,7 +229,7 @@ T(p2p) {
     free(a);
 }
 
-T(rskiploop) {
+T(x64_rskiploop) {
     size_t p = 0;
     x64_mov_rq(&p, m, R(AX), U6(1));
     x64_push_r(&p, m, R(AX));

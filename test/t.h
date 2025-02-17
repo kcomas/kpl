@@ -34,6 +34,6 @@ void _a(const char *name, const char *sf, _test_fn *tf);
 
 #define T(N)  void _##N(__attribute__((unused)) _tests *_t); \
     __attribute__((constructor)) void __##N(void) { \
-        _a(#N, __FILE__, &_##N); \
+        _a(#N, __FILE__, _##N); \
     } \
 void _##N(__attribute__((unused)) _tests *_t)
