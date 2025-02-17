@@ -6,7 +6,7 @@ I;
 
 static const alfr vm = { .a = malloc, .f = free };
 
-T(vr_ab_s_i, {
+T(vr_ab_s_i) {
     vr *v = vr_i(2, &vm, NULL);
     vr_ab(&v, I5(1));
     vr_ab(&v, I5(2));
@@ -18,9 +18,9 @@ T(vr_ab_s_i, {
     for (size_t i = 0; i < v->l; i++) printf("%d ", v->d[i].i5);
     putchar('\n');
     vr_f(v);
-});
+}
 
-T(reverse, {
+T(reverse) {
     vr *v = vr_i(10, &vm, NULL);
     vr_ab(&v, D(1.1));
     vr_ab(&v, D(2.2));
@@ -45,9 +45,9 @@ T(reverse, {
     putchar('\n');
     A(vr_sb(v, &u) == VR_STAT(SUB), "not empty");
     vr_f(v);
-});
+}
 
-T(strings, {
+T(strings) {
     char *msg = "Hi: 0";
     size_t ml = strlen(msg);
     vr *v = vr_i(5, &vm, &free);
@@ -76,4 +76,4 @@ T(strings, {
     putchar('\n');
     A(strcmp(v->d[0].p, "Hi: 9") == 0, "vr_r str");
     vr_f(v);
-});
+}

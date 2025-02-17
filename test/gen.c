@@ -17,7 +17,7 @@ extern const alfr gm;
 
 #define S(stmt) A((stmt) == GEN_STAT(OK), "stmt")
 
-T(b, {
+T(b) {
     gen *g = gen_i(&gm, &gm, gen_entry_f, gen_code_entry_f, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
@@ -40,7 +40,7 @@ T(b, {
     gen_st_f(st);
     gen_f(g);
     as_f(a);
-});
+}
 
 static gen *init(void) {
     gen *g = gen_i(&gm, &gm, gen_entry_f, gen_code_entry_f, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
@@ -63,7 +63,7 @@ static void build(gen *g, uint8_t *m) {
     as_f(a);
 }
 
-T(fib, {
+T(fib) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -85,9 +85,9 @@ T(fib, {
     uint64_t r = ((uint64_t(*)(uint64_t)) m)(n);
     printf("Fib(%lu): %lu\n", n, r);
     A(r == y, "fib");
-});
+}
 
-T(ack, {
+T(ack) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -123,4 +123,4 @@ T(ack, {
     uint64_t r = ((uint64_t(*)(uint64_t, uint64_t)) m)(am, bn);
     printf("Ack(%lu, %lu): %lu\n", am, bn, r);
     A(r == y, "ack");
-});
+}

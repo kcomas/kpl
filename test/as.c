@@ -24,7 +24,7 @@ extern const alfr am;
 
 typedef int64_t btestfn(int64_t x);
 
-T(b, {
+T(b) {
     as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_op_p(a->ops, false, 0);
     as_a(a, AS_X64(NOP), NULL, NULL, NULL, NULL);
@@ -50,11 +50,11 @@ T(b, {
     printf("Call at L(1): %ld\n", r);
     A(r == v, "value not returned");
     as_f(a);
-});
+}
 
 typedef const char *iftfn(uint8_t x);
 
-T(ift, {
+T(ift) {
     as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_a(a, AS_X64(PUSH), as_arg_r(a, R(DI)), NULL, NULL, NULL);
     as_a(a, AS_X64(MOV), as_arg_r(a, R(CX)), as_arg_b(a, 5), NULL, NULL);
@@ -74,9 +74,9 @@ T(ift, {
     A(strcmp(((iftfn*) m)(2), "<") == 0, "<");
     A(strcmp(((iftfn*) m)(7), ">") == 0, ">");
     as_f(a);
-});
+}
 
-T(loop, {
+T(loop) {
     as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, U6(2)));
     AS_A1(a, AS_X64(PUSH), as_arg_r(a, R(AX)));
@@ -96,9 +96,9 @@ T(loop, {
     int32_t r = ((int32_t(*)(int32_t)) m)(5);
     A(r == 1, "dec");
     as_f(a);
-});
+}
 
-T(call, {
+T(call) {
     as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
     AS_A1(a, AS_X64(JMP), as_arg_l(a, 2));
@@ -115,4 +115,4 @@ T(call, {
     printf("call %d, inc: %d\n", v, r);
     A(r == v + 1, "inc");
     as_f(a);
-});
+}

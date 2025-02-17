@@ -15,7 +15,7 @@ static void lst_i6_p(const lst * const l) {
 
 static const alfr lm = { .a = malloc, .f = free };
 
-T(lst_ab_af_sf_sb, {
+T(lst_ab_af_sf_sb) {
     lst *l = lst_i(&lm, &lm, NULL);
     lst_ab(l, I6(1));
     lst_ab(l, I6(2));
@@ -30,11 +30,11 @@ T(lst_ab_af_sf_sb, {
     A(l->t->d[0].i6 == 2, "Inv tail");
     lst_i6_p(l);
     lst_f(l);
-});
+}
 
 #define ABV_NUMS 1, 2, 3, 4, 5
 
-T(lst_abv, {
+T(lst_abv) {
     lst *l = lst_i(&lm, &lm, NULL);
     const int64_t nums[] = {ABV_NUMS};
     size_t n = 5;
@@ -48,13 +48,13 @@ T(lst_abv, {
         h = h->d[2].p;
     }
     lst_f(l);
-});
+}
 
 static bool vcmp(un a, un b) {
     return a.u6 == b.u6;
 }
 
-T(cmp, {
+T(cmp) {
     size_t n = 5;
     lst *a = lst_i(&lm, &lm, NULL);
     A(lst_abv(a, n, ABV_NUMS) == LST_STAT(OK), "lst_abv");
@@ -68,4 +68,4 @@ T(cmp, {
     lst_f(a);
     lst_f(b);
     lst_f(c);
-});
+}

@@ -3,8 +3,8 @@
 
 I;
 
-T(pass, {});
+T(pass) {}
 
-T(fail, {
+T(fail) {
     A(0, "basic fail");
-});
+}

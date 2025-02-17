@@ -32,7 +32,7 @@ static void pt(tbl *t) {
     putchar('\n');
 }
 
-T(tbl, {
+T(tbl) {
     lst *tl = lst_i(&tm, &tm, (void*) te_f);
     te *b = te_i(1, &tm, NULL);
     tbl *t = tbl_i(&tm, tbl_sdbm, tbl_str_eq, tl, b);
@@ -63,4 +63,4 @@ T(tbl, {
     }
     pt(t);
     tbl_f(t);
-});
+}
