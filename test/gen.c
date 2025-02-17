@@ -1,7 +1,6 @@
 
 #include "gen_t.h"
 
-I;
 
 static uint8_t *m = NULL;
 

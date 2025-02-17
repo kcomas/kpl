@@ -2,8 +2,6 @@
 #include "../src/lib/mc.h"
 #include "t.h"
 
-I;
-
 static const alfr mm = { .a = malloc, .f = free };
 
 T(mc_wb) {

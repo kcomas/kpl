@@ -3,7 +3,6 @@
 #include "psr_t.h"
 #include "t.h"
 
-I;
 
 const alfr am = { .a = malloc, .f = free };
 

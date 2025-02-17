@@ -2,7 +2,6 @@
 #include "../src/tkn.h"
 #include "t.h"
 
-I;
 
 const alfr tm = { .a = malloc, .f = free };
 

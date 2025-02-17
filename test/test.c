@@ -1,7 +1,6 @@
 
 #include "t.h"
 
-I;
 
 T(pass) {}
 

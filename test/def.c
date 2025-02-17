@@ -2,7 +2,6 @@
 #include "../src/lib/def.h"
 #include "t.h"
 
-I;
 
 T(utf8) {
     const char *greek = "AΑΔΓΦΠΣZΩ";

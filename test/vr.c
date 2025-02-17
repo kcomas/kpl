@@ -2,7 +2,6 @@
 #include "../src/lib/vr.h"
 #include "t.h"
 
-I;
 
 static const alfr vm = { .a = malloc, .f = free };
 
