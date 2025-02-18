@@ -14,5 +14,12 @@ T(mc_wb) {
 }
 
 T(mc_eq) {
-    // TODO
+    mc *a = mc_i_cstr("abc", &mm);
+    mc *b = mc_i_cstr("abc", &mm);
+    A(mc_eq(a, b), "mc_eq");
+    mc *c = mc_i_cstr("abd", &mm);
+    A(!mc_eq(b, c), "!mc_eq");
+    mc_f(a);
+    mc_f(b);
+    mc_f(c);
 }
