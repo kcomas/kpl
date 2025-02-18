@@ -101,6 +101,7 @@ OBJS += $(AST_OBJS)
 $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
+$(TESTS): OO = -O3
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
 > $(CCOBJ)
 

@@ -27,11 +27,13 @@ static tbl *mktbl(size_t size) {
     return tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
-#define ROOT(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
+#define RN(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
 
-#define SCALAR(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_s_i(&am, TYPE(T))), V)
+#define TN(V) ast_an_i(a, NULL, NULL, AST_CLS(T), P(type_i(&am, TYPE(V))))
 
-#define OP(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
+#define SN(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_i(&am, TYPE(T))), V)
+
+#define ON(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
 
 static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
     lst *l = ali();
@@ -45,7 +47,9 @@ static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
     return ast_an_i(a, NULL, NULL, AST_CLS(A), type, tgt, l);
 }
 
-#define APLY(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
+#define AN(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
+
+#define ZN(S, TGT) ast_an_i(a, NULL, NULL, AST_CLS(Z), P(type_i(&am, TYPE(SL))), mc_i_cstr(S, &am), TGT)
 
 static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     printf("%s\n", pgm);
@@ -66,9 +70,9 @@ static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     ast_verify(_t, a, PGM, AST)
 
 T(ast_aplyopadd) {
-    V(aplyopadd, ROOT(APLY(P(NULL), OP(P(NULL), ADD, NULL, NULL), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2)))));
+    V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), 2, SN(I6, I6(1)), SN(I6, I6(2)))));
 }
 
 T(ast_typetype) {
-    V(typetype, NULL);
+    V(typetype, RN(AN(P(NULL), TN(FN), 3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(P(NULL), TN(FN), 2, ZN("z", TN(U6)), TN(I6)))));
 }
