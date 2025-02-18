@@ -186,8 +186,11 @@ T(psr_op_op) {
 }
 
 T(psr_fn) {
-    te *h = ppnode(psr_r(tpsr("f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c}")));
-    V(h, {N(ROOT), OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(OP(N(NONE), OP(N(VAR), OP(N(VAR), N(VAR)))))))});
+    te *h = ppnode(psr_r(tpsr(fnadd3)));
+    V(h, {N(ROOT), LST(
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(OP(N(NONE), OP(N(VAR), OP(N(VAR), N(VAR))))))),
+        APLY(N(VAR), N(INT), N(INT), N(INT))
+        )});
     te_f(h);
 }
 

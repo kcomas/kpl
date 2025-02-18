@@ -3,8 +3,10 @@
 
 #include "../src/psr.h"
 
+psr *bpsr(const char *pgm);
+
 extern const char *aplyopadd;
 
 extern const char *typetype;
 
-psr *bpsr(const char *pgm);
+extern const char *fnadd3;

@@ -31,7 +31,7 @@ static void t_t_f(void *p) {
 static void t_i_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
-    te_f(n->d[4].p);
+    mc_f(n->d[4].p);
     n->af->f(n);
 }
 
@@ -80,7 +80,7 @@ static void t_l_f(void *p) {
     n->af->f(n);
 }
 
-te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...) {
+te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, ...) {
     size_t len = 4;
     frfn *nf = NULL;
     switch (cls) {
@@ -126,9 +126,9 @@ te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, 
     an->d[0] = P(parent);
     an->d[1] = P(psr);
     an->d[2] = U6(cls);
-    an->d[3] = tt;
+    an->d[3] = ct;
     va_list args;
-    va_start(args, tt);
+    va_start(args, ct);
     for (size_t i = 4; i < len; i++) an->d[i] = va_arg(args, un);
     va_end(args);
     return an;

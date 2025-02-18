@@ -10,10 +10,6 @@ static tbl *mktbl(void) {
     return t;
 }
 
-const char *aplyopadd = "+(1;2)";
-
-const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
-
 psr *bpsr(const char *pgm) {
     tkn *t = tkn_i(&pm, &pm, tkn_entry_f, mktbl, tkn_df, mc_i_cstr(pgm, &pm));
     tkn_b(t);
@@ -21,3 +17,9 @@ psr *bpsr(const char *pgm) {
     psr *p = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);
     return psr_b(p);
 }
+
+const char *aplyopadd = "+(1;2)";
+
+const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
+
+const char *fnadd3 = "{f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)}";
