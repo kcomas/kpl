@@ -22,7 +22,7 @@ static ast_stat err(ast_stat stat, te *pn, te **e) {
 
 static ast_stat ast_root(ast *a, te *pn, void **vn, te **e) {
     te **an = (te**) vn;
-    *an = ast_an_i(a, NULL, pn, AST_CLS(R), P(NULL)); // a->ati()
+    *an = ast_an_i(a, NULL, pn, AST_CLS(R), P(NULL));
     if (!pn->d[2].p) return AST_STAT(OK);
     return ast_n(a, pn->d[2].p, &(*an)->d[4].p, e);
 }
