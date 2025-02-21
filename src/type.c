@@ -16,9 +16,9 @@ const char *type_str(type t) {
         "U6",
         "F5",
         "F6",
+        "SL",
         "C4",
         "SG",
-        "SL",
         "VR",
         "LT",
         "HH",
@@ -39,7 +39,7 @@ const char *type_str(type t) {
 
 type_cls type_c(type t) {
     if (t >= TYPE(VD) && t <= TYPE(SG)) return TYPE_CLS(S);
-    if (t >= TYPE(SL) && t <= TYPE(LT)) return TYPE_CLS(V);
+    if (t >= TYPE(VR) && t <= TYPE(LT)) return TYPE_CLS(V);
     if (t >= TYPE(ST) && t <= TYPE(HH)) return TYPE_CLS(H);
     if (t >= TYPE(FN) && t <= TYPE(CF)) return TYPE_CLS(F);
     if (t >= TYPE(BA) && t <= TYPE(UN)) return TYPE_CLS(C);
