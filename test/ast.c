@@ -1,6 +1,11 @@
 
 #include "ast_t.h"
 
+#define V(PGM, AST) ast *a = ast_b(ast_i(&ast_am, &ast_am, &ast_am, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
+    te *an = NULL; \
+    bast(_t, a, PGM, &an); \
+    ast_verify(_t, a, an, AST)
+
 T(ast_aplyopadd) {
     V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
 }
