@@ -28,10 +28,10 @@ fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, tbl *
 
 typedef bool fld_test_fn(const te *an);
 
-typedef fld_stat fld_fn(fld *f, te **an);
+typedef fld_stat fld_fn(fld *f, te **an, te **e);
 
 void fld_a(fld *f, ast_cls cls, fld_test_fn test, fld_fn fn);
 
-fld_stat fld_n(fld *f, te **an); // modifies in place
+fld_stat fld_n(fld *f, te **an, te **e); // modifies in place
 
 void fld_f(fld *f);

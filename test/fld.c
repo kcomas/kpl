@@ -3,8 +3,12 @@
 #include "ast_t.h"
 
 static void fast(_tests *_t, te **an) {
+    fld_stat stat;
     fld *f = fld_b(fld_i(&ast_am, &ast_am, ati, ali, mktbl(AST_CLS(_))));
-    A(fld_n(f, an) == FLD_STAT(OK), "fld_n");
+    te *e = NULL;
+    stat = fld_n(f, an, &e);
+    if (e) ast_p(e, 0);
+    A(stat == FLD_STAT(OK), "fld_n");
     fld_f(f);
 }
 
@@ -14,6 +18,6 @@ static void fast(_tests *_t, te **an) {
     fast(_t, &an); \
     ast_verify(_t, a, an, AST)
 
-T(ast_aplyopadd) {
+T(fld_aplyopadd) {
     V(aplyopadd, RN(ON(P(NULL), ADD, SN(I6, I6(1)), SN(I6, I6(2)))));
 }

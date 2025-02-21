@@ -63,3 +63,15 @@ T(cmp) {
     lst_f(b);
     lst_f(c);
 }
+
+T(lst_sb) {
+    size_t n = 5;
+    lst *a = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
+    un d;
+    while (n > 0) {
+        lst_sb(a, &d);
+        n--;
+    }
+    A(a->l == 0, "lst_sb");
+    lst_f(a);
+}
