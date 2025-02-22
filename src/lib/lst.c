@@ -12,7 +12,7 @@ lst *lst_i(const alfr *af, const alfr *ta, frfn *df) {
     return l;
 }
 
-lst *lst_iv(const alfr *af, const alfr *ta, frfn *df, size_t n, ...) {
+lst *lst_i_v(const alfr *af, const alfr *ta, frfn *df, size_t n, ...) {
     lst *l = lst_i(af, ta, df);
     va_list args;
     va_start(args, n);

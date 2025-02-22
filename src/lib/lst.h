@@ -23,7 +23,7 @@ typedef struct {
 
 lst *lst_i(const alfr *af, const alfr *ta, frfn *df);
 
-lst *lst_iv(const alfr *af, const alfr *ta, frfn *df, size_t n, ...);
+lst *lst_i_v(const alfr *af, const alfr *ta, frfn *df, size_t n, ...);
 
 lst *lst_c(lst *l);
 

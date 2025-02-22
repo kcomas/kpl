@@ -26,7 +26,7 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define ON(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
 
-#define L(n, ...) lst_iv(&ast_am, &ast_am, (void*) te_f, n, __VA_ARGS__)
+#define L(n, ...) lst_i_v(&ast_am, &ast_am, (void*) te_f, n, __VA_ARGS__)
 
 #define AN(T, TGT, LST) ast_an_i(a, NULL, NULL, AST_CLS(A), T, TGT, LST)
 

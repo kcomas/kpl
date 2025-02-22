@@ -131,6 +131,7 @@ void type_p(const te *t) {
         case TYPE_CLS(F):
             printf("%s(", type_str(t->d[0].u6));
             // TODO
+            type_p(t->d[2].p);
             putchar(')');
             break;
         case TYPE_CLS(C):

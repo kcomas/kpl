@@ -32,10 +32,10 @@ T(lst_ab_af_sf_sb) {
 
 #define ABV_NUMS 1, 2, 3, 4, 5
 
-T(lst_ivv) {
+T(lst_i_v) {
     const int64_t nums[] = {ABV_NUMS};
     size_t n = 5;
-    lst *l = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *l = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
     A(l->l == n, "len");
     lst_i6_p(l);
     size_t i = 0;
@@ -53,10 +53,10 @@ static bool vcmp(un a, un b) {
 
 T(cmp) {
     size_t n = 5;
-    lst *a = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
-    lst *b = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *a = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *b = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
     A(lst_eq(a, b, vcmp), "lst_eq");
-    lst *c = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *c = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
     c->t->d[0].u6 = 10;
     A(!lst_eq(b, c, vcmp), "!lst_eq");
     lst_f(a);
@@ -66,7 +66,7 @@ T(cmp) {
 
 T(lst_sb) {
     size_t n = 5;
-    lst *a = lst_iv(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *a = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
     un d;
     while (n > 0) {
         lst_sb(a, &d);
