@@ -46,20 +46,10 @@ static fld_stat fld_lst_n(fld *f, lst *l, te **e) {
 fld_stat fld_n(fld *f, te **an, te **e) {
     fld_stat stat = FLD_STAT(OK);
     if (!*an) return stat;
-    ast_cls cls = (*an)->d[2].u6;
-    te *kv;
-    if (tbl_g_i(f->ft, U6(cls), &kv) == TBL_STAT(OK)) {
-        te *h = ((lst*) kv->d[1].p)->h;
-        while (h) {
-            te *fns = h->d[0].p;
-            if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat;
-            h = h->d[2].p;
-        }
-    }
-    cls = (*an)->d[2].u6; // possible new node
-    switch (cls) {
+    switch ((*an)->d[2].u6) {
         case AST_CLS(R):
-            return fld_n(f, (te**) &(*an)->d[4].p, e);
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            break;
         case AST_CLS(T):
             break;
         case AST_CLS(I):
@@ -69,17 +59,28 @@ fld_stat fld_n(fld *f, te **an, te **e) {
         case AST_CLS(V):
             break;
         case AST_CLS(O):
-            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK)) return stat;
-            return fld_n(f, (te**) &(*an)->d[6].p, e);
+            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return stat;;
+            break;
         case AST_CLS(Z):
-            return fld_n(f, (te**) &(*an)->d[5].p, e);
+            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK)) return stat;
+            break;
         case AST_CLS(A):
-            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
-            return fld_lst_n(f, (*an)->d[5].p, e);
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK) || (stat = fld_lst_n(f, (*an)->d[5].p, e))) return stat;
+            break;
         case AST_CLS(L):
-            return fld_lst_n(f, (*an)->d[4].p, e);
+            if ((stat = fld_lst_n(f, (*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            break;
         default:
             return FLD_STAT(INV);
+    }
+    te *kv;
+    if (tbl_g_i(f->ft, U6((*an)->d[2].u6), &kv) == TBL_STAT(OK)) {
+        te *h = ((lst*) kv->d[1].p)->h;
+        while (h) {
+            te *fns = h->d[0].p;
+            if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat;
+            h = h->d[2].p;
+        }
     }
     return stat;
 }

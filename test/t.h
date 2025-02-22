@@ -32,6 +32,10 @@ void _a(const char *name, const char *sf, _test_fn *tf);
     } \
 } while (0)
 
+#define E do { \
+    if (_t->ln) return; \
+} while (0)
+
 #define T(N)  void _##N(__attribute__((unused)) _tests *_t); \
     __attribute__((constructor)) void __##N(void) { \
         _a(#N, __FILE__, _##N); \

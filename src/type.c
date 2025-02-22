@@ -37,13 +37,13 @@ const char *type_str(type t) {
     return s;
 }
 
-type_cls type_c(type t) {
+type_cls type_g_c(type t) {
     if (t >= TYPE(VD) && t <= TYPE(SG)) return TYPE_CLS(S);
     if (t >= TYPE(VR) && t <= TYPE(LT)) return TYPE_CLS(V);
     if (t >= TYPE(ST) && t <= TYPE(HH)) return TYPE_CLS(H);
     if (t >= TYPE(FN) && t <= TYPE(CF)) return TYPE_CLS(F);
     if (t >= TYPE(BA) && t <= TYPE(UN)) return TYPE_CLS(C);
-    return TYPE_CLS(I);
+    return TYPE_CLS(_);
 }
 
 te *type_s_i(const alfr *af, type t) {
@@ -94,9 +94,7 @@ te *type_f_i(const alfr *af, type f, tbl *a, te *r) {
 }
 
 te *type_i(const alfr *af, type t) {
-    switch (type_c(t)) {
-        case TYPE_CLS(I):
-            break;
+    switch (type_g_c(t)) {
         case TYPE_CLS(S):
             return type_s_i(af, t);
         case TYPE_CLS(V):
@@ -117,11 +115,8 @@ void type_p(const te *t) {
         printf("??");
         return;
     }
-    type_cls cls = type_c(t->d[0].u6);
+    type_cls cls = type_g_c(t->d[0].u6);
     switch (cls) {
-        case TYPE_CLS(I):
-            printf("INV");
-            break;
         case TYPE_CLS(S):
             printf("%s", type_str(t->d[0].u6));
             break;
@@ -141,16 +136,17 @@ void type_p(const te *t) {
         case TYPE_CLS(C):
             // TODO
             break;
+        default:
+            printf("INV");
+            break;
     }
 }
 
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
     if (!a || !b || a->d[0].u6 != b->d[0].u6) return false;
-    type_cls cls = type_c(a->d[0].u6);
+    type_cls cls = type_g_c(a->d[0].u6);
     switch (cls) {
-        case TYPE_CLS(I):
-            break;
         case TYPE_CLS(S):
             return true;
         case TYPE_CLS(V):
@@ -163,6 +159,8 @@ bool type_eq(const te *restrict a, const te *restrict b) {
             return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(C):
             // TODO
+            break;
+        default:
             break;
     }
     return false;

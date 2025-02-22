@@ -47,15 +47,15 @@ const char *type_str(type t);
 #define TYPE_CLS(N) TYPE_CLS_##N
 
 typedef enum {
-    TYPE_CLS(I), // invalid
     TYPE_CLS(S), // te[type]
     TYPE_CLS(V), // te[type;te[...]]
     TYPE_CLS(H), // te[type;tbl]
     TYPE_CLS(F), // te[type;tbl;te[...]]
-    TYPE_CLS(C) // te[type;...]
+    TYPE_CLS(C), // te[type;...]
+    TYPE_CLS(_)
 } type_cls; // how type is stored
 
-type_cls type_c(type t);
+type_cls type_g_c(type t);
 
 te *type_s_i(const alfr *af, type t);
 
