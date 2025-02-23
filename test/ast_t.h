@@ -16,6 +16,8 @@ void bast(_tests *_t, ast *a, const char *pgm, te **an);
 
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
+#define NN(C, T, ...) ast_an_i(a, NULL, NULL, AST_CLS(C), P(T))
+
 #define RN(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
 
 #define IN(S) ast_an_i(a, NULL, NULL, AST_CLS(I), P(NULL), mc_i_cstr(S, &ast_am))
