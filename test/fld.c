@@ -21,11 +21,10 @@ static tbl *type_tbl_i(size_t n, ...) {
     tbl *t = ati();
     va_list args;
     va_start(args, n);
-    while (n > 0) {
+    for (size_t i = 0; i < n; i++) {
         mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
         te *type = va_arg(args, te*);
-        type_tbl_a(t, &ast_am, s, type);
-        n--;
+        type_tbl_a(t, &ast_am, s, i, type);
     }
     va_end(args);
     return t;

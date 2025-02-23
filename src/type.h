@@ -57,7 +57,7 @@ typedef enum {
 
 type_cls type_g_c(type t);
 
-void type_tbl_a(tbl *t, const alfr *af, mc *s, te *type);
+void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type);
 
 te *type_s_i(const alfr *af, type t);
 
