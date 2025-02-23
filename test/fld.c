@@ -42,7 +42,7 @@ static tbl *type_tbl_i(size_t n, ...) {
     ast_verify(_t, a, an, AST)
 
 T(aplyopadd) {
-    V(aplyopadd, RN(ON(P(NULL), ADD, SN(I6, I6(1)), SN(I6, I6(2)))));
+    V(aplyopadd, RN(ON(NULL, ADD, SN(I6, I6(1)), SN(I6, I6(2)))));
 }
 
 T(typetype) {

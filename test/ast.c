@@ -7,19 +7,19 @@
     ast_verify(_t, a, an, AST)
 
 T(aplyopadd) {
-    V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
+    V(aplyopadd, RN(AN(NULL, ON(NULL, ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
 }
 
 T(typetype) {
-    V(typetype, RN(AN(P(NULL), TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(P(NULL), TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
+    V(typetype, RN(AN(NULL, TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(NULL, TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
 }
 
 T(fnadd3) {
     V(fnadd3, RN(LN(L(2,
-        ON(P(NULL), AGN, IN("f"), ON(P(NULL), CST,
-            AN(P(NULL), TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
-            LN(L(1, ON(P(NULL), SUB, NULL, ON(P(NULL), ADD, IN("a"), ON(P(NULL), ADD, IN("b"), IN("c"))))))
+        ON(NULL, AGN, IN("f"), ON(NULL, CST,
+            AN(NULL, TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
+            LN(L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, IN("a"), ON(NULL, ADD, IN("b"), IN("c"))))))
             )),
-        AN(P(NULL), IN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))
+        AN(NULL, IN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))
     )))));
 }
