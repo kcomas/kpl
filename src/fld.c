@@ -8,11 +8,10 @@ static fld_stat err(fld_stat stat, te *an, te **e) {
 
 static fld_stat aply_op_r(fld *f, te **an, te **e) {
     (void) f;
-    lst *l = (*an)->d[5].p;
+    lst *l = lst_c((*an)->d[5].p);
     if (l->l < 1 || l-l > 2) return err(FLD_STAT(INV), *an, e);
-    te *on = (*an)->d[4].p;
+    te *on = te_c((*an)->d[4].p);
     on->d[0] = (*an)->d[0];
-    (*an)->d[0] = (*an)->d[1] = (*an)->d[4] = (*an)->d[5] = P(NULL);
     te_f(*an);
     un a = P(NULL), b = P(NULL);
     lst_sb(l, &b);
@@ -28,23 +27,28 @@ static bool aply_op_t(const te *an) {
     return an->d[2].u6 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u6 == AST_CLS(O);
 }
 
-static fld_stat z_lst_tbl(fld *f, lst *l, tbl **t) {
+
+static fld_stat z_type_i(fld *f, lst *l, tbl **t) {
     *t = f->fti();
     un ln;
     while (l->l) {
-        if (lst_sb(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
+        if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
         te *zn = ln.p;
         if (zn->d[2].u6 != AST_CLS(Z)) return FLD_STAT(INV);
-        // TODO
+        te *tn = zn->d[5].p;
+        if (tn->d[2].u6 != AST_CLS(T)) return FLD_STAT(INV);
+        type_tbl_a(*t, f->ta, mc_c(zn->d[4].p), te_c(tn->d[3].p));
+        te_f(zn);
     }
     lst_f(l);
     return FLD_STAT(OK);
 }
 
 static fld_stat aply_type_r(fld *f, te **an, te **e) {
-    lst *l = (*an)->d[5].p;
+    fld_stat stat;
+    lst *l = lst_c((*an)->d[5].p);
     if (!l->l) return err(FLD_STAT(INV), *an, e);
-    te *tn = (*an)->d[4].p;
+    te *tn = te_c((*an)->d[4].p);
     te *t = tn->d[3].p;
     type_cls tc = type_g_c(t->d[0].u6);
     un ln;
@@ -53,16 +57,14 @@ static fld_stat aply_type_r(fld *f, te **an, te **e) {
             if (lst_sb(l, &ln) != LST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
             te *rn = ln.p;
             if (rn->d[2].u6 != AST_CLS(T)) return err(FLD_STAT(INV), *an, e);
-            t->d[2] = rn->d[3];
-            rn->d[3] = P(NULL);
+            t->d[2] = P(te_c(rn->d[3].p));
             te_f(rn);
-            if (z_lst_tbl(f, l, (tbl**) &t->d[1].p) != FLD_STAT(OK)) return err(FLD_STAT(INV), *an, e);
+            if ((stat = z_type_i(f, l, (tbl**) &t->d[1].p)) != FLD_STAT(OK)) return err(stat, *an, e);
             break;
         default:
             return err(FLD_STAT(INV), *an, e);
     }
     tn->d[0] = (*an)->d[0];
-    (*an)->d[0] = (*an)->d[1] = (*an)->d[4] = (*an)->d[5] = P(NULL);
     te_f(*an);
     *an = tn;
     return FLD_STAT(OK);

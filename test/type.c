@@ -4,7 +4,7 @@
 
 static const alfr tm = { .a = malloc, .f = free };
 
-T(type_scalar) {
+T(scalar) {
     te *a = type_s_i(&tm, TYPE(I6));
     te *b = type_s_i(&tm, TYPE(I6));
     type_p(b);
@@ -17,7 +17,7 @@ T(type_scalar) {
     te_f(c);
 }
 
-T(type_vector) {
+T(vector) {
     te *va = type_v_i(&tm, TYPE(VR), type_s_i(&tm, TYPE(U6)));
     type_p(va);
     putchar('\n');

@@ -46,6 +46,20 @@ type_cls type_g_c(type t) {
     return TYPE_CLS(_);
 }
 
+static void type_tbl_e_f(void *p) {
+    te *t = p;
+    mc_f(t->d[0].p);
+    te_f(t->d[1].p);
+    t->af->f(t);
+}
+
+void type_tbl_a(tbl *t, const alfr *af, mc *s, te *type) {
+    te *kv = te_i(2, af, type_tbl_e_f);
+    kv->d[0] = P(s);
+    kv->d[1] = P(type);
+    tbl_a(t, kv);
+}
+
 te *type_s_i(const alfr *af, type t) {
     te *s = te_i(1, af, NULL);
     s->d[0] = U6(t);
@@ -110,6 +124,20 @@ te *type_i(const alfr *af, type t) {
     return NULL;
 }
 
+static void type_tbl_p(const tbl *t) {
+    if (!t) {
+        printf("``");
+        return;
+    }
+    te *h = t->i->h;
+    while (h) {
+        te *li = h->d[0].p;
+        type_p(li->d[1].p);
+        printf("`%s ", (char*) ((mc*) li->d[0].p)->d);
+        h = h->d[2].p;
+    }
+}
+
 void type_p(const te *t) {
     if (!t) {
         printf("??");
@@ -130,7 +158,7 @@ void type_p(const te *t) {
             break;
         case TYPE_CLS(F):
             printf("%s(", type_str(t->d[0].u6));
-            // TODO
+            type_tbl_p(t->d[1].p);
             type_p(t->d[2].p);
             putchar(')');
             break;

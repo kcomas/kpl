@@ -23,7 +23,7 @@ static void printj(size_t len, uint8_t *m) {
 
 typedef int64_t add3(int64_t a);
 
-T(x64_radd3) {
+T(radd3) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -42,7 +42,7 @@ T(x64_radd3) {
 
 typedef int64_t add(int64_t a, int64_t b);
 
-T(x64_radd) {
+T(radd) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -58,7 +58,7 @@ T(x64_radd) {
 }
 typedef int64_t sub(int64_t a, int64_t b);
 
-T(x64_rsub) {
+T(rsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -85,7 +85,7 @@ static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
     x64_call_r(p, m, R(15));
 }
 
-T(x64_rloop) {
+T(rloop) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -156,7 +156,7 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_ret(p, m);
 }
 
-T(x64_rfib) {
+T(rfib) {
     size_t p = 0;
     bfib(&p, m);
     uint64_t n = 10;
@@ -166,7 +166,7 @@ T(x64_rfib) {
     A(r == 55, "fib");
 }
 
-T(x64_daddsub) {
+T(daddsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -181,7 +181,7 @@ T(x64_daddsub) {
     A(d = a + b - c, "double");
 }
 
-T(x64_cmp) {
+T(cmp) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -203,7 +203,7 @@ static void printp(int64_t **a) {
     printf("%p, %ld\n", a, **a);
 }
 
-T(x64_p2p) {
+T(p2p) {
     size_t p = 0;
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
@@ -229,7 +229,7 @@ T(x64_p2p) {
     free(a);
 }
 
-T(x64_rskiploop) {
+T(rskiploop) {
     size_t p = 0;
     x64_mov_rq(&p, m, R(AX), U6(1));
     x64_push_r(&p, m, R(AX));
