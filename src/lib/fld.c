@@ -73,15 +73,18 @@ fld_stat fld_n(fld *f, te **an, te **e) {
         default:
             return FLD_STAT(INV);
     }
-    te *kv;
-    if (tbl_g_i(f->ft, U6((*an)->d[2].u6), &kv) == TBL_STAT(OK)) {
-        te *h = ((lst*) kv->d[1].p)->h;
-        while (h) {
-            te *fns = h->d[0].p;
-            if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat;
-            h = h->d[2].p;
+    te *pan, *kv, *h, *fns;
+    do {
+        pan = *an;
+        if (tbl_g_i(f->ft, U6((*an)->d[2].u6), &kv) == TBL_STAT(OK)) {
+            h = ((lst*) kv->d[1].p)->h;
+            while (h) {
+                fns = h->d[0].p;
+                if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat;
+                h = h->d[2].p;
+            }
         }
-    }
+    } while (pan != *an); // run again if node changes
     return stat;
 }
 
