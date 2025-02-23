@@ -171,6 +171,19 @@ void type_p(const te *t) {
     }
 }
 
+static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
+    if (!a && !b) return true;
+    if (!a || !b || a->i->l != b->i->l) return false;
+    te *ah = a->i->h, *bh = b->i->h;
+    while (ah && bh) {
+        te *ae = ah->d[0].p, *be = bh->d[0].p;
+        if (!mc_eq(ae->d[0].p, be->d[0].p) || !type_eq(ae->d[1].p, be->d[1].p)) return false;
+        ah = ah->d[2].p;
+        bh = bh->d[2].p;
+    }
+    return true;
+}
+
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
     if (!a || !b || a->d[0].u6 != b->d[0].u6) return false;
@@ -184,8 +197,7 @@ bool type_eq(const te *restrict a, const te *restrict b) {
             // TODO
             break;
         case TYPE_CLS(F):
-            // TODO tbl eq
-            return type_eq(a->d[2].p, b->d[2].p);
+            return type_tbl_eq(a->d[1].p, b->d[1].p) && type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(C):
             // TODO
             break;
