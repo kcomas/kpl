@@ -21,10 +21,11 @@ typedef struct {
     const alfr *af, *ta;
     fld_tbl_i *fti;
     fld_lst_i *fli;
+    ast *a;
     tbl *ft;
 } fld;
 
-fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, tbl *ft);
+fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, ast *a, tbl *ft);
 
 typedef bool fld_test_fn(const te *an);
 

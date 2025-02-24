@@ -18,8 +18,14 @@ typedef enum {
 
 const char *ast_op_str(oc o);
 
+// lst tbl entry te[mc;flags;ast_node;type]
+te *ast_lst_tbl_e_i(const ast *a, mc *s);
+
+// get first parent node of cls
+ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
+
 ast *ast_b(ast *a);
 
-void ast_p(te *an, size_t idnt);
+void ast_p(const te *an, size_t idnt);
 
 bool ast_eq(const te *restrict a, const te *restrict b);

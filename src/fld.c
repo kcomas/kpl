@@ -18,7 +18,9 @@ static fld_stat aply_op_r(fld *f, te **an, te **e) {
     if (l->l) lst_sb(l, &a);
     lst_f(l);
     on->d[5] = a;
+    ((te*) a.p)->d[0] = P(on);
     on->d[6] = b;
+    if (b.p) ((te*) b.p)->d[0] = P(on);
     *an = on;
     return FLD_STAT(OK);
 }
@@ -76,7 +78,19 @@ static bool aply_type_t(const te *an) {
 }
 
 static fld_stat idnt_lst_r(fld *f, te **an, te **e) {
-    // TODO add idnt to lst and replce idnt mc with ptr to entry in lst
+    te *ln, *kv;
+    if (ast_g_pn(AST_CLS(L), *an, &ln) != AST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
+    tbl *lt;
+    if (!ln->d[3].p) ln->d[3].p = f->fti();
+    lt = ln->d[3].p;
+    if (tbl_g_i(lt, P((*an)->d[3].p), &kv) == TBL_STAT(NF)) {
+        kv = ast_lst_tbl_e_i(f->a, mc_c((*an)->d[3].p));
+        tbl_a(lt, kv);
+    }
+    te *en = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(E), P(te_c(kv)));
+    te_f(*an);
+    *an = en;
+    return FLD_STAT(OK);
 }
 
 static bool idnt_lst_t(const te *an) {

@@ -46,14 +46,14 @@ ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst
 
 // ast t te[par;psr;cls;...]
 
-te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, ...);
+te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);
 
-typedef ast_stat ast_tf(ast *a, te *pn, void **vn, te **e);
+typedef ast_stat ast_tf(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
 
 // do not allow dupes
 ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
-ast_stat ast_n(ast *a, te *pn, void **vn, te **e);
+ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
 
 ast_stat ast_t_a(ast *a, size_t tid, size_t id);
 

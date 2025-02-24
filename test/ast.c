@@ -15,10 +15,10 @@ T(typetype) {
 }
 
 T(fnadd3) {
-    V(fnadd3, RN(LN(L(2,
+    V(fnadd3, RN(LN(NULL, L(2,
         ON(NULL, AGN, IN("f"), ON(NULL, CST,
             AN(NULL, TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
-            LN(L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, IN("a"), ON(NULL, ADD, IN("b"), IN("c"))))))
+            LN(NULL, L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, IN("a"), ON(NULL, ADD, IN("b"), IN("c"))))))
             )),
         AN(NULL, IN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))
     )))));

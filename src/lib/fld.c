@@ -1,13 +1,14 @@
 
 #include "fld.h"
 
-fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, tbl *ft) {
+fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, ast *a, tbl *ft) {
     fld *f = af->a(sizeof(fld));
     f->r = 1;
     f->af = af;
     f->ta = ta;
     f->fti = fti;
     f->fli = fli;
+    f->a = a;
     f->ft = ft;
     return f;
 }

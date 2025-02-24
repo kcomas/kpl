@@ -79,7 +79,7 @@ static void t_l_f(void *p) {
     n->af->f(n);
 }
 
-te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, ...) {
+te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...) {
     size_t len = 4;
     frfn *nf = NULL;
     switch (cls) {
@@ -122,7 +122,7 @@ te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, 
             return NULL;
     }
     te *an = te_i(len, a->ta, nf);
-    an->d[0] = P(parent);
+    an->d[0] = P(pan);
     an->d[1] = P(psr);
     an->d[2] = U6(cls);
     an->d[3] = ct;
@@ -143,14 +143,14 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
     return AST_STAT(OK);
 }
 
-ast_stat ast_n(ast *a, te *pn, void **vn, te **e) {
+ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
     ast_stat stat;
     size_t pid;
     if ((stat = a->pig(pn, &pid)) != AST_STAT(OK)) return stat;
     te *kv;
     if (tbl_g_i(a->pt, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
     ast_tf *atf = kv->d[1].p;
-    return atf(a, pn, vn, e);
+    return atf(a, pan, pn, vn, e);
 }
 
 ast_stat ast_t_a(ast *a, size_t tid, size_t id) {

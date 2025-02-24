@@ -32,7 +32,7 @@ void _a(const char *name, const char *sf, _test_fn *tf);
     } \
 } while (0)
 
-#define E do { \
+#define E() do { \
     if (_t->ln) return; \
 } while (0)
 

@@ -33,7 +33,7 @@ void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size
     A(*I <= VL, "verify_lst")
 
 void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl) {
-    E;
+    E();
     if (!n) {
         VN(v, i, vl, NONE);
         return;
@@ -83,7 +83,7 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
 }
 
 void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size_t vl) {
-    E;
+    E();
     if (!l) return;
     te *h = l->h;
     while (h) {
