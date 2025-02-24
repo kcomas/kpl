@@ -22,7 +22,7 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define RN(N) NNV(R, NULL, N)
 
-#define IN(S) NNV(I, NULL, mc_i_cstr(S, &ast_am))
+#define IN(S) NN(I, mc_i_cstr(S, &ast_am))
 
 #define TN(V) NN(T, type_i(&ast_am, TYPE(V)))
 

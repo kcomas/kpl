@@ -47,3 +47,7 @@ T(aplyopadd) {
 T(typetype) {
     V(typetype, RN(NN(T, TF(FN, TF(FN, TS(I6), 1, "z", TS(U6)), 2, "x", TS(I6), "y", TS(F6)))));
 }
+
+T(fnadd3) {
+    V(fnadd3, NULL);
+}

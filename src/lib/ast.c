@@ -22,7 +22,7 @@ static void t_r_f(void *p) {
     n->af->f(n);
 }
 
-static void t_t_f(void *p) {
+static void t_te_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
     n->af->f(n);
@@ -30,8 +30,7 @@ static void t_t_f(void *p) {
 
 static void t_i_f(void *p) {
     te *n = p;
-    te_f(n->d[3].p);
-    mc_f(n->d[4].p);
+    mc_f(n->d[3].p);
     n->af->f(n);
 }
 
@@ -89,10 +88,10 @@ te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, 
             nf = t_r_f;
             break;
         case AST_CLS(T):
-            nf = t_t_f;
+        case AST_CLS(E):
+            nf = t_te_f;
             break;
         case AST_CLS(I):
-            len += 1;
             nf = t_i_f;
             break;
         case AST_CLS(S):

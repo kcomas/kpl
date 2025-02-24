@@ -75,8 +75,18 @@ static bool aply_type_t(const te *an) {
     return an->d[2].u6 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u6 == AST_CLS(T);
 }
 
+static fld_stat idnt_lst_r(fld *f, te **an, te **e) {
+    // TODO add idnt to lst and replce idnt mc with ptr to entry in lst
+}
+
+static bool idnt_lst_t(const te *an) {
+    // TODO check if parent is a namespace op
+    return an->d[2].u6 == AST_CLS(I);
+}
+
 fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_t, aply_type_r);
+    fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     return f;
 }
