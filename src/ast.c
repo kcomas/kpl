@@ -69,7 +69,7 @@ static ast_stat ast_type(ast *a, te *restrict pan, te *restrict pn, void **vn, t
     te **an = (te**) vn;
     size_t tid;
     if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &tid)) != AST_STAT(OK)) return err(stat, pn, e);
-    *an = ast_an_i(a, pan, pn, AST_CLS(T), P(type_i(a->ta, tid)));
+    *an = ast_an_i(a, pan, pn, AST_CLS(T), P(type_i(a->ta, NULL, tid)));
     return AST_STAT(OK);
 }
 
@@ -77,7 +77,7 @@ static ast_stat ast_int(ast *a, te *restrict pan, te *restrict pn, void **vn, te
     te **an = (te**) vn;
     int64_t i = 0;
     if (tkn_g_i6(pn->d[2].p, node_root_mc(pn), &i) != TKN_STAT(OK)) return err(AST_STAT(INV), pn, e);
-    *an = ast_an_i(a, pan, pn, AST_CLS(S), P(type_i(a->ta, TYPE(I6))), I6(i));
+    *an = ast_an_i(a, pan, pn, AST_CLS(S), P(type_i(a->ta, NULL, TYPE(I6))), I6(i));
     return AST_STAT(OK);
 }
 
@@ -134,7 +134,7 @@ static ast_stat ast_z(ast *a, te *restrict pan, te *restrict pn, void **vn, te *
     te **an = (te**) vn;
     mc *v;
     if (tkn_g_mc(pn->d[2].p, node_root_mc(pn), 1, a->ma, &v) != TKN_STAT(OK)) return err(AST_STAT(INV), pn, e);
-    *an = ast_an_i(a, pan, pn, AST_CLS(Z), P(type_i(a->ta, TYPE(SL))), v, NULL);
+    *an = ast_an_i(a, pan, pn, AST_CLS(Z), P(type_i(a->ta, NULL, TYPE(SL))), v, NULL);
     if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
     return AST_STAT(OK);
 }
@@ -194,7 +194,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(S):
             printf("(S ");
             type_p(an->d[3].p);
-            switch (((te*) an->d[3].p)->d[0].u6) {
+            switch (((te*) an->d[3].p)->d[1].u6) {
                 case TYPE(I6):
                     printf(" %ld", an->d[4].i6);
                     break;
@@ -276,9 +276,9 @@ void ast_p(const te *an, size_t idnt) {
 }
 
 static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
-    if (t->d[0].u6 == TYPE(VD)) return true;
-    if (t->d[0].u6 >= TYPE(I3) && t->d[0].u6 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
-    if (t->d[0].u6 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
+    if (t->d[1].u6 == TYPE(VD)) return true;
+    if (t->d[1].u6 >= TYPE(I3) && t->d[1].u6 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
+    if (t->d[1].u6 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
     return false;
 }
 

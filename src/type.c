@@ -61,63 +61,67 @@ void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type) {
     tbl_a(t, kv);
 }
 
-te *type_s_i(const alfr *af, type t) {
-    te *s = te_i(1, af, NULL);
-    s->d[0] = U6(t);
+te *type_s_i(const alfr *af, te *p, type t) {
+    te *s = te_i(2, af, NULL);
+    s->d[0] = P(p);
+    s->d[1] = U6(t);
     return s;
 }
 
 static void type_v_f(void *p) {
     te *t = p;
-    te_f(t->d[1].p);
+    te_f(t->d[2].p);
     t->af->f(t);
 }
 
-te *type_v_i(const alfr *af, type v, te *t) {
-    te *vv = te_i(2, af, type_v_f);
-    vv->d[0] = U6(v);
-    vv->d[1] = P(t);
+te *type_v_i(const alfr *af, te *restrict p, type v, te *restrict t) {
+    te *vv = te_i(3, af, type_v_f);
+    vv->d[0] = P(p);
+    vv->d[1] = U6(v);
+    vv->d[2] = P(t);
     return vv;
 }
 
 static void type_h_f(void *p) {
     te *t = p;
-    tbl_f(t->d[1].p);
+    tbl_f(t->d[2].p);
     t->af->f(t);
 }
 
-te *type_h_i(const alfr *af, type h, tbl *t) {
-    te *hh = te_i(2, af, type_h_f);
-    hh->d[0] = U6(h);
-    hh->d[1] = P(t);
+te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t) {
+    te *hh = te_i(3, af, type_h_f);
+    hh->d[0] = P(p);
+    hh->d[1] = U6(h);
+    hh->d[2] = P(t);
     return hh;
 }
 
 static void type_f_f(void *p) {
     te *t = p;
-    tbl_f(t->d[1].p);
     te_f(t->d[2].p);
+    tbl_f(t->d[3].p);
     t->af->f(t);
 }
 
-te *type_f_i(const alfr *af, type f, te *r, tbl *a) {
-    te *ff = te_i(3, af, type_f_f);
-    ff->d[0] = U6(f);
-    ff->d[1] = P(a);
+te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *a) {
+    te *ff = te_i(4, af, type_f_f);
+    ff->d[0] = P(p);
+    ff->d[1] = U6(f);
     ff->d[2] = P(r);
+    ff->d[3] = P(a);
     return ff;
 }
 
-te *type_i(const alfr *af, type t) {
+te *type_i(const alfr *af, te *restrict p, type t) {
     switch (type_g_c(t)) {
         case TYPE_CLS(S):
-            return type_s_i(af, t);
+            return type_s_i(af, p, t);
         case TYPE_CLS(V):
-            return type_v_i(af, t, NULL);
+            return type_v_i(af, p, t, NULL);
         case TYPE_CLS(H):
-            return type_h_i(af, t, NULL);
+            return type_h_i(af, p, t, NULL);
         case TYPE_CLS(F):
-            return type_f_i(af, t, NULL, NULL);
+            return type_f_i(af, p, t, NULL, NULL);
         // TODO
         default:
             break;
@@ -144,22 +148,22 @@ void type_p(const te *t) {
         printf("??");
         return;
     }
-    type_cls cls = type_g_c(t->d[0].u6);
+    type_cls cls = type_g_c(t->d[1].u6);
     switch (cls) {
         case TYPE_CLS(S):
-            printf("%s", type_str(t->d[0].u6));
+            printf("%s", type_str(t->d[1].u6));
             break;
         case TYPE_CLS(V):
-            printf("%s(", type_str(t->d[0].u6));
-            type_p(t->d[1].p);
+            printf("%s(", type_str(t->d[1].u6));
+            type_p(t->d[2].p);
             putchar(')');
             break;
         case TYPE_CLS(H):
             // TODO
             break;
         case TYPE_CLS(F):
-            printf("%s(", type_str(t->d[0].u6));
-            type_tbl_p(t->d[1].p);
+            printf("%s(", type_str(t->d[1].u6));
+            type_tbl_p(t->d[3].p);
             type_p(t->d[2].p);
             putchar(')');
             break;
@@ -187,18 +191,18 @@ static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
 
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
-    if (!a || !b || a->d[0].u6 != b->d[0].u6) return false;
-    type_cls cls = type_g_c(a->d[0].u6);
+    if (!a || !b || a->d[1].u6 != b->d[1].u6) return false;
+    type_cls cls = type_g_c(a->d[1].u6);
     switch (cls) {
         case TYPE_CLS(S):
             return true;
         case TYPE_CLS(V):
-            return type_eq(a->d[1].p, b->d[1].p);
+            return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(H):
             // TODO
             break;
         case TYPE_CLS(F):
-            return type_tbl_eq(a->d[1].p, b->d[1].p) && type_eq(a->d[2].p, b->d[2].p);
+            return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p);
         case TYPE_CLS(C):
             // TODO
             break;

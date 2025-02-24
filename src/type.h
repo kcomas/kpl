@@ -46,12 +46,13 @@ const char *type_str(type t);
 
 #define TYPE_CLS(N) TYPE_CLS_##N
 
+// parent type is weak ref
 typedef enum {
-    TYPE_CLS(S), // te[type]
-    TYPE_CLS(V), // te[type;te[...]]
-    TYPE_CLS(H), // te[type;tbl[mc;id;type]]
-    TYPE_CLS(F), // te[type;tbl[mc;id;type];te[...]]
-    TYPE_CLS(C), // te[type;...]
+    TYPE_CLS(S), // te[parent;type]
+    TYPE_CLS(V), // te[parent;type;te[...]]
+    TYPE_CLS(H), // te[parent;type;tbl[mc;id;type]]
+    TYPE_CLS(F), // te[parent;type;te[...];tbl[mc;id;type]]
+    TYPE_CLS(C), // te[parent;type;...]
     TYPE_CLS(_)
 } type_cls; // how type is stored
 
@@ -59,15 +60,15 @@ type_cls type_g_c(type t);
 
 void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type);
 
-te *type_s_i(const alfr *af, type t);
+te *type_s_i(const alfr *af, te *p, type t);
 
-te *type_v_i(const alfr *af, type v, te *t);
+te *type_v_i(const alfr *af, te *restrict p, type v, te *restrict t);
 
-te *type_h_i(const alfr *af, type h, tbl *t);
+te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t);
 
-te *type_f_i(const alfr *af, type f, te *r, tbl *a);
+te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *a);
 
-te *type_i(const alfr *af, type t);
+te *type_i(const alfr *af, te *restrict p, type t);
 
 void type_p(const te *t);
 
