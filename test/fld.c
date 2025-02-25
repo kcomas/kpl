@@ -63,11 +63,11 @@ T(typetype) {
 }
 
 T(fnadd3) {
-    V(fnadd3, RN(LN(LT(1, "f"), L(2,
+    V(fnadd3, RN(AN(NULL, LN(LT(1, "f"), L(2,
         ON(NULL, AGN, EN("f"),
             ON(NULL, CST,
             NN(T, TF(FN, TS(I6), 3, "a", TS(I6), "b", TS(I6), "c", TS(I6))),
             LN(LT(3, "a", "b", "c"), L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, EN("a"), ON(NULL, ADD, EN("b"), EN("c"))))))
         )),
-        AN(NULL, EN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))));
+        ON(NULL, DUMP, SN(I5, I5(1)), AN(NULL, EN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))), NULL)));
 }
