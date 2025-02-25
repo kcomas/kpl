@@ -271,8 +271,8 @@ psr_stat psr_sym_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-const mc *node_root_mc(const te *n) {
-    if (n->d[1].u6 != NODE_TYPE(ROOT)) return node_root_mc(n->d[0].p);
+const mc *node_root_mc(te *n) {
+    while (n->d[1].u6 != NODE_TYPE(ROOT)) n = n->d[0].p;
     return ((psr*) n->d[0].p)->tt->s;
 }
 

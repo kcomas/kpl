@@ -29,3 +29,11 @@ T(vector) {
     te_f(vb);
     te_f(vc);
 }
+
+T(circular) {
+    te *va = type_v_i(&tm, NULL, TYPE(VR), type_s_i(&tm, NULL, TYPE(U6)));
+    te *vb = type_v_i(&tm, va, TYPE(VR), type_s_i(&tm, NULL, TYPE(U6)));
+    A(type_ic(vb, va), "type_ic");
+    te_f(va);
+    te_f(vb);
+}
