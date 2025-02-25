@@ -8,10 +8,22 @@ const char *ast_oc_str(oc o) {
         "CST",
         "ADD",
         "SUB",
+        "PRINT",
         "_END"
     };
-    const char *s = "AINV";
+    const char *s = "OCINV";
     if (o > OC(_START) && o < OC(_END)) s = ocs[o];
+    return s;
+}
+
+const char *cmd_op_str(cc c) {
+    static const char *ccs[] = {
+        "_START",
+        "P1",
+        "_END"
+    };
+    const char *s = "CCINV";
+    if (c > CC(_START) && c < CC(_END)) s = ccs[c];
     return s;
 }
 
@@ -130,14 +142,24 @@ static ast_stat ast_aply(ast *a, te *restrict pan, te *restrict pn, void **vn, t
 }
 
 static ast_stat ast_z(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
-    ast_stat stat;
     te **an = (te**) vn;
     mc *v;
     if (tkn_g_mc(pn->d[2].p, node_root_mc(pn), 1, a->ma, &v) != TKN_STAT(OK)) return err(AST_STAT(INV), pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(Z), P(type_i(a->ta, NULL, TYPE(SL))), v, NULL);
-    if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
-    return AST_STAT(OK);
+    if (!pn->d[3].p) return AST_STAT(OK);
+    return ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e);
 }
+
+static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
+    ast_stat stat;
+    te **an = (te**) vn;
+    size_t cid;
+    if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &cid)) != AST_STAT(OK)) return err(stat, pn, e);
+    *an = ast_an_i(a, pan, pn, AST_CLS(C), U6(cid), NULL);
+    if (!pn->d[4].p) return AST_STAT(OK);
+    return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
+}
+
 
 static ast *ast_tkn(ast *a) {
     // types
@@ -151,6 +173,8 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(CST), OC(CST));
     ast_t_a(a, TCUST(ADD), OC(ADD));
     ast_t_a(a, TCUST(SUB), OC(SUB));
+    // cmds
+    ast_t_a(a, TCUST(P1), CC(P1));
     return a;
 }
 
@@ -163,6 +187,7 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(LST), ast_lst);
     ast_a(a, NODE_TYPE(APLY), ast_aply);
     ast_a(a, NODE_TYPE(SYM), ast_z);
+    ast_a(a, NODE_TYPE(CMD), ast_cmd);
     return ast_tkn(a);
 }
 
@@ -269,6 +294,14 @@ void ast_p(const te *an, size_t idnt) {
             }
             putchar(')');
             break;
+        case AST_CLS(C):
+            printf("(C [%s]", cmd_op_str(an->d[3].u6));
+            if (an->d[4].p) {
+                putchar('\n');
+                ast_p(an->d[4].p, idnt + 1);
+            }
+            putchar(')');
+            break;
         default:
             printf("INV CLS");
             break;
@@ -311,6 +344,8 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
             return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_un_eq);
         case AST_CLS(L):
             return tbl_eq(a->d[3].p, b->d[3].p, lst_tbl_e_eq) && lst_eq(a->d[4].p, b->d[4].p, ast_un_eq);
+        case AST_CLS(C):
+            return a->d[3].u6 == b->d[3].u6 && ast_eq(a->d[4].p, b->d[4].p);
         default:
             break;
     }

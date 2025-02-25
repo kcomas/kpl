@@ -76,6 +76,10 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
             VN(v, i, vl, SYM);
             VV(n->d[3].p, v, i, vl);
             break;
+        case NODE_TYPE(CMD):
+            VN(v, i, vl, CMD);
+            VV(n->d[3].p, v, i, vl);
+            break;
         default:
             A(0, "NODE");
             break;
@@ -108,6 +112,8 @@ void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size
 #define APLY(...) N(APLY), __VA_ARGS__
 
 #define SYM(TGT) N(SYM), TGT
+
+#define CMD(TGT) N(CMD), TGT
 
 T(sigma) {
     te *h = ppnode(psr_r(ppsr(tpsr("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]"))));
@@ -186,12 +192,12 @@ T(op_op) {
     te_f(h);
 }
 
-T(fn) {
+T(fnadd3) {
     te *h = ppnode(psr_r(tpsr(fnadd3)));
-    V(h, {N(ROOT), LST(
+    V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(OP(N(NONE), OP(N(VAR), OP(N(VAR), N(VAR))))))),
-        APLY(N(VAR), N(INT), N(INT), N(INT))
-        )});
+        CMD(APLY(N(VAR), N(INT), N(INT), N(INT)))
+        ))});
     te_f(h);
 }
 

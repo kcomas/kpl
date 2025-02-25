@@ -43,6 +43,8 @@ psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TOKEN(UN), "&", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TOKEN(UN), "#", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TOKEN(UN), "?", tkn_ft));
+    // cmd
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(P1), "/p1", tkn_ft));
     return p;
 }
 
@@ -260,14 +262,19 @@ psr_stat psr_aply_e(psr *p, te *restrict e, te *restrict n) {
     return PSR_STAT(OK);
 }
 
-static void p_s_i(te *n) {
+static void p_sc_i(te *n) {
     te_f(n->d[2].p);
     te_f(n->d[3].p);
     n->af->f(n);
 }
 
 psr_stat psr_sym_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(SYM), 4, p_s_i);
+    *n = node_i(p, NODE_TYPE(SYM), 4, p_sc_i);
+    return PSR_STAT(OK);
+}
+
+psr_stat psr_cmd_i(psr *p, te **n) {
+    *n = node_i(p, NODE_TYPE(CMD), 4, p_sc_i);
     return PSR_STAT(OK);
 }
 
@@ -342,6 +349,7 @@ void node_p(const te *n, size_t idnt) {
             putchar(')');
             break;
        case NODE_TYPE(SYM):
+       case NODE_TYPE(CMD):
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
             printf("|");

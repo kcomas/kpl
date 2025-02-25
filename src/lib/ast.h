@@ -25,6 +25,7 @@ typedef enum {
     AST_CLS(Z), // left target, no arg apply type [te[type];mc;te]
     AST_CLS(A), // apply type [te[type];te;lst]
     AST_CLS(L), // list tbl with scope [tbl[mc;id;type;node];lst]
+    AST_CLS(C), // cmd te[cmd;tgt]
     AST_CLS(_)
 } ast_cls;
 

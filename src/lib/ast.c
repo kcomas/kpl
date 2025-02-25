@@ -79,6 +79,12 @@ static void t_l_f(void *p) {
     n->af->f(n);
 }
 
+static void t_c_f(void *p) {
+    te *n = p;
+    te_f(n->d[4].p);
+    n->af->f(n);
+}
+
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...) {
     size_t len = 4;
     frfn *nf = NULL;
@@ -117,6 +123,10 @@ te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...
         case AST_CLS(L):
             len += 1;
             nf = t_l_f;
+            break;
+        case AST_CLS(C):
+            len += 1;
+            nf = t_c_f;
             break;
         default:
             return NULL;
