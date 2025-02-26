@@ -1,6 +1,26 @@
 
 #include "def.h"
 
+#define _UOGC(CT, T, O) CT T##_g_o(un u, size_t o) { \
+    return u.u6 >> (O * o) & (((uint64_t) 1 << O) - 1); \
+}
+
+#define _UOSC(CT, T, O) un T##_s_o(un u, size_t o, CT v) { \
+    uint64_t b = (((uint64_t) 1 << O) - 1) << (O * o); \
+    return UN(u6, (u.u6 & ~b) | ((uint64_t) v << (O * o))); \
+}
+
+#define _UOC(CT, T, O) _UOGC(CT, T, O); \
+    _UOSC(CT, T, O)
+
+_UOC(uint8_t, u3, 8);
+_UOC(int8_t, i3, 8);
+_UOC(uint16_t, u4, 16);
+_UOC(int16_t, i4, 16);
+_UOC(uint32_t, u5, 32);
+_UOC(int32_t, i5, 32);
+_UOC(float, f5, 32);
+
 static bool is_cont(size_t n, ...) {
     va_list args;
     va_start(args, n);

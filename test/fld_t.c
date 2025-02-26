@@ -1,0 +1,42 @@
+
+#include "fld_t.h"
+
+void fast(_tests *_t, ast *a, te **an) {
+    E();
+    fld_stat stat;
+    fld *f = fld_b(fld_i(&ast_am, &ast_am, ati, ali, a, mktbl(AST_CLS(_))));
+    te *e = NULL;
+    stat = fld_n(f, an, &e);
+    if (e) {
+        ast_p(e, 0);
+        putchar('\n');
+    }
+    A(stat == FLD_STAT(OK), "fld_n");
+    fld_f(f);
+}
+
+tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
+    tbl *t = ati();
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        tbl_a(t, ast_lst_tbl_e_i(a, mc_i_cstr(va_arg(args, char*), &ast_am)));
+        n--;
+    }
+    va_end(args);
+    return t;
+}
+
+// char*, te[type] ....
+tbl *fld_type_tbl_i(size_t n, ...) {
+    tbl *t = ati();
+    va_list args;
+    va_start(args, n);
+    for (size_t i = 0; i < n; i++) {
+        mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
+        te *type = va_arg(args, te*);
+        type_tbl_a(t, &ast_am, s, i, type);
+    }
+    va_end(args);
+    return t;
+}

@@ -103,7 +103,7 @@ $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST)/ast_t.o $(TEST_OBJS)
 FLD = fld$(TNAME)
 FLD_OBJS = $(SRC)/fld.o $(LSRC)/fld.o $(AST_OBJS)
 OBJS += $(FLD_OBJS)
-$(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+$(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
 $(TESTS): OO = -O3
