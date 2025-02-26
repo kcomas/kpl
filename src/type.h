@@ -9,6 +9,8 @@
 typedef enum {
     TYPE(_START),
     // scalar
+    TYPE(_S),
+    TYPE(DL),
     TYPE(VD), // void
     TYPE(BL),
     TYPE(I3),
@@ -25,16 +27,21 @@ typedef enum {
     TYPE(C4),
     TYPE(SG),
     // vector
+    TYPE(_V),
     TYPE(VR),
     TYPE(LT),
+    TYPE(MC),
     // hash
+    TYPE(_H),
     TYPE(HH),
     TYPE(ST),
     // function
+    TYPE(_F),
     TYPE(FN),
     TYPE(SF),
     TYPE(CF),
     // collection
+    TYPE(_C),
     TYPE(TE),
     TYPE(BA),
     TYPE(TD),
