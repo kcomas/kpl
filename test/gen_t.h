@@ -19,11 +19,3 @@ te *gen_arg(gen *g, x64_type t, size_t id);
 te *gen_tmp(gen *g, x64_type t, size_t id);
 
 te *gen_data(gen *g, x64_type t, un d);
-
-void gen_entry_f(void *p);
-
-void gen_code_entry_f(void *p);
-
-void gen_st_atmf(void *p);
-
-void gen_st_latf(void *p);

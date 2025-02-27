@@ -1,6 +1,4 @@
 
-.RECIPEPREFIX = >
-.PHONY: clean
 CC = gcc
 OO = -g -Og
 FFLAGS = -fstack-protector-all -fno-omit-frame-pointer
@@ -14,6 +12,8 @@ CCOBJ = $(CC) -o $@ $^
 NAME = kpl
 TNAME = _test
 TESTS = tests
+.RECIPEPREFIX = >
+.PHONY: show_$(TESTS) clean
 
 all: OO = -O3
 all: $(NAME)
@@ -106,9 +106,18 @@ OBJS += $(FLD_OBJS)
 $(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
+CHK = chk$(TNAME)
+CHK_OBJS = $(SRC)/chk.o $(LSRC)/chk.o $(FLD_OBJS)
+OBJS += $(CHK_OBJS)
+$(CHK): $(CHK_OBJS) $(TEST)/chk.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
 $(TESTS): OO = -O3
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
 > $(CCOBJ)
+
+show_$(TESTS):
+> echo `find ./test -type f -name "*.c" | grep -v -E "(_t|\/t\.c)" | cut -d "/" -f3 | sed 's/\.c/$(TNAME)/'`
 
 clean:
 > find -type f -regex "^\($(SRC)\|$(TEST)\).*\.o$$" | xargs rm -fv

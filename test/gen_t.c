@@ -54,33 +54,3 @@ te *gen_tmp(gen *g, x64_type t, size_t id) {
 te *gen_data(gen *g, x64_type t, un d) {
     return gen_var_i(g, NULL, GEN_CLS(D), U3(t), d);
 }
-
-void gen_entry_f(void *p) {
-    te *t = p;
-    if (t->l == 3) tbl_f(t->d[2].p);
-    else tbl_f(t->d[4].p);
-    t->af->f(t);
-}
-
-void gen_code_entry_f(void *p) {
-    te *t = p;
-    te_f(t->d[1].p);
-    te_f(t->d[2].p);
-    te_f(t->d[3].p);
-    te_f(t->d[5].p);
-    te_f(t->d[6].p);
-    t->af->f(t);
-}
-
-void gen_st_atmf(void *p) {
-    te *t = p;
-    te_f(t->d[1].p);
-    t->af->f(t);
-}
-
-void gen_st_latf(void *p) {
-    te *t = p;
-    te_f(t->d[1].p);
-    te_f(t->d[2].p);
-    t->af->f(t);
-}

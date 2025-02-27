@@ -118,14 +118,12 @@ void gen_p(const gen *g, const uint8_t *m) {
     }
 }
 
-gen_st *gen_st_i(const alfr *af, const alfr *ta, frfn *atmf, frfn *latf, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
+gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
     st->vc = st->rac = st->xac = 0;
     st->r = 1;
     st->af = af;
     st->ta = ta;
-    st->atmf = atmf;
-    st->latf = latf;
     st->atm = atm;
     st->lat = lat;
     st->rstk = rstk;
@@ -146,6 +144,13 @@ un ovt_hsh(const te *ovt) {
     return U6((ovt->d[0].u6  << 8) + ovt->d[2].u3);
 }
 
+static void gen_st_latf(void *p) {
+    te *t = p;
+    te_f(t->d[1].p);
+    te_f(t->d[2].p);
+    t->af->f(t);
+}
+
 static void update_lat(gen_st *st, te *ovt, te *o) {
     un hsh = ovt_hsh(ovt);
     te *kv;
@@ -155,7 +160,7 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
         kv->d[1] = P(te_c(ovt));
         kv->d[2] = P(te_c(o));
     } else {
-        kv = te_i(3, st->ta, st->latf);
+        kv = te_i(3, st->ta, gen_st_latf);
         kv->d[0] = hsh;
         kv->d[1] = P(te_c(ovt));
         kv->d[2] = P(te_c(o));
@@ -163,10 +168,16 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
     }
 }
 
+void gen_st_atmf(void *p) {
+    te *t = p;
+    te_f(t->d[1].p);
+    t->af->f(t);
+}
+
 static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
     if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
     else if (st->xstk->l == 0) return GEN_STAT(INV);
-    *kv = te_i(3, st->ta, st->atmf);
+    *kv = te_i(3, st->ta, gen_st_atmf);
     (*kv)->d[0] = hsh;
     (*kv)->d[1] = P(te_c(ovt));
     un d;

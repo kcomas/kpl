@@ -41,14 +41,13 @@ void tkn_m_s_e(te *m, uint32_t e) {
     m->d[1] = u5_s_o(m->d[1], 1, e);
 }
 
-tkn *tkn_i(const alfr *af, const alfr *ta, frfn ef, tkn_tbl_i ttif, tkn_pf df, mc *s) {
+tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s) {
     tkn *t = af->a(sizeof(tkn));
     t->idc = TOKEN(_);
     t->r = t->lno = t->cno = 1;
     t->pos = 0;
     t->af = af;
     t->ta = ta;
-    t->ef = ef;
     t->ttif = ttif;
     t->df = df;
     t->t = ttif();
@@ -56,11 +55,17 @@ tkn *tkn_i(const alfr *af, const alfr *ta, frfn ef, tkn_tbl_i ttif, tkn_pf df, m
     return t;
 }
 
+static void tkn_entry_f(void *v) {
+    te *t = v;
+    tbl_f(t->d[3].p);
+    t->af->f(t);
+}
+
 static uint16_t entry_add(tkn *t, tbl *tl, size_t p, const char *s, uint16_t tid, tkn_pf *pf) {
     size_t e = 0;
     un c = c4_g(s, p, &e);
     for (;;) {
-        te *kv = te_i(4, t->ta, t->ef);
+        te *kv = te_i(4, t->ta, tkn_entry_f);
         kv->d[0] = c;
         kv->d[1] = U4(TOKEN(UN));
         kv->d[3].p = t->ttif();

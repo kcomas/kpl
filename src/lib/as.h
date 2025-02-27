@@ -30,7 +30,6 @@ typedef tbl *op_tbl_i(void);
 typedef struct _as {
     ssize_t r;
     const alfr *af, *ta, *la;
-    frfn *lef, *oef, *cf;
     op_tbl_i *oti;
     tbl *lbls, *ops;
     lst *code;
@@ -40,7 +39,7 @@ typedef bool as_code_fn(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restr
 
 typedef bool as_lbl_fn(as *a, uint8_t *m, te *restrict lc, te *restrict fc);
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn lef, frfn oef, frfn cf, op_tbl_i oti, tbl *lbls, lst *code);
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, op_tbl_i oti, tbl *lbls, lst *code);
 
 // add and register label
 size_t as_lbl_a(as *a, size_t lbl_id);

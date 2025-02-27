@@ -26,7 +26,7 @@ T(btest) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     const uint16_t tids[] = {1, TCUST(WS), TCUST(NUM), TCUST(WS), 3, TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NL), TCUST(WS), 5, TCUST(WS), 6, TCUST(WS), 2, TCUST(WS), 4};
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i(&tm, &tm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
     tkn_b(t);
     tkn_a(t, TOKEN(UN), "sigma", tkn_ft); // 1
     tkn_a(t, TOKEN(UN), "sig", tkn_ft); // 2
@@ -42,7 +42,7 @@ T(btest) {
 T(stest) {
     const char *pgm = "0 Σ [12;44;67]\n";
     const uint16_t tids[] = {TCUST(NUM), TCUST(WS), 1, TCUST(WS), TCUST(LS), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(RS), TCUST(NL)};
-    tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i(&tm, &tm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
     printf("%s\n", pgm);
     tkn_b(t);
     tkn_a(t, TOKEN(UN), "Σ", tkn_ft);
@@ -59,7 +59,7 @@ T(symtest) {
     size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(SYM), TCUST(WS), TCUST(VAR), TCUST(SYM)};
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i(&tm, &tm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
     tkn_b(t);
     tkn_p(t->t, 0);
     tkn_stat tstat;
@@ -88,7 +88,7 @@ T(inttest) {
     size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM)};
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i(&tm, &tm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
     tkn_b(t);
     tkn_p(t->t, 0);
     tkn_stat tstat;
