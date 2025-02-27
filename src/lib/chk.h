@@ -26,6 +26,6 @@ chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a);
 
 typedef chk_stat chk_fn(chk *c, te *an);
 
-chk_stat chk_a(chk *c, ast_cls cls, un ct, ...);
+void chk_a(chk *c, ast_cls cls, un ct, ...);
 
 void chk_f(chk *c);
