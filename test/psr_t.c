@@ -3,15 +3,22 @@
 
 static const alfr pm = { .a = malloc, .f = free };
 
-static tbl *mktbl(void) {
+static tbl *tkn_mktbl(void) {
     lst *tl = lst_i(&pm, &pm, (void*) te_f);
     te *b = te_i(10, &pm, NULL);
     tbl *t = tbl_i(&pm, tkn_sh, c4_eq, tl, b);
     return t;
 }
 
+static tbl *mktbl(void) {
+    lst *tl = lst_i(&pm, &pm, (void*) te_f);
+    te *b = te_i(10, &pm, NULL);
+    tbl *t = tbl_i(&pm, tbl_no_hsh, tbl_un_eq, tl, b);
+    return t;
+}
+
 psr *bpsr(const char *pgm) {
-    tkn *t = tkn_i(&pm, &pm, tkn_entry_f, mktbl, tkn_df, mc_i_cstr(pgm, &pm));
+    tkn *t = tkn_i(&pm, &pm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &pm));
     tkn_b(t);
     vr *v = vr_i(10, &pm, (void*) te_f);
     psr *p = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);

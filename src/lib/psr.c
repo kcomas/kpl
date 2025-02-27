@@ -23,15 +23,15 @@ size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre
     va_list tkns;
     va_start(tkns, nt);
     while (nt > 0) {
-        size_t iid = va_arg(tkns, size_t);
-        if (tbl_g_i(pt, U6(iid), &kv) == TBL_STAT(NF)) {
+        uint16_t tid = va_arg(tkns, int);
+        if (tbl_g_i(pt, U4(tid), &kv) == TBL_STAT(NF)) {
             while (nt > 0) {
                 kv = te_i(8, p->ta, p->pef);
-                kv->d[0] = U6(iid);
+                kv->d[0] = U4(tid);
                 kv->d[7] = P(p->pti());
                 tbl_a(pt, kv);
                 pt = kv->d[7].p;
-                iid = va_arg(tkns, size_t);
+                tid = va_arg(tkns, int);
                 nt--;
             }
             kv->d[1] = pid ? U6(pid) : U6(p->idc++);
@@ -53,7 +53,7 @@ size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre
 
 psr_stat psr_n(psr *p, te *nh) {
     psr_stat pstat;
-    te *m = te_i(5, p->ta, NULL);
+    te *m = te_i(2, p->ta, NULL);
     for (;;) {
         if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         psr_mode pm = PSR_MODE(NONE);
@@ -63,7 +63,7 @@ psr_stat psr_n(psr *p, te *nh) {
         psr_node_fn *nf = NULL;
         tbl *pt = p->pt;
         te *kv, *pn = NULL;
-        while (tbl_g_i(pt, m->d[0], &kv) == TBL_STAT(OK)) {
+        while (tbl_g_i(pt, U4(tkn_m_g_i(m)), &kv) == TBL_STAT(OK)) {
             vr_ab(&p->ts, P(m));
             pm = kv->d[2].u6;
             st = kv->d[3].p;
@@ -71,7 +71,7 @@ psr_stat psr_n(psr *p, te *nh) {
             mf = kv->d[5].p;
             nf = kv->d[6].p;
             pt = kv->d[7].p;
-            m = te_i(5, p->ta, NULL);
+            m = te_i(2, p->ta, NULL);
             if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         }
         tkn_s(p->tt, m);
@@ -107,7 +107,7 @@ psr_stat psr_n(psr *p, te *nh) {
                     te_f(lnh);
                     return pstat;
                 }
-                for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
+                for (size_t i = 0; i < st->l; i++) if (tkn_m_g_i(p->ts->d[p->ts->l - 1].p) == st->d[i].u4) goto el;
                 if (p->tstat != TKN_STAT(OK)) {
                     te_f(m);
                     te_f(pn);
@@ -124,7 +124,7 @@ psr_stat psr_n(psr *p, te *nh) {
                 te_f(pn);
                 return pstat;
             }
-            m = te_i(5, p->ta, NULL);
+            m = te_i(2, p->ta, NULL);
         } else if (nf && mf) {
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) {
                 te_f(m);

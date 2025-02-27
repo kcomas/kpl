@@ -8,8 +8,7 @@ void tkn_p(tbl *tl, size_t idnt) {
         te *kv = h->d[0].p;
         c4 c = kv->d[0].c;
         printf("%c%c%c%c,", c.a, c.b, c.c, c.d);
-        ssize_t id = kv->d[1].i6;
-        if (id > -1) printf("%ld", id);
+        printf("%u", kv->d[1].u4);
         putchar('\n');
         if (kv->d[3].p) tkn_p(kv->d[3].p, idnt + 1);
         h = h->d[2].p;
@@ -17,8 +16,8 @@ void tkn_p(tbl *tl, size_t idnt) {
 }
 
 void tkn_m_p(const te *m, const mc *s) {
-        printf("tid:%lu,lno:%lu,cno:%lu,start:%lu,end:%lu,str:", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
-    for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(s->d[i]);
+        printf("tid:%u,lno:%u,cno:%u,start:%u,end:%u,str:", tkn_m_g_i(m), tkn_m_g_l(m), tkn_m_g_c(m), tkn_m_g_s(m), tkn_m_g_e(m));
+    for (uint16_t i = tkn_m_g_s(m); i < tkn_m_g_e(m); i++) putchar(s->d[i]);
 }
 
 size_t tkn_sh(un v) {
@@ -32,8 +31,8 @@ void tkn_entry_f(void *v) {
 }
 
 tkn_stat tkn_df(tkn *t, te *m) {
-    t->cno = m->d[2].u6;
-    t->pos = m->d[3].u6;
+    t->cno = tkn_m_g_c(m);
+    t->pos = tkn_m_g_s(m);
     size_t e = 0;
     un c = c4_g((char*) t->s->d, t->pos, &e);
     if (!isalnum(c.c.a)) return TKN_STAT(INV);
@@ -42,15 +41,15 @@ tkn_stat tkn_df(tkn *t, te *m) {
         t->pos = e + 1;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
-    m->d[0].u6 = TCUST(VAR);
-    m->d[4].u6 = t->pos;
+    tkn_m_s_i(m, TCUST(VAR));
+    tkn_m_s_e(m, t->pos);
     return TKN_STAT(OK);
 }
 
 tkn_stat tkn_num(tkn *t, te *m) {
     while (isdigit(t->s->d[t->pos])) {
         t->pos++;
-        m->d[4].u6++;
+        tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
     return TKN_STAT(OK);
 }
@@ -71,7 +70,7 @@ tkn_stat tkn_ft(tkn *t, te *m) {
 tkn_stat tkn_ws(tkn *t, te *m) {
     while (t->s->d[t->pos] == ' ') {
         t->pos++;
-        m->d[4].u6++;
+        tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
     return TKN_STAT(OK);
 }
@@ -86,9 +85,9 @@ tkn_stat tkn_sym(tkn *t, te *m) {
         t->pos = e + 1;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
-    m->d[0].u6 = TCUST(SYM);
-    if (t->pos - m->d[3].u6 < 2) return TKN_STAT(INV);
-    m->d[4].u6 = t->pos;
+    tkn_m_s_i(m, TCUST(SYM));
+    if (t->pos - tkn_m_g_s(m) < 2) return TKN_STAT(INV);
+    tkn_m_s_e(m, t->pos);
     return TKN_STAT(OK);
 }
 
@@ -111,7 +110,7 @@ void tkn_b(tkn *t) {
 
 tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i) {
     uint64_t v = 0;
-    for(size_t p = t->d[3].u6; p < t->d[4].u6; p++) {
+    for(uint32_t p = tkn_m_g_s(t); p < tkn_m_g_e(t); p++) {
         char c = s->d[p];
         if (c < '0' || c > '9') return TKN_STAT(INV);
         v *= 10;
@@ -123,8 +122,8 @@ tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i) {
 }
 
 tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v) {
-    ssize_t start = t->d[3].i6;
-    ssize_t end = t->d[4].i6;
+    ssize_t start = tkn_m_g_s(t);
+    ssize_t end = tkn_m_g_e(t);
     size_t i = 0;
     if (off > 0) start += off;
     else end += off;

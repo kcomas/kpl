@@ -163,19 +163,19 @@ ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
     return atf(a, pan, pn, vn, e);
 }
 
-ast_stat ast_t_a(ast *a, size_t tid, size_t id) {
+ast_stat ast_t_a(ast *a, uint16_t tid, size_t id) {
     te *kv;
     if (tbl_g_i(a->tt, U6(tid), &kv) == TBL_STAT(OK)) return AST_STAT(INV);
     kv = te_i(2, a->ta, NULL);
-    kv->d[0] = U6(tid);
+    kv->d[0] = U4(tid);
     kv->d[1] = U6(id);
     tbl_a(a->tt, kv);
     return AST_STAT(OK);
 }
 
-ast_stat ast_t_n(ast *a, size_t tid, size_t *id) {
+ast_stat ast_t_n(ast *a, te *t, size_t *id) {
     te *kv;
-    if (tbl_g_i(a->tt, U6(tid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
+    if (tbl_g_i(a->tt, U4(tkn_m_g_i(t)), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
     *id = kv->d[1].u6;
     return AST_STAT(OK);
 }

@@ -20,7 +20,32 @@ typedef struct _tkn tkn;
 // on match
 typedef tkn_stat tkn_pf(tkn *t, te *m);
 
-// match te[id;lno;cno;start;end]
+// match te[u5(cno)|u4(lno)|u4(id);u5(start)|u5(end)]
+
+// id
+uint16_t tkn_m_g_i(const te *m);
+
+void tkn_m_s_i(te *m, uint16_t i);
+
+// lno
+uint16_t tkn_m_g_l(const te *m);
+
+void tkn_m_s_l(te *m, uint16_t l);
+
+// cno
+uint32_t tkn_m_g_c(const te *m);
+
+void tkn_m_s_c(te *m, uint32_t c);
+
+// start pos
+uint32_t tkn_m_g_s(const te *m);
+
+void tkn_m_s_s(te *m, uint32_t s);
+
+// end pos
+uint32_t tkn_m_g_e(const te *m);
+
+void tkn_m_s_e(te *m, uint32_t e);
 
 #define TOKEN(N) TOKEN_##N
 
@@ -31,8 +56,9 @@ typedef enum {
 } token;
 
 typedef struct _tkn {
+    uint16_t idc, lno;
+    uint32_t cno, pos; // id counter
     ssize_t r;
-    size_t idc, lno, cno, pos; // id counter
     const alfr *af, *ta;
     frfn *ef; // entry free
     tkn_tbl_i *ttif;
@@ -44,7 +70,7 @@ typedef struct _tkn {
 tkn *tkn_i(const alfr *af, const alfr *ta, frfn ef, tkn_tbl_i ttif, tkn_pf df, mc *s);
 
 // give zero for an assigned id
-size_t tkn_a(tkn *t, size_t tid, const char *s, tkn_pf *pf);
+uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf);
 
 tkn_stat tkn_n(tkn *t, te *m);
 
