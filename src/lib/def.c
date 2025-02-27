@@ -2,12 +2,15 @@
 #include "def.h"
 
 #define _UOGC(CT, T, O) CT T##_g_o(un u, size_t o) { \
-    return u.u6 >> (O * o) & (((uint64_t) 1 << O) - 1); \
+    un a; \
+    a.u6 = u.u6 >> (O * o) & (((uint64_t) 1 << O) - 1); \
+    return a.T; \
 }
 
 #define _UOSC(CT, T, O) un T##_s_o(un u, size_t o, CT v) { \
+    un a = UN(T, v); \
     uint64_t b = (((uint64_t) 1 << O) - 1) << (O * o); \
-    return UN(u6, (u.u6 & ~b) | ((uint64_t) v << (O * o))); \
+    return UN(u6, (u.u6 & ~b) | (a.u6 << (O * o))); \
 }
 
 #define _UOC(CT, T, O) _UOGC(CT, T, O); \

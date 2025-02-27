@@ -20,25 +20,25 @@ T(vr_ab_s_i) {
 
 T(reverse) {
     vr *v = vr_i(10, &vm, NULL);
-    vr_ab(&v, D(1.1));
-    vr_ab(&v, D(2.2));
-    vr_ab(&v, D(3.3));
-    vr_ab(&v, D(4.4));
-    vr_af(&v, D(5.5));
+    vr_ab(&v, F6(1.1));
+    vr_ab(&v, F6(2.2));
+    vr_ab(&v, F6(3.3));
+    vr_ab(&v, F6(4.4));
+    vr_af(&v, F6(5.5));
     A(v->l == 5, "len");
-    A(v->d[0].d == 5.5, "vr_af");
-    for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].d);
+    A(v->d[0].f6 == 5.5, "vr_af");
+    for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].f6);
     putchar('\n');
     vr_r(v);
-    A(v->d[4].d == 5.5, "vr_r");
-    for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].d);
+    A(v->d[4].f6 == 5.5, "vr_r");
+    for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].f6);
     putchar('\n');
     vr_r(v);
-    A(v->d[0].d == 5.5, "vr_r");
+    A(v->d[0].f6 == 5.5, "vr_r");
     un u;
     for (size_t i = 0; i < 5; i++) {
         A(vr_sb(v, &u) == VR_STAT(OK), "vr_sb");
-        printf("%f,", u.d);
+        printf("%f,", u.f6);
     }
     putchar('\n');
     A(vr_sb(v, &u) == VR_STAT(SUB), "not empty");
