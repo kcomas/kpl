@@ -26,19 +26,13 @@ gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
     return g;
 }
 
-static un gen_op_hsh(gen_cls cls, un info) {
-    return U6((info.u3 << 8) + cls);
-}
-
-
 static void gen_entry_f(void *p) {
     te *t = p;
-    if (t->l == 3) tbl_f(t->d[2].p);
-    else tbl_f(t->d[4].p);
+    tbl_f(t->d[2].p);
     t->af->f(t);
 }
 
-gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn) {
+gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, uint16_t type1, gen_cls cls2, uint16_t type2, gen_cls cls3, uint16_t type3, gen_fn *fn) {
     tbl *oci = g->oci;
     te *kv;
     if (tbl_g_i(oci, U6(op_id), &kv) == TBL_STAT(NF)) {
@@ -49,22 +43,21 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
         oci = kv->d[2].p;
     } else oci = kv->d[2].p;
     const gen_cls cls[] = {cls1, cls2, cls3};
-    const un info[] = {info1, info2, info3};
+    const uint16_t type[] = {type1, type2, type3};
     for (size_t i = 0; i < 3; i++) {
         if (cls[i] == GEN_CLS(N)) break;
-        un hsh = gen_op_hsh(cls[i], info[i]);
+        un hsh = U6(0);
+        hsh = u4_s_o(hsh, 1, cls[i]);
+        hsh = u4_s_o(hsh, 0, type[i]);
         if (tbl_g_i(oci, hsh, &kv) == TBL_STAT(NF)) {
-            kv = te_i(6, g->ta, gen_entry_f);
+            kv = te_i(3, g->ta, gen_entry_f);
             kv->d[0] = hsh;
-            kv->d[1] = U6(cls[i]);
-            kv->d[2] = info[i];
-            kv->d[4] = P(g->cti());
+            kv->d[2] = P(g->cti());
             tbl_a(oci, kv);
-            oci = kv->d[4].p;
-        } else oci = kv->d[4].p;
+            oci = kv->d[2].p;
+        } else oci = kv->d[2].p;
     }
-    if (kv->l == 3) kv->d[1] = P(fn);
-    else kv->d[3] = P(fn);
+    kv->d[1] = P(fn);
     return GEN_STAT(OK);
 }
 
@@ -88,10 +81,9 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     const te *ac[] = {ac1, ac2, ac3};
     for (size_t i = 0; i < 3; i++) {
         if (!ac[i]) break;
-        un hsh = gen_op_hsh(ac[i]->d[0].u3, ac[i]->d[1]);
-        if (tbl_g_i(oci, hsh, &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
-        oci = kv->d[4].p;
-        fn = kv->d[3].p;
+        if (tbl_g_i(oci, ac[i]->d[0], &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+        oci = kv->d[2].p;
+        fn = kv->d[1].p;
     }
     te *e = te_i(7, g->ta, gen_code_entry_f);
     e->d[0] = U6(op_id);
@@ -103,11 +95,27 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     return GEN_STAT(OK);
 }
 
-te *gen_var_i(gen *g, frfn fr, gen_cls cls, un info, un id) {
-    te *v = te_i(3, g->ta, fr);
-    v->d[0] = U3(cls);
-    v->d[1] = info;
-    v->d[2] = id;
+uint16_t gen_var_g_c(const te *v) {
+    return u4_g_o(v->d[0], 1);
+}
+
+void gen_var_s_c(te *v, uint16_t c) {
+    v->d[0] = u4_s_o(v->d[0], 1, c);
+}
+
+uint16_t gen_var_g_t(const te *v) {
+    return u4_g_o(v->d[0], 0);
+}
+
+void gen_var_s_t(te *v, uint16_t t) {
+    v->d[0] = u4_s_o(v->d[0], 0, t);
+}
+
+te *gen_var_i(gen *g, frfn fr, gen_cls cls, uint16_t type, un id) {
+    te *v = te_i(2, g->ta, fr);
+    gen_var_s_c(v, cls);
+    gen_var_s_t(v, type);
+    v->d[1] = id;
     return v;
 }
 

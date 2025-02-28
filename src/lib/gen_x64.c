@@ -52,8 +52,8 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
         } else {
             putchar('\n');
             for (size_t i = 0; i < idnt; i++) putchar(' ');
-            printf("(%s %s)", gen_cls_str(o->d[1].u3), x64_type_str(o->d[2].u3));
-            gen_op_p(o->d[4].p, true, idnt + 1);
+            printf("(%s %s)", gen_cls_str(gen_var_g_c(o)), x64_type_str(gen_var_g_t(o)));
+            gen_op_p(o->d[2].p, true, idnt + 1);
         }
         h = h->d[2].p;
     }
@@ -61,11 +61,11 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
 
 static void ovt_p(const te *ovt) {
     vr *m;
-    printf("(%s ", gen_cls_str(ovt->d[0].u3));
-    switch (ovt->d[0].u3) {
+    printf("(%s ", gen_cls_str(gen_var_g_c(ovt)));
+    switch (gen_var_g_c(ovt)) {
         case GEN_CLS(M):
             putchar('[');
-            m = ovt->d[2].p;
+            m = ovt->d[1].p;
             for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
             printf("])");
             break;
@@ -74,19 +74,19 @@ static void ovt_p(const te *ovt) {
         case GEN_CLS(T):
         case GEN_CLS(L):
         case GEN_CLS(D):
-            printf("%s ", x64_type_str(ovt->d[1].u3));
+            printf("%s ", x64_type_str(gen_var_g_t(ovt)));
             break;
         default:
             printf("N ");
             break;
     }
-    if (ovt->d[0].u3 == GEN_CLS(M)) return;
-    switch (ovt->d[1].u6) {
+    if (gen_var_g_c(ovt) == GEN_CLS(M)) return;
+    switch (gen_var_g_t(ovt)) {
         case X64_TYPE(M):
-            printf("%p)", ovt->d[2].p);
+            printf("%p)", ovt->d[1].p);
             break;
         default:
-            printf("%lu)", ovt->d[2].u6);
+            printf("%lu)", ovt->d[1].u6);
             break;
     }
 }
@@ -141,7 +141,7 @@ void gen_st_p(const gen_st *st) {
 }
 
 un ovt_hsh(const te *ovt) {
-    return U6((ovt->d[0].u6  << 8) + ovt->d[2].u3);
+    return U6((ovt->d[1].u6 << 32) + ovt->d[0].u5);
 }
 
 static void gen_st_latf(void *p) {
@@ -175,19 +175,20 @@ void gen_st_atmf(void *p) {
 }
 
 static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
-    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
+    x64_type xt = gen_var_g_t(ovt);
+    if (xt >= X64_TYPE(M) && xt <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
     else if (st->xstk->l == 0) return GEN_STAT(INV);
     *kv = te_i(3, st->ta, gen_st_atmf);
     (*kv)->d[0] = hsh;
     (*kv)->d[1] = P(te_c(ovt));
     un d;
     vr *stk;
-    if (ovt->d[1].u3 < X64_TYPE(F5)) stk = st->rstk;
+    if (xt < X64_TYPE(F5)) stk = st->rstk;
     else stk = st->xstk;
     if (decs) {
         vr_sb(stk, &d);
         (*kv)->d[2] = d;
-    } else (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
+    } else (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[1].u3].u3);
     tbl_a(st->atm, *kv);
     return GEN_STAT(OK);
 }
@@ -197,7 +198,7 @@ static gen_stat reg_map(gen_st *st, te *ovt) {
     un hsh = ovt_hsh(ovt);
     te *kv;
     if (tbl_g_i(st->atm, hsh, &kv) == TBL_STAT(OK)) {
-        if (ovt->d[1].u3 != ((te*) kv->d[1].p)->d[1].u3) return GEN_STAT(INV);
+        if (gen_var_g_t(ovt) != gen_var_g_t(kv->d[1].p)) return GEN_STAT(INV);
     } else set_reg(st, hsh, ovt, &kv, false);
     return GEN_STAT(OK);
 }
@@ -205,19 +206,19 @@ static gen_stat reg_map(gen_st *st, te *ovt) {
 static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
     gen_stat stat;
     vr *m;
-    switch (ovt->d[0].u3) {
+    switch (gen_var_g_c(ovt)) {
         case GEN_CLS(M):
-            m = ovt->d[2].p;
+            m = ovt->d[1].p;
             for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
             break;
         case GEN_CLS(A):
-            if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) st->rac = ovt->d[2].u3 + 1 > st->rac ? ovt->d[2].u3 + 1 : st->rac;
-            else st->xac = ovt->d[2].u3 + 1 > st->xac ? ovt->d[2].u3 + 1 : st->xac;
+            if (gen_var_g_t(ovt) >= X64_TYPE(M) && gen_var_g_t(ovt) <= X64_TYPE(I6)) st->rac = ovt->d[1].u3 + 1 > st->rac ? ovt->d[1].u3 + 1 : st->rac;
+            else st->xac = ovt->d[1].u3 + 1 > st->xac ? ovt->d[1].u3 + 1 : st->xac;
             if ((stat = reg_map(st, ovt)) != GEN_STAT(OK)) return stat;
             update_lat(st, ovt, o);
             break;
         case GEN_CLS(V):
-            st->vc = ovt->d[2].u3 + 1 > st->vc ? ovt->d[2].u3 + 1 : st->vc;
+            st->vc = ovt->d[1].u3 + 1 > st->vc ? ovt->d[1].u3 + 1 : st->vc;
             break;
         case GEN_CLS(T):
             update_lat(st, ovt, o);
@@ -271,7 +272,7 @@ gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
     if (!ovt) return GEN_STAT(INV);
     un hsh = ovt_hsh(ovt);
     if (tbl_g_i(st->atm, hsh, kv) == TBL_STAT(NF)) {
-        if (ovt->d[0].u3 != GEN_CLS(T)) return GEN_STAT(INV);
+        if (gen_var_g_c(ovt) != GEN_CLS(T)) return GEN_STAT(INV);
         return set_reg(st, hsh, ovt, kv, true);
     }
     return GEN_STAT(OK);
@@ -310,7 +311,7 @@ static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a)  {
     (void) g;
     (void) s;
     te *lbl = ci->d[1].p;
-    as_lbl_a(a, lbl->d[2].u6);
+    as_lbl_a(a, lbl->d[1].u6);
     set_code_s(ci, a);
     set_code_e(ci, a);
     return GEN_STAT(OK);
@@ -323,7 +324,7 @@ void gen_cond(gen *g);
 void gen_call(gen *g);
 
 gen *gen_b(gen *g) {
-    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
     gen_enter_leave(g);
     gen_arith(g);
     gen_cond(g);

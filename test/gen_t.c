@@ -23,7 +23,7 @@ tbl *gen_op_tbl(size_t bcks) {
 
 void gen_call_m_f(void *p) {
     te *t = p;
-    vr_f(t->d[2].p);
+    vr_f(t->d[1].p);
     t->af->f(t);
 }
 
@@ -36,21 +36,21 @@ te *gen_call_m(gen *g, size_t n, ...) {
         n--;
     }
     va_end(args);
-    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), U3(X64_TYPE(N)), P(v));
+    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), X64_TYPE(N), P(v));
 }
 
 te *gen_lbl(gen *g, size_t id) {
-    return gen_var_i(g, NULL, GEN_CLS(L), U3(X64_TYPE(N)), U6(id));
+    return gen_var_i(g, NULL, GEN_CLS(L), X64_TYPE(N), U6(id));
 }
 
 te *gen_arg(gen *g, x64_type t, size_t id) {
-    return gen_var_i(g, NULL, GEN_CLS(A), U3(t), U6(id));
+    return gen_var_i(g, NULL, GEN_CLS(A), t, U6(id));
 }
 
 te *gen_tmp(gen *g, x64_type t, size_t id) {
-    return gen_var_i(g, NULL, GEN_CLS(T), U3(t), U6(id));
+    return gen_var_i(g, NULL, GEN_CLS(T), t, U6(id));
 }
 
 te *gen_data(gen *g, x64_type t, un d) {
-    return gen_var_i(g, NULL, GEN_CLS(D), U3(t), d);
+    return gen_var_i(g, NULL, GEN_CLS(D), t, d);
 }

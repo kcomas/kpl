@@ -82,7 +82,7 @@ $(AS): $(LAS_OBJS) $(TEST)/as.o $(TEST)/as_t.o $(LASX64_OBJS) $(TEST_OBJS)
 > $(CCOBJ)
 
 GEN = gen$(TNAME)
-GEN_OBJS = $(LSRC)/gen.o $(LAS_OBJS)
+GEN_OBJS = $(LSRC)/gen.o $(LAS_OBJS) $(LDEF_OBJS)
 GENX64_OBJS = $(GEN_OBJS) $(LSRC)/gen_x64.o $(LX64_OBJS) $(LASX64_OBJS) $(LVR_OBS) $(patsubst %.c,%.o,$(wildcard $(LSRC)/gen_x64/*.c))
 OBJS += $(GEN_OBJS) $(GENX64_OBJS)
 $(GEN): $(GENX64_OBJS) $(TEST)/gen.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS)
