@@ -1,6 +1,25 @@
 
 #include "ast.h"
 
+const char *ast_cls_str(ast_cls cls) {
+    switch (cls) {
+        case AST_CLS(R): return "R";
+        case AST_CLS(T): return "T";
+        case AST_CLS(E): return "E";
+        case AST_CLS(I): return "I";
+        case AST_CLS(S): return "S";
+        case AST_CLS(V): return "V";
+        case AST_CLS(O): return "O";
+        case AST_CLS(Z): return "Z";
+        case AST_CLS(A): return "A";
+        case AST_CLS(L): return "L";
+        case AST_CLS(C): return "C";
+        default:
+            break;
+    }
+    return "INV CLS";
+}
+
 ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
     ast *a = af->a(sizeof(ast));
     a->r = 1;

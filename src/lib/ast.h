@@ -29,6 +29,8 @@ typedef enum {
     AST_CLS(_)
 } ast_cls;
 
+const char *ast_cls_str(ast_cls cls);
+
 // ast entry te[id;fn]
 
 typedef ast_stat psr_id_g(te *pn, size_t *pid);
