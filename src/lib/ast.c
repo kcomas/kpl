@@ -14,6 +14,11 @@ ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst
     return a;
 }
 
+ast *ast_c(ast *a) {
+    a->r++;
+    return a;
+}
+
 static void t_r_f(void *p) {
     te *n = p;
     te_f(n->d[1].p); // free psr

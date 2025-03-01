@@ -45,6 +45,8 @@ typedef struct {
 
 ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
 
+ast *ast_c(ast *a);
+
 // ast t te[par;psr;cls;...]
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);

@@ -8,7 +8,7 @@ fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, ast *
     f->ta = ta;
     f->fti = fti;
     f->fli = fli;
-    f->a = a;
+    f->a = ast_c(a);
     f->ft = ft;
     return f;
 }
@@ -95,6 +95,7 @@ fld_stat fld_n(fld *f, te **an, te **e) {
 
 void fld_f(fld *f) {
     if (!f || --f->r > 0) return;
+    ast_f(f->a);
     tbl_f(f->ft);
     f->af->f(f);
 }

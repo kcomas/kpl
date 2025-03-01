@@ -12,7 +12,7 @@ typedef enum {
 
 typedef tbl *chk_tbl_i(void);
 
-// entry te[cls;tbl[cls_chk;tbl...;te[cls_ck;fn]]]
+// entry te[u4(cls)|u4(type);tbl...te[u4(cls)|u4(type);fn]]]
 
 typedef struct {
     ssize_t r;
@@ -24,8 +24,11 @@ typedef struct {
 
 chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a);
 
+extern const uint8_t chk_cls_conts[];
+
 typedef chk_stat chk_fn(chk *c, te *an);
 
-void chk_a(chk *c, ast_cls cls, un ct, ...);
+// cls is also used for ops, cmds
+void chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...);
 
 void chk_f(chk *c);
