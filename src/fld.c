@@ -6,7 +6,7 @@ static fld_stat err(fld_stat stat, te *an, te **e) {
     return stat;
 }
 
-static fld_stat aply_op_r(fld *f, te **an, te **e) {
+static fld_stat aply_op_r(fld *f, te **restrict an, te **restrict e) {
     (void) f;
     lst *l = lst_c((*an)->d[5].p);
     if (l->l < 1 || l-l > 2) return err(FLD_STAT(INV), *an, e);
@@ -48,7 +48,7 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
     return FLD_STAT(OK);
 }
 
-static fld_stat aply_type_r(fld *f, te **an, te **e) {
+static fld_stat aply_type_r(fld *f, te **restrict an, te **restrict e) {
     fld_stat stat;
     lst *l = lst_c((*an)->d[5].p);
     if (!l->l) return err(FLD_STAT(INV), *an, e);
@@ -79,7 +79,7 @@ static bool aply_type_t(const te *an) {
     return an->d[2].u6 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u6 == AST_CLS(T);
 }
 
-static fld_stat idnt_lst_r(fld *f, te **an, te **e) {
+static fld_stat idnt_lst_r(fld *f, te **restrict an, te **restrict e) {
     te *ln, *kv;
     if (ast_g_pn(AST_CLS(L), *an, &ln) != AST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
     tbl *lt;
@@ -100,7 +100,7 @@ static bool idnt_lst_t(const te *an) {
     return an->d[2].u6 == AST_CLS(I);
 }
 
-static fld_stat cmd_r(fld *f, te **an, te **e) {
+static fld_stat cmd_r(fld *f, te **restrict an, te **restrict e) {
     te *nn;
     switch ((*an)->d[3].u6) {
         case CC(P1):

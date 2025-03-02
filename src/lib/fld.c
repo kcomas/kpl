@@ -45,7 +45,7 @@ static fld_stat fld_lst_n(fld *f, lst *l, te **e) {
     return stat;
 }
 
-fld_stat fld_n(fld *f, te **an, te **e) {
+fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
     fld_stat stat = FLD_STAT(OK);
     if (!*an) return stat;
     switch ((*an)->d[2].u6) {
