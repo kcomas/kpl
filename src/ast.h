@@ -17,7 +17,7 @@ typedef enum {
     OC(_END)
 } oc; // op code
 
-const char *ast_op_str(oc o);
+const char *ast_oc_str(oc o);
 
 #define CC(N) CC_##N
 
@@ -27,7 +27,7 @@ typedef enum {
     CC(_END)
 } cc; // cmd code
 
-const char *cmd_op_str(cc c);
+const char *ast_cc_str(cc c);
 
 // lst tbl entry te[mc;flags;ast_node;type]
 te *ast_lst_tbl_e_i(const ast *a, mc *s);

@@ -18,6 +18,7 @@ static void chk_entry_f(void *p) {
     t->af->f(t);
 }
 
+// zero for no chk
 const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(R)] = 1,
     [AST_CLS(T)] = 0,
@@ -29,7 +30,7 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(Z)] = 2,
     [AST_CLS(A)] = 2,
     [AST_CLS(L)] = 1,
-    [AST_CLS(C)] = 0 // no check
+    [AST_CLS(C)] = 0
 };
 
 static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uint8_t n) {
@@ -45,9 +46,9 @@ static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uin
 }
 
 chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...) {
-    if (cls == AST_CLS(C)) return CHK_STAT(INV);
     tbl *ct = c->ct;
     uint8_t n = chk_cls_conts[cls];
+    if (!n) return CHK_STAT(INV);
     te *kv;
     add_entry(c, ct, &kv, cls, type, n);
     va_list args;
