@@ -162,13 +162,13 @@ void type_p(const te *t) {
         printf("??");
         return;
     }
-    type_cls cls = type_g_c(t->d[1].u6);
+    type_cls cls = type_g_c(t->d[1].u4);
     switch (cls) {
         case TYPE_CLS(S):
-            printf("%s", type_str(t->d[1].u6));
+            printf("%s", type_str(t->d[1].u4));
             break;
         case TYPE_CLS(V):
-            printf("%s(", type_str(t->d[1].u6));
+            printf("%s(", type_str(t->d[1].u4));
             type_p(t->d[2].p);
             putchar(')');
             break;
@@ -176,7 +176,7 @@ void type_p(const te *t) {
             // TODO
             break;
         case TYPE_CLS(F):
-            printf("%s(", type_str(t->d[1].u6));
+            printf("%s(", type_str(t->d[1].u4));
             type_tbl_p(t->d[3].p);
             type_p(t->d[2].p);
             putchar(')');
@@ -205,8 +205,8 @@ static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
 
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
-    if (!a || !b || a->d[1].u6 != b->d[1].u6) return false;
-    type_cls cls = type_g_c(a->d[1].u6);
+    if (!a || !b || a->d[1].u4 != b->d[1].u4) return false;
+    type_cls cls = type_g_c(a->d[1].u4);
     switch (cls) {
         case TYPE_CLS(S):
             return true;

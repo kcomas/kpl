@@ -60,8 +60,8 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
 ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
 
-ast_stat ast_t_a(ast *a, uint16_t tid, size_t id);
+ast_stat ast_t_a(ast *a, uint16_t tid, uint16_t id);
 
-ast_stat ast_t_n(ast *a, te *t, size_t *id);
+ast_stat ast_t_n(ast *a, te *t, uint16_t *id);
 
 void ast_f(ast *a);

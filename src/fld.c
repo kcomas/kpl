@@ -26,7 +26,7 @@ static fld_stat aply_op_r(fld *f, te **restrict an, te **restrict e) {
 }
 
 static bool aply_op_t(const te *an) {
-    return an->d[2].u6 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u6 == AST_CLS(O);
+    return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(O);
 }
 
 
@@ -37,9 +37,9 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
     while (l->l) {
         if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
         te *zn = ln.p;
-        if (zn->d[2].u6 != AST_CLS(Z)) return FLD_STAT(INV);
+        if (zn->d[2].u4 != AST_CLS(Z)) return FLD_STAT(INV);
         te *tn = zn->d[5].p;
-        if (tn->d[2].u6 != AST_CLS(T)) return FLD_STAT(INV);
+        if (tn->d[2].u4 != AST_CLS(T)) return FLD_STAT(INV);
         ((te*) tn->d[3].p)->d[0] = P(p); // set parent
         type_tbl_a(t, f->a->ta, mc_c(zn->d[4].p), i++, te_c(tn->d[3].p));
         te_f(zn);
@@ -54,13 +54,13 @@ static fld_stat aply_type_r(fld *f, te **restrict an, te **restrict e) {
     if (!l->l) return err(FLD_STAT(INV), *an, e);
     te *tn = te_c((*an)->d[4].p);
     te *t = tn->d[3].p;
-    type_cls tc = type_g_c(t->d[1].u6);
+    type_cls tc = type_g_c(t->d[1].u4);
     un ln;
     switch (tc) {
         case TYPE_CLS(F):
             if (lst_sb(l, &ln) != LST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
             te *rn = ln.p;
-            if (rn->d[2].u6 != AST_CLS(T)) return err(FLD_STAT(INV), *an, e);
+            if (rn->d[2].u4 != AST_CLS(T)) return err(FLD_STAT(INV), *an, e);
             t->d[2] = P(te_c(rn->d[3].p));
             ((te*) t->d[2].p)->d[0] = P(t); // set parent
             te_f(rn);
@@ -76,7 +76,7 @@ static fld_stat aply_type_r(fld *f, te **restrict an, te **restrict e) {
 }
 
 static bool aply_type_t(const te *an) {
-    return an->d[2].u6 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u6 == AST_CLS(T);
+    return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(T);
 }
 
 static fld_stat idnt_lst_r(fld *f, te **restrict an, te **restrict e) {
@@ -97,12 +97,12 @@ static fld_stat idnt_lst_r(fld *f, te **restrict an, te **restrict e) {
 
 static bool idnt_lst_t(const te *an) {
     // TODO check if parent is a namespace op
-    return an->d[2].u6 == AST_CLS(I);
+    return an->d[2].u4 == AST_CLS(I);
 }
 
 static fld_stat cmd_r(fld *f, te **restrict an, te **restrict e) {
     te *nn;
-    switch ((*an)->d[3].u6) {
+    switch ((*an)->d[3].u4) {
         case CC(P1):
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U6(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(I5))), I5(1)), te_c((*an)->d[4].p));
             break;
@@ -115,7 +115,7 @@ static fld_stat cmd_r(fld *f, te **restrict an, te **restrict e) {
 }
 
 static bool cmd_t(const te *an) {
-    return an->d[2].u6 == AST_CLS(C) && an->d[4].p;
+    return an->d[2].u4 == AST_CLS(C) && an->d[4].p;
 }
 
 fld *fld_b(fld *f) {
