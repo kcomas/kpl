@@ -37,6 +37,6 @@ static chk_stat chk_nop(chk *c, te *an, te **e) {
 }
 
 chk *chk_b(chk *c) {
-    chk_a(c, chk_nop, AST_CLS(S), TYPE(_A), AST_CLS(L), TYPE(_A));
+    chk_a(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(_N));
     return c;
 }

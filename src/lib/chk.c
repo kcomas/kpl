@@ -27,8 +27,8 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(S)] = 1,
     [AST_CLS(V)] = 1,
     [AST_CLS(O)] = 3,
-    [AST_CLS(Z)] = 1,
-    [AST_CLS(A)] = 2,
+    [AST_CLS(Z)] = 1, // but starts at 5
+    [AST_CLS(A)] = 1,
     [AST_CLS(L)] = 1,
     [AST_CLS(C)] = 0
 };
@@ -100,27 +100,36 @@ chk_stat chk_n(chk *c, te *an, te **e) {
         case AST_CLS(R):
             if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
             break;
-        // TODO
+        case AST_CLS(T):
+        case AST_CLS(E):
+        case AST_CLS(S):
+        case AST_CLS(V):
+            break;
+        case AST_CLS(O):
+            if ((stat = chk_n(c, an->d[5].p, e)) != CHK_STAT(OK) || (stat = chk_n(c, an->d[6].p, e)) != CHK_STAT(OK)) return stat;
+            break;
+        case AST_CLS(Z):
+            if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
+            break;
         case AST_CLS(A):
-            // TODO
+            if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK) || (stat = chk_lst_n(c, an->d[5].p, e)) != CHK_STAT(OK)) return stat;
             break;
         case AST_CLS(L):
             if ((stat = chk_lst_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
             break;
         default:
-            return CHK_STAT(INV);
+            return CHK_STAT(INV); // nodes should have been removed
     }
-    uint8_t n = chk_cls_conts[an->d[2].u4];
-    if (!n) return CHK_STAT(INV);
+    uint8_t n = chk_cls_conts[an->d[2].u4], ncmp = AST_MIN_NODE_LEN;
+    if (!n) return CHK_STAT(OK); // do not test
     un hsh = chk_hsh(an);
     te *kv;
     if (tbl_g_i(c->ct, hsh, &kv) == TBL_STAT(NF)) return CHK_STAT(INV);
     while (n > 0) {
         n--;
-        // TODO
         tbl *ct = kv->d[1].p;
+        if (!ct) return CHK_STAT(INV);
     }
-    return stat;
 }
 
 void chk_f(chk *c) {

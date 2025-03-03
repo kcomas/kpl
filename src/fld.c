@@ -38,10 +38,10 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
         if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
         te *zn = ln.p;
         if (zn->d[2].u4 != AST_CLS(Z)) return FLD_STAT(INV);
-        te *tn = zn->d[5].p;
+        te *tn = zn->d[4].p;
         if (tn->d[2].u4 != AST_CLS(T)) return FLD_STAT(INV);
         ((te*) tn->d[3].p)->d[0] = P(p); // set parent
-        type_tbl_a(t, f->a->ta, mc_c(zn->d[4].p), i++, te_c(tn->d[3].p));
+        type_tbl_a(t, f->a->ta, mc_c(zn->d[5].p), i++, te_c(tn->d[3].p));
         te_f(zn);
     }
     lst_f(l);

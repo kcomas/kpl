@@ -14,6 +14,7 @@ const char *ast_cls_str(ast_cls cls) {
         case AST_CLS(A): return "A";
         case AST_CLS(L): return "L";
         case AST_CLS(C): return "C";
+        case AST_CLS(_): return "_";
         default:
             break;
     }
@@ -83,8 +84,8 @@ static void t_o_f(void *p) {
 static void t_z_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
-    mc_f(n->d[4].p);
-    te_f(n->d[5].p);
+    te_f(n->d[4].p);
+    mc_f(n->d[5].p);
     n->af->f(n);
 }
 
@@ -110,7 +111,7 @@ static void t_c_f(void *p) {
 }
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...) {
-    size_t len = 4;
+    size_t len = AST_MIN_NODE_LEN;
     frfn *nf = NULL;
     switch (cls) {
         case AST_CLS(R):

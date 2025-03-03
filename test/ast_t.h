@@ -36,7 +36,7 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define AN(T, TGT, LST) NNV(A, T, TGT, LST)
 
-#define ZN(S, TGT) NNV(Z, type_i(&ast_am, NULL, TYPE(SL)), mc_i_cstr(S, &ast_am), TGT)
+#define ZN(S, TGT) NNV(Z, type_i(&ast_am, NULL, TYPE(SL)), TGT, mc_i_cstr(S, &ast_am))
 
 #define LN(TBL, LST) NNV(L, TBL, LST)
 
