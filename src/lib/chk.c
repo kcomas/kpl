@@ -102,15 +102,14 @@ static chk_stat chk_r(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, b
     te *kv;
     if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
     while (n > 0) {
+        hsh = U6(0);
         n--;
         t = kv->d[1].p;
         if (!t) return chk_foe(foe, an, e);
         if (n == 2 && an->d[2].u4 == AST_CLS(O)) {
-            hsh = U6(0);
             hsh = u4_s_o(hsh, CHK_HSH_C, an->d[ncmp++].u4);
             hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
-        } else if (n == 0 && (an->d[2].u4 == AST_CLS(S) || an->d[4].u4 == AST_CLS(V))) {
-            hsh = U6(0);
+        } else if (n == 0 && (an->d[2].u4 == AST_CLS(S) || an->d[2].u4 == AST_CLS(V))) {
             hsh = u4_s_o(hsh, CHK_HSH_C, AST_CLS(_));
             hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
         } else hsh = chk_hsh(an->d[ncmp++].p);
