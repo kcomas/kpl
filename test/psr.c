@@ -63,6 +63,10 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
             VV(n->d[3].p, v, i, vl);
             VV(n->d[4].p, v, i, vl);
             break;
+        case NODE_TYPE(VEC):
+            VN(v, i, vl, VEC);
+            VL(n->d[3].p, v, i, vl);
+            break;
         case NODE_TYPE(LST):
             VN(v, i, vl, LST);
             VL(n->d[3].p, v, i, vl);
@@ -107,6 +111,8 @@ void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size
 
 #define OP(L, R) N(OP), L, R
 
+#define VEC(...) N(VEC), __VA_ARGS__
+
 #define LST(...) N(LST), __VA_ARGS__
 
 #define APLY(...) N(APLY), __VA_ARGS__
@@ -117,7 +123,7 @@ void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size
 
 T(sigma) {
     te *h = ppnode(psr_r(ppsr(tpsr("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]"))));
-    V(h, {N(ROOT), OP(N(INT), LST(N(INT), OP(N(FLT), LST(N(INT), N(INT), N(INT))), OP(N(INT), N(INT)), N(INT)))});
+    V(h, {N(ROOT), OP(N(INT), VEC(N(INT), OP(N(FLT), VEC(N(INT), N(INT), N(INT))), OP(N(INT), N(INT)), N(INT)))});
     te_f(h);
 }
 
@@ -129,7 +135,7 @@ T(aplyopadd) {
 
 T(nl) {
     te *h = ppnode(psr_r(tpsr("{\n3.2 - 2.1\n1 Σ [1;2;3]\n}")));
-    V(h, {N(ROOT), LST(OP(N(FLT), N(FLT)), OP(N(INT), LST(N(INT), N(INT), N(INT))))});
+    V(h, {N(ROOT), LST(OP(N(FLT), N(FLT)), OP(N(INT), VEC(N(INT), N(INT), N(INT))))});
     te_f(h);
 }
 
@@ -170,7 +176,7 @@ T(sym_add) {
 
 T(sym_lst) {
     te *h = ppnode(psr_r(tpsr("[`a;`b;`c]")));
-    V(h, {N(ROOT), LST(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE)))});
+    V(h, {N(ROOT), VEC(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE)))});
     te_f(h);
 }
 
@@ -221,7 +227,7 @@ T(defer_hsh) {
 
 T(value_hsh) {
     te *h = ppnode(psr_r(tpsr("[`a;`b;`c]#[1;2;3]")));
-    V(h, {N(ROOT), OP(LST(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE))), LST(N(INT), N(INT), N(INT)))});
+    V(h, {N(ROOT), OP(VEC(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE))), VEC(N(INT), N(INT), N(INT)))});
     te_f(h);
 }
 

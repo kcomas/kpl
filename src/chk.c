@@ -50,10 +50,20 @@ static chk_stat chk_nop(chk *c, te *an, te **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_op_e_eq(chk *c, te *an, te **e) {
+    (void) c;
+    (void) an;
+    (void) e;
+    printf("%s", __FUNCTION__);
+    return CHK_STAT(INV);
+}
+
 chk *chk_b(chk *c) {
     // before
     CHK_AB(c, chk_cst_fn_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     // after
     CHK_AA(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(_N));
+    // ops
+    CHK_AA(c, chk_op_e_eq, AST_CLS(O), TYPE(_N), OC(ADD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
     return c;
 }
