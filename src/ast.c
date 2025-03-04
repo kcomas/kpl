@@ -191,7 +191,8 @@ ast *ast_b(ast *a) {
 }
 
 static void lst_tbl_e_p(te *lte) {
-    type_p(lte->d[3].p);
+    // TODO ast node
+    type_p(lte->d[2].p);
     printf("`%s", (char*) ((mc*) lte->d[0].p)->d);
 }
 
