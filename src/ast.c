@@ -56,6 +56,23 @@ ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
     return AST_STAT(INV);
 }
 
+ast_stat ast_g_t(te *an, te **t) {
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+        case AST_CLS(I):
+        case AST_CLS(L):
+        case AST_CLS(_):
+            return AST_STAT(INV);
+        case AST_CLS(E):
+            *t = ((te*) an->d[3].p)->d[2].p;
+            break;
+        default:
+            *t = an->d[3].p;
+            break;
+    }
+    return *t ? AST_STAT(OK) : AST_STAT(INV);
+}
+
 static ast_stat err(ast_stat stat, te *pn, te **e) {
     *e = te_c(pn);
     return stat;

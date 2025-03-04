@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
+#define HERE(MSG) printf("\e[1m%s:%d\e[0m \e[1;94m%s\e[0m %s\n", __FILE__, __LINE__, __FUNCTION__, MSG);
+
 typedef void *alfn(size_t s);
 
 typedef void frfn(void *v);

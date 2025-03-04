@@ -55,7 +55,9 @@ fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
         case AST_CLS(T):
         case AST_CLS(I):
         case AST_CLS(S):
+            break;
         case AST_CLS(V):
+            // TODO
             break;
         case AST_CLS(O):
             if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return stat;

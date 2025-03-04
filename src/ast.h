@@ -35,6 +35,9 @@ te *ast_lst_tbl_e_i(const ast *a, mc *s);
 // get first parent node of cls
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
 
+// get type, not null
+ast_stat ast_g_t(te *an, te **type);
+
 ast *ast_b(ast *a);
 
 void ast_p(const te *an, size_t idnt);

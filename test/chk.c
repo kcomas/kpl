@@ -19,6 +19,7 @@ T(fnadd3) {
     chk_p(c->bt, 0);
     printf("AFTER\n");
     chk_p(c->at, 0);
+    printf("------\n");
     te *e = NULL;
     chk_stat stat = chk_n(c, an, &e);
     if (e) {
