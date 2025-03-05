@@ -30,16 +30,28 @@ typedef enum {
 
 const char *ast_cc_str(cc c);
 
-#define LTE_FLAG(N) LTE_FLAG_##N
+#define LTE_FLG(N) LTE_FLG_##N
 
 typedef enum {
-    LTE_FLAG(A) = 1 << 0,
-    LTE_FLAG(L) = 1 << 1,
-    LTE_FLAG(T) = 1 << 2
-} lte_flag; // list tbl entry
+    LTE_FLG(E) = 1 << 0, // export
+    LTE_FLG(A) = 1 << 1, // arg
+    LTE_FLG(L) = 1 << 2, // local
+    LTE_FLG(T) = 1 << 3, // type
+    LTE_FLG(F) = 1 << 4, // func, id becomes the code label
+} lte_flg; // list tbl entry
 
-// lst tbl entry te[mc;u5(id)|u5(flags);type;ast_node]
-te *ast_lst_tbl_e_i(const ast *a, mc *s, te *t);
+#define LTE_FLGS 5
+
+// lst tbl entry te[mc;u5(id)|u5(flgs);type;ast_node]
+te *ast_lst_tbl_e_i(const ast *a, mc *s, un flgs, te *t);
+
+uint32_t ast_lst_tbl_e_g_f(te *ent);
+
+void ast_lst_tbl_e_s_f(te *ent, uint32_t flg);
+
+uint32_t ast_lst_tbl_e_g_i(te *ent);
+
+void ast_lst_tbl_e_s_i(te *ent, uint32_t id);
 
 // get first parent node of cls
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
@@ -52,3 +64,5 @@ ast *ast_b(ast *a);
 void ast_p(const te *an, size_t idnt);
 
 bool ast_eq(const te *restrict a, const te *restrict b);
+
+te *ast_cpy(const te *an);

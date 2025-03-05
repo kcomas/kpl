@@ -86,7 +86,7 @@ static fld_stat idnt_lst_r(fld *f, te **restrict an, te **restrict e) {
     if (!ln->d[3].p) ln->d[3].p = f->fti();
     lt = ln->d[3].p;
     if (tbl_g_i(lt, P((*an)->d[3].p), &kv) == TBL_STAT(NF)) {
-        kv = ast_lst_tbl_e_i(f->a, mc_c((*an)->d[3].p), NULL);
+        kv = ast_lst_tbl_e_i(f->a, mc_c((*an)->d[3].p), U6(0), NULL);
         tbl_a(lt, kv);
     }
     te *en = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(E), P(te_c(kv)));

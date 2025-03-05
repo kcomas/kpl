@@ -8,6 +8,8 @@ void fast(_tests *_t, ast *a, te **an);
 
 tbl *fld_lst_tbl_i(ast *a, size_t n, ...);
 
+#define FLG(I, ...) U6((uint64_t) I << 32 | __VA_ARGS__)
+
 // mc, type...
 tbl *fld_type_tbl_i(size_t n, ...);
 

@@ -36,15 +36,28 @@ static void lst_tbl_e_f(void *p) {
     lte->af->f(lte);
 }
 
-te *ast_lst_tbl_e_i(const ast *a, mc *s, te *t) {
+te *ast_lst_tbl_e_i(const ast *a, mc *s, un flgs, te *t) {
     te *lte = te_i(4, a->ta, lst_tbl_e_f);
     lte->d[0] = P(s);
+    lte->d[1] = flgs;
     lte->d[2] = P(t);
     return lte;
 }
 
-static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
-    return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].u6 == eb->d[1].u6 && type_eq(ea->d[2].p, eb->d[2].p) && ast_eq(ea->d[3].p, eb->d[3].p);
+uint32_t ast_lst_tbl_e_g_f(te *ent) {
+    return u5_g_o(ent->d[1], 0);
+}
+
+void ast_lst_tbl_e_s_f(te *ent, uint32_t flg) {
+    ent->d[1] = u5_s_o(ent->d[1], 0, flg | ast_lst_tbl_e_g_f(ent));
+}
+
+uint32_t ast_lst_tbl_e_g_i(te *ent) {
+    return u5_g_o(ent->d[1], 1);
+}
+
+void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
+    ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
@@ -211,9 +224,25 @@ ast *ast_b(ast *a) {
 }
 
 static void lst_tbl_e_p(te *lte) {
-    // TODO ast node
+    static const char *lbl_flag_str[] = {
+        "E",
+        "A",
+        "L",
+        "T",
+        "F",
+    };
     type_p(lte->d[2].p);
     printf("`%s", (char*) ((mc*) lte->d[0].p)->d);
+    uint32_t id = ast_lst_tbl_e_g_i(lte);
+    uint32_t flgs = ast_lst_tbl_e_g_f(lte);
+    if (flgs) {
+        printf("<%d|", id);
+        for (int32_t i = LTE_FLGS - 1; i > -1; i--) {
+            if (flgs & ((uint32_t) 1 << i)) printf("%s", lbl_flag_str[i]);
+        }
+        printf(">");
+    }
+    // TODO ast node
 }
 
 void ast_p(const te *an, size_t idnt) {
@@ -335,6 +364,10 @@ void ast_p(const te *an, size_t idnt) {
             printf("INV CLS");
             break;
     }
+
+}
+static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
+    return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].u6 == eb->d[1].u6 && type_eq(ea->d[2].p, eb->d[2].p) && ast_eq(ea->d[3].p, eb->d[3].p);
 }
 
 static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
@@ -380,4 +413,11 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
             break;
     }
     return false;
+}
+
+te *ast_cpy(const te *an) {
+    ast_p(an, 0);
+    HERE("TODO");
+    exit(1);
+    return NULL;
 }

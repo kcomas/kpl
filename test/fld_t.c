@@ -14,14 +14,16 @@ void fast(_tests *_t, ast *a, te **an) {
     fld_f(f);
 }
 
+// char *, te[type] un(flags)
 tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
     tbl *t = ati();
     va_list args;
     va_start(args, n);
     while (n > 0) {
         mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
+        un flgs = va_arg(args, un);
         te *type = va_arg(args, te*);
-        te *e = ast_lst_tbl_e_i(a, s, type);
+        te *e = ast_lst_tbl_e_i(a, s, flgs, type);
         tbl_a(t, e);
         n--;
     }
