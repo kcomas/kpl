@@ -4,6 +4,7 @@
 const char *ast_oc_str(oc o) {
     static const char *ocs[] = {
         "_START",
+        "DFN",
         "AGN",
         "CST",
         "ADD",
@@ -186,6 +187,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(FN), TYPE(FN));
     ast_t_a(a, TCUST(UN), TYPE(UN));
     // ops
+    ast_t_a(a, TCUST(DFN), OC(DFN));
     ast_t_a(a, TCUST(AGN), OC(AGN));
     ast_t_a(a, TCUST(CST), OC(CST));
     ast_t_a(a, TCUST(ADD), OC(ADD));

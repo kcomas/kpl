@@ -17,7 +17,7 @@ T(typetype) {
 
 T(fnadd3) {
     V(fnadd3, RN(AN(NULL, LN(LT(1, "f", NULL), L(2,
-        ON(NULL, AGN, EN("f", NULL),
+        ON(NULL, DFN, EN("f", NULL),
             ON(NULL, CST,
             NN(T, TF(FN, TS(I6), 3, "a", TS(I6), "b", TS(I6), "c", TS(I6))),
             LN(LT(3, "a", NULL, "b", NULL,  "c", NULL), L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, EN("a", NULL), ON(NULL, ADD, EN("b", NULL), EN("c", NULL))))))

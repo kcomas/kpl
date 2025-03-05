@@ -26,6 +26,7 @@ typedef enum {
     TCUST(UN),
     // keys
     // ops
+    TCUST(DFN),
     TCUST(AGN),
     TCUST(CST),
     TCUST(ADD),

@@ -37,7 +37,10 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
     te *h = lt->i->h, *lei, *kv;
     while (h) {
         lei = h->d[0].p;
-        if (tbl_g_i(fat, lei->d[0], &kv) == TBL_STAT(OK)) lei->d[2] = P(te_c(kv->d[2].p));
+        if (tbl_g_i(fat, lei->d[0], &kv) == TBL_STAT(OK)) {
+            lei->d[2] = P(te_c(kv->d[2].p));
+            // TODO set arg flag
+        }
         h = h->d[2].p;
     }
     return CHK_STAT(OK);
@@ -83,11 +86,12 @@ static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_agn_e_op(chk *c, te *an, te **e) {
+static chk_stat chk_dfn_e_op(chk *c, te *an, te **e) {
     (void) c;
     (void) e;
     an->d[3] = P(te_c(((te*) an->d[6].p)->d[3].p));
     ((te*) ((te*) an->d[5].p)->d[3].p)->d[2] = P(te_c(an->d[3].p));
+    // TODO set local flag on entry
     return CHK_STAT(OK);
 }
 
@@ -138,7 +142,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_vd, AST_CLS(A), TYPE(_N), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
     // ops
-    CHK_AA(c, chk_agn_e_op, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(FN));
+    CHK_AA(c, chk_dfn_e_op, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(FN));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(ADD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(ADD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6));

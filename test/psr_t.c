@@ -29,4 +29,4 @@ const char *aplyopadd = "+(1;2)";
 
 const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
 
-const char *fnadd3 = "{f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)/p1}()";
+const char *fnadd3 = "{f::FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)/p1}()";
