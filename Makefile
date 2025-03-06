@@ -112,6 +112,12 @@ OBJS += $(CHK_OBJS)
 $(CHK): $(CHK_OBJS) $(TEST)/chk.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
+AG = ag$(TNAME)
+AG_OBJS = $(LSRC)/ag.o $(CHK_OBJS) $(GEN_OBJS)
+AGX64_OBJS = $(SRC)/ag_x64.o $(GEN_OBJS)
+$(AG): $(AG_OBJS) $(AGX64_OBJS) $(TEST)/ag.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
 OBJS := $(sort $(OBJS))
 
 $(TESTS): OO = -O3
