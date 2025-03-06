@@ -307,9 +307,15 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
     return stat;
 }
 
-static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a)  {
+gen_stat gen_err(gen_stat stat, te *ci, te **e) {
+    *e = te_c(ci);
+    return stat;
+}
+
+static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, te **e)  {
     (void) g;
     (void) s;
+    (void) e;
     te *lbl = ci->d[1].p;
     as_lbl_a(a, lbl->d[1].u6);
     set_code_s(ci, a);

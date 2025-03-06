@@ -119,13 +119,13 @@ te *gen_var_i(gen *g, frfn fr, gen_cls cls, uint16_t type, un id) {
     return v;
 }
 
-gen_stat gen_n(gen *g, void *st, as *a) {
+gen_stat gen_n(gen *g, void *st, as *a, te **e) {
     gen_stat stat;
     te *h = g->code->h;
     while (h) {
         te *c = h->d[0].p;
         gen_fn *fn = c->d[4].p;
-        if ((stat = fn(g, st, c, a)) != GEN_STAT(OK)) return stat;
+        if ((stat = fn(g, st, c, a, e)) != GEN_STAT(OK)) return stat;
         h = h->d[2].p;
     }
     return GEN_STAT(OK);
