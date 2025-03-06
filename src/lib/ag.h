@@ -8,4 +8,5 @@ typedef struct {
     uint32_t lc, tc; // label counter, temporary counter
     ssize_t r;
     gen *g;
-} ag;
+    tbl *at, *ot; // not op, op
+} ag; // ast to gen

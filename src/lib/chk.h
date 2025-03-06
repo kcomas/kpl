@@ -2,7 +2,7 @@
 #pragma once
 
 #include "type.h"
-#include "ast.h"
+#include "fld.h"
 
 #define CHK_STAT(N) CHK_STAT_##N
 
