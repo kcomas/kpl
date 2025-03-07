@@ -27,18 +27,26 @@ static bool lst_t(const te *an) {
 static fld_stat aply_lst_o(fld *f, te **restrict an, te **restrict e) {
     (void) f;
     (void) e;
-    te *lp, *ln;
-    if (ast_g_pn(AST_CLS(L), *an, &lp) == AST_STAT(OK)) {
-        HERE("TODO add to parent lst");
-    }
+    te *lp, *ln, *h, *lte;
     lst *al = (*an)->d[5].p;
     if (al && al->l > 0) {
         HERE("TODO add aply vars to head of lst");
     }
-    ln = te_c((*an)->d[4].p);
-    ln->d[0] = (*an)->d[0];
-    te_f(*an);
-    *an = ln;
+    if (ast_g_pn(AST_CLS(L), *an, &lp) == AST_STAT(OK)) {
+        HERE("TODO add to parent lst");
+    } else {
+        ln = te_c((*an)->d[4].p);
+        ln->d[0] = (*an)->d[0];
+        te_f(*an);
+        *an = ln;
+        uint32_t lc = 0; // update idxs of locals
+        h = ((tbl*) ln->d[3].p)->i->h;
+        while (h) {
+            lte = h->d[0].p;
+            if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) ast_lst_tbl_e_s_i(lte, lc++);
+            h = h->d[2].p;
+        }
+    }
     return FLD_STAT(OK);
 }
 
