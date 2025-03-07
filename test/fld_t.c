@@ -1,14 +1,14 @@
 
 #include "fld_t.h"
 
-void fast(_tests *_t, ast *a, te **an) {
+void fast(_tests *_t, ast *a, te **an, fld_build_fn fn, bool rr) {
     E();
-    fld *f = fld_b(fld_i(&ast_am, &ast_am, ati, ali, a, mktbl(AST_CLS(_))));
+    fld *f = fn(fld_i(&ast_am, &ast_am, ati, ali, a, mktbl(AST_CLS(_))));
     te *e = NULL;
-    fld_stat stat = fld_n(f, an, &e);
+    fld_stat stat = fld_n(f, an, &e, rr);
     if (e) {
         ast_p(e, 0);
-        putchar('\n');
+        printf("\n rr: %d\n", rr);
     }
     A(stat == FLD_STAT(OK), "fld_n");
     fld_f(f);

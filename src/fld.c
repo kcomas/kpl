@@ -1,14 +1,14 @@
 
 #include "fld.h"
 
-static fld_stat err(fld_stat stat, te *an, te **e) {
+fld_stat fld_err(fld_stat stat, te *an, te **e) {
     *e = te_c(an);
     return stat;
 }
 
 static fld_stat idnt_lst_r(fld *f, te **restrict an, te **restrict e) {
     te *ln, *kv;
-    if (ast_g_pn(AST_CLS(L), *an, &ln) != AST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
+    if (ast_g_pn(AST_CLS(L), *an, &ln) != AST_STAT(OK)) return fld_err(FLD_STAT(INV), *an, e);
     tbl *lt;
     if (!ln->d[3].p) ln->d[3].p = f->fti();
     lt = ln->d[3].p;
@@ -36,7 +36,7 @@ static fld_stat e_lst_type_o_def_r(fld *f, te **restrict an, te **restrict e) {
     } else if (lt->d[2].u4 == AST_CLS(T)) {
         lte->d[2] = P(te_c(lt->d[3].p));
         ast_lst_tbl_e_s_f(lte, LTE_FLG(T));
-    } else err(FLD_STAT(INV), *an, e);
+    } else fld_err(FLD_STAT(INV), *an, e);
     te_f(*an);
     *an = NULL;
     return FLD_STAT(OK);
@@ -49,7 +49,7 @@ static bool e_lst_type_o_def_t(const te *an) {
 static fld_stat aply_op_r(fld *f, te **restrict an, te **restrict e) {
     (void) f;
     lst *l = lst_c((*an)->d[5].p);
-    if (l->l < 1 || l-l > 2) return err(FLD_STAT(INV), *an, e);
+    if (l->l < 1 || l-l > 2) return fld_err(FLD_STAT(INV), *an, e);
     te *on = te_c((*an)->d[4].p);
     on->d[0] = (*an)->d[0];
     te_f(*an);
@@ -91,23 +91,23 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
 static fld_stat aply_type_r(fld *f, te **restrict an, te **restrict e) {
     fld_stat stat;
     lst *l = lst_c((*an)->d[5].p);
-    if (!l->l) return err(FLD_STAT(INV), *an, e);
+    if (!l->l) return fld_err(FLD_STAT(INV), *an, e);
     te *tn = te_c((*an)->d[4].p);
     te *t = tn->d[3].p;
     type_cls tc = type_g_c(t->d[1].u4);
     un ln;
     switch (tc) {
         case TYPE_CLS(F):
-            if (lst_sb(l, &ln) != LST_STAT(OK)) return err(FLD_STAT(INV), *an, e);
+            if (lst_sb(l, &ln) != LST_STAT(OK)) return fld_err(FLD_STAT(INV), *an, e);
             te *rn = ln.p;
-            if (rn->d[2].u4 != AST_CLS(T)) return err(FLD_STAT(INV), *an, e);
+            if (rn->d[2].u4 != AST_CLS(T)) return fld_err(FLD_STAT(INV), *an, e);
             t->d[2] = P(te_c(rn->d[3].p));
             ((te*) t->d[2].p)->d[0] = P(t); // set parent
             te_f(rn);
-            if ((stat = z_type_i(f, l, t)) != FLD_STAT(OK)) return err(stat, *an, e);
+            if ((stat = z_type_i(f, l, t)) != FLD_STAT(OK)) return fld_err(stat, *an, e);
             break;
         default:
-            return err(FLD_STAT(INV), *an, e);
+            return fld_err(FLD_STAT(INV), *an, e);
     }
     tn->d[0] = (*an)->d[0];
     te_f(*an);
@@ -126,7 +126,7 @@ static fld_stat cmd_r(fld *f, te **restrict an, te **restrict e) {
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U4(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(U5))), U5(1)), te_c((*an)->d[4].p));
             break;
         default:
-            return err(FLD_STAT(INV), *an, e);
+            return fld_err(FLD_STAT(INV), *an, e);
     }
     te_f(*an);
     *an = nn;

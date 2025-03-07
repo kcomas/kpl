@@ -34,25 +34,26 @@ void fld_a(fld *f, ast_cls cls, fld_test_fn test, fld_fn fn) {
     lst_ab(l, P(fns));
 }
 
-static fld_stat fld_lst_n(fld *f, lst *l, te **e) {
+static fld_stat fld_lst_n(fld *f, lst *l, te **e, bool rr) {
     fld_stat stat = FLD_STAT(OK);
     if (!l) return stat;
     te *h = l->h;
     while (h) {
-        if ((stat = fld_n(f, (te**) &h->d[0].p, e)) != FLD_STAT(OK)) return stat;
+        if ((stat = fld_n(f, (te**) &h->d[0].p, e, rr)) != FLD_STAT(OK)) return stat;
         h = h->d[2].p;
     }
     return stat;
 }
 
-fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
+fld_stat fld_n(fld *f, te **restrict an, te **restrict e, bool rr) {
     fld_stat stat = FLD_STAT(OK);
     if (!*an) return stat;
     switch ((*an)->d[2].u4) {
         case AST_CLS(R):
-            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e, rr)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(T):
+        case AST_CLS(E):
         case AST_CLS(I):
         case AST_CLS(S):
             break;
@@ -60,19 +61,19 @@ fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
             // TODO
             break;
         case AST_CLS(O):
-            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return stat;
+            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e, rr)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e, rr)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(Z):
-            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e, rr)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(A):
-            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK) || (stat = fld_lst_n(f, (*an)->d[5].p, e))) return stat;
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e, rr)) != FLD_STAT(OK) || (stat = fld_lst_n(f, (*an)->d[5].p, e, rr))) return stat;
             break;
         case AST_CLS(L):
-            if ((stat = fld_lst_n(f, (*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            if ((stat = fld_lst_n(f, (*an)->d[4].p, e, rr)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(C):
-            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e, rr)) != FLD_STAT(OK)) return stat;
             break;
         default:
             return FLD_STAT(INV);
@@ -88,7 +89,7 @@ fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
                 h = h->d[2].p;
             }
         }
-    } while (pan != *an); // run again if node changes
+    } while (rr && pan != *an); // run again if node changes
     return stat;
 }
 
