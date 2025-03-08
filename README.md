@@ -20,6 +20,8 @@ make
 
 ## Usage TODO
 
+#### Examples with an overview can be found in the ex folder
+
 ## Tests
 
 All Tests:

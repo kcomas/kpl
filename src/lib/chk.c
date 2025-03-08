@@ -97,7 +97,7 @@ static chk_stat chk_foe(bool foe, te *an, te **e) {
     return foe ? CHK_STAT(INV) : CHK_STAT(OK);
 }
 
-static chk_stat chk_r(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
+static chk_stat run(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
     un hsh = chk_hsh(an);
     te *kv;
     if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
@@ -134,7 +134,7 @@ chk_stat chk_n(chk *c, te *an, te **e) {
     chk_stat stat = CHK_STAT(OK);
     if (!an) return stat;
     const uint8_t n = chk_cls_conts[an->d[2].u4], ncmp = AST_MIN_LEN;
-    if (n && (stat = chk_r(c, c->bt, an, e, n, ncmp, false)) != CHK_STAT(OK)) return stat;
+    if (n && (stat = run(c, c->bt, an, e, n, ncmp, false)) != CHK_STAT(OK)) return stat;
     switch (an->d[2].u4) {
         case AST_CLS(R):
             if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
@@ -162,7 +162,7 @@ chk_stat chk_n(chk *c, te *an, te **e) {
             return CHK_STAT(INV); // nodes should have been removed
     }
     if (!n) return CHK_STAT(OK); // do not test
-    return chk_r(c, c->at, an, e, n, ncmp, true);
+    return run(c, c->at, an, e, n, ncmp, true);
 }
 
 void chk_f(chk *c) {

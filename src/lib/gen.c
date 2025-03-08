@@ -21,9 +21,21 @@ gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
     g->r = 1;
     g->af = af;
     g->ta = ta;
-    g->cti = cti; g->oci = oci;
+    g->cti = cti;
+    g->oci = oci;
     g->code = code;
     return g;
+}
+
+gen *gen_cpy(const gen *g) {
+    gen *gc = g->af->a(sizeof(gen));
+    gc->r = 1;
+    gc->af = g->af;
+    gc->ta = g->ta;
+    gc->cti = g->cti;
+    gc->oci = tbl_c(g->oci);
+    gc->code = lst_i(g->code->af, g->code->ta, g->code->df);
+    return gc;
 }
 
 static void gen_entry_f(void *p) {
