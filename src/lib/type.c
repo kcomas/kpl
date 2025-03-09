@@ -8,8 +8,6 @@ const char *type_str(type t) {
         "_N",
         "_A",
         "DL",
-        "FP",
-        "FL",
         "VD",
         "BL",
         "I3",

@@ -1,0 +1,15 @@
+
+#include "../src/atg_x64.h"
+#include "chk_t.h"
+#include "gen_t.h"
+
+extern const alfr am;
+
+T(fnadd3) {
+    IC(fnadd3);
+    RC();
+    fast(_t, a, &an, opt_b, false);
+    atg *t = atg_i(&ast_am, &ast_am, &ast_am, &ast_am, cti, gen_b(gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst())), lst_i(&ast_am, &ast_am, (void*) te_f));
+    A(atg_q(t, an, atg_x64_enq) == ATG_STAT(OK) && t->q->l > 0, "atg_q");
+    atg_f(t);
+}

@@ -11,20 +11,19 @@ __attribute__((destructor)) void gen_d(void) {
     x64_munmap(1, m);
 }
 
-extern const alfr gm;
-
+extern const alfr am;
 
 #define S(stmt) A((stmt) == GEN_STAT(OK), "gen_a")
 
 T(b) {
-    gen *g = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen *g = gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(ADD), gen_arg(g, X64_TYPE(U6), 0),  gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 1)));
     S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(U6), 0), NULL, NULL));
-    gen_st *st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
-    as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
     te *e;
@@ -44,9 +43,9 @@ T(b) {
 
 T(call) {
     te *e;
-    as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    gen *ga = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
-    gen_st *st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    gen *ga = gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     gen_b(ga);
     S(gen_a(ga, GEN_OP(LBL), gen_lbl(ga, 0), NULL, NULL));
     S(gen_a(ga, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -59,7 +58,7 @@ T(call) {
     gen_st_f(st);
     gen *gc = gen_cpy(ga);
     gen_f(ga);
-    st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
+    st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(SUB), gen_arg(gc, X64_TYPE(U6), 0), gen_arg(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U3), U3(1))));
@@ -81,15 +80,15 @@ T(call) {
 }
 
 static gen *init(void) {
-    gen *g = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen *g = gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
     return g;
 }
 
 static void build(_tests *_t, gen *g, uint8_t *m) {
     E();
-    gen_st *st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
-    as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
     te *e;

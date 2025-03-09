@@ -2,7 +2,7 @@
 #include "../src/opt.h"
 #include "chk_t.h"
 
-#define V(N) RC(N); \
+#define V(N) RC(); \
     fast(_t, a, &an, opt_b, false); \
     ast_verify(_t, a, an, N);
 

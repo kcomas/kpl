@@ -1,7 +1,7 @@
 
 #include "chk_t.h"
 
-#define V(N) RC(N); \
+#define V(N) RC(); \
     ast_verify(_t, a, an, N);
 
 T(fnadd3) {
