@@ -1,7 +1,7 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, gen *g, as *a, lst *q) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, lst *q, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->lc = 0;
    t->r = 1;
@@ -10,19 +10,46 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg
    t->saf = saf;
    t->sta = sta;
    t->aoti = aoti;
+   t->q = q;
    t->g = g;
    t->a = a;
-   t->q = q;
    t->at = aoti();
    t->ot = aoti();
    return t;
+}
+
+static atg_stat atg_lst_q(atg *t, lst *l, atg_enq enq) {
+    atg_stat stat = ATG_STAT(OK);
+    if (!l) return stat;
+    te *h = l->h;
+    while (h) {
+        if ((stat = atg_q(t, h->d[0].p, enq)) != ATG_STAT(OK)) return stat;
+        h = h->d[2].p;
+    }
+    return stat;
 }
 
 atg_stat atg_q(atg *t, te *an, atg_enq enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!an) return stat;
     if (enq(an)) lst_ab(t->q, P(te_c(an)));
-    HERE("TODO");
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+            return atg_q(t, an->d[4].p, enq);
+        case AST_CLS(V):
+            // TODO
+            break;
+        case AST_CLS(O):
+            if ((stat = atg_q(t, an->d[5].p, enq)) != ATG_STAT(OK)) return stat;
+            return atg_q(t, an->d[6].p, enq);
+        case AST_CLS(A):
+            if ((stat = atg_q(t, an->d[4].p, enq)) != ATG_STAT(OK)) return stat;
+            return atg_lst_q(t, an->d[5].p, enq);
+        case AST_CLS(L):
+            return atg_lst_q(t, an->d[4].p, enq);
+        default:
+            break;
+    }
     return stat;
 }
 

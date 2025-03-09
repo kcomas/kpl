@@ -18,13 +18,13 @@ typedef struct {
     ssize_t r;
     const alfr *af, *ta, *saf, *sta; // alloc for gen st
     atg_tbl_i *aoti;
+    lst *q; // queue
     gen *g; // for base gens
     as *a;
-    lst *q; // queue
     tbl *at, *ot; // not op, op
 } atg; // ast to gen
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, gen *g, as *a, lst *q);
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, lst *q, gen *g, as *a);
 
 typedef bool atg_enq(const te *an);
 
