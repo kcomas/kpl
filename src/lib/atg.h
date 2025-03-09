@@ -18,7 +18,7 @@ typedef struct {
     ssize_t r;
     const alfr *af, *ta, *saf, *sta; // alloc for gen st
     atg_tbl_i *aoti;
-    lst *q; // queue
+    lst *q; // queue of weak ref **an
     gen *g; // for base gens
     as *a;
     tbl *at, *ot; // not op, op
