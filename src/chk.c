@@ -112,6 +112,9 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
         h = h->d[2].p;
     }
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
+    te *rt;
+    if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
+    if (!type_eq(((te*) an->d[3].p)->d[2].p, rt)) return chk_err(CHK_STAT(INV), an, e); // last stmt ret type
     return CHK_STAT(OK);
 }
 

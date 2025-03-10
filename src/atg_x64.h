@@ -6,3 +6,5 @@
 #include "./lib/gen_x64.h"
 
 bool atg_x64_enq(const te *an);
+
+atg *atg_b(atg *t);
