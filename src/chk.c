@@ -108,7 +108,7 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
     te *h = lt->i->h;
     while (h) {
         uint32_t flgs = ast_lst_tbl_e_g_f(h->d[0].p);
-        if ((flgs & LTE_FLG(S)) && (!(flgs & LTE_FLG(F)))) return chk_err(CHK_STAT(INV), an, e);
+        if ((flgs & LTE_FLG(O)) && (!(flgs & LTE_FLG(F)))) return chk_err(CHK_STAT(INV), an, e);
         h = h->d[2].p;
     }
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
