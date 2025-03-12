@@ -33,13 +33,15 @@ typedef bool atg_test_fn(const te *an);
 
 atg_stat atg_q(atg *t, te **an, atg_test_fn enq);
 
-// keep root node
-typedef atg_stat atg_cc_fn(atg *t, gen *g, te *restrict rn, te *restrict an, te **e);
+// keep root node do not modify nodes
+typedef atg_stat atg_cc_fn(atg *t, gen *g, te *an, te **e);
 
 void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e);
 
 // te[u4(code)|u4(type)...;[tbl;cc]]
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc);
+
+atg_stat atg_err(atg_stat stat, te *an, te **e);
 
 atg_stat atg_qn(atg *t, te **e);
 

@@ -60,17 +60,16 @@ atg_stat atg_err(atg_stat stat, te *an, te **e) {
     return stat;
 }
 
-static atg_stat lst_cst_s(atg *t, gen *g, te *restrict rn, te *restrict an, te **e) {
+static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
-    (void) an;
-    if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), rn, e);
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     return ATG_STAT(OK);
 }
 
-static atg_stat lst_cst_e(atg *t, gen *g, te *restrict rn, te *restrict an, te **e) {
+static atg_stat lst_cst_e(atg *t, gen *g, te *an, te **e) {
     (void) t;
     (void) an;
-    (void) rn;
     (void) g;
     (void) e;
     HERE("TODO");
@@ -78,7 +77,7 @@ static atg_stat lst_cst_e(atg *t, gen *g, te *restrict rn, te *restrict an, te *
 }
 
 
-static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *restrict rn, te *restrict an, te **e) {
+static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, te **e) {
     HERE("TODO");
     return ATG_STAT(INV);
 }

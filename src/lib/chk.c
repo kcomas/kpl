@@ -93,7 +93,7 @@ static un chk_hsh(const te *an) {
 }
 
 static chk_stat chk_foe(bool foe, te *an, te **e) {
-    if (foe) *e = an;
+    if (foe) *e = te_c(an);
     return foe ? CHK_STAT(INV) : CHK_STAT(OK);
 }
 

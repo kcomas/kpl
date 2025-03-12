@@ -89,8 +89,60 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     return stat;
 }
 
-static atg_stat run_cc(atg *t, gen *g, te *rn, te **e) {
-    HERE("TODO");
+static atg_stat run_cc(atg *t, gen *g, te *an, te **e);
+
+static atg_stat run_cc_lst(atg *t, gen *g, lst *l, te **e) {
+    atg_stat stat = ATG_STAT(OK);
+    if (!l) return stat;
+    te *h = l->h;
+    while (h) {
+        if ((stat = run_cc(t, g, h->d[0].p, e)) != ATG_STAT(OK)) return stat;
+        h = h->d[2].p;
+    }
+    return stat;
+}
+
+static atg_stat run_cc(atg *t, gen *g, te *an, te **e) {
+    atg_stat stat = ATG_STAT(OK);
+    if (!an) return stat;
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+            if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+            break;
+        case AST_CLS(T):
+        case AST_CLS(E):
+        case AST_CLS(S):
+            break;
+        case AST_CLS(V):
+            // TODO
+            break;
+        case AST_CLS(O):
+            if ((stat = run_cc(t, g, an->d[5].p, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, an->d[6].p, e)) != ATG_STAT(OK)) return stat;
+            break;
+        case AST_CLS(Z):
+            if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+            break;
+        case AST_CLS(A):
+            if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+            if ((stat = run_cc_lst(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
+            break;
+        case AST_CLS(L):
+            if ((stat = run_cc_lst(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+            break;
+        default:
+            *e = te_c(an);
+            return ATG_STAT(INV);
+    }
+    switch (an->d[2].u4) {
+        case AST_CLS(T):
+        case AST_CLS(E):
+            break;
+        // run
+        default:
+            *e = te_c(an);
+            return ATG_STAT(INV);
+    }
+    return ATG_STAT(OK);
 }
 
 atg_stat atg_qn(atg *t, te **e) {
@@ -111,7 +163,7 @@ atg_stat atg_qn(atg *t, te **e) {
     }
     if (!sf || !ef) return ATG_STAT(INV);
     gen *g = gen_cpy(t->bg);
-    if ((stat = sf(t, g, *rn, NULL, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, NULL, e)) != ATG_STAT(OK)) return stat;
+    if ((stat = sf(t, g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, e)) != ATG_STAT(OK)) return stat;
     gen_p(g, NULL);
     HERE("TODO");
     return stat;
