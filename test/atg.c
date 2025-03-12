@@ -15,6 +15,7 @@ T(fnadd3) {
     fast(_t, a, &an, opt_b, false);
     atg *t = atg_i(&ast_am, &ast_am, &ast_am, &ast_am, cti, atli, gen_b(gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst())));
     atg_b(t);
+    atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     te *e = NULL;
     atg_stat stat = atg_qn(t, &e);

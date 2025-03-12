@@ -3,7 +3,7 @@
 
 atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *ati, atg_lst_i ali, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
-   t->lc = 0;
+   t->tc = t->lc = 0;
    t->r = 1;
    t->af = af;
    t->ta = ta;
@@ -63,7 +63,7 @@ void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e) {
     lst_ab(t->se, P(se));
 }
 
-static void a_o(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
+static void add_e(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
     un hsh = U6(0);
     hsh = u4_s_o(hsh, 1, c);
     hsh = u4_s_o(hsh, 0, ct);
@@ -71,6 +71,7 @@ static void a_o(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
         *kv = te_i(2, t->ta, NULL);
         (*kv)->d[0] = hsh;
         if (at) (*kv)->d[1] = P(t->ati());
+        tbl_a(ot, *kv);
     }
 }
 
@@ -78,11 +79,11 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     atg_stat stat = ATG_STAT(OK);
     tbl *ot = t->ot;
     te *kv;
-    a_o(t, ot, oc, ct, &kv, true);
+    add_e(t, ot, oc, ct, &kv, true);
     ot = kv->d[1].p;
-    a_o(t, ot, lc, lt, &kv, true);
+    add_e(t, ot, lc, lt, &kv, true);
     ot = kv->d[1].p;
-    a_o(t, ot, rc, rt, &kv, false);
+    add_e(t, ot, rc, rt, &kv, false);
     if (kv->d[1].p) return ATG_STAT(INV);
     kv->d[1] = P(cc);
     return stat;

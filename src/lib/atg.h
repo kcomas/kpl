@@ -16,7 +16,7 @@ typedef tbl *atg_tbl_i(void);
 typedef lst *atg_lst_i(void);
 
 typedef struct {
-    uint32_t lc; // label counter
+    uint32_t tc, lc; // tmp counter, label counter
     ssize_t r;
     const alfr *af, *ta, *saf, *sta; // alloc for gen st
     atg_tbl_i *ati;
