@@ -1,7 +1,7 @@
 
 #include "atg_x64.h"
 
-static atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
+static void atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
     n--;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
     te *h = t->i->h;
@@ -55,11 +55,6 @@ bool atg_x64_enq(const te *an) {
     return false;
 }
 
-atg_stat atg_err(atg_stat stat, te *an, te **e) {
-    *e = te_c(an);
-    return stat;
-}
-
 static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
@@ -77,10 +72,21 @@ static atg_stat lst_cst_e(atg *t, gen *g, te *an, te **e) {
     return ATG_STAT(OK);
 }
 
+static te *var_arg(gen *g, te *lte, x64_type xt) {
+    uint32_t id = ast_lst_tbl_e_g_i(lte);
+    uint32_t flgs = ast_lst_tbl_e_g_f(lte);
+    if (flgs & LTE_FLG(A)) return gen_arg(g, xt, id);
+    // TODO var
+    return NULL;
+}
 
 static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, te **e) {
-    HERE("TODO");
-    return ATG_STAT(INV);
+    te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) an->d[6].p)->d[3].p;
+    if (!(l = var_arg(g, l, X64_TYPE(I6)))) return atg_err(ATG_STAT(INV), an->d[5].p, e);
+    if (!(r = var_arg(g, r, X64_TYPE(I6)))) return atg_err(ATG_STAT(INV), an->d[6].p, e);
+    if (gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->lc++), l, r) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    gen_p(g, NULL);
+    return ATG_STAT(OK);
 }
 
 atg *atg_b(atg *t) {

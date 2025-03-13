@@ -89,6 +89,40 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     return stat;
 }
 
+atg_stat atg_err(atg_stat stat, te *an, te **e) {
+    *e = te_c(an);
+    return stat;
+}
+
+static atg_stat cc_r(atg *t, gen *g, te *an, te **e, tbl *tt, size_t n, ...) {
+    te *kv;
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) return atg_err(ATG_STAT(INV), an, e);
+        n--;
+        if (n > 0) tt = kv->d[1].p;
+    }
+    va_end(args);
+    return ((atg_cc_fn*) kv->d[1].p)(t, g, an, e);
+}
+
+static atg_stat cc(atg *t, gen *g, te *an, te **e) {
+    un ha = U6(0);
+    switch (an->d[2].u4) {
+        case AST_CLS(T):
+        case AST_CLS(E):
+            return ATG_STAT(OK);
+        case AST_CLS(O):
+            ha = u4_s_o(ha, AST_HSH_C, an->d[4].u4);
+            ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            return cc_r(t, g, an, e, t->ot, 3, ha, ast_hsh(an->d[5].p), ast_hsh(an->d[6].p));
+        default:
+            break;
+    }
+    return atg_err(ATG_STAT(INV), an, e);
+}
+
 static atg_stat run_cc(atg *t, gen *g, te *an, te **e);
 
 static atg_stat run_cc_lst(atg *t, gen *g, lst *l, te **e) {
@@ -133,16 +167,7 @@ static atg_stat run_cc(atg *t, gen *g, te *an, te **e) {
             *e = te_c(an);
             return ATG_STAT(INV);
     }
-    switch (an->d[2].u4) {
-        case AST_CLS(T):
-        case AST_CLS(E):
-            break;
-        // run
-        default:
-            *e = te_c(an);
-            return ATG_STAT(INV);
-    }
-    return ATG_STAT(OK);
+    return cc(t, g, an, e);
 }
 
 atg_stat atg_qn(atg *t, te **e) {
@@ -164,7 +189,6 @@ atg_stat atg_qn(atg *t, te **e) {
     if (!sf || !ef) return ATG_STAT(INV);
     gen *g = gen_cpy(t->bg);
     if ((stat = sf(t, g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, e)) != ATG_STAT(OK)) return stat;
-    gen_p(g, NULL);
     HERE("TODO");
     return stat;
 }

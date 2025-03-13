@@ -15,7 +15,6 @@ TESTS = tests
 .RECIPEPREFIX = >
 .PHONY: show_$(TESTS) clean
 
-all: OO = -O3
 all: $(NAME)
 
 TEST_OBJS = $(TEST)/t.o
@@ -128,6 +127,7 @@ $(ATG): $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o 
 OBJS := $(sort $(OBJS))
 
 $(TESTS): OO = -O3
+$(TESTS): WFLAGS += -Werror
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
 > $(CCOBJ)
 

@@ -9,6 +9,4 @@ void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt);
 
 bool atg_x64_enq(const te *an);
 
-atg_stat atg_err(atg_stat stat, te *an, te **e);
-
 atg *atg_b(atg *t);
