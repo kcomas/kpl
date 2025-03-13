@@ -4,6 +4,7 @@
 #include "mc.h"
 #include "tbl.h"
 #include "tkn.h"
+#include "type.h"
 
 #define AST_STAT(N) AST_STAT_##N
 
@@ -30,6 +31,11 @@ typedef enum {
 } ast_cls;
 
 const char *ast_cls_str(ast_cls cls);
+
+un ast_hsh(const te *an);
+
+#define AST_HSH_C 1
+#define AST_HSH_T 0
 
 // ast entry te[id;fn]
 

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "./lib/ast.h"
-#include "./lib/type.h"
 #include "psr.h"
 
 #define OC(N) OC_##N

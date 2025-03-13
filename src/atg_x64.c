@@ -7,8 +7,8 @@ static atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
     te *h = t->i->h;
     while (h) {
         te *kv = h->d[0].p;
-        uint16_t hc = u4_g_o(kv->d[0], 1);
-        uint16_t ht = u4_g_o(kv->d[0], 0);
+        uint16_t hc = u4_g_o(kv->d[0], AST_HSH_C);
+        uint16_t ht = u4_g_o(kv->d[0], AST_HSH_T);
         printf("[%s %s]", ast_cls_str(hc), type_str(ht));
         if (n > 0) {
             putchar('\n');
@@ -64,6 +64,7 @@ static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    // TODO zero ref counted vars
     return ATG_STAT(OK);
 }
 

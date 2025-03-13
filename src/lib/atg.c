@@ -65,8 +65,8 @@ void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e) {
 
 static void add_e(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
     un hsh = U6(0);
-    hsh = u4_s_o(hsh, 1, c);
-    hsh = u4_s_o(hsh, 0, ct);
+    hsh = u4_s_o(hsh, AST_HSH_C, c);
+    hsh = u4_s_o(hsh, AST_HSH_T, ct);
     if (tbl_g_i(ot, hsh, kv) == TBL_STAT(NF)) {
         *kv = te_i(2, t->ta, NULL);
         (*kv)->d[0] = hsh;
