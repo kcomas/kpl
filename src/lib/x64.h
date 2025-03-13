@@ -156,6 +156,9 @@ x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 // subsd xmm0, xmm1
 x64_stat x64_subsd_rr(size_t *p, uint8_t *m, reg d, reg s);
 
+// neg rax
+x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r);
+
 // and rmx, rdi
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s);
 
