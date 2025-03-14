@@ -12,8 +12,9 @@ typedef enum {
     TYPE(_S),
     // internal
     TYPE(_N), // none
-    TYPE(_A), // used for type checking only
-    TYPE(DL), // deferred list {}
+    TYPE(_A), // auto
+    TYPE(_L), // deferred list {}
+    TYPE(_G), // gen code
     // user
     TYPE(VD), // void
     TYPE(BL),

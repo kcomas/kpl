@@ -31,7 +31,7 @@ static fld_stat e_lst_type_o_def_r(fld *f, te **restrict an, te **restrict e) {
     te *lte = te_c(((te*) (*an)->d[6].p)->d[3].p);
     te *lt = (*an)->d[6].p;
     if (lt->d[2].u4 == AST_CLS(L)) {
-        lte->d[2] = P(type_s_i(f->a->ta, NULL, TYPE(DL)));
+        lte->d[2] = P(type_s_i(f->a->ta, NULL, TYPE(_L)));
         lte->d[3] = P(te_c(lt));
     } else if (lt->d[2].u4 == AST_CLS(T)) {
         lte->d[2] = P(te_c(lt->d[3].p));

@@ -158,8 +158,7 @@ static atg_stat run_cc(atg *t, gen *g, te *an, te **e) {
             if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
             break;
         case AST_CLS(A):
-            if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
-            if ((stat = run_cc_lst(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
+            if ((stat = run_cc(t, g, an->d[4].p, e)) != ATG_STAT(OK) || (stat = run_cc_lst(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
             break;
         case AST_CLS(L):
             if ((stat = run_cc_lst(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
@@ -171,7 +170,7 @@ static atg_stat run_cc(atg *t, gen *g, te *an, te **e) {
     return cc(t, g, an, e);
 }
 
-atg_stat atg_qn(atg *t, te **e) {
+atg_stat atg_qn(atg *t, ast *a, te **e) {
     atg_stat stat = ATG_STAT(OK);
     un v;
     if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);
@@ -190,6 +189,9 @@ atg_stat atg_qn(atg *t, te **e) {
     if (!sf || !ef) return ATG_STAT(INV);
     gen *g = gen_cpy(t->bg);
     if ((stat = sf(t, g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, e)) != ATG_STAT(OK)) return stat;
+    te *nn = ast_an_i(a, (*rn)->d[0].p, (*rn)->d[1].p, AST_CLS(S), P(type_s_i(a->ta, NULL, TYPE(_G))), P(g));
+    te_f(*rn);
+    *rn = nn;
     return stat;
 }
 

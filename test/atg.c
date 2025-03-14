@@ -18,12 +18,14 @@ T(fnadd3) {
     atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     te *e = NULL;
-    atg_stat stat = atg_qn(t, &e);
+    atg_stat stat = atg_qn(t, a, &e);
     if (e) {
         ast_p(e, 0);
         putchar('\n');
     }
     A(stat == ATG_STAT(OK), "atg_qn");
+    ast_p(an, 0);
+    putchar('\n');
     // TODO test first cc
     atg_f(t);
 }
