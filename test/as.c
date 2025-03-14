@@ -130,3 +130,16 @@ T(calle) {
     A(r == ((int64_t(*)()) m)(), "calle");
     as_f(a);
 }
+
+T(neg) {
+    int64_t r = 8;
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
+    AS_A1(a, AS_X64(NEG), as_arg_r(a, R(AX)));
+    AS_A0(a, AS_X64(RET));
+    A(as_n(a, m) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    A(-r == ((int64_t(*)(int64_t)) m)(r), "neg");
+    as_f(a);
+
+}

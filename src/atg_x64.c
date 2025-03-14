@@ -55,6 +55,11 @@ bool atg_x64_enq(const te *an) {
     return false;
 }
 
+atg_stat atg_err(atg_stat stat, te *an, te **e) {
+    *e = te_c(an);
+    return stat;
+}
+
 static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
