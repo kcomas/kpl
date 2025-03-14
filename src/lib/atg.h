@@ -41,6 +41,6 @@ void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e);
 // te[u4(code)|u4(type)...;[tbl;cc]]
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc);
 
-atg_stat atg_qn(atg *t, ast *a, te **e);
+atg_stat atg_qn(atg *t, gen **g, ast *a, te **e);
 
 void atg_f(atg *t);
