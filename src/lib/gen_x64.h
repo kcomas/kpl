@@ -14,6 +14,7 @@ typedef enum {
     GEN_OP(LEAVE),
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
+    GEN_OP(NEG),
     GEN_OP(ADD),
     GEN_OP(SUB),
     GEN_OP(EQ),

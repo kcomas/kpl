@@ -115,6 +115,8 @@ static atg_stat cc(atg *t, gen *g, te *an, te **e) {
             ha = u4_s_o(ha, AST_HSH_C, an->d[4].u4);
             ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
             return cc_r(t, g, an, e, t->ot, 3, ha, ast_hsh(an->d[5].p), ast_hsh(an->d[6].p));
+        case AST_CLS(L):
+            return ATG_STAT(OK);
         default:
             break;
     }
@@ -188,7 +190,6 @@ atg_stat atg_qn(atg *t, te **e) {
     if (!sf || !ef) return ATG_STAT(INV);
     gen *g = gen_cpy(t->bg);
     if ((stat = sf(t, g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, e)) != ATG_STAT(OK)) return stat;
-    HERE("TODO");
     return stat;
 }
 
