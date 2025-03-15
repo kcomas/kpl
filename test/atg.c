@@ -34,7 +34,6 @@ T(fnadd3) {
     te_f(ft);
     te_f(cn);
     cn = NULL;
-    gen_f(g);
     // TODO test gen
     te_f(an);
     atg_f(t);
