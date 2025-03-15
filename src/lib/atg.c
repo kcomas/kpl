@@ -1,7 +1,7 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *ati, atg_lst_i ali, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->tc = t->lc = 0;
    t->r = 1;
@@ -10,11 +10,10 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg
    t->saf = saf;
    t->sta = sta;
    t->ati = ati;
-   t->ali = ali;
    t->bg = g;
    t->a = a;
-   t->q = ali();
-   t->se = ali();
+   t->q = q;
+   t->se = se;
    t->at = ati();
    t->ot = ati();
    return t;
@@ -63,12 +62,18 @@ void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e) {
     lst_ab(t->se, P(se));
 }
 
+static void atg_tbl_entry_f(void *p) {
+    te *t = p;
+    tbl_f(t->d[1].p);
+    t->af->f(t);
+}
+
 static void add_e(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
     un hsh = U6(0);
     hsh = u4_s_o(hsh, AST_HSH_C, c);
     hsh = u4_s_o(hsh, AST_HSH_T, ct);
     if (tbl_g_i(ot, hsh, kv) == TBL_STAT(NF)) {
-        *kv = te_i(2, t->ta, NULL);
+        *kv = te_i(2, t->ta, at ? atg_tbl_entry_f : NULL);
         (*kv)->d[0] = hsh;
         if (at) (*kv)->d[1] = P(t->ati());
         tbl_a(ot, *kv);
