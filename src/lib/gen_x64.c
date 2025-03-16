@@ -166,8 +166,8 @@ gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, v
     return st;
 }
 
-gen_st *gen_st_i_st(const gen_st *st) {
-    return gen_st_i(st->af, st->ta, tbl_i_t(st->atm), tbl_i_t(st->lat), vr_i_v(st->rstk), vr_i_v(st->xstk));
+gen_st *gen_st_i_gen_st(const gen_st *st) {
+    return gen_st_i(st->af, st->ta, tbl_i_tbl(st->atm), tbl_i_tbl(st->lat), vr_i_vr(st->rstk), vr_i_vr(st->xstk));
 }
 
 void gen_st_p(const gen_st *st) {

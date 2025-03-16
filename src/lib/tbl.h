@@ -30,7 +30,7 @@ typedef struct {
 
 tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
-tbl *tbl_i_t(const tbl *t);
+tbl *tbl_i_tbl(const tbl *t);
 
 tbl *tbl_c(tbl *t);
 

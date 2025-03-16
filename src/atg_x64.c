@@ -132,7 +132,7 @@ static atg_stat neg_i6_o_i6(atg *t, gen *g, te *an, te **e) {
 static atg_stat dfn_fn_e_fn_s__g(atg *t, gen *g, te *an, te **e) {
     (void) g;
     gen *sg = ((te*) an->d[6].p)->d[4].p;
-    gen_st *st = gen_st_i_st(t->bst);
+    gen_st *st = gen_st_i_gen_st(t->bst);
     // TODO run asm
     gen_st_f(st);
     gen_f(sg);

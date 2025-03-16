@@ -27,8 +27,8 @@ gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
     return g;
 }
 
-gen *gen_i_g(const gen *g) {
-    return gen_i(g->af, g->ta, g->cti, tbl_c(g->oci), lst_i_l(g->code));
+gen *gen_i_gen(const gen *g) {
+    return gen_i(g->af, g->ta, g->cti, tbl_c(g->oci), lst_i_lst(g->code));
 }
 
 static bool gen_lst_eq(un x, un y) {
