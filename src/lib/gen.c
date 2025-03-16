@@ -18,6 +18,7 @@ const char* gen_cls_str(gen_cls cls) {
 
 gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
     gen *g = af->a(sizeof(gen));
+    g->lbl = UINT32_MAX;
     g->r = 1;
     g->af = af;
     g->ta = ta;

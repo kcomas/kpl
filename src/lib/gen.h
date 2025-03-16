@@ -32,6 +32,7 @@ typedef tbl *cls_tbl_i(void);
 // code te[op_id;aci;ac2;ac3;fn;as_code_s;as_code_e]
 
 typedef struct {
+    uint32_t lbl;
     ssize_t r;
     const alfr *af, *ta;
     cls_tbl_i *cti;

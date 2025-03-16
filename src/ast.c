@@ -271,8 +271,6 @@ void ast_p(const te *an, size_t idnt) {
             type_p(an->d[3].p);
             switch (((te*) an->d[3].p)->d[1].u4) {
                 case TYPE(_G):
-                    printf(" GEN");
-                    break;
                 case TYPE(U5):
                     printf(" %u", an->d[4].i5);
                     break;
@@ -375,7 +373,8 @@ static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
 }
 
 static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
-    if (t->d[1].u4 <= TYPE(VD)) return true;
+    if (t->d[1].u4 == TYPE(_G)) return a->d[4].u5 == b->d[4].u5;
+    if (t->d[1].u4 == TYPE(VD)) return true;
     if (t->d[1].u4 >= TYPE(I3) && t->d[1].u4 <= TYPE(F6)) return a->d[4].u4 == b->d[4].u4;
     if (t->d[1].u4 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
     return false;
