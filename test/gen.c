@@ -13,8 +13,6 @@ __attribute__((destructor)) void gen_d(void) {
 
 extern const alfr am;
 
-#define S(stmt) A((stmt) == GEN_STAT(OK), "gen_a")
-
 T(b) {
     gen *g = gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
