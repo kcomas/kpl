@@ -15,18 +15,22 @@ typedef tbl *atg_tbl_i(void);
 
 typedef lst *atg_lst_i(void);
 
+typedef void atg_st_f(void *p);
+
 typedef struct {
     uint32_t tc, lc; // tmp counter, label counter
     ssize_t r;
-    const alfr *af, *ta, *saf, *sta; // alloc for gen st
+    const alfr *af, *ta;
     atg_tbl_i *ati;
+    void *bst; // base gen state
+    atg_st_f *sf;
     gen *bg; // for base gens
     as *a;
     lst *q, *se; // queue of weak ref **an, start end fns
     tbl *at, *ot; // aply, op
 } atg; // ast to gen
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
+atg *atg_i(const alfr *af, const alfr *ta, atg_tbl_i ati, lst *q, lst *se, void *st, atg_st_f sf, gen *g, as *a);
 
 typedef bool atg_test_fn(const te *an);
 

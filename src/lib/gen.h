@@ -41,7 +41,7 @@ typedef struct {
 
 gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code);
 
-gen *gen_cpy(const gen *g);
+gen *gen_i_g(const gen *g);
 
 bool gen_code_eq(const gen *restrict a, const gen *restrict b);
 

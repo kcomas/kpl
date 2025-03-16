@@ -14,6 +14,8 @@ typedef struct {
 
 te *te_i(size_t l, const alfr *af, frfn *tf);
 
+te *te_i_t(const te *t);
+
 te *te_c(te *t);
 
 size_t te_g_l(const te *t);
