@@ -67,8 +67,7 @@ atg_stat atg_err(atg_stat stat, te *an, te **e) {
 
 static atg_stat cst_type_lst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
-    g->lbl = t->lc++;
-    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl = t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     // TODO zero ref counted vars
     return ATG_STAT(OK);
