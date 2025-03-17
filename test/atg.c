@@ -14,13 +14,13 @@ T(fnadd3) {
     atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     gen *g;
-    te *e = NULL;
-    atg_stat stat = atg_qn(t, &g, a, &e);
-    if (e) {
-        ast_p(e, 0);
+    te *ae = NULL, *ce = NULL;
+    atg_stat astat = atg_qn(t, &g, a, &ae);
+    if (ae) {
+        ast_p(ae, 0);
         putchar('\n');
     }
-    A(stat == ATG_STAT(OK), "atg_qn");
+    A(astat == ATG_STAT(OK), "atg_qn");
     ast_p(an, 0);
     putchar('\n');
     gen_p(g, NULL);
@@ -44,19 +44,23 @@ T(fnadd3) {
     A(gen_code_eq(g, gc), "gen_code_eq");
     gen_f(gc);
     gen_st *sc = gen_st_i_gen_st(st);
-    HERE("ASM");
+    A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
+    gen_stat gstat = gen_n(g, sc, t->a, &ce);
+    if (ce) {
+        printf("CODE ERROR %p\n", ce);
+    }
+    A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     sc = NULL;
+    gen_p(g, NULL);
     gen_f(g);
     g = gc = NULL;
-    /*
-    stat = atg_qn(t, &g, a, &e);
-    if (e) {
-        ast_p(e, 0);
+    astat = atg_qn(t, &g, a, &ae);
+    if (ae) {
+        ast_p(ae, 0);
         putchar('\n');
     }
-    A(stat == ATG_STAT(OK), "atg_qn");
-    */
+    A(astat == ATG_STAT(OK), "atg_qn");
     gen_st_f(st);
     atg_f(t);
     ast_f(a);

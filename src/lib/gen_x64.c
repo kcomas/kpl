@@ -179,8 +179,11 @@ void gen_st_p(const gen_st *st) {
     putchar('\n');
 }
 
-un ovt_hsh(const te *ovt) {
-    return U6((ovt->d[1].u6 << 32) + ovt->d[0].u5);
+static un ovt_hsh(const te *ovt) {
+    un hsh = U6(0);
+    hsh = u5_s_o(hsh, 0, ovt->d[0].u5);
+    hsh = u5_s_o(hsh, 1, ovt->d[1].u5);
+    return hsh;
 }
 
 static void gen_st_latf(void *p) {
@@ -207,7 +210,7 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
     }
 }
 
-void gen_st_atmf(void *p) {
+static void gen_st_atmf(void *p) {
     te *t = p;
     te_f(t->d[1].p);
     t->af->f(t);

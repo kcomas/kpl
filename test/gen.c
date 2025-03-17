@@ -54,7 +54,7 @@ T(call) {
     printf("FN0\n");
     gen_p(ga, NULL);
     gen_st_f(st);
-    gen *gc = gen_i_g(ga);
+    gen *gc = gen_i_gen(ga);
     gen_f(ga);
     st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
@@ -82,11 +82,11 @@ T(eq) {
     S(gen_a(a, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(a, GEN_OP(ADD), gen_tmp(a, X64_TYPE(U6), 0),  gen_arg(a, X64_TYPE(U6), 0), gen_arg(a, X64_TYPE(U6), 1)));
     S(gen_a(a, GEN_OP(LEAVE), gen_tmp(a, X64_TYPE(U6), 0), NULL, NULL));
-    gen *b = gen_i_g(a);
+    gen *b = gen_i_gen(a);
     S(gen_a(b, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(b, GEN_OP(ADD), gen_tmp(b, X64_TYPE(U6), 0),  gen_arg(b, X64_TYPE(U6), 0), gen_arg(b, X64_TYPE(U6), 1)));
     S(gen_a(b, GEN_OP(LEAVE), gen_tmp(b, X64_TYPE(U6), 0), NULL, NULL));
-    gen *c = gen_i_g(b);
+    gen *c = gen_i_gen(b);
     S(gen_a(c, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(c, GEN_OP(ADD), gen_tmp(c, X64_TYPE(I6), 0),  gen_arg(c, X64_TYPE(I6), 0), gen_arg(c, X64_TYPE(I6), 1)));
     S(gen_a(c, GEN_OP(LEAVE), gen_tmp(c, X64_TYPE(I6), 0), NULL, NULL));
@@ -111,6 +111,9 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     gen_st_p(st);
     te *e;
     gen_stat stat = gen_n(g, st, a, &e);
+    if (e) {
+        printf("CODE ERROR %p\n", e);
+    }
     A(stat == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
@@ -184,4 +187,19 @@ T(ack) {
     uint64_t r = ((uint64_t(*)(uint64_t, uint64_t)) m)(am, bn);
     printf("Ack(%lu, %lu): %lu\n", am, bn, r);
     A(r == y, "ack");
+}
+
+T(addaddaddneg) {
+    gen *g = init();
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2)));
+    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 0), gen_tmp(g, X64_TYPE(I6), 0)));
+    S(gen_a(g, GEN_OP(NEG), gen_tmp(g, X64_TYPE(I6), 1), gen_tmp(g, X64_TYPE(I6), 1), NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 1), NULL, NULL));
+    BUILD(g, m);
+    int64_t a = 1, b = 2, c = 3, z = -6;
+    int64_t r = ((int64_t(*)(int64_t, int64_t, int64_t )) m)(a, b, c);
+    printf("-(%ld+%ld+%ld)=%ld\n", a, b, c, r);
+    A(r == z, "addaddaddneg");
 }
