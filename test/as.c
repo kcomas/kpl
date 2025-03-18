@@ -141,5 +141,4 @@ T(neg) {
     as_code_p(a, m);
     A(-r == ((int64_t(*)(int64_t)) m)(r), "neg");
     as_f(a);
-
 }
