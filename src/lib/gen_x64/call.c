@@ -63,14 +63,18 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     return GEN_STAT(OK);
 }
 
+typedef struct {
+    bool pr, rv;
+} call_ops;
+
 // preserve regs, return value
-static gen_stat call(gen_st *st, te *ci, as *a, te **e, bool pr, bool rv) {
+static gen_stat call(gen_st *st, te *ci, as *a, te **e, call_ops co) {
     gen_stat stat;
     te *kvr;
     uint8_t rsaves[28];
     size_t rsl = 0;
-    if ((stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
-    if (pr) {
+    if (co.rv && (stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
+    if (co.pr) {
         te *h = st->atm->i->h;
         while (h) {
             te *r = h->d[0].p;
@@ -87,26 +91,26 @@ static gen_stat call(gen_st *st, te *ci, as *a, te **e, bool pr, bool rv) {
         default:
            return gen_err(stat, ci, e);
     }
-    if (rv && (stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
-    if (pr) {
+    if (co.rv && (stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
+    if (co.pr) {
         while (rsl > 0) {
             AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), ci);
             rsl--;
         }
     }
-    drop_atm_kv(st, kvr, ci);
+    if (co.rv) drop_atm_kv(st, kvr, ci);
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
 
 static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
-    return call(s, ci, a, e, true, true);
+    return call(s, ci, a, e, (call_ops) { .pr = true, .rv = true });
 }
 
 static gen_stat callnpr_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
-    return call(s, ci, a, e, false, true);
+    return call(s, ci, a, e, (call_ops) { .pr = false, .rv = true });
 }
 
 void gen_call(gen *g) {
