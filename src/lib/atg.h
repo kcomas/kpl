@@ -39,8 +39,13 @@ typedef atg_stat atg_cc_fn(atg *t, gen *g, te *an, te **e);
 
 void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e);
 
+// te[u4(code)|u4(type);cc]
+atg_stat atg_a_a(atg *t, type rt, ast_cls tc, type tt, atg_cc_fn cc);
+
 // te[u4(code)|u4(type)...;[tbl;cc]]
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc);
+
+atg_stat atg_r(atg *t, gen *g, te *an, te **e);
 
 atg_stat atg_qn(atg *t, gen **g, ast *a, te **e);
 

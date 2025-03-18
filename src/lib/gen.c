@@ -16,12 +16,13 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
+gen *gen_i(const alfr *af, const alfr *ta, const alfr *va, cls_tbl_i cti, tbl *oci, lst *code) {
     gen *g = af->a(sizeof(gen));
     g->lbl = UINT32_MAX;
     g->r = 1;
     g->af = af;
     g->ta = ta;
+    g->va = va;
     g->cti = cti;
     g->oci = oci;
     g->code = code;
@@ -29,7 +30,7 @@ gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
 }
 
 gen *gen_i_gen(const gen *g) {
-    return gen_i(g->af, g->ta, g->cti, tbl_c(g->oci), lst_i_lst(g->code));
+    return gen_i(g->af, g->ta, g->va, g->cti, tbl_c(g->oci), lst_i_lst(g->code));
 }
 
 static bool gen_lst_eq(un x, un y) {
