@@ -138,9 +138,9 @@ static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, te **e) {
 }
 
 static atg_stat add_i6_e_i6_o_i6(atg *t, gen *g, te *an, te **e) {
-    te *l = ((te*) an->d[5].p)->d[3].p, *r = te_c(((te*) g->code->t->d[0].p)->d[1].p);
+    te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) g->code->t->d[0].p)->d[1].p;
     if (!(l = var_arg(g, l, X64_TYPE(I6)))) return atg_err(ATG_STAT(INV), an->d[5].p, e);
-    if (gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->tc++), l, r) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    if (gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->tc++), l, te_c(r)) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     return ATG_STAT(OK);
 }
 
@@ -184,18 +184,40 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
     atg_stat stat = ATG_STAT(OK);
     uint32_t lbl = ((te*) an->d[4].p)->d[4].u5;
     vr *v;
-    if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) return atg_err(stat, an, e);
+    if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) {
+        vr_f(v);
+        return atg_err(stat, an, e);
+    }
     gen_op go = GEN_OP(CALL);
     // TODO check if this is the last stmt or parent is return
-    if (gen_a(g, go, gen_tmp(g, atg_x64_g_t(an->d[3].p), t->tc++), gen_call_v(g, v), gen_lbl(g, lbl)) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    if (gen_a(g, go, gen_tmp(g, atg_x64_g_t(an->d[3].p), t->tc++), gen_call_v(g, v), gen_lbl(g, lbl)) != GEN_STAT(OK)) {
+        vr_f(v);
+        return atg_err(ATG_STAT(INV), an, e);
+    }
     return stat;
 }
 
 static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, te **e) {
+    (void) t;
     uint32_t fd = ((te*) an->d[5].p)->d[4].u5;
+    if (fd == 0 || fd > 2) return atg_err(ATG_STAT(INV), an, e);
+    FILE *f = fd == 1 ? stdout : stderr;
     te *type;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
-    HERE("GEN CALL C");
+    vr *v = vr_i(3, g->va, (void*) te_f);
+    vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
+    switch (type->d[1].u4) {
+        case TYPE(I6):
+            vr_ab(&v, P(gen_data(g, X64_TYPE(M), P("(I6 %ld)\n"))));
+            vr_ab(&v, P(te_c(((te*) g->code->t->d[0].p)->d[1].p)));
+            break;
+        default:
+            vr_f(v);
+            return atg_err(ATG_STAT(INV), an, e);
+    }
+    gen_op go = GEN_OP(CALLV);
+    // TODO check if this is the last stmt or parent is return
+    if (gen_a(g, go, gen_call_v(g, v), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     return ATG_STAT(OK);
 }
 
