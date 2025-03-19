@@ -14,6 +14,7 @@ typedef enum {
     GEN_OP(LEAVE),
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
+    GEN_OP(CALLV), // varardic
     GEN_OP(NEG),
     GEN_OP(ADD),
     GEN_OP(SUB),
@@ -84,6 +85,8 @@ gen_stat gen_st_p1(gen *g, gen_st *st);
 void set_code_s(te *ci, as *a);
 
 void set_code_e(te *ci, as *a);
+
+gen_stat rstk_b(const gen_st *st, uint8_t *r);
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv);
 

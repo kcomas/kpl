@@ -207,7 +207,7 @@ T(addaddaddneg) {
 T(printf) {
     gen *g = init();
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
-    HERE("CALL FNP");
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P("printf: %ld\n")), gen_arg(g, X64_TYPE(I6), 0)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(I6), 0), NULL, NULL));
     BUILD(g, m);
     int64_t a = 789;
