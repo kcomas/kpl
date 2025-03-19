@@ -63,7 +63,14 @@ T(fnadd3) {
     ast_p(an, 0);
     putchar('\n');
     gen_p(g, NULL);
+    cn = RN(SN(_G, U5(1)));
     A(ast_eq(an, cn), "ast_eq");
+    te_f(cn);
+    HERE("GEN EQ");
+    A(gen_code_eq(g, gc), "gen_code_eq");
+    gen_f(gc);
+    HERE("RUN");
+    gen_f(g);
     gen_st_f(st);
     atg_f(t);
     ast_f(a);

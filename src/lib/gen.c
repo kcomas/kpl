@@ -48,6 +48,8 @@ static bool gen_lst_eq(un x, un y) {
 }
 
 bool gen_code_eq(const gen *restrict a, const gen *restrict b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
     return lst_eq(a->code, b->code, gen_lst_eq);
 }
 

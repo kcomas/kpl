@@ -97,7 +97,11 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         } \
         for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci); \
     } \
-    if ((stat = call_arg(st, ci, a, RV ? 2 : 1, rsaves, rsl)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    if (PR) { \
+        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, rsaves, rsl)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    } else { \
+        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, NULL, 0)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    } \
     te *fn = RV ? ci->d[3].p : ci->d[2].p; \
     uint8_t fr; \
     switch (gen_var_g_c(fn)) { \
@@ -129,6 +133,7 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
 CALL(true, true);
 CALL(false, true);
 CALL(true, false);
+CALL(false, false);
 
 static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
@@ -157,9 +162,16 @@ static gen_stat callvnr_md(gen *g, void *s, te *ci, as *a, te **e) {
     return call_pr_true_rv_false(s, ci, a, e);
 }
 
+static gen_stat callvnprnr_md(gen *g, void *s, te *ci, as *a, te **e) {
+    (void) g;
+    set_vec_reg(ci, a);
+    return call_pr_false_rv_false(s, ci, a, e);
+}
+
 void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_auml_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_auml_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_auml_fn);
     GEN_OP_A2(g, GEN_OP(CALLV), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnr_md);
+    GEN_OP_A2(g, GEN_OP(CALLVNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnprnr_md);
 }

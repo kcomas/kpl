@@ -180,6 +180,30 @@ static atg_stat lst_args_var(atg *t, gen *g, te **e, lst *l, vr **v) {
     return stat;
 }
 
+static atg_stat call_npr(gen_op *go, const te *an) {
+    bool npr = false;
+    te *p = an->d[0].p;
+    // TODO check if parent op is ret
+    if (p->d[2].u4 == AST_CLS(L)) { // check last stmt
+        lst *l = p->d[4].p;
+        if (!l) return ATG_STAT(INV);
+        te *t = l->t;
+        if (an == t->d[0].p) npr = true;
+    }
+    if (!npr) return ATG_STAT(OK);
+    switch (*go) {
+        case GEN_OP(CALL):
+            *go = GEN_OP(CALLNPR);
+            break;
+        case GEN_OP(CALLV):
+            *go = GEN_OP(CALLVNPR);
+            break;
+        default:
+            return ATG_STAT(INV);
+    }
+    return ATG_STAT(OK);
+}
+
 static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
     atg_stat stat = ATG_STAT(OK);
     uint32_t lbl = ((te*) an->d[4].p)->d[4].u5;
@@ -189,7 +213,7 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
         return atg_err(stat, an, e);
     }
     gen_op go = GEN_OP(CALL);
-    // TODO check if this is the last stmt or parent is return
+    if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(stat, an, e);
     if (gen_a(g, go, gen_tmp(g, atg_x64_g_t(an->d[3].p), t->tc++), gen_call_v(g, v), gen_lbl(g, lbl)) != GEN_STAT(OK)) {
         vr_f(v);
         return atg_err(ATG_STAT(INV), an, e);
@@ -198,6 +222,7 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
 }
 
 static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, te **e) {
+    atg_stat stat = ATG_STAT(OK);
     (void) t;
     uint32_t fd = ((te*) an->d[5].p)->d[4].u5;
     if (fd == 0 || fd > 2) return atg_err(ATG_STAT(INV), an, e);
@@ -216,9 +241,9 @@ static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, te **e) {
             return atg_err(ATG_STAT(INV), an, e);
     }
     gen_op go = GEN_OP(CALLV);
-    // TODO check if this is the last stmt or parent is return
+    if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     if (gen_a(g, go, gen_call_v(g, v), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
-    return ATG_STAT(OK);
+    return stat;
 }
 
 atg *atg_b(atg *t) {
