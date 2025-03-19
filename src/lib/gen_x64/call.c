@@ -142,8 +142,7 @@ static gen_stat callnpr_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
 
 static void set_vec_reg(te *ci, as *a) {
     size_t nx = 0;
-    ci = ci->d[1].p;
-    vr *v = ci->d[1].p;
+    vr *v = ((te*) ci->d[1].p)->d[1].p;
     for (size_t i = 0; i < v->l; i++) {
        x64_type t = gen_var_g_t(v->d[i].p);
        if (t == X64_TYPE(F5) || t == X64_TYPE(F6)) nx++;

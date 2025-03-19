@@ -126,7 +126,8 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     co = kv->d[3].p;
     const te *args[] = {arg1, arg2, arg3, arg4};
     for (size_t i = 0; i < 4; i++) {
-        if (!args[i] || tbl_g_i(co, U6(args[i]->d[0].u6), &kv) == TBL_STAT(NF)) break;
+        if (!args[i]) break;
+        if (tbl_g_i(co, U6(args[i]->d[0].u6), &kv) == TBL_STAT(NF)) return AS_STAT(INV);
         co = kv->d[3].p;
     }
     fn = kv->d[1].p;
