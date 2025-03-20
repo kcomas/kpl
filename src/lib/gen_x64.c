@@ -280,7 +280,7 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
 gen_stat gen_st_p1(gen *g, gen_st *st) {
     gen_stat stat = GEN_STAT(OK);
     // swap R(DX) with R(10), R(CX) with R(11), XMM(0) with XMM(7)
-    static reg r[] = {R(12),  R(13), R(14), R(15), R(BX), R(9), R(8), R(11), R(10), R(SI), R(DI)};
+    static reg r[] = {R(12), R(13), R(14), R(15), R(BX), R(9), R(8), R(11), R(10), R(SI), R(DI)};
     for (size_t i = 0; i < 11; i++) vr_ab(&st->rstk, U3(r[i]));
     static reg x[] = {XMM(15), XMM(14), XMM(13), XMM(12), XMM(11), XMM(10), XMM(9), XMM(8), XMM(6), XMM(5), XMM(4), XMM(3), XMM(2), XMM(1), XMM(7)};
     for (size_t i = 0; i < 15; i++) vr_ab(&st->xstk, U3(x[i]));

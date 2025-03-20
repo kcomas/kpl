@@ -47,9 +47,7 @@ T(fnadd3) {
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
     gen_stat gstat = gen_n(g, sc, t->a, &ce);
-    if (ce) {
-        printf("CODE ERROR %p\n", ce);
-    }
+    if (ce) printf("CODE ERROR %p\n", ce);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     sc = NULL;
@@ -75,11 +73,26 @@ T(fnadd3) {
     S(gen_a(gc, GEN_OP(LEAVE), NULL, NULL, NULL));
     A(gen_code_eq(g, gc), "gen_code_eq");
     gen_f(gc);
-    HERE("RUN");
+    sc = gen_st_i_gen_st(st);
+    A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
+    gstat = gen_n(g, sc, t->a, &ce);
+    if (ce) printf("CODE ERROR %p\n", ce);
+    A(gstat == GEN_STAT(OK), "gen_n");
+    gen_st_f(sc);
+    uint8_t *m = x64_mmap(1);
     gen_f(g);
     gen_st_f(st);
     gen_f(gb);
-    atg_f(t);
     ast_f(a);
+    A(as_n(t->a, m) == AS_STAT(OK), "as_n");
+    as_code_p(t->a, m);
+    uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
+    A(eidx == 1, "eidx");
+    te *l1c = as_lbl_g_c(t->a, eidx);
+    A(l1c, "lc");
+    size_t ep = l1c->d[8].u6;
+    atg_f(t);
+    ((void (*)(void)) &m[ep])();
+    x64_munmap(1, m);
     te_f(an);
 }
