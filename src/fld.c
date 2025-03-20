@@ -125,6 +125,7 @@ static fld_stat cmd_r(fld *f, te **restrict an, te **restrict e) {
     switch ((*an)->d[3].u4) {
         case CC(P1):
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U4(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(U5))), U5(1)), te_c((*an)->d[4].p));
+            ((te*) (*an)->d[4].p)->d[0] = P(nn); // update tgt parent
             break;
         default:
             return fld_err(FLD_STAT(INV), *an, e);

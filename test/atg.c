@@ -67,7 +67,12 @@ T(fnadd3) {
     cn = RN(SN(_G, U5(1)));
     A(ast_eq(an, cn), "ast_eq");
     te_f(cn);
-    HERE("GEN EQ");
+    gc = gen_i_gen(gb);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 3, gen_data(g, X64_TYPE(I6), I6(1)), gen_data(g, X64_TYPE(I6), I6(2)), gen_data(g, X64_TYPE(I6), I6(3))), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 3, gen_data(g, X64_TYPE(M), P(stdout)), gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_tmp(g, X64_TYPE(I6), 2)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), NULL, NULL, NULL));
     A(gen_code_eq(g, gc), "gen_code_eq");
     gen_f(gc);
     HERE("RUN");
