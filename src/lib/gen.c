@@ -42,7 +42,11 @@ static bool gen_lst_eq(un x, un y) {
         te *l = a->d[i].p;
         te *r = b->d[i].p;
         if (!l && !r) continue;
-        if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6 || l->d[1].u6 != r->d[1].u6) return false;
+        if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
+        if (gen_var_g_c(l) == GEN_CLS(M)) {
+            HERE("CMP GEN M");
+            return false;
+        } else if (l->d[1].u6 != r->d[1].u6) return false;
     }
     return true;
 }

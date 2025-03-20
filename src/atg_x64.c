@@ -183,12 +183,11 @@ static atg_stat lst_args_var(atg *t, gen *g, te **e, lst *l, vr **v) {
 static atg_stat call_npr(gen_op *go, const te *an) {
     bool npr = false;
     te *p = an->d[0].p;
-    // TODO check if parent op is ret
-    if (p->d[2].u4 == AST_CLS(L)) { // check last stmt
+    // TODO if parent op is ret
+    if (p->d[2].u4 == AST_CLS(L)) { // if last stmt
         lst *l = p->d[4].p;
         if (!l) return ATG_STAT(INV);
-        te *t = l->t;
-        if (an == t->d[0].p) npr = true;
+        if (an == l->t->d[0].p) npr = true;
     }
     if (!npr) return ATG_STAT(OK);
     switch (*go) {
@@ -221,6 +220,10 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
     return stat;
 }
 
+const char *atg_dump_strs[TYPE(_END)] = {
+    [TYPE(I6)] = "(I6 %ld)\n"
+};
+
 static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, te **e) {
     atg_stat stat = ATG_STAT(OK);
     (void) t;
@@ -233,7 +236,7 @@ static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, te **e) {
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     switch (type->d[1].u4) {
         case TYPE(I6):
-            vr_ab(&v, P(gen_data(g, X64_TYPE(M), P("(I6 %ld)\n"))));
+            vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)]))));
             vr_ab(&v, P(te_c(((te*) g->code->t->d[0].p)->d[1].p)));
             break;
         default:

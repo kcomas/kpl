@@ -25,6 +25,10 @@ vr *vr_i(size_t s, const alfr *af, frfn *df);
 
 vr *vr_i_vr(const vr *v);
 
+typedef bool vr_eq_fn(un a, un b);
+
+bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn);
+
 vr *vr_c(vr *v);
 
 size_t vr_g_s(const vr *v);
