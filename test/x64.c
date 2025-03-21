@@ -170,8 +170,8 @@ T(daddsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
-    x64_addsd_rr(&p, m, XMM(0), XMM(1));
-    x64_subsd_rr(&p, m, XMM(0), XMM(2));
+    x64_addsd_xx(&p, m, XMM(0), XMM(1));
+    x64_subsd_xx(&p, m, XMM(0), XMM(2));
     x64_pop_r(&p, m, R(BP));
     x64_ret(&p, m);
     printj(p, m);
@@ -250,4 +250,13 @@ T(rskiploop) {
     x64_ret(&p, m);
     printj(p, m);
     A(((int32_t(*)(int32_t)) m)(5) == 1, "loop");
+}
+
+T(cvtsi2sd) {
+    size_t p = 0;
+    x64_cvtsi2sd_xr(&p, m, XMM(0), R(DI));
+    x64_ret(&p, m);
+    printj(p, m);
+    int64_t r = 123; double x = 123.0;
+    A(((double(*)(int64_t)) m)(r) == x, "cvtsi2sd");
 }

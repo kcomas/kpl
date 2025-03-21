@@ -13,6 +13,36 @@ __attribute__((destructor)) void gen_d(void) {
 
 extern const alfr am;
 
+static gen *init(void) {
+    gen *g = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen_b(g);
+    return g;
+}
+
+static void build(_tests *_t, gen *g, uint8_t *m) {
+    E();
+    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
+    gen_st_p(st);
+    te *e = NULL;
+    gen_stat stat = gen_n(g, st, a, &e);
+    if (e) {
+        printf("CODE ERROR %p\n", e);
+    }
+    A(stat == GEN_STAT(OK), "gen_n");
+    printf("STATE AFTER\n");
+    gen_st_p(st);
+    A(as_n(a, m) == AS_STAT(OK), "as_n");
+    gen_p(g, m);
+    gen_st_f(st);
+    gen_f(g);
+    as_f(a);
+}
+
+#define BUILD(G, M) build(_t, G, M); \
+    E()
+
 T(b) {
     gen *g = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
@@ -100,36 +130,6 @@ T(eq) {
     gen_f(b);
     gen_f(c);
 }
-
-static gen *init(void) {
-    gen *g = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
-    gen_b(g);
-    return g;
-}
-
-static void build(_tests *_t, gen *g, uint8_t *m) {
-    E();
-    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
-    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
-    gen_st_p(st);
-    te *e = NULL;
-    gen_stat stat = gen_n(g, st, a, &e);
-    if (e) {
-        printf("CODE ERROR %p\n", e);
-    }
-    A(stat == GEN_STAT(OK), "gen_n");
-    printf("STATE AFTER\n");
-    gen_st_p(st);
-    A(as_n(a, m) == AS_STAT(OK), "as_n");
-    gen_p(g, m);
-    gen_st_f(st);
-    gen_f(g);
-    as_f(a);
-}
-
-#define BUILD(G, M) build(_t, G, M); \
-    E()
 
 T(fib) {
     gen *g = init();
