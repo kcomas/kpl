@@ -113,7 +113,7 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    te *e;
+    te *e = NULL;
     gen_stat stat = gen_n(g, st, a, &e);
     if (e) {
         printf("CODE ERROR %p\n", e);

@@ -26,7 +26,7 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t 
             for (size_t i = 0; i < 6; i++) {
                 if (r->d[2].u3 == ir[i]) {
                     for (size_t i = 0; i < args->l; i++) {
-                        if (r->d[1].p == args->d[i].p) { // check if this is an arg being passed in
+                        if (r->d[0].u6 == gen_var_hsh(args->d[i].p).u6) { // check if this is an arg being passed in
                             if (vr_sf(st->rstk, &nr) != VR_STAT(OK)) return GEN_STAT(INV);
                             AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), nr), as_arg_i(a, ARG_ID(R), r->d[2]), ci);
                             vr_ab(&st->rstk, r->d[2]);
