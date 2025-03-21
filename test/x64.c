@@ -254,7 +254,9 @@ T(rskiploop) {
 
 T(cvtsi2sd) {
     size_t p = 0;
-    x64_cvtsi2sd_xr(&p, m, XMM(11), R(DI));
+    x64_movq_xr(&p, m, XMM(2), R(DI));
+    x64_movq_rx(&p, m, R(8), XMM(2));
+    x64_cvtsi2sd_xr(&p, m, XMM(11), R(8));
     x64_movq_xx(&p, m, XMM(0), XMM(11));
     x64_ret(&p, m);
     printj(p, m);
