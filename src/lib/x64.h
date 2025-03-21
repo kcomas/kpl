@@ -129,6 +129,15 @@ x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s);
 // mov rax, qword ptr[rdi+dsp8]
 x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
+// movq rax, xmm0
+x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s);
+
+// movq xmm0, rax
+x64_stat x64_movq_xr(size_t *p, uint8_t *m, reg d, reg s);
+
+// movq xmm0, xmm1
+x64_stat x64_movq_xx(size_t *p, uint8_t *m, reg d, reg s);
+
 // lea rax, [rax+dsp8]
 x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 

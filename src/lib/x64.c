@@ -175,6 +175,24 @@ x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     return x64_a(p, m, dsp);
 }
 
+x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_X(s);
+    return x64_b(p, m, 5, 0x66, set_rex2(d, s), 0x0F, 0x7E, modrm(MOD(11), d, s));
+}
+
+x64_stat x64_movq_xr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_R(s);
+    return x64_b(p, m, 5, 0x66, set_rex2(s, d), 0x0F, 0x6E, modrm(MOD(11), s, d));
+}
+
+x64_stat x64_movq_xx(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_X(s);
+    return x64_b(p, m, 5, 0xF3, set_rex2(s, d), 0x0F, 0x7E, modrm(MOD(11), s, d));
+}
+
 x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     VALID_R(d);
     VALID_R(s);
