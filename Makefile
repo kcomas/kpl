@@ -75,7 +75,7 @@ $(PSR): $(PSR_OBJS) $(TEST)/psr.o $(TEST)/psr_t.o $(TEST_OBJS)
 
 AS = as$(TNAME)
 LAS_OBJS = $(LSRC)/as.o $(LTBL_OBJS)
-LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS)
+LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS) $(patsubst %.c,%.o,$(wildcard $(LSRC)/as_x64/*.c))
 OBJS += $(LAS_OBJS) $(LASX64_OBJS)
 $(AS): $(LAS_OBJS) $(TEST)/as.o $(TEST)/as_t.o $(LASX64_OBJS) $(TEST_OBJS)
 > $(CCOBJ)
