@@ -146,14 +146,19 @@ T(neg) {
 T(xmmrsp) {
     as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(SUB), as_arg_r(a, R(SP)), as_arg_b(a, sizeof(void*) * 2));
-    A(AS_A3(a, AS_X64(MOVQ), as_arg_rm(a, R(SP)), as_arg_b(a, 8), as_arg_r(a, XMM(1))) == AS_STAT(OK), "movq_rmbx");
+    AS_A3(a, AS_X64(MOVQ), as_arg_rm(a, R(SP)), as_arg_b(a, 8), as_arg_r(a, XMM(1)));
     AS_A2(a, AS_X64(MOVQ), as_arg_rm(a, R(SP)), as_arg_r(a, XMM(2)));
+    AS_A3(a, AS_X64(MOVQ), as_arg_r(a, XMM(15)), as_arg_rm(a, R(SP)), as_arg_b(a, 8));
+    AS_A2(a, AS_X64(MOVQ), as_arg_r(a, XMM(14)), as_arg_rm(a, R(SP)));
+    AS_A2(a, AS_X64(MOVQ), as_arg_r(a, XMM(0)), as_arg_r(a, XMM(15)));
+    AS_A2(a, AS_X64(ADDSD), as_arg_r(a, XMM(0)), as_arg_r(a, XMM(14)));
     AS_A2(a, AS_X64(ADD), as_arg_r(a, R(SP)), as_arg_b(a, sizeof(void*) * 2));
-    // TODO
     AS_A0(a, AS_X64(RET));
     A(as_n(a, m) == AS_STAT(OK), "as");
     as_code_p(a, m);
     double w = 0, x = 3.14, y = 0.86, z = 4.0;
-    A(z == ((double(*)(double, double, double)) m)(w, x, y), "xmmrsp");
+    double r = ((double(*)(double, double, double)) m)(w, x, y);
+    printf("%lf + %lf = %lf\n", x, y, r);
+    A(z == r, "xmmrsp");
     as_f(a);
 }
