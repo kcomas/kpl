@@ -271,7 +271,7 @@ static const char *comisdl = "Less";
 T(comisd) {
     size_t p = 0;
     x64_comisd_xx(&p, m, XMM(0), XMM(1));
-    x64_jbejna_b(&p, m, 0);
+    x64_jbjnaejc_b(&p, m, 0);
     uint8_t *byte = x64_lb(p, m);
     size_t lbl = p;
     x64_mov_rq(&p, m, R(AX), P(comisdg));
