@@ -195,6 +195,9 @@ x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 // cmp rax, qword ptr[rsp]
 x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
 
+// comisd xmm0, xmm1
+x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
 // test rax, rdi
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s);
 
