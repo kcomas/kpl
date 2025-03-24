@@ -54,6 +54,8 @@ typedef enum {
     XMM(15)
 } reg;
 
+#define RIP 5
+
 // 0-7 gen lower, 8-15 // gen upper
 // 16-23 xmm lower 24-32 xmm upper
 
@@ -194,6 +196,9 @@ x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // cmp rax, qword ptr[rsp]
 x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
+
+// cmp rax, qword ptr[rip+disp32]
+x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // comisd xmm0, xmm1
 x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s);
