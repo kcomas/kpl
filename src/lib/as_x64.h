@@ -72,11 +72,13 @@ typedef enum {
     AS_X64(_END)
 } as_inst;
 
+void as_op_p(const tbl *ot, bool args, size_t idnt);
+
 void as_code_i_p(const te *c, const uint8_t *m);
 
-void as_code_p(const as *a, const uint8_t *m);
+void as_data_p(const as *a, const uint8_t *m);
 
-void as_op_p(const tbl *ot, bool args, size_t idnt);
+void as_code_p(const as *a, const uint8_t *m);
 
 bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe);
 
