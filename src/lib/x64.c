@@ -61,7 +61,7 @@ x64_stat x64_d(size_t *p, uint8_t *m, un v) {
     return X64_STAT(OK);
 }
 
-x64_stat x64_e(size_t *p, uint8_t *m, uint8_t size, un v) {
+x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     memset(m + *p, 0, size);
     switch (size) {
         case sizeof(uint8_t):
@@ -134,7 +134,7 @@ x64_stat x64_call_r(size_t *p, uint8_t *m, reg r) {
     return x64_b(p, m, 3, set_rex(r), 0xFF, 0xD0 + rid(r));
 }
 
-x64_stat x64_call_dw(size_t *p, uint8_t *m, uint32_t dw) {
+x64_stat x64_call_d(size_t *p, uint8_t *m, uint32_t dw) {
     x64_a(p, m, 0xE8);
     return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }

@@ -164,6 +164,24 @@ void as_code_p(const as *a, const uint8_t *m) {
         as_code_i_p(c, m);
         h = h->d[2].p;
     }
+    if (a->dq->l && m) {
+        h = a->dq->h;
+        while (h) {
+            te *dqe = h->d[0].p;
+            printf("%05lu:", dqe->d[4].u6);
+            for (size_t i = 0; i < dqe->d[1].u6; i++) printf("%02X ", m[dqe->d[4].u6 + i]);
+            putchar('\n');
+            h = h->d[2].p;
+        }
+    }
+}
+
+bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe) {
+    (void) a;
+    dqe->d[4] = U6(*p); // for print
+    te *ci = dqe->d[0].p;
+    x64_jmpd_lbldw(m, ci->d[8].u6 + ci->d[9].u6, *p);
+    return x64_e(p, m, dqe->d[1].u6, dqe->d[2]) == X64_STAT(OK);
 }
 
 #define INST(N) static bool as_##N(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -187,7 +205,7 @@ static bool as_call_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restric
     (void) arg4;
     te *lblc = as_lbl_g_c(a, arg1->d[1].u5);
     if (!lblc) return false;
-    if (lblc->d[9].u6) return x64_call_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
+    if (lblc->d[9].u6) return x64_call_d(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
     else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
     for (size_t i = 0; i < 5; i++) x64_nop(p, m);
     return true;
@@ -196,7 +214,7 @@ static bool as_call_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restric
 static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
     (void) a;
     size_t p = fc->d[8].u6;
-    return x64_call_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) - sizeof(uint32_t)) == X64_STAT(OK);
+    return x64_call_d(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) - sizeof(uint32_t)) == X64_STAT(OK);
 }
 
 // internal

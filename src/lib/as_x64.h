@@ -78,4 +78,6 @@ void as_code_p(const as *a, const uint8_t *m);
 
 void as_op_p(const tbl *ot, bool args, size_t idnt);
 
+bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe);
+
 as *as_b(as *a);
