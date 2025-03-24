@@ -18,9 +18,8 @@ AUAUL(eq, JE);
 AUAUL(ne, JNE);
 AUAUL(gt, JA);
 
-// using data segment for cmp is slower but leaving for now
-//AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
-//AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
+// using data segment for cmp is slower
+//AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
 
 #define AUDUL(N, J) static gen_stat N##_audul_fn(gen *g, void *s, te *ci, as *a, te **e)  { \
     (void) g; \
@@ -28,7 +27,8 @@ AUAUL(gt, JA);
     gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
-    AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci); \
+    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci); \
+    AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci); \
     AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
     drop_atm_kv(st, kv, ci); \
     set_code_e(ci, a); \
