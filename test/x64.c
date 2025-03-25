@@ -288,7 +288,7 @@ T(comisd) {
 }
 
 T(cmprip) {
-    int64_t c = 123;
+    int64_t c = INT64_MAX;
     size_t p = 0;
     x64_cmp_ri(&p, m, R(DI), 0); // ripe - rips
     uint32_t rips = p;
@@ -304,7 +304,7 @@ T(cmprip) {
     x64_jmpd_lbldw(m, rips, ripe);
     x64_e(&p, m, sizeof(int64_t), I6(c));
     printj(p, m);
-    int64_t r = ((int64_t(*)(int64_t)) m)(c);
+    int64_t r = ((int64_t(*)(int64_t)) m)(INT64_MAX);
     printf("rip disp32: %d, %ld == %ld\n", ripe - rips, c, r);
     A(c == r, "ne");
 }

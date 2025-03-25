@@ -225,18 +225,14 @@ T(printf) {
     int64_t a = 789;
     A(a == ((int64_t(*)(int64_t)) m)(a), "printf");
 }
+
 /*
-    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(U6), 0), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(U6), 0)), gen_lbl(g, 0)));
-    S(gen_a(g, GEN_OP(SUB), gen_tmp(g, X64_TYPE(U6), 1), gen_arg(g, X64_TYPE(U6), 0), gen_data(g, X64_TYPE(U3), U3(2))));
-    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(U6), 1), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(U6), 1)), gen_lbl(g, 0)));
-    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(U6), 0), gen_tmp(g, X64_TYPE(U6), 0), gen_tmp(g, X64_TYPE(U6), 1)));
-    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 0), NULL, NULL));
-    BUILD(g, m);
-    uint64_t n = 8, y = 21;
-    //uint64_t n = 35, y = 9227465;
-    uint64_t r = ((uint64_t(*)(uint64_t)) m)(n);
-    printf("Fib(%lu): %lu\n", n, r);
-    A(r == y, "fib");
+S(gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, gen_arg(g, X64_TYPE(F6), 0)), gen_data(g, X64_TYPE(M), P(fibp)), NULL));
+static void fibp(double n) {
+    printf("n: %lf\n", n);
+}
+*/
+
 T(fibxmm) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
@@ -245,12 +241,20 @@ T(fibxmm) {
     S(gen_a(g, GEN_OP(NE), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(0)), gen_lbl(g, 1)));
     S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(F6), F6(0)), NULL, NULL));
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    // n < 2
     S(gen_a(g, GEN_OP(GT), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(2)), gen_lbl(g, 2)));
     S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(F6), F6(1)), NULL, NULL));
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 2), NULL, NULL));
     S(gen_a(g, GEN_OP(SUB), gen_tmp(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(1))));
-    //S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(F6), 0), NULL, NULL));
-    S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(F6), F6(0)), NULL, NULL)); // REMOVE
+    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(F6), 0), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(F6), 0)), gen_lbl(g, 0)));
+    S(gen_a(g, GEN_OP(SUB), gen_tmp(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(2))));
+    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(F6), 1), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(F6), 1)), gen_lbl(g, 0)));
+    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(F6), 0), gen_tmp(g, X64_TYPE(F6), 0), gen_tmp(g, X64_TYPE(F6), 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(F6), 0), NULL, NULL));
     BUILD(g, m);
+    double n = 8.0, y = 21.0;
+    //double n = 35.0, y = 9227465.0;
+    double r = ((double(*)(double)) m)(8);
+    printf("Fibxmm(%lf): %lf == %lf\n", n, r, y);
+    A(r == y, "fibxmm");
 }
-*/
