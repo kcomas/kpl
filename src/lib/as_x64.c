@@ -178,6 +178,23 @@ void as_code_p(const as *a, const uint8_t *m) {
     if (a->dq->l && m) as_data_p(a, m);
 }
 
+void as_x64_err_p(as_stat stat, te *e) {
+    switch (stat) {
+        case AS_STAT(CODE):
+            as_code_i_p(e, NULL);
+            break;
+        case AS_STAT(LBL):
+            HERE("TODO LBL ERR");
+            break;
+        case AS_STAT(DATA):
+            HERE("TODO DATA ERR");
+            break;
+        default:
+            break;
+    }
+    te_f(e);
+}
+
 bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe) {
     (void) a;
     dqe->d[4] = U6(*p); // for print

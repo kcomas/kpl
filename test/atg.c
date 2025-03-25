@@ -84,7 +84,7 @@ T(fnadd3) {
     gen_st_f(st);
     gen_f(gb);
     ast_f(a);
-    A(as_n(t->a, m) == AS_STAT(OK), "as_n");
+    A(as_n(t->a, m, &ae) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
     A(eidx == 1, "eidx");

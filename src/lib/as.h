@@ -7,7 +7,10 @@
 
 typedef enum {
     AS_STAT(OK),
-    AS_STAT(INV)
+    AS_STAT(INV),
+    AS_STAT(CODE),
+    AS_STAT(LBL),
+    AS_STAT(DATA)
 } as_stat;
 
 // label entry te[label_id;code;lst[code]] lst needed for backfill
@@ -72,6 +75,6 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
 #define AS_A1(A, OP_ID, ARG1) AS_A2(A, OP_ID, ARG1, NULL)
 #define AS_A0(A, OP_ID) AS_A1(A, OP_ID, NULL)
 
-as_stat as_n(as *a, uint8_t *m);
+as_stat as_n(as *a, uint8_t *m, te **e);
 
 void as_f(as *a);

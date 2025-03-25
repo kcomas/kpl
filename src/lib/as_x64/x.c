@@ -16,10 +16,28 @@ INST_XX(addsd);
 INST_XX(subsd);
 INST_XX(comisd);
 
+#define INST_XI(N) static bool as_##N##_xi(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    as_dq_a(a, ci, sizeof(double), arg2->d[1], as_dq_x64); /* TODO fn to get sizeof*/ \
+    return x64_##N##_xi(p, m, arg1->d[1].u3, 0) == X64_STAT(OK); \
+}
+
+INST_XI(movq);
+INST_XI(addsd);
+INST_XI(subsd);
+INST_XI(comisd);
+
 as *as_x_b(as *a) {
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movq_xx, NULL);
+    as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_movq_xi, NULL);
     as_op_a(a, AS_X64(ADDSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_addsd_xx, NULL);
+    as_op_a(a, AS_X64(ADDSD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_addsd_xi, NULL);
     as_op_a(a, AS_X64(SUBSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_subsd_xx, NULL);
+    as_op_a(a, AS_X64(SUBSD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_subsd_xi, NULL);
     as_op_a(a, AS_X64(COMISD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_comisd_xx, NULL);
+    as_op_a(a, AS_X64(COMISD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_comisd_xi, NULL);
     return a;
 }

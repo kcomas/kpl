@@ -44,6 +44,17 @@ INST_RR(cmp);
 
 INST_RB(add);
 INST_RB(sub);
+INST_RB(cmp);
+
+#define INST_RD(N) static bool as_##N##_rd(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_rd(p, m, arg1->d[1].u3, arg2->d[1].u5) == X64_STAT(OK); \
+}
+
+INST_RD(cmp);
 
 #define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -89,7 +100,7 @@ INST_RRMB(mov);
     (void) ci; \
     (void) arg3; \
     (void) arg4; \
-    as_dq_a(a, ci, sizeof(uint64_t), arg2->d[1], as_dq_x64); \
+    as_dq_a(a, ci, sizeof(uint64_t), arg2->d[1], as_dq_x64); /* TODO fn to get sizeof*/ \
     return x64_##N##_ri(p, m, arg1->d[1].u3, 0) == X64_STAT(OK); \
 }
 
@@ -125,6 +136,8 @@ as *as_r_b(as *a) {
     as_op_a(a, AS_X64(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_xor_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_cmp_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_cmp_rrm, NULL);
+    as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_cmp_rb, NULL);
+    as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(DW), ARG_ID(N), ARG_ID(N), as_cmp_rd, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_cmp_ri, NULL);
     return a;
 }
