@@ -300,3 +300,17 @@ T(ackxmm) {
     printf("Ack(%lf, %lf): %lf == %lf\n", am, bn, r, y);
     A(r == y, "ack");
 }
+
+T(printfxmm) {
+    gen *g = init();
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 8, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf, ai:%ld, bi:%ld, ci:%ld, di:%ld)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2), gen_arg(g, X64_TYPE(I6), 3)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 4, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 5, gen_data(g, X64_TYPE(M), P("printf(ai:%ld, bi:%ld, ci:%ld, di:%ld)\n")), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2), gen_arg(g, X64_TYPE(I6), 3)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(F6), 2), NULL, NULL));
+    BUILD(g, m);
+    double ad = 1.9, bd = 2.2, cd = 3.3;
+    uint64_t ai = 1, bi = 2, ci = 3, di = 4;
+    double dd = ((double(*)(double, double, double, uint64_t, uint64_t, uint64_t, uint64_t)) m)(ad, bd, cd, ai, bi, ci, di);
+    A(cd == dd, "printxmm");
+}
