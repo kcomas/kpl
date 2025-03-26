@@ -207,6 +207,18 @@ T(fnadd3) {
     te_f(h);
 }
 
+T(fnf6muli6cstdiv) {
+    te *h = ppnode(psr_r(tpsr(fnf6muli6cstdiv)));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)),
+            LST(
+                APLY(OP(N(NONE), N(NONE)), OP(N(VAR), N(VAR)), OP(N(TYPE), N(VAR)))
+            ))),
+        CMD(APLY(N(VAR), N(FLT), N(FLT), OP(N(TYPE), N(INT))))
+        ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(tpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});
