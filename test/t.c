@@ -28,6 +28,12 @@ void _a(const char *n, const char *sf, _test_fn *tf) {
 #define F(CT) printf("\e[1m%s:%d \e[95m%s\n\e[0m", CT->ef, CT->ln, CT->m);
 
 int main(void) {
+#ifdef NTO
+    if (_tl) {
+        printf("\e[1;91mTO() NEEDS TO BE REMOVED\e[0m\n"); \
+        exit(1);
+    }
+#endif
     volatile int p = 0, f = 0; // can't optimize with jit fns
     _tests *tf = NULL;
     while (__t) {

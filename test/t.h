@@ -51,7 +51,7 @@ _TF(N)
 #define TO(N) _TF(N); \
     static __attribute__((constructor)) void __##N(void) { \
         if (_tl) { \
-            printf("\e[1;91mTO CAN ONLY BE USED ONCE\e[0m\n"); \
+            printf("\e[1;91mTO() CAN ONLY BE USED ONCE\e[0m\n"); \
             exit(1); \
         } \
         _tl = true; \
