@@ -13,6 +13,8 @@ typedef enum {
     OC(CST),
     OC(ADD),
     OC(SUB),
+    OC(MUL),
+    OC(DIV),
     OC(DUMP),
     OC(_END)
 } oc; // op code
