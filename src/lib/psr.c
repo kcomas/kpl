@@ -62,7 +62,7 @@ psr_stat psr_n(psr *p, te *nh) {
         psr_megre_fn *mf = NULL;
         psr_node_fn *nf = NULL;
         tbl *pt = p->pt;
-        te *kv, *pn = NULL;
+        te *kv = NULL, *pn = NULL;
         while (tbl_g_i(pt, U4(tkn_m_g_i(m)), &kv) == TBL_STAT(OK)) {
             vr_ab(&p->ts, P(m));
             pm = kv->d[2].u6;
@@ -107,7 +107,7 @@ psr_stat psr_n(psr *p, te *nh) {
                     te_f(lnh);
                     return pstat;
                 }
-                for (size_t i = 0; i < st->l; i++) if (tkn_m_g_i(p->ts->d[p->ts->l - 1].p) == st->d[i].u4) goto el;
+                for (size_t i = 0; i < st->l; i++) if (p->ts->l > 0 && tkn_m_g_i(p->ts->d[p->ts->l - 1].p) == st->d[i].u4) goto el;
                 if (p->tstat != TKN_STAT(OK)) {
                     te_f(m);
                     te_f(pn);

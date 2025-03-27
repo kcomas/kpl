@@ -87,6 +87,7 @@ T(fnadd3) {
     A(as_n(t->a, m, &ae) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
+    te_f(an);
     A(eidx == 1, "eidx");
     te *l1c = as_lbl_g_c(t->a, eidx);
     A(l1c, "lc");
@@ -94,5 +95,4 @@ T(fnadd3) {
     atg_f(t);
     ((void (*)(void)) &m[ep])();
     x64_munmap(1, m);
-    te_f(an);
 }

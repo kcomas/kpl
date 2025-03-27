@@ -34,7 +34,7 @@ int main(void) {
         exit(1);
     }
 #endif
-    volatile int p = 0, f = 0; // can't optimize with jit fns
+    volatile int p = 0, f = 0;
     _tests *tf = NULL;
     while (__t) {
         _tests *ct = __t;
