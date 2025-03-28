@@ -24,23 +24,34 @@ size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
 
-tkn_stat tkn_df(tkn *t, te *m) {
+static void tkn_err_p(void *d) {
+    tkn *t = d;
+    printf("lno: %d, cno: %d", t->lno, t->cno);
+}
+
+static tkn_stat tkn_err(tkn *t, err **e, const char *m) {
+    *e = err_i(t->ea, tkn_err_p, (void*) tkn_f, tkn_c(t), m);
+    return TKN_STAT(INV);
+}
+
+tkn_stat tkn_df(tkn *t, te *m, err **e) {
     t->cno = tkn_m_g_c(m);
     t->pos = tkn_m_g_s(m);
-    size_t e = 0;
-    un c = c4_g((char*) t->s->d, t->pos, &e);
-    if (!isalnum(c.c.a)) return TKN_STAT(INV);
+    size_t ce = 0;
+    un c = c4_g((char*) t->s->d, t->pos, &ce);
+    if (!isalnum(c.c.a)) return tkn_err(t, e, "invalid var");
     while (isalnum(c.c.a)) {
         t->cno++;
-        t->pos = e + 1;
-        c = c4_g((char*) t->s->d, t->pos, &e);
+        t->pos = ce + 1;
+        c = c4_g((char*) t->s->d, t->pos, &ce);
     }
     tkn_m_s_i(m, TCUST(VAR));
     tkn_m_s_e(m, t->pos);
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_num(tkn *t, te *m) {
+tkn_stat tkn_num(tkn *t, te *m, err **e) {
+    (void) e;
     while (isdigit(t->s->d[t->pos])) {
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
@@ -48,20 +59,23 @@ tkn_stat tkn_num(tkn *t, te *m) {
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_nl(tkn *t, te *m) {
+tkn_stat tkn_nl(tkn *t, te *m, err **e) {
     (void) m;
+    (void) e;
     t->lno++;
     t->cno = 1;
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_ft(tkn *t, te *m) {
+tkn_stat tkn_ft(tkn *t, te *m, err **e) {
     (void) t;
     (void) m;
+    (void) e;
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_ws(tkn *t, te *m) {
+tkn_stat tkn_ws(tkn *t, te *m, err **e) {
+    (void) e;
     while (t->s->d[t->pos] == ' ') {
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
@@ -69,18 +83,19 @@ tkn_stat tkn_ws(tkn *t, te *m) {
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_sym(tkn *t, te *m) {
-    size_t e = 0;
-    un c = c4_g((char*) t->s->d, t->pos, &e); // `
-    c = c4_g((char*) t->s->d, t->pos, &e);
-    if (!isalnum(c.c.a)) return TKN_STAT(INV);
+tkn_stat tkn_sym(tkn *t, te *m, err **e) {
+    (void) e;
+    size_t ce = 0;
+    un c = c4_g((char*) t->s->d, t->pos, &ce); // `
+    c = c4_g((char*) t->s->d, t->pos, &ce);
+    if (!isalnum(c.c.a)) return tkn_err(t, e, "invalid sym`");
     while (isalnum(c.c.a)) {
         t->cno++;
-        t->pos = e + 1;
-        c = c4_g((char*) t->s->d, t->pos, &e);
+        t->pos = ce + 1;
+        c = c4_g((char*) t->s->d, t->pos, &ce);
     }
     tkn_m_s_i(m, TCUST(SYM));
-    if (t->pos - tkn_m_g_s(m) < 2) return TKN_STAT(INV);
+    if (t->pos - tkn_m_g_s(m) < 2) return tkn_err(t, e, "invalid sym` len");
     tkn_m_s_e(m, t->pos);
     return TKN_STAT(OK);
 }

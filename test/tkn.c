@@ -14,7 +14,7 @@ static tbl *tkn_mktbl(void) {
 static tkn *btkn = NULL;
 
 static __attribute__((constructor)) void tkn_con(void) {
-    btkn = tkn_i(&tm, &tm, tkn_mktbl, tkn_df, mc_i(0, &tm));
+    btkn = tkn_i(&tm, &tm, &tm, tkn_mktbl, tkn_df, mc_i(0, &tm));
     tkn_b(btkn);
 }
 
@@ -24,8 +24,9 @@ static __attribute__((destructor)) void tkn_des(void) {
 
 #define R(T, IDS) tkn_stat tstat; \
     te *m = te_i(2, &tm, NULL); \
+    err *e = NULL; \
     size_t id = 0; \
-    while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) { \
+    while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) { \
         tkn_m_p(m, t->s); \
         putchar('\n'); \
         A(tkn_m_g_i(m) == IDS[id++], "tid"); \
@@ -68,12 +69,12 @@ T(symtest) {
     const size_t tids[] = {TCUST(VAR), TCUST(SYM), TCUST(WS), TCUST(VAR), TCUST(SYM)};
     printf("%s\n", pgm);
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
-    tkn_b(t);
     tkn_p(t->t, 0);
     tkn_stat tstat;
     te *m = te_i(2, &tm, NULL);
+    err *e = NULL;
     size_t id = 0;
-    while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
+    while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
         tkn_m_p(m, t->s);
         putchar('\n');
         A(tkn_m_g_i(m) == tids[id++], "tid");
@@ -97,12 +98,12 @@ T(inttest) {
     const size_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM)};
     printf("%s\n", pgm);
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
-    tkn_b(t);
     tkn_p(t->t, 0);
     tkn_stat tstat;
     te *m = te_i(2, &tm, NULL);
+    err *e = NULL;
     size_t id = 0;
-    while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
+    while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
         tkn_m_p(m, t->s);
         putchar('\n');
         A(tkn_m_g_i(m) == tids[id++], "tid");
@@ -115,4 +116,23 @@ T(inttest) {
     A(tstat == TKN_STAT(END), "END");
     te_f(m);
     tkn_f(t);
+}
+
+T(err) {
+    const char *pgm = "a`$";
+    printf("%s\n", pgm);
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn_stat tstat;
+    te *m = te_i(2, &tm, NULL);
+    err *e = NULL;
+    while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
+        tkn_m_p(m, t->s);
+        putchar('\n');
+    }
+    A(e, "err");
+    err_p(e);
+    A(tstat == TKN_STAT(INV), "END");
+    te_f(m);
+    tkn_f(t);
+    err_f(e);
 }
