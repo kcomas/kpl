@@ -2,6 +2,7 @@
 #pragma once
 
 #include "tbl.h"
+#include "err.h"
 
 #define AS_STAT(N) AS_STAT_##N
 
@@ -34,7 +35,7 @@ typedef tbl *op_tbl_i(void);
 
 typedef struct _as {
     ssize_t r;
-    const alfr *af, *ta, *la;
+    const alfr *af, *ta, *la, *ea;
     op_tbl_i *oti;
     tbl *lbls, *ops;
     lst *dq, *code; // data queue
@@ -44,7 +45,9 @@ typedef bool as_code_fn(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restr
 
 typedef bool as_lbl_fn(as *a, uint8_t *m, te *restrict lc, te *restrict fc);
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, op_tbl_i oti, tbl *lbls, lst *code);
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, op_tbl_i oti, tbl *lbls, lst *code);
+
+as *as_i_as(const as *a);
 
 // add and register label
 size_t as_lbl_a(as *a, size_t lbl_id);
@@ -75,6 +78,6 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
 #define AS_A1(A, OP_ID, ARG1) AS_A2(A, OP_ID, ARG1, NULL)
 #define AS_A0(A, OP_ID) AS_A1(A, OP_ID, NULL)
 
-as_stat as_n(as *a, uint8_t *m, te **e);
+as_stat as_n(as *a, uint8_t *m, err **e);
 
 void as_f(as *a);

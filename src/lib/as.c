@@ -1,18 +1,34 @@
 
 #include "as.h"
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, op_tbl_i oti, tbl *lbls, lst *code) {
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, op_tbl_i oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;
     a->ta = ta;
     a->la = la;
+    a->ea = ea;
     a->oti = oti;
     a->lbls = lbls;
     a->ops = oti();
     a->dq = lst_i(la, ta, (void*) te_f);
     a->code = code;
     return a;
+}
+
+as *as_i_as(const as *a) {
+    as *aa = a->af->a(sizeof(as));
+    aa->r = 1;
+    aa->af = a->af;
+    aa->ta = a->ta;
+    aa->la = a->la;
+    aa->ea = a->ea;
+    aa->oti = a->oti;
+    aa->lbls = tbl_i_tbl(a->lbls);
+    aa->ops = tbl_c(a->ops);
+    aa->dq = lst_i_lst(a->dq);
+    aa->code = lst_i_lst(a->code);
+    return aa;
 }
 
 static void as_code_entry_f(void *p) {
@@ -154,7 +170,7 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     return AS_STAT(OK);
 }
 
-as_stat as_n(as *a, uint8_t *m, te **e) {
+as_stat as_n(as *a, uint8_t *m, err **e) {
     size_t p = 0;
     te *h = a->code->h;
     while (h) {
@@ -163,7 +179,7 @@ as_stat as_n(as *a, uint8_t *m, te **e) {
         if (c->d[0].u6 == CODE_ID(O)) {
             as_code_fn *fn = c->d[6].p;
             if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
-                *e = te_c(c);
+                *e = err_i(a->ea, NULL, (void*) te_f, te_c(c), "as code");
                 return AS_STAT(CODE);
             }
             c->d[9] = U6(p - c->d[8].u6);
@@ -177,7 +193,7 @@ as_stat as_n(as *a, uint8_t *m, te **e) {
         while (lh) {
             as_lbl_fn *lfn = ((te*) lh->d[0].p)->d[7].p;
             if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) {
-                *e = te_c(lbl);
+                *e = err_i(a->ea, NULL, (void*) te_f, te_c(lbl), "as lbl");
                 return AS_STAT(LBL);
             }
             lh = lh->d[2].p;
@@ -189,7 +205,7 @@ as_stat as_n(as *a, uint8_t *m, te **e) {
         te *dqe = h->d[0].p;
         as_dq_fn *dfn = dqe->d[3].p;
         if (!dfn || !dfn(a, &p, m, dqe)) {
-            *e = te_c(dqe);
+            *e = err_i(a->ea, NULL, (void*) te_f, te_c(dqe), "as data");
             return AS_STAT(DATA);
         }
         h = h->d[2].p;
