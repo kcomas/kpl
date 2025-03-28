@@ -76,6 +76,8 @@ tkn *tkn_c(tkn *t);
 // give zero for an assigned id
 uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf);
 
+tkn_stat tkn_err(tkn *t, err **e, const char *m);
+
 tkn_stat tkn_n(tkn *t, te *m, err **e);
 
 void tkn_s(tkn *t, te *m);

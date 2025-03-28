@@ -20,10 +20,10 @@ static tbl *mktbl(void) {
 static psr *bp = NULL;
 
 static __attribute__((constructor)) void psr_con(void) {
-    tkn *t = tkn_i(&pm, &pm, tkn_mktbl, tkn_df, mc_i(0, &pm));
+    tkn *t = tkn_i(&pm, &pm, &pm, tkn_mktbl, tkn_df, mc_i(0, &pm));
     tkn_b(t);
     vr *v = vr_i(10, &pm, (void*) te_f);
-    bp = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);
+    bp = psr_i(&pm, &pm, &pm, &pm, psr_entry_f, mktbl, t, v);
     psr_a(bp, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(bp->tt, TOKEN(UN), "Σ", tkn_ft));
     psr_b(bp);
 }
