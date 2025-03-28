@@ -4,11 +4,11 @@
 
 static uint8_t *m = NULL;
 
-__attribute__((constructor)) void x64_con(void) {
+static __attribute__((constructor)) void x64_con(void) {
     m = x64_mmap(1);
 }
 
-__attribute__((destructor)) void x64_des(void) {
+static __attribute__((destructor)) void x64_des(void) {
     x64_munmap(1, m);
 }
 

@@ -188,7 +188,7 @@ atg_stat atg_r(atg *t, gen *g, te *an, te **e) {
     return cc(t, g, an, e);
 }
 
-atg_stat atg_qn(atg *t, gen **g, ast *a, te **e) {
+atg_stat atg_n(atg *t, gen **g, ast *a, te **e) {
     atg_stat stat = ATG_STAT(OK);
     un v;
     if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);

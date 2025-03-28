@@ -68,6 +68,8 @@ typedef struct _tkn {
 
 tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s);
 
+tkn *tkn_i_tkn(const tkn *t, mc *s);
+
 // give zero for an assigned id
 uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf);
 

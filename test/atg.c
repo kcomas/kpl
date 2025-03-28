@@ -16,12 +16,12 @@ T(fnadd3) {
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     gen *g;
     te *ae = NULL, *ce = NULL;
-    atg_stat astat = atg_qn(t, &g, a, &ae);
+    atg_stat astat = atg_n(t, &g, a, &ae);
     if (ae) {
         ast_p(ae, 0);
         putchar('\n');
     }
-    A(astat == ATG_STAT(OK), "atg_qn");
+    A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
     putchar('\n');
     gen_p(g, NULL);
@@ -53,12 +53,12 @@ T(fnadd3) {
     sc = NULL;
     gen_f(g);
     g = gc = NULL;
-    astat = atg_qn(t, &g, a, &ae);
+    astat = atg_n(t, &g, a, &ae);
     if (ae) {
         ast_p(ae, 0);
         putchar('\n');
     }
-    A(astat == ATG_STAT(OK), "atg_qn");
+    A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
     putchar('\n');
     gen_p(g, NULL);

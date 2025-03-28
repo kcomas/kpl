@@ -47,6 +47,6 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
 
 atg_stat atg_r(atg *t, gen *g, te *an, te **e);
 
-atg_stat atg_qn(atg *t, gen **g, ast *a, te **e);
+atg_stat atg_n(atg *t, gen **g, ast *a, te **e);
 
 void atg_f(atg *t);
