@@ -24,3 +24,13 @@ T(fnadd3) {
         )),
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))), NULL)));
 }
+
+T(fnf6muli6cstdiv) {
+    V(fnf6muli6cstdiv, RN(AN(NULL,
+        LN(LT(1, "f", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, NN(T, TF(FN, TS(F6), 3, "x", TS(F6), "y", TS(F6), "z", TS(U6))), LN(LT(3, "x", U6(0), NULL, "y", U6(0), NULL, "z", U6(0), NULL), L(1, ON(NULL, DIV,
+            ON(NULL, MUL, EN("x", U6(0), NULL), EN("y", U6(0), NULL)),
+            ON(NULL, CST, TN(F6), EN("z", U6(0), NULL))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), ON(NULL, CST, TN(U6), SN(I6, I6(2)))))))),
+    NULL)));
+}
