@@ -82,7 +82,7 @@ void as_data_p(const as *a, const uint8_t *m);
 
 void as_code_p(const as *a, const uint8_t *m);
 
-void as_x64_err_p(as_stat stat, te *e);
+err_d_p *as_x64_err_g_p(as_stat stat);
 
 bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe);
 

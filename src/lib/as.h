@@ -33,9 +33,12 @@ typedef enum {
 
 typedef tbl *op_tbl_i(void);
 
+typedef err_d_p *as_err_g_p(as_stat stat);
+
 typedef struct _as {
     ssize_t r;
     const alfr *af, *ta, *la, *ea;
+    as_err_g_p *gep;
     op_tbl_i *oti;
     tbl *lbls, *ops;
     lst *dq, *code; // data queue
@@ -45,7 +48,7 @@ typedef bool as_code_fn(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restr
 
 typedef bool as_lbl_fn(as *a, uint8_t *m, te *restrict lc, te *restrict fc);
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, op_tbl_i oti, tbl *lbls, lst *code);
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code);
 
 as *as_i_as(const as *a);
 

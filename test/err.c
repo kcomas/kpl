@@ -9,3 +9,7 @@ T(b) {
     err_p(e);
     err_f(e);
 }
+
+T(nerr) {
+    err_p(NULL);
+}

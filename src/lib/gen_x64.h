@@ -108,6 +108,6 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
 #define AS1(a, op_id, arg1, ci) AS2(a, op_id, arg1, NULL, ci)
 #define AS0(a, op_id, ci) AS1(a, op_id, NULL, ci)
 
-gen_stat gen_err(gen_stat stat, te *ci, te **e);
+gen_stat gen_err(const gen *g, te *ci, err **e, const char *m);
 
 gen *gen_b(gen *g);

@@ -359,12 +359,17 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
     return stat;
 }
 
-gen_stat gen_err(gen_stat stat, te *ci, te **e) {
-    *e = te_c(ci);
-    return stat;
+static void gen_err_p(void *d) {
+    HERE("TODO");
+    printf("%p", d);
 }
 
-static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, te **e)  {
+gen_stat gen_err(const gen *g, te *ci, err **e, const char *m) {
+    *e = err_i(g->ea, gen_err_p, (void*) te_f, te_c(ci), m);
+    return GEN_STAT(INV);
+}
+
+static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     (void) g;
     (void) s;
     (void) e;
