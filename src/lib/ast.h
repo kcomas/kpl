@@ -40,13 +40,15 @@ typedef lst *ast_lst_i(void);
 
 typedef struct {
     ssize_t r;
-    const alfr *af, *ta, *ma;
+    const alfr *af, *ta, *ma, *ea;
     psr_id_g *pig;
     ast_lst_i *ali;
     tbl *pt, *tt;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, const alfr *ea, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
+
+ast *ast_i_ast(const ast *a);
 
 ast *ast_c(ast *a);
 
@@ -67,12 +69,12 @@ ast_stat ast_g_t(te *an, te **type);
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);
 
-typedef ast_stat ast_tf(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
+typedef ast_stat ast_tf(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e);
 
 // do not allow dupes
 ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
-ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
+ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e);
 
 ast_stat ast_t_a(ast *a, uint16_t tid, uint16_t id);
 

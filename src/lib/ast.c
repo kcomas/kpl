@@ -21,17 +21,22 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV CLS";
 }
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, const alfr *ea, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
     ast *a = af->a(sizeof(ast));
     a->r = 1;
     a->af = af;
     a->ta = ta;
     a->ma = ma;
+    a->ea = ea;
     a->pig = pig;
     a->ali = ali;
     a->pt = pt;
     a->tt = tt;
     return a;
+}
+
+ast *ast_i_ast(const ast *a) {
+    return ast_i(a->af, a->ta, a->ma, a->ea, a->pig, a->ali, tbl_c(a->pt), tbl_c(a->tt));
 }
 
 ast *ast_c(ast *a) {
@@ -231,12 +236,15 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
     return AST_STAT(OK);
 }
 
-ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
+ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
     ast_stat stat;
     size_t pid;
     if ((stat = a->pig(pn, &pid)) != AST_STAT(OK)) return stat;
     te *kv;
-    if (tbl_g_i(a->pt, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
+    if (tbl_g_i(a->pt, U6(pid), &kv) == TBL_STAT(NF)) {
+        *e = err_i(a->ea, NULL, (void*) te_f, te_c(pn), "ast_n");
+        return AST_STAT(INV);
+    }
     ast_tf *atf = kv->d[1].p;
     return atf(a, pan, pn, vn, e);
 }
