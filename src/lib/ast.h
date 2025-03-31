@@ -41,12 +41,13 @@ typedef lst *ast_lst_i(void);
 typedef struct {
     ssize_t r;
     const alfr *af, *ta, *ma, *ea;
+    err_d_p *edp;
     psr_id_g *pig;
     ast_lst_i *ali;
     tbl *pt, *tt;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, const alfr *ea, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, const alfr *ea, err_d_p edp, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
 
 ast *ast_i_ast(const ast *a);
 

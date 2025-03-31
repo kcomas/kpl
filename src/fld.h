@@ -4,6 +4,6 @@
 #include "./lib/fld.h"
 #include "ast.h"
 
-fld_stat fld_err(fld_stat stat, te *an, te **e);
+fld_stat fld_err(fld *f, te *an, err **e, const char *m);
 
 fld *fld_b(fld *f);

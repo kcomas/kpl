@@ -1,9 +1,8 @@
 
-#include "../src/opt.h"
-#include "chk_t.h"
+#include "opt_t.h"
 
 #define V(N) RC(); \
-    fast(_t, a, &an, opt_b, false); \
+    fast(_t, a, &an, bopt, false); \
     ast_verify(_t, a, an, N);
 
 T(fnadd3) {

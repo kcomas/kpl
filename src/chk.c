@@ -29,12 +29,16 @@ void chk_p(const tbl *ct, size_t idnt) {
     }
 }
 
-chk_stat chk_err(chk_stat stat, te *an, te **e) {
-    *e = te_c(an);
-    return stat;
+static void chk_err_p(void *d) {
+    ast_p(d, 0);
 }
 
-static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
+static chk_stat chk_err(chk *c, te *an, err **e, const char *m) {
+    *e = err_i(c->ea, chk_err_p, (void*) te_f, te_c(an), m);
+    return CHK_STAT(INV);
+}
+
+static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     (void) c;
     (void) e;
     tbl *fat = ((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
@@ -59,31 +63,31 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_nop(chk *c, te *an, te **e) {
+static chk_stat chk_nop(chk *c, te *an, err **e) {
     (void) c;
     (void) an;
     (void) e;
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_vd(chk *c, te *an, te **e) {
+static chk_stat chk_vd(chk *c, te *an, err **e) {
     (void) e;
     an->d[3] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
+static chk_stat chk_aply_e_fn(chk *c, te *an, err **e) {
     (void) c;
     // TODO check if FN without def
     te *t = ((te*) ((te*) an->d[4].p)->d[3].p)->d[2].p;
     tbl *fa = t->d[3].p;
     lst *l = an->d[5].p;
-    if (fa->i->l != l->l) return chk_err(CHK_STAT(INV), an, e); // args len
+    if (fa->i->l != l->l) return chk_err(c, an, e, "chk args len");
     te *fh = fa->i->h, *lh = l->h, *ft, *lt;
     while (fh && lh) {
         ft = ((te*) fh->d[0].p)->d[2].p;
-        if (ast_g_t(lh->d[0].p, &lt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
-        if (!type_eq(ft, lt)) return chk_err(CHK_STAT(INV), an, e);
+        if (ast_g_t(lh->d[0].p, &lt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type");
+        if (!type_eq(ft, lt)) return chk_err(c, an, e, "chk type ne");
         fh = fh->d[2].p;
         lh = lh->d[2].p;
     }
@@ -91,48 +95,46 @@ static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_dfn_e_op(chk *c, te *an, te **e) {
+static chk_stat chk_dfn_e_op(chk *c, te *an, err **e) {
     (void) c;
-    (void) e;
     te *lte = ((te*) an->d[5].p)->d[3].p, *r = an->d[6].p;
-    if (lte->d[2].p != NULL || lte->d[3].p != NULL) return chk_err(CHK_STAT(INV), an, e);
+    if (lte->d[2].p != NULL || lte->d[3].p != NULL) return chk_err(c, an, e, "chk lte defined");
     an->d[3] = P(te_c(r->d[3].p));
     lte->d[2] = P(te_c(r->d[3].p));
     ast_lst_tbl_e_s_f(lte, LTE_FLG(L));
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
+static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     (void) c;
-    (void) e;
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h = lt->i->h;
     while (h) {
         uint32_t flgs = ast_lst_tbl_e_g_f(h->d[0].p);
-        if ((flgs & LTE_FLG(O)) && (!(flgs & LTE_FLG(F)))) return chk_err(CHK_STAT(INV), an, e);
+        if ((flgs & LTE_FLG(O)) && (!(flgs & LTE_FLG(F)))) return chk_err(c, an, e, "chk out of scope");
         h = h->d[2].p;
     }
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
     te *rt;
-    if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
-    if (!type_eq(((te*) an->d[3].p)->d[2].p, rt)) return chk_err(CHK_STAT(INV), an, e); // last stmt ret type
+    if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get return type");
+    if (!type_eq(((te*) an->d[3].p)->d[2].p, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_op_lr_teq(chk *c, te *an, te **e) {
+static chk_stat chk_op_lr_teq(chk *c, te *an, err **e) {
     (void) c;
     te *lt, *rt;
-    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an->d[5].p, e);
-    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an->d[6].p, e);
-    if (!type_eq(lt, rt)) return chk_err(CHK_STAT(INV), an, e);
+    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(c, an->d[5].p, e, "chk cannot get op l type");
+    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an->d[6].p, e, "chk cannot get op r type");
+    if (!type_eq(lt, rt)) return chk_err(c, an, e, "chk op l r type ne");
     an->d[3] = P(te_c(lt));
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_op_mon(chk *c, te *an, te **e) {
+static chk_stat chk_op_mon(chk *c, te *an, err **e) {
     (void) c;
     te *t;
-    if (ast_g_t(an->d[6].p, &t) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
+    if (ast_g_t(an->d[6].p, &t) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type");
     an->d[3] = P(te_c(t));
     return CHK_STAT(OK);
 }

@@ -1,6 +1,6 @@
 
 #include "../src/atg_x64.h"
-#include "chk_t.h"
+#include "opt_t.h"
 #include "gen_t.h"
 
 extern const alfr am;
@@ -8,7 +8,7 @@ extern const alfr am;
 T(fnadd3) {
     IC(fnadd3);
     RC();
-    fast(_t, a, &an, opt_b, false);
+    fast(_t, a, &an, bopt, false);
     atg *t = atg_b(atg_i(&ast_am, &ast_am, cti, lst_i(&am, &am, NULL), ali(), gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()))));
     gen *gb = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));

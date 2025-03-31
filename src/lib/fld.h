@@ -18,21 +18,23 @@ typedef lst *fld_lst_i(void);
 
 typedef struct {
     ssize_t r;
-    const alfr *af, *ta;
+    const alfr *af, *ta, *ea;
     fld_tbl_i *fti;
     fld_lst_i *fli;
     ast *a;
     tbl *ft;
 } fld;
 
-fld *fld_i(const alfr *af, const alfr *ta, fld_tbl_i *fti, fld_lst_i *fli, ast *a, tbl *ft);
+fld *fld_i(const alfr *af, const alfr *ta, const alfr *ea, fld_tbl_i *fti, fld_lst_i *fli, ast *a, tbl *ft);
+
+fld *fld_i_fld(const fld *f, ast *a);
 
 typedef bool fld_test_fn(const te *an);
 
-typedef fld_stat fld_fn(fld *f, te **restrict an, te **restrict e);
+typedef fld_stat fld_fn(fld *f, te **an, err **e);
 
 void fld_a(fld *f, ast_cls cls, fld_test_fn test, fld_fn fn);
 
-fld_stat fld_n(fld *f, te **restrict an, te **restrict e, bool rr); // modifies in place
+fld_stat fld_n(fld *f, te **an, err **e, bool rr); // modifies in place
 
 void fld_f(fld *f);

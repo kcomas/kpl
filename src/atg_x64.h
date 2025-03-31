@@ -11,8 +11,6 @@ bool atg_x64_enq(const te *an);
 
 x64_type atg_x64_g_t(const te *type);
 
-atg_stat atg_err(atg_stat stat, te *an, te **e);
-
 extern const char *atg_dump_strs[TYPE(_END)];
 
 atg *atg_b(atg *t);
