@@ -1,26 +1,6 @@
 
 #include "gen_t.h"
 
-static uint8_t *m = NULL;
-
-extern const alfr am;
-
-static gen *bg = NULL;
-
-static as *ba = NULL;
-
-static __attribute__((constructor)) void gen_c(void) {
-    bg = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
-    ba = as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    m = x64_mmap(1);
-}
-
-static __attribute__((destructor)) void gen_d(void) {
-    gen_f(bg);
-    as_f(ba);
-    x64_munmap(1, m);
-}
-
 static void build(_tests *_t, gen *g, uint8_t *m) {
     E();
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));

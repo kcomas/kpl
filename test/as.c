@@ -1,22 +1,6 @@
 
 #include "as_t.h"
 
-extern const alfr am;
-
-static uint8_t *m = NULL;
-
-static as *ba = NULL;
-
-static __attribute__((constructor)) void as_c(void) {
-    m = x64_mmap(1);
-    ba = as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-}
-
-static __attribute__((destructor)) void as_d(void) {
-    x64_munmap(1, m);
-    as_f(ba);
-}
-
 static void as_printf(as *a, const char *fmt) {
     as_a(a, AS_X64(XOR), as_arg_r(a, R(AX)), as_arg_r(a, R(AX)), NULL, NULL);
     as_a(a, AS_X64(MOV), as_arg_r(a, R(DI)), as_arg_qw(a, P(fmt)), NULL, NULL);
