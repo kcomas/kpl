@@ -388,3 +388,67 @@ void node_p(const te *n, size_t idnt) {
         break;
     }
 }
+
+static un node_tkn_g_s_e(const te *n) {
+    un se = U6(0);
+    if (!n) return se;
+    switch (n->d[1].u6) {
+        case NODE_TYPE(ROOT):
+            break;
+        case NODE_TYPE(FLT):
+            se = u5_s_o(se, TKN_S, tkn_m_g_s(n->d[2].p));
+            se = u5_s_o(se, TKN_E, tkn_m_g_e(n->d[4].p));
+            break;
+        default:
+            se = u5_s_o(se, TKN_S, tkn_m_g_s(n->d[2].p));
+            se = u5_s_o(se, TKN_E, tkn_m_g_e(n->d[2].p));
+            break;
+    }
+    return se;
+}
+
+static void node_tkn_mm(const te *n, uint32_t *s, uint32_t *e) {
+    if (!n) return;
+    te *h;
+    switch (n->d[1].u6) {
+        case NODE_TYPE(OP):
+            node_tkn_mm(n->d[3].p, s, e);
+            node_tkn_mm(n->d[4].p, s, e);
+            break;
+        case NODE_TYPE(VEC):
+        case NODE_TYPE(LST):
+            h = ((lst*) n->d[3].p)->h;
+            while (h) {
+                node_tkn_mm(h->d[0].p, s, e);
+                h = h->d[2].p;
+            }
+            break;
+        case NODE_TYPE(APLY):
+            node_tkn_mm(n->d[3].p, s, e);
+            h = ((lst*) n->d[4].p)->h;
+            while (h) {
+                node_tkn_mm(h->d[0].p, s, e);
+                h = h->d[2].p;
+            }
+            break;
+        case NODE_TYPE(SYM):
+        case NODE_TYPE(CMD):
+            node_tkn_mm(n->d[3].p, s, e);
+            break;
+        default:
+            break;
+    }
+    un se = node_tkn_g_s_e(n);
+    if (!se.u6) return;
+    if (u5_g_o(se, TKN_S) < *s) *s = u5_g_o(se, TKN_S);
+    if (u5_g_o(se, TKN_E) > *e) *e = u5_g_o(se, TKN_E);
+}
+
+psr_stat node_tkn_s_e(const te *n, uint32_t *s, uint32_t *e) {
+    un se = node_tkn_g_s_e(n);
+    if (!se.u6) return PSR_STAT(INV);
+    *s = u5_g_o(se, TKN_S);
+    *e = u5_g_o(se, TKN_E);
+    node_tkn_mm(n, s, e);
+    return PSR_STAT(OK);
+}

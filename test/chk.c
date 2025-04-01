@@ -24,3 +24,8 @@ T(fnadd3) {
     V(cn);
     te_f(ft);
 }
+
+TO(fnf6muli6cstdiv) {
+    IC(fnf6muli6cstdiv);
+    V(NULL);
+}

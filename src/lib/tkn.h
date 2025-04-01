@@ -38,6 +38,9 @@ uint32_t tkn_m_g_c(const te *m);
 
 void tkn_m_s_c(te *m, uint32_t c);
 
+#define TKN_S 0
+#define TKN_E 1
+
 // start pos
 uint32_t tkn_m_g_s(const te *m);
 
