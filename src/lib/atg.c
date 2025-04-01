@@ -19,6 +19,24 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p edp, atg_tbl_
    return t;
 }
 
+atg *atg_i_atg(const atg *t) {
+    atg *tt = t->af->a(sizeof(atg));
+    tt->tc = tt->lc = 0;
+    tt->r = 1;
+    tt->af = t->af;
+    tt->ta = t->ta;
+    tt->ea = t->ea;
+    tt->edp = t->edp;
+    tt->ati = t->ati;
+    tt->bg = gen_i_gen(t->bg);
+    tt->a = as_i_as(t->a);
+    tt->q = lst_i_lst(t->q);
+    tt->se = lst_c(t->se);
+    tt->at = tbl_c(t->at);
+    tt->ot = tbl_c(t->ot);
+    return tt;
+}
+
 static atg_stat atg_lst_q(atg *t, lst *l, atg_test_fn enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;

@@ -3,7 +3,7 @@
 
 chk *bchk = NULL;
 
-static __attribute__((constructor)) void chk_con(void) {
+static __attribute__((constructor(105))) void chk_con(void) {
     bchk = chk_b(chk_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, NULL));
 }
 

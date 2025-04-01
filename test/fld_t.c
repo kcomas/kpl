@@ -3,7 +3,7 @@
 
 fld *bfld = NULL;
 
-static __attribute__((constructor)) void chk_con(void) {
+static __attribute__((constructor(104))) void chk_con(void) {
     bfld = fld_b(fld_i(&ast_am, &ast_am, &ast_am, ati, ali, NULL, mktbl(AST_CLS(_))));
 }
 

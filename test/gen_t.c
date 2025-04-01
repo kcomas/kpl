@@ -4,7 +4,7 @@
 
 gen *bg = NULL;
 
-static __attribute__((constructor)) void gen_c(void) {
+static __attribute__((constructor(102))) void gen_c(void) {
     bg = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
 }
 
