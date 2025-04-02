@@ -19,7 +19,6 @@ void fast(_tests *_t, ast *a, te **an, const fld *bf, bool rr) {
     if (e) {
         err_p(e);
         err_f(e);
-        printf("\n rr: %d\n", rr);
     }
     A(stat == FLD_STAT(OK), "fld_n");
     fld_f(f);
