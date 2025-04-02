@@ -25,7 +25,17 @@ T(fnadd3) {
     te_f(ft);
 }
 
-TO(fnf6muli6cstdiv) {
+T(fnf6muli6cstdiv) {
     IC(fnf6muli6cstdiv);
-    V(NULL);
+    te *ft = TF(FN, TS(F6), 3, "x", TS(F6), "y", TS(F6), "z", TS(U6));
+    te *cn = RN(AN(TS(VD), LN(LT(1, "f", FLG(0, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("f", FLG(0, LTE_FLG(F)), te_c(ft)),
+            ON(te_c(ft), CST, NN(T, te_c(ft)),
+                LN(LT(3, "x", FLG(0, LTE_FLG(A)), TS(F6), "y", FLG(1, LTE_FLG(A)), TS(F6), "z", FLG(2, LTE_FLG(A)), TS(U6)), L(1,
+                    ON(TS(F6), DIV, ON(TS(F6), MUL, EN("x", FLG(0, LTE_FLG(A)), TS(F6)), EN("y", FLG(1, LTE_FLG(A)), TS(F6))), ON(TS(F6), CST, TN(F6), EN("z", FLG(2, LTE_FLG(A)), TS(U6)))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("f", FLG(0, LTE_FLG(F)), te_c(ft)),
+            L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), ON(TS(U6), CST, TN(U6), SN(I6, I6(2))))))
+    )), NULL));
+    V(cn);
+    te_f(ft);
 }
