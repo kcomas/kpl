@@ -26,6 +26,7 @@ T(fnadd3) {
     atg_stat astat = atg_n(t, &g, a, &e);
     if (e) {
         err_p(e);
+        err_f(e);
     }
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
@@ -62,6 +63,7 @@ T(fnadd3) {
     astat = atg_n(t, &g, a, &e);
     if (e) {
         err_p(e);
+        err_f(e);
     }
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
