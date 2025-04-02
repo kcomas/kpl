@@ -132,6 +132,7 @@ $(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/
 
 OBJS := $(sort $(OBJS))
 
+#$(TESTS): OO = -O3
 $(TESTS): FLAGS += -DNTO
 $(TESTS): FFLAGS += -fsanitize=address -fsanitize=leak -fsanitize=undefined
 $(TESTS): WFLAGS += -Werror
