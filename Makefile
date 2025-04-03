@@ -1,7 +1,7 @@
 
 CC = gcc
 OO = -g -Og
-FFLAGS = -fstack-protector-all -fno-omit-frame-pointer
+FFLAGS = -fstack-protector-all -fno-omit-frame-pointer -fcf-protection=full -fPIE
 MFLAGS = -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
 CFLAGS = -std=gnu99 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)

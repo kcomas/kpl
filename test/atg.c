@@ -86,7 +86,6 @@ T(fnadd3) {
     if (e) err_p(e);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
-    uint8_t *m = x64_mmap(1);
     gen_f(g);
     gen_st_f(st);
     ast_f(a);
@@ -102,5 +101,4 @@ T(fnadd3) {
     X64_RS();
     ((void (*)(void)) &m[ep])();
     X64_RR();
-    x64_munmap(1, m);
 }

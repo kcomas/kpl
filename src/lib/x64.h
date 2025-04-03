@@ -204,6 +204,12 @@ x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 // neg rax
 x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r);
 
+// mulsd xmm0, xmm1
+x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
+// divsd xmm0, xmm1
+x64_stat x64_divsd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
 // cvtsi2sd xmm0, rax
 x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s);
 
