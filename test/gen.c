@@ -87,9 +87,9 @@ T(call) {
     A(as_n(a, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t x = 3, y = 5, z = 7;
-    te *l1c = as_lbl_g_c(a, 1);
-    A(l1c, "l1c");
-    A(((int64_t(*)(int64_t, int64_t)) &m[l1c->d[8].u6])(x, y) == z, "call");
+    ssize_t l1c = as_lbl_g_c_i(a, 1);
+    A(l1c > 0, "l1c");
+    A(((int64_t(*)(int64_t, int64_t)) &m[l1c])(x, y) == z, "call");
     as_f(a);
 }
 

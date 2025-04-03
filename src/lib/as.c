@@ -93,6 +93,12 @@ te *as_lbl_g_c(as *a, size_t lbl_id) {
     return (te*) lbl->d[1].p;
 }
 
+ssize_t as_lbl_g_c_i(as *a, size_t lbl_id) {
+    te *lbl = get_lbl(a, lbl_id);
+    if (!lbl) return -1;
+    return ((te*) lbl->d[1].p)->d[8].u6;
+}
+
 as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c) {
     te *lbl = get_lbl(a, lbl_id);
     if (!lbl) return AS_STAT(INV);
