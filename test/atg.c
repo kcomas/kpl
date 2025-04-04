@@ -104,3 +104,9 @@ T(fnadd3) {
     gen_f(gc);
     AR(1);
 }
+/*
+T(fnf6muli6cstdiv) {
+    AI(fnf6muli6cstdiv, 2);
+    V(NULL, NULL);
+}
+*/
