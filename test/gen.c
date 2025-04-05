@@ -16,8 +16,9 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     A(stat == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
+    size_t p = 0;
     e = NULL;
-    as_stat astat = as_n(a, m, &e);
+    as_stat astat = as_n(a, &p, m, &e);
     A(astat == AS_STAT(OK), "as_n");
     gen_p(g, m);
     printf("DATA\n");
@@ -44,8 +45,9 @@ T(b) {
     A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
     printf("STATE AFTER\n");
     gen_st_p(st);
+    size_t p = 0;
     e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     gen_p(g, m);
     uint64_t arg1 = 3, arg2 = 4;
     uint64_t r = ((uint64_t(*)(uint64_t, uint64_t)) m)(arg1, arg2);
@@ -84,7 +86,8 @@ T(call) {
     gen_p(gc, NULL);
     gen_st_f(st);
     gen_f(gc);
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    size_t p = 0;
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t x = 3, y = 5, z = 7;
     ssize_t l1c = as_lbl_g_c_i(a, 1);
@@ -287,10 +290,28 @@ T(printfxmm) {
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 8, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf, ai:%ld, bi:%ld, ci:%ld, di:%ld)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2), gen_arg(g, X64_TYPE(I6), 3)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 4, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 5, gen_data(g, X64_TYPE(M), P("printf(ai:%ld, bi:%ld, ci:%ld, di:%ld)\n")), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2), gen_arg(g, X64_TYPE(I6), 3)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P("printf(ad:%lf)\n")), gen_arg(g, X64_TYPE(F6), 0)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 3, gen_data(g, X64_TYPE(M), P("%lf, %lf\n")), gen_data(g, X64_TYPE(F6), F6(2.2)), gen_data(g, X64_TYPE(F6), F6(6.6))), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(F6), 2), NULL, NULL));
     BUILD(g, m);
     double ad = 1.9, bd = 2.2, cd = 3.3;
     uint64_t ai = 1, bi = 2, ci = 3, di = 4;
     double dd = ((double(*)(double, double, double, uint64_t, uint64_t, uint64_t, uint64_t)) m)(ad, bd, cd, ai, bi, ci, di);
     A(cd == dd, "printxmm");
+}
+
+T(fnmulcstdiv) {
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 1)));
+    S(gen_a(gc, GEN_OP(CST), gen_tmp(gc, X64_TYPE(F6), 1), gen_arg(gc, X64_TYPE(U6), 0), NULL));
+    S(gen_a(gc, GEN_OP(DIV), gen_tmp(gc, X64_TYPE(F6), 2), gen_tmp(gc, X64_TYPE(F6), 0), gen_tmp(gc, X64_TYPE(F6), 1)));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(F6), 2), NULL, NULL));
+    BUILD(gc, m);
+    double a = 4.4, b = 6.6;
+    uint64_t c = 2;
+    double d = ((double(*)(double, double, uint64_t)) m)(a, b, c);
+    printf("%lf * %lf / %ld = %lf\n", a, b, c, d);
+    A(d == 14.52, "eq");
 }

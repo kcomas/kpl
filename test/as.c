@@ -24,8 +24,9 @@ T(b) {
     as_a(a, AS_X64(POP), as_arg_r(a, R(AX)), NULL, NULL, NULL);
     as_a(a, AS_X64(POP), as_arg_r(a, R(BP)), NULL, NULL, NULL);
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     te *l1c = as_lbl_g_c(a, 1);
     A(l1c, "lc");
@@ -56,8 +57,9 @@ T(ift) {
     as_printf(a, "%d Greater/Equal To 5\n");
     as_a(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, P(">")), NULL, NULL);
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     A(strcmp(((iftfn*) m)(2), "<") == 0, "<");
     A(strcmp(((iftfn*) m)(7), ">") == 0, ">");
@@ -79,8 +81,9 @@ T(loop) {
     AS_A1(a, AS_X64(POP), as_arg_r(a, R(AX)));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(SI)));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int32_t r = ((int32_t(*)(int32_t)) m)(5);
     A(r == 1, "dec");
@@ -98,8 +101,9 @@ T(call) {
     as_lbl_a(a, 2);
     AS_A1(a, AS_X64(CALL), as_arg_l(a, 1));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int32_t v = 5, r = ((int32_t(*)(int32_t)) m)(v);
     printf("call %d, inc: %d\n", v, r);
@@ -116,8 +120,9 @@ T(calle) {
     as_printf(a, "calle\n");
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, I6(r)));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     A(r == ((int64_t(*)()) m)(), "calle");
     as_f(a);
@@ -128,8 +133,9 @@ T(neg) {
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
     AS_A1(a, AS_X64(NEG), as_arg_r(a, R(AX)));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t r = 8;
     A(-r == ((int64_t(*)(int64_t)) m)(r), "neg");
@@ -147,8 +153,9 @@ T(xmmrsp) {
     AS_A2(a, AS_X64(ADDSD), as_arg_r(a, XMM(0)), as_arg_r(a, XMM(14)));
     AS_A2(a, AS_X64(ADD), as_arg_r(a, R(SP)), as_arg_b(a, sizeof(void*) * 2));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     double w = 0, x = 3.14, y = 0.86, z = 4.0;
     double r = ((double(*)(double, double, double)) m)(w, x, y);
@@ -166,8 +173,9 @@ T(cmprip) {
     as_lbl_a(a, 1);
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     A(123 == ((int64_t(*)(int64_t)) m)(123), "eq");
     as_f(a);
@@ -182,8 +190,9 @@ T(ucomisdrip) {
     as_lbl_a(a, 1);
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, U6(1)));
     AS_A0(a, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     A(1 == ((uint64_t(*)(double)) m)(3.14), "eq");
     as_f(a);
@@ -192,8 +201,9 @@ T(ucomisdrip) {
 T(err) {
     as *a = as_i_as(ba);
     AS_A1(a, AS_X64(JE), as_arg_l(a, 1));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(a, m, &e) != AS_STAT(OK), "as");
+    A(as_n(a, &p, m, &e) != AS_STAT(OK), "as");
     err_p(e);
     err_f(e);
     as_f(a);
@@ -202,14 +212,17 @@ T(err) {
 T(mulsddivsd) {
     as *s = as_i_as(ba);
     AS_A2(s, AS_X64(MULSD), as_arg_r(s, XMM(0)), as_arg_r(s, XMM(1)));
-    AS_A2(s, AS_X64(DIVSD), as_arg_r(s, XMM(0)), as_arg_r(s, XMM(2)));
+    AS_A2(s, AS_X64(CVTSI2SD), as_arg_r(s, XMM(15)), as_arg_r(s, R(DI)));
+    AS_A2(s, AS_X64(DIVSD), as_arg_r(s, XMM(0)), as_arg_r(s, XMM(15)));
     AS_A0(s, AS_X64(RET));
+    size_t p = 0;
     err *e = NULL;
-    A(as_n(s, m, &e) == AS_STAT(OK), "as");
+    A(as_n(s, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(s, m);
-    double a = 3.4, b = 5.6, c = 1.2;
-    double d = ((double(*)(double, double, double)) m)(a, b, c);
-    printf("%lf * %lf / %lf = %lf\n", a, b, c, d);
-    A(d - 15.866667 < 0.00001, "eq");
+    double a = 4.4, b = 6.6;
+    uint64_t c = 2;
+    double d = ((double(*)(double, double, uint64_t)) m)(a, b, c);
+    printf("%lf * %lf / %ld = %lf\n", a, b, c, d);
+    A(d == 14.52, "eq");
     as_f(s);
 }

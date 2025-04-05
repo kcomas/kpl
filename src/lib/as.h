@@ -84,6 +84,6 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
 #define AS_A1(A, OP_ID, ARG1) AS_A2(A, OP_ID, ARG1, NULL)
 #define AS_A0(A, OP_ID) AS_A1(A, OP_ID, NULL)
 
-as_stat as_n(as *a, uint8_t *m, err **e);
+as_stat as_n(as *a, size_t *p, uint8_t *m, err **e);
 
 void as_f(as *a);
