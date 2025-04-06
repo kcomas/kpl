@@ -213,6 +213,16 @@ T(fnf6muli6cstdiv) {
     te_f(h);
 }
 
+T(apltypefn) {
+    te *h = ppnode(psr_r(bpsr(apltypefn)));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), LST(
+            OP(APLY(N(TYPE), N(VAR)), OP(APLY(N(TYPE), N(VAR)), N(VAR)))))),
+            CMD(APLY(N(VAR), N(INT), N(INT)))
+        ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(bpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});

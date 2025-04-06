@@ -69,14 +69,14 @@ INST_RMBX(movsd);
 as *as_rx_b(as *a) {
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_movq_xr, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_movq_xrm, NULL);
-    as_op_a(a, AS_X64(MOVSD), ARG_ID(X), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_movsd_xrm, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_movq_xrmb, NULL);
-    as_op_a(a, AS_X64(MOVSD), ARG_ID(X), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_movsd_xrmb, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(R), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movq_rx, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(RM), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movq_rmx, NULL);
-    as_op_a(a, AS_X64(MOVSD), ARG_ID(RM), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movsd_rmx, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(RM), ARG_ID(B), ARG_ID(X),  ARG_ID(N), as_movq_rmbx, NULL);
+    as_op_a(a, AS_X64(MOVSD), ARG_ID(X), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_movsd_xrm, NULL);
     as_op_a(a, AS_X64(MOVSD), ARG_ID(RM), ARG_ID(B), ARG_ID(X),  ARG_ID(N), as_movsd_rmbx, NULL);
+    as_op_a(a, AS_X64(MOVSD), ARG_ID(X), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_movsd_xrmb, NULL);
+    as_op_a(a, AS_X64(MOVSD), ARG_ID(RM), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movsd_rmx, NULL);
     as_op_a(a, AS_X64(CVTSI2SD), ARG_ID(X), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_cvtsi2sd_xr, NULL);
     return a;
 }
