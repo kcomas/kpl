@@ -71,7 +71,6 @@ static bool aply_op_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(O);
 }
 
-
 static fld_stat z_type_i(fld *f, lst *l, te *p) {
     tbl *t = p->d[3].p = f->fti();
     un ln;
@@ -96,6 +95,30 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
     }
     lst_f(l);
     return FLD_STAT(OK);
+}
+
+static fld_stat aply_type_e_r(fld *f, te **an, err **e) {
+    te *t = ((te*) (*an)->d[4].p)->d[3].p;
+    te *en = ((lst*) (*an)->d[5].p)->h->d[0].p;
+    te *lte = en->d[3].p;
+    if (lte->d[2].p) return fld_err(f, *an, e, "fld lte type set");
+    lte->d[2] = P(te_c(t));
+    te_c(en);
+    en->d[0] = (*an)->d[0];
+    te_f(*an);
+    *an = en;
+    return FLD_STAT(OK);
+}
+
+static bool aply_type_e_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(A)) return false;
+    te *a4 = an->d[4].p;
+    if (!a4 || a4->d[2].u4 != AST_CLS(T)) return false;
+    lst *l = an->d[5].p;
+    if (!l || l->l != 1) return false;
+    te *e = l->h->d[0].p;
+    if (!e || e->d[2].u4 != AST_CLS(E)) return false;
+    return true;
 }
 
 static fld_stat aply_type_b_r(fld *f, te **an, err **e) {
@@ -152,6 +175,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), e_lst_type_o_def_t, e_lst_type_o_def_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
+    fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);
     fld_a(f, AST_CLS(C), cmd_t, cmd_r);
     return f;

@@ -169,7 +169,8 @@ te *gen_data(gen *g, x64_type t, un d) {
 
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
-    st->vc = st->rac = st->xac = 0;
+    st->rac = st->xac = 0;
+    st->rvc = st->xvc = 0;
     st->r = 1;
     st->af = af;
     st->ta = ta;
@@ -185,7 +186,7 @@ gen_st *gen_st_i_gen_st(const gen_st *st) {
 }
 
 void gen_st_p(const gen_st *st) {
-    printf("vc: %u, rac: %u, xac: %u\n", st->vc, st->rac, st->xac);
+    printf("rac: %u, xac: %u, rvc: %u, xvc: %u\n", st->rac, st->xac, st->rvc, st->xvc);
     printf("atm_l: %lu, lat_l: %lu\nR:", st->atm->i->l, st->lat->i->l);
     for (size_t i = 0; i < st->rstk->l; i++) printf("%s ", reg_str(st->rstk->d[i].u3));
     printf("\nX:");
@@ -267,7 +268,14 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
             update_lat(st, ovt, o);
             break;
         case GEN_CLS(V):
-            st->vc = ovt->d[1].u3 + 1 > st->vc ? ovt->d[1].u3 + 1 : st->vc;
+            switch (gen_var_g_t(ovt)) {
+                case X64_TYPE(F5):
+                case X64_TYPE(F6):
+                    st->xvc = ovt->d[1].u3 + 1 > st->xvc ? ovt->d[1].u3 + 1 : st->xvc;
+                    break;
+                default:
+                    st->rvc = ovt->d[1].u3 + 1 > st->rvc ? ovt->d[1].u3 + 1 : st->rvc;
+            }
             break;
         case GEN_CLS(T):
             update_lat(st, ovt, o);

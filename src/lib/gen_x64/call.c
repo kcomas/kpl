@@ -42,13 +42,12 @@ static gen_stat swap_args(te *restrict ci, as *a, te *restrict r, const vr *args
     return GEN_STAT(OK);
 }
 
-static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t *rsaves, size_t rsl, const uint8_t *xsaves, size_t xsl) {
+static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsaves, size_t rsl, const uint8_t *xsaves, size_t xsl) {
     gen_stat stat;
     static const reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
     static const reg xr[] = {XMM(0), XMM(1), XMM(2), XMM(3), XMM(4), XMM(5), XMM(6)};
     size_t iri = 0, xri = 0;
     te *ovt, *kv;
-    vr *args = ((te*) ci->d[arg_i].p)->d[1].p;
     if (!rsaves && !xsaves) { // swap regs that are passed for args
         te *h = st->atm->i->h;
         while (h) {
@@ -167,10 +166,11 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         } \
         for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci); \
     } \
+    vr *args = ((te*) ci->d[RV ? 2 : 1].p)->d[1].p; \
     if (PR) { \
-        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
+        if ((stat = call_arg(st, ci, a, args, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
     } else { \
-        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
+        if ((stat = call_arg(st, ci, a, args, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
     } \
     te *fn = RV ? ci->d[3].p : ci->d[2].p; \
     uint8_t fr; \
