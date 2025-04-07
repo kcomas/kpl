@@ -72,6 +72,10 @@ static bool aply_op_t(const te *an) {
 }
 
 static fld_stat z_type_i(fld *f, lst *l, te *p) {
+    if (!l->l) {
+        lst_f(l);
+        return FLD_STAT(OK);
+    }
     tbl *t = p->d[3].p = f->fti();
     un ln;
     size_t ra = 0, xa = 0;

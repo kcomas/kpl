@@ -63,10 +63,10 @@ static void type_tbl_e_f(void *p) {
     t->af->f(t);
 }
 
-void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type) {
+void type_tbl_a(tbl *t, const alfr *af, mc *s, uint32_t id, te *type) {
     te *kv = te_i(3, af, type_tbl_e_f);
     kv->d[0] = P(s);
-    kv->d[1] = U6(id);
+    kv->d[1] = U5(id);
     kv->d[2] = P(type);
     tbl_a(t, kv);
 }

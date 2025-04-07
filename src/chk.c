@@ -37,17 +37,43 @@ static chk_stat chk_err(chk *c, te *an, err **e, const char *m) {
 static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     (void) c;
     (void) e;
-    tbl *fat = ((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
+    tbl **fat = (tbl**) &((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
-    te *h = lt->i->h, *lei, *kv;
-    while (h) {
-        lei = h->d[0].p;
-        if (tbl_g_i(fat, lei->d[0], &kv) == TBL_STAT(OK)) {
-            lei->d[2] = P(te_c(kv->d[2].p));
-            ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
-            ast_lst_tbl_e_s_i(lei, kv->d[1].u5);
+    te *h, *lei, *kv;
+    if (!*fat) {
+        *fat = tbl_i_tbl(lt);
+        h = lt->i->h;
+        uint32_t ra = 0, xa = 0;
+        while (h) {
+            lei = h->d[0].p;
+            if (!ast_lst_tbl_e_g_f(lei)) {
+                if (!lei->d[2].p) return chk_err(c, an, e, "chk fn infer arg type not set");
+                ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
+                switch (((te*) lei->d[2].p)->d[1].u4) {
+                    case TYPE(F5):
+                    case TYPE(F6):
+                        ast_lst_tbl_e_s_i(lei, ra++);
+                        break;
+                    default:
+                        ast_lst_tbl_e_s_i(lei, xa++);
+                        break;
+                }
+                type_tbl_a(*fat, c->a->ta, mc_c(lei->d[0].p), ast_lst_tbl_e_g_i(lei), te_c(lei->d[2].p));
+            }
+            h = h->d[2].p;
         }
-        h = h->d[2].p;
+    } else {
+        h = lt->i->h;
+        while (h) {
+            lei = h->d[0].p;
+            if (tbl_g_i(*fat, lei->d[0], &kv) == TBL_STAT(OK)) {
+                if (lei->d[2].p && !type_eq(kv->d[2].p, lei->d[2].p)) return chk_err(c, an, e, "chk fn type neq");
+                lei->d[2] = P(te_c(kv->d[2].p));
+                ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
+                ast_lst_tbl_e_s_i(lei, kv->d[1].u5);
+            }
+            h = h->d[2].p;
+        }
     }
     te *p = an->d[0].p, *lte;
     if (p->d[2].u4 == AST_CLS(O) && p->d[4].u4 == OC(DFN) && p->d[5].p && ((te*) p->d[5].p)->d[2].u4 == AST_CLS(E)) { // set var so functions can be used before define
@@ -113,7 +139,9 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
     te *rt;
     if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get return type");
-    if (!type_eq(((te*) an->d[3].p)->d[2].p, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
+    te **fr = (te**) &((te*) an->d[3].p)->d[2].p;
+    if (!*fr) *fr = te_c(rt);
+    else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
     return CHK_STAT(OK);
 }
 
@@ -160,6 +188,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(U6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(ADD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(MUL), TYPE(_A), AST_CLS(E), TYPE(F6), AST_CLS(E), TYPE(F6));
+    CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(MUL), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(ADD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(O), TYPE(F6), AST_CLS(O), TYPE(F6));
     CHK_AA(c, chk_op_mon, AST_CLS(O), TYPE(_N), OC(SUB), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(I6));
