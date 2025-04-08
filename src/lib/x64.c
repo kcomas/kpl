@@ -375,7 +375,27 @@ x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
 
 x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0XF7, roe(MOD(11), 3, r));
+    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 3, r));
+}
+
+x64_stat x64_mul_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 4, r));
+}
+
+x64_stat x64_imul_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 5, r));
+}
+
+x64_stat x64_div_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 6, r));
+}
+
+x64_stat x64_idiv_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 7, r));
 }
 
 x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s) {

@@ -137,3 +137,9 @@ T(fnf6muli6cstdiv) {
     gen_f(gc);
     AR(1);
 }
+/*
+T(apltypefn) {
+    AI(apltypefn, 2);
+    V(NULL, NULL);
+}
+*/
