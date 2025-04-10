@@ -133,8 +133,8 @@ void as_op_p(const tbl *ot, bool args, size_t idnt) {
 }
 
 void as_code_i_p(const te *c, const uint8_t *m) {
-    if (m) printf("%05lu:", c->d[8].u6);
-    if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
+    if (m) printf("%05lX:", c->d[8].u6);
+    if (c->d[0].u6 == CODE_ID(L)) printf("L(%lX):\n", c->d[1].u6);
     else {
         printf("O(%s) ", as_inst_str(c->d[1].u6));
         for (size_t i = 2; i < 6; i++) {
@@ -152,7 +152,7 @@ void as_code_i_p(const te *c, const uint8_t *m) {
                     printf("%s", reg_str(arg->d[1].u3));
                     break;
                 default:
-                    printf("%lu", arg->d[1].u6);
+                    printf("%lX", arg->d[1].u6);
                     break;
             }
             putchar(' ');
@@ -169,7 +169,7 @@ void as_data_p(const as *a, const uint8_t *m) {
     te* h = a->dq->h;
     while (h) {
         te *dqe = h->d[0].p;
-        printf("%05lu:", dqe->d[4].u6);
+        printf("%05lX:", dqe->d[4].u6);
         for (size_t i = 0; i < dqe->d[1].u6; i++) printf("%02X ", m[dqe->d[4].u6 + i]);
         putchar('\n');
         h = h->d[2].p;

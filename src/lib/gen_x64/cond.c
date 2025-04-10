@@ -5,12 +5,11 @@
 
 #define AUAUL(N, J) static gen_stat N##_auaul_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
-    gen_st *st = s; \
     te *kv[2]; \
-    if ((stat = get_reg_n(st, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(kv[1]->d[2].u3)), ci); \
     AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
-    drop_atm_kv_n(st, kv, ci, 2); \
+    drop_atm_kv_n(s, kv, ci, 2); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
 }
@@ -24,9 +23,8 @@ AUAUL(gt, JA);
 
 #define AUDUL(N, J) static gen_stat N##_audul_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
-    gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
-    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if ((stat = get_reg(s, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     uint64_t qw = ((te*) ci->d[2].p)->d[1].u6; \
     if (qw <= UINT8_MAX) AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(B), U3(qw)), ci); \
     else if (qw <= UINT64_MAX) AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(DW), U5(qw)), ci); \
@@ -35,7 +33,7 @@ AUAUL(gt, JA);
         AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), kv->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci); \
     } \
     AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
-    drop_atm_kv(st, kv, ci); \
+    drop_atm_kv(s, kv, ci); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
 }
@@ -46,12 +44,11 @@ AUDUL(gt, JA);
 
 #define AXDXL(N, C, J) static gen_stat N##_axdxl_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
-    gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
-    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if ((stat = get_reg(s, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     AS2(a, AS_X64(C), as_arg_i(a, ARG_ID(X), kv->d[2]), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci); \
     AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
-    drop_atm_kv(st, kv, ci); \
+    drop_atm_kv(s, kv, ci); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
 }
