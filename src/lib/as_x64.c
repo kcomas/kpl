@@ -87,6 +87,7 @@ static const char *as_inst_str(size_t id) {
         "CVTSI2SD",
         "AND",
         "XOR",
+        "PXOR",
         "CMP",
         "UCOMISD",
         "COMISD",
@@ -134,7 +135,7 @@ void as_op_p(const tbl *ot, bool args, size_t idnt) {
 
 void as_code_i_p(const te *c, const uint8_t *m) {
     if (m) printf("%05lX:", c->d[8].u6);
-    if (c->d[0].u6 == CODE_ID(L)) printf("L(%lX):\n", c->d[1].u6);
+    if (c->d[0].u6 == CODE_ID(L)) printf("L(0x%lX):\n", c->d[1].u6);
     else {
         printf("O(%s) ", as_inst_str(c->d[1].u6));
         for (size_t i = 2; i < 6; i++) {
@@ -152,7 +153,7 @@ void as_code_i_p(const te *c, const uint8_t *m) {
                     printf("%s", reg_str(arg->d[1].u3));
                     break;
                 default:
-                    printf("%lX", arg->d[1].u6);
+                    printf("0x%lX", arg->d[1].u6);
                     break;
             }
             putchar(' ');

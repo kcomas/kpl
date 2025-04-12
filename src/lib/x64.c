@@ -448,6 +448,14 @@ x64_stat x64_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return x64_b(p, m, 3, set_rex2(d, s), 0x31, modrm(MOD(11), d, s));
 }
 
+x64_stat x64_pxor_xx(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_X(s);
+    x64_a(p, m, 0x66);
+    rex_br(p, m, s, d);
+    return x64_b(p, m, 3, 0x0F, 0xEF, modrm(MOD(11), s, d));
+}
+
 x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);

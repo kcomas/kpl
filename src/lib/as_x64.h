@@ -51,6 +51,7 @@ typedef enum {
     AS_X64(CVTSI2SD),
     AS_X64(AND),
     AS_X64(XOR),
+    AS_X64(PXOR),
     AS_X64(CMP),
     AS_X64(UCOMISD),
     AS_X64(COMISD),

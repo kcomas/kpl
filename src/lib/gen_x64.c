@@ -367,11 +367,11 @@ static te *mbdr_arg(as *a, int32_t dsp) {
 }
 
 void gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci) {
-    AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), mbdr_arg(a, dsp), as_arg_i(a, ARG_ID(R), U3(s)), ci);
+    AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), mbdr_arg(a, dsp), as_arg_i(a, s >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(s)), ci);
 }
 
 void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci) {
-    AS3(a, i, as_arg_i(a, ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), mbdr_arg(a, dsp), ci);
+    AS3(a, i, as_arg_i(a, d >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), mbdr_arg(a, dsp), ci);
 }
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {

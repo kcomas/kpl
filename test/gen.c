@@ -357,3 +357,21 @@ T(facloop) {
     printf("fac(%ld): %ld\n", a, r);
     A(r == 120, "eq");
 }
+
+T(facxmmloop) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(1)), NULL));
+    S(gen_a(g, GEN_OP(LT), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(2)), gen_lbl(g, 0)));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(MUL), gen_stkv(g, X64_TYPE(F6), 0), gen_stkv(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 0)));
+    S(gen_a(g, GEN_OP(SUB), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(1))));
+    S(gen_a(g, GEN_OP(GT), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(1)), gen_lbl(g, 0)));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_stkv(g, X64_TYPE(F6), 0), NULL, NULL));
+    BUILD(g, m);
+    double a = 5;
+    double r = ((double(*)(double)) m)(a);
+    printf("fac(%lf): %lf\n", a, r);
+    A(r == 120.0, "eq");
+}

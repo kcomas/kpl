@@ -327,3 +327,13 @@ T(imulidiv) {
     A(r == 21, "imulidiv");
     X64_RR();
 }
+
+T(pxor) {
+    size_t p = 0;
+    x64_pxor_xx(&p, m, XMM(0), XMM(0));
+    printj(p, m);
+    x64_ret(&p, m);
+    X64_RS();
+    A(!((double(*)(double)) m)(1.1), "xor");
+    X64_RR();
+}
