@@ -11,10 +11,14 @@ typedef enum {
     OC(DFN),
     OC(AGN),
     OC(CST),
+    OC(LOOP),
     OC(ADD),
     OC(SUB),
+    OC(SUBA),
     OC(MUL),
+    OC(MULA),
     OC(DIV),
+    OC(GT),
     OC(DUMP),
     OC(_END)
 } oc; // op code
@@ -25,6 +29,7 @@ const char *ast_oc_str(oc o);
 
 typedef enum {
     CC(_START),
+    CC(E),
     CC(P1),
     CC(_END)
 } cc; // cmd code

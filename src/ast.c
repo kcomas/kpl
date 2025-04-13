@@ -6,10 +6,14 @@ const char *ast_oc_str(oc o) {
         "DFN",
         "AGN",
         "CST",
+        "LOOP",
         "ADD",
         "SUB",
+        "SUBA",
         "MUL",
+        "MULA",
         "DIV",
+        "GT",
         "DUMP",
         "_END"
     };
@@ -21,6 +25,7 @@ const char *ast_oc_str(oc o) {
 const char *ast_cc_str(cc c) {
     static const char *ccs[] = {
         "_START",
+        "E",
         "P1",
         "_END"
     };
@@ -203,11 +208,16 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(DFN), OC(DFN));
     ast_t_a(a, TCUST(AGN), OC(AGN));
     ast_t_a(a, TCUST(CST), OC(CST));
+    ast_t_a(a, TCUST(LOOP), OC(LOOP));
     ast_t_a(a, TCUST(ADD), OC(ADD));
     ast_t_a(a, TCUST(SUB), OC(SUB));
+    ast_t_a(a, TCUST(SUBA), OC(SUBA));
     ast_t_a(a, TCUST(MUL), OC(MUL));
+    ast_t_a(a, TCUST(MULA), OC(MULA));
     ast_t_a(a, TCUST(DIV), OC(DIV));
+    ast_t_a(a, TCUST(GT), OC(GT));
     // cmds
+    ast_t_a(a, TCUST(E), CC(E));
     ast_t_a(a, TCUST(P1), CC(P1));
     return a;
 }
