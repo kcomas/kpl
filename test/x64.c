@@ -220,7 +220,7 @@ T(p2p) {
     x64_mov_rq(&p, m, R(SI), I6(23));
     x64_mov_rmr(&p, m, R(CX), R(SI));
     x64_push_r(&p, m, R(CX));
-    x64_lea_rrb(&p, m, R(DI), R(BP), -8);
+    x64_lea_rrmb(&p, m, R(DI), R(BP), -8);
     x64_mov_rq(&p, m, R(AX), P(&printp));
     x64_call_r(&p, m, R(AX));
     x64_pop_r(&p, m, R(CX));

@@ -16,7 +16,7 @@ typedef enum {
 #define AST_CLS(N) AST_CLS_##N
 
 typedef enum {
-    AST_CLS(R), // root te[tbl;te]
+    AST_CLS(R), // root te[tbl[mc;type;un(idx->data)];te]
     AST_CLS(T), // type te[type]
     AST_CLS(E), // lst entry te[mc;id;type;node]
     AST_CLS(I), // identifier [mc]

@@ -226,3 +226,16 @@ T(mulsddivsd) {
     A(d == 14.52, "eq");
     as_f(s);
 }
+
+T(arr) {
+    as *a = as_i_as(ba);
+    AS_A3(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_rm(a, R(DI)), as_arg_b(a, sizeof(int64_t) * 1));
+    AS_A0(a, AS_X64(RET));
+    size_t p = 0;
+    err *e = NULL;
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    int64_t ar[] = {1, 2, 3};
+    A(ar[1] == ((int64_t(*)(int64_t[])) m)(ar), "arr");
+    as_f(a);
+}
