@@ -189,6 +189,7 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
             // TODO
             break;
         case AST_CLS(O):
+            if (an->d[5].p && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(L) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L)) break; // for loops and ifs match cc in op...
             if ((stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK) || (stat = atg_r(t, g, an->d[6].p, e)) != ATG_STAT(OK)) return stat;
             break;
         case AST_CLS(Z):

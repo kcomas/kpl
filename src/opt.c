@@ -7,7 +7,7 @@ static fld_stat entry_o(fld *f, te **an, err **e) {
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (!flgs) return fld_err(f, *an, e, "opt var flgs inv");
     if (flgs & LTE_FLG(A)) return FLD_STAT(OK);
-    if ((flgs & LTE_FLG(L) || flgs & LTE_FLG(T) || flgs & LTE_FLG(F)) && lte->r < 3) return fld_err(f, *an, e, "opt unused var");
+    // TODO chk if unused
     return FLD_STAT(OK);
 }
 
@@ -35,6 +35,7 @@ static bool lst_inv_t(const te *an) {
 
 static fld_stat lst_le_o(fld *f, te **an, err **e) {
     size_t eti = 0;
+    if (!(*an)->d[3].p) return FLD_STAT(OK);
     te *h = ((tbl*) (*an)->d[3].p)->i->h, *lte, *kv, *rn = NULL;
     while (h) {
         lte = h->d[0].p;
