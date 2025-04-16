@@ -1,8 +1,34 @@
 
 #include "tbl.h"
 
+#define TBL_POOL 100
+
+static tbl *tblp[TBL_POOL];
+
+static _Atomic size_t tpi = 0;
+
+static void *al(size_t n) {
+    (void) n;
+    if (!tpi) return malloc(sizeof(tbl));
+    return tblp[--tpi];
+}
+
+static void fr(void *p) {
+    if (tpi == TBL_POOL) {
+        free(p);
+        return;
+    }
+    tblp[tpi++] = p;
+}
+
+const alfr al_tbl = { .a = al, .f = fr };
+
+static __attribute__((destructor)) void al_tbl_f(void) {
+    for (size_t i = 0; i < tpi; i++) free(tblp[i]);
+}
+
 tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b) {
-    tbl *t = af->a(sizeof(tbl));
+    tbl *t = af->a(0);
     t->r = 1;
     t->af = af;
     t->hf = hf;

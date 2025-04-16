@@ -4,7 +4,7 @@
 fld *bfld = NULL;
 
 static __attribute__((constructor(104))) void chk_con(void) {
-    bfld = fld_b(fld_i(&ast_am, &ast_am, &ast_am, ati, ali, NULL, mktbl(AST_CLS(_))));
+    bfld = fld_b(fld_i(&ast_am, &al_te, &ast_am, ati, ali, NULL, mktbl(AST_CLS(_))));
 }
 
 static __attribute__((destructor)) void chk_des(void) {
@@ -50,7 +50,7 @@ tbl *fld_type_tbl_i(size_t n, ...) {
         mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
         te *type = va_arg(args, te*);
         size_t id = va_arg(args, size_t);
-        type_tbl_a(t, &ast_am, s, id, type);
+        type_tbl_a(t, &al_te, s, id, type);
     }
     va_end(args);
     return t;

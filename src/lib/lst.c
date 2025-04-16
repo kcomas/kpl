@@ -1,8 +1,34 @@
 
 #include "lst.h"
 
+#define LST_POOL 100
+
+static lst *lstp[LST_POOL];
+
+static _Atomic size_t lpi = 0;
+
+static void *al(size_t n) {
+    (void) n;
+    if (!lpi) return malloc(sizeof(lst));
+    return lstp[--lpi];
+}
+
+static void fr(void *p) {
+    if (lpi == LST_POOL) {
+        free(p);
+        return;
+    }
+    lstp[lpi++] = p;
+}
+
+const alfr al_lst = { .a = al, .f = fr };
+
+static __attribute__((destructor)) void al_lst_f(void) {
+    for (size_t i = 0; i < lpi; i++) free(lstp[i]);
+}
+
 lst *lst_i(const alfr *af, const alfr *ta, frfn *df) {
-    lst *l = af->a(sizeof(lst));
+    lst *l = af->a(0);
     l->r = 1;
     l->l = 0;
     l->af = af;

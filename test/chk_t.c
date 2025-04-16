@@ -4,7 +4,7 @@
 chk *bchk = NULL;
 
 static __attribute__((constructor(105))) void chk_con(void) {
-    bchk = chk_b(chk_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, NULL));
+    bchk = chk_b(chk_i(&ast_am, &al_te, &ast_am, ast_err_p, cti, NULL));
 }
 
 static __attribute__((destructor)) void chk_des(void) {
@@ -12,9 +12,9 @@ static __attribute__((destructor)) void chk_des(void) {
 }
 
 tbl *cti(void) {
-    lst *tl = lst_i(&ast_am, &ast_am, (void*) te_f);
-    te *b = te_i(10, &ast_am, NULL);
-    return tbl_i(&ast_am, tbl_no_hsh, tbl_un_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(10, &al_te, NULL);
+    return tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
 void rchk(_tests *_t, chk *c, te *an) {

@@ -11,10 +11,8 @@ static void lst_i6_p(const lst * const l) {
     putchar('\n');
 }
 
-static const alfr lm = { .a = malloc, .f = free };
-
 T(lst_ab_af_sf_sb) {
-    lst *l = lst_i(&lm, &lm, NULL);
+    lst *l = lst_i(&al_lst, &al_te, NULL);
     lst_ab(l, I6(1));
     lst_ab(l, I6(2));
     lst_ab(l, I6(3));
@@ -35,7 +33,7 @@ T(lst_ab_af_sf_sb) {
 T(lst_i_v) {
     const int64_t nums[] = {ABV_NUMS};
     size_t n = 5;
-    lst *l = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *l = lst_i_v(&al_lst, &al_te, NULL, n, ABV_NUMS);
     A(l->l == n, "len");
     lst_i6_p(l);
     size_t i = 0;
@@ -53,10 +51,10 @@ static bool vcmp(un a, un b) {
 
 T(cmp) {
     size_t n = 5;
-    lst *a = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
-    lst *b = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *a = lst_i_v(&al_lst, &al_te, NULL, n, ABV_NUMS);
+    lst *b = lst_i_v(&al_lst, &al_te, NULL, n, ABV_NUMS);
     A(lst_eq(a, b, vcmp), "lst_eq");
-    lst *c = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *c = lst_i_v(&al_lst, &al_te, NULL, n, ABV_NUMS);
     c->t->d[0].u6 = 10;
     A(!lst_eq(b, c, vcmp), "!lst_eq");
     lst_f(a);
@@ -66,7 +64,7 @@ T(cmp) {
 
 T(lst_sb) {
     size_t n = 5;
-    lst *a = lst_i_v(&lm, &lm, NULL, n, ABV_NUMS);
+    lst *a = lst_i_v(&al_lst, &al_te, NULL, n, ABV_NUMS);
     un d;
     while (n > 0) {
         lst_sb(a, &d);

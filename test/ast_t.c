@@ -6,7 +6,7 @@ const alfr ast_am = { .a = malloc, .f = free };
 ast *bast = NULL;
 
 static __attribute__((constructor(103))) void ast_con(void) {
-    bast = ast_b(ast_i(&ast_am, &ast_am, &ast_am, &ast_am, node_err_p, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
+    bast = ast_b(ast_i(&ast_am, &al_te, &ast_am, &ast_am, node_err_p, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
 }
 
 static __attribute__((destructor)) void ast_des(void) {
@@ -20,19 +20,19 @@ ast_stat pig(te *pn, size_t *pid) {
 }
 
 tbl *ati(void) {
-    lst *tl = lst_i(&ast_am, &ast_am, (void*) te_f);
-    te *b = te_i(10, &ast_am, NULL);
-    return tbl_i(&ast_am, tbl_mc_sdbm, tbl_mc_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(10, &al_te, NULL);
+    return tbl_i(&al_tbl, tbl_mc_sdbm, tbl_mc_eq, tl, b);
 }
 
 lst *ali(void) {
-    return lst_i(&ast_am, &ast_am, (void*) te_f);
+    return lst_i(&al_lst, &al_te, (void*) te_f);
 }
 
 tbl *mktbl(size_t size) {
-    lst *tl = lst_i(&ast_am, &ast_am, (void*) te_f);
-    te *b = te_i(size, &ast_am, NULL);
-    return tbl_i(&ast_am, tbl_no_hsh, tbl_un_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(size, &al_te, NULL);
+    return tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
 void astb(_tests *_t, ast *a, const char *pgm, te **an) {

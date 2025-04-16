@@ -1,13 +1,54 @@
 
 #include "te.h"
 
+static te *tah = NULL;
+
+static void *al(size_t n) {
+    if (n < 2) {
+        printf("\e[1;91mTE MUST HAVE LENGTH OF AT LEAST 2 EXITING\e[0m\n");
+        exit(1);
+    }
+    te *h = tah;
+    while (h) {
+        if (h->l == n) break;
+        h = h->d[1].p;
+    }
+    if (h && h == tah) tah = tah->d[1].p;
+    else if (h) {
+        ((te*) h->d[0].p)->d[1] = h->d[1];
+        if (h->d[1].p) ((te*) h->d[1].p)->d[0] = h->d[0];
+    } else h = malloc(sizeof(te) + sizeof(un) * n);
+    return h;
+}
+
+static void fr(void *p) {
+    te *t = p;
+    t->d[0] = P(NULL);
+    t->d[1] = P(NULL);
+    if (tah) {
+        tah->d[0] = P(t);
+        t->d[1] = P(tah);
+    }
+    tah = t;
+}
+
+const alfr al_te = { .a = al, .f = fr };
+
+static __attribute__((destructor)) void al_te_f(void) {
+    while (tah) {
+        te *tmp = tah;
+        tah = tah->d[1].p;
+        free(tmp);
+    }
+}
+
 static void td(void *p) {
     te *t = p;
     t->af->f(t);
 }
 
 te *te_i(size_t l, const alfr *af, frfn *tf) {
-    te *t = af->a(sizeof(te) + sizeof(un) * l);
+    te *t = af->a(l);
     t->r = 1;
     t->l = l;
     t->af = af;

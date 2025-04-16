@@ -5,6 +5,8 @@
 #include "def.h"
 #include "te.h"
 
+extern const alfr al_lst;
+
 #define LST_STAT(N) LST_STAT_##N
 
 typedef enum {
