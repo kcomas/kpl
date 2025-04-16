@@ -74,6 +74,13 @@ typedef enum {
     MOD(11) = 0xC0
 } mod;
 
+typedef enum {
+    S1 = 0x00,
+    S2 = 0x40,
+    S4 = 0x80,
+    S8 = 0xC0
+} scale;
+
 // map page aligned
 uint8_t *x64_mmap(size_t size);
 
@@ -144,11 +151,17 @@ x64_stat x64_mov_rr(size_t *p, uint8_t *m, reg d, reg s);
 // mov qword ptr[rdi], rax
 x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s);
 
+// mov qword ptr[rdi+rsi*x], rax
+x64_stat x64_mov_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s);
+
 // mov qword ptr[rdi+dsp8], rax
 x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
 // mov rax, qword ptr [rdi]
 x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s);
+
+// mov rax qword ptr[rdi+rsi*x]
+x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x);
 
 // mov rax, qword ptr[rdi+dsp8]
 x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
