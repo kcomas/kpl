@@ -247,12 +247,15 @@ T(sib) {
     t->d[2] = U6(33);
     as *a = as_i_as(ba);
     AS_A4(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_rm(a, R(DI)), as_arg_rs(a, R(SI), 8), as_arg_b(a, sizeof(void*) * 4));
+    AS_A4(a, AS_X64(MOV), as_arg_rm(a, R(DI)), as_arg_rs(a, R(SI), 8), as_arg_b(a, sizeof(void*) * 4), as_arg_r(a, R(DX)));
     AS_A0(a, AS_X64(RET));
     size_t p = 0;
     err *e = NULL;
     A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
-    A(22 == ((uint64_t(*)(te*, size_t)) m)(t, 1), "te");
+    A(22 == ((uint64_t(*)(te*, size_t, uint64_t)) m)(t, 1, 44), "te g");
+    A(t->d[1].u6 == 44, "te s");
+    for (size_t i = 0; i < 3; i++) printf("%ld\n", t->d[i].u6);
     as_f(a);
     te_f(t);
 }
