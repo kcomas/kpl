@@ -106,7 +106,7 @@ INST_RRMB(mov);
     (void) ci; \
     (void) arg3; \
     (void) arg4; \
-    as_dq_a(a, ci, sizeof(uint64_t), arg2->d[1], as_dq_x64); /* TODO fn to get sizeof*/ \
+    as_dq_a(a, ci, sizeof(uint64_t), arg2->d[1], as_x64_dq); /* TODO fn to get sizeof*/ \
     return x64_##N##_ri(p, m, arg1->d[1].u3, 0) == X64_STAT(OK); \
 }
 

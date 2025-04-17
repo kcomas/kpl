@@ -14,6 +14,8 @@ te *as_arg_r(as *a, size_t rid);
 
 te *as_arg_rm(as *a, size_t rmid);
 
+te *as_arg_rs(as *a, size_t rid, size_t sid);
+
 te *as_arg_l(as *a, size_t lid);
 
 te *as_arg_qw(as *a, un v);

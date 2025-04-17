@@ -151,20 +151,26 @@ x64_stat x64_mov_rr(size_t *p, uint8_t *m, reg d, reg s);
 // mov qword ptr[rdi], rax
 x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s);
 
+// mov qword ptr[rdi+dsp8], rax
+x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+
 // mov qword ptr[rdi+rsi*x], rax
 x64_stat x64_mov_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s);
 
-// mov qword ptr[rdi+dsp8], rax
-x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+// mov qword ptr[rdi+rsi*x+dsp8], rax
+x64_stat x64_mov_rmobr(size_t *p, uint8_t *m, reg d, reg o, scale x, uint8_t dsp, reg s);
 
 // mov rax, qword ptr [rdi]
 x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s);
 
+// mov rax, qword ptr[rdi+dsp8]
+x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+
 // mov rax qword ptr[rdi+rsi*x]
 x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x);
 
-// mov rax, qword ptr[rdi+dsp8]
-x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+// mov rax qword ptr[rdi+rsi*x+dsp8]
+x64_stat x64_mov_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp);
 
 // movq rax, xmm0
 x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s);

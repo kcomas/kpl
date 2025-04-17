@@ -239,3 +239,20 @@ T(arr) {
     A(ar[1] == ((int64_t(*)(int64_t[])) m)(ar), "arr");
     as_f(a);
 }
+
+T(sib) {
+    te *t = te_i(3, &al_te, NULL);
+    t->d[0] = U6(11);
+    t->d[1] = U6(22);
+    t->d[2] = U6(33);
+    as *a = as_i_as(ba);
+    AS_A4(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_rm(a, R(DI)), as_arg_rs(a, R(SI), 8), as_arg_b(a, sizeof(void*) * 4));
+    AS_A0(a, AS_X64(RET));
+    size_t p = 0;
+    err *e = NULL;
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    A(22 == ((uint64_t(*)(te*, size_t)) m)(t, 1), "te");
+    as_f(a);
+    te_f(t);
+}
