@@ -83,28 +83,6 @@ static gen_stat leave_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     return leave_e(g, s, ci, a, e);
 }
 
-static gen_stat set_du_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    int32_t idx;
-    te *tgt = ci->d[1].p;
-    if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
-    if (!((te*) ci->d[2].p)->d[1].u6) AS2(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
-    else AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
-    gen_as_rmbdr(a, AS_X64(MOV), R(BP), idx, R(AX), ci);
-    set_code_e(ci, a);
-    return GEN_STAT(OK);
-}
-
-static gen_stat set_dx_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    int32_t idx;
-    te *tgt = ci->d[1].p;
-    if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
-    if (!((te*) ci->d[2].p)->d[1].u6) AS2(a, AS_X64(PXOR), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), ci);
-    else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
-    gen_as_rmbdr(a, AS_X64(MOVSD), R(BP), idx, XMM(0), ci);
-    set_code_e(ci, a);
-    return GEN_STAT(OK);
-}
-
 void gen_enter_leave(gen *g) {
     GEN_OP_A0(g, GEN_OP(ENTER), enter_fn);
     GEN_OP_A0(g, GEN_OP(LEAVE), leave_fn);
@@ -118,6 +96,4 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(F6), leave_dx_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(I6), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(F6), leave_vx_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), set_du_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), set_dx_fn);
 }

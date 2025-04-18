@@ -59,6 +59,10 @@ te *gen_call_v(gen *g, vr *v);
 
 te *gen_call_m(gen *g, size_t n, ...);
 
+te *gen_idx_v(gen *g, x64_type t, vr *v);
+
+te *gen_idx_m(gen *g, x64_type t, size_t n, ...);
+
 te *gen_lbl(gen *g, size_t id);
 
 te *gen_arg(gen *g, x64_type t, size_t id);
