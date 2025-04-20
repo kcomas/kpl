@@ -22,6 +22,7 @@ const char *gen_op_str(gen_op go) {
         "NE",
         "GT",
         "LT",
+        "LTE",
         "_END"
     };
     const char *s = "INV";
@@ -385,19 +386,19 @@ gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
     return GEN_STAT(OK);
 }
 
-static te *mbdr_arg(as *a, int32_t dsp) {
+te *bd_arg(as *a, int32_t dsp) {
     te *arg;
     if (dsp >= INT8_MIN && dsp <= INT8_MAX) arg = as_arg_i(a, ARG_ID(B), I3(dsp));
     else arg = as_arg_i(a, ARG_ID(DW), I5(dsp));
     return arg;
 }
 
-void gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci) {
-    AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), mbdr_arg(a, dsp), as_arg_i(a, s >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(s)), ci);
+as_stat gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci) {
+    return gen_as(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), bd_arg(a, dsp), as_arg_i(a, s >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(s)), NULL, ci);
 }
 
-void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci) {
-    AS3(a, i, as_arg_i(a, d >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), mbdr_arg(a, dsp), ci);
+as_stat gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci) {
+    return gen_as(a, i, as_arg_i(a, d >= XMM(0) ? ARG_ID(X) : ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), bd_arg(a, dsp), NULL, ci);
 }
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {

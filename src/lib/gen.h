@@ -45,7 +45,7 @@ gen *gen_i(const alfr *af, const alfr *ta, const alfr *va, const alfr *ea, cls_t
 
 gen *gen_i_gen(const gen *g);
 
-bool gen_code_eq(const gen *restrict a, const gen *restrict b);
+bool gen_code_eq(const gen *a, const gen *b);
 
 typedef gen_stat gen_fn(gen *g, void *s, te *ci, as *a, err **e); // state
 

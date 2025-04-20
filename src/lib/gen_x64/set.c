@@ -5,9 +5,10 @@ static gen_stat set_du_fn(gen *g, void *s, te *ci, as *a, err **e) {
     int32_t idx;
     te *tgt = ci->d[1].p;
     if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
-    if (!((te*) ci->d[2].p)->d[1].u6) AS2(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
-    else AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
-    gen_as_rmbdr(a, AS_X64(MOV), R(BP), idx, R(AX), ci);
+    if (!((te*) ci->d[2].p)->d[1].u6) {
+        if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    } else if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as_rmbdr(a, AS_X64(MOV), R(BP), idx, R(AX), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
@@ -16,9 +17,10 @@ static gen_stat set_dx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     int32_t idx;
     te *tgt = ci->d[1].p;
     if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
-    if (!((te*) ci->d[2].p)->d[1].u6) AS2(a, AS_X64(PXOR), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), ci);
-    else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
-    gen_as_rmbdr(a, AS_X64(MOVSD), R(BP), idx, XMM(0), ci);
+    if (!((te*) ci->d[2].p)->d[1].u6) {
+        if (gen_as(a, AS_X64(PXOR), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as_rmbdr(a, AS_X64(MOVSD), R(BP), idx, XMM(0), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
@@ -44,7 +46,7 @@ static gen_stat set_iu_fn(gen *g, void *s, te *ci, as *a, err **e) {
                 default:
                     return gen_err(g, ci, e, "gen inv data offset type");
             }
-            AS(a, AS_X64(MOV), as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, ARG_ID(RS), as_x64_rs(kvii->d[2].u3, 8)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
+            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, ARG_ID(RS), as_x64_rs(kvii->d[2].u3, 8)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), as_arg_i(a, ARG_ID(R), kv->d[2]), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             drop_atm_kv(s, kvib, ci);
             drop_atm_kv(s, kvii, ci);
         } else return gen_err(g, ci, e, "nyi");

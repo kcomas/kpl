@@ -80,7 +80,7 @@ x64_type atg_x64_g_t(const te *type) {
     return X64_TYPE(N);
 }
 
-static atg_stat atg_err(const atg *t, te *an, err **e, const char *m) {
+atg_stat atg_err(const atg *t, te *an, err **e, const char *m) {
     *e = err_i(t->ea, ast_err_p, (void*) te_f, te_c(an), m);
     return ATG_STAT(INV);
 }
@@ -106,16 +106,16 @@ static atg_stat root_lst_s(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
-    // TODO exports
+    HERE("TODO EXPORT");
     if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
-static te *var_arg(gen *g, te *lte, x64_type xt) {
+te *var_arg(gen *g, te *lte, x64_type xt) {
     uint32_t id = ast_lst_tbl_e_g_i(lte);
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (flgs & LTE_FLG(A)) return gen_arg(g, xt, id);
-    // TODO var
+    if (flgs & LTE_FLG(L)) return gen_stkv(g, xt, id);
     return NULL;
 }
 
@@ -134,52 +134,35 @@ static atg_stat cst_f6_e_u6(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static gen_op atg_gen_g_cond_rv(const te *ci) {
+    switch (ci->d[0].u6) {
+        case GEN_OP(LTE): return GEN_OP(GT);
+        default:
+            break;
+    }
+    return GEN_OP(_END);
+}
+
 static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
-    (void) g;
-    //uint32_t sl = t->lc++, el = t->lc++;
-    return atg_err(t, an, e, "TODO");
-}
-
-static atg_stat op_tel_ter_t(atg *t, gen *g, te *an, err **e, gen_op oc, x64_type xt, const char *pf) {
-    te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) an->d[6].p)->d[3].p;
-    if (!(l = var_arg(g, l, xt))) return atg_err(t, an->d[5].p, e, "atg op l inv");
-    if (!(r = var_arg(g, r, xt))) return atg_err(t, an->d[6].p, e, "atg op r inv");
-    if (gen_a(g, oc, gen_tmp(g, xt, t->tc++), l, r) != GEN_STAT(OK)) return atg_err(t, an, e, pf);
-    return ATG_STAT(OK);
-}
-
-static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
-   return op_tel_ter_t(t, g, an, e, GEN_OP(ADD), X64_TYPE(I6), __FUNCTION__);
-}
-
-static atg_stat mul_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
-   return op_tel_ter_t(t, g, an, e, GEN_OP(MUL), X64_TYPE(I6), __FUNCTION__);
-}
-
-static atg_stat add_i6_e_i6_o_i6(atg *t, gen *g, te *an, err **e) {
-    te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) g->code->t->d[0].p)->d[1].p;
-    if (!(l = var_arg(g, l, X64_TYPE(I6)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
-    if (gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->tc++), l, te_c(r)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    return ATG_STAT(OK);
-}
-
-static atg_stat neg_i6_o_i6(atg *t, gen *g, te *an, err **e) {
-    uint32_t id = ((te*) ((te*) g->code->t->d[0].p)->d[1].p)->d[1].u5;
-    if (gen_a(g, GEN_OP(NEG), gen_tmp(g, X64_TYPE(I6), id), gen_tmp(g, X64_TYPE(I6), id), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    return ATG_STAT(OK);
-}
-
-static atg_stat mul_f6_e_f6_e_f6(atg *t, gen *g, te *an, err **e) {
-   return op_tel_ter_t(t, g, an, e, GEN_OP(MUL), X64_TYPE(F6), __FUNCTION__);
-}
-
-static atg_stat div_f6_o_f6_o_f6(atg *t, gen *g, te *an, err **e) {
-    te *l = g->code->t->d[1].p;
-    l = l->d[0].p;
-    l = l->d[1].p;
-    te *r = g->code->t->d[0].p;
-    r = r->d[1].p;
-    if (gen_a(g, GEN_OP(DIV), gen_tmp(g, X64_TYPE(F6), t->tc++), te_c(l), te_c(r)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    atg_stat stat;
+    uint32_t sl = t->lc++, el = t->lc++;
+    te *cnds = g->code->t, *lbl, *ends, *ende, *ci;
+    if ((stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
+    ends = cnds = cnds->d[2].p; // gen code gen by cond
+    while (cnds) {
+        lbl = ((te*) cnds->d[0].p)->d[3].p;
+        if (gen_var_g_c(lbl) != GEN_CLS(L)) return atg_err(t, an, e, "atg loop cond not lbl");
+        lbl->d[1] = U5(el);
+        cnds = cnds->d[2].p;
+    }
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, sl), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    ende = g->code->t;
+    if ((stat = atg_r(t, g, an->d[6].p, e)) != ATG_STAT(OK)) return stat;
+    while (ends != ende) {
+        ci = ends->d[0].p;
+        if (gen_a(g, atg_gen_g_cond_rv(ci), te_c(ci->d[1].p), te_c(ci->d[2].p), gen_lbl(g, sl)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        ends = ends->d[2].p;
+    }
     return ATG_STAT(OK);
 }
 
@@ -258,12 +241,31 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, err **e) {
     return stat;
 }
 
+static atg_stat oc_cond_gen(oc c, gen_op *go) {
+    switch (c) {
+        case OC(GT):
+            *go = GEN_OP(LTE);
+            break;
+        default:
+            return ATG_STAT(INV);
+    }
+    return ATG_STAT(OK);
+}
+
+static atg_stat gt_i6_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
+    if (((te*) an->d[0].p)->d[2].u4 != AST_CLS(L)) return atg_err(t, an, e, "nyi");
+    gen_op go;
+    if (oc_cond_gen(an->d[4].u6, &go) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv cond oc");
+    if (gen_a(g, go, var_arg(g, ((te*) an->d[5].p)->d[3].p, X64_TYPE(I6)), gen_data(g, X64_TYPE(I6), ((te*) an->d[6].p)->d[4]), gen_lbl(g, UINT32_MAX)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 const char *atg_dump_strs[TYPE(_END)] = {
     [TYPE(I6)] = "(I6 %ld)\n",
     [TYPE(F6)] = "(F6 %lf)\n"
 };
 
-static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, err **e) {
+static atg_stat dump_vd(atg *t, gen *g, te *restrict an, err **e, te *restrict cd) {
     atg_stat stat = ATG_STAT(OK);
     (void) t;
     uint32_t fd = ((te*) an->d[5].p)->d[4].u5;
@@ -284,12 +286,22 @@ static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, err **e) {
             vr_f(v);
             return atg_err(t, an, e, "atg inv dump type");
     }
-    vr_ab(&v, P(te_c(((te*) g->code->t->d[0].p)->d[1].p)));
+    vr_ab(&v, P(cd));
     gen_op go = GEN_OP(CALLV);
     if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
     if (gen_a(g, go, gen_call_v(g, v), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return stat;
 }
+
+static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, err **e) {
+    return dump_vd(t, g, an, e, te_c(((te*) g->code->t->d[0].p)->d[1].p));
+}
+
+static atg_stat dump_vd_s_u5_e_i6(atg *t, gen *g, te *an, err **e) {
+    return dump_vd(t, g, an, e, var_arg(g, ((te*) an->d[6].p)->d[3].p, X64_TYPE(I6)));
+}
+
+void atg_arith(atg *t);
 
 atg *atg_b(atg *t) {
     atg_a_se(t, cst_type_lst_t, cst_type_lst_s, cst_type_lst_e);
@@ -301,13 +313,10 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(CST), TYPE(FN), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A), atg_ok);
     atg_a_o(t, OC(CST), TYPE(F6), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6), cst_f6_e_u6);
     atg_a_o(t, OC(LOOP), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), loop_l_l);
-    atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), add_i6_e_i6_e_i6);
-    atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6), add_i6_e_i6_o_i6);
-    atg_a_o(t, OC(SUB), TYPE(I6), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(I6), neg_i6_o_i6);
-    atg_a_o(t, OC(MUL), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(E), TYPE(F6), mul_f6_e_f6_e_f6);
-    atg_a_o(t, OC(MUL), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), mul_i6_e_i6_e_i6);
-    atg_a_o(t, OC(DIV), TYPE(F6), AST_CLS(O), TYPE(F6), AST_CLS(O), TYPE(F6), div_f6_o_f6_o_f6);
+    atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), gt_i6_e_i6_s_i6);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(I6), dump_vd_s_u5_aply);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(F6), dump_vd_s_u5_aply);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(I6), dump_vd_s_u5_e_i6);
+    atg_arith(t);
     return t;
 }

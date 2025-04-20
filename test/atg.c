@@ -167,9 +167,8 @@ T(apltypefn) {
     gen_f(gc);
     AR(1);
 }
-/*
+
 T(facloop) {
     AI(facloop, 1);
     V(NULL, NULL);
 }
-*/

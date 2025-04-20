@@ -65,7 +65,7 @@ static fld_stat aply_lst_o(fld *f, te **an, err **e) {
     (void) e;
     te *lp, *ln, *h, *lte;
     if (ast_g_pn(AST_CLS(L), *an, &lp) == AST_STAT(OK)) {
-        HERE("TODO add to parent lst");
+        return fld_err(f, *an, e, "TODO add to parent lst");
     } else {
         ln = te_c((*an)->d[4].p);
         ln->d[0] = (*an)->d[0];

@@ -52,14 +52,14 @@ static bool gen_lst_eq(un x, un y) {
         te *r = b->d[i].p;
         if (!l && !r) continue;
         if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
-        if (gen_var_g_c(l) == GEN_CLS(M)) {
+        if (gen_var_g_c(l) == GEN_CLS(M) || gen_var_g_c(l) == GEN_CLS(I)) {
             if (!vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq)) return false;
         } else if (l->d[1].u6 != r->d[1].u6) return false;
     }
     return true;
 }
 
-bool gen_code_eq(const gen *restrict a, const gen *restrict b) {
+bool gen_code_eq(const gen *a, const gen *b) {
     if (!a && !b) return true;
     if (!a || !b) return false;
     return lst_eq(a->code, b->code, gen_lst_eq);
