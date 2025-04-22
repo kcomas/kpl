@@ -124,7 +124,7 @@ static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
             d = h->d[0].p;
             uint32_t id = opt_exp_id(d);
             uint16_t eid = opt_exp_eid(d), flgs = opt_exp_flgs(d);
-            x64_type xt = type_g_x64_type(d->d[1].p);
+            x64_type xt = type_g_x64_type(d->d[2].p);
             if (flgs & LTE_FLG(A)) es = gen_arg(g, xt, id);
             else if (flgs & LTE_FLG(L)) es = gen_stkv(g, xt, id);
             else return atg_err(t, an, e, "atg inv exp type");
@@ -354,7 +354,7 @@ static err *__attribute__((noinline)) jit_run(const uint8_t *m, size_t ep, te *x
 }
 
 err *atg_z(const alfr *ta, tbl *volatile et, const uint8_t *m, size_t ep) {
-    err *e = NULL;
+    err *e;
     te *x = NULL, *h, *d;
     if (et) x = te_i(et->i->l > 1 ? et->i->l : 2, ta, NULL);
     e = jit_run(m, ep, x);
@@ -362,7 +362,7 @@ err *atg_z(const alfr *ta, tbl *volatile et, const uint8_t *m, size_t ep) {
         h = et->i->h;
         while (h) {
             d = h->d[0].p;
-            d->d[2] = x->d[opt_exp_eid(d)];
+            d->d[1] = x->d[opt_exp_eid(d)];
             h = h->d[2].p;
         }
         te_f(x);

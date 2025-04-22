@@ -23,8 +23,8 @@ static fld_stat lst_inv_o(fld *f, te **an, err **e) {
 static void export_tbl_f(void *p) {
     te *t = p;
     mc_f(t->d[0].p);
-    te_f(t->d[1].p);
     // TODO jit destructor
+    te_f(t->d[2].p);
     t->af->f(t);
 }
 
@@ -47,9 +47,9 @@ static fld_stat lst_le_o(fld *f, te **an, err **e) {
             if (tbl_g_i(rn->d[3].p, lte->d[0], &kv) == TBL_STAT(OK)) return fld_err(f, *an, e, "opt export already set");
             kv = te_i(3, f->ta, export_tbl_f);
             kv->d[0] = P(mc_c(lte->d[0].p));
-            kv->d[1] = P(te_c(lte->d[2].p));
-            kv->d[2] = lte->d[1];
-            kv->d[2] = u4_s_o(kv->d[2], 1, eti++);
+            kv->d[1] = lte->d[1];
+            kv->d[1] = u4_s_o(kv->d[1], 1, eti++);
+            kv->d[2] = P(te_c(lte->d[2].p));
             tbl_a(rn->d[3].p, kv);
         }
         h = h->d[2].p;
@@ -115,15 +115,15 @@ static bool cst_s_t(const te *an) {
 }
 
 uint32_t opt_exp_id(te *x) {
-    return u5_g_o(x->d[2], 1);
+    return u5_g_o(x->d[1], 1);
 }
 
 uint16_t opt_exp_eid(te *x) {
-    return u4_g_o(x->d[2], 1);
+    return u4_g_o(x->d[1], 1);
 }
 
 uint32_t opt_exp_flgs(te *x) {
-    return u4_g_o(x->d[2], 0);
+    return u4_g_o(x->d[1], 0);
 }
 
 fld *opt_b(fld *f) {

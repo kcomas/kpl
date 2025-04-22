@@ -65,7 +65,7 @@ T(facloop) {
     te *kv;
     mc *f = mc_i_cstr("f", &ast_am);
     A(tbl_g_i(ept, P(f), &kv) == TBL_STAT(OK), "exp not found");
-    A(((te*) kv->d[1].p)->d[1].u6 == TYPE(I6), "inv exp type");
+    A(((te*) kv->d[2].p)->d[1].u6 == TYPE(I6), "inv exp type");
     uint32_t id = opt_exp_id(kv);
     uint16_t eid = opt_exp_eid(kv), flgs = opt_exp_flgs(kv);
     A(id == 1, "inv lid");
