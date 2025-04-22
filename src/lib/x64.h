@@ -97,11 +97,7 @@ x64_stat x64_d(size_t *p, uint8_t *m, un u);
 
 x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
-#define X64_RS() \
-        asm("sub $0x10, %rsp\n\t" \
-        "movsd %xmm0, (%rsp)\n\t" \
-        "push %rax\n\t" \
-        "push %rbx\n\t" \
+#define X64_RS() asm("push %rbx\n\t" \
         "push %rcx\n\t" \
         "push %rdx\n\t" \
         "push %r12\n\t" \
@@ -109,17 +105,13 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
         "push %r14\n\t" \
         "push %r15\n\t")
 
-#define X64_RR() \
-        asm("pop %r15\n\t" \
+#define X64_RR() asm("pop %r15\n\t" \
         "pop %r14\n\t" \
         "pop %r13\n\t" \
         "pop %r12\n\t" \
         "pop %rdx\n\t" \
         "pop %rcx\n\t" \
-        "pop %rbx\n\t" \
-        "pop %rax\n\t" \
-        "movsd (%rsp), %xmm0\n\t" \
-        "add $0x10, %rsp\n\t")
+        "pop %rbx\n\t")
 
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
@@ -241,6 +233,12 @@ x64_stat x64_addsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 // dec rax
 x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r);
 
+// dec qword ptr[rax]
+x64_stat x64_dec_rm(size_t *p, uint8_t *m, reg r);
+
+// dec qword ptr[rax+dsp8]
+x64_stat x64_dec_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
+
 // sub rax, byte
 x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
@@ -297,6 +295,12 @@ x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // cmp rax, imm8
 x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
+
+// cmp qword ptr[rax], imm8
+x64_stat x64_cmp_rmb(size_t *p, uint8_t *m, reg r, uint8_t b);
+
+// cmp qword ptr[rax+dsp8], imm8
+x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b);
 
 // cmp rax, imm32
 x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d);

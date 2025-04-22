@@ -34,7 +34,7 @@ static bool lst_inv_t(const te *an) {
 }
 
 static fld_stat lst_le_o(fld *f, te **an, err **e) {
-    size_t eti = 0;
+    uint16_t eti = 0;
     if (!(*an)->d[3].p) return FLD_STAT(OK);
     te *h = ((tbl*) (*an)->d[3].p)->i->h, *lte, *kv, *rn = NULL;
     while (h) {
@@ -48,7 +48,8 @@ static fld_stat lst_le_o(fld *f, te **an, err **e) {
             kv = te_i(3, f->ta, export_tbl_f);
             kv->d[0] = P(mc_c(lte->d[0].p));
             kv->d[1] = P(te_c(lte->d[2].p));
-            kv->d[2] = U6(eti++);
+            kv->d[2] = lte->d[1];
+            kv->d[2] = u4_s_o(kv->d[2], 1, eti++);
             tbl_a(rn->d[3].p, kv);
         }
         h = h->d[2].p;
@@ -111,6 +112,18 @@ static fld_stat cst_s_o(fld *f, te **an, err **e) {
 
 static bool cst_s_t(const te *an) {
     return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(T) && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(S);
+}
+
+uint32_t opt_exp_id(te *x) {
+    return u5_g_o(x->d[2], 1);
+}
+
+uint16_t opt_exp_eid(te *x) {
+    return u4_g_o(x->d[2], 1);
+}
+
+uint32_t opt_exp_flgs(te *x) {
+    return u4_g_o(x->d[2], 0);
 }
 
 fld *opt_b(fld *f) {

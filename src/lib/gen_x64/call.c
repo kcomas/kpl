@@ -40,6 +40,7 @@ static gen_stat swap_args(te *restrict ci, as *a, te *restrict r, const vr *args
 
 static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsaves, size_t rsl, const uint8_t *xsaves, size_t xsl) {
     gen_stat stat;
+    int32_t idx;
     static const reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
     static const reg xr[] = {XMM(0), XMM(1), XMM(2), XMM(3), XMM(4), XMM(5), XMM(6)};
     size_t iri = 0, xri = 0;
@@ -93,8 +94,16 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsa
                 drop_atm_kv(st, kv, ci);
                 break;
             case GEN_CLS(V):
-                HERE("TODO move rsp into regs");
-                // TODO move rsp into reg
+                if ((stat = st_stkv_idx(st, gen_var_g_t(ovt), ovt->d[1].u3, &idx)) != GEN_STAT(OK)) return stat;
+                switch (gen_var_g_t(ovt)) {
+                    case X64_TYPE(F5):
+                    case X64_TYPE(F6):
+                        if (gen_as_rrmbd(a, AS_X64(MOVSD), xr[xri++], R(BP), idx, ci) != AS_STAT(OK)) return GEN_STAT(INV);
+                        break;
+                    default:
+                        if (gen_as_rrmbd(a, AS_X64(MOV), ir[iri++], R(BP), idx, ci) != AS_STAT(OK)) return GEN_STAT(INV);
+                        break;
+                }
                 break;
             case GEN_CLS(D):
                 switch (gen_var_g_t(ovt)) {

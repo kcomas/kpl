@@ -374,12 +374,12 @@ gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
             if (v >= st->xvc) return GEN_STAT(INV);
-            *idx = st->xvc * sizeof(void*) * 2 * (v + 1);
+            *idx = sizeof(void*) * 2 * (v + 1);
             break;
         default:
             if (v >= st->rvc) return GEN_STAT(INV);
             *idx = st->xvc * sizeof(void*) * 2;
-            *idx += st->rvc * sizeof(void*) * (v + 1);
+            *idx += sizeof(void*) * (v + 1);
             break;
     }
     *idx = -*idx;

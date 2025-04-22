@@ -124,6 +124,7 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
         oci = kv->d[2].p;
         fn = kv->d[1].p;
     }
+    if (!fn) return GEN_STAT(INV);
     te *e = te_i(7, g->ta, gen_code_entry_f);
     e->d[0] = U6(op_id);
     e->d[1] = P(ac1);

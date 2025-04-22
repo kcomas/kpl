@@ -80,7 +80,7 @@ static gen_stat sub_vuvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
         if (v0 == v1) {
             if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v0), bd_arg(a, d), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         } else return gen_err(g, ci, e, "nyi");
-    } return gen_err(g, ci, e, "nyi");
+    } else return gen_err(g, ci, e, "nyi");
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
@@ -122,8 +122,8 @@ MULDIVVUVUAU(imul, IMUL);
     int32_t v0, v1, v2; \
     if (stk_g_idx3(s, ci->d[1].p, ci->d[2].p, ci->d[3].p, &v0, &v1, &v2) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx"); \
     gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v1, ci); \
-    gen_as_rrmbd(a, AS_X64(MOV), R(DX), R(BP), v2, ci); \
-    if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    gen_as_rrmbd(a, AS_X64(MOV), R(CX), R(BP), v2, ci); \
+    if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(R), U3(R(CX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     gen_as_rmbdr(a, AS_X64(MOV), R(BP), v0, R(AX), ci); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \

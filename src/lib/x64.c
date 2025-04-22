@@ -392,6 +392,21 @@ x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r) {
     return x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(11), 1, r));
 }
 
+// dec qword ptr[rax]
+x64_stat x64_dec_rm(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(00), 1, r));
+    return sib_rm(p, m, r);
+}
+
+// dec qword ptr[rax+dsp8]
+x64_stat x64_dec_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp) {
+    VALID_R(r);
+    x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(01), 1, r));
+    sib_rm(p, m, r);
+    return x64_a(p, m, dsp);
+}
+
 x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
     VALID_R(r);
     return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), 5, r), b);
@@ -508,6 +523,20 @@ x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
 x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b) {
     VALID_R(r);
     return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), 7, r), b);
+}
+
+x64_stat x64_cmp_rmb(size_t *p, uint8_t *m, reg r, uint8_t b) {
+    VALID_R(r);
+    x64_b(p, m, 3, set_rex(r), 0x83, roe(MOD(00), 7, r));
+    sib_rm(p, m, r);
+    return x64_a(p, m, b);
+}
+
+x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b) {
+    VALID_R(r);
+    x64_b(p, m, 3, set_rex(r), 0x83, roe(MOD(01), 7, r));
+    sib_rm(p, m, r);
+    return x64_b(p, m, 2, dsp, b);
 }
 
 x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d) {

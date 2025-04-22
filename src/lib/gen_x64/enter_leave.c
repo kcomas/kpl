@@ -52,7 +52,9 @@ static gen_stat leave_ax_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat leave_du_fn(gen *g, void *s, te *ci, as *a, err **e)  {
-    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (!((te*) ci->d[1].p)->d[1].u6) {
+        if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
+    } else if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     return leave_e(g, s, ci, a, e);
 }
 
@@ -92,6 +94,7 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(F6), leave_ax_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(U6), leave_du_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(F6), leave_dx_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(M), leave_du_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(I6), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(F6), leave_vx_fn);
 }
