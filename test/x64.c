@@ -355,3 +355,15 @@ T(sib) {
     A(a[1] == v, "inv sib");
     for (size_t i = 0; i < 3; i++) printf("%ld\n", a[i]);
 }
+
+T(sibupper) {
+    size_t p = 0;
+    int64_t a[] = {5, 6, 7};
+    x64_mov_rr(&p, m, R(14), R(DI));
+    x64_mov_rr(&p, m, R(15), R(SI));
+    x64_mov_rrmo(&p, m, R(AX), R(14), R(15), S8);
+    x64_ret(&p, m);
+    printj(p, m);
+    int64_t r = ((int64_t(*)(int64_t*, size_t)) m)(a, 1);
+    A(r == a[1], "inv sib");
+}
