@@ -241,14 +241,14 @@ T(rskiploop) {
     uint32_t loop = p;
     x64_mov_rrm(&p, m, R(AX), R(SP));
     x64_cmp_rr(&p, m, R(SI), R(AX));
-    x64_jbjnaejc_dw(&p, m, 0);
+    x64_jbjnaejc_d(&p, m, 0);
     uint32_t test = p;
     x64_push_r(&p, m, R(SI));
     x64_printf(&p, m, "Dec: %lu\n");
     x64_pop_r(&p, m, R(SI));
     x64_dec_r(&p, m, R(SI));
-    x64_jmp_dw(&p, m, x64_jmpu_lbldw(p, loop));
-    x64_jmpd_lbldw(m, test, p);
+    x64_jmp_d(&p, m, x64_jmpu_lbld(p, loop));
+    x64_jmpd_lbld(m, test, p);
     x64_pop_r(&p, m, R(AX));
     x64_ret(&p, m);
     printj(p, m);
@@ -304,7 +304,7 @@ T(cmprip) {
     x64_mov_rr(&p, m, R(AX), R(DI));
     x64_ret(&p, m);
     uint32_t ripe = p;
-    x64_jmpd_lbldw(m, rips, ripe);
+    x64_jmpd_lbld(m, rips, ripe);
     x64_e(&p, m, sizeof(int64_t), I6(c));
     printj(p, m);
     int64_t r = ((int64_t(*)(int64_t)) m)(INT64_MAX);

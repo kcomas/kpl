@@ -225,7 +225,7 @@ bool as_x64_dq(as *a, size_t *p, uint8_t *m, te *dqe) {
     (void) a;
     dqe->d[4] = U6(*p); // for print
     te *ci = dqe->d[0].p;
-    x64_jmpd_lbldw(m, ci->d[8].u6 + ci->d[9].u6, *p);
+    x64_jmpd_lbld(m, ci->d[8].u6 + ci->d[9].u6, *p);
     return x64_e(p, m, dqe->d[1].u6, dqe->d[2]) == X64_STAT(OK);
 }
 
