@@ -75,13 +75,13 @@ T(tbl) {
 T(fnadd3) {
     AI(fnadd3, 2);
     te *ft = TFN(FN, TS(I6), 3, "a", TS(I6), 0, "b", TS(I6), 1, "c", TS(I6), 2);
-    te *cn = RN(LN(LT(1, "f", FLG(0, LTE_FLG(F)), te_c(ft)), L(2,
-        ON(te_c(ft), DFN, EN("f", FLG(0, LTE_FLG(F)), te_c(ft)), SN(_G, U5(0))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("f", FLG(0, LTE_FLG(F)), te_c(ft)),
+    te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
             L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))))
     )));
     gen *gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 0), gen_arg(gc, X64_TYPE(I6), 1), gen_arg(gc, X64_TYPE(I6), 2)));
     S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 1), gen_arg(gc, X64_TYPE(I6), 0), gen_tmp(gc, X64_TYPE(I6), 0)));
@@ -91,29 +91,29 @@ T(fnadd3) {
     te_f(cn);
     te_f(ft);
     gen_f(gc);
-    cn = RN(SN(_G, U5(1)));
+    cn = RN(SN(_G, I5(0)));
     gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(I6), I6(1)), gen_data(gc, X64_TYPE(I6), I6(2)), gen_data(gc, X64_TYPE(I6), I6(3))), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(I6), I6(1)), gen_data(gc, X64_TYPE(I6), I6(2)), gen_data(gc, X64_TYPE(I6), I6(3))), gen_lbl(gc, (uint32_t) -1)));
     S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_tmp(gc, X64_TYPE(I6), 2)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
     te_f(cn);
     gen_f(gc);
-    AR(1);
+    AR(0);
 }
 
 T(fnf6muli6cstdiv) {
     AI(fnf6muli6cstdiv, 2);
     te *ft = TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0);
-    te *cn = RN(LN(LT(1, "f", FLG(0, LTE_FLG(F)), te_c(ft)), L(2,
-        ON(te_c(ft), DFN, EN("f", FLG(0, LTE_FLG(F)), te_c(ft)), SN(_G, U5(0))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("f", FLG(0, LTE_FLG(F)), te_c(ft)),
+    te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
             L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), SN(U6, U6(2)))))
     )));
     gen *gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 1)));
     S(gen_a(gc, GEN_OP(CST), gen_tmp(gc, X64_TYPE(F6), 1), gen_arg(gc, X64_TYPE(U6), 0), NULL));
@@ -123,28 +123,28 @@ T(fnf6muli6cstdiv) {
     te_f(cn);
     te_f(ft);
     gen_f(gc);
-    cn = RN(SN(_G, U5(1)));
+    cn = RN(SN(_G, I5(0)));
     gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(F6), 3), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(F6), F6(4.4)), gen_data(gc, X64_TYPE(F6), F6(6.6)), gen_data(gc, X64_TYPE(U6), U6(2))), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(F6), 3), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(F6), F6(4.4)), gen_data(gc, X64_TYPE(F6), F6(6.6)), gen_data(gc, X64_TYPE(U6), U6(2))), gen_lbl(gc, (uint32_t) -1)));
     S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(F6)])), gen_tmp(gc, X64_TYPE(F6), 3)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
     te_f(cn);
     gen_f(gc);
-    AR(1);
+    AR(0);
 }
 
 T(apltypefn) {
     AI(apltypefn, 2);
     te *ft = TFN(FN, TS(I6), 2, "a", TS(I6), 0, "b", TS(I6), 1);
-    te *cn = RN(LN(LT(1, "f", FLG(0, LTE_FLG(F)), te_c(ft)), L(2,
-        ON(te_c(ft), DFN, EN("f", FLG(0, LTE_FLG(F)), te_c(ft)), SN(_G, U5(0))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("f", FLG(0, LTE_FLG(F)), te_c(ft)), L(2, SN(I6, I6(3)), SN(I6, I6(4)))))
+    te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2, SN(I6, I6(3)), SN(I6, I6(4)))))
     )));
     gen *gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(I6), 0), gen_arg(gc, X64_TYPE(I6), 1), gen_arg(gc, X64_TYPE(I6), 0)));
     S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 1), gen_arg(gc, X64_TYPE(I6), 0), gen_tmp(gc, X64_TYPE(I6), 0)));
@@ -153,22 +153,22 @@ T(apltypefn) {
     te_f(cn);
     te_f(ft);
     gen_f(gc);
-    cn = RN(SN(_G, U5(1)));
+    cn = RN(SN(_G, I5(0)));
     gc = gen_i_gen(bg);
-    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(I6), I6(3)), gen_data(gc, X64_TYPE(I6), I6(4))), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(I6), I6(3)), gen_data(gc, X64_TYPE(I6), I6(4))), gen_lbl(gc, (uint32_t) -1)));
     S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_tmp(gc, X64_TYPE(I6), 2)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
     te_f(cn);
     gen_f(gc);
-    AR(1);
+    AR(0);
 }
 
 T(facloop) {
     AI(facloop, 1);
-    te *cn = RN(SN(_G, U5(0)));
+    te *cn = RN(SN(_G, I5(0)));
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));

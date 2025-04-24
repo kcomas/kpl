@@ -7,6 +7,7 @@ const char *ast_oc_str(oc o) {
         "AGN",
         "CST",
         "LOOP",
+        "IF",
         "ADD",
         "SUB",
         "SUBA",
@@ -209,6 +210,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(AGN), OC(AGN));
     ast_t_a(a, TCUST(CST), OC(CST));
     ast_t_a(a, TCUST(LOOP), OC(LOOP));
+    ast_t_a(a, TCUST(IF), OC(IF));
     ast_t_a(a, TCUST(ADD), OC(ADD));
     ast_t_a(a, TCUST(SUB), OC(SUB));
     ast_t_a(a, TCUST(SUBA), OC(SUBA));

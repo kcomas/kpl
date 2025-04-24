@@ -282,7 +282,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
-#define ZXI(N, C1, C2, C3) x64_stat x64_##N##_xi(size_t *p, uint8_t *m, reg r, uint32_t dsp) { \
+#define ZZZXI(N, C1, C2, C3) x64_stat x64_##N##_xi(size_t *p, uint8_t *m, reg r, uint32_t dsp) { \
     if (r < XMM(0)) return X64_STAT(INV_REG); \
     x64_a(p, m, C1); \
     uint8_t rex = 0; \
@@ -292,7 +292,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
 }
 
-#define ZXX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xx(size_t *p, uint8_t *m, reg d, reg s) { \
+#define ZZZXX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xx(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM < XMM(0)) return X64_STAT(INV_REG); \
     x64_a(p, m, C1); \
@@ -303,7 +303,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 3, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
 }
 
-#define ZXR(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xr(size_t *p, uint8_t *m, reg d, reg s) { \
+#define ZZZXR(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xr(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -312,7 +312,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 5, C1, rex, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
 }
 
-#define ZRX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rx(size_t *p, uint8_t *m, reg d, reg s) { \
+#define ZZZRX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rx(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -321,7 +321,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 5, C1, rex, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
 }
 
-#define ZRMX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmx(size_t *p, uint8_t *m, reg d, reg s) { \
+#define ZZZRMX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmx(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -332,7 +332,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return X64_STAT(OK); \
 }
 
-#define ZRMBX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) { \
+#define ZZZRMBX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -343,7 +343,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
-#define ZXRM(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrm(size_t *p, uint8_t *m, reg d, reg s) { \
+#define ZZZXRM(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrm(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -354,7 +354,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return X64_STAT(OK); \
 }
 
-#define ZXRMB(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) { \
+#define ZZZXRMB(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -364,7 +364,6 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
     return x64_a(p, m, dsp); \
 }
-
 
 Z(nop, 0x90);
 
@@ -400,33 +399,33 @@ ZRRMO(mov, 0x8B, d, o, s);
 
 ZRRMOB(mov, 0x8B, d, o, s);
 
-ZRX(movq, 0x66, 0x0F, 0x7E, s, d);
+ZZZRX(movq, 0x66, 0x0F, 0x7E, s, d);
 
-ZRMX(movq, 0x66, 0x0F, 0xD6, s, d);
+ZZZRMX(movq, 0x66, 0x0F, 0xD6, s, d);
 
-ZRMBX(movq, 0x66, 0x0F, 0xD6, s, d);
+ZZZRMBX(movq, 0x66, 0x0F, 0xD6, s, d);
 
-ZXR(movq, 0x66, 0x0F, 0x6E, d, s);
+ZZZXR(movq, 0x66, 0x0F, 0x6E, d, s);
 
-ZXRM(movq, 0xF3, 0x0F, 0x7E, d, s);
+ZZZXRM(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-ZXRMB(movq, 0xF3, 0x0F, 0x7E, d, s);
+ZZZXRMB(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-ZXX(movq, 0xF3, 0x0F, 0x7E, d, s);
+ZZZXX(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-ZXI(movq, 0xF3, 0x0F, 0x7E);
+ZZZXI(movq, 0xF3, 0x0F, 0x7E);
 
-ZXX(movsd, 0xF2, 0x0F, 0x10, d, s);
+ZZZXX(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-ZXRM(movsd, 0xF2, 0x0F, 0x10, d, s);
+ZZZXRM(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-ZXRMB(movsd, 0xF2, 0x0F, 0x10, d, s);
+ZZZXRMB(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-ZXI(movsd, 0xF2, 0x0F, 0x10);
+ZZZXI(movsd, 0xF2, 0x0F, 0x10);
 
-ZRMX(movsd, 0xF2, 0x0F, 0x11, s, d);
+ZZZRMX(movsd, 0xF2, 0x0F, 0x11, s, d);
 
-ZRMBX(movsd, 0xF2, 0x0F, 0x11, s, d);
+ZZZRMBX(movsd, 0xF2, 0x0F, 0x11, s, d);
 
 ZRRMB(lea, 0x8D, d, s);
 
@@ -440,9 +439,9 @@ ZRMR(add, 0x01, s, d);
 
 ZRMBR(add, 0x01, s, d);
 
-ZXX(addsd, 0xF2, 0x0F, 0x58, d, s);
+ZZZXX(addsd, 0xF2, 0x0F, 0x58, d, s);
 
-ZXI(addsd, 0xF2, 0x0F, 0x58);
+ZZZXI(addsd, 0xF2, 0x0F, 0x58);
 
 ZRE(dec, 0xFF, 1);
 
@@ -454,9 +453,9 @@ ZREB(sub, 0x83, 5);
 
 ZRR(sub, 0x29, s, d);
 
-ZXX(subsd, 0xF2, 0x0F, 0x5C, d, s);
+ZZZXX(subsd, 0xF2, 0x0F, 0x5C, d, s);
 
-ZXI(subsd, 0xF2, 0x0F, 0x5C);
+ZZZXI(subsd, 0xF2, 0x0F, 0x5C);
 
 ZRE(neg, 0xF7, 3);
 
@@ -468,17 +467,17 @@ ZRE(div, 0xF7, 6);
 
 ZRE(idiv, 0xF7, 7);
 
-ZXX(mulsd, 0xF2, 0x0F, 0x59, d, s);
+ZZZXX(mulsd, 0xF2, 0x0F, 0x59, d, s);
 
-ZXX(divsd, 0xF2, 0x0F, 0x5E, d, s);
+ZZZXX(divsd, 0xF2, 0x0F, 0x5E, d, s);
 
-ZXR(cvtsi2sd, 0xF2, 0x0F, 0x2A, d, s);
+ZZZXR(cvtsi2sd, 0xF2, 0x0F, 0x2A, d, s);
 
 ZRR(and, 0x21, s, d);
 
 ZRR(xor, 0x31, s, d);
 
-ZXX(pxor, 0x66, 0x0F, 0xEF, d, s);
+ZZZXX(pxor, 0x66, 0x0F, 0xEF, d, s);
 
 ZRR(cmp, 0x39, s, d);
 
@@ -494,13 +493,13 @@ ZRMBEB(cmp, 0x83, 7);
 
 ZRED(cmp, 0x81, 7);
 
-ZXX(ucomisd, 0x66, 0x0F, 0x2E, d, s);
+ZZZXX(ucomisd, 0x66, 0x0F, 0x2E, d, s);
 
-ZXI(ucomisd, 0x66, 0x0F, 0x2E);
+ZZZXI(ucomisd, 0x66, 0x0F, 0x2E);
 
-ZXX(comisd, 0x66, 0x0F, 0x2F, d, s);
+ZZZXX(comisd, 0x66, 0x0F, 0x2F, d, s);
 
-ZXI(comisd, 0x66, 0x0F, 0x2F);
+ZZZXI(comisd, 0x66, 0x0F, 0x2F);
 
 ZRR(test, 0x85, s, d);
 

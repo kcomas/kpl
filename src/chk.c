@@ -178,14 +178,11 @@ static chk_stat chk_aply_e_fn(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_dfn_e_op(chk *c, te *an, err **e) {
+static chk_stat chk_dfn_e_fn(chk *c, te *an, err **e) {
     (void) c;
-    te *lte = ((te*) an->d[5].p)->d[3].p, *r = an->d[6].p;
-    if (lte->d[2].p != NULL || lte->d[3].p != NULL) return chk_err(c, an, e, "chk lte defined");
-    // TODO check if been used before
-    an->d[3] = P(te_c(r->d[3].p));
-    lte->d[2] = P(te_c(r->d[3].p));
-    ast_lst_tbl_e_s_f(lte, LTE_FLG(L));
+    (void) e;
+    te *lte = ((te*) an->d[5].p)->d[3].p;
+    ast_lst_tbl_e_s_i(lte, c->fnlc--);
     return CHK_STAT(OK);
 }
 
@@ -270,8 +267,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
     // ops
     CHK_AA(c, chk_op_e_n_s_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
-    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));
-    CHK_AA(c, chk_dfn_e_op, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(FN));
+    CHK_AA(c, chk_dfn_e_fn, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6));
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(U6), AST_CLS(S), TYPE(I6));

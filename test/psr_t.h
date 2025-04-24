@@ -17,3 +17,5 @@ extern const char *fnf6muli6cstdiv;
 extern const char *apltypefn;
 
 extern const char *facloop;
+
+extern const char *facrec;

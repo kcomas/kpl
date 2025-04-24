@@ -3,6 +3,7 @@
 
 chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p ep, chk_tbl_i cti, ast *a) {
     chk *c = af->a(sizeof(chk));
+    c->fnlc = -1;
     c->r = 1;
     c->af = af;
     c->ta = ta;
@@ -17,6 +18,7 @@ chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p ep, chk_tbl_i
 
 chk *chk_i_chk(const chk *c, ast *a) {
     chk *cc= c->af->a(sizeof(chk));
+    cc->fnlc = -1;
     cc->r = 1;
     cc->af = c->af;
     cc->ta= c->ta;
