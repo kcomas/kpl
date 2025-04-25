@@ -248,11 +248,11 @@ T(facrec) {
                 LST(OP(N(VAR), N(INT))),
                 LST(
                     OP(N(VAR), APLY(N(VAR), OP(N(VAR), N(INT)))),
-                    N(INT)
+                    OP(N(TYPE), N(INT))
                 )
             )
         ))),
-        CMD(APLY(N(VAR), N(INT)))
+        CMD(APLY(N(VAR), OP(N(TYPE), N(INT))))
     ))});
     te_f(h);
 }
