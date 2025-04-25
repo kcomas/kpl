@@ -243,9 +243,9 @@ T(facloop) {
 T(facrec) {
     te *h = ppnode(psr_r(bpsr(facrec)));
     V(h, {N(ROOT), APLY(LST(
-        OP(N(VAR), OP(N(TYPE), LST(
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)), LST(
             OP(
-                APLY(OP(N(NONE), N(NONE)), APLY(N(TYPE), N(VAR)), N(INT)),
+                LST(OP(N(VAR), N(INT))),
                 LST(
                     OP(N(VAR), APLY(N(VAR), OP(N(VAR), N(INT)))),
                     N(INT)

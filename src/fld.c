@@ -46,8 +46,36 @@ static fld_stat op_lr_lst_r(fld *f, te **an, err **e) {
 
 static bool op_lr_lst_t(const te *an) {
     te *l = an->d[5].p, *r = an->d[6].p;
-    if (an->d[4].u4 != OC(LOOP)) return false;
+    if (an->d[4].u4 != OC(LOOP) && an->d[4].u4 != OC(IF)) return false;
     return l->d[2].u4 != AST_CLS(L) || r->d[2].u4 != AST_CLS(L);
+}
+
+static fld_stat scope(fld *f, te *an, err **e) {
+    te *pl, *h, *kv;
+    if (ast_g_pn(AST_CLS(L), an->d[0].p, &pl) != AST_STAT(OK)) return fld_err(f, an, e, "fld ast_g_pn");
+    if (!pl->d[3].p) {
+        pl->d[3] = an->d[3];
+        an->d[3] = P(NULL);
+    } else if (an->d[3].p) {
+        h = ((tbl*) an->d[3].p)->i->h;
+        while (h) {
+            if (tbl_g_i(pl->d[3].p, ((te*) h->d[0].p)->d[0], &kv) == TBL_STAT(NF)) tbl_a(pl->d[3].p, te_c(h->d[0].p));
+            h = h->d[2].p;
+        }
+    }
+    return FLD_STAT(OK);
+}
+
+static fld_stat op_lr_lst_scope_r(fld *f, te **an, err **e) {
+    fld_stat fstat;
+    if ((fstat = scope(f, (*an)->d[5].p, e)) != FLD_STAT(OK)) return fstat;
+    return scope(f, (*an)->d[6].p, e);
+}
+
+static bool op_lr_lst_scope_t(const te *an) {
+    te *l = an->d[5].p, *r = an->d[6].p;
+    if (an->d[4].u4 != OC(LOOP) && an->d[4].u4 != OC(IF)) return false;
+    return l->d[2].u4 == AST_CLS(L) && r->d[2].u4 == AST_CLS(L);
 }
 
 static fld_stat e_lst_type_o_def_r(fld *f, te **an, err **e) {
@@ -206,6 +234,7 @@ static bool cmd_t(const te *an) {
 fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
+    fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
     fld_a(f, AST_CLS(O), e_lst_type_o_def_t, e_lst_type_o_def_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);

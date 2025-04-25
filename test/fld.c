@@ -54,3 +54,15 @@ T(facloop) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("f", U6(LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(facrec) {
+    V(facrec, RN(AN(NULL, LN(LT(1, "fac", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("fac", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(U6), 1, "n", TS(U6), 0)),
+            LN(LT(2, "n", U6(0), NULL, "fac", U6(0), NULL), L(1, ON(NULL, IF,
+                LN(NULL, L(1, ON(NULL, GT, EN("n", U6(0), NULL), SN(I6, I6(1))))),
+                LN(LT(2, "n", U6(0), NULL, "fac", U6(0), NULL), L(2,
+                    ON(NULL, MUL, EN("n", U6(0), NULL), AN(NULL, EN("fac", U6(0), NULL), L(1, ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(1)))))),
+                    SN(I6, I6(1))))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("fac", U6(0), NULL), L(1, SN(I6, I6(5))))))),
+    NULL)));
+}

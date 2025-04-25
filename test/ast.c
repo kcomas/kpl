@@ -57,9 +57,9 @@ T(facloop) {
 
 T(facrec) {
     V(facrec, RN(AN(NULL, LN(NULL, L(2,
-        ON(NULL, DFN, IN("fac"), ON(NULL, CST, TN(FN), LN(NULL, L(1,
+        ON(NULL, DFN, IN("fac"), ON(NULL, CST, AN(NULL, TN(FN), L(2, ZN("n", TN(U6)), TN(U6))), LN(NULL, L(1,
             ON(NULL, IF,
-                AN(NULL, ON(NULL, GT, NULL, NULL), L(2, AN(NULL, TN(U6), L(1, IN("n"))), SN(I6, I6(1)))),
+                LN(NULL, L(1, ON(NULL, GT, IN("n"), SN(I6, I6(1))))),
                 LN(NULL, L(2,
                     ON(NULL, MUL, IN("n"), AN(NULL, IN("fac"), L(1, ON(NULL, SUB, IN("n"), SN(I6, I6(1)))))),
                     SN(I6, I6(1))
