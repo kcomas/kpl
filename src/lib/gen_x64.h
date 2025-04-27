@@ -28,6 +28,7 @@ typedef enum {
     GEN_OP(GT),
     GEN_OP(LT),
     GEN_OP(LTE),
+    GEN_OP(JMP),
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 

@@ -23,6 +23,7 @@ const char *gen_op_str(gen_op go) {
         "GT",
         "LT",
         "LTE",
+        "JMP",
         "_END"
     };
     const char *s = "INV";
@@ -460,6 +461,14 @@ static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     return GEN_STAT(OK);
 }
 
+static gen_stat jmp_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    te *lbl = ci->d[1].p;
+    if (gen_as(a, AS_X64(JMP), as_arg_i(a, ARG_ID(L), lbl->d[1]), NULL, NULL, NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
+    set_code_e(ci, a);
+    return GEN_STAT(OK);
+}
+
 // not meant to be used outside
 void gen_enter_leave(gen *g);
 void gen_set(gen *g);
@@ -469,6 +478,7 @@ void gen_call(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(JMP), GEN_CLS(L), X64_TYPE(N), jmp_fn);
     gen_enter_leave(g);
     gen_set(g);
     gen_arith(g);

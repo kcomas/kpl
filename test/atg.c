@@ -196,3 +196,39 @@ T(facloop) {
     A(kv->d[1].i6 == 120, "inv exp value");
     tbl_f(et);
 }
+
+T(facrec) {
+    AI(facrec, 2);
+    te *ft = TFN(FN, TS(U6), 1, "n", TS(U6), 0);
+    te *cn = RN(LN(LT(1, "fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(U6), EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, SN(U6, U6(5)))))
+    )));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(LTE), gen_arg(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(SUB), gen_tmp(gc, X64_TYPE(U6), 1), gen_arg(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1))));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(U6), 2), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(U6), 1)), gen_lbl(gc, (uint32_t) -1)));
+    S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(U6), 0), gen_arg(gc, X64_TYPE(U6), 0), gen_tmp(gc, X64_TYPE(U6), 2)));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(U6), 0), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    te_f(ft);
+    gen_f(gc);
+    cn = RN(SN(_G, I5(2)));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 2), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(U6), 4), gen_call_m(gc, 1, gen_data(gc, X64_TYPE(U6), U6(5))), gen_lbl(gc, (uint32_t) -1)));
+    S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(U6)])), gen_tmp(gc, X64_TYPE(U6), 4)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    AR(2);
+}
