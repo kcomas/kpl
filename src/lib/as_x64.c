@@ -285,11 +285,11 @@ static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
 }
 
 // internal
-as *as_r_b(as *a);
-as *as_ro_b(as *a);
-as *as_rx_b(as *a);
-as *as_x_b(as *a);
-as *as_jmp_b(as *a);
+void as_r_b(as *a);
+void as_ro_b(as *a);
+void as_rx_b(as *a);
+void as_x_b(as *a);
+void as_jmp_b(as *a);
 
 as *as_b(as *a) {
     as_op_a(a, AS_X64(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_nop, NULL);
