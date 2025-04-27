@@ -36,19 +36,19 @@ psr *bpsr(const char *pgm) {
     return psr_i_psr(bp, mc_i_cstr(pgm, &pm));
 }
 
-const char *aplyopadd = "+(1;2)";
+const char *TPGM(aplyopadd) = "+(1;2)";
 
-const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
+const char *TPGM(typetype) = "FN(I6`x;F6`y;FN(U6`z;I6))";
 
-const char *fnadd3 = "{f::FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)/p1}()";
+const char *TPGM(fnadd3) = "{f::FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)/p1}()";
 
-const char *fnf6muli6cstdiv = "{f::FN(F6`x;F6`y;U6`z;F6)${/(x*y;F6$z)};f(4.4;6.6;U6$2)/p1}()";
+const char *TPGM(fnf6muli6cstdiv) = "{f::FN(F6`x;F6`y;U6`z;F6)${/(x*y;F6$z)};f(4.4;6.6;U6$2)/p1}()";
 
-const char *apltypefn = "{f::FN${I6(a)+I6(b)*a};f(3;4)/p1}()";
+const char *TPGM(apltypefn) = "{f::FN${I6(a)+I6(b)*a};f(3;4)/p1}()";
 
-const char *facloop = "{\n\tv::5\n\tf/e::1\n\t>(v;1)@{\n\t\tf*:v\n\t\tv-:1\n\t}\n\tf/p1\n}()";
+const char *TPGM(facloop) = "{\n\tv::5\n\tf/e::1\n\t>(v;1)@{\n\t\tf*:v\n\t\tv-:1\n\t}\n\tf/p1\n}()";
 
-const char *facrec = "{\n"
+const char *TPGM(facrec) = "{\n"
                      " fac::FN(U6`n;U6)${\n"
                      "  {n>1}?{\n"
                      "   n*fac(n-1)\n"

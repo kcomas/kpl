@@ -7,15 +7,15 @@
     ast_verify(_t, a, an, AST)
 
 T(aplyopadd) {
-    V(aplyopadd, RN(AN(NULL, ON(NULL, ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
+    V(TPGM(aplyopadd), RN(AN(NULL, ON(NULL, ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
 }
 
 T(typetype) {
-    V(typetype, RN(AN(NULL, TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(NULL, TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
+    V(TPGM(typetype), RN(AN(NULL, TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(NULL, TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
 }
 
 T(fnadd3) {
-    V(fnadd3, RN(AN(NULL, LN(NULL, L(2,
+    V(TPGM(fnadd3), RN(AN(NULL, LN(NULL, L(2,
         ON(NULL, DFN, IN("f"), ON(NULL, CST,
             AN(NULL, TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
             LN(NULL, L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, IN("a"), ON(NULL, ADD, IN("b"), IN("c"))))))
@@ -25,7 +25,7 @@ T(fnadd3) {
 }
 
 T(fnf6muli6cstdiv) {
-    V(fnf6muli6cstdiv, RN(AN(NULL, LN(NULL, L(2,
+    V(TPGM(fnf6muli6cstdiv), RN(AN(NULL, LN(NULL, L(2,
             ON(NULL, DFN, IN("f"), ON(NULL, CST,
                 AN(NULL, TN(FN), L(4, ZN("x", TN(F6)), ZN("y", TN(F6)), ZN("z", TN(U6)), TN(F6))),
                 LN(NULL, L(1, AN(NULL, ON(NULL, DIV, NULL, NULL), L(2, ON(NULL, MUL, IN("x"), IN("y")), ON(NULL, CST, TN(F6), IN("z"))))))
@@ -35,14 +35,14 @@ T(fnf6muli6cstdiv) {
 }
 
 T(apltypefn) {
-    V(apltypefn, RN(AN(NULL, LN(NULL, L(2,
+    V(TPGM(apltypefn), RN(AN(NULL, LN(NULL, L(2,
         ON(NULL, DFN, IN("f"),
         ON(NULL, CST, TN(FN), LN(NULL, L(1, ON(NULL, ADD, AN(NULL, TN(I6), L(1, IN("a"))), ON(NULL, MUL, AN(NULL, TN(I6), L(1, IN("b"))), IN("a"))))))),
         CN(P1, AN(NULL, IN("f"), L(2, SN(I6, I6(3)), SN(I6, I6(4))))))), NULL)));
 }
 
 T(facloop) {
-    V(facloop, RN(AN(NULL, LN(NULL, L(4,
+    V(TPGM(facloop), RN(AN(NULL, LN(NULL, L(4,
         ON(NULL, DFN, IN("v"), SN(I6, I6(5))),
         ON(NULL, DFN, CN(E, IN("f")), SN(I6, I6(1))),
         ON(NULL, LOOP,
@@ -56,7 +56,7 @@ T(facloop) {
 }
 
 T(facrec) {
-    V(facrec, RN(AN(NULL, LN(NULL, L(2,
+    V(TPGM(facrec), RN(AN(NULL, LN(NULL, L(2,
         ON(NULL, DFN, IN("fac"), ON(NULL, CST, AN(NULL, TN(FN), L(2, ZN("n", TN(U6)), TN(U6))), LN(NULL, L(1,
             ON(NULL, IF,
                 LN(NULL, L(1, ON(NULL, GT, IN("n"), SN(I6, I6(1))))),

@@ -6,16 +6,20 @@
 
 psr *bpsr(const char *pgm);
 
-extern const char *aplyopadd;
+#define TPGM(N) TPGM_##N
 
-extern const char *typetype;
+extern const char *TPGM(aplyopadd);
 
-extern const char *fnadd3;
+extern const char *TPGM(typetype);
 
-extern const char *fnf6muli6cstdiv;
+extern const char *TPGM(fnadd3);
 
-extern const char *apltypefn;
+extern const char *TPGM(fnf6muli6cstdiv);
 
-extern const char *facloop;
+extern const char *TPGM(apltypefn);
 
-extern const char *facrec;
+extern const char *TPGM(facloop);
+
+extern const char *TPGM(facrec);
+
+extern const char *TPGM(fib);

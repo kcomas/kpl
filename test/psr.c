@@ -122,7 +122,7 @@ T(sigma) {
 }
 
 T(aplyopadd) {
-    te *h = ppnode(psr_r(bpsr(aplyopadd)));
+    te *h = ppnode(psr_r(bpsr(TPGM(aplyopadd))));
     V(h, {N(ROOT), APLY(OP(N(NONE), N(NONE)), N(INT), N(INT))});
     te_f(h);
 }
@@ -134,7 +134,7 @@ T(nl) {
 }
 
 T(typetype) {
-    te *h = ppnode(psr_r(bpsr(typetype)));
+    te *h = ppnode(psr_r(bpsr(TPGM(typetype))));
     V(h, {N(ROOT), APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)))});
     te_f(h);
 }
@@ -193,7 +193,7 @@ T(op_op) {
 }
 
 T(fnadd3) {
-    te *h = ppnode(psr_r(bpsr(fnadd3)));
+    te *h = ppnode(psr_r(bpsr(TPGM(fnadd3))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(OP(N(NONE), OP(N(VAR), OP(N(VAR), N(VAR))))))),
         CMD(APLY(N(VAR), N(INT), N(INT), N(INT)))
@@ -202,7 +202,7 @@ T(fnadd3) {
 }
 
 T(fnf6muli6cstdiv) {
-    te *h = ppnode(psr_r(bpsr(fnf6muli6cstdiv)));
+    te *h = ppnode(psr_r(bpsr(TPGM(fnf6muli6cstdiv))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)),
             LST(
@@ -214,7 +214,7 @@ T(fnf6muli6cstdiv) {
 }
 
 T(apltypefn) {
-    te *h = ppnode(psr_r(bpsr(apltypefn)));
+    te *h = ppnode(psr_r(bpsr(TPGM(apltypefn))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(N(TYPE), LST(
             OP(APLY(N(TYPE), N(VAR)), OP(APLY(N(TYPE), N(VAR)), N(VAR)))))),
@@ -224,7 +224,7 @@ T(apltypefn) {
 }
 
 T(facloop) {
-    te *h = ppnode(psr_r(bpsr(facloop)));
+    te *h = ppnode(psr_r(bpsr(TPGM(facloop))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), N(INT)),
         OP(CMD(N(VAR)), N(INT)),
@@ -241,7 +241,7 @@ T(facloop) {
 }
 
 T(facrec) {
-    te *h = ppnode(psr_r(bpsr(facrec)));
+    te *h = ppnode(psr_r(bpsr(TPGM(facrec))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)), LST(
             OP(
@@ -362,7 +362,7 @@ T(add_flt_fn) {
 }
 
 T(fib) {
-    te *h = ppnode(psr_r(bpsr("$(FN(U6`n;U6);{?{=(n;0)?0;<(n;3)?2;S(n-1)+S(n-2)}})(35)")));
+    te *h = ppnode(psr_r(bpsr("$(FN(I6`n;I6);{?{=(n;0)?0;<(n;3)?2;S(n-1)+S(n-2)}})(35)")));
     V(h, {N(ROOT),
         APLY(APLY(OP(N(NONE), N(NONE)),
                 APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)),

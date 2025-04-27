@@ -5,7 +5,7 @@
     ast_verify(_t, a, an, N);
 
 T(fnadd3) {
-    IC(fnadd3);
+    IC(TPGM(fnadd3));
     printf("BEFORE\n");
     chk_p(c->bt, 0);
     printf("AFTER\n");
@@ -26,7 +26,7 @@ T(fnadd3) {
 }
 
 T(fnf6muli6cstdiv) {
-    IC(fnf6muli6cstdiv);
+    IC(TPGM(fnf6muli6cstdiv));
     te *ft = TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0);
     te *cn = RN(AN(TS(VD), LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
@@ -41,7 +41,7 @@ T(fnf6muli6cstdiv) {
 }
 
 T(apltypefn) {
-    IC(apltypefn);
+    IC(TPGM(apltypefn));
     te *ft = TFN(FN, TS(I6), 2, "a", TS(I6), 0, "b", TS(I6), 1);
     V(RN(AN(TS(VD), LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, te_c(ft)), LN(LT(2, "a", FLG(0, LTE_FLG(A)), TS(I6), "b", FLG(1, LTE_FLG(A)), TS(I6)), L(1, ON(TS(I6), ADD, EN("a", FLG(0, LTE_FLG(A)), TS(I6)), ON(TS(I6), MUL, EN("b", FLG(1, LTE_FLG(A)), TS(I6)), EN("a", FLG(0, LTE_FLG(A)), TS(I6)))))))),
@@ -51,7 +51,7 @@ T(apltypefn) {
 }
 
 T(facloop) {
-    IC(facloop);
+    IC(TPGM(facloop));
     V(RN(AN(TS(VD), LN(LT(2, "v", FLG(0, LTE_FLG(L)), TS(I6), "f", FLG(1, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), L(4,
         ON(TS(I6), DFN, EN("v", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(5))),
         ON(TS(I6), DFN, EN("f", FLG(1, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), SN(I6, I6(1))),
@@ -65,7 +65,7 @@ T(facloop) {
 }
 
 T(facrec) {
-    IC(facrec);
+    IC(TPGM(facrec));
     te *ft = TFN(FN, TS(U6), 1, "n", TS(U6), 0);
     tbl *lta = LT(2, "n", FLG(0, LTE_FLG(A)), TS(U6), "fac", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
     tbl *ltb = LT(2, "n", FLG(0, LTE_FLG(A) | LTE_FLG(O)), TS(U6), "fac", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
