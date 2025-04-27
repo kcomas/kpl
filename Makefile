@@ -133,7 +133,7 @@ $(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/
 
 OBJS := $(sort $(OBJS))
 
-FSAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
+FSAN = -fsanitize=address,leak,undefined
 #$(TESTS): OO = -O2
 $(TESTS): FLAGS += -DNTO
 $(TESTS): FFLAGS += $(FSAN)
