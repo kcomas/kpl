@@ -57,3 +57,16 @@ const char *TPGM(facrec) = "{\n"
                      " }\n"
                      " fac(U6$5)/p1\n"
                      "}()";
+
+const char *TPGM(fibrec) = "{\n"
+                            "   fib::FN(I6`n;I6)${\n"
+                            "       ?{\n"
+                            "           <=(n;0)?0\n"
+                            "           <(n;3)?1\n"
+                            "           fib(n-1)+fib(n-2)\n"
+                            "       }\n"
+                            "   }\n"
+                            "   fib(8)/p1\n"
+                            "}()\n";
+
+

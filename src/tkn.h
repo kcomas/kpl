@@ -39,7 +39,11 @@ typedef enum {
     TCUST(MUL),
     TCUST(MULA),
     TCUST(DIV),
+    TCUST(EQ),
     TCUST(GT),
+    TCUST(GTEQ),
+    TCUST(LT),
+    TCUST(LTEQ),
     // cmds
     TCUST(E),
     TCUST(P1),

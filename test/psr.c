@@ -257,6 +257,21 @@ T(facrec) {
     te_f(h);
 }
 
+T(fibrec) {
+    te *h = ppnode(psr_r(bpsr(TPGM(fibrec))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)), LST(
+            OP(N(NONE), LST(
+                OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), N(INT)),
+                OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), N(INT)),
+                OP(APLY(N(VAR), OP(N(VAR), N(INT))), APLY(N(VAR), OP(N(VAR), N(INT))))
+            ))
+        ))),
+        CMD(APLY(N(VAR), N(INT)))
+    ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(bpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});

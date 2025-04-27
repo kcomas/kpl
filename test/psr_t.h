@@ -22,4 +22,4 @@ extern const char *TPGM(facloop);
 
 extern const char *TPGM(facrec);
 
-extern const char *TPGM(fib);
+extern const char *TPGM(fibrec);
