@@ -127,7 +127,12 @@ psr_stat psr_n(psr *p, te *nh, err **e) {
                 if ((pstat = psr_n(p, lnh, e)) != PSR_STAT(END)) {
                     te_f(m);
                     te_f(pn);
-                    for (size_t i = 0; i < 3; i++) te_f(lnh->d[i].p);
+                    if (!lnh->d[0].p && !lnh->d[2].p) te_f(lnh->d[1].p);
+                    else {
+                        if (lnh->d[0].p == lnh->d[2].p) lnh->d[2] = P(NULL);
+                        te_f(lnh->d[0].p);
+                        te_f(lnh->d[2].p);
+                    }
                     te_f(lnh);
                     return pstat;
                 }

@@ -23,7 +23,7 @@ static void fr(void *p) {
 
 const alfr al_tbl = { .a = al, .f = fr };
 
-static __attribute__((destructor)) void al_tbl_f(void) {
+static __attribute__((destructor(101))) void al_tbl_f(void) {
     for (size_t i = 0; i < tpi; i++) free(tblp[i]);
 }
 

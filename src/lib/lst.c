@@ -23,7 +23,7 @@ static void fr(void *p) {
 
 const alfr al_lst = { .a = al, .f = fr };
 
-static __attribute__((destructor)) void al_lst_f(void) {
+static __attribute__((destructor(102))) void al_lst_f(void) {
     for (size_t i = 0; i < lpi; i++) free(lstp[i]);
 }
 

@@ -40,6 +40,7 @@ psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(IF), "?", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LOOP), "@", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADD), "+", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADDA), "+:", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUB), "-", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUBA), "-:", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MUL), "*", tkn_ft));
@@ -55,35 +56,51 @@ psr *psr_b(psr *p) {
     // cmd
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(P1), "/p1", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(E), "/e", tkn_ft));
+    // misc
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, tkn_a(p->tt, TCUST(CMT), "//", tkn_cmt));
     return p;
 }
 
-static void p_r_f(void *p) {
+void psr_rn_f(void *p) {
     te *n = p;
     psr_f(n->d[0].p);
     te_f(n->d[2].p);
     n->af->f(n);
 }
 
-te *psr_r(psr *p) {
-    psr_stat pstat;
-    te *nh = te_i(3, p->ta, p_r_f);
-    err *e = NULL;
-    if ((pstat = psr_n(p, nh, &e)) != PSR_STAT(END)) {
-        err_p(e);
-        err_f(e);
-        te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
-        te_f(nh);
-        te_f(n);
-        psr_f(p);
-        return NULL;
-    }
+te *psr_g_rn(psr *p, te *nh) {
+    nh->tf = psr_rn_f;
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
     nh->d[0] = P(p);
     nh->d[1] = U6(NODE_TYPE(ROOT));
     nh->d[2] = P(n);
     n->d[0] = P(nh);
     return nh;
+}
+
+void psr_n_err_f(void *d) {
+    te *nh = d;
+    if (!nh->d[0].p && !nh->d[2].p) te_f(nh->d[1].p);
+    else {
+        if (nh->d[0].p == nh->d[2].p) nh->d[2] = P(NULL);
+        te_f(nh->d[0].p);
+        te_f(nh->d[2].p);
+    }
+    nh->af->f(nh);
+}
+
+te *psr_r(psr *p) {
+    psr_stat pstat;
+    te *nh = te_i(3, p->ta, psr_n_err_f);
+    err *e = NULL;
+    if ((pstat = psr_n(p, nh, &e)) != PSR_STAT(END)) {
+        err_p(e);
+        err_f(e);
+        te_f(nh);
+        psr_f(p);
+        return NULL;
+    }
+    return psr_g_rn(p, nh);
 }
 
 void psr_p(tbl *t, size_t idnt) {
@@ -308,8 +325,13 @@ psr_stat psr_cmd_i(psr *p, te **n, err **e) {
     return PSR_STAT(OK);
 }
 
-const mc *node_root_mc(te *n) {
+te *node_g_root(te *n) {
     while (n->d[1].u6 != NODE_TYPE(ROOT)) n = n->d[0].p;
+    return n;
+}
+
+const mc *node_root_mc(te *n) {
+    n = node_g_root(n);
     return ((psr*) n->d[0].p)->tt->s;
 }
 

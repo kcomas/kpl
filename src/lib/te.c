@@ -34,7 +34,7 @@ static void fr(void *p) {
 
 const alfr al_te = { .a = al, .f = fr };
 
-static __attribute__((destructor)) void al_te_f(void) {
+static __attribute__((destructor(103))) void al_te_f(void) {
     while (tah) {
         te *tmp = tah;
         tah = tah->d[1].p;

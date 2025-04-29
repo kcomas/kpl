@@ -11,6 +11,7 @@ typedef enum {
     TCUST(TAB),
     TCUST(SEMI),
     TCUST(NL),
+    TCUST(CMT),
     TCUST(LB),
     TCUST(RB),
     TCUST(LP),
@@ -34,6 +35,7 @@ typedef enum {
     TCUST(IF),
     TCUST(LOOP),
     TCUST(ADD),
+    TCUST(ADDA),
     TCUST(SUB),
     TCUST(SUBA),
     TCUST(MUL),
@@ -66,9 +68,11 @@ tkn_stat tkn_ft(tkn *t, te *m, err **e);
 
 tkn_stat tkn_ws(tkn *t, te *m, err **e);
 
+tkn_stat tkn_cmt(tkn *t, te *m, err **e);
+
 tkn_stat tkn_sym(tkn *t, te *m, err **e);
 
-void tkn_b(tkn *t);
+tkn *tkn_b(tkn *t);
 
 tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i);
 

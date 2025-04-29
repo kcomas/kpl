@@ -25,6 +25,12 @@ typedef enum {
 
 psr *psr_b(psr *p);
 
+void psr_rn_f(void *p);
+
+te *psr_g_rn(psr *p, te *nh);
+
+void psr_n_err_f(void *d);
+
 te *psr_r(psr *p);
 
 void psr_p(tbl *t, size_t idnt);
@@ -73,6 +79,8 @@ psr_stat psr_sym_i(psr *p, te **n, err **e);
 
 // node te[par;id;tkn;tgt]
 psr_stat psr_cmd_i(psr *p, te **n, err **e);
+
+te *node_g_root(te *n);
 
 const mc *node_root_mc(te *n);
 

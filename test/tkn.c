@@ -62,6 +62,17 @@ T(stest) {
     tkn_f(t);
 }
 
+T(cmt) {
+    const char *pgm = "// a b c\nd";
+    const uint16_t tids[] = {TCUST(CMT), TCUST(VAR)};
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    printf("%s\n", pgm);
+    tkn_a(t, TCUST(CMT), "//", tkn_cmt);
+    tkn_p(t->t, 0);
+    R(t, tids);
+    tkn_f(t);
+}
+
 T(symtest) {
     const char *pgm = "a`b asdf`1234";
     const char *syms[] = {"b", "1234"};
