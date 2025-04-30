@@ -26,6 +26,7 @@ typedef enum {
     GEN_OP(EQ),
     GEN_OP(NE),
     GEN_OP(GT),
+    GEN_OP(GTE),
     GEN_OP(LT),
     GEN_OP(LTE),
     GEN_OP(JMP),

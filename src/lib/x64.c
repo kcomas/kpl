@@ -431,6 +431,10 @@ ZRRMB(lea, 0x8D, d, s);
 
 ZRE(inc, 0xFF, 0);
 
+ZRME(inc, 0xFF, 0);
+
+ZRMBE(inc, 0xFF, 0);
+
 ZREB(add, 0x83, 0);
 
 ZRR(add, 0x01, s, d);

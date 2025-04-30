@@ -187,19 +187,48 @@ err *z(mc *fn, tbl **et) {
         return e;
     }
     while (zt->q->l > 0) {
-        gen *g = NULL;
-        if (atg_n(zt, &g, za, &e) != ATG_STAT(OK)) {
+        gen *zg = NULL;
+        if (atg_n(zt, &zg, za, &e) != ATG_STAT(OK)) {
             ast_f(za);
             atg_f(zt);
-            gen_f(g);
+            gen_f(zg);
             te_f(an);
             mc_f(pgm);
             return e;
         }
+        gen_st *zst = gen_st_i_gen_st(bst);
+        if (gen_st_p1(zg, zst) != GEN_STAT(OK)) {
+            ast_f(za);
+            atg_f(zt);
+            gen_f(zg);
+            gen_st_f(zst);
+            te_f(an);
+            mc_f(pgm);
+            return e;
+        }
+        if (gen_n(zg, zst, zt->a, &e) != GEN_STAT(OK)) {
+            ast_f(za);
+            atg_f(zt);
+            gen_f(zg);
+            gen_st_f(zst);
+            te_f(an);
+            mc_f(pgm);
+            return e;
+        }
+        gen_st_f(zst);
+        gen_f(zg);
     }
     ast_f(za);
+    if (as_n(zt->a, &p, m, &e) != AS_STAT(OK)) {
+        atg_f(zt);
+        te_f(an);
+        mc_f(pgm);
+        return e;
+    }
+    ssize_t ep = as_lbl_g_c_i(zt->a, ((te*) an->d[4].p)->d[4].u5);
+    // TODO check for valid ep not -1
+    e = atg_z(zt->ta, an->d[3].p, m, ep);
     te_f(an);
-    // TODO run
     atg_f(zt);
     mc_f(pgm);
     return e;

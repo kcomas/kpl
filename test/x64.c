@@ -367,3 +367,12 @@ T(sibupper) {
     int64_t r = ((int64_t(*)(int64_t*, size_t)) m)(a, 1);
     A(r == a[1], "inv sib");
 }
+
+T(addp) {
+    size_t p = 0;
+    int64_t a = 5;
+    x64_add_rmr(&p, m, R(DI), R(SI));
+    x64_ret(&p, m);
+    ((void(*)(int64_t*, int64_t)) m)(&a, 4);
+    A(a == 9, "inv add");
+}

@@ -21,6 +21,7 @@ const char *gen_op_str(gen_op go) {
         "EQ",
         "NE",
         "GT",
+        "GTE",
         "LT",
         "LTE",
         "JMP",
