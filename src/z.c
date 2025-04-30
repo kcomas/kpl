@@ -113,7 +113,6 @@ static void z_e_p(void *d) {
 #define APLYLSTS 4 // {}()
 
 err *z(mc *fn, tbl **et) {
-    (void) et;
     err *e = NULL;
     mc *pgm = NULL;
     int fd;
@@ -227,8 +226,9 @@ err *z(mc *fn, tbl **et) {
     }
     ssize_t ep = as_lbl_g_c_i(zt->a, ((te*) an->d[4].p)->d[4].u5);
     // TODO check for valid ep not -1
-    e = atg_z(zt->ta, an->d[3].p, m, ep);
+    if (an->d[3].p) *et = tbl_c(an->d[3].p);
     te_f(an);
+    e = atg_z(zt->ta, *et, m, ep);
     atg_f(zt);
     mc_f(pgm);
     return e;
