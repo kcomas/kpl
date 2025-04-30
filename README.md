@@ -20,7 +20,11 @@ cd kpl
 make
 ```
 
-## Usage TODO
+## Usage
+
+```
+./kpl [file]
+```
 
 #### Examples with an overview can be found in the ex folder
 
