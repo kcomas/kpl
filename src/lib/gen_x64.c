@@ -36,6 +36,17 @@ const char *x64_type_str(x64_type xt) {
     switch (xt) {
         case X64_TYPE(N): return "N";
         case X64_TYPE(M): return "M";
+        case X64_TYPE(MU3): return "MU3";
+        case X64_TYPE(MU4): return "MU4";
+        case X64_TYPE(MU5): return "MU5";
+        case X64_TYPE(MU6): return "MU6";
+        case X64_TYPE(MI3): return "MI3";
+        case X64_TYPE(MI4): return "MI4";
+        case X64_TYPE(MI5): return "MI5";
+        case X64_TYPE(MI6): return "MI6";
+        case X64_TYPE(MF5): return "MF5";
+        case X64_TYPE(MF6): return "MF6";
+        case X64_TYPE(MM): return "MM";
         case X64_TYPE(U3): return "U3";
         case X64_TYPE(U4): return "U4";
         case X64_TYPE(U5): return "U5";

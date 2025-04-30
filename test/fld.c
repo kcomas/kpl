@@ -66,8 +66,16 @@ T(facrec) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("fac", U6(0), NULL), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(5)))))))),
     NULL)));
 }
-/*
+
 T(fibrec) {
-    V(TPGM(fibrec), NULL);
+    V(TPGM(fibrec), RN(AN(NULL, LN(LT(1, "fib", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("fib", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(I6), 1, "n", TS(I6), 0)),
+            LN(LT(2, "n", U6(0), NULL, "fib", U6(0), NULL), L(1,
+                ON(NULL, IF, LN(NULL, NULL), LN(NULL, L(3,
+                    ON(NULL, IF, LN(NULL, L(1, ON(NULL, LTE, EN("n", U6(0), NULL), SN(I6, I6(0))))), LN(NULL, L(1, SN(I6, I6(0))))),
+                    ON(NULL, IF, LN(NULL, L(1, ON(NULL, LT, EN("n", U6(0), NULL), SN(I6, I6(3))))), LN(NULL, L(1, SN(I6, I6(1))))),
+                    ON(NULL, ADD, AN(NULL, EN("fib", U6(0), NULL), L(1, ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(1))))), AN(NULL, EN("fib", U6(0), NULL), L(1, ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(2)))))))))
+        )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("fib", U6(0), NULL), L(1, SN(I6, I6(8)))))
+    )), NULL)));
 }
-*/
