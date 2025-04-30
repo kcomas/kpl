@@ -1,14 +1,14 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p edp, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->tc = t->lc = 0;
    t->r = 1;
    t->af = af;
    t->ta = ta;
    t->ea = ea;
-   t->edp = edp;
+   t->efn = efn;
    t->ati = ati;
    t->bg = g;
    t->a = a;
@@ -26,7 +26,7 @@ atg *atg_i_atg(const atg *t) {
     tt->af = t->af;
     tt->ta = t->ta;
     tt->ea = t->ea;
-    tt->edp = t->edp;
+    tt->efn = t->efn;
     tt->ati = t->ati;
     tt->bg = gen_i_gen(t->bg);
     tt->a = as_i_as(t->a);
@@ -127,10 +127,7 @@ static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
     va_list args;
     va_start(args, n);
     while (n > 0) {
-        if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) {
-            *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r_cc_r");
-            return ATG_STAT(INV);
-        }
+        if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) return t->efn(t, an, e, "atg_r_cc_r");
         n--;
         if (n > 0) tt = kv->d[1].p;
     }
@@ -158,8 +155,7 @@ static atg_stat cc(atg *t, gen *g, te *an, err **e) {
         default:
             break;
     }
-    *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r_cc");
-    return ATG_STAT(INV);
+    return t->efn(t, an, e, "atg_r_cc");
 }
 
 
@@ -203,8 +199,7 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
             if ((stat = atg_r_lst(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
             break;
         default:
-            *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r");
-            return ATG_STAT(INV);
+            return t->efn(t, an, e, "atg_r");
     }
     return cc(t, g, an, e);
 }

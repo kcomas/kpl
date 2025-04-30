@@ -167,7 +167,9 @@ static fld_stat op_s_s_o(fld *f, te **an, err **e) {
 }
 
 static bool op_s_s_t(const te *an) {
-    if (an->d[2].u4 != AST_CLS(O) || ((te*) an->d[5].p)->d[2].u4 != AST_CLS(S) || ((te*) an->d[6].p)->d[2].u4 != AST_CLS(S)) return false;
+    if (an->d[2].u4 != AST_CLS(O)) return false;
+    if (!an->d[5].p || !an->d[6].p) return false;
+    if (((te*) an->d[5].p)->d[2].u4 != AST_CLS(S) || ((te*) an->d[6].p)->d[2].u4 != AST_CLS(S)) return false;
     switch (an->d[4].u4) {
         case OC(ADD):
         case OC(SUB):

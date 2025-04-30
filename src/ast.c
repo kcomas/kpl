@@ -104,7 +104,7 @@ void ast_err_f(void *d) {
     te_f(ast_g_root(d));
 }
 
-static ast_stat ast_err(ast *a, te *pn, err **e, const char *m) {
+static ast_stat ast_err(const ast *a, te *pn, err **e, const char *m) {
     te_c(node_g_root(pn));
     *e = err_i(a->ea, node_err_p, node_err_f, pn, m);
     return AST_STAT(INV);

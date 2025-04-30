@@ -15,7 +15,7 @@ typedef tbl *chk_tbl_i(void);
 
 typedef struct _chk chk;
 
-typedef chk_stat chk_err_fn(chk *c, te *an, err **e, const char *m);
+typedef chk_stat chk_err_fn(const chk *c, te *an, err **e, const char *m);
 
 // entry te[u4(cls)|u4(type);tbl...te[u4(cls)|u4(type);fn]]]
 

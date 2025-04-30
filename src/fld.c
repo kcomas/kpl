@@ -1,7 +1,7 @@
 
 #include "fld.h"
 
-fld_stat fld_err(fld *f, te *an, err **e, const char *m) {
+fld_stat fld_err(const fld *f, te *an, err **e, const char *m) {
     te_c(ast_g_root(an));
     *e = err_i(f->ea, ast_err_p, ast_err_f, an, m);
     return FLD_STAT(INV);

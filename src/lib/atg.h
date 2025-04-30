@@ -17,11 +17,15 @@ typedef lst *atg_lst_i(void);
 
 typedef void atg_st_f(void *p);
 
-typedef struct {
+typedef struct _atg atg;
+
+typedef atg_stat atg_err_fn(const atg *t, te *an, err **e, const char *m);
+
+typedef struct _atg {
     uint32_t tc, lc; // tmp counter, label counter
     ssize_t r;
     const alfr *af, *ta, *ea;
-    err_d_p *edp;
+    atg_err_fn *efn;
     atg_tbl_i *ati;
     gen *bg; // for base gens
     as *a;
@@ -29,7 +33,7 @@ typedef struct {
     tbl *at, *ot; // aply, op
 } atg; // ast to gen
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p edp, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
 
 atg *atg_i_atg(const atg *t);
 
