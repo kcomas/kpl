@@ -113,7 +113,7 @@ $(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.
 > $(CCOBJ)
 
 CHK = chk$(TNAME)
-CHK_OBJS = $(SRC)/chk.o $(LSRC)/chk.o $(FLD_OBJS)
+CHK_OBJS = $(SRC)/chk.o $(LSRC)/chk.o $(FLD_OBJS) $(patsubst %.c,%.o,$(wildcard $(SRC)/chk/*.c))
 OBJS += $(CHK_OBJS)
 $(CHK): $(CHK_OBJS) $(TEST)/chk.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)

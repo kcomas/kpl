@@ -114,6 +114,72 @@ static bool cst_s_t(const te *an) {
     return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(T) && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(S);
 }
 
+#define S_OP(O) static un type_##O##_op(type t, un a, un b) { \
+    switch (t) { \
+        case TYPE(U3): return u3_##O(a, b); \
+        case TYPE(U4): return u4_##O(a, b); \
+        case TYPE(U5): return u5_##O(a, b); \
+        case TYPE(U6): return u6_##O(a, b); \
+        case TYPE(I3): return i3_##O(a, b); \
+        case TYPE(I4): return i4_##O(a, b); \
+        case TYPE(I5): return i5_##O(a, b); \
+        case TYPE(I6): return i6_##O(a, b); \
+        case TYPE(F5): return f5_##O(a, b); \
+        case TYPE(F6): return f6_##O(a, b); \
+        default: \
+            break; \
+    } \
+    return U6(0); \
+}
+
+S_OP(add);
+S_OP(sub);
+S_OP(mul);
+S_OP(div);
+
+static fld_stat op_s_s_o(fld *f, te **an, err **e) {
+    te *l = (*an)->d[5].p, *r = (*an)->d[6].p, *type = (*an)->d[3].p;
+    un v;
+    switch ((*an)->d[4].u4) {
+        case OC(ADD):
+            v = type_add_op(type->d[1].u4, l->d[4], r->d[4]);
+            break;
+        case OC(SUB):
+            v = type_sub_op(type->d[1].u4, l->d[4], r->d[4]);
+            break;
+        case OC(MUL):
+            v = type_mul_op(type->d[1].u4, l->d[4], r->d[4]);
+            break;
+        case OC(DIV):
+            v = type_div_op(type->d[1].u4, l->d[4], r->d[4]);
+            break;
+        default:
+            return fld_err(f, *an, e, "opt inv s inline op");
+    }
+    // TODO check for overflow/underflow
+    te_c(r);
+    r->d[0] = (*an)->d[0];
+    r->d[1] = (*an)->d[1];
+    r->d[4] = v;
+    te_f(*an);
+    *an = r;
+    return FLD_STAT(OK);
+}
+
+static bool op_s_s_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(O) || ((te*) an->d[5].p)->d[2].u4 != AST_CLS(S) || ((te*) an->d[6].p)->d[2].u4 != AST_CLS(S)) return false;
+    switch (an->d[4].u4) {
+        case OC(ADD):
+        case OC(SUB):
+        case OC(MUL):
+        case OC(DIV):
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
 uint32_t opt_exp_id(te *x) {
     return u5_g_o(x->d[1], 1);
 }
@@ -132,5 +198,6 @@ fld *opt_b(fld *f) {
     fld_a(f, AST_CLS(L), lst_le_t, lst_le_o);
     fld_a(f, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(f, AST_CLS(O), cst_s_t, cst_s_o);
+    fld_a(f, AST_CLS(O), op_s_s_t, op_s_s_o);
     return f;
 }
