@@ -105,7 +105,7 @@ te *chk_g_pn_lte(te *an, const mc *s) {
     return NULL;
 }
 
-static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side) {
+static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
     (void) c;
     tbl *t = ((te*) an->d[side].p)->d[3].p;
     if (!t) return CHK_STAT(OK);
@@ -118,7 +118,7 @@ static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side) {
             ast_lst_tbl_e_s_f(lte, LTE_FLG(O));
             lte->d[2] = P(te_c(kv->d[2].p));
         }
-        if (!lte->d[2].p) return chk_err(c, an, e, "chk lst var type not resolved");
+        if (fc && !lte->d[2].p) return chk_err(c, an, e, "chk lst var type not resolved");
         h = h->d[2].p;
     }
     return CHK_STAT(OK);
@@ -126,8 +126,9 @@ static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side) {
 
 static chk_stat chk_op_lst_lr_b(chk *c, te *an, err **e) {
     chk_stat cstat;
-    if ((cstat = chk_op_lst_side(c, an, e, 5)) != CHK_STAT(OK)) return cstat;
-    return chk_op_lst_side(c, an, e, 6);
+    if (an->d[0].p && ((te*) an->d[0].p)->d[2].u4 == AST_CLS(L) && (cstat = chk_op_lst_side(c, an, e, 0, false)) != CHK_STAT(OK)) return cstat; // ignore unresolved
+    if ((cstat = chk_op_lst_side(c, an, e, 5, true)) != CHK_STAT(OK)) return cstat;
+    return chk_op_lst_side(c, an, e, 6, true);
 }
 
 static chk_stat chk_nop(chk *c, te *an, err **e) {
@@ -171,8 +172,16 @@ static chk_stat chk_lst_l(chk *c, te *an, err **e) {
 
 static chk_stat chk_if(chk *c, te *an, err **e) {
     lst *bl = ((te*) an->d[6].p)->d[4].p;
-    if (bl->l == 1) return chk_vd(c, an, e);
-    te *h = bl->h, *rt, *tt;
+    te *h = bl->h, *rt, *tt, *pn;
+    if (bl->l == 1) {
+        pn = an->d[0].p;
+        if (!pn || pn->d[2].u4 != AST_CLS(L)) return chk_vd(c, an, e);
+        pn = pn->d[0].p;
+        if (!pn || pn->d[2].u4 != AST_CLS(O) || pn->d[4].u4 != OC(IF)) return chk_vd(c, an, e);
+        if (ast_g_t(h->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type");
+        an->d[3] = P(te_c(rt));
+        return CHK_STAT(OK);
+    }
     if (ast_g_t(h->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type");
     h = h->d[2].p;
     while (h) {

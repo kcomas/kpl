@@ -225,7 +225,7 @@ err *z(mc *fn, tbl **et) {
         return e;
     }
     ssize_t ep = as_lbl_g_c_i(zt->a, ((te*) an->d[4].p)->d[4].u5);
-    // TODO check for valid ep not -1
+    if (ep < 0) return err_i(&z_al, NULL, NULL, NULL, __FUNCTION__);
     if (an->d[3].p) *et = tbl_c(an->d[3].p);
     te_f(an);
     e = atg_z(zt->ta, *et, m, ep);

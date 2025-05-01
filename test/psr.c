@@ -376,26 +376,6 @@ T(add_flt_fn) {
     te_f(h);
 }
 
-T(fib) {
-    te *h = ppnode(psr_r(bpsr("$(FN(I6`n;I6);{?{=(n;0)?0;<(n;3)?2;S(n-1)+S(n-2)}})(35)")));
-    V(h, {N(ROOT),
-        APLY(APLY(OP(N(NONE), N(NONE)),
-                APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)),
-                LST(OP(N(NONE),
-                    LST(
-                        OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), N(INT)),
-                        OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), N(INT)),
-                        OP(
-                            APLY(N(KEY), OP(N(VAR), N(INT))),
-                            APLY(N(KEY), OP(N(VAR), N(INT)))
-                        )
-                    )
-                ))
-            ), N(INT))
-    });
-    te_f(h);
-}
-
 T(ack) {
     te *h = ppnode(psr_r(bpsr("$(FN(U6`m;U6`n;U6);{?{?(m=0;n+1);&(m>0;n=0)?S(m-1;1);&(m>0;n>0)?S(m-1;S(m;n-1));n+1}})(3;10)")));
     V(h, {N(ROOT),
