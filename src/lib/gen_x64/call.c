@@ -215,7 +215,6 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         } \
     } \
     if (RV) drop_atm_kv(st, kvr, ci); \
-    set_code_e(ci, a); \
     return GEN_STAT(OK); \
 }
 

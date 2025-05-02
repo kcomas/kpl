@@ -37,6 +37,54 @@ atg *atg_i_atg(const atg *t) {
     return tt;
 }
 
+static void atg_s_g(te *an, gen *g) {
+    te *c = g->code->t->d[0].p;
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+        case AST_CLS(Z):
+        case AST_CLS(A):
+            an->d[AST_MIN_LEN + 2] = P(c);
+            break;
+        case AST_CLS(T):
+        case AST_CLS(E):
+        case AST_CLS(I):
+            an->d[AST_MIN_LEN] = P(c);
+            break;
+        case AST_CLS(S):
+        case AST_CLS(V):
+        case AST_CLS(L):
+        case AST_CLS(C):
+            an->d[AST_MIN_LEN + 1] = P(c);
+            break;
+        case AST_CLS(O):
+            an->d[AST_MIN_LEN + 3] = P(c);
+            break;
+    }
+}
+
+te *atg_g_g(te *an) {
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+        case AST_CLS(Z):
+        case AST_CLS(A):
+            return an->d[AST_MIN_LEN + 2].p;
+        case AST_CLS(T):
+        case AST_CLS(E):
+        case AST_CLS(I):
+            return an->d[AST_MIN_LEN].p;
+        case AST_CLS(S):
+        case AST_CLS(V):
+        case AST_CLS(L):
+        case AST_CLS(C):
+            return an->d[AST_MIN_LEN + 1].p;
+        case AST_CLS(O):
+            return an->d[AST_MIN_LEN + 3].p;
+        default:
+            break;
+    }
+    return NULL;
+}
+
 static atg_stat atg_lst_q(atg *t, lst *l, atg_test_fn enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;
@@ -123,6 +171,7 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
 }
 
 static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
+    atg_stat stat;
     te *kv;
     va_list args;
     va_start(args, n);
@@ -132,7 +181,9 @@ static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
         if (n > 0) tt = kv->d[1].p;
     }
     va_end(args);
-    return ((atg_cc_fn*) kv->d[1].p)(t, g, an, e);
+    if ((stat = ((atg_cc_fn*) kv->d[1].p)(t, g, an, e)) != ATG_STAT(OK)) return stat;
+    atg_s_g(an, g);
+    return ATG_STAT(OK);
 }
 
 static atg_stat cc(atg *t, gen *g, te *an, err **e) {
@@ -159,7 +210,7 @@ static atg_stat cc(atg *t, gen *g, te *an, err **e) {
 }
 
 
-static atg_stat atg_r_lst(atg *t, gen *g, lst *l, err **e) {
+atg_stat atg_lst_r(atg *t, gen *g, lst *l, err **e) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;
     te *h = l->h;
@@ -196,7 +247,7 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
             // args have to be called while building for gen
             break;
         case AST_CLS(L):
-            if ((stat = atg_r_lst(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+            if ((stat = atg_lst_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
             break;
         default:
             return t->efn(t, an, e, "atg_r");

@@ -205,6 +205,7 @@ err *z(mc *fn, tbl **et) {
             mc_f(pgm);
             return e;
         }
+        gen_x64_opt(zg, zst);
         if (gen_n(zg, zst, zt->a, &e) != GEN_STAT(OK)) {
             ast_f(za);
             atg_f(zt);

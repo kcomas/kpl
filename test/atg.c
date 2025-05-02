@@ -25,12 +25,14 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
     putchar('\n');
-    gen_p(g, NULL);
     A(ast_eq(an, tn), "ast_eq");
-    A(gen_code_eq(g, gc), "gen_code_eq");
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
+    gen_x64_opt(g, sc);
+    gen_p(g, NULL);
+    A(gen_code_eq(g, gc), "gen_code_eq");
     gen_stat gstat = gen_n(g, sc, t->a, &e);
+    gen_p(g, NULL);
     if (e) {
         err_p(e);
         err_f(e);
@@ -211,7 +213,7 @@ T(facrec) {
     S(gen_a(gc, GEN_OP(SUB), gen_tmp(gc, X64_TYPE(U6), 1), gen_arg(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1))));
     S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(U6), 2), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(U6), 1)), gen_lbl(gc, (uint32_t) -1)));
     S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(U6), 0), gen_arg(gc, X64_TYPE(U6), 0), gen_tmp(gc, X64_TYPE(U6), 2)));
-    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(U6), 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1)), NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
@@ -232,3 +234,19 @@ T(facrec) {
     gen_f(gc);
     AR(2);
 }
+
+/*
+T(fibrec) {
+    AI(TPGM(fibrec), 2);
+    te *ft = TFN(FN, TS(I6), 1, "n", TS(I6), 0);
+    te *cn = RN(LN(LT(1, "fib", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("fib", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("fib", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, SN(I6, I6(8)))))
+    )));
+    gen *gc = gen_i_gen(bg);
+    V(cn, gc);
+    te_f(ft);
+    te_f(cn);
+    gen_f(gc);
+}
+*/

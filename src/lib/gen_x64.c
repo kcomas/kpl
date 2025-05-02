@@ -368,12 +368,8 @@ void gen_st_f(gen_st *st) {
     st->af->f(st);
 }
 
-void set_code_s(te *ci, as *a) {
+static void set_code_s(te *ci, as *a) {
     if (!ci->d[5].p && a->code->t) ci->d[5] = P(te_c(a->code->t));
-}
-
-void set_code_e(te *ci, as *a) {
-    ci->d[6] = P(te_c(a->code->t));
 }
 
 gen_stat rstk_b(const gen_st *st, uint8_t *r) {
@@ -462,6 +458,35 @@ gen_stat gen_err(const gen *g, te *ci, err **e, const char *m) {
     return GEN_STAT(INV);
 }
 
+static void jmp_2_leave(gen *g, te *restrict lve, te *restrict lbl) {
+    te *h = g->code->h, *c;
+    while (h) {
+        c = h->d[0].p;
+        if (c->d[0].u6 == GEN_OP(JMP) && ((te*) c->d[1].p)->d[1].u6 == ((te*) lbl->d[1].p)->d[1].u6) {
+            c->d[0] = U6(GEN_OP(LEAVE));
+            te_f(c->d[1].p);
+            c->d[1] = P(te_c(lve->d[1].p));
+            c->d[4] = lve->d[4];
+        }
+        h = h->d[2].p;
+    }
+}
+
+void gen_x64_opt(gen *g, gen_st *st) {
+    (void) st;
+    te *h = g->code->h, *c;
+    while (h) {
+        c = h->d[0].p;
+        if (c->d[0].u6 == GEN_OP(LEAVE)) {
+            if (h->d[1].p) {
+                c = ((te*) h->d[1].p)->d[0].p;
+                if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h->d[0].p, c);
+            }
+        }
+        h = h->d[2].p;
+    }
+}
+
 static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     (void) g;
     (void) s;
@@ -469,7 +494,6 @@ static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     te *lbl = ci->d[1].p;
     as_lbl_a(a, lbl->d[1].u6);
     set_code_s(ci, a);
-    set_code_e(ci, a);
     return GEN_STAT(OK);
 }
 
@@ -477,7 +501,6 @@ static gen_stat jmp_fn(gen *g, void *s, te *ci, as *a, err **e) {
     (void) s;
     te *lbl = ci->d[1].p;
     if (gen_as(a, AS_X64(JMP), as_arg_i(a, ARG_ID(L), lbl->d[1]), NULL, NULL, NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
-    set_code_e(ci, a);
     return GEN_STAT(OK);
 }
 
