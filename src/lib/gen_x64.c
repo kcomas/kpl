@@ -463,7 +463,7 @@ static void jmp_2_leave(gen *g, te *restrict lve, te *restrict lbl) {
     while (h) {
         c = h->d[0].p;
         if (c->d[0].u6 == GEN_OP(JMP) && ((te*) c->d[1].p)->d[1].u6 == ((te*) lbl->d[1].p)->d[1].u6) {
-            c->d[0] = U6(GEN_OP(LEAVE));
+            c->d[0] = lve->d[0];
             te_f(c->d[1].p);
             c->d[1] = P(te_c(lve->d[1].p));
             c->d[4] = lve->d[4];
