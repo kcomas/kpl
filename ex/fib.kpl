@@ -6,4 +6,5 @@ fib::FN(I6`n;I6)${
         fib(n-1)+fib(n-2)
     }
 }
+
 fib(40)/p1
