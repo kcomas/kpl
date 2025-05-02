@@ -1,4 +1,6 @@
 
+// recursive Fibonacci
+
 fib::FN(I6`n;I6)${
     ?{
         <=(n;0)?0
