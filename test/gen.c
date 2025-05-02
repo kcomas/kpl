@@ -396,3 +396,11 @@ T(updateTE) {
     putchar('\n');
     te_f(t);
 }
+/*
+T(stkargs) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), gen_data(g, X64_TYPE(U3), U3(1)), NULL, NULL));
+    BUILD(g, m);
+}
+*/

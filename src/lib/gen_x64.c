@@ -219,8 +219,7 @@ te *gen_stkv(gen *g, x64_type t, size_t id) {
 
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
-    st->rac = st->xac = 0;
-    st->rvc = st->xvc = 0;
+    st->rac = st->xac = st->rvc = st->xvc = st->rsc = st->xsc = 0;
     st->r = 1;
     st->af = af;
     st->ta = ta;
@@ -236,7 +235,7 @@ gen_st *gen_st_i_gen_st(const gen_st *st) {
 }
 
 void gen_st_p(const gen_st *st) {
-    printf("rvc: %u, xvc: %u, rac: %u, xac: %u\n", st->rvc, st->xvc, st->rac, st->xac);
+    printf("rvc: %u, xvc: %u, rac: %u, xac: %u, rsc: %u, xsc: %u\n", st->rvc, st->xvc, st->rac, st->xac, st->rsc, st->xsc);
     printf("atm_l: %lu, lat_l: %lu\nR:", st->atm->i->l, st->lat->i->l);
     for (size_t i = 0; i < st->rstk->l; i++) printf("%s ", reg_str(st->rstk->d[i].u3));
     printf("\nX:");

@@ -306,17 +306,25 @@ static atg_stat dfn_fn_e_fn_s__g(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
     atg_stat stat = ATG_STAT(OK);
+    uint32_t flgs;
     *v = vr_i(l->l, g->va, (void*) te_f);
-    te *h = l->h;
+    te *h = l->h, *an, *lte;
     while (h) {
-        te *an = h->d[0].p;
+        an = h->d[0].p;
         if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
         switch (an->d[2].u4) {
-            case AST_CLS(O):
-                vr_ab(v, P(te_c((atg_g_g(an))->d[1].p)));
+            case AST_CLS(E):
+                lte = an->d[3].p;
+                flgs = ast_lst_tbl_e_g_f(lte);
+                if (flgs & LTE_FLG(A)) return atg_err(t, an, e, "atg lst args FLG(A) nyi");
+                else if (flgs & LTE_FLG(L)) vr_ab(v, P(gen_stkv(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
+                else return atg_err(t, an, e, "atg inv lst args FLG");
                 break;
             case AST_CLS(S):
                 vr_ab(v, P(gen_data(g, atg_x64_g_t(an->d[3].p), an->d[4])));
+                break;
+            case AST_CLS(O):
+                vr_ab(v, P(te_c((atg_g_g(an))->d[1].p)));
                 break;
             default:
                 return atg_err(t, an, e, "atg lst arg cls inv");
