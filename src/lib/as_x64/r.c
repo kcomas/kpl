@@ -74,6 +74,7 @@ INST_RB(cmp);
 INST_RMB(cmp);
 INST_RMB(inc);
 INST_RMB(dec);
+INST_RMB(add);
 INST_RMB(imul);
 
 #define INST_RMBB(N) static bool as_##N##_rmbb(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -84,6 +85,7 @@ INST_RMB(imul);
 }
 
 INST_RMBB(cmp);
+INST_RMBB(add);
 
 #define INST_RD(N) static bool as_##N##_rd(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -170,6 +172,8 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rmr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_add_rmbr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_add_rb, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_add_rmb, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(B), ARG_ID(N), as_add_rmbb, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_sub_rr, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_sub_rb, NULL);
     as_op_a(a, AS_X64(NEG), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_neg_r, NULL);

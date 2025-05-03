@@ -222,6 +222,12 @@ x64_stat x64_inc_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
 // add rax, byte
 x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
+// add qword prt[rax], byte
+x64_stat x64_add_rmb(size_t *p, uint8_t *m, reg r, int8_t b);
+
+// add qword prt[rax + dsp8], byte
+x64_stat x64_add_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, int8_t b);
+
 // add rax, rdi
 x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 

@@ -20,6 +20,7 @@ typedef enum {
     GEN_CLS(I), // index tgt, accessors
     GEN_CLS(A), // arg
     GEN_CLS(V), // var local
+    GEN_CLS(S), // stack arg
     GEN_CLS(T), // tmp
     GEN_CLS(L), // label
     GEN_CLS(D) // data
