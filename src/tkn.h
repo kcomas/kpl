@@ -46,6 +46,8 @@ typedef enum {
     TCUST(GTE),
     TCUST(LT),
     TCUST(LTE),
+    TCUST(AND),
+    TCUST(OR),
     // cmds
     TCUST(E),
     TCUST(P1),

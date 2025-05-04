@@ -65,6 +65,16 @@ const char *TPGM(fibrec) = "{\n"
                             "       }\n"
                             "   }\n"
                             "   fib(8)/p1\n"
-                            "}()\n";
+                            "}()";
 
-
+const char *TPGM(ackrec) = "{\n"
+                           "    ack::FN(U6`m;U6`n;U6)${\n"
+                           "        ?{\n"
+                           "            =(m;0)?n+1\n"
+                           "            &(m>0;n=0)?ack(m-1;U6$1)\n"
+                           "            &(m>0;n>0)?ack(m-1;ack(m;n-1))\n"
+                           "            n+1\n"
+                           "        }\n"
+                           "    }\n"
+                           "    ack(U6$2;U6$2)/p1\n"
+                           "}()";
