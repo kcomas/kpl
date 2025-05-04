@@ -76,5 +76,5 @@ const char *TPGM(ackrec) = "{\n"
                            "            n+1\n"
                            "        }\n"
                            "    }\n"
-                           "    ack(U6$2;U6$2)/p1\n"
+                           "    ack(U6$2;U6$1)/p1\n"
                            "}()";

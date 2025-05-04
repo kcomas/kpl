@@ -20,10 +20,12 @@ typedef enum {
     OC(MUL),
     OC(MULA),
     OC(DIV),
+    OC(EQ),
     OC(GT),
     OC(GTE),
     OC(LT),
     OC(LTE),
+    OC(AND),
     OC(DUMP),
     OC(_END)
 } oc; // op code

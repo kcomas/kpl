@@ -81,3 +81,17 @@ T(fibrec) {
         CN(P1, AN(NULL, IN("fib"), L(1, SN(I6, I6(8)))))
     )), NULL)));
 }
+
+T(ackrec) {
+    V(TPGM(ackrec), RN(AN(NULL, LN(NULL, L(2,
+        ON(NULL, DFN, IN("ack"), ON(NULL, CST, AN(NULL, TN(FN), L(3, ZN("m", TN(U6)), ZN("n", TN(U6)), TN(U6))), LN(NULL, L(1,
+            ON(NULL, IF, NULL, LN(NULL, L(4,
+                ON(NULL, IF, AN(NULL, ON(NULL, EQ, NULL, NULL), L(2, IN("m"), SN(I6, I6(0)))), ON(NULL, ADD, IN("n"), SN(I6, I6(1)))),
+                ON(NULL, IF, AN(NULL, ON(NULL, AND, NULL, NULL), L(2, ON(NULL, GT, IN("m"), SN(I6, I6(0))), ON(NULL, EQ, IN("n"), SN(I6, I6(0))))), AN(NULL, IN("ack"), L(2, ON(NULL, SUB, IN("m"), SN(I6, I6(1))), ON(NULL, CST, TN(U6), SN(I6, I6(1)))))),
+                ON(NULL, IF, AN(NULL, ON(NULL, AND, NULL, NULL), L(2, ON(NULL, GT, IN("m"), SN(I6, I6(0))), ON(NULL, GT, IN("n"), SN(I6, I6(0))))), AN(NULL, IN("ack"), L(2, ON(NULL, SUB, IN("m"), SN(I6, I6(1))), AN(NULL, IN("ack"), L(2, IN("m"), ON(NULL, SUB, IN("n"), SN(I6, I6(1)))))))),
+                ON(NULL, ADD, IN("n"), SN(I6, I6(1)))
+            )))
+        )))),
+        CN(P1, AN(NULL, IN("ack"), L(2, ON(NULL, CST, TN(U6), SN(I6, I6(2))), ON(NULL, CST, TN(U6), SN(I6, I6(1))))))
+    )), NULL)));
+}
