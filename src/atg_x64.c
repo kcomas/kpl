@@ -291,17 +291,14 @@ static atg_stat if_l_l(atg *t, gen *g, te *an, err **e) {
     return atg_err(t, an, e, "atg if inv");
 }
 
-static atg_stat dfn_i6_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
-    uint32_t vid = ast_lst_tbl_e_g_i(((te*) an->d[5].p)->d[3].p);
-    if (gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(I6), vid), gen_data(g, X64_TYPE(I6), ((te*) an->d[6].p)->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
-    return ATG_STAT(OK);
+#define DFNES(t, T) static atg_stat dfn_##t##_e_##t##_s_##t(atg *t, gen *g, te *an, err **e) { \
+    uint32_t vid = ast_lst_tbl_e_g_i(((te*) an->d[5].p)->d[3].p); \
+    if (gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(T), vid), gen_data(g, X64_TYPE(T), ((te*) an->d[6].p)->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__); \
+    return ATG_STAT(OK); \
 }
 
-static atg_stat dfn_u6_e_u6_s_u6(atg *t, gen *g, te *an, err **e) {
-    uint32_t vid = ast_lst_tbl_e_g_i(((te*) an->d[5].p)->d[3].p);
-    if (gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(U6), vid), gen_data(g, X64_TYPE(U6), ((te*) an->d[6].p)->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
-    return ATG_STAT(OK);
-}
+DFNES(i6, I6);
+DFNES(u6, U6);
 
 static atg_stat dfn_fn_e_fn_s__g(atg *t, gen *g, te *an, err **e) {
     (void) t;
