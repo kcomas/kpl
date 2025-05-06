@@ -1,0 +1,15 @@
+
+// recursive Ackerman
+
+m::U6$3
+n::U6$10
+
+ack::FN(U6`m;U6`n;U6)${
+    ?{
+        &(m>0;n=0)?ack(m-1;U6$1)
+        &(m>0;n>0)?ack(m-1;ack(m;n-1))
+        n+1
+    }
+}
+
+ack(m;n)/p1
