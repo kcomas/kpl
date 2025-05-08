@@ -78,3 +78,14 @@ const char *TPGM(ackrec) = "{\n"
                            "    }\n"
                            "    ack(U6$2;U6$1)/p1\n"
                            "}()";
+
+const char *TPGM(scope) = "{\n"
+                          "     s/e::1\n"
+                          "     x::NF(VD)${\n"
+                          "         s+:1\n"
+                          "     }\n"
+                          "     x()\n"
+                          "     x()\n"
+                          "     x()\n"
+                          "     s/p1\n"
+                          "}()";

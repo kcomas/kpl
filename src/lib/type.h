@@ -44,8 +44,8 @@ typedef enum {
     // function
     TYPE(_F),
     TYPE(FN),
-    TYPE(SF),
-    TYPE(CF),
+    TYPE(NF),
+    TYPE(CJ),
     // collection
     TYPE(_C),
     TYPE(TE),
