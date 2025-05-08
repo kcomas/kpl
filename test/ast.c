@@ -95,3 +95,17 @@ T(ackrec) {
         CN(P1, AN(NULL, IN("ack"), L(2, ON(NULL, CST, TN(U6), SN(I6, I6(2))), ON(NULL, CST, TN(U6), SN(I6, I6(1))))))
     )), NULL)));
 }
+
+T(scope) {
+    V(TPGM(scope), RN(AN(NULL, LN(NULL, L(6,
+        ON(NULL, DFN, CN(E, IN("s")), SN(I6, I6(0))),
+        ON(NULL, DFN, IN("x"), ON(NULL, CST,
+            AN(NULL, TN(NF), L(2, ZN("x", TN(I6)), TN(VD))),
+            LN(NULL, L(1, ON(NULL, ADDA, IN("s"), IN("x"))))
+        )),
+        AN(NULL, IN("x"), L(1, SN(I6, I6(1)))),
+        AN(NULL, IN("x"), L(1, SN(I6, I6(2)))),
+        AN(NULL, IN("x"), L(1, SN(I6, I6(3)))),
+        CN(P1, IN("s"))
+    )), NULL)));
+}
