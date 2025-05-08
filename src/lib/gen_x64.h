@@ -66,6 +66,8 @@ typedef enum {
 
 const char *x64_type_str(x64_type xt);
 
+bool x64_type_is_ref(x64_type xt);
+
 void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
 void gen_p(const gen *g, const uint8_t *m);
@@ -73,6 +75,10 @@ void gen_p(const gen *g, const uint8_t *m);
 te *gen_call_v(gen *g, vr *v);
 
 te *gen_call_m(gen *g, size_t n, ...);
+
+vr *gen_vr(gen *g, size_t n, ...);
+
+te *gen_call_w(gen *g, vr *s, vr *r);
 
 te *gen_idx_v(gen *g, x64_type t, vr *v);
 
@@ -95,7 +101,7 @@ te *gen_stka(gen *g, x64_type t, size_t id);
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
 
 typedef struct {
-    uint8_t rvc, xvc, rac, xac, rsc, xsc; // var count, arg count, stack count
+    uint8_t rvc, xvc, rac, xac, rsc; // var count, arg count, stack count (only gen regs for stack)
     ssize_t r;
     const alfr *af, *ta;
     tbl *atm, *lat; // map args, tmp to regs, last code of arg, tmp
@@ -115,6 +121,9 @@ gen_stat rstk_b(const gen_st *st, uint8_t *r);
 
 // get idx for stack var
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx);
+
+// get idx for stk arg
+gen_stat st_stka_idx(x64_type t, uint8_t v, int32_t *idx);
 
 te *bd_arg(as *a, int32_t dsp);
 

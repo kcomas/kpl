@@ -408,3 +408,18 @@ T(addm) {
     ((void(*)(uint64_t*)) m)(&a);
     A(a == 5, "addm");
 }
+
+T(callwstck) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(CALL), gen_call_w(g, gen_vr(g, 1, gen_arg(g, X64_TYPE(MI6), 0)), NULL), gen_lbl(g, 1), NULL));
+    S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_stka(g, X64_TYPE(MI6), 0), gen_stka(g, X64_TYPE(MI6), 0), gen_data(g, X64_TYPE(I6), U6(5))));
+    S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
+    BUILD(g, m);
+    uint64_t a = 2;
+    ((void(*)(uint64_t*)) m)(&a);
+    A(a == 7, "stk");
+}

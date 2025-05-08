@@ -64,6 +64,11 @@ const char *x64_type_str(x64_type xt) {
     return "INV";
 }
 
+bool x64_type_is_ref(x64_type xt) {
+    if (xt >= X64_TYPE(MU3) && xt <= X64_TYPE(MM)) return true;
+    return false;
+}
+
 void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
@@ -91,7 +96,17 @@ static void ovt_p(const te *ovt) {
             m = ovt->d[1].p;
             for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
             printf("])");
-            return;
+            break;
+        case GEN_CLS(W):
+            putchar('[');
+            m = ((te*) ovt->d[1].p)->d[0].p;
+            if (m) for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
+            putchar(']');
+            putchar('[');
+            m = ((te*) ovt->d[1].p)->d[1].p;
+            if (m) for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
+            printf("])");
+            break;
         case GEN_CLS(I):
             printf("%s ", x64_type_str(gen_var_g_t(ovt)));
             m = ovt->d[1].p;
@@ -99,9 +114,10 @@ static void ovt_p(const te *ovt) {
             putchar('[');
             for (size_t i = 1; i < m->l; i++) ovt_p(m->d[i].p);
             printf("])");
-            return;
+            break;
         case GEN_CLS(A):
         case GEN_CLS(V):
+        case GEN_CLS(S):
         case GEN_CLS(T):
         case GEN_CLS(L):
             printf("%s %lu)", x64_type_str(gen_var_g_t(ovt)), ovt->d[1].u6);
@@ -186,6 +202,34 @@ te *gen_call_m(gen *g, size_t n, ...) {
     return gen_call_v(g, v);
 }
 
+static void gen_call_w_vr_f(void *p) {
+    te *t = p;
+    vr_f(t->d[0].p);
+    vr_f(t->d[1].p);
+    t->af->f(t);
+}
+
+static void gen_call_w_f(void *p) {
+    te *t = p;
+    te_f(t->d[1].p);
+    t->af->f(t);
+}
+
+vr *gen_vr(gen *g, size_t n, ...) {
+    va_list args;
+    va_start(args, n);
+    vr *v = mi(g, n, args);
+    va_end(args);
+    return v;
+}
+
+te *gen_call_w(gen *g, vr *s, vr *r) {
+    te *t = te_i(2, g->ta, gen_call_w_vr_f);
+    t->d[0] = P(s);
+    t->d[1] = P(r);
+    return gen_var_i(g, gen_call_w_f, GEN_CLS(W), X64_TYPE(N), P(t));
+}
+
 te *gen_idx_v(gen *g, x64_type t, vr *v) {
     return gen_var_i(g, gen_mi_f, GEN_CLS(I), t, P(v));
 }
@@ -224,7 +268,7 @@ te *gen_stka(gen *g, x64_type t, size_t id) {
 
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
-    st->rac = st->xac = st->rvc = st->xvc = st->rsc = st->xsc = 0;
+    st->rac = st->xac = st->rvc = st->xvc = st->rsc = 0;
     st->r = 1;
     st->af = af;
     st->ta = ta;
@@ -240,7 +284,7 @@ gen_st *gen_st_i_gen_st(const gen_st *st) {
 }
 
 void gen_st_p(const gen_st *st) {
-    printf("rvc: %u, xvc: %u, rac: %u, xac: %u, rsc: %u, xsc: %u\n", st->rvc, st->xvc, st->rac, st->xac, st->rsc, st->xsc);
+    printf("rvc: %u, xvc: %u, rac: %u, xac: %u, rsc: %u\n", st->rvc, st->xvc, st->rac, st->xac, st->rsc);
     printf("atm_l: %lu, lat_l: %lu\nR:", st->atm->i->l, st->lat->i->l);
     for (size_t i = 0; i < st->rstk->l; i++) printf("%s ", reg_str(st->rstk->d[i].u3));
     printf("\nX:");
@@ -316,6 +360,12 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
             m = ovt->d[1].p;
             for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
             break;
+        case GEN_CLS(W):
+            m = ((te*) ovt->d[1].p)->d[0].p;
+            if (m) for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
+            m = ((te*) ovt->d[1].p)->d[1].p;
+            if (m) for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
+            break;
         case GEN_CLS(A):
             if (gen_var_g_t(ovt) >= X64_TYPE(M) && gen_var_g_t(ovt) <= X64_TYPE(I6)) st->rac = ovt->d[1].u3 + 1 > st->rac ? ovt->d[1].u3 + 1 : st->rac;
             else st->xac = ovt->d[1].u3 + 1 > st->xac ? ovt->d[1].u3 + 1 : st->xac;
@@ -336,8 +386,7 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
              switch (gen_var_g_t(ovt)) {
                 case X64_TYPE(F5):
                 case X64_TYPE(F6):
-                    st->xsc = ovt->d[1].u3 + 1 > st->xsc ? ovt->d[1].u3 + 1 : st->xsc;
-                    break;
+                    return GEN_STAT(INV);
                 default:
                     st->rsc = ovt->d[1].u3 + 1 > st->rsc ? ovt->d[1].u3 + 1 : st->rsc;
             }
@@ -406,6 +455,18 @@ gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
             break;
     }
     *idx = -*idx;
+    return GEN_STAT(OK);
+}
+
+gen_stat st_stka_idx(x64_type t, uint8_t v, int32_t *idx) {
+    switch (t) {
+        case X64_TYPE(F5):
+        case X64_TYPE(F6):
+            return GEN_STAT(INV);
+        default:
+            break;
+    }
+    *idx = sizeof(void*) + sizeof(void*) * (v + 1);
     return GEN_STAT(OK);
 }
 
