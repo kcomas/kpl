@@ -51,8 +51,6 @@ static void chk_lte_s_i(te *lte, uint32_t *r, uint32_t *x) {
 }
 
 static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
-    (void) c;
-    (void) e;
     tbl **fat = (tbl**) &((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h, *lte, *kv;
@@ -94,6 +92,27 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
+    chk_stat stat;
+    if ((stat = chk_cst_fn_lst_b(c, an, e)) != CHK_STAT(OK)) return stat;
+    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *kv;
+    uint32_t si = 0;
+    while (h) {
+        lte = h->d[0].p;
+        if (lte->d[2].p) {
+            h = h->d[2].p;
+            continue;
+        }
+        if (!(kv = chk_g_pn_lte(an, lte->d[0].p))) return chk_err(c, an, e, "ckk nf cannot find var");
+        if (!kv->d[2].p) return chk_err(c, an, e, "chk nf var inv");
+        ast_lst_tbl_e_s_i(lte, si++);
+        ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
+        lte->d[2] = P(te_c(kv->d[2].p));
+        h = h->d[2].p;
+    }
+    return CHK_STAT(OK);
+}
+
 te *chk_g_pn_lte(te *an, const mc *s) {
     te *plns = an, *pln, *kv;
     do {
@@ -106,7 +125,6 @@ te *chk_g_pn_lte(te *an, const mc *s) {
 }
 
 static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
-    (void) c;
     tbl *t = ((te*) an->d[side].p)->d[3].p;
     if (!t) return CHK_STAT(OK);
     te *h = t->i->h, *lte, *kv;
@@ -225,7 +243,8 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     te *rt;
     if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get return type");
     te **fr = (te**) &((te*) an->d[3].p)->d[2].p;
-    if (!*fr) *fr = te_c(rt);
+    if (*fr && (*fr)->d[1].u4 == TYPE(VD)) return CHK_STAT(OK);
+    else if (!*fr) *fr = te_c(rt);
     else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
     return CHK_STAT(OK);
 }
@@ -301,6 +320,7 @@ void chk_arith(chk *c);
 chk *chk_b(chk *c) {
     // before
     CHK_AB(c, chk_cst_fn_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
+    CHK_AB(c, chk_cst_nf_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     // after
@@ -310,12 +330,15 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(F6), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_lst_l, AST_CLS(A), TYPE(_N), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
+    CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(NF));
     // ops
     CHK_AA(c, chk_op_e_n_so_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_e_n_so_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_e_n_so_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(U6));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));
+    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(NF), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(NF), AST_CLS(O), TYPE(NF));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
+    CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6));
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(U6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_l_lst_bl, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));

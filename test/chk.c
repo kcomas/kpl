@@ -135,3 +135,22 @@ T(ackrec) {
     te_f(en);
     te_f(eack);
 }
+
+T(scope) {
+    IC(TPGM(scope));
+    te *ft = TFN(NF, TS(VD), 1, "x", TS(I6), 0);
+    te *fe = EN("x", FLG(-1, LTE_FLG(F)), te_c(ft));
+    V(RN(AN(TS(VD), LN(LT(2, "s", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6), "x", FLG(-1, LTE_FLG(F)), te_c(ft)), L(6,
+        ON(TS(I6), DFN, EN("s", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), SN(I6, I6(0))),
+        ON(te_c(ft), DFN, te_c(fe), ON(te_c(ft), CST,
+            NN(T, TFN(NF, TS(VD), 1, "x", TS(I6), 0)),
+            LN(LT(2, "s", FLG(0, LTE_FLG(S)), TS(I6), "x", FLG(0, LTE_FLG(A)), TS(I6)), L(1, ON(TS(I6), ADDA, EN("s", FLG(0, LTE_FLG(S)), TS(I6)), EN("x", FLG(0, LTE_FLG(A)), TS(I6)))))
+        )),
+        AN(TS(VD), te_c(fe), L(1, SN(I6, I6(1)))),
+        AN(TS(VD), te_c(fe), L(1, SN(I6, I6(2)))),
+        AN(TS(VD), te_c(fe), L(1, SN(I6, I6(3)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)))
+    )), NULL)));
+    te_f(ft);
+    te_f(fe);
+}
