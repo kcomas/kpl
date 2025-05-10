@@ -141,6 +141,7 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
 }
 
 static gen_stat call_stk(const gen *g, gen_st *st, te *ci, as *a, err **e, vr *sargs) {
+    int32_t idx;
     te *s, *kv;
     for (size_t i = 0; i < sargs->l; i++) {
         s = sargs->d[i].p;
@@ -151,6 +152,13 @@ static gen_stat call_stk(const gen *g, gen_st *st, te *ci, as *a, err **e, vr *s
                 if (get_reg(st, s, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv arg tmp stk reg");
                 if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                 drop_atm_kv(st, kv, ci);
+                break;
+            case GEN_CLS(V):
+                if (st_stkv_idx(st, gen_var_g_t(s), s->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call inv stk arg");
+                if (!x64_type_is_ref(gen_var_g_t(s))) {
+                    if (gen_as_rrmbd(a, AS_X64(LEA), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return GEN_STAT(INV);
+                } else return gen_err(g, ci, e, "gen stk ref nyi");
+                if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                 break;
             default:
                 return gen_err(g, ci, e, "gen stk var inv cls");

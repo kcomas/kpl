@@ -70,8 +70,6 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id);
 
 void node_err_p(void *d);
 
-te *ast_g_root(te *an);
-
 void node_err_f(void *d);
 
 void ast_err_p(void *d);

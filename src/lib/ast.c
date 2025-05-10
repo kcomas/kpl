@@ -81,6 +81,12 @@ ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
     return AST_STAT(INV);
 }
 
+te *ast_g_root(te *an) {
+    te *rn = NULL;
+    ast_g_pn(AST_CLS(R), an, &rn);
+    return rn;
+}
+
 ast_stat ast_g_t(te *an, te **t) {
     switch (an->d[2].u4) {
         case AST_CLS(R):

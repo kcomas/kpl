@@ -61,6 +61,8 @@ un ast_hsh(const te *an);
 // get first parent node of cls
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
 
+te *ast_g_root(te *an);
+
 // get type, not null
 ast_stat ast_g_t(te *an, te **type);
 

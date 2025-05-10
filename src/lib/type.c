@@ -35,11 +35,11 @@ const char *type_str(type t) {
         "_F",
         "FN",
         "NF",
-        "CJ",
         "_C",
         "TE",
         "BA",
         "TD",
+        "CJ",
         "_END"
     };
     const char *s = "INV TYPE";
@@ -110,15 +110,17 @@ static void type_f_f(void *p) {
     te *t = p;
     te_f(t->d[2].p);
     tbl_f(t->d[3].p);
+    tbl_f(t->d[4].p);
     t->af->f(t);
 }
 
-te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *a) {
-    te *ff = te_i(4, af, type_f_f);
+te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *restrict a, tbl *restrict s) {
+    te *ff = te_i(5, af, type_f_f);
     ff->d[0] = P(p);
     ff->d[1] = U4(f);
     ff->d[2] = P(r);
     ff->d[3] = P(a);
+    ff->d[4] = P(s);
     return ff;
 }
 
@@ -131,7 +133,7 @@ te *type_i(const alfr *af, te *restrict p, type t) {
         case TYPE_CLS(H):
             return type_h_i(af, p, t, NULL);
         case TYPE_CLS(F):
-            return type_f_i(af, p, t, NULL, NULL);
+            return type_f_i(af, p, t, NULL, NULL, NULL);
         // TODO
         default:
             break;
@@ -148,8 +150,9 @@ static void type_tbl_p(const tbl *t) {
     while (h) {
         te *li = h->d[0].p;
         type_p(li->d[2].p);
-        printf("`%s[%lu] ", (char*) ((mc*) li->d[0].p)->d, li->d[1].u6);
+        printf("`%s[%lu]", (char*) ((mc*) li->d[0].p)->d, li->d[1].u6);
         h = h->d[2].p;
+        if (h) putchar(' ');
     }
 }
 
@@ -174,6 +177,11 @@ void type_p(const te *t) {
         case TYPE_CLS(F):
             printf("%s(", type_str(t->d[1].u4));
             type_tbl_p(t->d[3].p);
+            if (t->d[4].p) {
+                printf(" {");
+                type_tbl_p(t->d[4].p);
+                printf("} ");
+            } else putchar(' ');
             type_p(t->d[2].p);
             putchar(')');
             break;
@@ -212,7 +220,7 @@ bool type_eq(const te *restrict a, const te *restrict b) {
             // TODO
             break;
         case TYPE_CLS(F):
-            return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p);
+            return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p) && type_tbl_eq(a->d[4].p, b->d[4].p);
         case TYPE_CLS(C):
             // TODO
             break;

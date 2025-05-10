@@ -36,6 +36,7 @@ typedef enum {
     AS_X64(MOV),
     AS_X64(MOVQ),
     AS_X64(MOVSD),
+    AS_X64(LEA),
     AS_X64(ADD),
     AS_X64(ADDSD),
     AS_X64(SUB),
