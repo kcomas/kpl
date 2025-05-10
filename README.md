@@ -23,10 +23,14 @@ make
 ## Usage
 
 ```
-./kpl [file]
+./kpl [file] # Examples with an overview can be found in the ex folder
 ```
 
-#### Examples with an overview can be found in the ex folder
+#### Example
+
+```
+./kpl ./ex/fib.kpl
+```
 
 ## Tests
 
