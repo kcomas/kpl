@@ -404,3 +404,13 @@ T(scope) {
     ))});
     te_f(h);
 }
+
+T(efn) {
+    te *h = ppnode(psr_r(bpsr(TPGM(efn))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(CMD(N(VAR)), OP(N(TYPE), LST(
+            OP(APLY(N(TYPE), N(VAR)), OP(APLY(N(TYPE), N(VAR)), APLY(N(TYPE), N(VAR))))
+        )))
+    ))});
+    te_f(h);
+}
