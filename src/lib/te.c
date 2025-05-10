@@ -1,6 +1,8 @@
 
 #include "te.h"
 
+#define MPIS 20 // max pool item size
+
 static te *tah = NULL;
 
 static void *al(size_t n) {
@@ -8,6 +10,7 @@ static void *al(size_t n) {
         printf("\e[1;91mTE MUST HAVE LENGTH OF AT LEAST 2 EXITING\e[0m\n");
         exit(1);
     }
+    if (n > MPIS) return malloc(sizeof(te) + sizeof(un) * n);
     te *h = tah;
     while (h) {
         if (h->l == n) break;
@@ -23,6 +26,7 @@ static void *al(size_t n) {
 
 static void fr(void *p) {
     te *t = p;
+    if (t->l > MPIS) return free(t);
     t->d[0] = P(NULL);
     t->d[1] = P(NULL);
     if (tah) {
