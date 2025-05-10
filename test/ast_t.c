@@ -52,10 +52,13 @@ void astb(_tests *_t, ast *a, const char *pgm, te **an) {
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn) {
     E();
     ast_p(an, 0);
+    bool eq = ast_eq(an, tn);
+    if (!eq) {
+        printf("\n--- DIFF ---\n");
+        ast_p(tn, 0);
+    }
     putchar('\n');
-    ast_p(tn, 0);
-    putchar('\n');
-    A(ast_eq(an, tn), "ast_eq");
+    A(eq, "ast_eq");
     ast_f(a);
     te_f(an);
     te_f(tn);
