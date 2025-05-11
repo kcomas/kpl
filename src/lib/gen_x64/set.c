@@ -50,7 +50,12 @@ static gen_stat idx_to(gen *g, void *s, te *restrict ci, as *a, err **e, as_inst
         if ((x == GEN_CLS(A) || x == GEN_CLS(T)) && gen_var_g_t(i->d[0].p) == X64_TYPE(M) && y == GEN_CLS(D)) {
             if ((stat = get_reg(s, i->d[0].p, &kvib) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
-            if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), from, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (gen_var_g_c(from) == ARG_ID(QW)) {
+                if (gen_as(a, ai, as_arg_i(a, ARG_ID(R), U3(R(AX))), from, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            } else {
+                if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), from, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            }
             drop_atm_kv(s, kvib, ci);
         } else return gen_err(g, ci, e, "nyi");
     } else if (i->l == 3) {
@@ -88,6 +93,14 @@ static gen_stat set_iv_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat set_id_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    gen_stat stat;
+    vr *i = ((te*) ci->d[1].p)->d[1].p;
+    arg_id aid = ((te*) ci->d[2].p)->d[1].u6 <= UINT32_MAX ? ARG_ID(DW) : ARG_ID(QW);
+    if ((stat = idx_to(g, s, ci, a, e, AS_X64(MOV), i, as_arg_i(a, aid, ((te*) ci->d[2].p)->d[1]))) != GEN_STAT(OK)) return stat;
+    return GEN_STAT(OK);
+}
+
 static gen_stat set_ad_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv;
@@ -104,8 +117,9 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), set_du_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), set_du_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), set_dx_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), set_iu_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), set_iv_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(A), X64_TYPE(I6), set_iu_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(V), X64_TYPE(I6), set_iv_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U5), set_id_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), set_ad_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), set_ad_fn);
 }

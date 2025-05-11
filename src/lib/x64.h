@@ -165,6 +165,9 @@ x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x);
 // mov rax qword ptr[rdi+rsi*x+dsp8]
 x64_stat x64_mov_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp);
 
+// mov qword ptr[rax+dsp8] imm32
+x64_stat x64_mov_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, int32_t d);
+
 // movq rax, xmm0
 x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s);
 

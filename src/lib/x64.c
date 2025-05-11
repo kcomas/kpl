@@ -153,6 +153,16 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 2, dsp, b); \
 }
 
+#define ZRMBED(N, C, E) x64_stat x64_##N##_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, int32_t d) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(01) | E << 3 | rid(r)); \
+    if (r == R(SP) || r == R(12)) x64_a(p, m, S1 | rid(r) << 3 | rid(r)); \
+    x64_b(p, m, 1, dsp); \
+    return x64_e(p, m, sizeof(uint32_t), U5(d)); \
+}
+
 #define ZZRE(N, C1, C2, E) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
@@ -167,7 +177,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 3, rex, C1, MOD(00) | C2 | rid(r)); \
 }
 
-#define ZRQ(N, C) x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u) { \
+#define ZRQ(N, C) x64_stat x64_##N##_rq(size_t *p, uint8_t *m, reg r, un u) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
@@ -398,6 +408,8 @@ ZRRMB(mov, 0x8B, d, s);
 ZRRMO(mov, 0x8B, d, o, s);
 
 ZRRMOB(mov, 0x8B, d, o, s);
+
+ZRMBED(mov, 0xC7, 0);
 
 ZZZRX(movq, 0x66, 0x0F, 0x7E, s, d);
 

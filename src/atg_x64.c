@@ -143,10 +143,11 @@ static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
             x64_type xt = type_g_x64_type(d->d[2].p);
             if (flgs & LTE_FLG(A)) es = gen_arg(g, xt, id);
             else if (flgs & LTE_FLG(L)) es = gen_stkv(g, xt, id);
+            else if (flgs & LTE_FLG(F)) es = gen_data(g, X64_TYPE(U5), U5(id));
             else return atg_err(t, an, e, "atg inv exp type");
             uint32_t idx = sizeof(void*) * 4 + sizeof(void*) * eid;
             // TODO build more complex types
-            if (gen_a(g, GEN_OP(SET), gen_idx_m(g, xt, 2, gen_arg(g, X64_TYPE(M), ATG_EXP_ARG_ID), gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx))), es, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_arg(g, X64_TYPE(M), ATG_EXP_ARG_ID), gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx))), es, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
             h = h->d[2].p;
         }
     }
@@ -571,16 +572,23 @@ static err *__attribute__((noinline)) jit_run(const uint8_t *m, size_t ep, te *x
     return ((atg_jit*) &m[ep])(x);
 }
 
-err *atg_z(const alfr *ta, tbl *volatile et, const uint8_t *m, size_t ep) {
+err *atg_z(const atg *t, tbl *volatile et, const uint8_t *m, size_t ep) {
     err *e;
     te *x = NULL, *h, *d;
-    if (et) x = te_i(et->i->l > 1 ? et->i->l : 2, ta, NULL);
+    if (et) x = te_i(et->i->l > 1 ? et->i->l : 2, t->ta, NULL);
     e = jit_run(m, ep, x);
     if (et) {
         h = et->i->h;
         while (h) {
             d = h->d[0].p;
-            d->d[1] = x->d[opt_exp_eid(d)];
+            switch (((te*) d->d[2].p)->d[1].u4) {
+                case TYPE(FN):
+                    if ((ssize_t) (d->d[1].u6 = as_lbl_g_c_i(t->a, x->d[opt_exp_eid(d)].u5)) == -1) return err_i(t->ea, NULL, NULL, NULL, "atg fn idx inv");
+                    break;
+                default:
+                    d->d[1] = x->d[opt_exp_eid(d)];
+                    break;
+            }
             h = h->d[2].p;
         }
         te_f(x);
