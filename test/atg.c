@@ -424,7 +424,7 @@ T(efn) {
     A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
     double x = 1.1, y = 2.2, z = 3.3;
     double r = ((double(*)(double, double, double)) &m[kv->d[1].u6])(z, y, x);
-    A(r == (x + y) * z, "addmul inv");
+    A(r == z * (x + y), "addmul inv");
     mc_f(s);
     tbl_f(et);
 }
