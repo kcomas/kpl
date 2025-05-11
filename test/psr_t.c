@@ -90,4 +90,4 @@ const char *TPGM(scope) = "{\n"
                           "     s/p1\n"
                           "}()";
 
-const char *TPGM(efn) = "{addmul/e::FN${I6(z)*I6(y)+I6(x)}}()";
+const char *TPGM(efn) = "{addmul/e::FN${F6(z)*F6(y)+F6(x)}}()";
