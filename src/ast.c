@@ -146,6 +146,27 @@ static ast_stat ast_flt(ast *a, te *restrict pan, te *restrict pn, void **vn, er
     return AST_STAT(OK);
 }
 
+static ast_stat add_lst(ast *a, te *restrict pn, te **an, err **e) {
+    ast_stat stat;
+    void *ln;
+    if (!pn->d[3].p) return AST_STAT(OK);
+    lst *ll = a->ali();
+    (*an)->d[4] = P(ll);
+    te *h = ((lst*) pn->d[3].p)->h;
+    while (h) {
+        if ((stat = ast_n(a, *an, h->d[0].p, &ln, e)) != AST_STAT(OK)) return stat;
+        lst_ab(ll, P(ln));
+        h = h->d[2].p;
+    }
+    return AST_STAT(OK);
+}
+
+static ast_stat ast_vec(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
+    te **an = (te**) vn;
+    *an = ast_an_i(a, pan, pn, AST_CLS(V), P(NULL), NULL);
+    return add_lst(a, pn, an, e);
+}
+
 static ast_stat ast_op(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
     ast_stat stat;
     te **an = (te**) vn;
@@ -161,20 +182,9 @@ static ast_stat ast_op(ast *a, te *restrict pan, te *restrict pn, void **vn, err
 }
 
 static ast_stat ast_lst(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
-    ast_stat stat;
-    void *ln;
     te **an = (te**) vn;
     *an = ast_an_i(a, pan, pn, AST_CLS(L), P(NULL), NULL);
-    if (!pn->d[3].p) return AST_STAT(OK);
-    lst *ll = a->ali();
-    (*an)->d[4] = P(ll);
-    te *h = ((lst*) pn->d[3].p)->h;
-    while (h) {
-        if ((stat = ast_n(a, *an, h->d[0].p, &ln, e)) != AST_STAT(OK)) return stat;
-        lst_ab(ll, P(ln));
-        h = h->d[2].p;
-    }
-    return AST_STAT(OK);
+    return add_lst(a, pn, an, e);
 }
 
 static ast_stat ast_aply(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
@@ -256,6 +266,7 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(TYPE), ast_type);
     ast_a(a, NODE_TYPE(INT), ast_int);
     ast_a(a, NODE_TYPE(FLT), ast_flt);
+    ast_a(a, NODE_TYPE(VEC), ast_vec);
     ast_a(a, NODE_TYPE(OP), ast_op);
     ast_a(a, NODE_TYPE(LST), ast_lst);
     ast_a(a, NODE_TYPE(APLY), ast_aply);
@@ -338,6 +349,17 @@ void ast_p(const te *an, size_t idnt) {
             putchar(')');
             break;
         case AST_CLS(V):
+            printf("(V ");
+            type_p(an->d[3].p);
+            if (an->d[4].p) {
+                te *h = ((lst*) an->d[4].p)->h;
+                while (h) {
+                    putchar('\n');
+                    ast_p(h->d[0].p, idnt + 1);
+                    h = h->d[2].p;
+                }
+            }
+            putchar(')');
             break;
         case AST_CLS(O):
             printf("(O ");
@@ -448,8 +470,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(S):
             return type_eq(a->d[3].p, b->d[3].p) && ast_v_eq(a->d[3].p, a, b);
         case AST_CLS(V):
-            // TODO
-            break;
+            return type_eq(a->d[3].p, b->d[3].p) && lst_eq(a->d[4].p, b->d[4].p, ast_un_eq);
         case AST_CLS(O):
             return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u4 == b->d[4].u4 && ast_eq(a->d[5].p, b->d[5].p) && ast_eq(a->d[6].p, b->d[6].p);
         case AST_CLS(Z):

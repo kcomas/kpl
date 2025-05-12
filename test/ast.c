@@ -118,3 +118,13 @@ T(efn) {
         ))))
     )), NULL)));
 }
+
+T(teadd) {
+    V(TPGM(teadd), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("a"), VN(NULL, L(3, SN(I6, I6(1)), SN(I6, I6(0)), SN(I6, I6(3))))),
+        ON(NULL, AGN, AN(NULL, IN("a"), L(1, SN(I6, I6(1)))),
+            ON(NULL, ADD, AN(NULL, IN("a"), L(1, SN(I6, I6(0)))), AN(NULL, IN("a"), L(1, SN(I6, I6(2)))))
+        ),
+        CN(P1, IN("a"))
+    )), NULL)));
+}
