@@ -134,11 +134,39 @@ te *type_i(const alfr *af, te *restrict p, type t) {
             return type_h_i(af, p, t, NULL);
         case TYPE_CLS(F):
             return type_f_i(af, p, t, NULL, NULL, NULL);
-        // TODO
+        case TYPE_CLS(C):
+            STOP("COLLECTION TYPES MUST BE INVOKED DIRECTLY");
+            break;
         default:
             break;
     }
     return NULL;
+}
+
+static void type_te_f(void *p) {
+    te *t = p;
+    for (size_t i = 2; i < t->l; i++) te_f(t->d[i].p);
+    t->af->f(t);
+}
+
+te *type_te_i(const alfr *af, te *restrict p, size_t l) {
+    te *t = te_i(l + 2, af, type_te_f);
+    t->d[0] = P(p);
+    t->d[1] = U4(TYPE(TE));
+    return t;
+}
+
+te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...) {
+    va_list args;
+    te *t = type_te_i(af, p, l), *a;
+    va_start(args, l);
+    for (size_t i = 0; i < l; i++) {
+        a = te_c(va_arg(args, void*));
+        a->d[0] = P(t);
+        t->d[2 + i] = P(a);
+    }
+    va_end(args);
+    return t;
 }
 
 static void type_tbl_p(const tbl *t) {
@@ -186,7 +214,19 @@ void type_p(const te *t) {
             putchar(')');
             break;
         case TYPE_CLS(C):
-            // TODO
+            switch (t->d[1].u4) {
+                case TYPE(TE):
+                    printf("%s(", type_str(t->d[1].u4));
+                    for (size_t i = 2; i < t->l; i++) {
+                        type_p(t->d[i].p);
+                        if (i < t->l - 1) putchar(';');
+                    }
+                    putchar(')');
+                    break;
+                default:
+                    printf("INV _C");
+                    return;
+            }
             break;
         default:
             printf("TINV");
@@ -209,7 +249,7 @@ static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
 
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
-    if (!a || !b || a->d[1].u4 != b->d[1].u4) return false;
+    if (!a || !b || a->d[1].u4 != b->d[1].u4 || a->l != b->l) return false;
     type_cls cls = type_g_c(a->d[1].u4);
     switch (cls) {
         case TYPE_CLS(S):
@@ -222,7 +262,13 @@ bool type_eq(const te *restrict a, const te *restrict b) {
         case TYPE_CLS(F):
             return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p) && type_tbl_eq(a->d[4].p, b->d[4].p);
         case TYPE_CLS(C):
-            // TODO
+            switch (a->d[1].u4) {
+                case TYPE(TE):
+                    for (size_t i = 2; i < a->l; i++) if (!type_eq(a->d[i].p, b->d[i].p)) return false;
+                    return true;
+                default:
+                    return false;
+            }
             break;
         default:
             break;

@@ -157,6 +157,10 @@ static chk_stat chk_op_lst_lr_b(chk *c, te *an, err **e) {
     return chk_op_lst_side(c, an, e, 6, true);
 }
 
+static chk_stat chk_vec_b(chk *c, te *an, err **e) {
+    return chk_err(c, an, e, "TODO infer TE type");
+}
+
 static chk_stat chk_nop(chk *c, te *an, err **e) {
     (void) c;
     (void) an;
@@ -331,6 +335,7 @@ chk *chk_b(chk *c) {
     CHK_AB(c, chk_cst_nf_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
+    CHK_AB(c, chk_vec_b, AST_CLS(V), TYPE(_N), AST_CLS(_), TYPE(_A));
     // after
     CHK_AA(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(VD));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(U5), AST_CLS(_), TYPE(_A));

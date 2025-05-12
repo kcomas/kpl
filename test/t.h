@@ -1,10 +1,8 @@
 
 #pragma once
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include "../src/lib/def.h"
 
 typedef struct __tests _tests;
 

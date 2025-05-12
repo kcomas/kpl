@@ -137,7 +137,7 @@ chk_stat chk_n(chk *c, te *an, err **e) {
         case AST_CLS(S):
             break;
         case AST_CLS(V):
-            // TODO
+            if ((stat = chk_lst_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
             break;
         case AST_CLS(O):
             if ((stat = chk_n(c, an->d[5].p, e)) != CHK_STAT(OK) || (stat = chk_n(c, an->d[6].p, e)) != CHK_STAT(OK)) return stat;
