@@ -97,3 +97,10 @@ const char *TPGM(teadd) = "{\n"
                        "    a(1): a(0)+a(2)\n"
                        "    a/p1\n"
                        "}()\n";
+
+const char *TPGM(vrmul) = "{\n"
+                          "     i::1.1\n"
+                          "     v::VR$[i]\n"
+                          "     <(i;100)@v,:i*:2\n"
+                          "     v/p1\n"
+                          "}()\n";
