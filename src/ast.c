@@ -21,6 +21,8 @@ const char *ast_oc_str(oc o) {
         "LT",
         "LTE",
         "AND",
+        "CNCT",
+        "CNCTA",
         "DUMP",
         "_END"
     };
@@ -235,6 +237,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(FN), TYPE(FN));
     ast_t_a(a, TCUST(NF), TYPE(NF));
     ast_t_a(a, TCUST(UN), TYPE(UN));
+    ast_t_a(a, TCUST(VR), TYPE(VR));
     // ops
     ast_t_a(a, TCUST(DFN), OC(DFN));
     ast_t_a(a, TCUST(AGN), OC(AGN));
@@ -254,6 +257,8 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(LT), OC(LT));
     ast_t_a(a, TCUST(LTE), OC(LTE));
     ast_t_a(a, TCUST(AND), OC(AND));
+    ast_t_a(a, TCUST(CNCT), OC(CNCT));
+    ast_t_a(a, TCUST(CNCTA), OC(CNCTA));
     // cmds
     ast_t_a(a, TCUST(E), CC(E));
     ast_t_a(a, TCUST(P1), CC(P1));
