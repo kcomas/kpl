@@ -274,9 +274,8 @@ psr_stat psr_aply_i(psr *p, te **n, err **e) {
 psr_stat psr_aply_m(psr *p, te *restrict nh, te *restrict n, err **e) {
     (void) p;
     (void) e;
-    if (!nh->d[1].p && !nh->d[2].p) {
-        nh->d[2] = P(n);
-    } else if (nh->d[1].p && ((te*) nh->d[1].p)->d[4].p) {
+    if (!nh->d[1].p && !nh->d[2].p) nh->d[2] = P(n);
+    else if (nh->d[1].p && ((te*) nh->d[1].p)->d[4].p) {
         n->d[0] = ((te*) ((te*) nh->d[1].p)->d[4].p)->d[0];
         n->d[3] = ((te*) nh->d[1].p)->d[4];
         ((te*) nh->d[1].p)->d[4] = ((te*) ((te*) nh->d[1].p)->d[4].p)->d[0] = P(n);

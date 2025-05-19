@@ -167,6 +167,17 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_mov_rq(p, m, arg1->d[1].u3, arg2->d[1]) == X64_STAT(OK);
 }
 
+// only can be used after the lbl is defined
+bool as_mov_rl(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
+    (void) a;
+    (void) ci;
+    (void) arg3;
+    (void) arg4;
+    te *lblc = as_lbl_g_c(a, arg2->d[1].u5);
+    if (!lblc || !lblc->d[9].u6) return false;
+    return x64_mov_rq(p, m, arg1->d[1].u3, P(&m[lblc->d[8].u6])) == X64_STAT(OK);
+}
+
 void as_r_b(as *a) {
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_pop_r, NULL);
@@ -174,6 +185,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_mov_rr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(L), ARG_ID(N), ARG_ID(N), as_mov_rl, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_mov_rmr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_mov_rmbr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(DW), ARG_ID(N), as_mov_rmbd, NULL);

@@ -37,15 +37,23 @@ gen *gen_i_gen(const gen *g) {
     return gen_i(g->af, g->ta, g->va, g->ea, g->cti, tbl_c(g->oci), lst_i_lst(g->code));
 }
 
-static bool gen_vr_m_eq(un x, un y) {
-    te *l = x.p;
-    te *r = y.p;
-    if (!l || !r || l->d[0].u6 != r->d[0].u6 || l->d[1].u6 != r->d[1].u6) return false;
-    return true;
-}
+static bool gen_itm_eq(un x, un y);
 
 static bool gen_w_eq(const te *l, const te *r) {
-    return vr_eq(l->d[0].p, r->d[0].p, gen_vr_m_eq) && vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq);
+    return vr_eq(l->d[0].p, r->d[0].p, gen_itm_eq) && vr_eq(l->d[1].p, r->d[1].p, gen_itm_eq);
+}
+
+static bool gen_itm_eq(un x, un y) {
+    te *l = x.p;
+    te *r = y.p;
+    if (!l && !r) return true;
+    if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
+    if (gen_var_g_c(l) == GEN_CLS(M) || gen_var_g_c(l) == GEN_CLS(I)) {
+        if (!vr_eq(l->d[1].p, r->d[1].p, gen_itm_eq)) return false;
+    } else if (gen_var_g_c(l) == GEN_CLS(W)) {
+        if (!gen_w_eq(l->d[1].p, r->d[1].p)) return false;
+    } else if (l->d[1].u6 != r->d[1].u6) return false;
+    return true;
 }
 
 static bool gen_lst_eq(un x, un y) {
@@ -56,13 +64,7 @@ static bool gen_lst_eq(un x, un y) {
     for (size_t i = 1; i < 4; i++) {
         te *l = a->d[i].p;
         te *r = b->d[i].p;
-        if (!l && !r) continue;
-        if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
-        if (gen_var_g_c(l) == GEN_CLS(M) || gen_var_g_c(l) == GEN_CLS(I)) {
-            if (!vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq)) return false;
-        } else if (gen_var_g_c(l) == GEN_CLS(W)) {
-            if (!gen_w_eq(l->d[1].p, r->d[1].p)) return false;
-        } else if (l->d[1].u6 != r->d[1].u6) return false;
+        if (!gen_itm_eq(P(l), P(r))) return false;
     }
     return true;
 }

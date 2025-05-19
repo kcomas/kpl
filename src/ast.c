@@ -489,7 +489,6 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
 
 te *ast_cpy(const te *an) {
     ast_p(an, 0);
-    HERE("TODO");
-    exit(1);
+    STOP("TODO ast_cpy");
     return NULL;
 }

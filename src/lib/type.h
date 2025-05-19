@@ -56,6 +56,12 @@ typedef enum {
 
 const char *type_str(type t);
 
+// check if they type is passed as pointer
+bool type_is_ref(type t);
+
+// check if type needs a destructor fn
+bool type_is_des(type t);
+
 #define TYPE_CLS(N) TYPE_CLS_##N
 
 // parent type is weak ref
@@ -93,5 +99,13 @@ void type_p(const te *t);
 
 bool type_eq(const te *restrict a, const te *restrict b);
 
+bool type_un_eq(un a, un b);
+
 // check if b exists on on a parents
 bool type_ic(const te *restrict a, const te *restrict b);
+
+size_t type_hsh(const te *t);
+
+size_t type_un_hsh(un v);
+
+bool type_has_refs(const te *t);
