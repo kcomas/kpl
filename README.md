@@ -27,9 +27,10 @@ make
 
 [opts] are
 -h: show help message
+./kpl -h
 
 -d[steps]: show debugging output from p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)
-eg ./kpl -dps ./ex/ack.kpl # show the paser and assembler output for the file ./ex/ack.kpl
+./kpl -dps ./ex/ack.kpl # show the paser and assembler output for the file ./ex/ack.kpl
 ```
 
 #### Example
