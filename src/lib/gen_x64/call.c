@@ -115,6 +115,7 @@ static gen_stat call_arg(const gen *g, gen_st *st, te *ci, as *a, vr *args, cons
                     case X64_TYPE(U5):
                     case X64_TYPE(U6):
                     case X64_TYPE(I6):
+                        // TODO optimize
                         if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                         break;
                     default:

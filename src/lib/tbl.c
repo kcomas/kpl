@@ -118,7 +118,7 @@ tbl_stat tbl_g_i(tbl *t, un k, te **kv) {
 #endif
 
 #ifndef TBL_INS
-    #define TBL_INS 4
+    #define TBL_INS 2
 #endif
 
 static tbl_stat rsize(tbl *t) {
