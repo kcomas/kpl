@@ -3,14 +3,46 @@
 
 static const alfr al_main = { .a = malloc, .f = free };
 
+static int usage(const char *name) {
+    printf("\e[1musage: %s [opts] file.kpl\n", name);
+    printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)\n");
+    printf(" -h show this msg\n\e[0m");
+    return 1;
+}
+
+static const uint32_t dopts[26] = {
+    ['p' - 'a'] = Z_D_FLG(P),
+    ['a' - 'a'] = Z_D_FLG(A),
+    ['f' - 'a'] = Z_D_FLG(F),
+    ['c' - 'a'] = Z_D_FLG(C),
+    ['o' - 'a'] = Z_D_FLG(O),
+    ['g' - 'a'] = Z_D_FLG(G),
+    ['s' - 'a'] = Z_D_FLG(S),
+};
+
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("\e[1mUsage: %s file.kpl\n\e[0m", argv[0]);
-        return 1;
+    if (argc < 2) return usage(argv[0]);
+    int i = 1, x = 1, o = 0;
+    uint32_t dflgs = 0;
+    while (i < argc && argv[i][0] == '-') {
+        if (argv[i][x] == 'h') return usage(argv[0]);
+        if (argv[i][x] == 'd') {
+            while (argv[i][++x] != '\0') {
+                o = argv[i][x] - 'a';
+                if (o < 0 || o > 25 || !dopts[o]) {
+                    printf("\e[1;91minv -d opt: %c\n\e[0m", argv[i][x]);
+                    return usage(argv[0]);
+                }
+                dflgs |= dopts[o];
+            }
+            x = 1;
+        }
+        i++;
     }
-    mc *fn = mc_i_cstr(argv[1], &al_main);
+    if (i == argc) return usage(argv[0]);
+    mc *fn = mc_i_cstr(argv[i], &al_main);
     tbl *et = NULL;
-    err *e = z(fn, &et);
+    err *e = z(fn, &et, dflgs);
     mc_f(fn);
     tbl_f(et);
     if (e) {
