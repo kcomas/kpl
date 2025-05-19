@@ -10,7 +10,7 @@ static int usage(const char *name) {
     return 1;
 }
 
-static const uint32_t dopts[26] = {
+static const uint8_t dopts[26] = {
     ['p' - 'a'] = Z_D_FLG(P),
     ['a' - 'a'] = Z_D_FLG(A),
     ['f' - 'a'] = Z_D_FLG(F),
@@ -23,7 +23,7 @@ static const uint32_t dopts[26] = {
 int main(int argc, char *argv[]) {
     if (argc < 2) return usage(argv[0]);
     int i = 1, x = 1, o = 0;
-    uint32_t dflgs = 0;
+    uint8_t dflgs = 0;
     while (i < argc && argv[i][0] == '-') {
         if (argv[i][x] == 'h') return usage(argv[0]);
         if (argv[i][x] == 'd') {
