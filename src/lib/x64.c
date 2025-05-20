@@ -1,14 +1,6 @@
 
 #include "x64.h"
 
-#define RIP 5
-
-#define SIB 4
-
-static uint8_t rid(reg r) {
-    return r & 7;
-}
-
 static size_t pg_algn(size_t size) {
     size_t mod = size % getpagesize();
     if (mod) size = size - mod + getpagesize();
@@ -21,6 +13,30 @@ uint8_t *x64_mmap(size_t size) {
 
 void x64_munmap(size_t size, uint8_t *m) {
     munmap(m, pg_algn(size));
+}
+
+size_t p = 0;
+
+uint8_t *m = NULL;
+
+#ifndef JIT_M
+    #define JIT_M 1e6
+#endif
+
+static __attribute__((constructor)) void x64_con(void) {
+    m = x64_mmap(JIT_M);
+}
+
+static __attribute__((destructor)) void x64_des(void) {
+    x64_munmap(JIT_M, m);
+}
+
+#define RIP 5
+
+#define SIB 4
+
+static uint8_t rid(reg r) {
+    return r & 7;
 }
 
 x64_stat x64_a(size_t *p, uint8_t *m, uint8_t b) {

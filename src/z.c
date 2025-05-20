@@ -21,10 +21,6 @@ static gen *bg = NULL;
 
 static atg *bt = NULL;
 
-static size_t p = 0;
-
-static uint8_t *m = NULL;
-
 static tbl *tkn_mktbl(void) {
     lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
     te *b = te_i(5, &al_te, NULL);
@@ -67,10 +63,6 @@ static tbl *gen_cls_info_tbl(void) {
     return mktbls(GEN_CLS(L) + 1 + X64_TYPE(F6) + 1);
 }
 
-#ifndef JIT_M
-    #define JIT_M 1e6
-#endif
-
 static __attribute__((constructor)) void z_con(void) {
     tkn *t = tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &z_al)));
     vr *v = vr_i(10, &z_al, (void*) te_f);
@@ -83,7 +75,6 @@ static __attribute__((constructor)) void z_con(void) {
     bst = gen_st_i(&z_al, &al_te, mktbls(10), mktbls(10), vr_i(16, &z_al, NULL), vr_i(16, &z_al, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &z_al, &z_al, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bt = atg_b(atg_i(&z_al, &al_te, &z_al, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)),gen_i_gen(bg), as_i_as(bs)));
-    m = x64_mmap(JIT_M);
 }
 
 static __attribute__((destructor)) void z_des(void) {
@@ -96,7 +87,6 @@ static __attribute__((destructor)) void z_des(void) {
     as_f(bs);
     gen_st_f(bst);
     gen_f(bg);
-    x64_munmap(JIT_M, m);
 }
 
 static void z_e_p(void *d) {

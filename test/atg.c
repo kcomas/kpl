@@ -90,7 +90,7 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
 
 static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     E();
-    size_t p = 0;
+    p = 0;
     err *e = NULL;
     A(as_n(t->a, &p, m, &e) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);

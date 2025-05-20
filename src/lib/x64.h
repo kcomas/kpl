@@ -7,6 +7,10 @@
 #include <sys/mman.h>
 #include "def.h"
 
+extern size_t p;
+
+extern uint8_t *m;
+
 #define X64_STAT(N) JIT_STAT_##N
 
 typedef enum {

@@ -16,7 +16,7 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     A(stat == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
-    size_t p = 0;
+    p = 0;
     e = NULL;
     as_stat astat = as_n(a, &p, m, &e);
     A(astat == AS_STAT(OK), "as_n");
@@ -45,7 +45,7 @@ T(b) {
     A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
     printf("STATE AFTER\n");
     gen_st_p(st);
-    size_t p = 0;
+    p = 0;
     e = NULL;
     A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     gen_p(g, m);
@@ -86,7 +86,7 @@ T(call) {
     gen_p(gc, NULL);
     gen_st_f(st);
     gen_f(gc);
-    size_t p = 0;
+    p = 0;
     A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t x = 3, y = 5, z = 7;
