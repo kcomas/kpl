@@ -221,7 +221,7 @@ static atg_stat v_te_fn(atg *t, gen *g, te *an, err **e) {
     te *kv, *h, *n;
     uint32_t ti = t->tc++, eid = 0;
     lst *l = an->d[4].p;
-    if (!l) return atg_err(t, an, e, "atg inv te len");
+    if (!l || l->l < 2) return atg_err(t, an, e, "atg inv te len");
     if (tbl_g_i(t->dt, an->d[3], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv des");
     if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), ti), gen_call_m(g, 3, gen_data(g, X64_TYPE(U6), U6(l->l)), gen_data(g, X64_TYPE(M), P(&al_te)), gen_data(g, X64_TYPE(M), kv->d[1])), gen_data(g, X64_TYPE(M), P(te_i))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     h = l->h;
