@@ -138,15 +138,19 @@ T(lfile) {
     te *kv;
     A(tbl_g_i(et, P(f), &kv) == TBL_STAT(OK), "export not found");
     mc_f(f);
-    A(((te*) kv->d[2].p)->d[1].u4 == TYPE(I6), "inv export type");
+    A(kv->d[2].p && ((te*) kv->d[2].p)->d[1].u4 == TYPE(I6), "inv export type");
     A(kv->d[1].i6 == 5050, "inv export value");
     tbl_f(et);
 }
 
-/*
 T(vrmul) {
-    V(TPGM(vrmul), RN(AN(NULL, LN(LT(2, "i", U6(0), NULL, "v", U6(0), NULL), L(1,
-        ON(NULL, DFN, NULL, NULL)
+    V(TPGM(vrmul), RN(AN(NULL, LN(LT(2, "i", U6(0), NULL, "v", U6(0), NULL), L(4,
+        ON(NULL, DFN, EN("i", U6(0), NULL), SN(F6, F6(1.1))),
+        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, TN(VR), VN(NULL, L(1, EN("i", U6(0), NULL))))),
+        ON(NULL, LOOP,
+            LN(NULL, L(1, ON(NULL, LT, EN("i", U6(0), NULL), SN(I6, I6(100))))),
+            LN(NULL, L(1, ON(NULL, CNCTA, EN("v", U6(0), NULL), ON(NULL, MULA, EN("i", U6(0), NULL), SN(I6, I6(2))))))
+        ),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", U6(0), NULL))
     )), NULL)));
 }
-*/

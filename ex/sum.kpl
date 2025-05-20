@@ -1,5 +1,6 @@
 
 // sum 1 to 100
+// used in tests var b needs to be exported
 
 a::0
 i::0
