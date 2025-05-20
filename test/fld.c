@@ -126,3 +126,27 @@ T(teadd) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), NULL))
     )), NULL)));
 }
+
+T(lfile) {
+    mc *f = mc_i_cstr("./ex/sum.kpl", &ast_am);
+    tbl *et = NULL;
+    err *e = z(f, &et, 0);
+    A(!e, "lfile error");
+    mc_f(f);
+    A(et->i->l == 1, "inv tbl len");
+    f = mc_i_cstr("b", &ast_am);
+    te *kv;
+    A(tbl_g_i(et, P(f), &kv) == TBL_STAT(OK), "export not found");
+    mc_f(f);
+    A(((te*) kv->d[2].p)->d[1].u4 == TYPE(I6), "inv export type");
+    A(kv->d[1].i6 == 5050, "inv export value");
+    tbl_f(et);
+}
+
+/*
+T(vrmul) {
+    V(TPGM(vrmul), RN(AN(NULL, LN(LT(2, "i", U6(0), NULL, "v", U6(0), NULL), L(1,
+        ON(NULL, DFN, NULL, NULL)
+    )), NULL)));
+}
+*/

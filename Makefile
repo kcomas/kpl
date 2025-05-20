@@ -106,32 +106,37 @@ OBJS += $(AST_OBJS)
 $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST)/ast_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
-FLD = fld$(TNAME)
 FLD_OBJS = $(SRC)/fld.o $(LSRC)/fld.o $(AST_OBJS)
 OBJS += $(FLD_OBJS)
-$(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
-> $(CCOBJ)
 
-CHK = chk$(TNAME)
 CHK_OBJS = $(SRC)/chk.o $(LSRC)/chk.o $(FLD_OBJS) $(patsubst %.c,%.o,$(wildcard $(SRC)/chk/*.c))
 OBJS += $(CHK_OBJS)
-$(CHK): $(CHK_OBJS) $(TEST)/chk.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
-> $(CCOBJ)
 
-OPT = opt$(TNAME)
 OPT_OBJS = $(SRC)/opt.o $(CHK_OBJS)
 OBJS += $(OPT_OBJS)
-$(OPT): $(OPT_OBJS) $(TEST)/opt.o $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
-> $(CCOBJ)
 
-ATG = atg$(TNAME)
 ATG_OBJS = $(LSRC)/atg.o $(OPT_OBJS) $(GEN_OBJS)
 ATGX64_OBJS = $(SRC)/atg_x64.o $(GENX64_OBJS) $(patsubst %.c,%.o,$(wildcard $(SRC)/atg_x64/*.c))
 OBJS += $(ATG_OBJS) $(ATGX64_OBJS)
-$(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS))
+
+OBJS := $(SRC)/z.o $(sort $(OBJS))
+
+FLD = fld$(TNAME)
+$(FLD): $(OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
-OBJS := $(sort $(OBJS))
+CHK = chk$(TNAME)
+$(CHK): $(OBJS) $(TEST)/chk.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
+OPT = opt$(TNAME)
+$(OPT): $(OBJS) $(TEST)/opt.o $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
+ATG = atg$(TNAME)
+$(ATG): $(OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
 
 FSAN = -fsanitize=address,leak,undefined
 #$(TESTS): OO = -O2
@@ -147,7 +152,7 @@ show_$(TESTS):
 
 $(NAME): OO = -O2
 $(NAME): WFLAGS += -Werror
-$(NAME): $(SRC)/main.o $(SRC)/z.o $(OBJS)
+$(NAME): $(SRC)/main.o $(OBJS)
 > $(CCOBJ)
 
 clean:

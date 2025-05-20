@@ -4,7 +4,7 @@
 #define _GNU_SOURCE
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "./atg_x64.h"
+#include "atg_x64.h"
 
 #define Z_D_FLG(N) Z_D_FLG_##N
 
