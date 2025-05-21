@@ -117,10 +117,6 @@ tbl_stat tbl_g_i(tbl *t, un k, te **kv) {
     #define TBL_MUL 2
 #endif
 
-#ifndef TBL_INS
-    #define TBL_INS 2
-#endif
-
 static tbl_stat rsize(tbl *t) {
     te *nb = te_i(t->b->l * TBL_MUL, t->b->af, t->b->tf);
     te_f(t->b);
@@ -145,7 +141,7 @@ static tbl_stat rsize(tbl *t) {
 
 static bool ins(tbl *t, te *kv) {
     size_t idx = t->hf(kv->d[0]) % t->b->l;
-    size_t i = idx, r = 0, maxr = t->i->l / TBL_INS;
+    size_t i = idx, r = 0, maxr = t->b->l - t->i->l; // total buckets - used buckets
     do {
         te *li = t->b->d[i].p;
         if (li == NULL) {
