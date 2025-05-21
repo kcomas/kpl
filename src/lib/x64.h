@@ -427,5 +427,8 @@ x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
 // jnle jg dword
 x64_stat x64_jnlejg_d(size_t *p, uint8_t *m, uint32_t dw);
 
+// loop byte
+x64_stat x64_loop_b(size_t *p, uint8_t *m, uint8_t b);
+
 // setl setnge rax
 x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r);

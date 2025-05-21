@@ -608,4 +608,6 @@ ZB(jnlejg, 0x7F);
 
 ZZD(jnlejg, 0x0F, 0x8F);
 
+ZB(loop, 0xE2);
+
 ZZRE(setlsetnge, 0x0F, 0x9C, 0);

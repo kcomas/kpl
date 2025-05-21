@@ -424,11 +424,15 @@ T(callwstck) {
     A(a == 7, "stk");
 }
 
-/*
 T(vrpushprint) {
     gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    // TODO push doubles
     S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
     BUILD(g, m);
+    vr *v = vr_i(1, &am, NULL);
+    ((void(*)(vr**)) m)(&v);
+    for (size_t i = 0; i < v->l; i++) printf("%lf, ", v->d[i].f6);
+    putchar('\n');
+    vr_f(v);
 }
-*/

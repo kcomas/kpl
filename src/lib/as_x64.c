@@ -116,6 +116,7 @@ static const char *as_inst_str(size_t id) {
         "JNG",
         "JNLE",
         "JG",
+        "LOOP",
         "_END"
     };
     const char *s = "INV";
