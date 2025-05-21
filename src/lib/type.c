@@ -30,13 +30,13 @@ const char *type_str(type t) {
         "MC",
         "_H",
         "UN",
-        "HH",
         "ST",
         "_F",
         "FN",
         "NF",
         "_C",
         "TE",
+        "KV",
         "BA",
         "TD",
         "CJ",
@@ -59,9 +59,9 @@ static uint8_t props[TYPE(_END)] = {
     [TYPE(LT)] = REF | DES,
     [TYPE(MC)] = REF,
     [TYPE(UN)] = REF | DES,
-    [TYPE(HH)] = REF | DES,
     [TYPE(ST)] = REF | DES,
-    [TYPE(TE)] = REF | DES
+    [TYPE(TE)] = REF | DES,
+    [TYPE(KV)] = REF | DES
 };
 
 bool type_is_ref(type t) {
@@ -188,7 +188,7 @@ te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...) {
     te *t = type_te_i(af, p, l), *a;
     va_start(args, l);
     for (size_t i = 0; i < l; i++) {
-        a = te_c(va_arg(args, void*));
+        a = va_arg(args, void*);
         a->d[0] = P(t);
         t->d[2 + i] = P(a);
     }
@@ -387,4 +387,29 @@ bool type_has_refs(const te *t) {
             break;
     }
     return false;
+}
+
+te *type_cpy(const te *t) {
+    te *c = NULL;
+    if (!t) return c;
+    switch (type_g_c(t->d[1].u4)) {
+        case TYPE_CLS(S):
+            c = type_s_i(t->af, t->d[0].p, t->d[1].u4);
+            break;
+        case TYPE_CLS(V):
+            STOP("TODO TYPE CPY V");
+            break;
+        case TYPE_CLS(H):
+            STOP("TODO TYPE CPY H");
+            break;
+        case TYPE_CLS(F):
+            STOP("TODO TYPE CPY F");
+            break;
+        case TYPE_CLS(C):
+            STOP("TODO TYPE CPY C");
+            break;
+        default:
+            break;
+    }
+    return c;
 }

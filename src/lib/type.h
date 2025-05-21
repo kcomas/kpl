@@ -39,7 +39,6 @@ typedef enum {
     // hash
     TYPE(_H),
     TYPE(UN),
-    TYPE(HH),
     TYPE(ST),
     // function
     TYPE(_F),
@@ -48,6 +47,7 @@ typedef enum {
     // collection
     TYPE(_C),
     TYPE(TE),
+    TYPE(KV),
     TYPE(BA),
     TYPE(TD),
     TYPE(CJ),
@@ -111,3 +111,5 @@ size_t type_hsh(const te *t);
 size_t type_un_hsh(un v);
 
 bool type_has_refs(const te *t);
+
+te *type_cpy(const te *t);

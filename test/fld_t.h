@@ -25,5 +25,4 @@ tbl *fld_type_tbl_i(size_t n, ...);
 
 #define TFS(FT, RT, A, S) type_f_i(&al_te, NULL, TYPE(FT), RT, A, S)
 
-
 #define TS(T) type_s_i(&al_te, NULL, TYPE(T))
