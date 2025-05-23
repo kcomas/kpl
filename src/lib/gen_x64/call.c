@@ -13,11 +13,12 @@ typedef struct {
     uint8_t r;
     int8_t i, a;
     un d;
-} rac; // reg to, arg idx, regs from, data
+} rac; // reg to, arg idx, reg from, data
 
 static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *restrict cret, vr *restrict vs, vr *restrict va, te *restrict cfn, uint8_t flgs) {
     gen_stat stat;
-    uint8_t ra = 0, xa = 6;
+    bool swaps = false;
+    uint8_t ra = 0, xa = 6, cr = 0, cx = 0;
     int32_t idx;
     rac tmp;
     rac args[] = {
@@ -150,25 +151,27 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                 tmp = args[i];
                 args[i] = args[n];
                 args[n] = tmp;
+                swaps = true;
             }
         }
     }
-    uint8_t cr = 0, cx = 0;
-    for (ssize_t i = 11; i > 0; i--) {
-        if (args[i].a < 0) continue;
-        for (ssize_t n = i - 1; n >= 0; n--) {
-            if (args[n].a < 0) continue;
-            if (args[i].a == args[n].r) {
-                if (args[i].a < XMM(0)) {
-                    if (st->rstk->l <= cr) return gen_err(g, ci, e, "gen r clash no regs");
-                    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), st->rstk->d[cr]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    args[i].a = st->rstk->d[cr].u3;
-                    cr++;
-                } else {
-                    if (st->xstk->l <= cx) return gen_err(g, ci, e, "gen x clash no regs");
-                    if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(R), st->xstk->d[cx]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    args[i].a = st->xstk->d[cx].u3;
-                    cx++;
+    if (swaps) {
+        for (ssize_t i = 11; i > 0; i--) {
+            if (args[i].a < 0) continue;
+            for (ssize_t n = i - 1; n >= 0; n--) {
+                if (args[n].a < 0) continue;
+                if (args[i].a == args[n].r) {
+                    if (args[i].a < XMM(0)) {
+                        if (st->rstk->l <= cr) return gen_err(g, ci, e, "gen r clash no regs");
+                        if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), st->rstk->d[cr]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                        args[i].a = st->rstk->d[cr].u3;
+                        cr++;
+                    } else {
+                        if (st->xstk->l <= cx) return gen_err(g, ci, e, "gen x clash no regs");
+                        if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(R), st->xstk->d[cx]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                        args[i].a = st->xstk->d[cx].u3;
+                        cx++;
+                    }
                 }
             }
         }
@@ -219,7 +222,11 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         if (args[i].a > -1) {
             if (args[i].r != args[i].a && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(args[i].r)), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         } else {
-            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(args[i].r)), as_arg_i(a, ARG_ID(QW), args[i].d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (args[i].d.u6) {
+                if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(args[i].r)), as_arg_i(a, ARG_ID(QW), args[i].d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            } else {
+                if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(args[i].r)), as_arg_i(a, ARG_ID(R), U3(args[i].r)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            }
         }
     }
     for (size_t i = 6; i < xa; i++) {
@@ -228,7 +235,11 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         if (args[i].a > -1) {
             if (args[i].r != args[i].a && gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(X), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         } else {
-            if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(QW), args[i].d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (args[i].d.f6) {
+                if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(QW), args[i].d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            } else {
+                if (gen_as(a, AS_X64(PXOR), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(X), U3(args[i].r)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            }
         }
     }
     if (vs) {
