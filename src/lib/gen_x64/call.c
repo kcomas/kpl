@@ -143,8 +143,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             }
         }
     }
-    drop_atm_kv_n(st, kv, ci, kvi);
-    drop_atm_kv(st, ci, rkv);
     for (ssize_t i = 11; i > 0; i--) {
         if (args[i].a < 0) continue;
         for (ssize_t n = i - 1; n >= 0; n--) {
@@ -155,6 +153,28 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             }
         }
     }
+    uint8_t cr = 0, cx = 0;
+    for (ssize_t i = 11; i > 0; i--) {
+        if (args[i].a < 0) continue;
+        for (ssize_t n = i - 1; n >= 0; n--) {
+            if (args[n].a < 0) continue;
+            if (args[i].a == args[n].r) {
+                if (args[i].a < XMM(0)) {
+                    if (st->rstk->l <= cr) return gen_err(g, ci, e, "gen r clash no regs");
+                    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), st->rstk->d[cr]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    args[i].a = st->rstk->d[cr].u3;
+                    cr++;
+                } else {
+                    if (st->xstk->l <= cx) return gen_err(g, ci, e, "gen x clash no regs");
+                    if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(R), st->xstk->d[cx]), as_arg_i(a, ARG_ID(R), U3(args[i].a)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    args[i].a = st->xstk->d[cx].u3;
+                    cx++;
+                }
+            }
+        }
+    }
+    drop_atm_kv_n(st, kv, ci, kvi);
+    drop_atm_kv(st, ci, rkv);
     uint8_t ri = 0, xi = 0, vi = 0, fr;
     reg rs[12], xs[12];
     if (!(flgs & CFLG(NPR))) {
