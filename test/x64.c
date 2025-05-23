@@ -356,8 +356,8 @@ T(sibupper) {
     printj(p, m);
     X64_RS();
     int64_t r = ((int64_t(*)(int64_t*, size_t)) m)(a, 1);
-    X64_RR();
     A(r == a[1], "inv sib");
+    X64_RR();
 }
 
 T(addp) {
@@ -367,4 +367,18 @@ T(addp) {
     x64_ret(&p, m);
     ((void(*)(int64_t*, int64_t)) m)(&a, 4);
     A(a == 9, "inv add");
+}
+
+T(movsd_xrmo) {
+    p = 0;
+    x64_movsd_xrmo(&p, m, XMM(0), R(DI), R(SI), S8);
+    x64_ret(&p, m);
+    // double v[] = {1.1, 2.2, 3.3};
+    double *v = calloc(3, sizeof(double));
+    v[0] = 1.1;
+    v[1] = 2.2;
+    v[2] = 3.3;
+    double r = ((double(*)(double[], uint64_t)) m)(v, 2);
+    A(r == v[2], "sib");
+    free(v);
 }

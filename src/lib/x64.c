@@ -285,6 +285,17 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
+#define ZRRMD(N, C, RR, RM) x64_stat x64_##N##_rrmd(size_t *p, uint8_t *m, reg d, reg s, uint32_t dsp) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(10) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
+}
+
 #define ZRRMO(N, C, RR, RS, RM) x64_stat x64_##N##_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) { \
     if (RR > R(15)) return X64_STAT(INV_REG); \
     if (RS > R(15)) return X64_STAT(INV_REG); \
@@ -391,6 +402,29 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
+#define ZZZXRMO(N, C1, C2, C3, RR, RS, RM) x64_stat x64_##N##_xrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 6, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+}
+
+#define ZZZXRMOB(N, C1, C2, C3, RR, RS, RM) x64_stat x64_##N##_xrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 6, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
+}
+
 Z(nop, 0x90);
 
 Z(ret, 0xC3);
@@ -454,6 +488,10 @@ ZZZXI(movsd, 0xF2, 0x0F, 0x10);
 ZZZRMX(movsd, 0xF2, 0x0F, 0x11, s, d);
 
 ZZZRMBX(movsd, 0xF2, 0x0F, 0x11, s, d);
+
+ZZZXRMO(movsd, 0xF2, 0x0F, 0x10, d, o, s);
+
+ZZZXRMOB(movsd, 0xF2, 0x0F, 0x10, d, o, s);
 
 ZRRMB(lea, 0x8D, d, s);
 
@@ -522,6 +560,10 @@ ZZZXX(pxor, 0x66, 0x0F, 0xEF, d, s);
 ZRR(cmp, 0x39, s, d);
 
 ZRRM(cmp, 0x3B, d, s);
+
+ZRRMB(cmp, 0x3B, d, s);
+
+ZRRMD(cmp, 0x3B, d, s);
 
 ZRI(cmp, 0x3B);
 

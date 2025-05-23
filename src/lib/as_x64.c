@@ -289,6 +289,7 @@ static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
 // internal
 void as_r_b(as *a);
 void as_ro_b(as *a);
+void as_xo_b(as *a);
 void as_rx_b(as *a);
 void as_x_b(as *a);
 void as_jmp_b(as *a);
@@ -301,6 +302,7 @@ as *as_b(as *a) {
     as_jmp_b(a);
     as_r_b(a);
     as_ro_b(a);
+    as_xo_b(a);
     as_x_b(a);
     as_rx_b(a);
     return a;
