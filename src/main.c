@@ -38,12 +38,16 @@ int main(int argc, char *argv[]) {
                 }
                 x = 1;
                 break;
+            case '-':
+                i++;
+                goto run;
             default:
                 printf("\e[1;91minv opt -%c\n\e[0m", argv[i][x]);
                 return usage(argv[0]);
         }
         i++;
     }
+    run:
     if (i == argc) {
         HERE("TODO REPL");
         return usage(argv[0]);

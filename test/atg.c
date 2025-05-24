@@ -501,6 +501,7 @@ T(teadd) {
     AR(0);
 }
 
+/*
 T(vrmul) {
     AI(TPGM(vrmul), 1, 1);
     te *tvr = type_v_i(&al_te, NULL, TYPE(VR), type_i(&al_te, NULL, TYPE(F6)));
@@ -508,3 +509,4 @@ T(vrmul) {
     te_f(tvr);
     V(NULL, NULL);
 }
+*/
