@@ -3,6 +3,8 @@
 
 #include "def.h"
 
+extern const alfr al_vr;
+
 #define VR_STAT(N) VR_STAT_##N
 
 typedef enum {

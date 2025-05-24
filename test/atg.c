@@ -112,7 +112,7 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     RC(); \
     fast(_t, a, &an, bopt, false); \
     atg *t = atg_i_atg(batg); \
-    gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL)); \
+    gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL)); \
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->dt->i->l == DL && t->q->l == QL, "atg_q"); \
     te *dh = t->dt->i->h
 

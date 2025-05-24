@@ -1,8 +1,48 @@
 
 #include "vr.h"
 
+static vr *vah = NULL;
+
+#define VR_S_MIN 5
+
+static void *al(size_t s) {
+    if (s < VR_S_MIN) s = VR_S_MIN;
+    vr *h = vah;
+    while (h) {
+        if (h->s >= s) break;
+        h = h->d[1].p;
+    }
+    if (h && h == vah) vah = vah->d[1].p;
+    else if (h) {
+        ((vr*) h->d[0].p)->d[1] = h->d[1];
+        if (h->d[1].p) ((vr*) h->d[1].p)->d[0] = h->d[0];
+    } else h = malloc(sizeof(vr) + sizeof(un) * s);
+    return h;
+}
+
+static void fr(void *p) {
+    vr *v = p;
+    v->d[0] = P(NULL);
+    v->d[1] = P(NULL);
+    if (vah) {
+        vah->d[0] = P(v);
+        v->d[1] = P(vah);
+    }
+    vah = v;
+}
+
+const alfr al_vr = { .a = al, .f = fr };
+
+static __attribute__((destructor(103))) void al_vr_f(void) {
+    while (vah) {
+        vr *tmp = vah;
+        vah = vah->d[1].p;
+        free(tmp);
+    }
+}
+
 vr *vr_i(size_t s, const alfr *af, frfn *df) {
-    vr *v = af->a(sizeof(vr) + sizeof(un) * s);
+    vr *v = af->a(s);
     v->r = 1;
     v->s = s;
     v->l = 0;
@@ -57,7 +97,7 @@ static vr *resize(vr *v) {
     vr *nv = vr_i(v->s * VR_RES, v->af, v->df);
     nv->l = v->l;
     for (size_t i = 0; i < v->l; i++) nv->d[i] = v->d[i];
-    nv->af->f(v);
+    v->af->f(v);
     return nv;
 }
 
