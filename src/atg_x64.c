@@ -175,6 +175,18 @@ static te *atg_te_idx_d(gen *g, uint32_t id) {
     return gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx));
 }
 
+/*
+// calc offset to index into vr
+static uint32_t atg_vr_d_c_o(uint32_t id) {
+    return sizeof(void*) * 5 + sizeof(void*) * id;
+}
+
+static te *atg_vr_idx_d(gen *g, uint32_t id) {
+    uint32_t idx = atg_vr_d_c_o(id);
+    return gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx));
+}
+*/
+
 static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     te *rn = an->d[0].p;
@@ -241,13 +253,16 @@ static atg_stat v_te_fn(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat v_vr_fn(atg *t, gen *g, te *an, err **e) {
-    te *kv;
-    uint32_t ti = t->tc++;
+    te *kv, *h, *n;
+    uint32_t ti = t->tc++, eid = 0;
     lst *l = an->d[4].p;
     if (tbl_g_i(t->dt, an->d[3], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv vr des");
     (void) g;
     (void) ti;
+    (void) eid;
     (void) l;
+    (void) h;
+    (void) n;
     return atg_err(t, an, e, "TODO BUILD VR");
 }
 

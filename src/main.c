@@ -21,7 +21,7 @@ static const uint8_t dopts[26] = {
 };
 
 int main(int argc, char *argv[]) {
-    int i = 1, x = 1, o = 0;
+    ssize_t i = 1, x = 1, o = 0;
     uint8_t dflgs = 0;
     while (i < argc && argv[i][0] == '-') {
         switch (argv[i][x]) {
