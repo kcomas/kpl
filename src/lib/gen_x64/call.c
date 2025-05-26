@@ -103,7 +103,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                     switch (gen_var_g_t(ovt)) {
                         case X64_TYPE(F5):
                         case X64_TYPE(F6):
-                            if (gen_as_rrmbd(a, AS_X64(MOVSD), args[xa].a, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                            if (gen_as_rrmbd(a, AS_X64(MOVSD), args[xa].r, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                             args[xa].a = args[xa].r;
                             xa++;
                             break;
@@ -114,14 +114,14 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                             break;
                     }
                     break;
-                    break;
                 case GEN_CLS(I):
                     switch (gen_var_g_t(ovt)) {
                         case X64_TYPE(F5):
                         case X64_TYPE(F6):
                             args[xa].i = i;
                             if (st->xstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp x regs");
-                            if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOVSD), ovt->d[1].p, as_arg_i(a, ARG_ID(X), U3(args[xa].r)), st->xstk->d[0].u3, ARG_ID(X))) != GEN_STAT(OK)) return stat;
+                            if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                            if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOVSD), ovt->d[1].p, as_arg_i(a, ARG_ID(X), U3(args[xa].r)), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
                             args[xa].a = args[xa].r;
                             xa++;
                             break;
@@ -178,7 +178,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     }
     drop_atm_kv_n(st, kv, ci, kvi);
     drop_atm_kv(st, ci, rkv);
-    uint8_t ri = 0, xi = 0, vi = 0, fr;
+    uint8_t ri = 0, xi = 0, vi = 0;
     reg rs[12], xs[12];
     if (!(flgs & CFLG(NPR))) {
         h = st->atm->i->h;
@@ -275,9 +275,9 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), cfn->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             break;
         case GEN_CLS(D):
-            if ((stat = rstk_b(st, &fr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen no reg for call");
-            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(fr)), as_arg_i(a, ARG_ID(QW), cfn->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-            if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), U3(fr)), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call mem addr no available regs");
+            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(st->rstk->d[0].u3)), as_arg_i(a, ARG_ID(QW), cfn->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), U3(st->rstk->d[0].u3)), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             break;
         default:
             return gen_err(g, ci, e, "gen fn cls inv");

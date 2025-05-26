@@ -10,6 +10,7 @@
 typedef enum {
     GEN_OP(_START),
     GEN_OP(LBL),
+    GEN_OP(NOP), // used as tmp vars after mutli cmd gen
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
     GEN_OP(SET),
@@ -72,6 +73,8 @@ x64_type x64_type_to_ref(x64_type xt);
 
 void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
+void ovt_p(const te *ovt);
+
 void gen_p(const gen *g, const uint8_t *m);
 
 te *gen_call_v(gen *g, vr *v);
@@ -118,8 +121,6 @@ void gen_st_p(const gen_st *st);
 
 // pass 1
 gen_stat gen_st_p1(gen *g, gen_st *st);
-
-gen_stat rstk_b(const gen_st *st, uint8_t *r);
 
 // get idx for stack var
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx);

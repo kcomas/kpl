@@ -11,7 +11,7 @@
     te *lblc = as_lbl_g_c(a, arg1->d[1].u6); \
     if (!lblc) return false; \
     if (lblc->d[9].u6) { \
-        ssize_t diff = lblc->d[8].u6 - *p - sizeof(uint8_t); \
+        ssize_t diff = lblc->d[8].u6 - *p - sizeof(uint8_t) * 2; \
         if (diff >= INT8_MIN && diff <= INT8_MAX) return x64_##N##_b(p, m, diff) == X64_STAT(OK); \
         return x64_##N##_d(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK); \
     } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false; \

@@ -34,6 +34,7 @@ INST_XI(movq);
 INST_XI(movsd);
 INST_XI(addsd);
 INST_XI(subsd);
+INST_XI(mulsd);
 INST_XI(ucomisd);
 INST_XI(comisd);
 
@@ -47,6 +48,7 @@ void as_x_b(as *a) {
     as_op_a(a, AS_X64(SUBSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_subsd_xx, NULL);
     as_op_a(a, AS_X64(SUBSD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_subsd_xi, NULL);
     as_op_a(a, AS_X64(MULSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_mulsd_xx, NULL);
+    as_op_a(a, AS_X64(MULSD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_mulsd_xi, NULL);
     as_op_a(a, AS_X64(DIVSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_divsd_xx, NULL);
     as_op_a(a, AS_X64(PXOR), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_pxor_xx, NULL);
     as_op_a(a, AS_X64(UCOMISD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_ucomisd_xx, NULL);

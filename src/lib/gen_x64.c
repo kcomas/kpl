@@ -5,6 +5,7 @@ const char *gen_op_str(gen_op go) {
     static const char *gos[] = {
         "_START",
         "LBL",
+        "NOP",
         "ENTER",
         "LEAVE",
         "SET",
@@ -107,7 +108,7 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
     }
 }
 
-static void ovt_p(const te *ovt) {
+void ovt_p(const te *ovt) {
     vr *m;
     printf("(%s ", gen_cls_str(gen_var_g_c(ovt)));
     switch (gen_var_g_c(ovt)) {
@@ -434,13 +435,17 @@ gen_stat gen_st_p1(gen *g, gen_st *st) {
     te *h = g->code->h;
     while (h) {
         te *o = h->d[0].p;
+        if (o->d[0].u6 == GEN_OP(NOP)) { // only used to get ovt
+            h = h->d[2].p;
+            continue;
+        }
         for (size_t i = 1; i < 4; i++) {
             if (!o->d[i].p) break;
             else if ((stat = gen_st_p1_ovt(st, o->d[i].p, o)) != GEN_STAT(OK)) return stat;
         }
         h = h->d[2].p;
     }
-    if (st->rac > 6 || st->xac > 6) return GEN_STAT(INV); // TODO pass more args via stk
+    if (st->rac > 5 || st->xac > 5) return GEN_STAT(INV); // TODO pass more args via stk
     un rx;
     for (uint8_t i = 0; i < st->rac; i++) vr_sb(st->rstk, &rx);
     for (uint8_t i = 0; i < st->xac; i++) vr_sb(st->xstk, &rx);
@@ -458,12 +463,6 @@ void gen_st_f(gen_st *st) {
 
 static void set_code_s(te *ci, as *a) {
     if (!ci->d[5].p && a->code->t) ci->d[5] = P(te_c(a->code->t));
-}
-
-gen_stat rstk_b(const gen_st *st, uint8_t *r) {
-    if (st->rstk->l == 0) return GEN_STAT(INV);
-    *r = st->rstk->d[0].u3;
-    return GEN_STAT(OK);
 }
 
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
@@ -602,6 +601,15 @@ static gen_stat jmp_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat nop_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) g;
+    (void) s;
+    (void) ci;
+    (void) a;
+    (void) e;
+    return GEN_STAT(OK);
+}
+
 // not meant to be used outside
 void gen_enter_leave(gen *g);
 void gen_set(gen *g);
@@ -612,6 +620,7 @@ void gen_ref(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(MM), nop_fn);
     GEN_OP_A1(g, GEN_OP(JMP), GEN_CLS(L), X64_TYPE(N), jmp_fn);
     gen_enter_leave(g);
     gen_set(g);

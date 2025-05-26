@@ -1,0 +1,6 @@
+
+// push values into vec and print
+
+v::VR$[i::1.1]
+<(i;10000)@v,:i*:2
+v/p1
