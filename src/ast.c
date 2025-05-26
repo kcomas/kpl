@@ -83,7 +83,7 @@ void node_err_p(void *d) {
     }
     const mc *str = node_root_mc(d);
     te *tkn = ((te*) d)->d[2].p;
-    printf("\e[1m%d::%d\e[0m ", tkn_m_g_l(tkn) + 1, tkn_m_g_c(tkn));
+    printf("\e[1m%d::%d\e[0m ", tkn_m_g_l(tkn), tkn_m_g_c(tkn));
     for (uint32_t i = s; i < e; i++) putchar(str->d[i]);
 }
 
