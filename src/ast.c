@@ -141,6 +141,14 @@ static ast_stat ast_int(ast *a, te *restrict pan, te *restrict pn, void **vn, er
     return AST_STAT(OK);
 }
 
+static ast_stat ast_str(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
+    te **an = (te**) vn;
+    mc *s;
+    if (tkn_g_str(pn->d[2].p, node_root_mc(pn), a->ma, &s) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast str");
+    *an = ast_s_i(a, pan, pn, ast_s_sg_f, P(type_i(a->ta, NULL, TYPE(SG))), P(s));
+    return AST_STAT(OK);
+}
+
 static ast_stat ast_flt(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
     te **an = (te**) vn;
     double d = 0;
@@ -272,6 +280,7 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(VAR), ast_var);
     ast_a(a, NODE_TYPE(TYPE), ast_type);
     ast_a(a, NODE_TYPE(INT), ast_int);
+    ast_a(a, NODE_TYPE(STR), ast_str);
     ast_a(a, NODE_TYPE(FLT), ast_flt);
     ast_a(a, NODE_TYPE(VEC), ast_vec);
     ast_a(a, NODE_TYPE(OP), ast_op);
@@ -348,6 +357,9 @@ void ast_p(const te *an, size_t idnt) {
                     break;
                 case TYPE(F6):
                     printf(" %lf", an->d[4].f6);
+                    break;
+                case TYPE(SG):
+                    printf(" \"%s\"", (char*) ((mc*) an->d[4].p)->d);
                     break;
                 default:
                     printf("INV S");
@@ -449,11 +461,30 @@ static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
     return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].u6 == eb->d[1].u6 && type_eq(ea->d[2].p, eb->d[2].p) && ast_eq(ea->d[3].p, eb->d[3].p);
 }
 
-static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
-    if (t->d[1].u4 == TYPE(_G)) return a->d[4].u5 == b->d[4].u5;
-    if (t->d[1].u4 == TYPE(VD)) return true;
-    if (t->d[1].u4 >= TYPE(I3) && t->d[1].u4 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
-    if (t->d[1].u4 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
+static bool ast_s_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
+    switch (t->d[1].u4) {
+        case TYPE(_G):
+            return a->d[4].u5 == b->d[4].u5;
+        case TYPE(VD):
+            return true;
+        case TYPE(I3):
+        case TYPE(I4):
+        case TYPE(I5):
+        case TYPE(I6):
+        case TYPE(U3):
+        case TYPE(U4):
+        case TYPE(U5):
+        case TYPE(U6):
+        case TYPE(F5):
+        case TYPE(F6):
+            return a->d[4].u6 == b->d[4].u6;
+        case TYPE(C4):
+            return c4_eq(a->d[4], b->d[4]);
+        case TYPE(SG):
+            return mc_eq(a->d[4].p, b->d[4].p);
+        default:
+            break;
+    }
     return false;
 }
 
@@ -475,7 +506,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(I):
             return mc_eq(a->d[3].p, b->d[3].p);
         case AST_CLS(S):
-            return type_eq(a->d[3].p, b->d[3].p) && ast_v_eq(a->d[3].p, a, b);
+            return type_eq(a->d[3].p, b->d[3].p) && ast_s_eq(a->d[3].p, a, b);
         case AST_CLS(V):
             return type_eq(a->d[3].p, b->d[3].p) && lst_eq(a->d[4].p, b->d[4].p, ast_un_eq);
         case AST_CLS(O):

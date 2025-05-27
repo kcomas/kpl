@@ -89,9 +89,9 @@ T(symtest) {
         tkn_m_p(m, t->s);
         putchar('\n');
         A(tkn_m_g_i(m) == tids[id++], "tid");
-        if (m->d[0].u6 == TCUST(SYM)) {
+        if (tkn_m_g_i(m) == TCUST(SYM)) {
             mc *v;
-            A(tkn_g_mc(m, t->s, 1, &tm, &v) == TKN_STAT(OK), "tkn_g_mc");
+            A(tkn_g_mc(m, t->s, 1, &al_mc, &v) == TKN_STAT(OK), "tkn_g_mc");
             printf("%s\n", (char*) v->d);
             A(strcmp(syms[i++], (char*) v->d) == 0, "sym");
             mc_f(v);
@@ -118,7 +118,7 @@ T(inttest) {
         tkn_m_p(m, t->s);
         putchar('\n');
         A(tkn_m_g_i(m) == tids[id++], "tid");
-        if (m->d[0].u6 == TCUST(NUM)) {
+        if (tkn_m_g_i(m) == TCUST(NUM)) {
             int64_t v = 0;
             A(tkn_g_i6(m, t->s, &v) == TKN_STAT(OK), "tkn_g_i6");
             A(nums[i++] == v, "num");
@@ -156,4 +156,33 @@ T(str) {
     tkn_p(t->t, 0);
     R(t, tids);
     tkn_f(t);
+}
+
+T(strtest) {
+    const char *pgm = "\"abc\" 12 \"1\"";
+    mc *strs[] = {mc_i_cstr("abc", &al_mc), mc_i_cstr("1", &al_mc)};
+    size_t i = 0;
+    const size_t tids[] = {TCUST(STR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(STR)};
+    printf("%s\n", pgm);
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
+    tkn_p(t->t, 0);
+    tkn_stat tstat;
+    te *m = te_i(2, &al_te, NULL);
+    err *e = NULL;
+    size_t id = 0;
+    while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
+        tkn_m_p(m, t->s);
+        putchar('\n');
+        A(tkn_m_g_i(m) == tids[id++], "tid");
+        if (tkn_m_g_i(m) == TCUST(STR)) {
+            mc *v;
+            A(tkn_g_str(m, t->s, &al_mc, &v) == TKN_STAT(OK), "tkn_g_str");
+            A(mc_eq(strs[i++], v), "str");
+            mc_f(v);
+        }
+    }
+    A(tstat == TKN_STAT(END), "END");
+    te_f(m);
+    tkn_f(t);
+    for (size_t i = 0; i < 2; i++) mc_f(strs[i]);
 }

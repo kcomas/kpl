@@ -89,3 +89,5 @@ tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restri
 
 // byte offset + for off start - for off end
 tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v);
+
+tkn_stat tkn_g_str(const te *t, const mc *s, const alfr *af, mc **v);

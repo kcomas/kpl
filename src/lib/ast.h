@@ -70,6 +70,13 @@ ast_stat ast_g_t(te *an, te **type);
 
 #define AST_MIN_LEN 4
 
+// need to be available for S nodes
+void ast_s_f(void *p);
+
+void ast_s_sg_f(void *p);
+
+te *ast_s_i(ast *a, te *restrict pan, te *restrict psr, frfn nf, un ct, un v);
+
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);
 
 typedef ast_stat ast_tf(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e);

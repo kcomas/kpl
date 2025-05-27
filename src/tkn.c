@@ -168,16 +168,24 @@ tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restri
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v) {
-    ssize_t start = tkn_m_g_s(t);
-    ssize_t end = tkn_m_g_e(t);
+static tkn_stat _tkn_g_mc(const mc *s, ssize_t start, ssize_t end, const alfr *af, mc **v) {
     size_t i = 0;
-    if (off > 0) start += off;
-    else end += off;
     if (start < 0 || end < 0 || start > end) return TKN_STAT(INV);
     size_t l = end - start + sizeof(char);
     *v = mc_i(l, af);
     (*v)->l = l;
     while (start < end) (*v)->d[i++] = s->d[start++];
     return TKN_STAT(OK);
+}
+
+tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v) {
+    ssize_t start = tkn_m_g_s(t);
+    ssize_t end = tkn_m_g_e(t);
+    if (off > 0) start += off;
+    else end += off;
+    return _tkn_g_mc(s, start, end, af, v);
+}
+
+tkn_stat tkn_g_str(const te *t, const mc *s, const alfr *af, mc **v) {
+    return _tkn_g_mc(s, tkn_m_g_s(t) + 1, tkn_m_g_e(t) - 1, af, v);
 }
