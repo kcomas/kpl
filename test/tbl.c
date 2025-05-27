@@ -7,11 +7,9 @@ static void kv_f(te *t) {
     t->af->f(t);
 }
 
-const alfr tm = { .a = malloc, .f = free };
-
 static te *kv_i(const char *s, int64_t v) {
     te *t = te_i(2, &al_te, (void*) kv_f);
-    t->d[0] = P(mc_i_cstr(s, &tm));
+    t->d[0] = P(mc_i_cstr(s, &al_mc));
     t->d[1] = I6(v);
     return t;
 }
@@ -49,22 +47,22 @@ T(tbl) {
     }
     te *kv;
     mc *m;
-    m = mc_i_cstr("World", &tm);
+    m = mc_i_cstr("World", &al_mc);
     A(tbl_g_i(t, P(m), &kv) == TBL_STAT(OK), "tbl_g_i");
     mc_f(m);
     printf("%lu\n", kv->d[1].i6);
     A(tbl_a(t, kv_i("World", 789)) == TBL_STAT(OK), "tbl_a");
-    m = mc_i_cstr("World", &tm);
+    m = mc_i_cstr("World", &al_mc);
     A(tbl_g_i(t, P(m), &kv) == TBL_STAT(OK), "tbl_g_i");
     mc_f(m);
     printf("%lu\n", kv->d[1].i6);
     pt(t);
-    m = mc_i_cstr("Hello", &tm);
+    m = mc_i_cstr("Hello", &al_mc);
     A(tbl_s(t, P(m), &kv) == TBL_STAT(OK), "tbl_s");
     mc_f(m);
     printf("%lu\n", kv->d[1].i6);
     kv_f(kv);
-    m = mc_i_cstr("asdf", &tm);
+    m = mc_i_cstr("asdf", &al_mc);
     A(tbl_g_i(t, P(m), &kv) == TBL_STAT(NF), "tbl_g_i");
     mc_f(m);
     h = t->i->h;

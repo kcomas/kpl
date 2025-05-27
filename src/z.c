@@ -64,8 +64,8 @@ static tbl *gen_cls_info_tbl(void) {
 }
 
 static __attribute__((constructor)) void z_con(void) {
-    bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &z_al))), vr_i(10, &al_vr, (void*) te_f)));
-    ba = ast_b(ast_i(&z_al, &al_te, &z_al, &z_al, node_err_p, pig, ali, mktbls(NODE_TYPE(_END)), mktbls(TCUST(_END))));
+    bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &al_mc))), vr_i(10, &al_vr, (void*) te_f)));
+    ba = ast_b(ast_i(&z_al, &al_te, &al_mc, &z_al, node_err_p, pig, ali, mktbls(NODE_TYPE(_END)), mktbls(TCUST(_END))));
     bf = fld_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
     bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, mktbl, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
@@ -104,7 +104,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         close(fd);
         return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
     }
-    pgm = mc_i(sx.stx_size + APLYLSTS + sizeof(char), &z_al);
+    pgm = mc_i(sx.stx_size + APLYLSTS + sizeof(char), &al_mc);
     pgm->d[0] = '{';
     if (read(fd, pgm->d + 1, sx.stx_size) == -1) {
         close(fd);

@@ -128,13 +128,13 @@ T(teadd) {
 }
 
 T(lfile) {
-    mc *f = mc_i_cstr("./ex/sum.kpl", &ast_am);
+    mc *f = mc_i_cstr("./ex/sum.kpl", &al_mc);
     tbl *et = NULL;
     err *e = z(f, &et, 0);
     A(!e, "lfile error");
     mc_f(f);
     A(et->i->l == 1, "inv tbl len");
-    f = mc_i_cstr("b", &ast_am);
+    f = mc_i_cstr("b", &al_mc);
     te *kv;
     A(tbl_g_i(et, P(f), &kv) == TBL_STAT(OK), "export not found");
     mc_f(f);

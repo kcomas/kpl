@@ -1,8 +1,6 @@
 
 #include "z.h"
 
-static const alfr al_main = { .a = malloc, .f = free };
-
 static int usage(const char *name) {
     printf("\e[1musage: %s [opts] file.kpl\n", name);
     printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)\n");
@@ -52,7 +50,7 @@ int main(int argc, char *argv[]) {
         HERE("TODO REPL");
         return usage(argv[0]);
     }
-    mc *fn = mc_i_cstr(argv[i], &al_main);
+    mc *fn = mc_i_cstr(argv[i], &al_mc);
     tbl *et = NULL;
     err *e = z(fn, &et, dflgs);
     mc_f(fn);

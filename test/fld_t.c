@@ -30,7 +30,7 @@ tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
     va_list args;
     va_start(args, n);
     while (n > 0) {
-        mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
+        mc *s = mc_i_cstr(va_arg(args, char*), &al_mc);
         un flgs = va_arg(args, un);
         te *type = va_arg(args, te*);
         te *e = ast_lst_tbl_e_i(a, s, flgs, type);
@@ -47,7 +47,7 @@ tbl *fld_type_tbl_i(size_t n, ...) {
     va_list args;
     va_start(args, n);
     for (size_t i = 0; i < n; i++) {
-        mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
+        mc *s = mc_i_cstr(va_arg(args, char*), &al_mc);
         te *type = va_arg(args, te*);
         size_t id = va_arg(args, size_t);
         type_tbl_a(t, &al_te, s, id, type);
