@@ -19,6 +19,7 @@ typedef enum {
     TCUST(LS),
     TCUST(RS),
     TCUST(SYM),
+    TCUST(STR),
     TCUST(NUM),
     TCUST(VAR),
     // types
@@ -37,6 +38,7 @@ typedef enum {
     TCUST(CST),
     TCUST(IF),
     TCUST(LOOP),
+    TCUST(MTCH),
     TCUST(ADD),
     TCUST(ADDA),
     TCUST(SUB),

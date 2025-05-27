@@ -147,3 +147,13 @@ T(err) {
     tkn_f(t);
     err_f(e);
 }
+
+T(str) {
+    const char *pgm = "a \"b\" c";
+    const uint16_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(STR), TCUST(WS), TCUST(VAR)};
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    printf("%s\n", pgm);
+    tkn_p(t->t, 0);
+    R(t, tids);
+    tkn_f(t);
+}
