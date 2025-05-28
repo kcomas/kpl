@@ -64,14 +64,10 @@ lst *lst_c(lst *l) {
 
 static te *ms(te *h, size_t c, lst_cmp_fn fn) {
     te *th = NULL, *n = NULL, *t, *l, *r;
-    t = h;
     if (c < 2) return h;
     else if (c == 2) {
         t = h->d[2].p;
-        h->d[1] = P(NULL);
-        h->d[2] = P(NULL);
-        t->d[1] = P(NULL);
-        t->d[2] = P(NULL);
+        h->d[1] = h->d[2] = t->d[1] = t->d[2] = P(NULL);
         if (fn(h->d[0], t->d[0]) < 1) {
             h->d[2] = P(t);
             t->d[1] = P(h);
@@ -83,12 +79,11 @@ static te *ms(te *h, size_t c, lst_cmp_fn fn) {
         }
         return th;
     }
-    size_t ch = c / 2;
     t = h;
+    size_t ch = c / 2;
     for (size_t i = 0; i < ch; i++) t = t->d[2].p;
     l = t->d[1].p;
-    l->d[2] = P(NULL);
-    t->d[1] = P(NULL);
+    l->d[2] = t->d[1] = P(NULL);
     l = ms(h, ch, fn);
     r = ms(t, c - ch, fn);
     while (l && r) {
@@ -99,25 +94,19 @@ static te *ms(te *h, size_t c, lst_cmp_fn fn) {
             t = r;
             r = r->d[2].p;
         }
-        if (!th) {
-            th = n = t;
-        } else {
+        if (!th) th = n = t;
+        else {
             n->d[2] = P(t);
             t->d[1] = P(n);
             n = n->d[2].p;
         }
     }
-    while (l) {
-        n->d[2] = P(l);
-        l->d[1] = P(n);
+    t = l ? l : r;
+    while (t) {
+        n->d[2] = P(t);
+        t->d[1] = P(n);
         n = n->d[2].p;
-        l = l->d[2].p;
-    }
-    while (r) {
-        n->d[2] = P(r);
-        r->d[1] = P(n);
-        n = n->d[2].p;
-        r = r->d[2].p;
+        t = t->d[2].p;
     }
     return th;
 }
