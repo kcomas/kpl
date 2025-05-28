@@ -135,6 +135,12 @@ T(sort) {
         h = h->d[2].p;
     }
     putchar('\n');
+    h = a->t;
+    while (h) {
+        printf("%ld ", h->d[0].i6);
+        h = h->d[1].p;
+    }
+    putchar('\n');
     A(lst_eq(a, b, eq_num), "not sorted num");
     lst_f(a);
     lst_f(b);
