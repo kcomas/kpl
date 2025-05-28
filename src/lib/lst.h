@@ -31,11 +31,13 @@ lst *lst_i_lst(const lst *l);
 
 lst *lst_c(lst *l);
 
-size_t lst_g_l(const lst *l);
+typedef ssize_t lst_cmp_fn(un a, un b);
 
-typedef bool lst_cmp_fn(un a, un b);
+void lst_s(lst *l, lst_cmp_fn fn);
 
-bool lst_eq(const lst *restrict a, const lst *restrict b, lst_cmp_fn fn);
+typedef bool lst_eq_fn(un a, un b);
+
+bool lst_eq(const lst *restrict a, const lst *restrict b, lst_eq_fn fn);
 
 lst_stat lst_ab(lst *l, un d);
 

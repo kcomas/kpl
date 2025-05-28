@@ -1,4 +1,5 @@
 
+#include "../src/lib/mc.h"
 #include "../src/lib/lst.h"
 #include "t.h"
 
@@ -72,4 +73,69 @@ T(lst_sb) {
     }
     A(a->l == 0, "lst_sb");
     lst_f(a);
+}
+
+static ssize_t cmp_str(un a, un b) {
+    mc *ma = a.p;
+    mc *mb = b.p;
+    return strcmp((char*) ma->d, (char*) mb->d);
+}
+
+static ssize_t cmp_num(un a, un b) {
+    if (a.i6 < b.i6) return -1;
+    if (a.i6 > b.i6) return 1;
+    return 0;
+}
+
+static bool eq_str(un a, un b) {
+    return mc_eq(a.p, b.p);
+}
+
+static bool eq_num(un a, un b) {
+    return a.i6 == b.i6;
+}
+
+T(sort) {
+    lst *l = lst_i_v(&al_lst, &al_te, (void*) mc_f, 4, mc_i_cstr("d", &al_mc), mc_i_cstr("a", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("b", &al_mc));
+    te *h = l->h;
+    while (h) {
+        printf("%s ", (char*) ((mc*) h->d[0].p)->d);
+        h = h->d[2].p;
+    }
+    putchar('\n');
+    lst_s(l, cmp_str);
+    h = l->h;
+    while (h) {
+        printf("%s ", (char*) ((mc*) h->d[0].p)->d);
+        h = h->d[2].p;
+    }
+    putchar('\n');
+    h = l->t;
+    while (h) {
+        printf("%s ", (char*) ((mc*) h->d[0].p)->d);
+        h = h->d[1].p;
+    }
+    putchar('\n');
+    lst *c = lst_i_v(&al_lst, &al_te, (void*) mc_f, 4, mc_i_cstr("a", &al_mc), mc_i_cstr("b", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("d", &al_mc));
+    A(lst_eq(l, c, eq_str), "not sorted");
+    lst_f(l);
+    lst_f(c);
+    lst *a = lst_i_v(&al_lst, &al_te, NULL, 10, 8, 3, 9, 4, 10, 2, 7, 1, 6, 5);
+    lst *b = lst_i_v(&al_lst, &al_te, NULL, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    h = a->h;
+    while (h) {
+        printf("%ld ", h->d[0].i6);
+        h = h->d[2].p;
+    }
+    putchar('\n');
+    lst_s(a, cmp_num);
+    h = a->h;
+    while (h) {
+        printf("%ld ", h->d[0].i6);
+        h = h->d[2].p;
+    }
+    putchar('\n');
+    A(lst_eq(a, b, eq_num), "not sorted num");
+    lst_f(a);
+    lst_f(b);
 }

@@ -21,10 +21,10 @@ const char *type_str(type t) {
         "U6",
         "F5",
         "F6",
-        "SL",
         "C4",
         "SG",
         "_V",
+        "SL",
         "VR",
         "LT",
         "MC",
@@ -208,7 +208,7 @@ bool type_te_eq(const te *t) {
     return true;
 }
 
-static void type_tbl_p(const tbl *t) {
+static void type_tbl_p(const tbl *t, bool id) {
     if (!t) {
         printf("``");
         return;
@@ -217,7 +217,8 @@ static void type_tbl_p(const tbl *t) {
     while (h) {
         te *li = h->d[0].p;
         type_p(li->d[2].p);
-        printf("`%s[%lu]", (char*) ((mc*) li->d[0].p)->d, li->d[1].u6);
+        if (id) printf("`%s[%lu]", (char*) ((mc*) li->d[0].p)->d, li->d[1].u6);
+        else printf("`%s", (char*) ((mc*) li->d[0].p)->d);
         h = h->d[2].p;
         if (h) putchar(' ');
     }
@@ -238,14 +239,16 @@ void type_p(const te *t) {
             putchar(')');
             break;
         case TYPE_CLS(H):
-            // TODO
+            printf("%s(", type_str(t->d[1].u4));
+            type_tbl_p(t->d[2].p, false);
+            putchar(')');
             break;
         case TYPE_CLS(F):
             printf("%s(", type_str(t->d[1].u4));
-            type_tbl_p(t->d[3].p);
+            type_tbl_p(t->d[3].p, true);
             if (t->d[4].p) {
                 printf(" {");
-                type_tbl_p(t->d[4].p);
+                type_tbl_p(t->d[4].p, true);
                 printf("} ");
             } else putchar(' ');
             type_p(t->d[2].p);

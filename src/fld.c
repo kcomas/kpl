@@ -54,9 +54,7 @@ static bool op_lr_lst_t(const te *an) {
     switch (an->d[4].u4) {
         case OC(LOOP):
         case OC(IF):
-            break;
         case OC(MTCH):
-            if (!l) return false;
             break;
         default:
             return false;

@@ -28,11 +28,11 @@ typedef enum {
     TYPE(U6),
     TYPE(F5),
     TYPE(F6),
-    TYPE(SL),
     TYPE(C4),
     TYPE(SG),
     // vector
     TYPE(_V),
+    TYPE(SL),
     TYPE(VR),
     TYPE(LT),
     TYPE(MC),
@@ -68,7 +68,7 @@ bool type_is_des(type t);
 typedef enum {
     TYPE_CLS(S), // te[parent;type]
     TYPE_CLS(V), // te[parent;type;te[...]]
-    TYPE_CLS(H), // te[parent;type;tbl[mc;id;type]]
+    TYPE_CLS(H), // te[parent;type;tbl[mc;_;type]]
     TYPE_CLS(F), // te[parent;type;te[...];tbl[mc;id;type];tbl[mc;id;type]]
     TYPE_CLS(C), // te[parent;type;...]
     TYPE_CLS(_)

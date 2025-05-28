@@ -22,14 +22,14 @@ typedef chk_stat chk_err_fn(const chk *c, te *an, err **e, const char *m);
 typedef struct _chk {
     int32_t fnlc; // fn label counter
     ssize_t r;
-    const alfr *af, *ta, *ea;
+    const alfr *af, *ta, *la, *tbla, *ea;
     chk_err_fn *efn;
     chk_tbl_i *cti;
     ast *a;
     tbl *bt, *at; // before, after
 } chk;
 
-chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, chk_err_fn efn, chk_tbl_i cti, ast *a);
+chk *chk_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *tbla, const alfr *ea, chk_err_fn efn, chk_tbl_i cti, ast *a);
 
 chk *chk_i_chk(const chk *c, ast *a);
 
