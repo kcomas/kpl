@@ -138,8 +138,8 @@ T(ackrec) {
 
 T(scope) {
     IC(TPGM(scope));
-    tbl *args = fld_type_tbl_i(1, "x", TS(I6), 0);
-    tbl *scope = fld_type_tbl_i(1, "s", TS(I6), 0);
+    tbl *args = fld_type_tbl_i(true, 1, "x", TS(I6), 0);
+    tbl *scope = fld_type_tbl_i(true, 1, "s", TS(I6), 0);
     te *ft = TFS(NF, TS(VD), args, scope);
     te *fe = EN("x", FLG(-1, LTE_FLG(F)), te_c(ft));
     V(RN(AN(TS(VD), LN(LT(2, "s", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6), "x", FLG(-1, LTE_FLG(F)), te_c(ft)), L(6,
@@ -212,9 +212,22 @@ T(vrmul) {
     te_f(ie);
 }
 
-/*
 T(st) {
     IC(TPGM(st));
-    V(NULL);
+    te *st = TST(4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG));
+    V(RN(AN(TS(VD), LN(LT(3, "a", FLG(0, LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(L)), TS(F6), "s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)), L(5,
+        ON(TS(I6), DFN, EN("a", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1))),
+        ON(TS(F6), DFN, EN("b", FLG(0, LTE_FLG(L)), TS(F6)), SN(F6, F6(2.2))),
+        ON(te_c(st), DFN, EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)),
+            ON(te_c(st), MTCH, LN(NULL, NULL), LN(LT(2, "a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(F6)), L(4,
+                ZTN("a", TS(VD), EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6))),
+                ZTN("b", TS(VD), EN("b", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(F6))),
+                ZTN("c", TS(VD), ON(TS(U6), CST, TN(U6), ON(TS(I6), ADD, EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(2))))),
+                ZTN("d", TS(VD), SG("Hi"))
+            )))),
+        ON(TS(I6), AGN, ZTN("a", TS(I6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st))),
+            ON(TS(I6), MUL, SN(I6, I6(2)), ON(TS(I6), CST, TN(I6), ZTN("c", TS(U6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)))
+    )), NULL)));
+    te_f(st);
 }
-*/

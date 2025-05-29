@@ -41,15 +41,16 @@ tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
     return t;
 }
 
-// char*, te[type] id ....
-tbl *fld_type_tbl_i(size_t n, ...) {
+// char*, te[type] id(if gid) ....
+tbl *fld_type_tbl_i(bool gid, size_t n, ...) {
     tbl *t = ati();
+    size_t id = 0;
     va_list args;
     va_start(args, n);
     for (size_t i = 0; i < n; i++) {
         mc *s = mc_i_cstr(va_arg(args, char*), &al_mc);
         te *type = va_arg(args, te*);
-        size_t id = va_arg(args, size_t);
+        if (gid) id = va_arg(args, size_t);
         type_tbl_a(t, &al_te, s, id, type);
     }
     va_end(args);

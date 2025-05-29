@@ -275,13 +275,14 @@ void type_p(const te *t) {
     }
 }
 
-static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
+static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b, bool id) {
     if (!a && !b) return true;
     if (!a || !b || a->i->l != b->i->l) return false;
     te *ah = a->i->h, *bh = b->i->h;
     while (ah && bh) {
         te *ae = ah->d[0].p, *be = bh->d[0].p;
-        if (!mc_eq(ae->d[0].p, be->d[0].p) || ae->d[1].u6 != be->d[1].u6 || !type_eq(ae->d[2].p, be->d[2].p)) return false;
+        if (id && ae->d[1].u6 != be->d[1].u6) return false;
+        if (!mc_eq(ae->d[0].p, be->d[0].p) || !type_eq(ae->d[2].p, be->d[2].p)) return false;
         ah = ah->d[2].p;
         bh = bh->d[2].p;
     }
@@ -297,10 +298,9 @@ bool type_eq(const te *restrict a, const te *restrict b) {
         case TYPE_CLS(V):
             return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(H):
-            STOP("TODO TYPE CLS H EQ");
-            break;
+            return type_tbl_eq(a->d[2].p, b->d[2].p, false);
         case TYPE_CLS(F):
-            return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p) && type_tbl_eq(a->d[4].p, b->d[4].p);
+            return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p, true) && type_tbl_eq(a->d[4].p, b->d[4].p, true);
         case TYPE_CLS(C):
             switch (a->d[1].u4) {
                 case TYPE(TE):

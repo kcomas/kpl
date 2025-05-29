@@ -148,8 +148,8 @@ T(ackrec) {
 
 T(scope) {
     IC(TPGM(scope));
-    tbl *args = fld_type_tbl_i(1, "x", TS(I6), 0);
-    tbl *scope = fld_type_tbl_i(1, "s", TS(I6), 0);
+    tbl *args = fld_type_tbl_i(true, 1, "x", TS(I6), 0);
+    tbl *scope = fld_type_tbl_i(true, 1, "s", TS(I6), 0);
     te *ft = TFS(NF, TS(VD), args, scope);
     te *fe = EN("x", FLG(-1, LTE_FLG(F)), te_c(ft));
     V(RN(LN(LT(2, "s", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6), "x", FLG(-1, LTE_FLG(F)), te_c(ft)), L(6,
