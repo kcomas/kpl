@@ -1,14 +1,14 @@
 # KPL - Kevin's Programming Language
 
-## Typed/Jitted Scripting Language written in C
+### Typed/Jitted Scripting Language written in C
 
 ## Supported Platforms and Dependencies
 
-X86-64 Linux
+#### X86-64 Linux
 
-GCC
+#### GCC
 
-GNU Make
+#### GNU Make
 
 ## Build
 

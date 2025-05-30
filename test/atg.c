@@ -13,24 +13,36 @@ static __attribute__((destructor)) void atg_des(void) {
     atg_f(batg);
 }
 
-static void atg_des_verify(_tests *_t, atg *t, te *restrict dh, te *restrict tn, const gen *gc, gen_st *st) {
+static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st *st) {
     E();
-    A(dh, "destructor type not found");
-    te *h = dh->d[0].p;
-    A(type_eq(h->d[0].p, tn), "destructor type neq");
+    te *h;
+    if (tbl_g_i(t->dt, P(tn), &h) != TBL_STAT(OK)) {
+        type_p(tn);
+        putchar('\n');
+        A(0, "des type nf");
+    }
+    type_p(h->d[0].p);
+    putchar('\n');
     err *e = NULL;
     gen *g = NULL;
     gen_st *sc = NULL;
-    atg_stat stat = atg_d_n(t, h, &g, &e);
+    void *fn = NULL;
+    atg_stat stat = atg_d_n(t, h, &g, &fn, gen_type_des, &e);
     if (e) {
         err_p(e);
         err_f(e);
     }
     A(stat == ATG_STAT(OK), "atg_d_n");
+    if (fn) {
+        A(fn == fg, "fn ptr neq");
+        h->d[1] = P(fn);
+        return;
+    }
     if (g) {
         sc = gen_st_i_gen_st(st);
         STOP("GEN RUN FIRST PASS");
     }
+    const gen *gc = fg;
     gen_p(g, NULL);
     bool eq = gen_code_eq(g, gc);
     if (!eq) {
@@ -39,13 +51,13 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict dh, te *restrict tn,
     }
     if (g) {
         STOP("GENERATE DESTRUCTOR CODE");
+        STOP("ADD DES CODE TO H LIKE FN");
     }
     gen_st_f(sc);
     gen_f(g);
 }
 
-#define D(TN, GC) atg_des_verify(_t, t, dh, TN, GC, st); \
-    dh = dh->d[2].p
+#define D(TN, GC) atg_des_verify(_t, t, TN, GC, st)
 
 static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict tn, const gen *gc, gen_st *st) {
     E();
@@ -85,8 +97,7 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
     gen_f(g);
 }
 
-#define V(CN, GC) A(!dh, "destructor type found"); \
-    atg_verify(_t, t, a, an, CN, GC, st)
+#define V(CN, GC) atg_verify(_t, t, a, an, CN, GC, st)
 
 static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     E();
@@ -113,8 +124,8 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     fast(_t, a, &an, bopt, false); \
     atg *t = atg_i_atg(batg); \
     gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL)); \
-    A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->dt->i->l == DL && t->q->l == QL, "atg_q"); \
-    te *dh = t->dt->i->h
+    size_t cdl = t->dt->i->l; \
+    A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->dt->i->l - cdl == DL && t->q->l == QL, "atg_q");
 
 T(tbl) {
     atg_tbl_p(batg->ot, AST_CLS(O), 0);
@@ -538,3 +549,12 @@ T(vrmul) {
     te_f(cn);
     AR(0);
 }
+
+/*
+T(st) {
+    AI(TPGM(st), 1, 1);
+    te *std = type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG)));
+    D(std, NULL);
+    te_f(std);
+}
+*/
