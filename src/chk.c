@@ -100,12 +100,10 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     uint32_t si = 0;
     while (h) {
         lte = h->d[0].p;
-        if (lte->d[2].p) {
+        if (lte->d[2].p || !(kv = chk_g_pn_lte(an, lte->d[0].p))) {
             h = h->d[2].p;
             continue;
         }
-        if (!(kv = chk_g_pn_lte(an, lte->d[0].p))) return chk_err(c, an, e, "ckk nf cannot find var");
-        if (!kv->d[2].p) return chk_err(c, an, e, "chk nf var inv");
         ast_lst_tbl_e_s_i(lte, si++);
         ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
         lte->d[2] = P(te_c(kv->d[2].p));
@@ -370,7 +368,7 @@ static chk_stat chk_cst_z(chk *c, te *an, err **e) {
     return chk_err(c, an, e, "chk inv z cst");
 }
 
-static chk_stat chk_op_e_n_svo_dfn(chk *c, te *an, err **e) {
+static chk_stat chk_op_e_n_svoe_dfn(chk *c, te *an, err **e) {
     te *lte = ((te*) an->d[5].p)->d[3].p, *rt;
     if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an->d[6].p, e, "chk cannot get op r type");
     lte->d[2] = P(te_c(rt));
@@ -500,13 +498,14 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(NF));
     CHK_AA(c, chk_aply_e_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
     // ops
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(F6));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(I6));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(U6));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(VR));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(V), TYPE(TE));
-    CHK_AA(c, chk_op_e_n_svo_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(ST));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(E), TYPE(I6));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(F6));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(I6));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(U6));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(VR));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(V), TYPE(TE));
+    CHK_AA(c, chk_op_e_n_svoe_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(ST));
     CHK_AA(c, chk_agn_a_o, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_agn_z, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(Z), TYPE(SL), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));

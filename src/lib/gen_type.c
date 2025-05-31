@@ -25,6 +25,14 @@ gen_stat vr_des(gen *bg, te *t, void **fn, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat aff(gen *g, te *t, err **e, const char *pf) {
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 2))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_tmp(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 1))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(CALLNPR), gen_tmp(g, X64_TYPE(M), 0), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    return GEN_STAT(OK);
+}
+
 gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
@@ -36,11 +44,7 @@ gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
         int32_t off = sizeof(void*) * 4 + sizeof(void*) * (i - 2);
         if (gen_a(*g, GEN_OP(CALL), gen_call_m(*g, 1, gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, off <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(off)))), gen_data(*g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
     }
-    if (gen_a(*g, GEN_OP(SET), gen_tmp(*g, X64_TYPE(M), 0), gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(sizeof(void*) * 2))), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
-    if (gen_a(*g, GEN_OP(SET), gen_tmp(*g, X64_TYPE(M), 0), gen_idx_m(*g, X64_TYPE(M), 2, gen_tmp(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(sizeof(void*) * 1))), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
-    if (gen_a(*g, GEN_OP(CALLNPR), gen_tmp(*g, X64_TYPE(M), 0), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
-    if (gen_a(*g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
-    return GEN_STAT(OK);
+    return aff(*g, t, e, __FUNCTION__);
 }
 
 gen_stat gen_type_des(gen *bg, te *t, gen **g, void **fn, err **e) {

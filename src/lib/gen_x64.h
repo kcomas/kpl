@@ -5,38 +5,6 @@
 #include "gen.h"
 #include "as_x64.h"
 
-#define GEN_OP(N) GEN_OP_##N
-
-typedef enum {
-    GEN_OP(_START),
-    GEN_OP(LBL),
-    GEN_OP(NOP), // used as tmp vars after mutli cmd gen
-    GEN_OP(ENTER),
-    GEN_OP(LEAVE),
-    GEN_OP(SET),
-    GEN_OP(REF),
-    GEN_OP(CALL),
-    GEN_OP(CALLNPR), // no preserve registers
-    GEN_OP(CALLV), // varardic
-    GEN_OP(CALLVNPR),
-    GEN_OP(ADD),
-    GEN_OP(SUB),
-    GEN_OP(NEG),
-    GEN_OP(MUL),
-    GEN_OP(DIV),
-    GEN_OP(CST),
-    GEN_OP(EQ),
-    GEN_OP(NE),
-    GEN_OP(GT),
-    GEN_OP(GTE),
-    GEN_OP(LT),
-    GEN_OP(LTE),
-    GEN_OP(JMP),
-    GEN_OP(_END)
-} gen_op; // not x64 opcodes, pseudo codes
-
-const char *gen_op_str(gen_op go);
-
 #define X64_TYPE(N) X64_TYPE_##N
 
 typedef enum {
