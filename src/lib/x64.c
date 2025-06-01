@@ -52,7 +52,7 @@ x64_stat x64_b(size_t *p, uint8_t *m, size_t len, ...) {
     return X64_STAT(OK);
 }
 
-x64_stat x64_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]) {
+x64_stat x64_c(size_t *p, uint8_t *m, size_t len, uint8_t *b) {
     for (size_t i = 0; i < len; i++) x64_a(p, m, b[i]);
     return X64_STAT(OK);
 }
@@ -461,6 +461,8 @@ ZRRMO(mov, 0x8B, d, o, s);
 
 ZRRMOB(mov, 0x8B, d, o, s);
 
+ZRI(mov, 0x8B);
+
 ZRMBED(mov, 0xC7, 0);
 
 ZZZRX(movq, 0x66, 0x0F, 0x7E, s, d);
@@ -496,6 +498,8 @@ ZZZXRMO(movsd, 0xF2, 0x0F, 0x10, d, o, s);
 ZZZXRMOB(movsd, 0xF2, 0x0F, 0x10, d, o, s);
 
 ZRRMB(lea, 0x8D, d, s);
+
+ZRI(lea, 0x8D);
 
 ZRE(inc, 0xFF, 0);
 

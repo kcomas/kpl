@@ -40,7 +40,8 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
     }
     if (g) {
         sc = gen_st_i_gen_st(st);
-        STOP("GEN RUN FIRST PASS");
+        A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
+        gen_x64_opt(g, sc);
     }
     const gen *gc = fg;
     gen_p(g, NULL);
@@ -49,9 +50,15 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
         printf("--- DIFF ---\n");
         if (gc) gen_p(gc, NULL);
     }
+    A(eq, "des_eq");
     if (g) {
         size_t pc = p;
-        STOP("GENERATE DESTRUCTOR CODE");
+        gen_stat gstat = gen_n(g, sc, t->a, &e);
+        if (e) {
+            err_p(e);
+            err_f(e);
+        }
+        A(gstat == GEN_STAT(OK), "gen_n");
         h->d[1] = P(&m[pc]);
     }
     gen_st_f(sc);
@@ -555,7 +562,14 @@ T(vrmul) {
 T(st) {
     AI(TPGM(st), 1, 1);
     te *std = type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG)));
-    D(std, NULL);
+    err *e = NULL;
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(56)))), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
+    gen_type_aff(gc, std, &e, "");
+    D(std, gc);
     te_f(std);
+    gen_f(gc);
+    V(NULL, NULL);
 }
 */

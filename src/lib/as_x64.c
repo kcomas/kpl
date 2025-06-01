@@ -54,6 +54,7 @@ static const char *arg_id_str(size_t id) {
         case ARG_ID(W): return "W";
         case ARG_ID(DW): return "DW";
         case ARG_ID(QW): return "QW";
+        case ARG_ID(S): return "S";
         default:
             break;
     }
@@ -229,6 +230,21 @@ bool as_x64_dq(as *a, size_t *p, uint8_t *m, te *dqe) {
     te *ci = dqe->d[0].p;
     x64_jmpd_lbld(m, ci->d[8].u6 + ci->d[9].u6, *p);
     return x64_e(p, m, dqe->d[1].u6, dqe->d[2]) == X64_STAT(OK);
+}
+
+bool as_x64_dqs(as *a, size_t *p, uint8_t *m, te *dqe) {
+    (void) a;
+    dqe->d[4] = U6(*p); // for print
+    te *ci = dqe->d[0].p;
+    x64_jmpd_lbld(m, ci->d[8].u6 + ci->d[9].u6, *p);
+    x64_c(p, m, dqe->d[1].u6, dqe->d[2].p);
+    size_t mod = *p & 0x07;
+    dqe->d[1].u6 += mod;
+    while (mod) {
+        x64_a(p, m, 0x0);
+        mod--;
+    }
+    return true;
 }
 
 un as_x64_rs(size_t rid, size_t sid) {

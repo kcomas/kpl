@@ -160,8 +160,6 @@ INST_RRMD(mov);
 INST_RRMD(cmp);
 
 #define INST_RI(N) static bool as_##N##_ri(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) a; \
-    (void) ci; \
     (void) arg3; \
     (void) arg4; \
     as_dq_a(a, ci, sizeof(uint64_t), arg2->d[1], as_x64_dq); /* TODO fn to get sizeof*/ \
@@ -169,6 +167,16 @@ INST_RRMD(cmp);
 }
 
 INST_RI(cmp);
+
+#define INST_RS(N) bool as_##N##_rs(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) arg3; \
+    (void) arg4; \
+    as_dq_a(a, ci, strlen(arg2->d[1].p) + 1, arg2->d[1], as_x64_dqs); \
+    return x64_##N##_ri(p, m, arg1->d[1].u3, 0) == X64_STAT(OK); \
+}
+
+INST_RS(mov);
+INST_RS(lea);
 
 bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
@@ -197,6 +205,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(L), ARG_ID(N), ARG_ID(N), as_mov_rl, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(S), ARG_ID(N), ARG_ID(N), as_mov_rs, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_mov_rmr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_mov_rmbr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(DW), ARG_ID(N), as_mov_rmbd, NULL);
@@ -204,6 +213,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_mov_rrmb, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(DW), ARG_ID(N), as_mov_rrmd, NULL);
     as_op_a(a, AS_X64(LEA), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_lea_rrmb, NULL);
+    as_op_a(a, AS_X64(LEA), ARG_ID(R), ARG_ID(S), ARG_ID(N), ARG_ID(N), as_lea_rs, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rmr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_add_rmbr, NULL);
