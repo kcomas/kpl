@@ -21,7 +21,7 @@ typedef enum {
     ARG_ID(W), // word
     ARG_ID(DW), // double word
     ARG_ID(QW), // quad word
-    ARG_ID(S), // null terminated array of bytes, string
+    ARG_ID(S), // mc
 } arg_id;
 
 #define AS_X64(N) AS_X64_##N

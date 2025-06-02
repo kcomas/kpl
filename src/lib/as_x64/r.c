@@ -171,7 +171,8 @@ INST_RI(cmp);
 #define INST_RS(N) bool as_##N##_rs(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) arg3; \
     (void) arg4; \
-    as_dq_a(a, ci, strlen(arg2->d[1].p) + 1, arg2->d[1], as_x64_dqs); \
+    mc *s = arg2->d[1].p; \
+    as_dq_a(a, ci, s->l, P(s->d), as_x64_dqs); \
     return x64_##N##_ri(p, m, arg1->d[1].u3, 0) == X64_STAT(OK); \
 }
 

@@ -43,8 +43,6 @@ typedef enum {
 
 const char *gen_op_str(gen_op go);
 
-
-
 #define GEN_CLS(N) GEN_CLS_##N
 
 typedef enum {

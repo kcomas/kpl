@@ -50,6 +50,13 @@ static atg_stat a__e__s__(atg *t, gen *g, te *an, err **e, gen_op c, x64_type xt
     return ATG_STAT(OK);
 }
 
+static atg_stat a__e__o__(atg *t, gen *g, te *an, err **e, gen_op c, x64_type xt) {
+    te *l = ((te*) an->d[5].p)->d[3].p, *r = atg_g_g(an->d[6].p)->d[1].p;
+    if (!(l = var_arg(g, l, xt))) return atg_err(t, an->d[5].p, e, "atg op l inv");
+    if (gen_a(g, c, l, te_c(l), te_c(r)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 static atg_stat adda_i6_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
     return a__e__s__(t, g, an, e, GEN_OP(ADD), X64_TYPE(I6));
 }
@@ -72,6 +79,7 @@ static atg_stat add_i6_e_i6_o_i6(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK); \
 }
 
+OES(add, ADD, i6, I6);
 OES(add, ADD, u6, U6);
 OES(sub, SUB, u6, U6);
 OES(sub, SUB, i6, I6);
@@ -102,6 +110,10 @@ static atg_stat mula_f6_e_f6_s_f6(atg *t, gen *g, te *an, err **e) {
     return a__e__s__(t, g, an, e, GEN_OP(MUL), X64_TYPE(F6));
 }
 
+static atg_stat mula_i6_e_i6_o_i6(atg *t, gen *g, te *an, err **e) {
+    return a__e__o__(t, g, an, e, GEN_OP(MUL), X64_TYPE(I6));
+}
+
 static atg_stat div_f6_o_f6_o_f6(atg *t, gen *g, te *an, err **e) {
     te *l = atg_g_g(an->d[5].p)->d[1].p, *r = atg_g_g(an->d[6].p)->d[1].p;
     if (gen_a(g, GEN_OP(DIV), gen_tmp(g, X64_TYPE(F6), t->tc++), te_c(l), te_c(r)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -110,6 +122,7 @@ static atg_stat div_f6_o_f6_o_f6(atg *t, gen *g, te *an, err **e) {
 
 void atg_arith(atg *t) {
     atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), add_i6_e_i6_e_i6);
+    atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), add_i6_e_i6_s_i6);
     atg_a_o(t, OC(ADD), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(E), TYPE(F6), add_f6_e_f6_e_f6);
     atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6), add_i6_e_i6_o_i6);
     atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(A), TYPE(I6), AST_CLS(A), TYPE(I6), add_i6_a_i6_a_i6);
@@ -127,5 +140,6 @@ void atg_arith(atg *t) {
     atg_a_o(t, OC(MUL), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(O), TYPE(F6), mul_f6_e_f6_o_f6);
     atg_a_o(t, OC(MULA), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), mula_i6_e_i6_e_i6);
     atg_a_o(t, OC(MULA), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(F6), mula_f6_e_f6_s_f6);
+    atg_a_o(t, OC(MULA), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6), mula_i6_e_i6_o_i6);
     atg_a_o(t, OC(DIV), TYPE(F6), AST_CLS(O), TYPE(F6), AST_CLS(O), TYPE(F6), div_f6_o_f6_o_f6);
 }

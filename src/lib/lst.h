@@ -11,6 +11,7 @@ extern const alfr al_lst;
 
 typedef enum {
    LST_STAT(OK),
+   LST_STAT(NF),
    LST_STAT(SUB)
 } lst_stat;
 
@@ -29,6 +30,8 @@ lst *lst_i_v(const alfr *af, const alfr *ta, frfn *df, size_t n, ...);
 lst *lst_i_lst(const lst *l);
 
 lst *lst_c(lst *l);
+
+lst_stat lst_g_i(lst *l, un v, size_t *idx);
 
 typedef ssize_t lst_cmp_fn(un a, un b);
 

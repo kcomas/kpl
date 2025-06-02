@@ -9,6 +9,7 @@
 
 typedef enum {
     X64_TYPE(N), // none
+    X64_TYPE(S), // mc
     X64_TYPE(M), // *
     X64_TYPE(MU3),
     X64_TYPE(MU4),
@@ -110,6 +111,12 @@ gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n);
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci);
 
 void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n);
+
+gen_stat stk_va(gen_st *st, te *restrict c, int32_t *restrict v);
+
+gen_stat stk_g_idx2(gen_st *st, te *restrict c0, te *restrict c1, int32_t *restrict v0, int32_t *restrict v1);
+
+gen_stat stk_g_idx3(gen_st *st, te *restrict c0, te *restrict c1, te *restrict c2, int32_t *restrict v0, int32_t *restrict v1, int32_t *restrict v2);
 
 void gen_st_f(gen_st *st);
 

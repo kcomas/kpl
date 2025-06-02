@@ -16,7 +16,7 @@ te *as_arg_rs(as *a, size_t rid, size_t sid);
 
 te *as_arg_l(as *a, size_t lid);
 
-te *as_arg_s(as *a, const char *s);
+te *as_arg_s(as *a, mc *s);
 
 te *as_arg_qw(as *a, un v);
 

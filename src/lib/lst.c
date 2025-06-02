@@ -62,6 +62,21 @@ lst *lst_c(lst *l) {
     return l;
 }
 
+lst_stat lst_g_i(lst *l, un v, size_t *idx) {
+    if (!l->h) return LST_STAT(NF);
+    size_t i = 0;
+    te *h = l->h;
+    while (h) {
+        if (h->d[0].u6 == v.u6) {
+            *idx = i;
+            return LST_STAT(OK);
+        }
+        h = h->d[2].p;
+        i++;
+    }
+    return LST_STAT(NF);
+}
+
 static te *ms(te *h, size_t c, lst_cmp_fn fn) {
     te *th = NULL, *n = NULL, *t, *l, *r;
     if (c < 2) return h;
