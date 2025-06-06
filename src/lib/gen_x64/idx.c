@@ -67,7 +67,7 @@ gen_stat idx_from(const gen *g, void *s, te *restrict ci, as *a, err **e, as_ins
         x = gen_var_g_c(i->d[0].p);
         y = gen_var_g_c(i->d[1].p);
     }
-    if (i->l == 2 && to->d[0].u4 == ARG_ID(R)) {
+    if (i->l == 2) {
         if (x == GEN_CLS(V) && y == GEN_CLS(D)) {
             tgt = i->d[0].p;
             if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");

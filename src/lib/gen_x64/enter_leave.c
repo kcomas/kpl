@@ -5,8 +5,8 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_st *st = s;
     if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    uint32_t sub = st->rvc * sizeof(void*);
-    sub += st->xvc * sizeof(void*) * 2;
+    uint32_t sub = st->xvc * sizeof(void*) * 2;
+    sub += st->rvc * sizeof(void*);
     if (sub) {
         if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, sub), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
@@ -19,8 +19,8 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
 static gen_stat leave_e(gen *g, gen_st *st, te *ci, as *a, err **e)  {
     (void) g;
     (void) e;
-    uint32_t add = st->rvc * sizeof(void*);
-    add += st->xvc * sizeof(void*) * 2;
+    uint32_t add = st->xvc * sizeof(void*) * 2;
+    add += st->rvc * sizeof(void*);
     if (add) {
         if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, add), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
@@ -86,11 +86,13 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(I6), leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(U6), leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(I6), leave_au_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(M), leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(F6), leave_ax_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(F6), leave_ax_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(U6), leave_du_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(F6), leave_dx_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(M), leave_du_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(I6), leave_vu_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(M), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(F6), leave_vx_fn);
 }

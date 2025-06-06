@@ -73,7 +73,7 @@ ast_stat ast_g_t(te *an, te **type);
 // need to be available for S nodes
 void ast_s_f(void *p);
 
-void ast_s_sg_f(void *p);
+void ast_s_cs_f(void *p);
 
 te *ast_s_i(ast *a, te *restrict pan, te *restrict psr, frfn nf, un ct, un v);
 

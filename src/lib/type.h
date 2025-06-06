@@ -29,6 +29,7 @@ typedef enum {
     TYPE(F5),
     TYPE(F6),
     TYPE(C4),
+    TYPE(CS),
     TYPE(SG),
     // vector
     TYPE(_V),

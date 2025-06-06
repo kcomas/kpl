@@ -94,6 +94,8 @@ static void z_e_p(void *d) {
 
 #define APLYLSTS 4 // {}()
 
+static size_t cdl = 0; // current number of destructors
+
 err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
@@ -116,7 +118,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
     pgm->d[sx.stx_size + 2] = '(';
     pgm->d[sx.stx_size + 3] = ')';
     psr *zp = psr_i_psr(bp, mc_c(pgm));
-    te *nh = te_i(3, zp->ta, psr_n_err_f);
+    te *nh = te_i(3, zp->ta, psr_n_err_f), *an = NULL, *dh;
     if (psr_n(zp, nh, &e) != PSR_STAT(END)) {
         te_f(nh);
         psr_f(zp);
@@ -128,7 +130,6 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         node_p(nh->d[2].p, 0);
         putchar('\n');
     }
-    te *an = NULL;
     ast *za = ast_i_ast(ba);
     if (ast_n(za, NULL, nh, (void**) &an, &e) != AST_STAT(OK)) {
         ast_f(za);
@@ -186,6 +187,64 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         te_f(an);
         mc_f(pgm);
         return e;
+    }
+    if (zt->dt->i->l > cdl) {
+        dh = zt->dt->i->t;
+        cdl++;
+        while (cdl < zt->dt->i->l) {
+            dh = dh->d[1].p;
+            cdl++;
+        }
+        while (dh) {
+            te *h = dh->d[0].p;
+            gen *dg = NULL;
+            void *dfn = NULL;
+            if (atg_d_n(zt, h, &dg, &dfn, gen_type_des, &e) != ATG_STAT(OK)) {
+                ast_f(za);
+                atg_f(zt);
+                te_f(an);
+                mc_f(pgm);
+                gen_f(dg);
+                return e;
+            }
+            if (dfn) h->d[1] = P(fn);
+            else if (dg) {
+                gen_st *dst = gen_st_i_gen_st(bst);
+                if (gen_st_p1(dg, dst) != GEN_STAT(OK)) {
+                    ast_f(za);
+                    atg_f(zt);
+                    te_f(an);
+                    mc_f(pgm);
+                    gen_st_f(dst);
+                    gen_f(dg);
+                    return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "des gen st p1");
+                }
+                gen_x64_opt(dg, dst);
+                size_t pc = p;
+                if (gen_n(dg, dst, zt->a, &e) != GEN_STAT(OK)) {
+                    ast_f(za);
+                    atg_f(zt);
+                    te_f(an);
+                    mc_f(pgm);
+                    gen_st_f(dst);
+                    gen_f(dg);
+                    return e;
+                }
+                if (as_n(zt->a, &p, m, &e) != AS_STAT(OK)) {
+                    ast_f(za);
+                    atg_f(zt);
+                    te_f(an);
+                    mc_f(pgm);
+                    gen_st_f(dst);
+                    gen_f(dg);
+                    return e;
+                }
+                gen_st_f(dst);
+                gen_f(dg);
+                h->d[1] = P(&m[pc]);
+            }
+            dh = dh->d[2].p;
+        }
     }
     while (zt->q->l > 0) {
         gen *zg = NULL;

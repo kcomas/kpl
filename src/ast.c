@@ -22,6 +22,7 @@ const char *ast_oc_str(oc o) {
         "LT",
         "LTE",
         "AND",
+        "CSG",
         "CNCT",
         "CNCTA",
         "DUMP",
@@ -145,7 +146,7 @@ static ast_stat ast_str(ast *a, te *restrict pan, te *restrict pn, void **vn, er
     te **an = (te**) vn;
     mc *s;
     if (tkn_g_str(pn->d[2].p, node_root_mc(pn), a->ma, &s) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast str");
-    *an = ast_s_i(a, pan, pn, ast_s_sg_f, P(type_i(a->ta, NULL, TYPE(SG))), P(s));
+    *an = ast_s_i(a, pan, pn, ast_s_cs_f, P(type_i(a->ta, NULL, TYPE(CS))), P(s));
     return AST_STAT(OK);
 }
 
@@ -358,6 +359,7 @@ void ast_p(const te *an, size_t idnt) {
                 case TYPE(F6):
                     printf(" %lf", an->d[4].f6);
                     break;
+                case TYPE(CS):
                 case TYPE(SG):
                     printf(" \"%s\"", (char*) ((mc*) an->d[4].p)->d);
                     break;
@@ -480,6 +482,7 @@ static bool ast_s_eq(const te *restrict t, const te *restrict a, const te *restr
             return a->d[4].u6 == b->d[4].u6;
         case TYPE(C4):
             return c4_eq(a->d[4], b->d[4]);
+        case TYPE(CS):
         case TYPE(SG):
             return mc_eq(a->d[4].p, b->d[4].p);
         default:

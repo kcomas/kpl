@@ -66,6 +66,8 @@ te *gen_tmp(gen *g, x64_type t, size_t id);
 
 te *gen_data(gen *g, x64_type t, un d);
 
+te *gen_char(gen *g, const char *s);
+
 te *gen_stkv(gen *g, x64_type t, size_t id);
 
 te *gen_stka(gen *g, x64_type t, size_t id);
@@ -73,6 +75,8 @@ te *gen_stka(gen *g, x64_type t, size_t id);
 // atm entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];reg]
 
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
+
+bool gen_code_eq(const gen *a, const gen *b);
 
 typedef struct {
     uint8_t rvc, xvc, rac, xac, rsc; // var count, arg count, stack count (only gen regs for stack)

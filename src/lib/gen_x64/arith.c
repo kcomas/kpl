@@ -41,9 +41,17 @@ static gen_stat add_vuvuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat add_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO add_auvudu_fn");
+    int32_t v1;
+    te *kv;
+    if (get_reg(s, ci->d[1].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (stk_va(s, ci->d[2].p, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+    if (gen_as_rrmbd(a, AS_X64(MOV), kv->d[2].u3, R(BP), v1, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    uint64_t d = ((te*) ci->d[3].p)->d[1].u6;
+    if (d <= INT32_MAX) {
+        if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), kv->d[2]), bd_arg(a, d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    } else return gen_err(g, ci, e, "nyi");
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
 }
 
 static gen_stat add_susuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
@@ -116,6 +124,18 @@ static gen_stat add_vuvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
 
 static gen_stat sub_vuvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return vuvudu_fn(g, s, ci, a, e, AS_X64(DEC), AS_X64(SUB));
+}
+
+static gen_stat imul_auduau_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    te *kd, *ks;
+    if (get_reg(s, ci->d[3].p, &ks) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (get_reg(s, ci->d[1].p, &kd) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(IMUL), as_arg_i(a, ARG_ID(R), ks->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kd->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    drop_atm_kv(s, ks, ci);
+    drop_atm_kv(s, kd, ci);
+    return GEN_STAT(OK);
 }
 
 #define MULDIVAUAUAU(N, O) static gen_stat N##_auauau_fn(gen *g, void *s, te *ci, as *a, err **e) { \
@@ -245,9 +265,19 @@ static gen_stat cvtsi2sd_axau_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat cst_auau_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
     (void) a;
-    return gen_err(g, ci, e, "TODO CST");
+    reg sr;
+    te *cd = ci->d[1].p, *cs = ci->d[2].p, *kv;
+    if (gen_var_g_c(cd) == gen_var_g_c(cs) && cd->d[1].u6 != cs->d[1].u6) return gen_err(g, ci, e, "gen cst inv ids for same cls");
+    if (gen_var_g_c(cd) == gen_var_g_c(cs) && cd->d[1].u6 == cs->d[1].u6) {
+        if (get_reg(s, cs, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        sr = kv->d[2].u3;
+        drop_atm_kv(s, kv, ci);
+        if (get_reg(s, cd, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        if (kv->d[2].u3 != sr) return gen_err(g, ci, e, "gen cst inv reg swap");
+        drop_atm_kv(s, kv, ci);
+    } else return gen_err(g, ci, e, "nyi");
+    return GEN_STAT(OK);
 }
 
 void gen_arith(gen *g) {
@@ -286,6 +316,7 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), mul_auauau_fn);
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(U6), mul_auauau_fn);
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), imul_auauau_fn);
+    GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(I6), imul_auduau_fn);
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), imul_vuvuau_fn);
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), imul_vuvuvu_fn);
     GEN_OP_A3(g, GEN_OP(MUL), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), mulsd_axaxax_fn);
@@ -298,4 +329,5 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), divsd_axaxax_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(U6), cvtsi2sd_axau_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(I6), cst_auau_fn);
+    GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(U6), cst_auau_fn);
 }

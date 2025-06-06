@@ -164,7 +164,7 @@ T(st) {
                 ZN("a", EN("a", U6(0), NULL)),
                 ZN("b", EN("b", U6(0), NULL)),
                 ZN("c", ON(NULL, CST, TN(U6), ON(NULL, ADD, EN("a", U6(0), NULL), SN(I6, I6(2))))),
-                ZN("d", SG("Hi"))
+                ZN("d", ON(TS(SG), CSG, NULL, CS("Hi")))
             )))),
         ON(NULL, AGN, ZN("a", EN("s", FLG(0, LTE_FLG(E)), NULL)),
             ON(NULL, MUL, SN(I6, I6(2)), ON(NULL, CST, TN(I6), ZN("c", EN("s", FLG(0, LTE_FLG(E)), NULL))))),

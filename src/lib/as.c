@@ -152,13 +152,6 @@ void as_dq_a(as *a, te *ci, size_t size, un v, as_dq_fn dq_fn) {
     lst_ab(a->dq, P(d));
 }
 
-te *as_arg_i(as *a, size_t id, un d) {
-    te *arg = te_i(2, a->ta, NULL);
-    arg->d[0] = U6(id);
-    arg->d[1] = d;
-    return arg;
-}
-
 as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     tbl *co = a->ops;
     te *kv;
