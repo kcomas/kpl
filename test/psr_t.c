@@ -99,9 +99,9 @@ const char *TPGM(teadd) = "{\n"
                        "}()\n";
 
 const char *TPGM(vrmul) = "{\n"
-                          "     v::VR$[i::1.1]\n"
-                          "     <(i;100)@v,:i*:2\n"
-                          "     v/p1\n"
+                          "   v::VR$[i::1.1]\n"
+                          "   <(i;100)@v,:i*:2\n"
+                          "   v/p1\n"
                           "}()\n";
 
 const char *TPGM(st) = "{\n"
@@ -111,3 +111,10 @@ const char *TPGM(st) = "{\n"
                         "   s`a: 2 * I6$s`c\n"
                         "   s/p1\n"
                         "}()\n";
+
+const char *TPGM(import) = "{\n"
+                           " i::\"./ex/sum.kpl\"/l\n"
+                           " i/p1\n"
+                           " v/e::1+i`b*2\n"
+                           " v/p1\n"
+                           "}()\n";

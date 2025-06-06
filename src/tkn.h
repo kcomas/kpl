@@ -57,6 +57,7 @@ typedef enum {
     TCUST(CNCTA),
     // cmds
     TCUST(E),
+    TCUST(L),
     TCUST(P1),
     TCUST(_END)
 } tcust;
