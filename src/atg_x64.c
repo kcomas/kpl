@@ -717,7 +717,7 @@ static atg_stat cond_bl_e_f6_s_f6(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat atg_cs_sg(atg *t, gen *g, te *an, err **e) {
-    if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), t->tc++), gen_call_m(g, 2, gen_data(g, X64_TYPE(S), P(mc_c(((te*) an->d[6].p)->d[4].p))), gen_data(g, X64_TYPE(M), P(&al_mc))), gen_data(g, X64_TYPE(M), P(mc_i_cstr))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), t->tc++), gen_call_m(g, 2, gen_data(g, X64_TYPE(S), ((te*) an->d[6].p)->d[4]), gen_data(g, X64_TYPE(M), P(&al_mc))), gen_data(g, X64_TYPE(M), P(mc_i_cstr))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 

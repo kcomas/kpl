@@ -41,7 +41,7 @@ static atg_stat atg_dump_e(atg *t, gen *g, te *an, err **e, FILE *f, size_t idnt
 static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, gen_op go, FILE *f, size_t idnt, te *restrict type, te *restrict cd, mc *sym) {
     uint32_t ti;
     atg_stat stat = ATG_STAT(OK);
-    if (sym && gen_a(g, go, gen_call_m(g, 5, gen_data(g, X64_TYPE(M), P(f)), gen_data(g, X64_TYPE(M), P(atg_sym_str)), gen_data(g, X64_TYPE(U5), U5(idnt)), gen_data(g, X64_TYPE(M), P(atg_dump_idnt)), gen_data(g, X64_TYPE(S), P(mc_c(sym)))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (sym && gen_a(g, go, gen_call_m(g, 5, gen_data(g, X64_TYPE(M), P(f)), gen_data(g, X64_TYPE(M), P(atg_sym_str)), gen_data(g, X64_TYPE(U5), U5(idnt)), gen_data(g, X64_TYPE(M), P(atg_dump_idnt)), gen_data(g, X64_TYPE(S), P(sym))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     switch (type->d[1].u4) {

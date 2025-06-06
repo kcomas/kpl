@@ -17,7 +17,7 @@ static void* type_ref_g_des(type t) {
     return NULL;
 }
 
-gen_stat v_des(gen *bg, te *t, void **fn, err **e) {
+static gen_stat v_des(gen *bg, te *t, void **fn, err **e) {
     te *st = t->d[2].p;
     if (!st || !type_is_ref(st->d[1].u4)) return gen_type_err(bg, t, e, "gen type inv vr ref");
     *fn = type_ref_g_des(st->d[1].u4);
@@ -33,7 +33,7 @@ gen_stat gen_type_aff(gen *g, te *t, err **e, const char *pf) {
     return GEN_STAT(OK);
 }
 
-gen_stat h_des(gen *bg, te *t, gen **g, err **e) {
+static gen_stat h_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
     if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
@@ -53,7 +53,7 @@ gen_stat h_des(gen *bg, te *t, gen **g, err **e) {
     return gen_type_aff(*g, t, e, __FUNCTION__);
 }
 
-gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
+static gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
     if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
