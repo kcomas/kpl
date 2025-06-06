@@ -34,6 +34,8 @@ extern const char *atg_sym_str;
 
 atg *atg_b(atg *t);
 
-typedef err *atg_jit(te *x);
+typedef err *atg_jit(void);
+
+typedef err *atg_jit_exp(te *x);
 
 err *atg_z(const atg *t, tbl *volatile et, const uint8_t *m, size_t ep);

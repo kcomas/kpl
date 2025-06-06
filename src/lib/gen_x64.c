@@ -479,7 +479,7 @@ static void set_code_s(te *ci, as *a) {
 }
 
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
-    *idx = sizeof(void*) * 1;
+    *idx = sizeof(void*);
     switch (t) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
