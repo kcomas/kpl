@@ -4,6 +4,8 @@
 #include "type.h"
 #include "gen_x64.h"
 
+void* type_ref_g_des(type t);
+
 // p->af->f(p)
 gen_stat gen_type_aff(gen *g, te *t, err **e, const char *pf);
 

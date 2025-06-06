@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     tbl *et = NULL;
     err *e = z(fn, &et, dflgs);
     mc_f(fn);
-    tbl_f(et);
+    opt_exp_tbl_f(et);
     if (e) {
         err_p(e);
         err_f(e);
