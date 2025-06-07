@@ -143,7 +143,7 @@ $(ATG): $(OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST
 
 
 FSAN = -fsanitize=address,leak,undefined
-#$(TESTS): OO = -O2
+$(TESTS): OO = -O2
 $(TESTS): FLAGS += -DNTO
 $(TESTS): FFLAGS += $(FSAN)
 $(TESTS): LFLAGS += $(FSAN)
