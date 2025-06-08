@@ -1,4 +1,9 @@
 
 // floating point numbers
-a: $(F6;3.31) + F6$2.25
-$(FD;1) << $(SG;a),"\n"
+a:F6$3.123
+b:F6$2.456
+$(FD;1) << $(SG;a+b),"\n"
+
+sub:FN(F6;F6;F6)${(x;y) x - y}
+
+$(FD;1) << $(SG;sub(a;b)),"\n"
