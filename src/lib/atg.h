@@ -20,14 +20,13 @@ typedef struct {
     ssize_t r;
     const alfr *af, *ta, *saf, *sta; // alloc for gen st
     atg_tbl_i *ati;
-    atg_lst_i *ali;
     gen *bg; // for base gens
     as *a;
     lst *q, *se; // queue of weak ref **an, start end fns
     tbl *at, *ot; // aply, op
 } atg; // ast to gen
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *ati, atg_lst_i ali, gen *g, as *a);
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
 
 typedef bool atg_test_fn(const te *an);
 
