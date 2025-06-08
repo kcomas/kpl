@@ -74,7 +74,7 @@ T(facrec) {
     V(RN(AN(TS(VD), LN(LT(1, "fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, te_c(ft)),
             LN(tbl_c(lta), L(1, ON(TS(U6), IF,
-                LN(NULL, L(1, ON(TS(U6), GT, EN("n", FLG(0, LTE_FLG(A)), TS(U6)), SN(U6, U6(1))))),
+                LN(NULL, L(1, ON(TS(BL), GT, EN("n", FLG(0, LTE_FLG(A)), TS(U6)), SN(U6, U6(1))))),
                 LN(tbl_c(ltb), L(2,
                     ON(TS(U6), MUL, te_c(ne), AN(TS(U6), te_c(face), L(1, ON(TS(U6), SUB, te_c(ne), SN(U6, U6(1)))))),
                     ON(TS(U6), CST, TN(U6), SN(I6, I6(1)))))))))),
