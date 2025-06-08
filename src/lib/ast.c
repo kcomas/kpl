@@ -21,6 +21,24 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV CLS";
 }
 
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
+    ast *a = af->a(sizeof(ast));
+    a->r = 1;
+    a->af = af;
+    a->ta = ta;
+    a->ma = ma;
+    a->pig = pig;
+    a->ali = ali;
+    a->pt = pt;
+    a->tt = tt;
+    return a;
+}
+
+ast *ast_c(ast *a) {
+    a->r++;
+    return a;
+}
+
 un ast_hsh(const te *an) {
     un hsh = U6(0);
     if (!an) {
@@ -46,22 +64,32 @@ un ast_hsh(const te *an) {
     return hsh;
 }
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
-    ast *a = af->a(sizeof(ast));
-    a->r = 1;
-    a->af = af;
-    a->ta = ta;
-    a->ma = ma;
-    a->pig = pig;
-    a->ali = ali;
-    a->pt = pt;
-    a->tt = tt;
-    return a;
+ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
+    while (an) {
+        if (an->d[2].u4 == cls) {
+            *pn = an;
+            return AST_STAT(OK);
+        }
+        an = an->d[0].p;
+    }
+    return AST_STAT(INV);
 }
 
-ast *ast_c(ast *a) {
-    a->r++;
-    return a;
+ast_stat ast_g_t(te *an, te **t) {
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+        case AST_CLS(I):
+        case AST_CLS(L):
+        case AST_CLS(_):
+            return AST_STAT(INV);
+        case AST_CLS(E):
+            *t = ((te*) an->d[3].p)->d[2].p;
+            break;
+        default:
+            *t = an->d[3].p;
+            break;
+    }
+    return *t ? AST_STAT(OK) : AST_STAT(INV);
 }
 
 static void t_r_f(void *p) {

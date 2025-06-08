@@ -34,13 +34,13 @@ typedef tbl *cls_tbl_i(void);
 typedef struct {
     uint32_t lbl; // not used internally
     ssize_t r;
-    const alfr *af, *ta;
+    const alfr *af, *ta, *va; // al for gen, te, vr
     cls_tbl_i *cti;
     tbl *oci; // op cls op tbl given at start
     lst *code;
 } gen;
 
-gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code);
+gen *gen_i(const alfr *af, const alfr *ta, const alfr *va, cls_tbl_i cti, tbl *oci, lst *code);
 
 gen *gen_i_gen(const gen *g);
 

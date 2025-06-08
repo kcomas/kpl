@@ -32,11 +32,6 @@ typedef enum {
 
 const char *ast_cls_str(ast_cls cls);
 
-un ast_hsh(const te *an);
-
-#define AST_HSH_C 1
-#define AST_HSH_T 0
-
 // ast entry te[id;fn]
 
 typedef ast_stat psr_id_g(te *pn, size_t *pid);
@@ -54,6 +49,17 @@ typedef struct {
 ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
 
 ast *ast_c(ast *a);
+
+un ast_hsh(const te *an);
+
+#define AST_HSH_C 1
+#define AST_HSH_T 0
+
+// get first parent node of cls
+ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
+
+// get type, not null
+ast_stat ast_g_t(te *an, te **type);
 
 // ast t te[par;psr;cls;...]
 

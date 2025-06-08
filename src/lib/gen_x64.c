@@ -125,8 +125,12 @@ static void gen_call_m_f(void *p) {
     t->af->f(t);
 }
 
+te *gen_call_v(gen *g, vr *v) {
+    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), X64_TYPE(N), P(v));
+}
+
 te *gen_call_m(gen *g, size_t n, ...) {
-    vr *v = vr_i(n, g->af, (void*) te_f);
+    vr *v = vr_i(n, g->va, (void*) te_f);
     va_list args;
     va_start(args, n);
     while (n > 0) {
@@ -134,7 +138,7 @@ te *gen_call_m(gen *g, size_t n, ...) {
         n--;
     }
     va_end(args);
-    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), X64_TYPE(N), P(v));
+    return gen_call_v(g, v);
 }
 
 te *gen_lbl(gen *g, size_t id) {

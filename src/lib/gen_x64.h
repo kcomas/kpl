@@ -48,6 +48,8 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
 void gen_p(const gen *g, const uint8_t *m);
 
+te *gen_call_v(gen *g, vr *v);
+
 te *gen_call_m(gen *g, size_t n, ...);
 
 te *gen_lbl(gen *g, size_t id);
