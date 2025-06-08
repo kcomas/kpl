@@ -224,7 +224,7 @@ static const char *const tkn_type_str[] = {
 void tkn_p(const tkn *const t, const char *const str) {
     const char *type = "INVALID";
     if (t->type >= TKN_TYPE(NB) && t->type <= TKN_TYPE(RW)) type = tkn_type_str[t->type];
-    printf("type: %s, lno: %lu, cno: %lu, str: ", type, t->lno, t->cno);
+    printf("%lu,%lu,%s,", t->lno, t->cno, type); // line, char, type, str
     if (t->type == TKN_TYPE(NB)) printf("\\0");
     else if (t->type == TKN_TYPE(NL)) printf("\\n");
     else if (t->type == TKN_TYPE(WS)) printf("\\s[%lu]", t->len);

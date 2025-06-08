@@ -12,6 +12,7 @@ typedef enum {
     AST_STAT(TKN_ERR),
     AST_STAT(TKN_NF), // no case for tkn
     AST_STAT(VAR_I_ERR), // failed to add var node
+    AST_STAT(VAL_A_NN), // previous node not null
     AST_STAT(END)
 } ast_stat;
 
