@@ -21,13 +21,8 @@ size_t lst_g_l(const lst *l) {
     return l->l;
 }
 
-static void td(void *p) {
-    te *t = p;
-    t->af->fr(t);
-}
-
 lst_stat lst_ab(lst *l, un d) {
-    te *li = te_i(3, l->ta, &td);
+    te *li = te_i(3, l->ta, NULL);
     li->d[0] = d;
     if (!l->h) l->h = l->t = li;
     else {
@@ -39,7 +34,7 @@ lst_stat lst_ab(lst *l, un d) {
 }
 
 lst_stat lst_af(lst *l, un d) {
-    te *li = te_i(3, l->ta, &td);
+    te *li = te_i(3, l->ta, NULL);
     li->d[0] = d;
     if (!l->t) l->t = l->h = li;
     else {

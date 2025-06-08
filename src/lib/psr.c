@@ -1,12 +1,13 @@
 
 #include "psr.h"
 
-psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts) {
-    psr *p = pa(sizeof(psr));
+psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts) {
+    psr *p = af->al(sizeof(psr));
     p->r = 1;
     p->idc = PARSER(_);
-    p->pa = pa;
-    p->pf = pf;
+    p->af = af;
+    p->ta = ta;
+    p->la = la;
     p->pef = pef;
     p->pti = pti;
     p->tt = tt;
@@ -25,7 +26,7 @@ size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre
         size_t iid = va_arg(tkns, size_t);
         if (tbl_g_i(pt, U6(iid), &kv) == TBL_STAT(NF)) {
             while (nt > 0) {
-                kv = te_i(8, p->pa, p->pef);
+                kv = te_i(8, p->ta, p->pef);
                 kv->d[0] = U6(iid);
                 kv->d[7] = P(p->pti());
                 tbl_a(pt, kv);
@@ -52,7 +53,7 @@ size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre
 
 psr_stat psr_n(psr *p, te *nh) {
     psr_stat pstat;
-    te *m = te_i(5, p->pa, p->pf);
+    te *m = te_i(5, p->ta, NULL);
     for (;;) {
         if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         psr_mode pm = PSR_MODE(NONE);
@@ -70,7 +71,7 @@ psr_stat psr_n(psr *p, te *nh) {
             mf = kv->d[5].p;
             nf = kv->d[6].p;
             pt = kv->d[7].p;
-            m = te_i(5, p->pa, p->pf);
+            m = te_i(5, p->ta, NULL);
             if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         }
         tkn_s(p->tt, m);
@@ -82,7 +83,7 @@ psr_stat psr_n(psr *p, te *nh) {
             if (!st || !ef || !nf || !mf) return PSR_STAT(INV);
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
             vr_d(p->ts);
-            te *lnh = te_i(3, p->pa, p->pf);
+            te *lnh = te_i(3, p->ta, NULL);
             for (;;) {
                 lnh->d[0] = P(NULL);
                 lnh->d[1] = P(NULL);
@@ -99,7 +100,7 @@ psr_stat psr_n(psr *p, te *nh) {
             te_f(lnh);
             vr_d(p->ts);
             te_f(m);
-            m = te_i(5, p->pa, p->pf);
+            m = te_i(5, p->ta, NULL);
         } else if (nf && mf) {
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
             if (pn) if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
@@ -115,5 +116,5 @@ void psr_f(psr *p) {
     tkn_f(p->tt);
     vr_f(p->ts);
     tbl_f(p->pt);
-    p->pf(p);
+    p->af->fr(p);
 }

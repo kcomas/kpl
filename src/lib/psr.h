@@ -49,15 +49,15 @@ typedef struct _psr {
     tkn_stat tstat;
     ssize_t r;
     size_t idc;
-    alfn *pa;
-    frfn *pf, *pef;
+    const alfr *af, *ta, *la;
+    frfn *pef;
     psr_tbl_i *pti;
     tkn *tt;
     vr *ts; // tkn stk
     tbl *pt;
 } psr;
 
-psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
+psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
 
 // returns 0 for insert fail
 size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);

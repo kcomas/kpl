@@ -7,14 +7,13 @@
 typedef struct {
     ssize_t r; // ref count
     size_t s, l; // size, len
-    alfn *ma;
-    frfn *mf;
+    const alfr *af;
     uint8_t d[]; // data in bytes
 } mc; // memory chunk
 
-mc *mc_i(size_t s, alfn *ma, frfn *mf);
+mc *mc_i(size_t s, const alfr *af);
 
-mc *mc_i_cstr(const char *s, alfn *ma, frfn *mf);
+mc *mc_i_cstr(const char *s, const alfr *af);
 
 mc *mc_c(mc *m);
 
