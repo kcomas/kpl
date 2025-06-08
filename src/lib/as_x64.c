@@ -1,6 +1,46 @@
 
 #include "as_x64.h"
 
+static const char *reg_str(size_t rid) {
+    switch (rid) {
+        case R(AX): return "RAX";
+        case R(CX): return "RCX";
+        case R(DX): return "RDX";
+        case R(BX): return "RBX";
+        case R(SP): return "RSP";
+        case R(BP): return "RSP";
+        case R(SI): return "RSI";
+        case R(DI): return "RDI";
+        case R(8): return "R8";
+        case R(9): return "R9";
+        case R(10): return "R10";
+        case R(11): return "R11";
+        case R(12): return "R12";
+        case R(13): return "R13";
+        case R(14): return "R14";
+        case R(15): return "R15";
+        case XMM(0): return "XMM0";
+        case XMM(1): return "XMM1";
+        case XMM(2): return "XMM2";
+        case XMM(3): return "XMM3";
+        case XMM(4): return "XMM4";
+        case XMM(5): return "XMM5";
+        case XMM(6): return "XMM6";
+        case XMM(7): return "XMM7";
+        case XMM(8): return "XMM8";
+        case XMM(9): return "XMM9";
+        case XMM(10): return "XMM10";
+        case XMM(11): return "XMM11";
+        case XMM(12): return "XMM12";
+        case XMM(13): return "XMM13";
+        case XMM(14): return "XMM14";
+        case XMM(15): return "XMM15";
+        default:
+            break;
+    }
+    return "INV";
+}
+
 static const char *arg_id_str(size_t id) {
     switch (id) {
         case ARG_ID(N): return "N";
@@ -64,7 +104,18 @@ void as_code_p(const as *a, const uint8_t *m) {
             for (size_t i = 2; i < 6; i++) {
                 te *a = c->d[i].p;
                 if (!a) break;
-                printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
+                printf("A(%s):", arg_id_str(a->d[0].u6));
+                switch (a->d[0].u6) {
+                    case ARG_ID(R):
+                        printf("%s", reg_str(a->d[1].u6));
+                        break;
+                    case ARG_ID(RM):
+                        printf("(%s)", reg_str(a->d[1].u6));
+                        break;
+                    default:
+                        printf("%lu", a->d[1].u6);
+                }
+                putchar(' ');
             }
             if (m) {
                 printf("\n ");
