@@ -46,20 +46,24 @@ static gen *init(void) {
     return g;
 }
 
-static void build(gen *g, uint8_t *m) {
+static void build(_tests *_t, gen *g, uint8_t *m) {
+    E();
     gen_st *st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
     as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    if (gen_st_p1(g, st) != GEN_STAT(OK)) exit(33);
+    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    if (gen_n(g, st, a) != GEN_STAT(OK)) exit(44);
+    A(gen_n(g, st, a) == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
-    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    A(as_n(a, m) == AS_STAT(OK), "as_n");
     gen_p(g, m);
     gen_st_f(st);
     gen_f(g);
     as_f(a);
 }
+
+#define BUILD(G, M) build(_t, G, M); \
+    E()
 
 T(fib) {
     gen *g = init();
@@ -77,7 +81,7 @@ T(fib) {
     S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(U6), 1), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(U6), 1)), gen_lbl(g, 0)));
     S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(U6), 0), gen_tmp(g, X64_TYPE(U6), 0), gen_tmp(g, X64_TYPE(U6), 1)));
     S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 0), NULL, NULL));
-    build(g, m);
+    BUILD(g, m);
     uint64_t n = 8, y = 21;
     //uint64_t n = 35, y = 9227465;
     uint64_t r = ((uint64_t(*)(uint64_t)) m)(n);
@@ -115,7 +119,7 @@ T(ack) {
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 3), NULL, NULL));
     S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(U6), 3), gen_arg(g, X64_TYPE(U6), 1), gen_data(g, X64_TYPE(U3), U3(1))));
     S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 3), NULL, NULL));
-    build(g, m);
+    BUILD(g, m);
     uint64_t am = 2, bn = 4 , y = 11;
     //uint64_t am = 3, bn = 10, y = 8189;
     uint64_t r = ((uint64_t(*)(uint64_t, uint64_t)) m)(am, bn);

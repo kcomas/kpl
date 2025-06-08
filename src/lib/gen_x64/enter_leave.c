@@ -44,13 +44,13 @@ static gen_stat leave_au_fn(gen *g, void *s, te *ci, as *a)  {
 static gen_stat leave_du_fn(gen *g, void *s, te *ci, as *a)  {
     (void) g;
     gen_st *st = s;
-    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[2]), ci);
+    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), ci);
     return leave_e(st, ci, a);
 }
 
 void gen_enter_leave(gen *g) {
     GEN_OP_A0(g, GEN_OP(ENTER), enter_fn);
-    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), U3(X64_TYPE(U6)), leave_au_fn);
-    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), U3(X64_TYPE(U6)), leave_au_fn);
-    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), U3(X64_TYPE(U6)), leave_du_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(U6), leave_au_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(U6), leave_au_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(U6), leave_du_fn);
 }

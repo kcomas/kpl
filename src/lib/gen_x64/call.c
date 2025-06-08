@@ -5,11 +5,11 @@ static gen_stat call_arg(gen_st *st, te *restrict ci, as *a, te *restrict kvr) {
     gen_stat stat;
     static reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
     size_t iri = 0, xri = 0;
-    vr *args = ((te*) ci->d[2].p)->d[2].p;
+    vr *args = ((te*) ci->d[2].p)->d[1].p;
     for (size_t i = 0; i < args->l; i++) {
         if (iri > 5 || xri > 5) return GEN_STAT(INV);
         te *ovt = args->d[i].p, *kv;
-        switch (ovt->d[0].u3) {
+        switch (gen_var_g_c(ovt)) {
             case GEN_CLS(A):
             case GEN_CLS(T):
                 if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat;
@@ -37,7 +37,7 @@ static gen_stat call_arg(gen_st *st, te *restrict ci, as *a, te *restrict kvr) {
                     case X64_TYPE(M):
                     case X64_TYPE(U6):
                     case X64_TYPE(I6):
-                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[2]), ci);
+                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), ci);
                         break;
                     default:
                         return GEN_STAT(INV);
@@ -47,8 +47,8 @@ static gen_stat call_arg(gen_st *st, te *restrict ci, as *a, te *restrict kvr) {
                 return GEN_STAT(INV);
         }
     }
-    AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci);
-    switch (((te*) ci->d[1].p)->d[1].u3) {
+    AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci);
+    switch (gen_var_g_t(ci->d[1].p)) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
             // TODO
@@ -98,6 +98,6 @@ static gen_stat callnpr_auml_fn(gen *g, void *s, te *ci, as *a) {
 }
 
 void gen_call(gen *g) {
-    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(M), U3(X64_TYPE(N)), GEN_CLS(L), U3(X64_TYPE(N)), call_auml_fn);
-    GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(M), U3(X64_TYPE(N)), GEN_CLS(L), U3(X64_TYPE(N)), callnpr_auml_fn);
+    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_auml_fn);
+    GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_auml_fn);
 }

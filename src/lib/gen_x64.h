@@ -45,9 +45,9 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
 void gen_p(const gen *g, const uint8_t *m);
 
-// atm entry te[(id << 8) + cls;te[cls;info;id];reg]
+// atm entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];reg]
 
-// lat entry te[(id << 8) + cls;te[cls;info;id];code]
+// lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
 
 typedef struct {
     uint8_t vc, rac, xac; // var count for stk alloc, arg count
