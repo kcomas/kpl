@@ -16,6 +16,7 @@ typedef tbl *chk_tbl_i(void);
 // entry te[u4(cls)|u4(type);tbl...te[u4(cls)|u4(type);fn]]]
 
 typedef struct {
+    int32_t fnlc; // fn label counter
     ssize_t r;
     const alfr *af, *ta, *ea;
     err_d_p *ep;

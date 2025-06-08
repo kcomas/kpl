@@ -40,8 +40,8 @@ void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt) {
     }
 }
 
-static bool cst_type_lst_t(const te *an) {
-    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L);
+static bool dfn_cst_type_lst_t(const te *an) {
+    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L) && ((te*) an->d[0].p)->d[2].u4 == AST_CLS(O) && ((te*) an->d[0].p)->d[4].u4 == OC(DFN);
 }
 
 static bool root_lst_t(const te *an) {
@@ -51,7 +51,7 @@ static bool root_lst_t(const te *an) {
 bool atg_x64_enq(const te *an) {
     switch (an->d[2].u4) {
         case AST_CLS(O):
-            return cst_type_lst_t(an);
+            return dfn_cst_type_lst_t(an);
         case AST_CLS(L):
             return root_lst_t(an);
         default:
@@ -86,7 +86,8 @@ atg_stat atg_err(const atg *t, te *an, err **e, const char *m) {
 }
 
 static atg_stat cst_type_lst_s(atg *t, gen *g, te *an, err **e) {
-    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl = t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    te *lte = ((te*) ((te*) an->d[0].p)->d[5].p)->d[3].p;
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, ast_lst_tbl_e_g_i(lte)), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     // TODO zero ref counted vars
     return ATG_STAT(OK);
@@ -102,7 +103,10 @@ static atg_stat cst_type_lst_e(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat root_lst_s(atg *t, gen *g, te *an, err **e) {
-    return cst_type_lst_s(t, g, an, e);
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl = t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    // TODO zero ref counted vars
+    return ATG_STAT(OK);
 }
 
 static x64_type type_g_x64_type(te *tn) {
@@ -333,7 +337,7 @@ static atg_stat dump_vd_s_u5_e_i6(atg *t, gen *g, te *an, err **e) {
 void atg_arith(atg *t);
 
 atg *atg_b(atg *t) {
-    atg_a_se(t, cst_type_lst_t, cst_type_lst_s, cst_type_lst_e);
+    atg_a_se(t, dfn_cst_type_lst_t, cst_type_lst_s, cst_type_lst_e);
     atg_a_se(t, root_lst_t, root_lst_s, root_lst_e);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);

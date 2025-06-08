@@ -54,3 +54,8 @@ T(facloop) {
         CN(P1, IN("f"))
     )), NULL)));
 }
+/*
+T(facrec) {
+    V(facrec, NULL);
+}
+*/

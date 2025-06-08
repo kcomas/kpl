@@ -240,6 +240,23 @@ T(facloop) {
     te_f(h);
 }
 
+T(facrec) {
+    te *h = ppnode(psr_r(bpsr(facrec)));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), LST(
+            OP(
+                APLY(OP(N(NONE), N(NONE)), APLY(N(TYPE), N(VAR)), N(INT)),
+                LST(
+                    OP(N(VAR), APLY(N(VAR), OP(N(VAR), N(INT)))),
+                    OP(N(TYPE), N(INT))
+                )
+            )
+        ))),
+        CMD(APLY(N(VAR), OP(N(TYPE), N(INT))))
+    ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(bpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});
