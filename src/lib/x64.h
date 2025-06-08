@@ -91,7 +91,9 @@ x64_stat x64_d(size_t *p, uint8_t *m, un u);
 x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
 #define X64_RS() \
-        asm("push %rax\n\t" \
+        asm("sub $0x10, %rsp\n\t" \
+        "movsd %xmm0, (%rsp)\n\t" \
+        "push %rax\n\t" \
         "push %rbx\n\t" \
         "push %rcx\n\t" \
         "push %rdx\n\t" \
@@ -108,7 +110,9 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
         "pop %rdx\n\t" \
         "pop %rcx\n\t" \
         "pop %rbx\n\t" \
-        "pop %rax\n\t")
+        "pop %rax\n\t" \
+        "movsd (%rsp), %xmm0\n\t" \
+        "add $0x10, %rsp\n\t")
 
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
@@ -256,6 +260,9 @@ x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s);
 
 // and rax, rdi
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s);
+
+// pxor xmm0, xmm1
+x64_stat x64_pxor_xx(size_t *p, uint8_t *m, reg d, reg s);
 
 // xor rax, rdi
 x64_stat x64_xor_rr(size_t *p, uint8_t *m, reg d, reg s);
