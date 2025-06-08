@@ -237,7 +237,7 @@ T(import) {
     te *et = TH(ET, 1, "b", TS(I6));
     te *etn = EN("i", FLG(0, LTE_FLG(D)), te_c(et));
     V(RN(AN(TS(VD), LN(LT(2, "i", FLG(0, LTE_FLG(D)), te_c(et), "v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), L(4,
-        ON(te_c(et), DFN, te_c(etn), SET(1, "b", P(NULL), TS(I6))),
+        ON(te_c(et), NOP, te_c(etn), SET(1, "b", P(NULL), TS(I6))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), te_c(etn)),
         ON(TS(I6), DFN, EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)),
             ON(TS(I6), ADD, SN(I6, I6(1)), ON(TS(I6), MUL, ZTN("b", TS(I6), te_c(etn)), SN(I6, I6(2))))),

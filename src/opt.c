@@ -20,13 +20,6 @@ static fld_stat lst_inv_o(fld *f, te **an, err **e) {
     return fld_err(f, *an, e, "opt inv lst");
 }
 
-static void export_tbl_f(void *p) {
-    te *t = p;
-    mc_f(t->d[0].p);
-    // d[1] is freed in opt_exp_tbl_f
-    te_f(t->d[2].p);
-    t->af->f(t);
-}
 
 static bool lst_inv_t(const te *an) {
     if (an->d[2].u4 != AST_CLS(L)) return false;
@@ -35,13 +28,28 @@ static bool lst_inv_t(const te *an) {
     return !p || (p->d[2].u4 != AST_CLS(A) && p->d[2].u4 != AST_CLS(O));
 }
 
-static fld_stat lst_le_o(fld *f, te **an, err **e) {
+static void export_tbl_f(void *p) {
+    te *t = p;
+    mc_f(t->d[0].p);
+    // d[1] is freed in opt_exp_tbl_f
+    te_f(t->d[2].p);
+    t->af->f(t);
+}
+
+static fld_stat lst_led_o(fld *f, te **an, err **e) {
     uint16_t eti = 0;
     if (!(*an)->d[3].p) return FLD_STAT(OK);
-    te *h = ((tbl*) (*an)->d[3].p)->i->h, *lte, *kv, *rn = NULL;
+    tbl *lt = (*an)->d[3].p;
+    te *h = lt->i->h, *lte, *kv, *rn = NULL;
     while (h) {
         lte = h->d[0].p;
         uint32_t flgs = ast_lst_tbl_e_g_f(lte);
+        if (flgs & LTE_FLG(D)) {
+           h = h->d[2].p;
+           if (tbl_s(lt, lte->d[0], &lte) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt failed to remove data node");
+           te_f(lte);
+           continue;
+        }
         if ((flgs & LTE_FLG(O)) && (kv = chk_g_pn_lte((*an)->d[0].p, lte->d[0].p))) lte->d[1] = U6(kv->d[1].u6 | LTE_FLG(O));
         if (!(flgs & LTE_FLG(O)) && (flgs & LTE_FLG(E))) {
             if (!rn && ast_g_pn(AST_CLS(R), *an, &rn) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get root node");
@@ -59,7 +67,7 @@ static fld_stat lst_le_o(fld *f, te **an, err **e) {
     return FLD_STAT(OK);
 }
 
-static bool lst_le_t(const te *an) {
+static bool lst_led_t(const te *an) {
     return an->d[2].u4 == AST_CLS(L);
 }
 
@@ -214,6 +222,26 @@ static bool op_s_s_t(const te *an) {
     return false;
 }
 
+static fld_stat z_et_o(fld *f, te **an, err **e) {
+    te *kv, *n;
+    if (ast_g_t((*an)->d[4].p, &kv) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get ET type for Z");
+    if (tbl_g_i(kv->d[2].p, (*an)->d[5], &kv) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt cannot get value in ET tbl");
+    void *fn = NULL;
+    if (type_is_ref(((te*) kv->d[2].p)->d[1].u4)) {
+        STOP("UPDATE DES AND CLONE");
+    }
+    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, fn, kv->d[2], kv->d[1]);
+    te_f(*an);
+    *an = n;
+    return FLD_STAT(OK);
+}
+
+static bool z_et_t(const te *an) {
+    te *n;
+    if (ast_g_t(an->d[4].p, &n) != AST_STAT(OK)) return false;
+    return n->d[1].u4 == TYPE(ET);
+}
+
 uint32_t opt_exp_id(te *x) {
     return u5_g_o(x->d[1], 1);
 }
@@ -247,10 +275,11 @@ void opt_exp_tbl_f(tbl *et) {
 fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(E), entry_t, entry_o);
     fld_a(o, AST_CLS(L), lst_inv_t, lst_inv_o);
-    fld_a(o, AST_CLS(L), lst_le_t, lst_le_o);
+    fld_a(o, AST_CLS(L), lst_led_t, lst_led_o);
     fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
     fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
     fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
+    fld_a(o, AST_CLS(Z), z_et_t, z_et_o);
     return o;
 }

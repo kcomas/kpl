@@ -3,6 +3,7 @@
 const char *ast_oc_str(oc o) {
     static const char *ocs[] = {
         "_START",
+        "NOP",
         "DFN",
         "AGN",
         "CST",

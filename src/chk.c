@@ -382,7 +382,10 @@ static chk_stat chk_op_e_n_svoe_dfn(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_op_dfn_d(chk *c, te *an, err **e) {
-    return chk_op_e_n_svoe_dfn_flg(c, an, e, LTE_FLG(D));
+    chk_stat stat;
+    if ((stat = chk_op_e_n_svoe_dfn_flg(c, an, e, LTE_FLG(D))) != CHK_STAT(OK)) return stat;
+    an->d[4].u4 = OC(NOP);
+    return CHK_STAT(OK);
 }
 
 static chk_stat chk_agn_a_o(chk *c, te *an, err **e) {
