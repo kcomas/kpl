@@ -65,33 +65,43 @@ static bool ins(tbl *t, te *kv) {
     do {
         if (t->b->d[i].p == NULL) {
             lst_ab(t->i, P(kv));
-            t->b->d[i].p = t->i->t;
-            break;
+            t->b->d[i].p = t->i->t; // weak ref
+            return true;
         } else if (t->cf(TBIT(t, i)->d[0], kv->d[0])) {
             te *li = TBI(t, i);
             te_f(li->d[0].p);
             li->d[0].p = kv;
-            break;
+            return true;
         }
         i = (i + 1) % t->b->l;
     } while (i != idx);
-    return i != idx;
+    return false;
 }
 
 tbl_stat tbl_a(tbl *t, te *kv) {
     tbl_stat tstat = TBL_STAT(OK);
+    if (!ins(t, kv)) return TBL_STAT(OAE);
     if ((double) t->i->l / (double) t->b->l >= TBL_RES) {
         te *nb = te_i(t->b->l * TBL_MUL, t->b->ta, t->b->tf);
         te_f(t->b);
         t->b = nb;
         te *h = t->i->h;
         while (h) {
-            if (!ins(t, h->d[0].p)) return TBL_STAT(OAE);
+            size_t idx = t->hf(((te*) h->d[0].p)->d[0]) % t->b->l;
+            size_t i = idx;
+            do {
+                if (t->b->d[i].p == NULL) {
+                    t->b->d[i].p = h;
+                    i = t->b->l;
+                    break;
+                }
+                i = (i + 1) % t->b->l;
+            } while (i != idx);
+            if (i == idx) return TBL_STAT(OAE);
             h = h->d[2].p;
         }
         tstat = TBL_STAT(RES);
     }
-    if (!ins(t, kv)) return TBL_STAT(OAE);
     return tstat;
 }
 
