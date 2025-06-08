@@ -18,6 +18,16 @@ typedef enum {
 
 const char *ast_op_str(oc o);
 
+#define CC(N) CC_##N
+
+typedef enum {
+    CC(_START),
+    CC(P1),
+    CC(_END)
+} cc; // cmd code
+
+const char *cmd_op_str(cc c);
+
 // lst tbl entry te[mc;flags;ast_node;type]
 te *ast_lst_tbl_e_i(const ast *a, mc *s);
 
