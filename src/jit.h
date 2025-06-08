@@ -10,6 +10,7 @@ typedef enum {
     JIT_STAT(OK),
     JIT_STAT(SG_T_INV), // inv type for sg
     JIT_STAT(LG_T_INV), // inv type for lg
+    JIT_STAT(LM_INV),
     JIT_STAT(PV_T_INV), // no push for type
     JIT_STAT(ZOO_T_INV),
     JIT_STAT(ADD_T_INV),
@@ -68,11 +69,6 @@ inline void fn_stk_f(fn_stk *f) {
     alf(f);
 }
 
-typedef struct _jit {
-    size_t len, size; // len, num pages, total size
-    uint8_t *h; // address
-} jit;
-
 #ifndef BYTES_PER_OP
     #define BYTES_PER_OP 10
 #endif
@@ -95,11 +91,6 @@ inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, cons
     }
     er_a(m->e, ei);
     return jstat;
-}
-
-inline void jit_f(jit *j) {
-    munmap(j->h, j->size);
-    alf(j);
 }
 
 inline void jit_a(jit *j, uint8_t b) {

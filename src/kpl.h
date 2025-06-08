@@ -74,7 +74,15 @@ typedef struct _code code;
 
 typedef void jit_fn(void);
 
-typedef struct _jit jit;
+typedef struct _jit {
+    size_t len, size; // len, num pages, total size
+    uint8_t *h; // address
+} jit;
+
+inline void jit_f(jit *j) {
+    munmap(j->h, j->size);
+    alf(j);
+}
 
 typedef union _var var;
 

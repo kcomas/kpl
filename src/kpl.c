@@ -45,4 +45,6 @@ const char *type_get_str(type t) {
     return s;
 }
 
+extern inline void jit_f(jit *j);
+
 extern inline size_t str_dir_len(const char *const s);
