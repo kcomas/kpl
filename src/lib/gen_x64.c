@@ -55,7 +55,26 @@ void gen_op_p(tbl *ot, bool ci, size_t idnt) {
 void gen_p(gen *g, uint8_t *m) {
     te *h = g->code->h;
     while (h) {
-
+        te *o = h->d[0].p;
+        printf("(%s", gen_op_str(o->d[0].u6));
+        for (size_t i = 1; i < 4; i++) {
+            te *ovt = o->d[i].p;
+            if (!ovt) {
+                printf(" (N)");
+                continue;
+            }
+            printf(" (%s ", gen_cls_str(ovt->d[0].u3));
+            switch (ovt->d[0].u3) {
+                case GEN_CLS(A):
+                case GEN_CLS(V):
+                case GEN_CLS(T):
+                    printf("%s ", x64_type_str(ovt->d[1].u3));
+                default:
+                    break;
+            }
+            printf("%lu)", ovt->d[2].u6);
+        }
+        printf(")\n");
         h = h->d[2].p;
     }
 }
