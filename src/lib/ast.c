@@ -36,10 +36,23 @@ static void t_r_f(void *p) {
     n->af->f(n);
 }
 
+static void t_t_f(void *p) {
+    te *n = p;
+    te_f(n->d[3].p);
+    n->af->f(n);
+}
+
 static void t_i_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
     te_f(n->d[4].p);
+    n->af->f(n);
+}
+
+static void t_s_f(void *p) {
+    te *n = p;
+    te_f(n->d[3].p);
+    // TODO data like sg
     n->af->f(n);
 }
 
@@ -50,7 +63,7 @@ static void t_vl_f(void *p) {
     n->af->f(n);
 }
 
-static void t_ot_f(void *p) {
+static void t_oz_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
     te_f(n->d[4].p);
@@ -80,21 +93,25 @@ te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, 
         case AST_CLS(R):
             nf = t_r_f;
             break;
+        case AST_CLS(T):
+            nf = t_t_f;
+            break;
         case AST_CLS(I):
             nf = t_i_f;
             break;
         case AST_CLS(S):
+            nf = t_s_f;
             break;
         case AST_CLS(V):
             nf = t_vl_f;
             break;
         case AST_CLS(O):
             len += 2;
-            nf = t_ot_f;
+            nf = t_oz_f;
             break;
-        case AST_CLS(T):
+        case AST_CLS(Z):
             len += 1;
-            nf = t_ot_f;
+            nf = t_oz_f;
             break;
         case AST_CLS(A):
             len += 1;

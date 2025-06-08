@@ -15,11 +15,12 @@ typedef enum {
 
 typedef enum {
     AST_CLS(R), // root te[tbl;te]
+    AST_CLS(T), // type te[type]
     AST_CLS(I), // identifier [te[type];te]
     AST_CLS(S), // scalar type [un[type];un]
     AST_CLS(V), // vector type [te[type];lst]
     AST_CLS(O), // op [te[type];te;te;op_id]
-    AST_CLS(T), // target, no arg apply type [te[type];te;te]
+    AST_CLS(Z), // left target, no arg apply type [te[type];te;te]
     AST_CLS(A), // apply type [te[type];te;lst]
     AST_CLS(L) // list tbl with scope [tbl;lst]
 } ast_cls;
