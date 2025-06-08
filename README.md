@@ -20,7 +20,9 @@ GNU Make
 
 Double slash until end of line
 
+```
 // my comment
+```
 
 ### Values
 
@@ -91,7 +93,7 @@ c: a?{1.0\`a;a\`b\`b}
 + Add
 - Sub
 * Mul
- Div
+/ Div
 % Rem
 ```
 
