@@ -1,4 +1,5 @@
 
+.PHONY: clean
 .RECIPEPREFIX = >
 CC = gcc
 CFLAGS = -g -Wall -Wextra # TODO specify std
@@ -46,6 +47,5 @@ $(NAME):
 %.o: %.c
 > $(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: clean
 clean:
 > rm -fv $(SRC)/*.o $(TEST)/*.o $(NAME) *$(TNAME)
