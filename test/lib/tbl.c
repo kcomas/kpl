@@ -1,7 +1,8 @@
 
 #include "../../src/lib/tbl.h"
-#include <string.h>
-#include <stdio.h>
+#include "t.h"
+
+I;
 
 static size_t sh(un u) {
     char *s = u.p;
@@ -43,14 +44,13 @@ static void pt(tbl *t) {
     putchar('\n');
 }
 
-void btable(void) {
+T(tbl, {
     lst *tl = lst_i(&tm, &tm, (void*) &te_f);
     te *b = te_i(1, &tm, NULL);
     tbl *t = tbl_i(&tm, &sh, &cmp, tl, b);
-    tbl_stat tstat;
-    if ((tstat = tbl_a(t, kv_i("Hello", 123))) != TBL_STAT(RES)) exit(tstat);
+    A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
     pt(t);
-    if ((tstat = tbl_a(t, kv_i("World", 345))) != TBL_STAT(RES)) exit(tstat);
+    A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");
     pt(t);
     te *h = t->i->h;
     while (h) {
@@ -58,16 +58,16 @@ void btable(void) {
         h = h->d[2].p;
     }
     te *kv;
-    if ((tstat = tbl_g_i(t, P("World"), &kv)) != TBL_STAT(OK)) exit(tstat);
+    A(tbl_g_i(t, P("World"), &kv) == TBL_STAT(OK), "tbl_g_i");
     printf("%lu\n", kv->d[1].i6);
-    if ((tstat = tbl_a(t, kv_i("World", 789))) != TBL_STAT(OK)) exit(tstat);
-    if ((tstat = tbl_g_i(t, P("World"), &kv)) != TBL_STAT(OK)) exit(tstat);
+    A(tbl_a(t, kv_i("World", 789)) == TBL_STAT(OK), "tbl_a");
+    A(tbl_g_i(t, P("World"), &kv) == TBL_STAT(OK), "tbl_g_i");
     printf("%lu\n", kv->d[1].i6);
     pt(t);
-    if ((tstat = tbl_s(t, P("Hello"), &kv)) != TBL_STAT(OK)) exit(tstat);
+    A(tbl_s(t, P("Hello"), &kv) == TBL_STAT(OK), "tbl_s");
     printf("%lu\n", kv->d[1].i6);
     kv_f(kv);
-    if ((tstat = tbl_g_i(t, P("asdf"), &kv)) != TBL_STAT(NF)) exit(tstat);
+    A(tbl_g_i(t, P("asdf"), &kv) == TBL_STAT(NF), "tbl_g_i");
     h = t->i->h;
     while (h) {
         printf("%s\n", (char*) ((te*) h->d[0].p)->d[0].p);
@@ -75,9 +75,4 @@ void btable(void) {
     }
     pt(t);
     tbl_f(t);
-}
-
-int main(void) {
-    btable();
-    return 0;
-}
+});
