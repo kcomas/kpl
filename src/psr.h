@@ -2,28 +2,6 @@
 #include "tkn.h"
 #include "./lib/psr.h"
 
-#define PCUST(N) PCUST_##N
-
-typedef enum {
-    PCUST(INT) = PARSER(USR),
-    PCUST(FLT),
-    PCUST(VAR),
-    PCUST(TYPE),
-    PCUST(SELF),
-    PCUST(SUM),
-    PCUST(SUB),
-    PCUST(ADD),
-    PCUST(EQ),
-    PCUST(LT),
-    PCUST(GT),
-    PCUST(AND),
-    PCUST(EFN),
-    PCUST(MH),
-    PCUST(AGN),
-    PCUST(CST),
-    PCUST(IF),
-} pust;
-
 #define NODE_TYPE(N) NODE_TYPE_##N
 
 typedef enum {
