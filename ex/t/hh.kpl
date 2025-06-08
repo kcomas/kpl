@@ -24,8 +24,10 @@ ph(g)
 
 s:FN(VD)${()
     //h:HH{SG}${`a:"a";`b:"b"}
+    p:FN(SG;TE[U6;U6];VD)${(k;t)$(FD;1) << " ",[k;"=";SG$t(0);SG$t(1);"\n"]}
     h:HH{TE[U6;U6]}${`b:[U6$3;U6$4]}
-    t:'h`b
-    $(FD;1) << " ",[SG$t(0);SG$t(1);"\n"]}
+    h`a:[U6$7;U6$8]
+    p("b";'h`b)
+    p("a";'h`a)}
 
 s()
