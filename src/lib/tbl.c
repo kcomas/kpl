@@ -30,33 +30,45 @@ size_t tbl_g_s(const tbl* const t) {
     #define TBL_RES ((double) 0.9)
 #endif
 
-static tbl *resize(tbl *t) {
-}
+#ifndef TBL_MUL
+    #define TBL_MUL 2
+#endif
 
 #define TBI(T, I) T->b->d[I].p
 #define TBIT(T, I) ((te*) ((te*) TBI(T, I))->d[0].p)
 
-tbl_stat tbl_a(tbl **t, te *kv) {
-    tbl_stat tstat = TBL_STAT(OK);
-    if ((double) (*t)->i->l / (double) (*t)->b->l >= TBL_RES) {
-        *t = resize(*t);
-        tstat = TBL_STAT(RES);
-    }
-    lst_ab((*t)->i, P(kv));
-    size_t idx = (*t)->hf(kv->d[0]) % (*t)->b->l;
+static bool ins(tbl *t, te *kv) {
+    size_t idx = t->hf(kv->d[0]) % t->b->l;
     size_t i = idx;
     do {
-        if ((*t)->b->d[i].p == NULL) {
-            (*t)->b->d[i].p = (*t)->i->t;
+        if (t->b->d[i].p == NULL) {
+            t->b->d[i].p = t->i->t;
             break;
-        } else if ((*t)->cf(TBIT((*t), i)->d[0], kv->d[0])) {
-            te_f(TBI((*t), i));
-            TBI((*t), i) = kv;
+        } else if (t->cf(TBIT(t, i)->d[0], kv->d[0])) {
+            te_f(TBI(t, i));
+            TBI(t, i) = kv;
             break;
         }
-        i = (i + 1) % (*t)->b->l;
+        i = (i + 1) % t->b->l;
     } while (i != idx);
-    if (i == idx) return TBL_STAT(OAE);
+    return i != idx;
+}
+
+tbl_stat tbl_a(tbl *t, te *kv) {
+    tbl_stat tstat = TBL_STAT(OK);
+    if ((double) t->i->l / (double) t->b->l >= TBL_RES) {
+        te *nb = te_i(t->b->l * TBL_MUL, t->b->ta, t->b->tf);
+        te_f(t->b);
+        t->b = nb;
+        te *h = t->i->h;
+        while (h) {
+            if (!ins(t, h->d[0].p)) return TBL_STAT(OAE);
+            h = h->d[2].p;
+        }
+        tstat = TBL_STAT(RES);
+    }
+    lst_ab(t->i, P(kv));
+    if (!ins(t, kv)) return TBL_STAT(OAE);
     return tstat;
 }
 

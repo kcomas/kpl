@@ -38,7 +38,7 @@ size_t tbl_g_s(const tbl *const t);
 
 tbl_stat tbl_g_i(tbl *t, un k, te **kv);
 
-tbl_stat tbl_a(tbl **t, te *kv);
+tbl_stat tbl_a(tbl *t, te *kv);
 
 tbl_stat tbl_s(tbl *t, un k, te **kv);
 
