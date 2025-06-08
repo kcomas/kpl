@@ -37,7 +37,7 @@ INST_XI(subsd);
 INST_XI(ucomisd);
 INST_XI(comisd);
 
-as *as_x_b(as *a) {
+void as_x_b(as *a) {
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movq_xx, NULL);
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_movq_xi, NULL);
     as_op_a(a, AS_X64(MOVSD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_movsd_xi, NULL);
@@ -53,5 +53,4 @@ as *as_x_b(as *a) {
     as_op_a(a, AS_X64(UCOMISD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_ucomisd_xi, NULL);
     as_op_a(a, AS_X64(COMISD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_comisd_xx, NULL);
     as_op_a(a, AS_X64(COMISD), ARG_ID(X), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_comisd_xi, NULL);
-    return a;
 }

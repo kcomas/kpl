@@ -45,10 +45,9 @@ INST_RRMO(mov);
 
 INST_RRMOB(mov);
 
-as *as_ro_b(as *a) {
+void as_ro_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(RS), ARG_ID(R), ARG_ID(N), as_mov_rmor, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(RS), ARG_ID(B), ARG_ID(R), as_mov_rmobr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(N), as_mov_rrmo, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(B), as_mov_rrmob, NULL);
-    return a;
 }

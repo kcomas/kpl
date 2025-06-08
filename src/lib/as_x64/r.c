@@ -151,7 +151,7 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_mov_rq(p, m, arg1->d[1].u3, arg2->d[1]) == X64_STAT(OK);
 }
 
-as *as_r_b(as *a) {
+void as_r_b(as *a) {
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_pop_r, NULL);
     as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_r, NULL);
@@ -186,5 +186,4 @@ as *as_r_b(as *a) {
     as_op_a(a, AS_X64(CMP), ARG_ID(RM), ARG_ID(B), ARG_ID(B), ARG_ID(N), as_cmp_rmbb, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(DW), ARG_ID(N), ARG_ID(N), as_cmp_rd, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_cmp_ri, NULL);
-    return a;
 }
