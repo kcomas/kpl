@@ -12,7 +12,7 @@ const char *mod_stat_str(mod_stat ms) {
     return s;
 }
 
-inline mod *mod_i(tds *const s, tdr *const r);
+extern inline mod *mod_i(tds *const s, tdr *const r);
 
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 

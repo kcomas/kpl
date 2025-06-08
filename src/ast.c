@@ -436,6 +436,7 @@ void ast_f(ast *a) {
         case AST_TYPE(MOD):
             fn_node_f(a->n.m->fns);
             FNNF(a->n.m->tn, type_node_f);
+            tds_a(a->n.m->s, a->n.m->r);
             mod_f(a->n.m);
             break;
         AST_F_CASE(FN, fn, fn_node_f);

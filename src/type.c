@@ -425,13 +425,13 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(LD):
             if (op->l) return TYPE_ER(ts, INV_LD_L_NN);
             if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
-                mod *m = mod_i(ts->s, ts->r);
+                mod *m = mod_i(ts->s, tds_g(ts->s));
                 if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
-                m->fns = fn_node_i(ts->r->a, NULL);
-                m->fns->sig = type_node_i(ts->r->a, TYPE(MOD), NULL);
-                ast_st_i(&ldas, ts->r, m->src.str);
+                m->fns = fn_node_i(m->r->a, NULL);
+                m->fns->sig = type_node_i(m->r->a, TYPE(MOD), NULL);
+                ast_st_i(&ldas, m->r, m->src.str);
                 if (ast_parse_stmts(&ldas, m->fns, m->fns->body, TFLS, TKN_FLG(NB)) != AST_STAT(END)) return TYPE_ER(ts, INV_LD_ME);
-                type_st_i(&ldts, ts->s, ts->r, m->src.path);
+                type_st_i(&ldts, m->s, m->r, m->src.path);
                 if (type_chk_fn(&ldts, m->fns) != TYPE_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 if ((tstat = mod_tn_i(ts, m)) != TYPE_STAT(OK)) return tstat;
                 atmp = op->r;

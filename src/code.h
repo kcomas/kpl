@@ -257,7 +257,7 @@ inline void op_if_f(op_if *of) {
     alf(of);
 }
 
-void code_p(const code_st *const cs, const code *const c, size_t idnt);
+void code_p(const code *const c, size_t idnt);
 
 #define OP_A(CS, C, OC, OT, OD, A) code_a(CS->r->a, C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
 
