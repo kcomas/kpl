@@ -21,7 +21,7 @@ void err_p(const err *e) {
         printf("\e[3;4;1;31mEMPTY ERR PRINT\e[0m\n");
         return;
     }
-    if (e->m) printf("\e[1;91m%s\e[0m ", e->m);
+    if (e->m) printf("\e[1;91m%s\e[0m\n", e->m);
     if (e->d && e->dp) e->dp(e->d);
     putchar('\n');
 }

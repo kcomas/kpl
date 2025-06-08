@@ -77,3 +77,5 @@ psr_stat psr_cmd_i(psr *p, te **n, err **e);
 const mc *node_root_mc(te *n);
 
 void node_p(const te *n, size_t idnt);
+
+psr_stat node_tkn_s_e(const te *n, uint32_t *s, uint32_t *e);

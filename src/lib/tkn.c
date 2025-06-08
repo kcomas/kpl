@@ -26,19 +26,19 @@ void tkn_m_s_c(te *m, uint32_t c) {
 }
 
 uint32_t tkn_m_g_s(const te *m) {
-    return u5_g_o(m->d[1], 0);
+    return u5_g_o(m->d[1], TKN_S);
 }
 
 void tkn_m_s_s(te *m, uint32_t s) {
-    m->d[1] = u5_s_o(m->d[1], 0, s);
+    m->d[1] = u5_s_o(m->d[1], TKN_S, s);
 }
 
 uint32_t tkn_m_g_e(const te *m) {
-    return u5_g_o(m->d[1], 1);
+    return u5_g_o(m->d[1], TKN_E);
 }
 
 void tkn_m_s_e(te *m, uint32_t e) {
-    m->d[1] = u5_s_o(m->d[1], 1, e);
+    m->d[1] = u5_s_o(m->d[1], TKN_E, e);
 }
 
 tkn *tkn_i(const alfr *af, const alfr *ta, const alfr *ea, tkn_tbl_i ttif, tkn_pf df, mc *s) {

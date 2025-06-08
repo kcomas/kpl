@@ -61,12 +61,27 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
     ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
+void node_err_p(void *d) {
+    uint32_t s = 0, e = 0;
+    if (node_tkn_s_e(d, &s, &e) != PSR_STAT(OK)) {
+        printf("\e[1;91mCANNOT PRINT STR FROM AST\e[0m\n");
+        return;
+    }
+    const mc *str = node_root_mc(d);
+    te *tkn = ((te*) d)->d[2].p;
+    printf("\e[1mL%d:C%d\e[0m ", tkn_m_g_l(tkn), tkn_m_g_c(tkn));
+    for (uint32_t i = s; i < e; i++) putchar(str->d[i]);
+}
+
 void ast_err_p(void *d) {
-   node_p(d, 0);
+    te *t = d;
+    node_err_p(t->d[1].p);
+    putchar('\n');
+    ast_p(t, 0);
 }
 
 static ast_stat ast_err(ast *a, te *pn, err **e, const char *m) {
-    *e = err_i(a->ea, ast_err_p, (void*) te_f, te_c(pn), m);
+    *e = err_i(a->ea, node_err_p, (void*) te_f, te_c(pn), m);
     return AST_STAT(INV);
 }
 

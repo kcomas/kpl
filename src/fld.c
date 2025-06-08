@@ -1,12 +1,8 @@
 
 #include "fld.h"
 
-static void fld_err_p(void *d) {
-    ast_p(d, 0);
-}
-
 fld_stat fld_err(fld *f, te *an, err **e, const char *m) {
-    *e = err_i(f->ea, fld_err_p, (void*) te_f, te_c(an), m);
+    *e = err_i(f->ea, ast_err_p, (void*) te_f, te_c(an), m);
     return FLD_STAT(INV);
 }
 
@@ -57,6 +53,7 @@ static fld_stat aply_op_r(fld *f, te **an, err **e) {
     if (l->l < 1 || l-l > 2) return fld_err(f, *an, e, "fld aply op inv num args");
     te *on = te_c((*an)->d[4].p);
     on->d[0] = (*an)->d[0];
+    on->d[1] = (*an)->d[1]; // for psr errors
     te_f(*an);
     un a = P(NULL), b = P(NULL);
     lst_sb(l, &b);
