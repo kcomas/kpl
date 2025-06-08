@@ -11,7 +11,6 @@ inline void tdr_stk_i(tdr *const r) {
 }
 
 inline tdr *tdr_i(tds *const s) {
-    sem_wait(&s->a);
     al *a = al_i((void*) s + s->size);
     s->size += algn(sizeof(al), DEFALGN);
     er *e = er_i(a);
@@ -19,7 +18,6 @@ inline tdr *tdr_i(tds *const s) {
     r->a = a;
     r->e = e;
     r->j = ala(a, sizeof(jit));
-    sem_post(&s->a);
     return r;
 }
 
@@ -45,24 +43,23 @@ inline void tds_a(tds *volatile s, tdr *const r) {
     sem_wait(&s->a);
     er_c(r->e);
     LST_A(s, r);
-    sem_post(&s->a);
     sem_post(&s->l);
+    sem_post(&s->a);
 }
-
-#ifndef MAX_TD
-    #define MAX_TD 100
-#endif
 
 inline tdr *tds_g(tds *volatile s, bool stk) {
     tdr *r = NULL;
-    if (s->total < MAX_TD && !s->h) {
+    if (!s->h) {
+        sem_wait(&s->a);
         s->total++;
         r = tdr_i(s);
         if (stk) tdr_stk_i(r);
+        sem_post(&s->a);
     } else {
         sem_wait(&s->l);
         LST_S(s, r);
         if ((stk) && (!r->stk)) tdr_stk_i(r);
+        sem_post(&s->l);
     }
     return r;
 }
