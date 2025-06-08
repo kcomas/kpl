@@ -2,9 +2,9 @@
 .PHONY: clean
 .RECIPEPREFIX = >
 CC = gcc
-KPLFLGS = -DKPL_ALD=1
+DFLAGS = -DKPL_ALD=1
 OO = -g -Og
-CFLAGS = $(KPLFLGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
+CFLAGS = $(DFLAGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)

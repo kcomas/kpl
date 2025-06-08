@@ -4,7 +4,7 @@
 
 #define THREAD_STACK_PAGE_MUL 100
 
-inline tdr *tdr_i(tds *volatile s) {
+inline tdr *tdr_i(tds *const s) {
     al *a = al_i(s->nal);
     s->nal += sizeof(al);
     er *e = er_i(a);
