@@ -573,7 +573,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_FP(var_sg_f);
                         SET_REG_CALL(false, 0);
                         break;
+                    case TYPE(VR):
                     case TYPE(TE):
+                    case TYPE(ST):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_FP(var_tsv_gc);
                         SET_REG_CALL(false, 0);
