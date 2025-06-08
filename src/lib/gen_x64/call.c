@@ -33,6 +33,7 @@ static gen_stat call_auml_fn(alfn *al, frfn fr, gen *g, void *s, te *ci, as *a) 
                         break;
                     default:
                         AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(ir[iri++])), as_arg(al, fr, ARG_ID(R), kv->d[2]), ci);
+                        drop_atm_kv(st, kv, ci);
                         break;
                 }
                 break;

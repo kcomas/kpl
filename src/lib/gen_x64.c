@@ -171,13 +171,13 @@ static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
     (*kv)->d[0] = hsh;
     (*kv)->d[1] = P(te_c(ovt));
     un d;
-    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) {
-        (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
-        if (decs) vr_sb(st->rstk, &d);
-    } else {
-        (*kv)->d[2] = U3(st->xstk->d[st->xstk->l - 1 - ovt->d[2].u3].u3);
-        if (decs) vr_sb(st->xstk, &d);
-    }
+    vr *stk;
+    if (ovt->d[1].u3 < X64_TYPE(F5)) stk = st->rstk;
+    else stk = st->xstk;
+    if (decs) {
+        vr_sb(stk, &d);
+        (*kv)->d[2] = d;
+    } else (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
     tbl_a(st->atm, *kv);
     return GEN_STAT(OK);
 }
@@ -192,6 +192,32 @@ static gen_stat reg_map(gen_st *st, te *ovt) {
     return GEN_STAT(OK);
 }
 
+static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
+    gen_stat stat;
+    vr *m;
+    switch (ovt->d[0].u3) {
+        case GEN_CLS(M):
+            m = ovt->d[2].p;
+            for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
+            break;
+        case GEN_CLS(A):
+            if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) st->rac = ovt->d[2].u3 + 1 > st->rac ? ovt->d[2].u3 + 1 : st->rac;
+            else st->xac = ovt->d[2].u3 + 1 > st->xac ? ovt->d[2].u3 + 1 : st->xac;
+            if ((stat = reg_map(st, ovt)) != GEN_STAT(OK)) return stat;
+            update_lat(st, ovt, o);
+            break;
+        case GEN_CLS(V):
+            st->vc = ovt->d[2].u3 + 1 > st->vc ? ovt->d[2].u3 + 1 : st->vc;
+            break;
+        case GEN_CLS(T):
+            update_lat(st, ovt, o);
+            break;
+        default:
+            break;
+    }
+    return GEN_STAT(OK);
+}
+
 gen_stat gen_st_p1(gen *g, gen_st *st) {
     gen_stat stat = GEN_STAT(OK);
     // swap R(DX) with R(10), R(CX) with R(11), XMM(0) with XMM(7)
@@ -203,24 +229,8 @@ gen_stat gen_st_p1(gen *g, gen_st *st) {
     while (h) {
         te *o = h->d[0].p;
         for (size_t i = 1; i < 4; i++) {
-            te *ovt = o->d[i].p;
-            if (!ovt) break;
-            switch (ovt->d[0].u3) {
-                case GEN_CLS(A):
-                    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) st->rac = ovt->d[2].u3 + 1 > st->rac ? ovt->d[2].u3 + 1 : st->rac;
-                    else st->xac = ovt->d[2].u3 + 1 > st->xac ? ovt->d[2].u3 + 1 : st->xac;
-                    if ((stat = reg_map(st, ovt)) != GEN_STAT(OK)) return stat;
-                    update_lat(st, ovt, o);
-                    break;
-                case GEN_CLS(V):
-                    st->vc = ovt->d[2].u3 + 1 > st->vc ? ovt->d[2].u3 + 1 : st->vc;
-                    break;
-                case GEN_CLS(T):
-                    update_lat(st, ovt, o);
-                    break;
-                default:
-                    break;
-            }
+            if (!o->d[i].p) break;
+            else if ((stat = gen_st_p1_ovt(st, o->d[i].p, o)) != GEN_STAT(OK)) return stat;
         }
         h = h->d[2].p;
     }
