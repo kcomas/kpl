@@ -434,3 +434,20 @@ T(vrmul) {
     ))});
     te_f(h);
 }
+
+T(st) {
+    te *h = ppnode(psr_r(bpsr(TPGM(st))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), N(INT)),
+        OP(N(VAR), N(FLT)),
+        OP(N(VAR), OP(N(NONE), LST(
+            SYM(N(VAR)),
+            SYM(N(VAR)),
+            SYM(APLY(OP(N(NONE), N(NONE)), N(TYPE), OP(N(VAR), N(INT)))),
+            SYM(N(FLT))
+        ))),
+        OP(SYM(N(VAR)), OP(N(INT), OP(N(TYPE), SYM(N(VAR))))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}

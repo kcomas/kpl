@@ -103,3 +103,11 @@ const char *TPGM(vrmul) = "{\n"
                           "     <(i;100)@v,:i*:2\n"
                           "     v/p1\n"
                           "}()\n";
+
+const char *TPGM(st) = "{\n"
+                        "   a::1\n"
+                        "   b::2.2\n"
+                        "   s::#{a`a;b`b;$(U6;a+2)`c;4.4`d}\n"
+                        "   s`a: 2 * I6$s`c\n"
+                        "   s/p1\n"
+                        "}()\n";
