@@ -21,9 +21,12 @@ typedef enum {
     AST_STAT(FH_A_NN), // prev node for fn/hash not null
     AST_STAT(VT_A_NN), // prev node for vec/tuple not null
     AST_STAT(CALL_A_N), // prev node for call null
-    AST_STAT(IF_INV_FMT), // missing ( after if start
     AST_STAT(IF_INV_BODY), // invalid if body
     AST_STAT(IF_A_NN), // prev node for if not null
+    AST_STAT(IF_INV_FMT), // missing ( after if start
+    AST_STAT(LOP_INV_BODY), // missing ( after lop start
+    AST_STAT(LOP_A_NN), // prev node for lop not null
+    AST_STAT(LOP_INV_FMT), // missing ( after lop start
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(RET_A_NN), // prev node for if not null
     AST_STAT(END)
@@ -226,6 +229,8 @@ typedef enum {
     // TODO OP
     OP_TYPE(EQ),
     OP_TYPE(NOT),
+    OP_TYPE(GT),
+    OP_TYPE(LT),
     // TODO OP
     OP_TYPE(OR),
     OP_TYPE(CNCT),
@@ -325,11 +330,19 @@ inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, s
     lst_node_p(as, ii->body, idnt);
 }
 
+inline void if_itm_lop_p(const ast_st *const as, const if_itm *const ii, size_t idnt) {
+    if_itm_p(as, ii, 0, idnt);
+}
+
 inline void if_itm_f(if_itm *im, void *fn) {
     (void) fn;
     ast_f(im->cond);
     lst_node_f(im->body);
     free(im);
+}
+
+inline void if_itm_lop_f(if_itm *im) {
+    if_itm_f(im, 0);
 }
 
 typedef struct {
@@ -491,6 +504,7 @@ typedef enum {
     AST_TYPE(OP),
     AST_TYPE(LST),
     AST_TYPE(IF),
+    AST_TYPE(LOP),
     AST_TYPE(FN),
     AST_TYPE(CALL),
     AST_TYPE(RET),
@@ -504,6 +518,7 @@ typedef union {
     op_node *op;
     lst_node *lst;
     if_node *in;
+    if_itm *lop;
     fn_node *fn;
     call_node *cn;
     ret_node *ret;
@@ -534,6 +549,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
         case AST_TYPE(IF): return NULL;
+        case AST_TYPE(LOP): return NULL;
         case AST_TYPE(FN): return a->n.fn->sig;
         case AST_TYPE(CALL): return a->n.cn->ret;
         case AST_TYPE(RET): return ast_gtn(a->n.ret->a);

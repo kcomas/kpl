@@ -71,7 +71,7 @@ typedef enum {
     TKN_TYPE(NOT),
     TKN_TYPE(NEQ),
     TKN_TYPE(GT),
-    TKN_TYPE(LN),
+    TKN_TYPE(LT),
     TKN_TYPE(GTEQ),
     TKN_TYPE(LTEQ),
     TKN_TYPE(AND),

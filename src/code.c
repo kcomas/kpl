@@ -130,6 +130,9 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
 static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code **c) {
     code_stat cstat;
     lst_itm *h = lst->h;
+    if (lst->tn->t == TYPE(TE)) {
+        // TODO generate gc fn for tuple
+    }
     while (h) {
         IFCGEN(code_gen, cs, h->a, c);
         h = h->next;
