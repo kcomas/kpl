@@ -3,7 +3,7 @@
 
 te *te_i(size_t l, alfn *ta, frfn *tf) {
     te *t = ta(sizeof(te) + sizeof(un) * l);
-    t->r = 0;
+    t->r = 1;
     t->l = l;
     t->ta = ta;
     t->tf = tf;

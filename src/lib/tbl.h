@@ -9,6 +9,7 @@
 typedef enum {
     TBL_STAT(OK),
     TBL_STAT(RES),
+    TBL_STAT(UP),
     TBL_STAT(OAE), // open address error
     TBL_STAT(NF) // not found
 } tbl_stat;
