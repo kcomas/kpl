@@ -10,14 +10,14 @@ extern inline void tdr_f(tdr *r, void *fn);
 extern inline tds *tds_i(void);
 
 void tds_a(tds *volatile s, tdr *const r) {
-    sem_wait(&s->l);
+    sem_wait(&s->rl);
     er_c(r->e);
     LST_A(s, r);
-    sem_post(&s->l);
+    sem_post(&s->rl);
 }
 
 tdr *tds_g(tds *volatile s, bool stk) {
-    sem_wait(&s->l);
+    sem_wait(&s->rl);
     tdr *r = NULL;
     if (!s->h) {
         s->total++;
@@ -27,7 +27,7 @@ tdr *tds_g(tds *volatile s, bool stk) {
         LST_S(s, r);
         if ((stk) && (!r->stk)) tdr_stk_i(r);
     }
-    sem_post(&s->l);
+    sem_post(&s->rl);
     return r;
 }
 

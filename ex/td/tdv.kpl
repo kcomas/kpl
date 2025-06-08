@@ -12,7 +12,7 @@ gt:FN(U6;tt)${(y)
 run:FN(VD)${()
     t:VR[tt]$[]
     n:U6$0
-    m:U6$5
+    m:U6$3
     #@ (n < m) {
         t + gt(x)
         n: n + 1
