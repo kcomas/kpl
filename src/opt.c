@@ -35,8 +35,8 @@ static fld_stat aply_lst_o(fld *f, te **restrict an, te **restrict e) {
     if (al && al->l > 0) {
         HERE("TODO add aply vars to head of lst");
     }
-    ln = (*an)->d[4].p;
-    ln->d[0] = P(te_c((*an)->d[0].p));
+    ln = te_c((*an)->d[4].p);
+    ln->d[0] = (*an)->d[0];
     te_f(*an);
     *an = ln;
     return FLD_STAT(OK);
