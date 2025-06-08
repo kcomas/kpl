@@ -1,5 +1,6 @@
 
 #include "../src/jit.h"
+#include <stdio.h>
 
 static void printj(size_t len, uint8_t *m) {
     printf("- %lu - ", len);
@@ -138,12 +139,12 @@ static void rfib(uint8_t *m) {
 }
 
 int main(void) {
-    uint8_t *m = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    uint8_t *m = jit_mmap(1);
     radd3(m);
     radd(m);
     rsub(m);
     rloop(m);
     rfib(m);
-    munmap(m, getpagesize());
+    jit_munmap(1, m);
     return 0;
 }

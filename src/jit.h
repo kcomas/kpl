@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -66,6 +64,10 @@ typedef enum {
     JIT_STAT(OK),
     JIT_STAT(INV_REG)
 } jit_stat;
+
+uint8_t *jit_mmap(size_t size);
+
+void jit_munmap(size_t size, uint8_t *m);
 
 jit_stat jit_a(size_t *p, uint8_t *m, uint8_t b);
 
