@@ -82,6 +82,7 @@ void ast_f(ast *a);
 typedef enum {
     // ast types
     TYPE(STMT), // internal
+    TYPE(MOD), // file
     TYPE(INT),
     TYPE(FLT),
     TYPE(STR),
@@ -126,7 +127,7 @@ inline type_node *type_node_i(type t, ast *const a) {
 
 inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
     if (tn) {
-        printf("%s-", type_get_str(tn->t));
+        printf("%s", type_get_str(tn->t));
         putchar('\n');
         PCX(' ', idnt);
         ast_p(st, tn->a, idnt);
@@ -339,13 +340,14 @@ inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
     putchar('\n');
-    PCX(' ', idnt);
-    ast_p(as, cn->tgt, idnt);
-    putchar('\n');
-    PCX(' ', idnt);
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
+    printf("T-");
+    ast_p(as, cn->tgt, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    printf("A-");
     lst_node_p(as, cn->args, idnt);
 }
 

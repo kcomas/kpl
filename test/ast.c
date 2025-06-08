@@ -7,6 +7,7 @@ int main(int argc, char *argv[]) {
     mod *m = mod_i();
     mod_lfile(m, argv[1]);
     m->fns = fn_node_i(NULL);
+    m->fns->ret = type_node_i(TYPE(MOD), NULL);
     ast_stat astat;
     ast_st as;
     ast_st_i(&as, m->src.str);
