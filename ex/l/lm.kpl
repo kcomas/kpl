@@ -4,5 +4,6 @@ as: \l "lfns.kpl"
 $(FD;1) << "Loaded lfns.kpl\n"
 
 $(FD;1) << " ", ["Add:";SG$as`x;"+";SG$as`y;"=";$(SG;as`add(as`x;as`y));"\n"]
+$(FD;1) << " ", ["Sub:";SG$as`y;"-";SG$as`x;"=";$(SG;as`sub(as`y;as`x));"\n"]
 
 \d as
