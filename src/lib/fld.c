@@ -61,7 +61,7 @@ fld_stat fld_n(fld *f, te **an, te **e) {
         case AST_CLS(V):
             break;
         case AST_CLS(O):
-            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return stat;;
+            if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK) || (stat = fld_n(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(Z):
             if ((stat = fld_n(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK)) return stat;

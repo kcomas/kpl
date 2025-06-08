@@ -4,7 +4,10 @@
 const char *type_str(type t) {
     static const char *ts[] = {
         "_START",
-        "VD",
+        // scalar
+        "_S",
+        "DL",
+        "VD", // void
         "BL",
         "I3",
         "I4",
@@ -19,13 +22,22 @@ const char *type_str(type t) {
         "SL",
         "C4",
         "SG",
+        // vector
+        "_V",
         "VR",
         "LT",
+        "MC",
+        // hash
+        "_H",
         "HH",
         "ST",
+        // function
+        "_F",
         "FN",
         "SF",
         "CF",
+        // collection
+        "_C",
         "TE",
         "BA",
         "TD",
@@ -33,16 +45,16 @@ const char *type_str(type t) {
         "_END"
     };
     const char *s = "TINV";
-    if (t > TYPE(_START) && t < TYPE(_END)) s = ts[t];
+    if (t > TYPE(_START) && t < TYPE(_END) && t != TYPE(_S) && t != TYPE(_V) && t != TYPE(_H) && t != TYPE(_F) && t != TYPE(_C)) s = ts[t];
     return s;
 }
 
 type_cls type_g_c(type t) {
-    if (t >= TYPE(VD) && t <= TYPE(SG)) return TYPE_CLS(S);
-    if (t >= TYPE(VR) && t <= TYPE(LT)) return TYPE_CLS(V);
-    if (t >= TYPE(ST) && t <= TYPE(HH)) return TYPE_CLS(H);
-    if (t >= TYPE(FN) && t <= TYPE(CF)) return TYPE_CLS(F);
-    if (t >= TYPE(BA) && t <= TYPE(UN)) return TYPE_CLS(C);
+    if (t > TYPE(_S) && t < TYPE(_V)) return TYPE_CLS(S);
+    if (t > TYPE(_V) && t < TYPE(_H)) return TYPE_CLS(V);
+    if (t > TYPE(_H) && t < TYPE(_F)) return TYPE_CLS(H);
+    if (t > TYPE(_F) && t < TYPE(_C)) return TYPE_CLS(F);
+    if (t > TYPE(_C) && t < TYPE(_END)) return TYPE_CLS(C);
     return TYPE_CLS(_);
 }
 
