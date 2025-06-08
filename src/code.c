@@ -156,6 +156,7 @@ static const char *op_c_str[] = {
     "CNCTSG", // sg cnct op type is either sg or te
     "WFD", // OP_T is type to be written
     "TDI",
+    "TDJ",
     // GC
     "RCI",
     "RCD",
@@ -295,6 +296,7 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
         case TYPE(ST):
         case TYPE(FN):
         case TYPE(ER):
+        case TYPE(TD):
             code_a(cs->r->a, c, (op) {oc, t, 0, 0, od, a});
             break;
         default:
@@ -649,8 +651,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break;
         case OP_TYPE(LD):
             if (opn->r->at != AST_TYPE(MOD) || !opn->r->n.m) return CODE_ER(cs, LD_MOD_F, a);
-            code_st_i(&ldcs, cs->r);
-            opn->r->n.m->c = code_i(cs->r->a, CODE_I_SIZE);
+            code_st_i(&ldcs, opn->r->n.m->r);
+            opn->r->n.m->c = code_i(opn->r->n.m->r->a, CODE_I_SIZE);
             if (code_gen_fn(&ldcs, opn->r->n.m->fns, &opn->r->n.m->c) != CODE_STAT(OK)) return CODE_ER(cs, LD_MOD_F, opn->r);
             gc = code_i(cs->r->a, CODE_I_SIZE);
             OP_A(cs, &gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
@@ -787,6 +789,13 @@ static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code *
     call_node *cn = a->n.cn;
     type_node *tn;
     lst_itm *ch, *ah, *ct;
+    if (ftn->t == TYPE(TD)) {
+        IFCGEN(code_gen, cs, cn->tgt, c);
+        OP_A(cs, c, TDJ, OP, { .t = cn->ret->t }, a);
+        OP_A(cs, c, SWAP, OP, { .t = ftn->t }, a);
+        OP_GC(cs, c, ftn, a);
+        return CODE_ER(cs, OK, NULL);
+    }
     if (ftn->t != TYPE(FN)) return CODE_ER(cs, CALL_T_N_FN, a);
     ch = ftn->a->n.lst->h;
     ah = cn->args->h;

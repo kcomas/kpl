@@ -1,6 +1,10 @@
 
 #pragma once
 
+#define _GNU_SOURCE
+#include <sched.h>
+#include <sys/syscall.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -74,7 +78,7 @@ typedef struct _type_node type_node;
 
 typedef struct _code code;
 
-typedef void jit_fn(void);
+typedef void *jit_fn(void*);
 
 typedef struct _jit {
     uint8_t flgs;
@@ -91,20 +95,28 @@ typedef union _var var;
 
 typedef struct _var_td var_td;
 
+#define THREAD_STACK_SIZE_PAGE_MUL 4
+
 typedef struct _tdr {
     struct _tdr *prev, *next;
+    size_t stks;
+    pthread_t pt;
+    pthread_attr_t pa;
     al *a;
     er *e;
     jit *j;
+    void *stk;
+    void *stkp;
 } tdr; // thread resource
 
 typedef struct _tds {
     size_t len, total; // len is number in lst, total is number used
-    pthread_mutex_t pm;
+    bool lock;
     tdr *h, *t;
 } tds; // threads
 
 typedef struct {
+    bool done, lock;
     uint8_t ng; // number of globals
     struct {
         struct stat sb;

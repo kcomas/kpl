@@ -133,6 +133,7 @@ typedef enum {
     OP_C(WFD), // OP_T is type to be written
     // thread
     OP_C(TDI), // thread init
+    OP_C(TDJ), // thread join
     // GC
     OP_C(RCI),
     OP_C(RCD),

@@ -1,9 +1,19 @@
 
-#include "mod.h"
-#include "jit.h"
+#include "../src/mod.h"
+#include "../src/jit.h"
+
+int mt(void *args) {
+    mod *m = (mod*) args;
+    m->c->jf(NULL);
+    code_f(m->c);
+    fn_node_f(m->fns);
+    FNNF(m->tn, type_node_f);
+    tds_a(m->s, m->r);
+    mod_done(m);
+    return 0;
+}
 
 int main(int argc, char *argv[]) {
-    // TODO repl
     if (argc != 2) return 1;
     tds *volatile s = tds_i();
     tdr *volatile r = tds_g(s);
@@ -49,18 +59,17 @@ int main(int argc, char *argv[]) {
     fn_stk_a(r->a, &stk, m->c);
     r->j = jit_i(r->a, stk->nops, r->j);
     jit_stat jstat;
-    if ((jstat = jit_stk(m, stk, m->r->j)) != JIT_STAT(OK)) {
+    if ((jstat = jit_stk(m, stk, r->j)) != JIT_STAT(OK)) {
         code_p(m->c, 0);
         er_p(r->e);
         return jstat;
     }
-    m->c->jf();
     fn_stk_f(stk);
-    code_f(m->c);
-    fn_node_f(m->fns);
-    FNNF(m->tn, type_node_f);
+    clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    while (!m->done) {
+        wait(NULL);
+    }
     mod_f(m);
-    tds_a(s, r);
     tds_f(s);
     return 0;
 }

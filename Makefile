@@ -3,7 +3,7 @@
 .RECIPEPREFIX = >
 CC = gcc
 DFLAGS = -DALD=1
-OO = -g -O0
+OO = -g -Og
 CFLAGS = $(DFLAGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
 SRC = ./src
 TEST = ./test
@@ -55,7 +55,7 @@ jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 > $(CCOBJ)
 
 $(NAME): $(SRC)/main.o $(JIT_OBJS)
-> $(CCOBJ) -lpthread
+> $(CCOBJ)
 
 %.o: %.c %.h
 > $(CC) $(CFLAGS) -c $< -o $@

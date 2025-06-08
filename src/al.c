@@ -11,7 +11,8 @@ void alc_f(alc *ac, void *fn) {
     if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
 #endif
     munmap(ac->h, ac->size);
-    free(ac);
+    munmap(ac, getpagesize());
+    //free(ac);
 }
 
 extern inline void al_f(al *a);
