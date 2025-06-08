@@ -29,6 +29,7 @@ static const char *const jss[] = {
     "GCTSV_T_INV",
     "GCVR_T_INV",
     "DEL_T_INV",
+    "CLSE_T_INV",
     "IF_ELSE_INV",
     "INV_CODE"
 };
@@ -1132,9 +1133,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(CLSE):
                 op_set_jidx(j, o);
-                jit_a(j, 0x5F); // pop rdi
-                SET_FP(close);
-                SET_REG_CALL(false, 0);
+                switch (o->od.t) {
+                    case TYPE(FD):
+                        jit_a(j, 0x5F); // pop rdi
+                        SET_FP(close);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    default:
+                        return JIT_ER(m, CLSE_T_INV, o);
+                }
                 op_set_jlen(j, o);
                 break;
             default:
