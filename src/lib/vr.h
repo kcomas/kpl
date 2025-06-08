@@ -39,6 +39,10 @@ vr_stat vr_g_i(vr *const v, size_t i, un *d);
 
 vr_stat vr_ab(vr **v, un d);
 
+vr_stat vr_af(vr **v, un d);
+
 vr_stat vr_sb(vr *const v, un *d);
+
+vr_stat vr_sf(vr *const v, un *d);
 
 void vr_f(vr *v);

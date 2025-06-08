@@ -39,17 +39,37 @@ vr_stat vr_s_i(vr *const v, size_t i, un d) {
     return VR_STAT(OK);
 }
 
+static vr *resize(vr *v) {
+    vr *nv = vr_i(v->s * VR_RES, v->va, v->df, v->vf);
+    nv->l = v->l;
+    for (size_t i = 0; i < v->l; i++) nv->d[i] = v->d[i];
+    nv->vf(v);
+    return nv;
+}
+
 vr_stat vr_ab(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
     if ((*v)->l == (*v)->s) {
-        vr *nv = vr_i((*v)->s * VR_RES, (*v)->va, (*v)->df, (*v)->vf);
-        nv->l = (*v)->l;
-        for (size_t i = 0; i < (*v)->l; i++) nv->d[i] = (*v)->d[i];
-        nv->vf(*v);
-        *v = nv;
+        *v = resize(*v);
         vstat = VR_STAT(RES);
     }
     (*v)->d[(*v)->l++] = d;
+    return vstat;
+}
+
+vr_stat vr_af(vr **v, un d) {
+    vr_stat vstat = VR_STAT(OK);
+    if ((*v)->l == (*v)->s) {
+        *v = resize(*v);
+        vstat = VR_STAT(RES);
+    }
+    un n;
+    for (size_t i = 1; i < (*v)->l; i++) {
+        n = (*v)->d[i];
+        (*v)->d[i] = (*v)->d[i - 1];
+    }
+    (*v)->d[(*v)->l++] = n;
+    (*v)->d[0] = d;
     return vstat;
 }
 
@@ -57,6 +77,14 @@ vr_stat vr_sb(vr *const v, un *d) {
     if (v->l == 0) return VR_STAT(SUB);
      *d = v->d[--v->l];
      return VR_STAT(OK);
+}
+
+vr_stat vr_sf(vr *const v, un *d) {
+    if (v->l == 0) return VR_STAT(SUB);
+    *d = v->d[0];
+    v->l--;
+    for (size_t i = 0; i < v->l; i++) v->d[i] = v->d[i + 1];
+    return VR_STAT(OK);
 }
 
 void vr_f(vr *v) {
