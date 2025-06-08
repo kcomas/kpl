@@ -162,3 +162,18 @@ T(xmmrsp) {
     A(z == r, "xmmrsp");
     as_f(a);
 }
+
+T(cmprip) {
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    AS_A2(a, AS_X64(CMP), as_arg_r(a, R(DI)), as_arg_qw(a, I6(123)));
+    AS_A1(a, AS_X64(JE), as_arg_l(a, 1));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, I6(0)));
+    AS_A0(a, AS_X64(RET));
+    as_lbl_a(a, 1);
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
+    AS_A0(a, AS_X64(RET));
+    A(as_n(a, m) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    A(123 == ((int64_t(*)(int64_t)) m)(123), "eq");
+    as_f(a);
+}

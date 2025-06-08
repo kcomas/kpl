@@ -25,6 +25,8 @@ typedef enum {
 
 // code te[code_id;op_or_label_id;arg1;arg2;arg3;arg4;fn;lbl_fn;pos(in written bytes);len]
 
+// data queue te[code;size;data;fn;pos]
+
 typedef tbl *op_tbl_i(void);
 
 typedef struct _as {
@@ -32,7 +34,7 @@ typedef struct _as {
     const alfr *af, *ta, *la;
     op_tbl_i *oti;
     tbl *lbls, *ops;
-    lst *code;
+    lst *dq, *code; // data queue
 } as;
 
 typedef bool as_code_fn(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4);
@@ -50,11 +52,16 @@ te *as_lbl_g_c(as *a, size_t lbl_id);
 // set lbl code
 as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c);
 
+// update pos at end
+typedef bool as_dq_fn(as *a, size_t *p, uint8_t *m, te *dqe);
+
+void as_dq_a(as *a, te *ci, size_t size, un v, as_dq_fn dq_fn);
+
 // arg te[id;data]
 te *as_arg_i(as *a, size_t id, un d);
 
 // register op, not using varardic to avoid extra checks
-as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
+as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn lbl_fn);
 
 // add op
 as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4);

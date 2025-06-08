@@ -90,7 +90,7 @@ x64_stat x64_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
 x64_stat x64_d(size_t *p, uint8_t *m, un u);
 
-x64_stat x64_e(size_t *p, uint8_t *m, uint8_t size, un v);
+x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
@@ -111,7 +111,7 @@ x64_stat x64_pop_r(size_t *p, uint8_t *m, reg r);
 x64_stat x64_call_r(size_t *p, uint8_t *m, reg r);
 
 // call dword
-x64_stat x64_call_dw(size_t *p, uint8_t *m, uint32_t dw);
+x64_stat x64_call_d(size_t *p, uint8_t *m, uint32_t dw);
 
 // mov rax, 64bit value
 x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u);

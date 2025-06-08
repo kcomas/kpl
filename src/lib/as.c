@@ -10,6 +10,7 @@ as *as_i(const alfr *af, const alfr *ta, const alfr *la, op_tbl_i oti, tbl *lbls
     a->oti = oti;
     a->lbls = lbls;
     a->ops = oti();
+    a->dq = lst_i(la, ta, (void*) te_f);
     a->code = code;
     return a;
 }
@@ -111,6 +112,22 @@ as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t 
     return AS_STAT(OK);
 }
 
+static void as_dq_entry_f(void *p) {
+    te *d = p;
+    te_f(d->d[0].p);
+    d->af->f(d);
+}
+
+void as_dq_a(as *a, te *ci, size_t size, un v, as_dq_fn dq_fn) {
+    te *d = te_i(5, a->ta, as_dq_entry_f);
+    d->d[0] = P(te_c(ci));
+    d->d[1] = U6(size);
+    d->d[2] = v;
+    d->d[3] = P(dq_fn);
+    // 4 pos
+    lst_ab(a->dq, P(d));
+}
+
 te *as_arg_i(as *a, size_t id, un d) {
     te *arg = te_i(2, a->ta, NULL);
     arg->d[0] = U6(id);
@@ -161,6 +178,13 @@ as_stat as_n(as *a, uint8_t *m) {
         }
         h = h->d[2].p;
     }
+    h = a->dq->h;
+    while (h) {
+        te *dqe = h->d[0].p;
+        as_dq_fn *dfn = dqe->d[3].p;
+        if (!dfn || !dfn(a, &p, m, dqe)) return AS_STAT(INV);
+        h = h->d[2].p;
+    }
     return AS_STAT(OK);
 }
 
@@ -168,6 +192,7 @@ void as_f(as *a) {
     if (!a || --a->r > 0) return;
     tbl_f(a->lbls);
     tbl_f(a->ops);
+    lst_f(a->dq);
     lst_f(a->code);
     a->af->f(a);
 }
