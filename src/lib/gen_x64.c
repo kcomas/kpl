@@ -234,6 +234,7 @@ static void drop_atm_kv(gen_st *const st, const te *atm_kv, const te *ci) {
     if (r < XMM(0)) vr_ab(&st->rstk, U3(r));
     else vr_ab(&st->xstk, U3(r));
     tbl_s(st->atm, atm_kv->d[0], &kv);
+    te_f(kv);
 }
 
 static gen_stat add_auauau_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
