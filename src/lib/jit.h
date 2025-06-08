@@ -150,6 +150,9 @@ jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 // subsd xmm0, xmm1
 jit_stat jit_subsd_rr(size_t *p, uint8_t *m, reg d, reg s);
 
+// and rax, rdi
+jit_stat jit_and_rr(size_t *p, uint8_t *m, reg d, reg s);
+
 // xor rax, rdi
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s);
 

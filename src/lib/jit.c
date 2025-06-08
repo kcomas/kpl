@@ -192,6 +192,12 @@ jit_stat jit_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return jit_b(p, m, 5, set_rex2(s, d), 0xF2, 0xF, 0x5C, modrm(MOD(11), s, d));
 }
 
+jit_stat jit_and_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
+    return jit_b(p, m, 3, set_rex2(d, s), 0x21, modrm(MOD(11), d, s));
+}
+
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
