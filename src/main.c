@@ -22,9 +22,9 @@ static const uint8_t dopts[26] = {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) return usage(argv[0]);
-    int i = 1, x = 1, o = 0;
+    int i = 0, x = 1, o = 0;
     uint8_t dflgs = 0;
-    while (i < argc && argv[i][0] == '-') {
+    while (i < argc && argv[++i][0] == '-') {
         if (argv[i][x] == 'h') return usage(argv[0]);
         if (argv[i][x] == 'd') {
             while (argv[i][++x] != '\0') {
@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
             }
             x = 1;
         }
-        i++;
     }
     if (i == argc) return usage(argv[0]);
     mc *fn = mc_i_cstr(argv[i], &al_main);
