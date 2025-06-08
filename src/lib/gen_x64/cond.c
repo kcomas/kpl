@@ -14,8 +14,9 @@
     return GEN_STAT(OK); \
 }
 
+AUAUL(eq, JE);
 AUAUL(ne, JNE);
-AUAUL(ugt, JA);
+AUAUL(gt, JA);
 
 #define AUDUL(N, J) static gen_stat N##_audul_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  { \
     (void) g; \
@@ -31,13 +32,16 @@ AUAUL(ugt, JA);
     return GEN_STAT(OK); \
 }
 
+AUDUL(eq, JE);
 AUDUL(ne, JNE);
-AUDUL(ugt, JA);
+AUDUL(gt, JA);
 
 void gen_cond(gen *g) {
+    GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &eq_auaul_fn);
+    GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &eq_audul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ne_auaul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ne_audul_fn);
-    GEN_OP_A3(g, GEN_OP(UGT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ugt_auaul_fn);
-    GEN_OP_A3(g, GEN_OP(UGT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ugt_audul_fn);
+    GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &gt_auaul_fn);
+    GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &gt_audul_fn);
 
 }

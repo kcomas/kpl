@@ -10,8 +10,9 @@ const char *gen_op_str(gen_op go) {
         "CALL",
         "ADD",
         "SUB",
+        "EQ",
         "NE",
-        "UGT",
+        "GT",
         "_END"
     };
     const char *s = "INV";
