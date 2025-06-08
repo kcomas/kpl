@@ -5,6 +5,6 @@
 + Add
 - Sub
 \* Mul
+\*\* Exp
 / Div
 // Mod
-\*\* Exp
