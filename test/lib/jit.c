@@ -80,7 +80,7 @@ static void rloop(uint8_t *m) {
     jit_mov_rar(&p, m, R(SP), R(10));
     jit_mov_rrab(&p, m, R(8), R(SP), 8);
     jit_cmp_rr(&p, m, R(10), R(8));
-    jit_jne_b(&p, m, jit_jmpu_lblb(p, lbl));
+    jit_jnzjne_b(&p, m, jit_jmpu_lblb(p, lbl));
     jit_mov_rr(&p, m, R(AX), R(10));
     jit_leave(&p, m);
     jit_ret(&p, m);
@@ -99,7 +99,7 @@ static void bfib(size_t *p, uint8_t *m) {
     jit_mov_rq(p, m, R(9), U6(0));
     jit_mov_rra(p, m, R(DI), R(SP));
     jit_cmp_rr(p, m, R(9), R(DI));
-    jit_jne_b(p, m, 0);
+    jit_jnzjne_b(p, m, 0);
     uint8_t *byte = jit_lb(*p, m);
     size_t lbl = *p;
     jit_mov_rq(p, m, R(AX), U6(0));
@@ -110,7 +110,7 @@ static void bfib(size_t *p, uint8_t *m) {
     jit_mov_rq(p, m, R(9), U6(2));
     jit_mov_rra(p, m, R(DI), R(SP));
     jit_cmp_rr(p, m, R(9), R(DI));
-    jit_jc_b(p, m, 0);
+    jit_jbjnaejc_b(p, m, 0);
     byte = jit_lb(*p, m);
     lbl = *p;
     jit_mov_rq(p, m, R(AX), U6(1));

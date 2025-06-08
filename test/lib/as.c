@@ -22,7 +22,13 @@ static void btest(void) {
     as_f(a);
 }
 
+static void ltest(void) {
+    as *a = as_b();
+    as_f(a);
+}
+
 int main(void) {
     btest();
+    ltest();
     return 0;
 }
