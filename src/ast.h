@@ -88,6 +88,7 @@ typedef enum {
     TYPE(STR),
     // data types
     TYPE(VD),
+    TYPE(BL),
     TYPE(U3),
     TYPE(U4),
     TYPE(U5),
@@ -148,6 +149,19 @@ inline void type_node_f(type_node *tn) {
     FNNF(tn->a, ast_f);
     free(tn);
 }
+
+#define CONST_TYPE(N) CONST_TYPE_##N
+
+typedef enum {
+    CONST_TYPE(T),
+    CONST_TYPE(F),
+    CONST_TYPE(S) // self
+} const_type;
+
+typedef struct {
+    const_type ct;
+    type_node *tn;
+} const_node;
 
 typedef struct {
     type_node *tn;

@@ -37,6 +37,8 @@ static const type_var tv[] = {
 
 static const size_t tv_len = AL(tv);
 
+#define TKN_C(C) if (str[t->pos] == 'C') t->type = TKN_TYPE(C);
+
 static tkn_stat var(tkn *const t, const char *const str) {
     char c = str[t->pos];
     while (isalpha(c) || isdigit(c)) c = str[t->pos + ++t->len];
@@ -48,6 +50,11 @@ static tkn_stat var(tkn *const t, const char *const str) {
                 break;
             }
         }
+    }
+    if (t->len == 1) {
+        TKN_C(T);
+        TKN_C(F);
+        TKN_C(S);
     }
     return TKN_STAT(OK);
 }
@@ -165,6 +172,9 @@ static const char *const tkn_type_str[] = {
     "INT",
     "FLT",
     "STR",
+    "T",
+    "F",
+    "S",
     "VD",
     "U3",
     "U4",

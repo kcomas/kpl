@@ -2,8 +2,10 @@
 // Calculate fibonacci to n
 
 n:U6$10
+c:U6$0
 
 fib:FN(U6;U6)${(x)
+    c: c + 1
     #? (!x) {
         #; x
     } (|(x = 1;x = 2)) {
@@ -11,4 +13,4 @@ fib:FN(U6;U6)${(x)
     }
     fib(x - 1) + fib(x - 2)}
 
-1 << " " , ["The fibonacci of";SG$n;"is:";SG$fib(n);"\n"]
+1 << " " , ["The fibonacci of";SG$n;"is:";SG$fib(n);"after";SG$c;"calls\n"]

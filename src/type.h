@@ -10,6 +10,7 @@ typedef enum {
     TYPE_STAT(OK),
     TYPE_STAT(VAL_UT), // val is ast type
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
+    TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
     TYPE_STAT(INV_ASS_TO), // cannot assign to node
     TYPE_STAT(INV_CST), // invalid cast
     TYPE_STAT(INV_CST_L_A), // invalid node for left side of cst
@@ -41,7 +42,8 @@ typedef enum {
     TYPE_STAT(INV_ARGS_OP_CALL), // invalid args for op call
     TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
     TYPE_STAT(INV_RET_T), // inv ret type
-    TYPE_STAT(RET_T_NEQ) // ret type not eq to fn type
+    TYPE_STAT(RET_T_NEQ), // ret type not eq to fn type
+    TYPE_STAT(VAR_UT) // var not typed
 } type_stat;
 
 type_stat type_chk(fn_node *const fns, ast *const a);
