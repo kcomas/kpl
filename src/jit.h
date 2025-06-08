@@ -25,6 +25,7 @@ typedef enum {
     JIT_STAT(OR_T_INV),
     JIT_STAT(CSTSG_T_INV),
     JIT_STAT(CNCTSG_T_INV),
+    JIT_STAT(OFD_T_INV),
     JIT_STAT(WFD_T_INV),
     JIT_STAT(RCI_T_INV),
     JIT_STAT(RCD_T_INV),
@@ -34,7 +35,7 @@ typedef enum {
     JIT_STAT(GCVR_T_INV),
     JIT_STAT(DEL_T_INV),
     JIT_STAT(IF_ELSE_INV),
-    JIT_STAT(INV_CODE),
+    JIT_STAT(INV_CODE)
 } jit_stat;
 
 const char *jit_stat_str(jit_stat jstat);

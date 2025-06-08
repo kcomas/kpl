@@ -332,18 +332,15 @@ void var_fd_sg(mod *const m, ast *const a, int fd, var_sg *const sg) {
     er_itm *ei;
     struct statx sxb;
     if (statx(fd, "", AT_EMPTY_PATH, STATX_SIZE, &sxb) == -1) {
-        close(fd);
         VAR_FD_SG_ER("RFD_STATX");
         return;
     }
     char *str = ala(m->r->a, sxb.stx_size * sizeof(char) + sizeof(char));
     if (read(fd, str, sxb.stx_size) != (ssize_t) sxb.stx_size) {
         alf(str);
-        close(fd);
         VAR_FD_SG_ER("RFD_READ");
         return;
     }
-    close(fd);
     alf(sg->str);
     sg->len = sxb.stx_size;
     sg->size = sg->len + sizeof(char);
