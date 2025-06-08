@@ -605,6 +605,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                         return CODE_ER(cs, NO_OP_FOR_RET_VAL_T, a);
                 }
             } else IFCGEN(code_gen, cs, a->n.ret->a, c);
+            if (a->n.ret->tn->t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, a); // TODO xmm
             OP_A(cs, c, RFN, CODE, { .t = a->n.ret->tn->t }, a);
             break;
         case AST_TYPE(VAR):
