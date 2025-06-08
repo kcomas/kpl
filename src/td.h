@@ -11,8 +11,8 @@ inline void tdr_stk_i(tdr *const r) {
 }
 
 inline tdr *tdr_i(tds *const s) {
-    al *a = al_i(s->nal);
-    s->nal += sizeof(al);
+    al *a = al_i((void*) s + s->size);
+    s->size += algn(sizeof(al), DEFALGN);
     er *e = er_i(a);
     tdr *r = ala(a, sizeof(tdr));
     r->a = a;
@@ -34,8 +34,7 @@ inline void tdr_f(tdr *r, void *fn) {
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     sem_init(&s->l, -1, 1);
-    s->nal = s + sizeof(tds) + sizeof(al);
-    posix_memalign(&s->nal, sizeof(al), getpagesize());
+    s->size = algn(sizeof(tds), DEFALGN);
     return s;
 }
 

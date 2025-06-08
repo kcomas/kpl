@@ -85,5 +85,3 @@ void mod_sg_td(mod *const m, uint8_t i, var_td *const td) { m->g[i].td = td; }
 var_td *mod_lg_td(mod *const m, uint8_t i) { return m->g[i].td; }
 
 extern inline void mod_psrc(const mod *const m);
-
-extern inline void mod_f(mod *m);

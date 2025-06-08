@@ -3,7 +3,7 @@
 .RECIPEPREFIX = >
 CC = gcc
 DFLAGS = -DKPL_ALD
-OO = -g -Og
+OO = -g -O0
 FFLAGS = -fstack-protector-all -fno-omit-frame-pointer
 MFLAGS = -mno-omit-leaf-frame-pointer -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
