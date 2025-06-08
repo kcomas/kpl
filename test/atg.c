@@ -28,8 +28,8 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
     if (!eq) {
         printf("\n--- DIFF ---\n");
         ast_p(tn, 0);
-        putchar('\n');
     }
+    putchar('\n');
     A(eq, "ast_eq");
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
@@ -38,7 +38,7 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
     eq = gen_code_eq(g, gc);
     if (!eq) {
         printf("--- DIFF ---\n");
-        gen_p(gc, NULL);
+        if (gc) gen_p(gc, NULL);
     }
     A(eq, "gen_code_eq");
     gen_stat gstat = gen_n(g, sc, t->a, &e);
@@ -63,14 +63,15 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     A(el == elcmp, "el");
     ssize_t ep = as_lbl_g_c_i(t->a, el);
     A(ep > -1, "ep");
-    A(atg_z(t->ta, an->d[3].p, m, ep) == NULL, "inv ret");
+    A(atg_z(t, an->d[3].p, m, ep) == NULL, "inv ret");
     atg_f(t);
     te_f(an);
 }
 
-#define AR(E) gen_st_f(st); \
+#define AR(ELC) gen_st_f(st); \
     ast_f(a); \
-    atg_run(_t, t, an, E)
+    atg_run(_t, t, an, ELC); \
+    E()
 
 #define AI(PGM, QL) IC(PGM); \
     RC(); \
@@ -192,7 +193,7 @@ T(facloop) {
     S(gen_a(gc, GEN_OP(GT), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(1)), gen_lbl(gc, 1)));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 2), NULL, NULL));
     S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_stkv(gc, X64_TYPE(I6), 1)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
-    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(I6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(I6), 1), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(I6), 1), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
     te_f(cn);
@@ -373,7 +374,7 @@ T(scope) {
     S(gen_a(gc, GEN_OP(CALL), gen_call_w(gc, gen_vr(gc, 1, gen_stkv(gc, X64_TYPE(I6), 0)), gen_vr(gc, 1, gen_data(gc, X64_TYPE(I6), I6(2)))), gen_lbl(gc, (uint32_t) -1), NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_call_w(gc, gen_vr(gc, 1, gen_stkv(gc, X64_TYPE(I6), 0)), gen_vr(gc, 1, gen_data(gc, X64_TYPE(I6), I6(3)))), gen_lbl(gc, (uint32_t) -1), NULL));
     S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_stkv(gc, X64_TYPE(I6), 0)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
-    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(I6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(I6), 0), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(I6), 0), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
     te_f(cn);
@@ -388,4 +389,42 @@ T(scope) {
     A(kv->d[1].i6 == 6, "inv exp value");
     tbl_f(et);
 
+}
+
+T(efn) {
+    AI(TPGM(efn), 2);
+    te *tfn = TFN(FN, TS(F6), 3, "z", TS(F6), 0, "y", TS(F6), 1, "x", TS(F6), 2);
+    te *cn = RN(LN(LT(1, "addmul", FLG(-1, LTE_FLG(E) | LTE_FLG(F)), te_c(tfn)), L(1,
+        ON(te_c(tfn), DFN, EN("addmul", FLG(-1, LTE_FLG(E) | LTE_FLG(F)), te_c(tfn)), SN(_G, U5(-1)))
+    )));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 1), gen_arg(gc, X64_TYPE(F6), 2)));
+    S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(F6), 1), gen_arg(gc, X64_TYPE(F6), 0), gen_tmp(gc, X64_TYPE(F6), 0)));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(F6), 1),  NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    te_f(tfn);
+    gen_f(gc);
+    cn = RN(SN(_G, U5(0)));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_data(gc, X64_TYPE(U5), U5(-1)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    tbl *et = tbl_c(an->d[3].p);
+    AR(0);
+    A(et->i->l == 1, "inv et");
+    mc *s = mc_i_cstr("addmul", &ast_am);
+    te *kv;
+    A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
+    double x = 1.1, y = 2.2, z = 3.3;
+    double r = ((double(*)(double, double, double)) &m[kv->d[1].u6])(z, y, x);
+    A(r == (x + y) * z, "addmul inv");
+    mc_f(s);
+    tbl_f(et);
 }

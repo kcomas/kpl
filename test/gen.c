@@ -386,7 +386,7 @@ T(updateTE) {
     putchar('\n');
     gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(I6), 3, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 4)), gen_arg(g, X64_TYPE(U6), 1)), gen_arg(g, X64_TYPE(I6), 2), NULL));
+    S(gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 3, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 4)), gen_arg(g, X64_TYPE(U6), 1)), gen_arg(g, X64_TYPE(I6), 2), NULL));
     S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
     BUILD(g, m);
     ((void(*)(te*, size_t, int64_t)) m)(t, 1, 5);

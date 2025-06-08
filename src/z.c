@@ -223,7 +223,7 @@ err *z(mc *fn, tbl **et) {
     if (ep < 0) return err_i(&z_al, NULL, NULL, NULL, __FUNCTION__);
     if (an->d[3].p) *et = tbl_c(an->d[3].p);
     te_f(an);
-    e = atg_z(zt->ta, *et, m, ep);
+    e = atg_z(zt, *et, m, ep);
     atg_f(zt);
     mc_f(pgm);
     return e;

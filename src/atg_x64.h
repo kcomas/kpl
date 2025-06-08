@@ -21,4 +21,4 @@ atg *atg_b(atg *t);
 
 typedef err *atg_jit(te *x);
 
-err *atg_z(const alfr *ta, tbl *volatile et, const uint8_t *m, size_t ep);
+err *atg_z(const atg *t, tbl *volatile et, const uint8_t *m, size_t ep);
