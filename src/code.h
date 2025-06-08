@@ -27,9 +27,9 @@ inline void code_st_i(code_st *const cs, const char *str) {
 #define OP_C(N) OP_C_##N
 
 typedef enum {
-    // data
     OP_C(EFN), // enter fn
     OP_C(RFN), // return fn
+    // data
     OP_C(AG), // allocate globals
     OP_C(SG), // store global
     OP_C(LG), // load global
@@ -39,8 +39,6 @@ typedef enum {
     OP_C(LL), // load local
     OP_C(SA), // store arg
     OP_C(LA), // load arg
-    OP_C(PG), // push global
-    OP_C(PL), // push local
     OP_C(PV), // push value
     // control
     OP_C(JMPF), // jmp if false
