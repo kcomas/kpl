@@ -35,3 +35,15 @@ T(circular) {
     te_f(va);
     te_f(vb);
 }
+
+T(tetype) {
+    te *arr[] = {type_s_i(&al_te, NULL, TYPE(U6)), type_s_i(&al_te, NULL, TYPE(U6)), type_s_i(&al_te, NULL, TYPE(U6))};
+    te *a = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
+    type_p(a);
+    putchar('\n');
+    te *b = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
+    A(type_eq(a, b), "type_eq");
+    for (size_t i = 0; i < 3; i++) te_f(arr[i]);
+    te_f(a);
+    te_f(b);
+}

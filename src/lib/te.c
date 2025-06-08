@@ -6,10 +6,7 @@
 static te *tah = NULL;
 
 static void *al(size_t n) {
-    if (n < 2) {
-        printf("\e[1;91mTE MUST HAVE LENGTH OF AT LEAST 2 EXITING\e[0m\n");
-        exit(1);
-    }
+    if (n < 2) STOP("TE MUST HAVE LENGTH OF AT LEAST 2");
     if (n > MPIS) return malloc(sizeof(te) + sizeof(un) * n);
     te *h = tah;
     while (h) {

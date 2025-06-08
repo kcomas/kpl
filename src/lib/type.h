@@ -83,6 +83,10 @@ te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *restri
 
 te *type_i(const alfr *af, te *restrict p, type t);
 
+te *type_te_i(const alfr *af, te *restrict p, size_t l);
+
+te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...);
+
 void type_p(const te *t);
 
 bool type_eq(const te *restrict a, const te *restrict b);

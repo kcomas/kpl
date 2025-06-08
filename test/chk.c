@@ -169,3 +169,9 @@ T(efn) {
     )), NULL)));
     te_f(tfn);
 }
+/*
+T(teadd) {
+    IC(TPGM(teadd));
+    V(NULL);
+}
+*/
