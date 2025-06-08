@@ -532,7 +532,7 @@ inline call_node *call_node_i(al *const a, ast *const tgt, lst_node *const args)
 }
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
-    printf(",GCR:%d,", cn->flgs & NODE_FLG(GCR));
+    if (cn->flgs & NODE_FLG(GCR)) printf(",GCR");
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
