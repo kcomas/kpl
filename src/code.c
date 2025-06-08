@@ -349,6 +349,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             break;
         case AST_TYPE(OP):
             opn = cn->tgt->n.op;
+            if (cn->ret) opn->ret = cn->ret;
             if (cn->args->h) {
                 opn->l = cn->args->h->a;
                 if (cn->args->h->next) opn->r = cn->args->h->next->a;
