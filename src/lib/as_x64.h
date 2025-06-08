@@ -13,6 +13,7 @@ typedef enum {
     ARG_ID(N), // none passed as NULL
     ARG_ID(R), // gen reg
     ARG_ID(RM), // reg mem
+    ARG_ID(RS), // reg scale
     ARG_ID(X), // sse
     ARG_ID(L), // label
     ARG_ID(M), // mem
@@ -91,6 +92,11 @@ void as_code_p(const as *a, const uint8_t *m);
 
 err_d_p *as_x64_err_g_p(as_stat stat);
 
-bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe);
+bool as_x64_dq(as *a, size_t *p, uint8_t *m, te *dqe);
+
+#define AS_X64_RS_R 1
+#define AS_X64_RS_S 0
+
+un as_x64_rs(size_t rid, size_t sid);
 
 as *as_b(as *a);

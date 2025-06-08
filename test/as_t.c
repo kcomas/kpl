@@ -29,6 +29,10 @@ te *as_arg_rm(as *a, size_t rmid) {
     return as_arg_v(a, ARG_ID(RM), U3(rmid));
 }
 
+te *as_arg_rs(as *a, size_t rid, size_t sid) {
+    return as_arg_v(a, ARG_ID(RS), as_x64_rs(rid, sid));
+}
+
 te *as_arg_l(as *a, size_t lid) {
     return as_arg_v(a, ARG_ID(L), U6(lid));
 }

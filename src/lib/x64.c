@@ -167,6 +167,14 @@ x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s) {
     return sib_rm(p, m, d);
 }
 
+x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
+    VALID_R(d);
+    VALID_R(s);
+    x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(01), d, s));
+    sib_rm(p, m, d);
+    return x64_a(p, m, dsp);
+}
+
 x64_stat x64_mov_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s) {
     VALID_R(d);
     VALID_R(o);
@@ -174,11 +182,11 @@ x64_stat x64_mov_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s) {
     return x64_b(p, m, 4, set_rex2(SIB, s), 0x89, modrm(MOD(00), SIB, s), sib(x, d, o));
 }
 
-x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
+x64_stat x64_mov_rmobr(size_t *p, uint8_t *m, reg d, reg o, scale x, uint8_t dsp, reg s) {
     VALID_R(d);
+    VALID_R(o);
     VALID_R(s);
-    x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(01), d, s));
-    sib_rm(p, m, d);
+    x64_b(p, m, 4, set_rex2(SIB, s), 0x89, modrm(MOD(01), SIB, s), sib(x, d, o));
     return x64_a(p, m, dsp);
 }
 
@@ -189,6 +197,14 @@ x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     return sib_rm(p, m, s);
 }
 
+x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+    VALID_R(d);
+    VALID_R(s);
+    x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(01), s, d));
+    sib_rm(p, m, s);
+    return x64_a(p, m, dsp);
+}
+
 x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) {
     VALID_R(d);
     VALID_R(s);
@@ -196,11 +212,11 @@ x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) {
     return x64_b(p, m, 4, set_rex2(SIB, d), 0x8B, modrm(MOD(00), SIB, d), sib(x, s, o));
 }
 
-x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+x64_stat x64_mov_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp) {
     VALID_R(d);
     VALID_R(s);
-    x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(01), s, d));
-    sib_rm(p, m, s);
+    VALID_R(o);
+    x64_b(p, m, 4, set_rex2(SIB, d), 0x8B, modrm(MOD(01), SIB, d), sib(x, s, o));
     return x64_a(p, m, dsp);
 }
 

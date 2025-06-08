@@ -46,6 +46,7 @@ static const char *arg_id_str(size_t id) {
         case ARG_ID(N): return "N";
         case ARG_ID(R): return "R";
         case ARG_ID(RM): return "RM";
+        case ARG_ID(RS): return "RS";
         case ARG_ID(X): return "X";
         case ARG_ID(L): return "L";
         case ARG_ID(M): return "M";
@@ -133,6 +134,16 @@ void as_op_p(const tbl *ot, bool args, size_t idnt) {
     }
 }
 
+static uint8_t scale_g(scale x) {
+    switch (x) {
+        case S1: return 1;
+        case S2: return 2;
+        case S4: return 4;
+        case S8: return 8;
+    }
+    return 0;
+}
+
 void as_code_i_p(const te *c, const uint8_t *m) {
     if (m) printf("%05lX:", c->d[8].u6);
     if (c->d[0].u6 == CODE_ID(L)) printf("L(0x%lX):\n", c->d[1].u6);
@@ -148,6 +159,9 @@ void as_code_i_p(const te *c, const uint8_t *m) {
                     break;
                 case ARG_ID(RM):
                     printf("[%s]", reg_str(arg->d[1].u3));
+                    break;
+                case ARG_ID(RS):
+                    printf("[%s*%u]", reg_str(u3_g_o(arg->d[1], AS_X64_RS_R)), scale_g(u3_g_o(arg->d[1], AS_X64_RS_S)));
                     break;
                 case ARG_ID(X):
                     printf("%s", reg_str(arg->d[1].u3));
@@ -207,12 +221,34 @@ err_d_p *as_x64_err_g_p(as_stat stat) {
     return NULL;
 }
 
-bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe) {
+bool as_x64_dq(as *a, size_t *p, uint8_t *m, te *dqe) {
     (void) a;
     dqe->d[4] = U6(*p); // for print
     te *ci = dqe->d[0].p;
     x64_jmpd_lbldw(m, ci->d[8].u6 + ci->d[9].u6, *p);
     return x64_e(p, m, dqe->d[1].u6, dqe->d[2]) == X64_STAT(OK);
+}
+
+un as_x64_rs(size_t rid, size_t sid) {
+    un rs = U6(0);
+    rs = u3_s_o(rs, AS_X64_RS_R, rid);
+    scale x;
+    switch (sid) {
+        case 2:
+            x = S2;
+            break;
+        case 4:
+            x = S4;
+            break;
+        case 8:
+            x = S8;
+            break;
+        default:
+            x = S1;
+            break;
+    }
+    rs = u3_s_o(rs, AS_X64_RS_S, x);
+    return rs;
 }
 
 #define INST(N) static bool as_##N(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -250,6 +286,7 @@ static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
 
 // internal
 as *as_r_b(as *a);
+as *as_ro_b(as *a);
 as *as_rx_b(as *a);
 as *as_x_b(as *a);
 as *as_jmp_b(as *a);
@@ -261,6 +298,7 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(CALL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_l, as_call_e);
     as_jmp_b(a);
     as_r_b(a);
+    as_ro_b(a);
     as_x_b(a);
     as_rx_b(a);
     return a;
