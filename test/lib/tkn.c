@@ -9,7 +9,7 @@ static void tkn_p(tbl *tl, size_t idnt) {
         c4 c = kv->d[0].c;
         printf("%c%c%c%c ", c.a, c.b, c.c, c.d);
         ssize_t id = kv->d[1].i6;
-        if (id > -1) printf("%ld", id);
+        if (id > -1) printf(",%ld", id);
         putchar('\n');
         if (kv->d[3].p) tkn_p(kv->d[3].p, idnt + 1);
         h = h->d[2].p;
@@ -20,8 +20,7 @@ static void tknize(tkn *const t) {
     tkn_stat tstat;
     te *m = te_i(5, &malloc, &free);
     while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
-        printf("id:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
-        for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(t->s->d[i]);
+        tkn_m_p(m, t->s);
         putchar('\n');
     }
     if (tstat != TKN_STAT(END)) exit(55);

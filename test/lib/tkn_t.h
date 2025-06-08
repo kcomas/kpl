@@ -13,6 +13,8 @@ typedef enum {
     TCUST(VAR)
 } tcust;
 
+void tkn_m_p(const te *const m, const mc *const s);
+
 size_t tkn_sh(un v);
 
 tbl *tkn_mktbl(void);
