@@ -1,6 +1,35 @@
 
 #include "jit.h"
 
+static const char *const jss[] = {
+    "OK",
+    "SG_T_INV",
+    "LG_T_INV",
+    "PV_T_INV",
+    "ZOO_T_INV",
+    "ADD_T_INV",
+    "SUB_T_INV",
+    "MUL_T_INV",
+    "EQ_T_INV",
+    "GT_T_INV",
+    "LT_T_INV",
+    "OR_T_INV",
+    "CSTSG_T_INV",
+    "CNCTSG_T_INV",
+    "WFD_T_INV",
+    "RCD_T_INV",
+    "GC_T_INV",
+    "GCTEI_T_INV",
+    "DEL_T_INV",
+    "INV_CODE"
+};
+
+const char *jit_stat_str(jit_stat jstat) {
+    const char *s = "INVALID_JIT_STAT";
+    if (jstat >= JIT_STAT(OK) && jstat <= JIT_STAT(INV_CODE)) s = jss[jstat];
+    return s;
+}
+
 extern inline fn_stk *fn_stk_i(al *const a, size_t size);
 
 extern inline void fn_stk_a(al *const a, fn_stk **stk, code *const c);
@@ -24,6 +53,10 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
 extern inline void fn_stk_f(fn_stk *f);
 
 extern inline jit *jit_i(al *const a, size_t nops);
+
+extern inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o);
+
+#define JIT_ER(M, JSTAT, O) jit_er(M, __func__, JIT_STAT(JSTAT), O);
 
 extern inline void jit_f(jit *j);
 
@@ -79,7 +112,7 @@ static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
         CT_SET_FN(I6, var_##FN##_i6); \
         CT_SET_FN(U6, var_##FN##_u6); \
         default: \
-            return JIT_STAT(N##_T_INV); \
+            return JIT_ER(m, N##_T_INV, o); \
     } \
     SET_REG_CALL(false, 0); \
     jit_a(j, 0x50); \
@@ -121,7 +154,7 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
         memcpy(j->h + stk[stki - 1], &jmpl, sizeof(int)); // fill body skip
         stki--;
     }
-    return JIT_STAT(OK);
+    return JIT_ER(m, OK, NULL);
 }
 
 static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
@@ -142,7 +175,7 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     memcpy(j->h + lope, &jmpl, sizeof(int));
     jmpl = j->len - bs - sizeof(int);
     memcpy(j->h + bs, &jmpl, sizeof(int));
-    return JIT_STAT(OK);
+    return JIT_ER(m, OK, NULL);
 }
 
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
@@ -210,7 +243,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(FN, mod_sg_jf);
                     CT_SET_FN(FD, mod_sg_fd);
                     default:
-                        return JIT_STAT(SG_T_INV);
+                        return JIT_ER(m, SG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
@@ -227,7 +260,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(FN, mod_lg_jf);
                     CT_SET_FN(FD, mod_lg_fd);
                     default:
-                        return JIT_STAT(LG_T_INV);
+                        return JIT_ER(m, LG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -286,7 +319,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     OPPVT(FN, c->jf, jit_fn*);
                     OPPVT(FD, fd, int);
                     default:
-                        return JIT_STAT(PV_T_INV);
+                        return JIT_ER(m, PV_T_INV, o);
                 }
                 break;
             case OP_C(CTE):
@@ -317,7 +350,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 if ((jstat = jit_lop(m, o->od.of, jf, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
-            case OP_C(COND): return JIT_STAT(INV_CODE); // INTERNAL IN IF
+            case OP_C(COND): return JIT_ER(m, INV_CODE, o); // INTERNAL IN IF
             case OP_C(ZOO):
                 op_set_jidx(j, o);
                 jit_a(j, 0x5F); // pop rdi
@@ -325,7 +358,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(U6, var_zoo_u6);
                     CT_SET_FN(I6, var_zoo_i6);
                     default:
-                        return JIT_STAT(ZOO_T_INV);
+                        return JIT_ER(m, ZOO_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -340,7 +373,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(U6, var_u6_sg);
                     CT_SET_FN(I6, var_i6_sg);
                     default:
-                        return JIT_STAT(CSTSG_T_INV);
+                        return JIT_ER(m, CSTSG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -377,7 +410,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_FP(var_sg_cnct_sg_te_vr);
                         break;
                     default:
-                        return JIT_STAT(CNCTSG_T_INV);
+                        return JIT_ER(m, CNCTSG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
@@ -403,7 +436,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_a(j, 0x5E); // str in rsi
                         break;
                     default:
-                        return JIT_STAT(WFD_T_INV);
+                        return JIT_ER(m, WFD_T_INV, o);
                 }
                 jit_b(j, 2, 0x41, 0x5A); // pop r10
                 jit_a(j, 0x5F); // fd in rdi
@@ -422,7 +455,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(VR):
                         break;
                     default:
-                        return JIT_STAT(RCD_T_INV);
+                        return JIT_ER(m, RCD_T_INV, o);
                 }
                 SET_REG(o->od.t, type, false, 6);
                 SET_FP(var_rcd);
@@ -459,7 +492,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_a(j, 0x5F); // pop rdi
                         break;
                     default:
-                        return JIT_STAT(GC_T_INV);
+                        return JIT_ER(m, GC_T_INV, o);
                 }
                 op_set_jlen(j, o);
                 break;
@@ -484,7 +517,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0);
                         break;
                     default:
-                        return JIT_STAT(GCTEI_T_INV);
+                        return JIT_ER(m, GCTEI_T_INV, o);
                 }
                 jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
                 switch (o->od.v.t) {
@@ -508,7 +541,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         break;
                     default:
-                        return JIT_STAT(GCTEI_T_INV);
+                        return JIT_ER(m, GCTEI_T_INV, o);
                 }
                 op_set_jlen(j, o);
                 break;
@@ -527,15 +560,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0);
                         break;
                     default:
-                        return JIT_STAT(DEL_T_INV);
+                        return JIT_ER(m, DEL_T_INV, o);
                 }
                 op_set_jlen(j, o);
                 break;
             default:
-                return JIT_STAT(INV_CODE);
+                return JIT_ER(m, INV_CODE, o);
         }
     }
-    return JIT_STAT(OK);
+    return JIT_ER(m, OK, NULL);
 }
 
 jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
@@ -544,5 +577,5 @@ jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
         stk->fn[i]->jf = (jit_fn*) &j->h[j->len];
         if ((jstat = jit_code(m, stk->fn[i], stk->fn[i]->jf, j)) != JIT_STAT(OK)) return jstat;
     }
-    return JIT_STAT(OK);
+    return JIT_ER(m, OK, NULL);
 }
