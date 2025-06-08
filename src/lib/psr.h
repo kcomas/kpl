@@ -13,6 +13,14 @@ typedef enum {
     PSR_STAT(END) // exit success
 } psr_stat;
 
+#define PSR_MODE(N) PSR_MODE_##N
+
+typedef enum {
+    PSR_MODE(NONE), // no mode
+    PSR_MODE(ONCE), // keep going if no stop tkns
+    PSR_MODE(LOOP) // until stop tkns
+} psr_mode;
+
 #define PARSER(N) PARSER_##N
 
 typedef enum {
@@ -26,25 +34,30 @@ typedef struct _psr psr;
 typedef tbl *psr_tbl_i(void);
 
 // m tkn match
-typedef te *psr_node_fn(psr *const p, const te *const m);
+typedef psr_stat psr_node_fn(psr *const p, te **n);
 
-// current node, next node
-typedef psr_stat psr_megre_fn(psr *const p, te **c, te *const n);
+// head node, current node, next node ok to continue end to stop
+typedef psr_stat psr_megre_fn(psr *const p, te **h, void ***c, te *const n);
 
-// psr entry te[tkn_id;psr_id;te[stop tkn id](null for tknend);merge_fn;node_fn(null for none);tbl]
+// psr entry te[tkn_id;psr_id;mode;te[stop_tkns];merge_fn;node_fn(null for none);tbl]
 
 typedef struct _psr {
     ssize_t r;
+    size_t idc;
     alfn *pa;
     frfn *pf, *pef;
     psr_tbl_i *pti;
     tkn *tt;
+    vr *ts; // tkn stk
     tbl *pt;
 } psr;
 
-psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt);
+psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
 
 // returns 0 for insert fail
-size_t psr_a(psr *const p, size_t id, te *st, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
+size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
+
+// start tkn_id node zero for none
+psr_stat psr_n(psr *const p, te **h);
 
 void psr_f(psr *p);
