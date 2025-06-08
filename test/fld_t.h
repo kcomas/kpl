@@ -14,11 +14,13 @@ tbl *fld_lst_tbl_i(ast *a, size_t n, ...);
 
 #define FLG(I, ...) U6((uint64_t) I << 32 | __VA_ARGS__)
 
-// mc, type...
+// char*, te[type] id ....
 tbl *fld_type_tbl_i(size_t n, ...);
 
 #define LT(N, ...) fld_lst_tbl_i(a, N, __VA_ARGS__)
 
-#define TF(FT, RT, N, ...) type_f_i(&ast_am, NULL, TYPE(FT), RT, fld_type_tbl_i(N, __VA_ARGS__))
+#define TF(FT, RT) type_f_i(&ast_am, NULL, TYPE(FT), RT, NULL)
+
+#define TFN(FT, RT, N, ...) type_f_i(&ast_am, NULL, TYPE(FT), RT, fld_type_tbl_i(N, __VA_ARGS__))
 
 #define TS(T) type_s_i(&ast_am, NULL, TYPE(T))

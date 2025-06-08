@@ -3,14 +3,11 @@
 
 static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     (void) g;
+    (void) e;
     gen_st *st = s;
     AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), ci);
     AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), ci);
-    if (st->vc > 0) {
-        size_t stks = st->vc * sizeof(void*);
-        if (stks > UINT8_MAX) return gen_err(g, ci, e, "gen too many vars");
-        AS2(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(stks)), ci);
-    }
+    // TODO add rsp
     if (st->rac >= 3) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), ci);
     if (st->rac >= 4) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(11))), as_arg_i(a, ARG_ID(R), U3(R(CX))), ci);
     if (st->xac >= 1) AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(7))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), ci);
@@ -19,11 +16,10 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat leave_e(gen *g, gen_st *st, te *ci, as *a, err **e)  {
-    if (st->vc > 0) {
-        size_t stks = st->vc * sizeof(void*);
-        if (stks > UINT8_MAX) return gen_err(g, ci, e, "gen too many vars");
-        AS2(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(stks)), ci);
-    }
+    (void) g;
+    (void) st;
+    (void) e;
+    // TODO sub rsp
     AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(R(BP))), ci);
     AS0(a, AS_X64(RET), ci);
     set_code_e(ci, a);

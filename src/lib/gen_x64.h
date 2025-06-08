@@ -70,7 +70,7 @@ te *gen_data(gen *g, x64_type t, un d);
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
 
 typedef struct {
-    uint8_t vc, rac, xac; // var count for stk alloc, arg count
+    uint8_t rvc, xvc, rac, xac; // var count, arg count
     ssize_t r;
     const alfr *af, *ta;
     tbl *atm, *lat; // map args, tmp to regs, last code of arg, tmp
