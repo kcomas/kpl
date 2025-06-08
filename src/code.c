@@ -435,8 +435,10 @@ static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code
     IFCGEN(code_gen, cs, sym->a, c);
     if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
     if (tn->t == TYPE(HH)) {
+        if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
         // TODO check for HH
         // runtime look up and error
+        OP_RCI(cs, c, tn);
     } else {
         if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
         OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
