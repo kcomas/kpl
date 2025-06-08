@@ -1,7 +1,7 @@
 
 #include "../../src/lib/tkn.h"
 #include <ctype.h>
-#include <stdio.h>
+#include "t.h"
 
 #define TCUST(N) TCUST_##N
 

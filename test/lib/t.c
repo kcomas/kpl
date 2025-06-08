@@ -16,8 +16,8 @@ void _a(const char *name, _test_fn *tf) {
     } else __t = t;
 }
 
-int __attribute__((optimize("O0"))) main(void) {
-    int p = 0, f = 0;
+int main(void) {
+    volatile int p = 0, f = 0; // can't optimize with jit fns
     printf("\e[3m%s\n\e[0m", __f);
     while (__t) {
         _tests *ct = __t;

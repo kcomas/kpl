@@ -1,6 +1,8 @@
 
 #include "tkn_t.h"
 
+I;
+
 extern const alfr tm;
 
 static void tknize(tkn *t) {
@@ -14,7 +16,7 @@ static void tknize(tkn *t) {
     te_f(m);
 }
 
-static void btest(void) {
+T(btest, {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
     tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
@@ -28,9 +30,9 @@ static void btest(void) {
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
-}
+});
 
-static void stest(void) {
+T(stest, {
     const char *pgm = "0 Σ [12;44;67]\n";
     tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
     printf("%s\n", pgm);
@@ -42,9 +44,9 @@ static void stest(void) {
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
-}
+});
 
-static void symtest(void) {
+T(symtest, {
     const char *pgm = "a`b asdf`1234";
     printf("%s\n", pgm);
     tkn *t = tkn_i(&tm, &tm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &tm));
@@ -52,11 +54,4 @@ static void symtest(void) {
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
-}
-
-int main(void) {
-    btest();
-    stest();
-    symtest();
-    return 0;
-}
+});
