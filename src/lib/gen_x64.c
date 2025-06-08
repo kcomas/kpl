@@ -236,58 +236,22 @@ static void drop_atm_kv(gen_st *const st, const te *atm_kv, const te *ci) {
     tbl_s(st->atm, atm_kv->d[0], &kv);
 }
 
-static gen_stat add_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
+static gen_stat add_auauau_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     // TODO at end drop regs not needed
     set_code_e(ci, a);
     return GEN_STAT(OK);
 }
 
-static gen_stat leave_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
+static gen_stat leave_au_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     gen_st *st = (gen_st*) s;
     te *ovt = ci->d[1].p, *kv;
-    if (ovt) {
-        switch (ovt->d[0].u3) {
-            case GEN_CLS(N):
-                return GEN_STAT(INV);
-            case GEN_CLS(A):
-            case GEN_CLS(T):
-                switch (ovt->d[1].u3) {
-                    case X64_TYPE(N):
-                        return GEN_STAT(INV);
-                    case X64_TYPE(F5):
-                    case X64_TYPE(F6):
-                        // TODO
-                        break;
-                    default:
-                        if (tbl_g_i(st->atm, ovt_hsh(ovt), &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
-                        as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(AX))), as_arg(al, af, ARG_ID(R), U3(kv->d[2].u3)), NULL, NULL);
-                        drop_atm_kv(st, kv, ci);
-                        set_code_s(ci, a);
-                        break;
-                }
-                break;
-            case GEN_CLS(V):
-                switch (ovt->d[1].u3) {
-                    case X64_TYPE(N):
-                        return GEN_STAT(INV);
-                    case X64_TYPE(F5):
-                    case X64_TYPE(F6):
-                        // TODO
-                        break;
-                    default:
-                        // TODO mov rbp + offset into rax
-                        break;
-                }
-                break;
-            case GEN_CLS(D):
-                // TODO
-                break;
-            default:
-                break;
-        }
-    }
+    if (!ovt) return GEN_STAT(INV);
+    if (tbl_g_i(st->atm, ovt_hsh(ovt), &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+    as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(R(AX))), as_arg(al, af, ARG_ID(R), U3(kv->d[2].u3)), NULL, NULL);
+    set_code_s(ci, a);
+    drop_atm_kv(st, kv, ci);
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return GEN_STAT(INV);
@@ -303,7 +267,7 @@ static gen_stat leave_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a)  {
 
 gen *gen_b(gen *g) {
     GEN_OP_A0(g, GEN_OP(ENTER), &enter_fn);
-    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), &add_fn);
-    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), U3(X64_TYPE(U6)), &leave_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), &add_auauau_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), U3(X64_TYPE(U6)), &leave_au_fn);
     return g;
 }
