@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../../src/lib/gen_x64.h"
+#include "as_t.h"
 
 lst *gen_mklst(void);
 
@@ -13,4 +14,4 @@ te *gen_arg(x64_type t, size_t id);
 
 void gen_entry_f(void *p);
 
-void code_entry_f(void *p);
+void gen_code_entry_f(void *p);

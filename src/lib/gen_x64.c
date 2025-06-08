@@ -33,6 +33,30 @@ const char *x64_type_str(x64_type xt) {
     return "INV";
 }
 
+gen_st *gen_st_i(alfn *sa, frfn *sf, tbl *args, tbl *tmp, vr *rstk, vr *xstk) {
+    gen_st *st = sa(sizeof(gen_st));
+    st->sa = sa;
+    st->sf = sf;
+    st->args = args;
+    st->tmp = tmp;
+    st->rstk = rstk;
+    st->xstk = xstk;
+    return st;
+}
+
+gen_stat gen_st_p1(gen *g, gen_st *s, as *a) {
+    // TODO
+    return GEN_STAT(OK);
+}
+
+void gen_st_f(gen_st *st) {
+    tbl_f(st->args);
+    tbl_f(st->tmp);
+    vr_f(st->rstk);
+    vr_f(st->xstk);
+    st->sf(st);
+}
+
 void gen_op_p(tbl *ot, bool ci, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
@@ -75,6 +99,7 @@ void gen_p(gen *g, uint8_t *m) {
             printf("%lu)", ovt->d[2].u6);
         }
         printf(")\n");
+        // TODO as print
         h = h->d[2].p;
     }
 }
