@@ -29,34 +29,40 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(Z)] = 2,
     [AST_CLS(A)] = 2,
     [AST_CLS(L)] = 1,
-    [AST_CLS(C)] = 2
+    [AST_CLS(C)] = 0 // no check
 };
 
-static void add_entry(chk *c, te **kv, uint16_t cls, uint16_t type, uint8_t n) {
+static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uint8_t n) {
     un hsh = U6(0);
-    hsh = u4_s_o(hsh, cls, 1);
-    hsh = u4_s_o(hsh, type, 0);
-    if (tbl_g_i(c->ct, hsh, kv) == TBL_STAT(NF)) {
+    hsh = u4_s_o(hsh, 1, cls);
+    hsh = u4_s_o(hsh, 0, type);
+    if (tbl_g_i(ct, hsh, kv) == TBL_STAT(NF)) {
         *kv = te_i(2, c->ta, n > 0 ? chk_entry_f : NULL);
         (*kv)->d[0] = hsh;
         if (n > 0) (*kv)->d[1] = P(c->cti());
+        tbl_a(ct, *kv);
     }
 }
 
-void chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...) {
+chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...) {
+    if (cls == AST_CLS(C)) return CHK_STAT(INV);
+    tbl *ct = c->ct;
     uint8_t n = chk_cls_conts[cls];
     te *kv;
-    add_entry(c, &kv, cls, type, n);
+    add_entry(c, ct, &kv, cls, type, n);
     va_list args;
     va_start(args, type);
     while (n > 0) {
         n--;
+        ct = kv->d[1].p;
         cls = va_arg(args, int);
         type = va_arg(args, int);
-        add_entry(c, &kv, cls, type, n);
+        add_entry(c, ct, &kv, cls, type, n);
     }
     va_end(args);
+    if (kv->d[1].p) return CHK_STAT(INV);
     kv->d[1] = P(cf);
+    return CHK_STAT(OK);
 }
 
 void chk_f(chk *c) {

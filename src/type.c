@@ -46,8 +46,8 @@ const char *type_str(type t) {
         "UN",
         "_END"
     };
-    const char *s = "TINV";
-    if (t > TYPE(_START) && t < TYPE(_END) && t != TYPE(_S) && t != TYPE(_V) && t != TYPE(_H) && t != TYPE(_F) && t != TYPE(_C)) s = ts[t];
+    const char *s = "INV TYPE";
+    if (t > TYPE(_START) && t < TYPE(_END)) s = ts[t];
     return s;
 }
 
