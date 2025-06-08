@@ -10,6 +10,10 @@ void ex_f(void *data) {
     (void) data;
 }
 
+void ex_p(void *data) {
+    (void) data;
+}
+
 #define EXT 26
 
 int main(void) {
@@ -21,6 +25,12 @@ int main(void) {
         tbl_itm *ti;
         if ((st = tbl_op(&tl, tests[i].c, &tests[i], &ti, &ex_f, TBL_OP_FLG(AD))) != TBL_STAT(OK)) return st;
     }
+    printf("-----BUCKETS-----\n");
+    tbl_bucksp(tl, &ex_p);
+    printf("-----------------\n");
+    printf("-----LIST--------\n");
+    tbl_lstp(tl, &ex_p);
+    printf("-----------------\n");
     tbl_f(tl, &ex_f);
     return 0;
 }
