@@ -331,6 +331,8 @@ inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, s
 }
 
 inline void if_itm_lop_p(const ast_st *const as, const if_itm *const ii, size_t idnt) {
+    putchar('\n');
+    PCX(' ', idnt);
     if_itm_p(as, ii, 0, idnt);
 }
 
