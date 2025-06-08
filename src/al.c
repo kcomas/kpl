@@ -7,7 +7,7 @@ extern inline alc *alc_i(al *const a, size_t size);
 
 void alc_f(alc *ac, void *fn) {
     (void) fn;
-#ifdef ALD
+#if KPL_ALD
     if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
 #endif
     munmap(ac, ac->size);
@@ -16,7 +16,7 @@ void alc_f(alc *ac, void *fn) {
 extern inline void al_f(al *a);
 
 void *ala(al *const a, size_t size) {
-#ifdef ALD
+#if KPL_ALD
     a->u++;
 #endif
     size += sizeof(alci);
@@ -41,7 +41,7 @@ void alf(void *ptr) {
     alci *ai = ptr - sizeof(alci);
     alc *ac = ai->ac;
     ac->aus -= ai->size;
-#ifdef ALD
+#if KPL_ALD
     if (ai->size == 0) {
         printf("Double Free\n");
         exit(1);

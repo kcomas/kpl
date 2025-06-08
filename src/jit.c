@@ -309,7 +309,8 @@ static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
 }
 
 static var join_thrd(var_td *volatile td) {
-    while (!td->m->done) waitpid(td->id, NULL, WEXITED);
+    sem_wait(&td->m->done);
+    waitpid(td->id, NULL, WEXITED);
     return td->te->v[td->te->len - 1];
 }
 

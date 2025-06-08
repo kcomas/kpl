@@ -19,7 +19,8 @@ void ex_p(void *data) {
 #define EXT 26
 
 int main(void) {
-    al *a = al_i();
+    al als;
+    al *a = al_i(&als);
     ex tests[EXT];
     tbl *tl =  tbl_i(a, TBL_I_SIZE);
     tbl_stat st;

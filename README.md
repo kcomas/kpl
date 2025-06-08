@@ -9,6 +9,7 @@
 ### Dependencies
 
 #### GNU Make
+
 #### GCC
 
 ### Build
@@ -16,6 +17,7 @@
 ```bash
 make
 ```
+
 ##### Build Flags
 
 OO=-g -Og - Set optimization level (-O2 currently will segfault)
@@ -29,4 +31,5 @@ OO=-g -Og - Set optimization level (-O2 currently will segfault)
 ```bash
 ./kpl path/to/file
 ```
+
 ##### Examples are in the ex folder

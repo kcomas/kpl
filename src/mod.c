@@ -15,7 +15,7 @@ const char *mod_stat_str(mod_stat ms) {
 extern inline mod *mod_i(tds *const s, tdr *const r);
 
 void mod_done(mod *const m) {
-    m->done = true;
+    sem_post(&m->done);
 }
 
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
@@ -25,12 +25,12 @@ extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 static mod_stat _mod_lfile(mod *const m) {
     int fd = open(m->src.path, O_RDONLY);
     if (fd == -1) return MOD_ER(m, FLF);
-    if (fstat(fd, &m->src.sb) == -1) {
+    if (statx(fd, "", AT_EMPTY_PATH, STATX_BASIC_STATS | STATX_BTIME, &m->src.sxb) == -1) {
         close(fd);
         return MOD_ER(m, FLF);
     }
-    m->src.str = ala(m->r->a, m->src.sb.st_size * sizeof(char) + sizeof(char));
-    if (read(fd, m->src.str, m->src.sb.st_size) != m->src.sb.st_size) {
+    m->src.str = ala(m->r->a, m->src.sxb.stx_size * sizeof(char) + sizeof(char));
+    if (read(fd, m->src.str, m->src.sxb.stx_size) != (ssize_t) m->src.sxb.stx_size) {
         alf(m->src.str);
         close(fd);
         return MOD_ER(m, FLF);
