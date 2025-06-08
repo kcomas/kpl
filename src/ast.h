@@ -384,13 +384,11 @@ inline sym_node *sym_node_i(al *const am, ast *const a, const tkn *const t, cons
 }
 
 inline void sym_node_p(const ast_st *const as, const sym_node *const sym, size_t idnt) {
+    printf("%s", sym->s);
     type_node_p(as, sym->tn, idnt);
     putchar('\n');
     PCX(' ', idnt);
     ast_p(as, sym->a, idnt);
-    putchar('\n');
-    PCX(' ', idnt);
-    printf("%s", sym->s);
 }
 
 inline void sym_node_f(sym_node *const sym) {
