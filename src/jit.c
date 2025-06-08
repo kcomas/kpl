@@ -387,6 +387,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
             SET_FP(var_tsv_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            jit_a(j, 0x5F); // pop rdi
             break;
         case TYPE(HH):
             SET_FP(var_hh_rcd);
@@ -395,6 +396,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
             SET_FP(var_hh_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+            jit_a(j, 0x5F); // pop rdi
             break;
         case TYPE(ER):
             SET_FP(er_itm_rcd);
@@ -406,7 +408,7 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
         case TYPE(TD):
             SET_FP(var_td_rcd);
             SET_REG_CALL(false, 0);
-            JIT_TD_GC();
+            JIT_TD_GC(); // TODO check if working
             break;
         default:
             return JIT_ER(m, GCVR_T_INV, o);
