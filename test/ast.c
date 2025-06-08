@@ -109,3 +109,12 @@ T(scope) {
         CN(P1, IN("s"))
     )), NULL)));
 }
+
+T(efn) {
+    V(TPGM(efn), RN(AN(NULL, LN(NULL, L(1,
+        ON(NULL, DFN, CN(E, IN("addmul")), ON(NULL, CST, TN(FN), LN(NULL, L(1,
+            ON(NULL, MUL, AN(NULL, TN(I6), L(1, IN("z"))),
+                ON(NULL, ADD, AN(NULL, TN(I6), L(1, IN("y"))), AN(NULL, TN(I6), L(1, IN("x")))))
+        ))))
+    )), NULL)));
+}

@@ -24,13 +24,23 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
     }
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
-    putchar('\n');
-    A(ast_eq(an, tn), "ast_eq");
+    bool eq = ast_eq(an, tn);
+    if (!eq) {
+        printf("\n--- DIFF ---\n");
+        ast_p(tn, 0);
+        putchar('\n');
+    }
+    A(eq, "ast_eq");
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
     gen_x64_opt(g, sc);
     gen_p(g, NULL);
-    A(gen_code_eq(g, gc), "gen_code_eq");
+    eq = gen_code_eq(g, gc);
+    if (!eq) {
+        printf("--- DIFF ---\n");
+        gen_p(gc, NULL);
+    }
+    A(eq, "gen_code_eq");
     gen_stat gstat = gen_n(g, sc, t->a, &e);
     if (e) {
         err_p(e);
