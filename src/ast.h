@@ -220,6 +220,7 @@ typedef enum {
     OP_TYPE(TC), // '
     OP_TYPE(AGN), // :
     OP_TYPE(CST), // $
+    OP_TYPE(CLSE), // \c
     OP_TYPE(DEL), // \d
     OP_TYPE(LD), // \l
     OP_TYPE(VH), // \h

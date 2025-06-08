@@ -125,6 +125,7 @@ static const char *const op_type_str[] = {
     "TC", // '
     "AGN", // :
     "CST", // $
+    "CLSE", // \c
     "DEL", // \d
     "LD", // \l
     "VH", // \h
@@ -693,6 +694,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(TC);
         OP_CASE(AGN);
         OP_CASE(CST);
+        OP_CASE(CLSE);
         OP_CASE(DEL);
         OP_CASE(LD);
         OP_CASE(VH);

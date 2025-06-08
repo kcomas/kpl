@@ -778,6 +778,9 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     break;
             }
             return CODE_ER(cs, INV_CST, a);
+        case OP_TYPE(CLSE):
+            // TODO
+            break;
         case OP_TYPE(DEL):
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
@@ -909,9 +912,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tl = ast_gtn(opn->l))) return CODE_ER(cs, OP_NO_T_L, a);
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
-            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
+            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) { // write
                 OP_A(cs, c, WFD, OP, { .t = tr->t }, a);
                 OP_GC(cs, c, tr, a);
+            } else if  (tl->t != TYPE(FD) && tr->t == TYPE(FD)) { // read
+                // TODO
             }
             else return CODE_ER(cs, INV_FD_OP, a);
             break;

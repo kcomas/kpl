@@ -7,6 +7,8 @@
 
 typedef struct _var_tsv var_tsv;
 
+typedef struct _var_fd var_fd;
+
 var_sg *var_sg_i(al *const a, size_t size);
 
 var_sg *var_sg_i_str(al *const a, const char *const str);
