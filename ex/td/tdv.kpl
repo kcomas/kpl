@@ -1,0 +1,27 @@
+
+n:U6$0
+
+tf:FN(U6;U6)
+tt:TD(TE[U6;U6];tf)
+t:VR[tt]$[]
+x:U6$35
+
+gt:FN(U6;tt)${(x)
+    [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}}
+
+#@ (n < 5) {
+    t + gt(x)
+    n: n + 1
+}
+
+n:U6$0
+
+#@ (n < 5) {
+    v:-t
+    r:v()
+    $(FD;1) << " ", ["R:";SG$r;"\n"]
+    n: n + 1
+}

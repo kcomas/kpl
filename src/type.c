@@ -94,6 +94,7 @@ static const char *const tss[] = {
     "INV_TE_CALL_IDX",
     "INV_TE_CALL_IDX_T",
     "INV_CALL_ARGS_LEN",
+    "INV_CALL_RET_T",
     "INV_CALL_TGT_ARG_T",
     "INV_CALL_ARG_T",
     "CALL_ARG_T_NEQ",
@@ -577,7 +578,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
     }
     IFTCHK(type_chk, ts, fns, cn->tgt);
     IFTCHK(type_chk_lst, ts, fns, cn->args);
-    type_node *tt, *ta;
+    type_node *tt, *ta, *tr;
     ASTGTN(tt, cn->tgt, INV_CALL_TGT);
     lst_itm *th, *ah;
     int64_t tidx;
@@ -596,7 +597,8 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
             break;
         case TYPE(FN):
             if (tt->a->n.lst->len - 1 != cn->args->len) return TYPE_ER(ts, INV_CALL_ARGS_LEN);
-            cn->ret = type_node_c(ts->r->a, tt->a->n.lst->t->a->n.tn);
+            ASTGTN(tr, tt->a->n.lst->t->a, INV_CALL_RET_T);
+            cn->ret = type_node_c(ts->r->a, tr);
             th = tt->a->n.lst->h;
             ah = cn->args->h;
             while (ah) {

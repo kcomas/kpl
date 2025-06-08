@@ -32,7 +32,6 @@ inline tds *tds_i() {
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
-    while (s->lock) {}
     s->lock = true;
     er_c(r->e);
     LST_A(s, r);
@@ -40,7 +39,6 @@ inline void tds_a(tds *volatile s, tdr *const r) {
 }
 
 inline tdr *tds_g(tds *volatile s) {
-    while (s->lock) {}
     s->lock = true;
     tdr *r = NULL;
     if (!s->h) {

@@ -1,10 +1,7 @@
 
 // basic thread example
 
-n:U6$0
-
 tf:FN(U6;U6)
-t:VR[TD(TE[U6;U6];tf)]$[]
 x:U6$35
 
 va: [x;U6$0]*tf${(x)
@@ -28,17 +25,11 @@ ve: [x;U6$0]*tf${(x)
     r:f`fibp(x)
     r}
 
-a:va()
-b:vb()
-c:vc()
-d:vd()
-e:ve()
-
-$(FD;1) << " ", ["A:";SG$a;"\n"]
-$(FD;1) << " ", ["B:";SG$b;"\n"]
-$(FD;1) << " ", ["C:";SG$c;"\n"]
-$(FD;1) << " ", ["D:";SG$d;"\n"]
-$(FD;1) << " ", ["E:";SG$e;"\n"]
+$(FD;1) << " ", ["E:";SG$ve();"\n"]
+$(FD;1) << " ", ["D:";SG$vd();"\n"]
+$(FD;1) << " ", ["C:";SG$vc();"\n"]
+$(FD;1) << " ", ["B:";SG$vb();"\n"]
+$(FD;1) << " ", ["A:";SG$va();"\n"]
 
 \d va
 \d vb
