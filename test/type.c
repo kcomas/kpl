@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
     type_stat tstat;
     if ((tstat = type_chk_fn(m->fns)) != TYPE_STAT(OK)) {
         fn_node_p(&as, m->fns, 0);
+        printf("EC: %d\n", tstat);
         return tstat;
     }
     fn_node_p(&as, m->fns, 0);

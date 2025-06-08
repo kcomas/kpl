@@ -16,3 +16,5 @@ void fn_stk_b(fn_stk **stk, const code *const c) {
         if (c->ops[i].oc == OP_C(PV) && c->ops[i].ot == TYPE(FN)) fn_stk_b(stk, c->ops[i].od.c);
     fn_stk_a(stk, c);
 }
+
+extern inline void fn_stk_f(fn_stk *f);
