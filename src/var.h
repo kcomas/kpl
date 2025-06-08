@@ -13,16 +13,16 @@ typedef struct {
 
 typedef struct {
     RC;
-    size_t len;
+    size_t len, size;
     jit_fn *gc;
     var *v[];
-} var_te;
+} var_te_vr;
 
 var_sg *var_sg_i(size_t size);
 
 var_sg *var_sg_i_str(const char *const str);
 
-void var_sg_rc(var_sg *const sg);
+void var_sg_rci(var_sg *const sg);
 
 size_t var_sg_len(var_sg *const sg);
 
@@ -32,13 +32,21 @@ var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r);
 
 void var_sg_f(var_sg *sg);
 
+var_te_vr *var_te_vr_i(size_t size);
+
+var_te_vr *var_te_i(size_t size);
+
+void var_te_vr_f(var_te_vr *vtv);
+
 typedef union _var {
     int64_t i6;
     uint64_t u6;
     jit_fn *jf;
     var_sg *sg;
-    var_te *te;
+    var_te_vr *te, *vr;
 } var;
+
+ssize_t var_rcd(var v, type t);
 
 bool var_zoo_u6(uint64_t v);
 bool var_zoo_i6(int64_t v);

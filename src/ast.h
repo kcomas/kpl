@@ -81,50 +81,6 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt);
 
 void ast_f(ast *a);
 
-#define TYPE(N) TYPE_##N
-
-typedef enum {
-    // internal
-    TYPE(STMT),
-    TYPE(OP),
-    TYPE(IF),
-    TYPE(COND),
-    TYPE(LOP),
-    TYPE(VAR),
-    TYPE(CODE),
-    // ast types
-    TYPE(MOD), // file
-    TYPE(INT),
-    TYPE(FLT),
-    TYPE(STR),
-    // data types
-    TYPE(VD),
-    TYPE(BL),
-    TYPE(U3),
-    TYPE(U4),
-    TYPE(U5),
-    TYPE(U6),
-    TYPE(I3),
-    TYPE(I4),
-    TYPE(I5),
-    TYPE(I6),
-    TYPE(F5),
-    TYPE(F6),
-    TYPE(DT),
-    TYPE(CR),
-    TYPE(SL),
-    TYPE(SG),
-    TYPE(VR),
-    TYPE(TE),
-    TYPE(HH),
-    TYPE(ST),
-    TYPE(FN),
-    TYPE(ER),
-    TYPE(FD)
-} type;
-
-const char *type_get_str(type t);
-
 typedef struct {
     type t;
     ast *a;

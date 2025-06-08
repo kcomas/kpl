@@ -15,7 +15,7 @@ var_sg *var_sg_i_str(const char *const str) {
     return sg;
 }
 
-void var_sg_rc(var_sg *const sg) {
+void var_sg_rci(var_sg *const sg) {
     sg->rc++;
 }
 
@@ -39,6 +39,36 @@ var_sg *var_sg_cnct_sg_sg(const var_sg *const l, const var_sg *const r) {
 void var_sg_f(var_sg *sg) {
     if (--sg->rc > 0) return;
     free(sg);
+}
+
+var_te_vr *var_te_vr_i(size_t size) {
+    var_te_vr *vtv = calloc(1, sizeof(var_te_vr) + size * sizeof(var));
+    vtv->size = size;
+    return vtv;
+}
+
+var_te_vr *var_te_i(size_t size) {
+    var_te_vr *te = var_te_vr_i(size);
+    te->len = size;
+    return te;
+}
+
+void var_te_vr_f(var_te_vr *vtv) {
+    free(vtv);
+}
+
+ssize_t var_rcd(var v, type t) {
+    switch (t) {
+        case TYPE(STR):
+        case TYPE(SG):
+            return --v.sg->rc;
+        case TYPE(TE): return --v.te->rc;
+        case TYPE(VR): return --v.vr->rc;
+        default:
+            break;
+    }
+    exit(KPLE); // runtime error should be could during jit
+    return 0;
 }
 
 bool var_zoo_u6(uint64_t v) { return v != 0; }

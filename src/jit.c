@@ -321,10 +321,10 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
-                        jit_b(j, 2, 0x41, 0x5A); // pop r10
-                        jit_b(j, 3, 0x4C, 0x89, 0xD7); // mov rdi r10
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_FP(var_sg_str);
                         SET_REG_CALL(false, 0);
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         jit_a(j, 0x50); // push rax
                         SET_FP(var_sg_len);
                         SET_REG_CALL(false, 0);
@@ -334,16 +334,31 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     default:
                         return JIT_STAT(WFD_T_INV);
                 }
+                jit_b(j, 2, 0x41, 0x5A); // pop r10
                 jit_a(j, 0x5F); // fd in rdi
+                jit_b(j, 2, 0x41, 0x52); // push r10
+                SET_FP(write);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(*j, o);
+                break;
+            case OP_C(RCD):
+                op_set_jidx(*j, o);
+                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
-                        jit_b(j, 2, 0x41, 0x52); // push r10
-                    default:
+                    case TYPE(TE):
+                    case TYPE(VR):
                         break;
+                    default:
+                        return JIT_STAT(RCD_T_INV);
                 }
-                SET_FP(write);
+                SET_REG(o->od.t, type, false, 6);
+                SET_FP(var_rcd);
                 SET_REG_CALL(false, 0);
+                jit_b(j, 3, 0x4D, 0x31, 0xE4); // xor r12 12
+                jit_b(j, 3, 0x4C, 0x39, 0xE0); // cmp rax r12
+                jit_b(j, 4, 0x7E, 0x02, 0xC9, 0xC3); // jng 2, leave, ret
                 op_set_jlen(*j, o);
                 break;
             case OP_C(GC):
@@ -363,6 +378,9 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(SG):
                         SET_FP(var_sg_f);
                         SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(TE):
+                        // TODO call fn
                         break;
                     default:
                         return JIT_STAT(GC_T_INV);

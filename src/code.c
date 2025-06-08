@@ -62,13 +62,15 @@ static const char *op_c_str[] = {
     "OR",
     "CNCTSG",
     "WFD",
+    "RCD",
     "GC",
-    "GCTEI"
+    "GCTEI",
+    "DEL"
 };
 
 const char *op_c_get_str(op_c oc) {
     const char *s = "INVALID";
-    if (oc >= OP_C(EFN) && oc <= OP_C(GCTEI)) s = op_c_str[oc];
+    if (oc >= OP_C(EFN) && oc <= OP_C(DEL)) s = op_c_str[oc];
     return s;
 };
 
@@ -161,7 +163,6 @@ static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code
         case TYPE(I6):
         case TYPE(SG):
         case TYPE(TE):
-            // TODO idx in TE
             code_a(c, (op) {oc, t, 0, 0, od,  a});
             break;
         default:
@@ -186,16 +187,18 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         gc = code_i(CODE_I_SIZE);
         OP_A(&gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
         OP_A(&gc, LA, VAR, { SLV(0, TYPE(TE)) }, NULL);
+        OP_A(&gc, RCD, OP, { .t = TYPE(TE) }, NULL);
     }
     while (h) {
         IFCGEN(code_gen, cs, h->a, c);
         if (lst->tn->t == TYPE(TE)) {
             if (!(th = ast_gtn(h->a))) return CODE_STAT(NO_T_FOR_TE_IDX);
-            OP_GCTEI(&gc, th, h->a, ++id);
+            OP_GCTEI(&gc, th, h->a, ++id); // h->a node tkn in gc fn
         }
         h = h->next;
     }
     if (lst->tn->t == TYPE(TE)) {
+        OP_A(&gc, DEL, OP, { . t = TYPE(TE) }, NULL);
         OP_A(&gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
         OP_A(c, CTE, TE, { .te = cte_i(lst->len, gc) }, NULL);
     }
