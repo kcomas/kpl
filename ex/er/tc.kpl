@@ -1,7 +1,7 @@
 
 // try catch example
 
-f:FN(I6;I6)${(x)
+f:FN(I6;ER(I6))${(x)
     '"This is an error value passed: ", $(SG;x)
     x}
 
