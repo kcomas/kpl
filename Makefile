@@ -128,6 +128,7 @@ OBJS := $(sort $(OBJS))
 
 $(TESTS): OO = -O3
 $(TESTS): WFLAGS += -Werror
+$(TESTS): FLAGS += -DNTO
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
 > $(CCOBJ)
 
