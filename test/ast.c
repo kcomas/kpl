@@ -29,33 +29,29 @@ static tbl *mktbl(size_t size) {
 
 #define RN(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
 
+#define IN(S) ast_an_i(a, NULL, NULL, AST_CLS(I), P(NULL), mc_i_cstr(S, &am))
+
 #define TN(V) ast_an_i(a, NULL, NULL, AST_CLS(T), P(type_i(&am, TYPE(V))))
 
 #define SN(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_i(&am, TYPE(T))), V)
 
 #define ON(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
 
-static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
-    lst *l = ali();
-    va_list arg;
-    va_start(arg, n);
-    while (n > 0) {
-        lst_ab(l, P(va_arg(arg, te*)));
-        n--;
-    }
-    va_end(arg);
-    return ast_an_i(a, NULL, NULL, AST_CLS(A), type, tgt, l);
-}
+#define L(n, ...) lst_iv(&am, &am, (void*) te_f, n, __VA_ARGS__)
 
-#define AN(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
+#define AN(T, TGT, LST) ast_an_i(a, NULL, NULL, AST_CLS(A), T, TGT, LST)
 
 #define ZN(S, TGT) ast_an_i(a, NULL, NULL, AST_CLS(Z), P(type_i(&am, TYPE(SL))), mc_i_cstr(S, &am), TGT)
+
+#define LN(LST) ast_an_i(a, NULL, NULL, AST_CLS(L), P(NULL), LST)
 
 static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     printf("%s\n", pgm);
     te *pn = psr_r(bpsr(pgm)), *an = NULL, *e = NULL;
     A(pn != NULL, "psr_r");
-    A(ast_n(a, pn, (void**) &an, &e) == AST_STAT(OK), "ast_n");
+    ast_stat stat = ast_n(a, pn, (void**) &an, &e);
+    if (e) node_p(e, 0);
+    A(stat == AST_STAT(OK), "ast_n");
     ast_p(an, 0);
     putchar('\n');
     ast_p(cn, 0);
@@ -70,9 +66,19 @@ static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     ast_verify(_t, a, PGM, AST)
 
 T(ast_aplyopadd) {
-    V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), 2, SN(I6, I6(1)), SN(I6, I6(2)))));
+    V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
 }
 
 T(ast_typetype) {
-    V(typetype, RN(AN(P(NULL), TN(FN), 3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(P(NULL), TN(FN), 2, ZN("z", TN(U6)), TN(I6)))));
+    V(typetype, RN(AN(P(NULL), TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(P(NULL), TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
+}
+
+T(ast_fnadd3) {
+    V(fnadd3, RN(LN(L(2,
+        ON(P(NULL), AGN, IN("f"), ON(P(NULL), CST,
+            AN(P(NULL), TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
+            LN(L(1, ON(P(NULL), SUB, NULL, ON(P(NULL), ADD, IN("a"), ON(P(NULL), ADD, IN("b"), IN("c"))))))
+            )),
+        AN(P(NULL), IN("f"), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))
+    )))));
 }

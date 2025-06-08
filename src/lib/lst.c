@@ -12,6 +12,21 @@ lst *lst_i(const alfr *af, const alfr *ta, frfn *df) {
     return l;
 }
 
+lst *lst_iv(const alfr *af, const alfr *ta, frfn *df, size_t n, ...) {
+    lst *l = lst_i(af, ta, df);
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        if (lst_ab(l, va_arg(args, un)) != LST_STAT(OK)) {
+            lst_f(l);
+            return NULL;
+        }
+        n--;
+    }
+    va_end(args);
+    return l;
+}
+
 lst *lst_c(lst *l) {
     l->r++;
     return l;
@@ -43,18 +58,6 @@ lst_stat lst_ab(lst *l, un d) {
     }
     l->l++;
     return LST_STAT(OK);
-}
-
-lst_stat lst_abv(lst *l, size_t n, ...) {
-    lst_stat stat = LST_STAT(OK);
-    va_list args;
-    va_start(args, n);
-    while (n > 0) {
-        if ((stat = lst_ab(l, va_arg(args, un))) != LST_STAT(OK)) return stat;
-        n--;
-    }
-    va_end(args);
-    return stat;
 }
 
 lst_stat lst_af(lst *l, un d) {

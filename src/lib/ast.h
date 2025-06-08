@@ -17,7 +17,7 @@ typedef enum {
 typedef enum {
     AST_CLS(R), // root te[tbl;te]
     AST_CLS(T), // type te[type]
-    AST_CLS(I), // identifier [te[type];te]
+    AST_CLS(I), // identifier [te[type];entry;mc]
     AST_CLS(S), // scalar type [un[type];un]
     AST_CLS(V), // vector type [te[type];lst]
     AST_CLS(O), // op [te[type];op_id;te;te]
@@ -47,7 +47,7 @@ ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_tbl
 
 // ast t te[par;psr;cls;...]
 
-te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...);
+te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un ct, ...);
 
 typedef ast_stat ast_tf(ast *a, te *pn, void **vn, te **e);
 
