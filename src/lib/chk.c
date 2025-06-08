@@ -36,8 +36,8 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
 
 static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uint8_t n) {
     un hsh = U6(0);
-    hsh = u4_s_o(hsh, CHK_HSH_C, cls);
-    hsh = u4_s_o(hsh, CHK_HSH_T, type);
+    hsh = u4_s_o(hsh, AST_HSH_C, cls);
+    hsh = u4_s_o(hsh, AST_HSH_T, type);
     if (tbl_g_i(ct, hsh, kv) == TBL_STAT(NF)) {
         *kv = te_i(2, c->ta, n > 0 ? chk_entry_f : NULL);
         (*kv)->d[0] = hsh;
@@ -67,38 +67,13 @@ chk_stat chk_a(chk *c, tbl *t, chk_fn cf, uint16_t cls, uint16_t type, ...) {
     return CHK_STAT(OK);
 }
 
-static un chk_hsh(const te *an) {
-    un hsh = U6(0);
-    if (!an) {
-        hsh = u4_s_o(hsh, CHK_HSH_C, AST_CLS(_));
-        hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
-        return hsh;
-    }
-    hsh = u4_s_o(hsh, CHK_HSH_C, an->d[2].u4);
-    switch (an->d[2].u4) {
-        case AST_CLS(R):
-        case AST_CLS(L):
-            hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
-            break;
-        case AST_CLS(E):
-            if (!((te*) an->d[3].p)->d[2].p) hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
-            else hsh = u4_s_o(hsh, CHK_HSH_T, ((te*) ((te*) an->d[3].p)->d[2].p)->d[1].u4);
-            break;
-        default:
-            if (!an->d[3].p) hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
-            else hsh = u4_s_o(hsh, CHK_HSH_T, ((te*) an->d[3].p)->d[1].u4);
-            break;
-    }
-    return hsh;
-}
-
 static chk_stat chk_foe(bool foe, te *an, te **e) {
     if (foe) *e = te_c(an);
     return foe ? CHK_STAT(INV) : CHK_STAT(OK);
 }
 
 static chk_stat run(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
-    un hsh = chk_hsh(an);
+    un hsh = ast_hsh(an);
     te *kv;
     if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
     while (n > 0) {
@@ -107,12 +82,12 @@ static chk_stat run(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, boo
         t = kv->d[1].p;
         if (!t) return chk_foe(foe, an, e);
         if (n == 2 && an->d[2].u4 == AST_CLS(O)) {
-            hsh = u4_s_o(hsh, CHK_HSH_C, an->d[ncmp++].u4);
-            hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
+            hsh = u4_s_o(hsh, AST_HSH_C, an->d[ncmp++].u4);
+            hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
         } else if (n == 0 && (an->d[2].u4 == AST_CLS(S) || an->d[2].u4 == AST_CLS(V))) {
-            hsh = u4_s_o(hsh, CHK_HSH_C, AST_CLS(_));
-            hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
-        } else hsh = chk_hsh(an->d[ncmp++].p);
+            hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
+            hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
+        } else hsh = ast_hsh(an->d[ncmp++].p);
         if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
     }
     if (!kv->d[1].p) return chk_foe(foe, an, e);

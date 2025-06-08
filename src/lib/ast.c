@@ -21,6 +21,31 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV CLS";
 }
 
+un ast_hsh(const te *an) {
+    un hsh = U6(0);
+    if (!an) {
+        hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
+        hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_N));
+        return hsh;
+    }
+    hsh = u4_s_o(hsh, AST_HSH_C, an->d[2].u4);
+    switch (an->d[2].u4) {
+        case AST_CLS(R):
+        case AST_CLS(L):
+            hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
+            break;
+        case AST_CLS(E):
+            if (!((te*) an->d[3].p)->d[2].p) hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_N));
+            else hsh = u4_s_o(hsh, AST_HSH_T, ((te*) ((te*) an->d[3].p)->d[2].p)->d[1].u4);
+            break;
+        default:
+            if (!an->d[3].p) hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_N));
+            else hsh = u4_s_o(hsh, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            break;
+    }
+    return hsh;
+}
+
 ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
     ast *a = af->a(sizeof(ast));
     a->r = 1;
