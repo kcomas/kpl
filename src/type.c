@@ -178,6 +178,22 @@ static bool lst_node_eq(const lst_node *const la, const lst_node *const lb) {
     return true;
 }
 
+static bool tbl_eq(const tbl* const ta, const tbl* const tb) {
+    if (ta->len != tb->len) return false;
+    tbl_itm *tia = ta->h, *tib = tb->h;
+    hsh_data *hda, *hdb;
+    while (tia && tib) {
+        if (strcmp(tia->str, tib->str) != 0) return false;
+        hda = (hsh_data*) tia->data;
+        hdb = (hsh_data*) tib->data;
+        if (hda->id != hdb->id || !type_eq(hda->tn, hdb->tn)) return false;
+        tia = tia->next;
+        tib = tib->next;
+    }
+    if (tia || tib) return false;
+    return true;
+}
+
 static bool type_eq(const type_node *const ta, const type_node *tb) {
     if (!ta || !tb) return false;
     if ((ta->t == TYPE(SG) && tb->t == TYPE(STR)) || (ta->t == TYPE(STR) && tb->t == TYPE(SG))) return true;
@@ -187,12 +203,12 @@ static bool type_eq(const type_node *const ta, const type_node *tb) {
         case TYPE(TD):
             return lst_node_eq(ta->a->n.lst, tb->a->n.lst);
         case TYPE(ST):
-            exit(KPLE); // TODO
+            return tbl_eq(ta->a->n.tl, tb->a->n.tl);
         case TYPE(VR):
         case TYPE(HH):
             return type_eq(ta->a->n.tn, tb->a->n.tn);
         default:
-            break; // TODO specify all types
+            break;
     }
     return true;
 }
