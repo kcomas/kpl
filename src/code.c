@@ -87,6 +87,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
             case TYPE(I6):
                 printf(",%ld", c->ops[i].od.i6);
                 break;
+            case TYPE(STR):
             case TYPE(SG):
                 printf(",%s", c->ops[i].od.sg);
                 break;
