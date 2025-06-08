@@ -104,13 +104,13 @@ jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s);
 // mov rax, qword ptr[rdi+dsp8]
 jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
-// add rax, b
+// add rax, byte
 jit_stat jit_addrb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // add rax, rdi
 jit_stat jit_addrr(size_t *p, uint8_t *m, reg d, reg s);
 
-// sub rax, b
+// sub rax, byte
 jit_stat jit_subrb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // sub rax, rdi
