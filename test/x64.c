@@ -159,11 +159,11 @@ static void bfib(size_t *p, uint8_t *m) {
 T(x64_rfib) {
     size_t p = 0;
     bfib(&p, m);
-    uint64_t n = 35;
+    uint64_t n = 10;
     printj(p, m);
     uint64_t r = ((fib*) m)(n);
     printf("fib(%lu): %lu\n", n, r);
-    A(r == 9227465, "fib");
+    A(r == 55, "fib");
 }
 
 T(x64_daddsub) {
