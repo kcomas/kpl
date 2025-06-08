@@ -3,6 +3,7 @@
 
 n:U6$35
 c:U6$0
+z:U6$0
 
 fib:FN(U6;U6)${(x)
     c: c + 1
@@ -13,4 +14,8 @@ fib:FN(U6;U6)${(x)
     }
     S(x - 1) + S(x - 2)}
 
-$(FD;1) << " " , ["The fibonacci of";SG$n;"is:";SG$fib(n);"after";SG$c;"calls\n"]
+#@ (z < +(n;1)) {
+    c:U6$0
+    $(FD;1) << " " , ["The fibonacci of";SG$z;"is:";SG$fib(z);"after";SG$c;"calls\n"]
+    z: z + 1
+}
