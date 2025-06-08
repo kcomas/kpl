@@ -70,10 +70,12 @@ static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
 
 static atg_stat lst_cst_e(atg *t, gen *g, te *an, te **e) {
     (void) t;
-    (void) an;
-    (void) g;
-    (void) e;
-    HERE("TODO");
+    te *rt = ((te*) ((te*) an->d[5].p)->d[3].p)->d[2].p;
+    if (rt->d[1].u4 != TYPE(VD)) {
+        // TODO gc ref counted vars
+        if (gen_a(g, GEN_OP(LEAVE), te_c(((te*) g->code->t->d[0].p)->d[1].p), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    } else if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    gen_p(g, NULL);
     return ATG_STAT(OK);
 }
 
@@ -83,6 +85,14 @@ static te *var_arg(gen *g, te *lte, x64_type xt) {
     if (flgs & LTE_FLG(A)) return gen_arg(g, xt, id);
     // TODO var
     return NULL;
+}
+
+static atg_stat atg_ok(atg *t, gen *g, te *an, te **e) {
+    (void) t;
+    (void) g;
+    (void) an;
+    (void) e;
+    return ATG_STAT(OK);
 }
 
 static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, te **e) {
@@ -101,11 +111,15 @@ static atg_stat add_i6_e_i6_o_i6(atg *t, gen *g, te *an, te **e) {
 }
 
 static atg_stat neg_i6_o_i6(atg *t, gen *g, te *an, te **e) {
-    HERE("TODO");
+    (void) t;
+    uint32_t id = ((te*) ((te*) g->code->t->d[0].p)->d[1].p)->d[1].u5;
+    if (gen_a(g, GEN_OP(NEG), gen_tmp(g, X64_TYPE(I6), id), gen_tmp(g, X64_TYPE(I6), id), NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    return ATG_STAT(OK);
 }
 
 atg *atg_b(atg *t) {
     atg_a_se(t, lst_cst_t, lst_cst_s, lst_cst_e);
+    atg_a_o(t, OC(CST), TYPE(FN), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A), atg_ok);
     atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), add_i6_e_i6_e_i6);
     atg_a_o(t, OC(ADD), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6), add_i6_e_i6_o_i6);
     atg_a_o(t, OC(SUB), TYPE(I6), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(I6), neg_i6_o_i6);

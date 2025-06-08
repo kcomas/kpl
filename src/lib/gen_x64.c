@@ -9,6 +9,7 @@ const char *gen_op_str(gen_op go) {
         "LEAVE",
         "CALL",
         "CALLNPR",
+        "NEG",
         "ADD",
         "SUB",
         "EQ",
