@@ -43,7 +43,7 @@ typedef struct {
 } ast_st;
 
 inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str) {
-    tkn_st_i(&as->ts);
+    tkn_st_i(&as->ts, a, e);
     as->a = a;
     as->e = e;
     as->str = str;
