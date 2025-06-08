@@ -205,7 +205,7 @@ static atg_stat call_npr(gen_op *go, const te *an) {
 
 static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
     atg_stat stat = ATG_STAT(OK);
-    uint32_t lbl = ((te*) an->d[4].p)->d[4].u5;
+    uint32_t lbl = ast_lst_tbl_e_g_i(((te*) an->d[4].p)->d[3].p);
     vr *v;
     if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) {
         vr_f(v);
