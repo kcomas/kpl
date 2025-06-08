@@ -16,7 +16,9 @@ typedef enum {
     TOKEN(NUM),
     TOKEN(SEMI),
     TOKEN(LS),
-    TOKEN(RS)
+    TOKEN(RS),
+    TOKEN(BAR),
+    TOKEN(BEE)
 } token;
 
 static size_t sh(un v) {
@@ -124,7 +126,7 @@ static void tknize(tkn *const t) {
 }
 
 static void btest(void) {
-    const char *pgm = "sigma 123 Σ  si \n   sig ΣΩ";
+    const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
@@ -132,6 +134,8 @@ static void btest(void) {
     tkn_a(t, "sig", TOKEN(SIG), &ft);
     tkn_a(t, "Σ", TOKEN(SC), &ft);
     tkn_a(t, "ΣΩ", TOKEN(SCOC), &ft);
+    tkn_a(t, "bar", TOKEN(BAR), &ft);
+    tkn_a(t, "bee", TOKEN(BEE), &ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
