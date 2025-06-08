@@ -19,3 +19,5 @@ const char *ast_op_str(op o);
 ast *ast_b(ast *a);
 
 void ast_p(const te *an, size_t idnt);
+
+bool ast_eq(const te *a, const te *b);
