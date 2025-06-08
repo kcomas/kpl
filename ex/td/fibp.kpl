@@ -1,7 +1,0 @@
-
-fib: \l "../l/lfib.kpl"
-
-fibp:FN(U6;U6)${(x)
-    r:fib`fib(x)
-    $(FD;1) << " ", ["The Fib of";SG$x;"is";SG$r;"\n"]
-    r}
