@@ -46,7 +46,7 @@ size_t tkn_a(tkn *t, size_t tid, const char *s, tkn_pf *pf) {
     te *kv;
     while (c.c.a != '\0') {
         if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) return entry_add(t, tl, p, s, tid, pf);
-        tl = (tbl*) kv->d[3].p;
+        tl = kv->d[3].p;
         p = e + 1;
         c = c4_g(s, p, &e);
     }
@@ -70,11 +70,11 @@ tkn_stat tkn_n(tkn *t, te *m) {
     te *kv;
     while (c.c.a != '\0') {
         if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) break;
-        tl = (tbl*) kv->d[3].p;
+        tl = kv->d[3].p;
         t->pos = e + 1;
         t->cno++;
         if (kv->d[2].p) {
-            pf = (tkn_pf*) kv->d[2].p;
+            pf = kv->d[2].p;
             m->d[0] = kv->d[1];
             m->d[4].u6 = t->pos;
         }

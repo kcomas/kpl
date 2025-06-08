@@ -41,20 +41,20 @@ tbl *as_op_tbl(size_t bcks) {
 }
 
 void as_label_entry_f(void *p) {
-    te *l = (te*) p;
+    te *l = p;
     te_f(l->d[1].p);
     lst_f(l->d[2].p);
     free(l);
 }
 
 void as_op_entry_f(void *p) {
-    te *oe = (te*) p;
+    te *oe = p;
     tbl_f(oe->d[3].p);
     free(oe);
 }
 
 void as_code_entry_f(void *p) {
-    te *o = (te*) p;
+    te *o = p;
     te_f(o->d[2].p);
     te_f(o->d[3].p);
     te_f(o->d[4].p);

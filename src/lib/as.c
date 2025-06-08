@@ -123,7 +123,7 @@ as_stat as_n(as *a, uint8_t *m) {
         te *c = h->d[0].p;
         c->d[8] = U6(p);
         if (c->d[0].u6 == CODE_ID(O)) {
-            as_code_fn *fn = (as_code_fn*) c->d[6].p;
+            as_code_fn *fn = c->d[6].p;
             if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) return AS_STAT(INV);
             c->d[9] = U6(p - c->d[8].u6);
         } else c->d[9] = U6(1);
@@ -134,7 +134,7 @@ as_stat as_n(as *a, uint8_t *m) {
         te *lbl = h->d[0].p;
         te *lh = ((lst*) lbl->d[2].p)->h;
         while (lh) {
-            as_lbl_fn *lfn = (as_lbl_fn*) ((te*) lh->d[0].p)->d[7].p;
+            as_lbl_fn *lfn = ((te*) lh->d[0].p)->d[7].p;
             if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) return AS_STAT(INV);
             lh = lh->d[2].p;
         }

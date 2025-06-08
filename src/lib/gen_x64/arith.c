@@ -4,7 +4,7 @@
 static gen_stat add_auauau_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
     gen_stat stat;
-    gen_st *st = (gen_st*) s;
+    gen_st *st = s;
     te *kv[3];
     if ((stat = get_reg_n(st, ci, kv, 3)) != GEN_STAT(OK)) return stat;
     if (kv[0]->d[2].u3 == kv[2]->d[2].u3) return GEN_STAT(INV); /* second reg cannot be dest */
@@ -18,7 +18,7 @@ static gen_stat add_auauau_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a
 static gen_stat sub_auaubu_fn(alfn *al, frfn fr, gen *g, void *s, te *ci, as *a) {
     (void) g;
     gen_stat stat;
-    gen_st *st = (gen_st*) s;
+    gen_st *st = s;
     te *kv[2];
     if ((stat = get_reg_n(st, ci, kv, 2)) != GEN_STAT(OK)) return stat;
     if (kv[0]->d[2].u3 != kv[1]->d[2].u3) AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, fr, ARG_ID(R), U3(kv[1]->d[2].u3)), ci);

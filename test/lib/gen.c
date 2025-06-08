@@ -59,7 +59,7 @@ void fibtest(void) {
     uint8_t *m = x64_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     gen_p(g, m);
-    uint64_t n = 8;
+    uint64_t n = 35;
     printf("Fib(%lu): %lu\n", n, ((uint64_t(*)(uint64_t)) m)(n));
     gen_st_f(st);
     gen_f(g);

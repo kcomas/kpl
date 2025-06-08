@@ -4,7 +4,7 @@
 #define AUAUL(N, J) static gen_stat N##_auaul_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  { \
     (void) g; \
     gen_stat stat; \
-    gen_st *st = (gen_st*) s; \
+    gen_st *st = s; \
     te *kv[2]; \
     if ((stat = get_reg_n(st, ci, kv, 2)) != GEN_STAT(OK)) return stat; \
     AS2(a, AS_X64(CMP), as_arg(al, fr, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, fr, ARG_ID(R), U3(kv[1]->d[2].u3)), ci); \
@@ -20,7 +20,7 @@ AUAUL(ugt, JA);
 #define AUDUL(N, J) static gen_stat N##_audul_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  { \
     (void) g; \
     gen_stat stat; \
-    gen_st *st = (gen_st*) s; \
+    gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat; \
     AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(QW), ((te*) ci->d[2].p)->d[2]), ci); \
