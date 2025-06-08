@@ -33,6 +33,7 @@ extern inline void op_if_f(op_if *of);
 static const char *op_c_str[] = {
     "EFN",
     "PUSH",
+    "SWAP",
     "RFN",
     "CFN",
     "CS",
@@ -449,13 +450,14 @@ code_stat code_gen_call_res_var(code_st *const cs, const ast *const a, code **c,
     IFCGEN(code_gen, cs, cn->tgt, c);
     if (ires) OP_A(c, CS, OP, { .t = cn->ret->t }, a);
     else OP_A(c, CFN, OP, { .t = cn->ret->t }, a);
+    if (cn->ret->t != TYPE(VD)) OP_A(c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
     ct = ftn->a->n.lst->t->prev;
     while (ct) {
         if (!(tn = ast_gtn(ct->a))) return CODE_STAT(CALL_CT_ARG_T_GC_INV);
+        if (cn->ret->t != TYPE(VD)) OP_A(c, SWAP, VD, {}, a);
         OP_A(c, GC, OP, { .t = tn->t }, ct->a);
         ct = ct->prev;
     }
-    if (cn->ret->t != TYPE(VD)) OP_A(c, PUSH, U3, { .u3 = 0 }, a); // TODO xmm
     return CODE_STAT(OK);
 }
 
