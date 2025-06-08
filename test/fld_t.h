@@ -25,7 +25,7 @@ tbl *fld_type_tbl_i(bool gid, size_t n, ...);
 
 #define TFN(FT, RT, N, ...) type_f_i(&al_te, NULL, TYPE(FT), RT, fld_type_tbl_i(true, N, __VA_ARGS__), NULL)
 
-#define TST(N, ...) type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, N, __VA_ARGS__))
+#define TH(T, N, ...) type_h_i(&al_te, NULL, TYPE(T), fld_type_tbl_i(false, N, __VA_ARGS__))
 
 #define TFS(FT, RT, A, S) type_f_i(&al_te, NULL, TYPE(FT), RT, A, S)
 

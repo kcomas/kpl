@@ -57,10 +57,11 @@ typedef enum {
     LTE_FLG(T) = 1 << 3, // type
     LTE_FLG(F) = 1 << 4, // func, id becomes the code label
     LTE_FLG(O) = 1 << 5, // outside, used in another scope
-    LTE_FLG(S) = 1 << 6 // passed by scope
+    LTE_FLG(S) = 1 << 6, // passed by scope
+    LTE_FLG(D) = 1 << 7 // data only, not jitted
 } lte_flg; // list tbl entry
 
-#define LTE_FLGS 7
+#define LTE_FLGS 8
 
 // lst tbl entry te[mc;u5(id)|u5(flgs);type;ast_node]
 te *ast_lst_tbl_e_i(const ast *a, mc *s, un flgs, te *t);

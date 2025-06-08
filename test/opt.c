@@ -223,7 +223,7 @@ T(vrmul) {
 
 T(st) {
     IC(TPGM(st));
-    te *st = TST(4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG));
+    te *st = TH(ST, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG));
     V(RN(LN(LT(3, "a", FLG(0, LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(L)), TS(F6), "s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)), L(5,
         ON(TS(I6), DFN, EN("a", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1))),
         ON(TS(F6), DFN, EN("b", FLG(0, LTE_FLG(L)), TS(F6)), SN(F6, F6(2.2))),
