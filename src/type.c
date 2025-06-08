@@ -159,8 +159,8 @@ bool type_eq(const te *restrict a, const te *restrict b) {
             // TODO
             break;
         case TYPE_CLS(F):
-            // TODO
-            break;
+            // TODO tbl eq
+            return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(C):
             // TODO
             break;

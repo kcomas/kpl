@@ -196,7 +196,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
             // TODO compare tbls
             return ast_eq(a->d[4].p, b->d[4].p);
         case AST_CLS(T):
-            break;
+            return type_eq(a->d[3].p, b->d[3].p);
         case AST_CLS(I):
             break;
         case AST_CLS(S):
@@ -206,8 +206,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(O):
             return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u6 == b->d[4].u6 && ast_eq(a->d[5].p, b->d[5].p) && ast_eq(a->d[6].p, b->d[6].p);
         case AST_CLS(Z):
-            // TODO
-            break;
+            return type_eq(a->d[3].p, b->d[3].p) && mc_eq(a->d[4].p, b->d[4].p) && ast_eq(a->d[5].p, b->d[5].p);
         case AST_CLS(A):
             return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_un_eq);
         case AST_CLS(L):

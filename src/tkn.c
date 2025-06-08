@@ -129,7 +129,9 @@ tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v)
     if (off > 0) start += off;
     else end += off;
     if (start < 0 || end < 0 || start > end) return TKN_STAT(INV);
-    *v = mc_i(end - start + sizeof(char), af);
+    size_t l = end - start + sizeof(char);
+    *v = mc_i(l, af);
+    (*v)->l = l;
     while (start < end) (*v)->d[i++] = s->d[start++];
     return TKN_STAT(OK);
 }
