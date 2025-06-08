@@ -8,7 +8,8 @@
 #define JIT_STAT(N) JIT_STAT_##N
 
 typedef enum {
-    JIT_STAT(OK)
+    JIT_STAT(OK),
+    JIT_STAT(INV_CODE)
 } jit_stat;
 
 #ifndef FN_STK_SIZE
@@ -47,7 +48,7 @@ inline void fn_stk_f(fn_stk *f) {
 }
 
 typedef struct _jit {
-    int np, len, size; // compat with getpagesize
+    int len, np, size; // len, num pages, total size, int for compat with getpagesize
     uint8_t *a; // address
 } jit;
 

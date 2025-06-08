@@ -20,6 +20,14 @@ extern inline void jit_f(jit *j);
 extern inline void jit_a(jit **j, uint8_t b);
 
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
+    jit_stat jstat;
+    for (size_t i = 0;  i < c->len; i++) {
+        switch (c->ops[i].ot) {
+
+            default:
+                return JIT_STAT(INV_CODE);
+        }
+    }
     return JIT_STAT(OK);
 }
 
