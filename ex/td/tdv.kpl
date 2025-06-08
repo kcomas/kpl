@@ -9,7 +9,6 @@ gt:FN(U6;tt)${(y)
         r:f`fibp(x)
         r}}
 
-
 run:FN(VD)${()
     t:VR[tt]$[]
     n:U6$0

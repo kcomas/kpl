@@ -23,7 +23,7 @@ make
 Optimized
 
 ```bash
-make DFLAGS="" OO=-O2
+make DFLAGS="" OO=-O3
 ```
 
 ##### Build Flags
