@@ -22,6 +22,11 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
     return MOD_STAT(OK);
 }
 
+void mod_ag(mod *const m, size_t ng) {
+    m->g = calloc(ng, sizeof(dt));
+    m->ng = ng;
+}
+
 extern inline void mod_psrc(const mod *const m);
 
 extern inline void mod_f(mod *m);

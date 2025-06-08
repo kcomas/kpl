@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
     jit *j = jit_i(JIT_NUM_PAGE);
     jit_stat jstat;
     if ((jstat = jit_stk(m, stk, &j)) != JIT_STAT(OK)) {
+        code_p(&cs, m->c, 0);
         return jstat;
     }
     jit_f(j);

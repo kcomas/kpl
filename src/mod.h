@@ -33,6 +33,9 @@ inline mod *mod_i(void) {
 // load file
 mod_stat mod_lfile(mod *const m, const char *const path);
 
+// allocate globals
+void mod_ag(mod *const m, size_t ng);
+
 // print src
 inline void mod_psrc(const mod *const m) {
     if (m->src.path != NULL) printf("%s\n", m->src.path);
