@@ -37,6 +37,8 @@ void er_itm_p(er_itm *const ei);
 
 void er_itm_f(er_itm *ei, void *fn);
 
+void er_itm_gc(er_itm *ei);
+
 typedef struct _er {
     size_t len;
     er_itm *h, *t;
@@ -48,7 +50,7 @@ inline er *er_i(al *const a) {
 
 void er_a(er *const e, er_itm *const ei);
 
-er_itm *er_g(er *const e);
+er_itm *er_g(al *const a, er *const e);
 
 inline void er_p(er *const e) {
     er_itm *h = e->h;

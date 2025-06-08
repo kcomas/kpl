@@ -36,13 +36,22 @@ void er_itm_f(er_itm *ei, void *fn) {
     alf(ei);
 }
 
+void er_itm_gc(er_itm *ei) {
+    while (ei) {
+        er_itm *tmp = ei;
+        ei = ei->next;
+        er_itm_f(tmp, NULL);
+    }
+}
+
 extern inline er *er_i(al *const a);
 
 void er_a(er *const e, er_itm *const ei) {
     LST_A(e, ei);
 }
 
-er_itm *er_g(er *const e) {
+er_itm *er_g(al *const a, er *const e) {
+    if (!e->h) return er_itm_i(a, ER(OK), __func__, NULL);
     er_itm *ei = e->h;
     e->h = e->t = NULL;
     return ei;

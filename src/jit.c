@@ -381,7 +381,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(CE):
                 op_set_jidx(j, o);
-                SET_REG(m->e, er*, false, 7);
+                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->e, er*, false, 6);
                 SET_FP(er_g);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -498,6 +499,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(GC):
                 op_set_jidx(j, o);
                 switch (o->od.t) {
+                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -522,6 +524,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         jit_a(j, 0x5F); // pop rdi
                         break;
+                    case TYPE(ER):
+                        jit_a(j, 0x5F); // pop rdi
+                        SET_FP(er_itm_gc);
+                        SET_REG_CALL(false, 0);
+                        break;
                     default:
                         return JIT_ER(m, GC_T_INV, o);
                 }
@@ -530,6 +537,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(GCTEI):
                 op_set_jidx(j, o);
                 switch (o->od.v.t) {
+                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -543,6 +551,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(STR):
                     case TYPE(SG):
                     case TYPE(TE):
+                    case TYPE(ER):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_REG(o->od.v.id, uint8_t, false, 6);
                         SET_FP(var_te_vr_gidx);
@@ -553,6 +562,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
                 switch (o->od.v.t) {
+                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -590,6 +600,10 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(TE):
                     case TYPE(VR):
                         SET_FP(var_te_vr_d);
+                        SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(ER):
+                        SET_FP(er_itm_gc);
                         SET_REG_CALL(false, 0);
                         break;
                     default:
