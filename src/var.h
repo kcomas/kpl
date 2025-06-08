@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "er.h"
 
-typedef struct _var_te_vr var_te_vr;
+typedef struct _var_tsv var_tsv;
 
 var_sg *var_sg_i(al *const a, size_t size);
 
@@ -19,7 +19,7 @@ const char *var_sg_str(var_sg *const sg);
 
 var_sg *var_sg_cnct_sg_sg(al *const a, const var_sg *const l, const var_sg *const r);
 
-var_sg *var_sg_cnct_sg_te_vr(al *const a, const var_sg *const l, const var_te_vr *const r);
+var_sg *var_sg_cnct_sg_tsv(al *const a, const var_sg *const l, const var_tsv *const r);
 
 // var_sg_f in kpl.h
 
@@ -33,7 +33,7 @@ typedef union _var {
     int fd;
     jit_fn *jf;
     var_sg *sg;
-    var_te_vr *te, *vr;
+    var_tsv *te, *vr;
     er_itm *ei;
 } var;
 
@@ -84,21 +84,21 @@ VAR_FN_BOP_T(or, u6, uint64_t);
 
 bool OO0 var_not(bool v);
 
-typedef struct _var_te_vr {
+typedef struct _var_tsv {
     RC;
     size_t len, size;
     jit_fn *gc;
     var v[];
-} var_te_vr;
+} var_tsv; // tuple, struct, vec
 
-var_te_vr *var_te_vr_i(al *const a, size_t size, jit_fn *gc);
+var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc);
 
-var_te_vr *var_te_i(al *const a, size_t size, jit_fn *gc);
+var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc);
 
-jit_fn *var_te_vr_gc(var_te_vr *const vtv);
+jit_fn *var_tsv_gc(var_tsv *const tsv);
 
-var var_te_vr_gidx(var_te_vr *const vtv, size_t idx);
+var var_tsv_gidx(var_tsv *const tsv, size_t idx);
 
-void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v);
+void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v);
 
-void var_te_vr_d(var_te_vr *vtv);
+void var_tsv_d(var_tsv *tsv);
