@@ -15,6 +15,7 @@ typedef enum {
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(TBL_FOUND),
+    CODE_STAT(MOD_FOUND),
     CODE_STAT(NO_T_FOR_TE_IDX),
     CODE_STAT(NO_T_FOR_ST_IDX),
     CODE_STAT(SYM_NO_T_FOR_A),
@@ -39,6 +40,7 @@ typedef enum {
     CODE_STAT(GC_INV),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(LD_MOD_F),
     CODE_STAT(INV_SG_CNCT),
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
@@ -89,6 +91,7 @@ typedef enum {
     OP_C(AG), // allocate globals
     OP_C(SG), // store global
     OP_C(LG), // load global
+    OP_C(LM), // load module
     OP_C(AL), // allocate locals
     OP_C(SL), // store local
     OP_C(LL), // load local
@@ -189,6 +192,7 @@ typedef union _op_d {
     op_if *of;
     char *sg; // null term
     ctsv *tsv;
+    mod *m;
 } op_d;
 
 typedef struct {

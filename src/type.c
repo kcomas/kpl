@@ -94,12 +94,13 @@ static const char *const tss[] = {
     "INV_IRET_FNS",
     "IRET_T_NEQ",
     "VAR_UT",
-    "TBL_FOUND"
+    "TBL_FOUND",
+    "MOD_FOUND"
 };
 
 const char *type_stat_str(type_stat tstat) {
     const char *s = "INVALID_TYPE_STAT";
-    if (tstat >= TYPE_STAT(OK) && tstat <= TYPE_STAT(TBL_FOUND)) s = tss[tstat];
+    if (tstat >= TYPE_STAT(OK) && tstat <= TYPE_STAT(MOD_FOUND)) s = tss[tstat];
     return s;
 }
 
@@ -274,8 +275,8 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
     type_node *lt = NULL, *rt = NULL, *tn = NULL;
     ast *atmp;
     lst_node *lst;
-    ast_st ld_as;
-    type_st ld_ts;
+    ast_st ldas;
+    type_st ldts;
     if (op->ot != OP_TYPE(TC) && op->ot != OP_TYPE(ASS)) if (op->l) IFTCHK(type_chk, ts, fns, op->l);
     if (op->ot != OP_TYPE(CST)) if (op->r) IFTCHK(type_chk, ts, fns, op->r);
     switch (op->ot) {
@@ -387,10 +388,10 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 m->fns = fn_node_i(ts->a, NULL);
                 m->fns->sig = type_node_i(ts->a, TYPE(MOD), NULL);
-                ast_st_i(&ld_as, ts->a, ts->e, m->src.str);
-                if (ast_parse_stmts(&ld_as, m->fns, m->fns->body, TFLS, TKN_FLG(NB)) != AST_STAT(END)) return TYPE_ER(ts, INV_LD_ME);
-                type_st_i(&ld_ts, ts->a, ts->e, m->src.path, m->src.str);
-                if (type_chk_fn(&ld_ts, m->fns) != TYPE_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
+                ast_st_i(&ldas, ts->a, ts->e, m->src.str);
+                if (ast_parse_stmts(&ldas, m->fns, m->fns->body, TFLS, TKN_FLG(NB)) != AST_STAT(END)) return TYPE_ER(ts, INV_LD_ME);
+                type_st_i(&ldts, ts->a, ts->e, m->src.path, m->src.str);
+                if (type_chk_fn(&ldts, m->fns) != TYPE_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 if ((tstat = mod_tn_i(ts, m)) != TYPE_STAT(OK)) return tstat;
                 atmp = op->r;
                 op->r = ast_i(ts->a, AST_TYPE(MOD), (node) { .m = m }, &op->r->t);
@@ -555,6 +556,7 @@ type_stat type_chk(type_st *const ts, fn_node *const fns, ast *const a) {
         case AST_TYPE(SYM): return type_chk_sym(ts, fns, a->n.sym);
         case AST_TYPE(IF): return type_chk_if(ts, fns, a->n.in);
         case AST_TYPE(LOP): return type_check_lop(ts, fns, a->n.lop);
+        case AST_TYPE(MOD): return TYPE_ER(ts, MOD_FOUND);
         case AST_TYPE(FN): return type_chk_fn(ts, a->n.fn);
         case AST_TYPE(CALL): return type_chk_call(ts, fns, a->n.cn);
         case AST_TYPE(RET): return type_chk_ret(ts, fns, a->n.ret);
