@@ -93,3 +93,17 @@ T(ackrec) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, CST, TN(U6), SN(I6, I6(2))), ON(NULL, CST, TN(U6), SN(I6, I6(1))))))
     )), NULL)));
 }
+
+T(scope) {
+    V(TPGM(scope), RN(AN(NULL, LN(LT(2, "s", FLG(0, LTE_FLG(E)), NULL, "x", U6(0), NULL), L(6,
+        ON(NULL, DFN, EN("s", FLG(0, LTE_FLG(E)), NULL), SN(I6, I6(0))),
+        ON(NULL, DFN, EN("x", U6(0), NULL), ON(NULL, CST,
+            NN(T, TFN(NF, TS(VD), 1, "x", TS(I6), 0)),
+            LN(LT(2, "s", U6(0), NULL, "x", U6(0), NULL), L(1, ON(NULL, ADDA, EN("s", U6(0), NULL), EN("x", U6(0), NULL))))
+        )),
+        AN(NULL, EN("x", U6(0), NULL), L(1, SN(I6, I6(1)))),
+        AN(NULL, EN("x", U6(0), NULL), L(1, SN(I6, I6(2)))),
+        AN(NULL, EN("x", U6(0), NULL), L(1, SN(I6, I6(3)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}
