@@ -4,6 +4,8 @@
 #include "../src/lib/gen_x64.h"
 #include "as_t.h"
 
+extern gen *bg;
+
 lst *gen_mklst(void);
 
 tbl *gen_cls_info_tbl(void);

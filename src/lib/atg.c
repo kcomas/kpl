@@ -1,12 +1,14 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p edp, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->tc = t->lc = 0;
    t->r = 1;
    t->af = af;
    t->ta = ta;
+   t->ea = ea;
+   t->edp = edp;
    t->ati = ati;
    t->bg = g;
    t->a = a;
@@ -102,13 +104,13 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     return stat;
 }
 
-static atg_stat cc_r(atg *t, gen *g, te *an, te **e, tbl *tt, size_t n, ...) {
+static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
     te *kv;
     va_list args;
     va_start(args, n);
     while (n > 0) {
         if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) {
-            *e = te_c(an);
+            *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r_cc_r");
             return ATG_STAT(INV);
         }
         n--;
@@ -118,7 +120,7 @@ static atg_stat cc_r(atg *t, gen *g, te *an, te **e, tbl *tt, size_t n, ...) {
     return ((atg_cc_fn*) kv->d[1].p)(t, g, an, e);
 }
 
-static atg_stat cc(atg *t, gen *g, te *an, te **e) {
+static atg_stat cc(atg *t, gen *g, te *an, err **e) {
     un ha = U6(0);
     switch (an->d[2].u4) {
         case AST_CLS(T):
@@ -138,12 +140,12 @@ static atg_stat cc(atg *t, gen *g, te *an, te **e) {
         default:
             break;
     }
-    *e = te_c(an);
+    *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r_cc");
     return ATG_STAT(INV);
 }
 
 
-static atg_stat atg_r_lst(atg *t, gen *g, lst *l, te **e) {
+static atg_stat atg_r_lst(atg *t, gen *g, lst *l, err **e) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;
     te *h = l->h;
@@ -154,7 +156,7 @@ static atg_stat atg_r_lst(atg *t, gen *g, lst *l, te **e) {
     return stat;
 }
 
-atg_stat atg_r(atg *t, gen *g, te *an, te **e) {
+atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     if (!an) return stat;
     switch (an->d[2].u4) {
@@ -182,13 +184,13 @@ atg_stat atg_r(atg *t, gen *g, te *an, te **e) {
             if ((stat = atg_r_lst(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
             break;
         default:
-            *e = te_c(an);
+            *e = err_i(t->ea, t->edp, (void*) te_f, te_c(an), "atg_r");
             return ATG_STAT(INV);
     }
     return cc(t, g, an, e);
 }
 
-atg_stat atg_n(atg *t, gen **g, ast *a, te **e) {
+atg_stat atg_n(atg *t, gen **g, ast *a, err **e) {
     atg_stat stat = ATG_STAT(OK);
     un v;
     if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);

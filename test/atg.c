@@ -3,23 +3,19 @@
 #include "opt_t.h"
 #include "gen_t.h"
 
-extern const alfr am;
-
 T(fnadd3) {
     IC(fnadd3);
     RC();
     fast(_t, a, &an, bopt, false);
-    atg *t = atg_b(atg_i(&ast_am, &ast_am, cti, lst_i(&am, &am, NULL), ali(), gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()))));
-    gen *gb = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
+    atg *t = atg_b(atg_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, lst_i(&am, &am, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     gen *g;
-    te *ae = NULL;
-    atg_stat astat = atg_n(t, &g, a, &ae);
-    if (ae) {
-        ast_p(ae, 0);
-        putchar('\n');
+    err *e = NULL;
+    atg_stat astat = atg_n(t, &g, a, &e);
+    if (e) {
+        err_p(e);
     }
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
@@ -35,7 +31,7 @@ T(fnadd3) {
     te_f(ft);
     te_f(cn);
     cn = NULL;
-    gen *gc = gen_i_gen(gb);
+    gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 0), gen_arg(gc, X64_TYPE(I6), 1), gen_arg(gc, X64_TYPE(I6), 2)));
@@ -46,18 +42,16 @@ T(fnadd3) {
     gen_f(gc);
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
-    err *ge = NULL;
-    gen_stat gstat = gen_n(g, sc, t->a, &ge);
-    if (ge) err_p(ge);
+    gen_stat gstat = gen_n(g, sc, t->a, &e);
+    if (e) err_p(e);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     sc = NULL;
     gen_f(g);
     g = gc = NULL;
-    astat = atg_n(t, &g, a, &ae);
-    if (ae) {
-        ast_p(ae, 0);
-        putchar('\n');
+    astat = atg_n(t, &g, a, &e);
+    if (e) {
+        err_p(e);
     }
     A(astat == ATG_STAT(OK), "atg_n");
     ast_p(an, 0);
@@ -66,7 +60,7 @@ T(fnadd3) {
     cn = RN(SN(_G, U5(1)));
     A(ast_eq(an, cn), "ast_eq");
     te_f(cn);
-    gc = gen_i_gen(gb);
+    gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 2), gen_call_m(gc, 3, gen_data(g, X64_TYPE(I6), I6(1)), gen_data(g, X64_TYPE(I6), I6(2)), gen_data(g, X64_TYPE(I6), I6(3))), gen_lbl(gc, 0)));
@@ -76,17 +70,15 @@ T(fnadd3) {
     gen_f(gc);
     sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
-    gstat = gen_n(g, sc, t->a, &ge);
-    if (ge) err_p(ge);
+    gstat = gen_n(g, sc, t->a, &e);
+    if (e) err_p(e);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     uint8_t *m = x64_mmap(1);
     gen_f(g);
     gen_st_f(st);
-    gen_f(gb);
     ast_f(a);
-    err *ce = NULL;
-    A(as_n(t->a, m, &ce) == AS_STAT(OK), "as_n");
+    A(as_n(t->a, m, &e) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
     te_f(an);
@@ -95,6 +87,8 @@ T(fnadd3) {
     A(l1c, "lc");
     size_t ep = l1c->d[8].u6;
     atg_f(t);
+    asm("push %r13");
     ((void (*)(void)) &m[ep])();
+    asm("pop %r13");
     x64_munmap(1, m);
 }
