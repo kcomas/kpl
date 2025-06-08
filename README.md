@@ -16,11 +16,13 @@
 ```bash
 make
 ```
+##### Debug Build Flags (DFLAGS)
+
+ALD=1 - Track allocations and frees
 
 ### Run
 
 ```bash
 ./kpl path/to/file
 ```
-
 ##### Examples are in the ex folder

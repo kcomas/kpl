@@ -7,6 +7,8 @@ static const char *const tss[] = {
     "VAL_UT",
     "TC_FN_N_TC",
     "BLTS_INV_T",
+    "BTTS_INV_T",
+    "HSH_TBL_INS_F",
     "INV_TC_R",
     "TC_ER_N_STR_SG",
     "TC_ER_L_LST_INV",
@@ -144,9 +146,21 @@ static type_stat type_chk_hsh(type_st *const ts, fn_node *const fns, hsh_node *c
     type_node *bs;
     if (hsh->tn->t == TYPE(ST) && !hsh->tn->a) {
         btts = true;
-        // TODO
+        hsh->tn->a = ast_i(ts->a, AST_TYPE(TBL), (node) { .tl = tbl_i(ts->a, TBL_I_SIZE) }, NULL);
     }
-    // TODO
+    while (h) {
+        IFTCHK(type_chk, ts, fns, h->a);
+        if (btts) {
+            tbl_itm *ti;
+            ASTGTN(bs, h->a, BTTS_INV_T);
+            hsh_data *hd = hsh_data_i(ts->a, h->id, type_node_c(ts->a, bs));
+            if (tbl_op(ts->a, &hsh->tn->a->n.tl, h->k, hd, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
+                hsh_data_f(hd);
+                return TYPE_ER(ts, HSH_TBL_INS_F);
+            }
+        }
+        h = h->next;
+    }
     return TYPE_ER(ts, OK);
 }
 

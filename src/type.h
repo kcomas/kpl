@@ -12,6 +12,8 @@ typedef enum {
     TYPE_STAT(VAL_UT), // val is ast type
     TYPE_STAT(TC_FN_N_TC), // fn does not throw error
     TYPE_STAT(BLTS_INV_T),
+    TYPE_STAT(BTTS_INV_T),
+    TYPE_STAT(HSH_TBL_INS_F), // entry already exists
     // erros
     TYPE_STAT(INV_TC_R),
     TYPE_STAT(TC_ER_N_STR_SG),
