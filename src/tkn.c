@@ -141,6 +141,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
             T_ONE_C('$', CST);
             T_ONE_C('+', ADD);
             T_ONE_C('-', SUB);
+            T_ONE_C('*', MUL);
             case '/':
                 T_TYP_LEN(DIV);
                 if (str[t->pos + t->len] == '/') {
