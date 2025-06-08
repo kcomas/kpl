@@ -100,9 +100,28 @@ static bool idnt_lst_t(const te *an) {
     return an->d[2].u6 == AST_CLS(I);
 }
 
+static fld_stat cmd_r(fld *f, te **an, te **e) {
+    te *nn;
+    switch ((*an)->d[3].u6) {
+        case CC(P1):
+            nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(NULL), U6(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(I5))), I5(1)), te_c((*an)->d[4].p));
+            break;
+        default:
+            return err(FLD_STAT(INV), *an, e);
+    }
+    te_f(*an);
+    *an = nn;
+    return FLD_STAT(OK);
+}
+
+static bool cmd_t(const te *an) {
+    return an->d[2].u6 == AST_CLS(C) && an->d[4].p;
+}
+
 fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_t, aply_type_r);
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
+    fld_a(f, AST_CLS(C), cmd_t, cmd_r);
     return f;
 }

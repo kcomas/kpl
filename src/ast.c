@@ -8,7 +8,7 @@ const char *ast_oc_str(oc o) {
         "CST",
         "ADD",
         "SUB",
-        "PRINT",
+        "DUMP",
         "_END"
     };
     const char *s = "OCINV";
@@ -156,7 +156,7 @@ static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, te
     size_t cid;
     if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &cid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(C), U6(cid), NULL);
-    if (!pn->d[4].p) return AST_STAT(OK);
+    if (!pn->d[3].p) return AST_STAT(OK);
     return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
 }
 
@@ -220,6 +220,9 @@ void ast_p(const te *an, size_t idnt) {
             printf("(S ");
             type_p(an->d[3].p);
             switch (((te*) an->d[3].p)->d[1].u6) {
+                case TYPE(I5):
+                    printf(" %d", an->d[4].i5);
+                    break;
                 case TYPE(I6):
                     printf(" %ld", an->d[4].i6);
                     break;

@@ -36,6 +36,7 @@ void fld_a(fld *f, ast_cls cls, fld_test_fn test, fld_fn fn) {
 
 static fld_stat fld_lst_n(fld *f, lst *l, te **e) {
     fld_stat stat = FLD_STAT(OK);
+    if (!l) return stat;
     te *h = l->h;
     while (h) {
         if ((stat = fld_n(f, (te**) &h->d[0].p, e)) != FLD_STAT(OK)) return stat;
@@ -70,6 +71,9 @@ fld_stat fld_n(fld *f, te **an, te **e) {
             break;
         case AST_CLS(L):
             if ((stat = fld_lst_n(f, (*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
+            break;
+        case AST_CLS(C):
+            if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
             break;
         default:
             return FLD_STAT(INV);
