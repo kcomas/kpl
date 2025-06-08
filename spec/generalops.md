@@ -20,7 +20,7 @@ x:u64:: - type set
 ## Comments
 
 ### In line
-/// My Comment
+// My Comment
 
 ### Block
 /* My Comment \*/

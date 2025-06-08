@@ -4,7 +4,7 @@
 ## Operators
 ? key ?hash
 
-?? values ??hash
+$ values $hash
 
 [] Index hash[symbol_var]
 
