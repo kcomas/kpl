@@ -3,17 +3,21 @@
 
 static const char *const tss[] = {
     "OK",
-    "SELF_CALL_IN_MOD",
-    "VAL_UT",
-    "TC_FN_N_TC",
+    "SELF_CALL_IN_MOD", // cannot self call in mod
+    "VAL_UT", // val is ast type
+    "TC_FN_N_TC", // fn does not throw error
     "INV_TC_DISCARD_ER_T",
     "BLTS_INV_T",
+    // tbls
     "BTTS_INV_T",
-    "HSH_TBL_INS_F",
+    "HSH_TBL_INS_F", // entry already exists
+    // symbols
     "SYM_INV",
     "SYM_INV_A_T",
     "SYM_INV_TBL_R",
     "SYM_HSH_DATA_T_INV",
+    // cond
+    // erros
     "INV_TC_R",
     "TC_ER_L_LST_INV",
     "INV_TC_NE_T",
@@ -22,102 +26,123 @@ static const char *const tss[] = {
     "TC_ER_L_T_N_VAR",
     "TC_VAR_LT_N_T_ER",
     "INV_TC",
-    "INV_AGN",
-    "INV_AGN_ER",
-    "INV_VAR_AGN",
-    "VAR_AGN_N_T_M",
+    // assign
+    "INV_AGN", // cannot assign
+    "INV_AGN_ER", // cannot assign from error
+    "INV_VAR_AGN", // cannot assign to var
+    "VAR_AGN_N_T_M", // var assignment types do not match
     "INV_SYM_AGN",
     "SYM_AGN_N_T_M",
     "INV_CALL_AGN",
     "INV_CALL_AGN_T",
     "CALL_AGN_N_T_M",
-    "INV_AGN_TO",
+    "INV_AGN_TO", // cannot assign to node
+    // cast
     "INV_FD_CST",
-    "INV_CST",
-    "INV_CST_L_A",
-    "INV_CST_L_T_N",
-    "INV_CST_R_T_N",
+    "INV_CST", // invalid cast
+    "INV_CST_L_A", // invalid node for left side of cst
+    "INV_CST_L_T_N", // left side type for cst null
+    "INV_CST_R_T_N", // right side type for cst null
+    // vr
     "INV_VR_T",
     "INV_VR_PUSH_R_T",
     "INV_VR_PUSH_T_NEQ",
     "TE_VR_NUM_CST_INV",
     "INV_TE_TO_VR",
-    "INV_FN_CST",
-    "FN_CST_T_NN",
-    "INV_FN_CST_ARGS_LEN",
+    "INV_FN_CST", // invalid case for fn
+    "FN_CST_T_NN", // fn node type defined
+    "INV_FN_CST_ARGS_LEN", // length of args does not match type
+    // clse
     "INV_CLSE_L_NN",
     "INV_CLSE_T",
     "INV_CLSE_T_N_FD",
+    // del
     "INV_DEL_L_NN",
     "INV_DEL_R_NG",
-    "INV_LD_L_NN",
+    // ld
+    "INV_LD_L_NN", // left not null
     "INV_LD_ME",
     "LD_MOD_TBL_AD_F",
     "INV_LD",
+    // vh
     "INV_VH_L_NN",
     "INV_VH_R_NG",
+    // add
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
     "INV_ADD",
+    // sub
     "INV_UNARY_SUB_T",
     "INV_UNARY_SUB",
     "INV_SUB_L_T_N",
     "INV_SUB_R_T_N",
     "INV_SUB",
+    // mul
     "INV_MUL_L_T_N",
     "INV_MUL_R_T_N",
     "TD_TE_FN_T_NEQ",
     "FN_NO_TD",
     "INV_MUL",
+    // div
     "INV_DIV_L_T_N",
     "INV_DIV_R_T_N",
     "INV_DIV",
+    // eq
     "INV_EQ_L_T_N",
     "INV_EQ_R_T_N",
     "INV_EQ",
-    "INV_NOT_R_T_N",
+    // not
+    "INV_NOT_R_T_N", // right type for not null
+    // gt
     "INV_GT_L_T_N",
     "INV_GT_R_T_N",
     "INV_GT",
+    // lt
     "INV_LT",
     "INV_LT_L_T_N",
     "INV_LT_R_T_N",
+    // or
     "INV_OR_L_T_N",
     "INV_OR_R_T_N",
+    // cnct
     "INV_CNCT_L_T_N",
     "INV_CNCT_R_T_N",
     "INV_STR_CNCT",
     "INV_CNCT",
+    // rw
     "INV_RW_L_T_N",
     "INV_RW_R_T_N",
     "INV_RW",
-    "INV_FN_ARG_T",
-    "INV_FN_T_ARG",
-    "INV_FN_T_RET",
-    "INV_ARGS_OP_CALL",
-    "INV_OP_CALL_LRR_N_N",
-    "INV_CALL_TGT",
-    "INV_CALL_TGT_T",
+    // fn
+    "INV_FN_ARG_T", // fn arg is not a var
+    "INV_FN_T_ARG", // type for fn arg is invalid
+    "INV_FN_T_RET", // type for fn ret is invalid
+    "INV_ARGS_OP_CALL", // invalid args for op call
+    "INV_OP_CALL_LRR_N_N", // op node for call l r ret not null
+    "INV_CALL_TGT", // cannot get type for call tgt
+    "INV_CALL_TGT_T", // invalid call target type
     "INV_VR_CALL",
     "INV_VR_CALL_INT",
     "INV_TE_CALL",
     "INV_TE_CALL_IDX",
     "INV_TE_CALL_IDX_T",
-    "INV_CALL_ARGS_LEN",
+    "INV_CALL_ARGS_LEN", // too little or too many args
     "INV_CALL_RET_T",
-    "INV_CALL_TGT_ARG_T",
-    "INV_CALL_ARG_T",
-    "CALL_ARG_T_NEQ",
+    "INV_CALL_TGT_ARG_T", // invalid arg type for call
+    "INV_CALL_ARG_T", // arg type in call inv
+    "CALL_ARG_T_NEQ", // ivalid type for call arg
     "NO_ARGS_TD",
     "INV_TD_T",
-    "INV_RET_T",
-    "INV_RET_FNS",
-    "RET_T_NEQ",
+    // ret
+    "INV_RET_T", // inv ret type
+    "INV_RET_FNS", // return type for fn not found
+    "RET_T_NEQ", // ret type not eq to fn type
+    // implicit ret
     "INV_IRET_T",
     "INV_IRET_FNS",
     "IRET_T_NEQ",
-    "VAR_UT",
-    "TBL_FOUND",
+    "VAR_UT", // var not typed
+    "TBL_FOUND", // should not happen
     "MOD_FOUND"
 };
 
