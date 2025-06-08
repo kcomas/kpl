@@ -38,10 +38,10 @@ typedef tbl *psr_tbl_i(void);
 typedef psr_stat psr_node_fn(psr *p, te **n);
 
 // node holder, ok to continue end to stop
-typedef psr_stat psr_megre_fn(psr *p, te *nh, te *n);
+typedef psr_stat psr_megre_fn(psr *p, te *restrict nh, te *restrict n);
 
 // node for each, next node
-typedef psr_stat psr_each_fn(psr *p, te *en, te *n);
+typedef psr_stat psr_each_fn(psr *p, te *restrict en, te *restrict n);
 
 // psr entry te[tkn_id;psr_id;mode;te[stop_tkns];each_fn;merge_fn;node_fn(null for none);tbl]
 
