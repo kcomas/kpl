@@ -16,8 +16,6 @@
 
 #define KPLE 'k'+'p'+'l'
 
-#define KPLNIL(T) T __attribute__ ((noinline))
-
 #define TYPE(N) TYPE_##N
 
 typedef enum {
