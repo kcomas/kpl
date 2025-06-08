@@ -29,7 +29,7 @@ void chk_p(const tbl *ct, size_t idnt) {
     }
 }
 
-chk_stat chk_err(chk *c, te *an, err **e, const char *m) {
+chk_stat chk_err(const chk *c, te *an, err **e, const char *m) {
     te_c(ast_g_root(an));
     *e = err_i(c->ea, ast_err_p, ast_err_f, an, m);
     return CHK_STAT(INV);

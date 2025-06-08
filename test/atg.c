@@ -6,7 +6,7 @@
 atg *batg = NULL;
 
 static __attribute__((constructor(107))) void atg_con(void) {
-    batg = atg_b(atg_i(&ast_am, &al_te, &ast_am, ast_err_p, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
+    batg = atg_b(atg_i(&ast_am, &al_te, &ast_am, atg_err, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
 }
 
 static __attribute__((destructor)) void atg_des(void) {

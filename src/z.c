@@ -15,6 +15,8 @@ static fld *bo = NULL;
 
 static as *bs = NULL;
 
+static gen_st *bst = NULL;
+
 static gen *bg = NULL;
 
 static atg *bt = NULL;
@@ -84,8 +86,9 @@ static __attribute__((constructor)) void z_con(void) {
     bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, cti, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
     bs = as_b(as_i(&z_al, &al_te, &al_lst, &z_al, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
+    bst = gen_st_i(&z_al, &al_te, mktbls(20), mktbls(20), vr_i(16, &z_al, NULL), vr_i(16, &z_al, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &z_al, &z_al, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
-    bt = atg_b(atg_i(&z_al, &al_te, &z_al, ast_err_p, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(bs)));
+    bt = atg_b(atg_i(&z_al, &al_te, &z_al, atg_err, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(bs)));
     m = x64_mmap(JIT_M);
 }
 
@@ -97,6 +100,7 @@ static __attribute__((destructor)) void z_des(void) {
     fld_f(bo);
     atg_f(bt);
     as_f(bs);
+    gen_st_f(bst);
     gen_f(bg);
     x64_munmap(JIT_M, m);
 }
@@ -174,10 +178,29 @@ err *z(mc *fn, tbl **et) {
         return e;
     }
     fld_f(zo);
+    atg *zt = atg_i_atg(bt);
+    if (atg_q(zt, &an, atg_x64_enq) != ATG_STAT(OK)) {
+        ast_f(za);
+        atg_f(zt);
+        te_f(an);
+        mc_f(pgm);
+        return e;
+    }
+    while (zt->q->l > 0) {
+        gen *g = NULL;
+        if (atg_n(zt, &g, za, &e) != ATG_STAT(OK)) {
+            ast_f(za);
+            atg_f(zt);
+            gen_f(g);
+            te_f(an);
+            mc_f(pgm);
+            return e;
+        }
+    }
     ast_f(za);
-    ast_p(an, 0);
-    putchar('\n');
     te_f(an);
+    // TODO run
+    atg_f(zt);
     mc_f(pgm);
     return e;
 }
