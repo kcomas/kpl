@@ -106,7 +106,7 @@ static void z_e_p(void *d) {
 
 #define APLYLSTS 4 // {}()
 
-err *z(mc *fn, tbl **et, uint32_t dflgs) {
+err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
     int fd;

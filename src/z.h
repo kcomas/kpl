@@ -18,4 +18,4 @@ typedef enum {
     Z_D_FLG(S) = 1 << 6 // as
 } z_d_flgs;
 
-err *z(mc *fn, tbl **et, uint32_t dflgs); // file name, exports tbl, dump flgs
+err *z(mc *fn, tbl **et, uint8_t dflgs); // file name, exports tbl, dump flgs
