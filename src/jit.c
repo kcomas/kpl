@@ -214,15 +214,29 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     return JIT_ER(m, OK, NULL);
 }
 
-static void jit_var_tsv_gidx(jit *j) {
+static void jit_var_tsv_gidx(jit *j, bool push) {
     void *fp;
     uint8_t buf[sizeof(void*)];
     jit_b(j, 4, 0x48, 0x8B, 0x7D, 2 * sizeof(void*)); // mov rdi rbp+16
     jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr rsp
     SET_FP(var_tsv_gidx);
     SET_REG_CALL(false, 0);
-    jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+    if (push) jit_a(j, 0x50); // push rax
+    else jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
 }
+
+#define JIT_TD_GC() jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); /* mov rdi qword ptr [rsp] */ \
+    SET_FP(var_td_te); \
+    SET_REG_CALL(false, 0); \
+    jit_a(j, 0x50); /* push rax */ \
+    jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); /* mov rdi qword ptr [rsp] */ \
+    SET_FP(var_tsv_gc); \
+    SET_REG_CALL(false, 0); \
+    jit_b(j, 2, 0XFF, 0XD0); /* call rax with gc fn */ \
+    jit_a(j, 0X5F); /* pop rdi */ \
+    jit_a(j, 0X5F); /* pop rdi */ \
+    SET_FP(var_td_f); \
+    SET_REG_CALL(false, 0)
 
 static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     void *fp;
@@ -238,13 +252,13 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     jit_b(j, 2, 0x0F, 0x84); // je
     bs = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
-    jit_var_tsv_gidx(j);
+    jit_var_tsv_gidx(j, false);
     switch (o->od.t) {
         case TYPE(STR):
         case TYPE(SG):
             SET_FP(var_sg_rcd);
             SET_REG_CALL(false, 0);
-            jit_var_tsv_gidx(j);
+            jit_var_tsv_gidx(j, false);
             SET_FP(var_sg_f);
             SET_REG_CALL(false, 0)
             break;
@@ -253,7 +267,7 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
         case TYPE(ST):
             SET_FP(var_tsv_rcd);
             SET_REG_CALL(false, 0);
-            jit_var_tsv_gidx(j);
+            jit_var_tsv_gidx(j, false);
             SET_FP(var_tsv_gc);
             SET_REG_CALL(false, 0);
             jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
@@ -261,9 +275,15 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
         case TYPE(ER):
             SET_FP(er_itm_rcd);
             SET_REG_CALL(false, 0);
-            jit_var_tsv_gidx(j);
+            jit_var_tsv_gidx(j, false);
             SET_FP(er_itm_gc);
             SET_REG_CALL(false, 0);
+            break;
+        case TYPE(TD):
+            SET_FP(var_td_rcd);
+            SET_REG_CALL(false, 0);
+            jit_var_tsv_gidx(j, true);
+            JIT_TD_GC();
             break;
         default:
             return JIT_ER(m, GCVR_T_INV, o);
@@ -854,18 +874,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                         SET_REG_CALL(false, 0);
                         break;
                     case TYPE(TD):
-                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
-                        SET_FP(var_td_te);
-                        SET_REG_CALL(false, 0);
-                        jit_a(j, 0x50); // push rax
-                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
-                        SET_FP(var_tsv_gc);
-                        SET_REG_CALL(false, 0);
-                        jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
-                        jit_a(j, 0x5F); // pop rdi
-                        jit_a(j, 0x5F); // pop rdi
-                        SET_FP(var_td_f);
-                        SET_REG_CALL(false, 0);
+                        JIT_TD_GC();
                         break;
                     default:
                         return JIT_ER(m, GC_T_INV, o);
@@ -900,7 +909,14 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     default:
                         return JIT_ER(m, GCTSV_T_INV, o);
                 }
-                jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+                switch (o->od.v.t) {
+                    case TYPE(TD):
+                        jit_a(j, 0x50); // push rax
+                        break;
+                    default:
+                        jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
+                        break;
+                }
                 switch (o->od.v.t) {
                     case TYPE(U3):
                     case TYPE(U4):
@@ -927,6 +943,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     case TYPE(ER):
                         SET_FP(er_itm_gc);
                         SET_REG_CALL(false, 0);
+                        break;
+                    case TYPE(TD):
+                        JIT_TD_GC();
                         break;
                     default:
                         return JIT_ER(m, GCTSV_T_INV, o);
