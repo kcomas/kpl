@@ -1,8 +1,10 @@
 
 // contact sg
 
-a: "Hello"
-b: "World"
-c: "\n"
+$(FD;1) << "O","_","O","\n"
 
-$(FD;1) << a , " " , b , c
+//a: "Hello"
+//b: "World"
+//c: "\n"
+
+//$(FD;1) << " ", [a;b;c]

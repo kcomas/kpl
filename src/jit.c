@@ -115,7 +115,6 @@ static jit_stat jit_if(mod *const m, code *const c, jit **j) {
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
     jit_stat jstat;
     op *o;
-    uint8_t r910;
     void *fp;
     static uint8_t buf[sizeof(void*)];
     for (size_t i = 0;  i < c->len; i++) {
@@ -250,13 +249,21 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 jit_b(j, 3, 0x4C, 0x89, 0xCF); // mov rdi r9
                 jit_b(j, 3, 0x4C, 0x89, 0xD6); // move rsi r10
                 switch (o->od.t) {
-                    // TODO
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        SET_FP(var_sg_cnct_sg_sg);
+                        break;
                     default:
                         return JIT_STAT(CNCTSG_T_INV);
                 }
+                jit_b(j, 2, 0x41, 0x51); // push r9
+                jit_b(j, 2, 0x41, 0x52); // push r10
                 SET_REG_CALL(false, 0);
+                jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
+                jit_b(j, 2, 0x41, 0x59); // pop r9 cnct sg
                 jit_a(j, 0x50); // push rax
-                // TODO GC
+                jit_b(j, 2, 0x41, 0x51); // push r9
+                jit_b(j, 2, 0x41, 0x52); // push r10
                 op_set_jlen(*j, o);
                 break;
             case OP_C(WFD):
@@ -265,7 +272,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(STR):
                     case TYPE(SG):
                         jit_b(j, 2, 0x41, 0x5A); // pop r10
-                        jit_b(j, 3, 0x4C, 0x89, 0xD7); // mov rdi r9
+                        jit_b(j, 3, 0x4C, 0x89, 0xD7); // mov rdi r10
                         SET_FP(var_sg_str);
                         SET_REG_CALL(false, 0);
                         jit_a(j, 0x50); // push rax
@@ -278,18 +285,17 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                         return JIT_STAT(WFD_T_INV);
                 }
                 jit_a(j, 0x5F); // fd in rdi
+                jit_b(j, 2, 0x41, 0x52); // push r10
                 SET_FP(write);
                 SET_REG_CALL(false, 0);
                 op_set_jlen(*j, o);
                 break;
-            case OP_C(GCL):
-            case OP_C(GCR):
-                r910 = o->oc == OP_C(GCL) ? 0xCF : 0xD7; // L r9, R r10
+            case OP_C(GC):
                 op_set_jidx(*j, o);
+                jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
-                        jit_b(j, 3, 0x4C, 0x89, r910); // mov rdi r9/r10
                         SET_FP(var_sg_f);
                         SET_REG_CALL(false, 0);
                         break;
