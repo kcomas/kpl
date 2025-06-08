@@ -106,6 +106,7 @@ static atg_stat root_lst_s(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
+    // TODO exports
     if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }

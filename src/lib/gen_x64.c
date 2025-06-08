@@ -77,6 +77,14 @@ static void ovt_p(const te *ovt) {
             for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
             printf("])");
             return;
+        case GEN_CLS(I):
+            printf("%s ", x64_type_str(gen_var_g_t(ovt)));
+            m = ovt->d[1].p;
+            ovt_p(m->d[0].p);
+            putchar('[');
+            for (size_t i = 1; i < m->l; i++) ovt_p(m->d[i].p);
+            printf("])");
+            return;
         case GEN_CLS(A):
         case GEN_CLS(V):
         case GEN_CLS(T):
@@ -136,26 +144,43 @@ void gen_p(const gen *g, const uint8_t *m) {
     }
 }
 
-static void gen_call_m_f(void *p) {
+static void gen_mi_f(void *p) {
     te *t = p;
     vr_f(t->d[1].p);
     t->af->f(t);
 }
 
-te *gen_call_v(gen *g, vr *v) {
-    return gen_var_i(g, gen_call_m_f, GEN_CLS(M), X64_TYPE(N), P(v));
-}
-
-te *gen_call_m(gen *g, size_t n, ...) {
+static vr *mi(gen *g, size_t n, va_list args) {
     vr *v = vr_i(n, g->va, (void*) te_f);
-    va_list args;
-    va_start(args, n);
     while (n > 0) {
         vr_ab(&v, P(va_arg(args, te*)));
         n--;
     }
+    return v;
+}
+
+te *gen_call_v(gen *g, vr *v) {
+    return gen_var_i(g, gen_mi_f, GEN_CLS(M), X64_TYPE(N), P(v));
+}
+
+te *gen_call_m(gen *g, size_t n, ...) {
+    va_list args;
+    va_start(args, n);
+    vr *v = mi(g, n, args);
     va_end(args);
     return gen_call_v(g, v);
+}
+
+te *gen_idx_v(gen *g, x64_type t, vr *v) {
+    return gen_var_i(g, gen_mi_f, GEN_CLS(I), t, P(v));
+}
+
+te *gen_idx_m(gen *g, x64_type t, size_t n, ...) {
+    va_list args;
+    va_start(args, n);
+    vr *v = mi(g, n, args);
+    va_end(args);
+    return gen_idx_v(g, t, v);
 }
 
 te *gen_lbl(gen *g, size_t id) {
@@ -269,6 +294,7 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
     vr *m;
     switch (gen_var_g_c(ovt)) {
         case GEN_CLS(M):
+        case GEN_CLS(I):
             m = ovt->d[1].p;
             for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
             break;
@@ -435,6 +461,7 @@ static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
 
 // not meant to be used outside
 void gen_enter_leave(gen *g);
+void gen_set(gen *g);
 void gen_arith(gen *g);
 void gen_cond(gen *g);
 void gen_call(gen *g);
@@ -442,6 +469,7 @@ void gen_call(gen *g);
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
     gen_enter_leave(g);
+    gen_set(g);
     gen_arith(g);
     gen_cond(g);
     gen_call(g);
