@@ -163,7 +163,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(Z):
             break;
         case AST_CLS(A):
-            break;
+            return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_eq);
         case AST_CLS(L):
             break;
         default:

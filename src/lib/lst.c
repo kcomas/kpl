@@ -21,6 +21,18 @@ size_t lst_g_l(const lst *l) {
     return l->l;
 }
 
+bool lst_eq(const lst *restrict a, const lst *restrict b, lst_cmp_fn fn) {
+    if (!a && !b) return true;
+    if (!a || !b || a->l != b->l) return false;
+    te *ah = a->h, *bh = b->h;
+    while (ah && bh) {
+        if (!(fn(ah->d[0], bh->d[0]))) return false;
+        ah = ah->d[2].p;
+        bh = bh->d[2].p;
+    }
+    return true;
+}
+
 lst_stat lst_ab(lst *l, un d) {
     te *li = te_i(3, l->ta, NULL);
     li->d[0] = d;
