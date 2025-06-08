@@ -16,7 +16,7 @@ TNAME = _test
 all: $(NAME)
 
 AL_OBJS = $(SRC)/al.o $(SRC)/kpl.o
-al$(TNAME): $(AL_OBS) $(TEST)/al.o
+al$(TNAME): $(AL_OBJS) $(TEST)/al.o
 > $(CCOBJ)
 
 ER_OBJS = $(SRC)/er.o $(AL_OBJS)
@@ -52,7 +52,7 @@ jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 $(NAME): $(SRC)/main.o $(JIT_OBJS)
 > $(CCOBJ)
 
-%.o: %.c
+%.o: %.c %.h
 > $(CC) $(CFLAGS) -c $< -o $@
 
 clean:
