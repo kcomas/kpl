@@ -33,6 +33,13 @@ gen *gen_i_gen(const gen *g) {
     return gen_i(g->af, g->ta, g->va, g->cti, tbl_c(g->oci), lst_i_lst(g->code));
 }
 
+static bool gen_vr_m_eq(un x, un y) {
+    te *l = x.p;
+    te *r = y.p;
+    if (!l || !r || l->d[0].u6 != r->d[0].u6 || l->d[1].u6 != r->d[1].u6) return false;
+    return true;
+}
+
 static bool gen_lst_eq(un x, un y) {
     te *a = x.p;
     te *b = y.p;
@@ -44,8 +51,7 @@ static bool gen_lst_eq(un x, un y) {
         if (!l && !r) continue;
         if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
         if (gen_var_g_c(l) == GEN_CLS(M)) {
-            HERE("CMP GEN M");
-            return false;
+            if (!vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq)) return false;
         } else if (l->d[1].u6 != r->d[1].u6) return false;
     }
     return true;

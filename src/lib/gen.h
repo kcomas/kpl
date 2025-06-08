@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "def.h"
+#include "vr.h"
 #include "as.h"
 
 #define GEN_STAT(N) GEN_STAT_##N
