@@ -1,10 +1,10 @@
 
 // contact sg
 
-$(FD;1) << "O","_","O","\n"
+//$(FD;1) << "O","_","O","\n"
 
-//a: "Hello"
-//b: "World"
-//c: "\n"
+a: "Hello"
+b: "World"
+c: "\n"
 
-//$(FD;1) << " ", [a;b;c]
+$(FD;1) << " ", [a;b;c]

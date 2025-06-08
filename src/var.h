@@ -14,6 +14,7 @@ typedef struct {
 typedef struct {
     RC;
     size_t len;
+    jit_fn *gc;
     var *v[];
 } var_te;
 

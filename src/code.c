@@ -3,9 +3,7 @@
 
 extern inline void code_st_i(code_st *const cs, const char *str);
 
-extern inline code *code_i(size_t size);
-
-extern inline void code_a(code **c, op o);
+extern inline cte *cte_i(size_t len, code *const gc);
 
 #define CODE_F_T(T, FN, P) if (c->ops[i].ot == TYPE(T)) FN(c->ops[i].od.P)
 
@@ -17,9 +15,16 @@ void code_f(code *c) {
         CODE_F_T(LOP, op_if_f, of);
         CODE_F_T(SG, free, sg);
         CODE_F_T(STR, free, sg);
+        CODE_F_T(TE, cte_f, te);
     }
     free(c);
 }
+
+extern inline void cte_f(cte *te);
+
+extern inline code *code_i(size_t size);
+
+extern inline void code_a(code **c, op o);
 
 extern inline op_if *op_if_i(size_t size);
 
@@ -109,6 +114,11 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
             case TYPE(SG):
                 printf(",%s", c->ops[i].od.sg);
                 break;
+            case TYPE(TE):
+                printf(",%lu", c->ops[i].od.te->len);
+                putchar('\n');
+                code_p(cs, c->ops[i].od.te->gc, idnt + 4);
+                break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
                 break;
@@ -130,19 +140,54 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
     }
 }
 
+static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code **c) {
+    switch (tn->t) {
+        case TYPE(STR):
+        case TYPE(U3):
+        case TYPE(U4):
+        case TYPE(U5):
+        case TYPE(U6):
+        case TYPE(I3):
+        case TYPE(I4):
+        case TYPE(I5):
+        case TYPE(I6):
+        case TYPE(SG):
+        case TYPE(TE):
+            // TODO idx in TE
+            OP_A(c, GC, OP, { .t = tn->t }, a);
+            break;
+        default:
+            return CODE_STAT(GC_INV);
+    }
+    return CODE_STAT(OK);
+}
+
+#define OP_GC(C, TN, A) if ((cstat = code_gen_gc(TN, A, C)) != CODE_STAT(OK)) return cstat;
+
 #define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
 
 static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code **c) {
     code_stat cstat;
     lst_itm *h = lst->h;
+    code *gc;
+    type_node *th;
     if (lst->tn->t == TYPE(TE)) {
-        // TODO generate gc fn for tuple
+        gc = code_i(CODE_I_SIZE);
+        OP_A(&gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
+        OP_A(&gc, LA, VAR, { SLV(0, TYPE(TE)) }, NULL);
     }
     while (h) {
         IFCGEN(code_gen, cs, h->a, c);
+        if (lst->tn->t == TYPE(TE)) {
+            if (!(th = ast_gtn(h->a))) return CODE_STAT(NO_T_FOR_TE_IDX);
+            OP_GC(&gc, th, h->a);
+        }
         h = h->next;
     }
-    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U3, { .u3 = (uint8_t) lst->len }, NULL);
+    if (lst->tn->t == TYPE(TE)) {
+        OP_A(&gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
+        OP_A(c, CTE, TE, { .te = cte_i(lst->len, gc) }, NULL);
+    }
     return CODE_STAT(OK);
 }
 
@@ -218,28 +263,6 @@ static code_stat cor_int(const code_st *const cs, const ast *const a, const ast 
 }
 
 #define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
-
-static code_stat code_gc(const type_node *const tn, const ast *const a, code **c) {
-    switch (tn->t) {
-        case TYPE(STR):
-        case TYPE(U3):
-        case TYPE(U4):
-        case TYPE(U5):
-        case TYPE(U6):
-        case TYPE(I3):
-        case TYPE(I4):
-        case TYPE(I5):
-        case TYPE(I6):
-        case TYPE(SG):
-            OP_A(c, GC, OP, { .t = tn->t }, a);
-            break;
-        default:
-            return CODE_STAT(GC_INV);
-    }
-    return CODE_STAT(OK);
-}
-
-#define OP_GC(C, TN, A) if ((cstat = code_gc(TN, A, C)) != CODE_STAT(OK)) return cstat;
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
