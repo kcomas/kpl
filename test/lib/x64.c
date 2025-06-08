@@ -166,13 +166,13 @@ static void cmp(uint8_t *m) {
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_cmp_rr(&p, m, R(DI), R(SI));
-    x64_setl_r(&p, m, R(AX));
+    x64_setlsetnge_r(&p, m, R(AX)); // only effect lower bits
     x64_pop_r(&p, m, R(BP));
     x64_ret(&p, m);
     printj(p, m);
     int64_t a = 1, b = 2;
-    printf("cmp(%ld < %ld): %d\n", a, b, ((bool(*)(int64_t, int64_t)) m)(a, b));
-    printf("cmp(%ld < %ld): %d\n", b, a, ((bool(*)(int64_t, int64_t)) m)(b, a));
+    printf("cmp(%ld < %ld): %ld\n", a, b, ((int64_t(*)(int64_t, int64_t)) m)(a, b));
+    printf("cmp(%ld < %ld): %ld\n", b, a, ((int64_t(*)(int64_t, int64_t)) m)(b, a));
 }
 
 static void printp(int64_t **a) {

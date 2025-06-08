@@ -366,7 +366,7 @@ x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw) {
     return x64_e(p, m, sizeof(uint32_t), U5(dw));
 }
 
-x64_stat x64_setl_r(size_t *p, uint8_t *m, reg r) {
+x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     return x64_b(p, m, 4, set_rex(r), 0x0F, 0x9C, MOD(11) + rid(r));
 }
