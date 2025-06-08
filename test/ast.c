@@ -139,3 +139,9 @@ T(vrmul) {
         CN(P1, IN("v"))
     )), NULL)));
 }
+
+/*
+T(st) {
+    V(TPGM(st), RN(AN(NULL, NULL, NULL)));
+}
+*/

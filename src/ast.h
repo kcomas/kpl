@@ -13,6 +13,7 @@ typedef enum {
     OC(CST),
     OC(LOOP),
     OC(IF),
+    OC(MTCH),
     OC(ADD),
     OC(ADDA),
     OC(SUB),

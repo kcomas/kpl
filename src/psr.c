@@ -1,72 +1,6 @@
 
 #include "psr.h"
 
-psr *psr_b(psr *p) {
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(TAB));
-    // end stmt
-    te *vec_stp = te_i(2, p->ta, NULL);
-    vec_stp->d[0] = U4(tkn_a(p->tt, TCUST(RS), "]", tkn_ft));
-    te *lst_stp = te_i(2, p->ta, NULL);
-    lst_stp->d[0] = U4(tkn_a(p->tt, TCUST(RB), "}", tkn_ft));
-    te *aply_stp = te_i(2, p->ta, NULL);
-    aply_stp->d[0] = U4(tkn_a(p->tt, TCUST(RP), ")", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(SEMI));
-    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(NL));
-    // lists
-    psr_a(p, PARSER(UN), PSR_MODE(LOOP), vec_stp, psr_lst_e, psr_val_m, psr_vec_i, 1, tkn_a(p->tt, TCUST(LS), "[", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RS));
-    psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, psr_lst_e, psr_val_m, psr_lst_i, 1, tkn_a(p->tt, TCUST(LB), "{", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RB));
-    psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, psr_aply_e, psr_aply_m, psr_aply_i, 1, tkn_a(p->tt, TCUST(LP), "(", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RP));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_sym_i, 1, TCUST(SYM));
-    // value
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_var_i, 1, TCUST(VAR));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_int_i, 1, TCUST(NUM));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL,  psr_val_m, psr_flt_i, 3, TCUST(NUM), tkn_a(p->tt, TOKEN(UN), ".", tkn_ft), TCUST(NUM));
-    // type
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(VD), "VD", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(I6), "I6", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(U6), "U6", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(F6), "F6", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(FN), "FN", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(NF), "NF", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(UN), "UN", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(VR), "VR", tkn_ft));
-    // key
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_key_i, 1, tkn_a(p->tt, TOKEN(UN), "S", tkn_ft));
-    // op
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(AGN), ":", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(DFN), "::", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CST), "$", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(IF), "?", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LOOP), "@", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADD), "+", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADDA), "+:", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUB), "-", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUBA), "-:", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MUL), "*", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MULA), "*:", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(DIV), "/", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(EQ), "=", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(GT), ">", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(GTE), ">=", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LT), "<", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LTE), "<=", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(AND), "&", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(OR), "|", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TOKEN(UN), "#", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CNCT), ",", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CNCTA), ",:", tkn_ft));
-    // cmd
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(P1), "/p1", tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(E), "/e", tkn_ft));
-    // misc
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, tkn_a(p->tt, TCUST(CMT), "//", tkn_cmt));
-    return p;
-}
-
 void psr_rn_f(void *p) {
     te *n = p;
     psr_f(n->d[0].p);
@@ -138,32 +72,38 @@ static te *node_i(psr *p, node_id nt, size_t size, node_f f) {
     return n;
 }
 
-static void p_vtki_f(te *n) {
+static void p_vtkis_f(te *n) {
     te_f(n->d[2].p);
     n->af->f(n);
 }
 
 psr_stat psr_var_i(psr *p, te **n, err **e) {
     (void) e;
-    *n = node_i(p, NODE_TYPE(VAR), 3, p_vtki_f);
+    *n = node_i(p, NODE_TYPE(VAR), 3, p_vtkis_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_type_i(psr *p, te **n, err **e) {
     (void) e;
-    *n = node_i(p, NODE_TYPE(TYPE), 3, p_vtki_f);
+    *n = node_i(p, NODE_TYPE(TYPE), 3, p_vtkis_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_key_i(psr *p, te **n, err **e) {
     (void) e;
-    *n = node_i(p, NODE_TYPE(KEY), 3, p_vtki_f);
+    *n = node_i(p, NODE_TYPE(KEY), 3, p_vtkis_f);
     return PSR_STAT(OK);
 }
 
 psr_stat psr_int_i(psr *p, te **n, err **e) {
     (void) e;
-    *n = node_i(p, NODE_TYPE(INT), 3, p_vtki_f);
+    *n = node_i(p, NODE_TYPE(INT), 3, p_vtkis_f);
+    return PSR_STAT(OK);
+}
+
+psr_stat psr_str_i(psr *p, te **n, err **e) {
+    (void) e;
+    *n = node_i(p, NODE_TYPE(STR), 3, p_vtkis_f);
     return PSR_STAT(OK);
 }
 
@@ -351,6 +291,7 @@ void node_p(const te *n, size_t idnt) {
         case NODE_TYPE(TYPE):
         case NODE_TYPE(KEY):
         case NODE_TYPE(INT):
+        case NODE_TYPE(STR):
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
             printf("|)");
@@ -485,4 +426,71 @@ psr_stat node_tkn_s_e(const te *n, uint32_t *s, uint32_t *e) {
     *e = u5_g_o(se, TKN_E);
     node_tkn_mm(n, s, e);
     return PSR_STAT(OK);
+}
+
+psr *psr_b(psr *p) {
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(TAB));
+    // end stmt
+    te *vec_stp = te_i(2, p->ta, NULL);
+    vec_stp->d[0] = U4(tkn_a(p->tt, TCUST(RS), "]", tkn_ft));
+    te *lst_stp = te_i(2, p->ta, NULL);
+    lst_stp->d[0] = U4(tkn_a(p->tt, TCUST(RB), "}", tkn_ft));
+    te *aply_stp = te_i(2, p->ta, NULL);
+    aply_stp->d[0] = U4(tkn_a(p->tt, TCUST(RP), ")", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(SEMI));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(NL));
+    // lists
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), vec_stp, psr_lst_e, psr_val_m, psr_vec_i, 1, tkn_a(p->tt, TCUST(LS), "[", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RS));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, psr_lst_e, psr_val_m, psr_lst_i, 1, tkn_a(p->tt, TCUST(LB), "{", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RB));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, psr_aply_e, psr_aply_m, psr_aply_i, 1, tkn_a(p->tt, TCUST(LP), "(", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RP));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_sym_i, 1, TCUST(SYM));
+    // value
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_var_i, 1, TCUST(VAR));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_str_i, 1, TCUST(STR));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_int_i, 1, TCUST(NUM));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL,  psr_val_m, psr_flt_i, 3, TCUST(NUM), tkn_a(p->tt, TOKEN(UN), ".", tkn_ft), TCUST(NUM));
+    // type
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(VD), "VD", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(I6), "I6", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(U6), "U6", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(F6), "F6", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(FN), "FN", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(NF), "NF", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(UN), "UN", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(VR), "VR", tkn_ft));
+    // key
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_key_i, 1, tkn_a(p->tt, TOKEN(UN), "S", tkn_ft));
+    // op
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(AGN), ":", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(DFN), "::", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CST), "$", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(IF), "?", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LOOP), "@", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MTCH), "#", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADD), "+", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(ADDA), "+:", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUB), "-", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(SUBA), "-:", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MUL), "*", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(MULA), "*:", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(DIV), "/", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(EQ), "=", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(GT), ">", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(GTE), ">=", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LT), "<", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(LTE), "<=", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(AND), "&", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(OR), "|", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CNCT), ",", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(CNCTA), ",:", tkn_ft));
+    // cmd
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(P1), "/p1", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_aply_m, psr_cmd_i, 1, tkn_a(p->tt, TCUST(E), "/e", tkn_ft));
+    // misc
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, tkn_a(p->tt, TCUST(CMT), "//", tkn_cmt));
+    return p;
 }

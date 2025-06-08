@@ -107,7 +107,7 @@ const char *TPGM(vrmul) = "{\n"
 const char *TPGM(st) = "{\n"
                         "   a::1\n"
                         "   b::2.2\n"
-                        "   s::#{a`a;b`b;$(U6;a+2)`c;4.4`d}\n"
+                        "   s/e::#{a`a;b`b;$(U6;a+2)`c;\"Hi\"`d}\n"
                         "   s`a: 2 * I6$s`c\n"
                         "   s/p1\n"
                         "}()\n";

@@ -49,6 +49,9 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
         case NODE_TYPE(INT):
             VN(v, i, vl, INT);
             break;
+        case NODE_TYPE(STR):
+            VN(v, i, vl, STR);
+            break;
         case NODE_TYPE(FLT):
             VN(v, i, vl, FLT);
             break;
@@ -440,11 +443,11 @@ T(st) {
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), N(INT)),
         OP(N(VAR), N(FLT)),
-        OP(N(VAR), OP(N(NONE), LST(
+        OP(CMD(N(VAR)), OP(N(NONE), LST(
             SYM(N(VAR)),
             SYM(N(VAR)),
             SYM(APLY(OP(N(NONE), N(NONE)), N(TYPE), OP(N(VAR), N(INT)))),
-            SYM(N(FLT))
+            SYM(N(STR))
         ))),
         OP(SYM(N(VAR)), OP(N(INT), OP(N(TYPE), SYM(N(VAR))))),
         CMD(N(VAR))
