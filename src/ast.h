@@ -4,6 +4,7 @@
 #include "kpl.h"
 #include "tbl.h"
 #include "tkn.h"
+#include "er.h"
 
 #define AST_STAT(N) AST_STAT_##N
 
@@ -37,12 +38,14 @@ typedef struct {
     tkn_st ts;
     tkn next, peek;
     al *a;
+    er *e;
     const char *str;
 } ast_st;
 
-inline void ast_st_i(ast_st *const as, al *const a, char *const str) {
+inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str) {
     tkn_st_i(&as->ts);
     as->a = a;
+    as->e = e;
     as->str = str;
 }
 

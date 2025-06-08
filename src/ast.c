@@ -1,7 +1,7 @@
 
 #include "ast.h"
 
-extern inline void ast_st_i(ast_st *const as, al *const a, char *const str);
+extern inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str);
 
 static tkn *inc_tkn(ast_st *const as, bool inc) {
     return inc ? &as->next : &as->peek;
