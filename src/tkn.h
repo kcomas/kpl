@@ -29,6 +29,7 @@ typedef enum {
     TCUST(FN),
     TCUST(NF),
     TCUST(UN),
+    TCUST(VR),
     // keys
     // ops
     TCUST(DFN),
@@ -50,6 +51,8 @@ typedef enum {
     TCUST(LTE),
     TCUST(AND),
     TCUST(OR),
+    TCUST(CNCT),
+    TCUST(CNCTA),
     // cmds
     TCUST(E),
     TCUST(P1),

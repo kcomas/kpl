@@ -31,3 +31,5 @@ extern const char *TPGM(scope);
 extern const char *TPGM(efn);
 
 extern const char *TPGM(teadd);
+
+extern const char *TPGM(vrmul);
