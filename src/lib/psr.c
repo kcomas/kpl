@@ -2,7 +2,7 @@
 #include "psr.h"
 
 psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts) {
-    psr *p = af->al(sizeof(psr));
+    psr *p = af->a(sizeof(psr));
     p->r = 1;
     p->idc = PARSER(_);
     p->af = af;
@@ -116,5 +116,5 @@ void psr_f(psr *p) {
     tkn_f(p->tt);
     vr_f(p->ts);
     tbl_f(p->pt);
-    p->af->fr(p);
+    p->af->f(p);
 }

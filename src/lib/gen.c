@@ -16,19 +16,20 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, un id) {
-    te *v = te_i(3, ga, gf);
+te *gen_var(const alfr *af, frfn *fr, gen_cls cls, un info, un id) {
+    te *v = te_i(3, af, fr);
     v->d[0] = U3(cls);
     v->d[1] = info;
     v->d[2] = id;
     return v;
 }
 
-gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code) {
-    gen *g = ga(sizeof(gen));
+gen *gen_i(const alfr *af, const alfr *ta, const alfr *aa, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code) {
+    gen *g = af->a(sizeof(gen));
     g->r = 1;
-    g->ga = ga;
-    g->gf = gf;
+    g->af = af;
+    g->ta = ta;
+    g->aa = aa;
     g->ocef = ocef;
     g->cef = cef;
     g->cti = cti; g->oci = oci;
@@ -44,7 +45,7 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
     tbl *oci = g->oci;
     te *kv;
     if (tbl_g_i(oci, U6(op_id), &kv) == TBL_STAT(NF)) {
-        kv = te_i(3, g->ga, g->ocef);
+        kv = te_i(3, g->ta, g->ocef);
         kv->d[0] = U6(op_id);
         kv->d[2] = P(g->cti());
         tbl_a(oci, kv);
@@ -56,7 +57,7 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
         if (cls[i] == GEN_CLS(N)) break;
         un hsh = gen_op_hsh(cls[i], info[i]);
         if (tbl_g_i(oci, hsh, &kv) == TBL_STAT(NF)) {
-            kv = te_i(6, g->ga, g->ocef);
+            kv = te_i(6, g->ta, g->ocef);
             kv->d[0] = hsh;
             kv->d[1] = U6(cls[i]);
             kv->d[2] = info[i];
@@ -85,7 +86,7 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
         oci = kv->d[4].p;
         fn = kv->d[3].p;
     }
-    te *e = te_i(7, g->ga, g->cef);
+    te *e = te_i(7, g->ta, g->cef);
     e->d[0] = U6(op_id);
     e->d[1] = P(ac1);
     e->d[2] = P(ac2);
@@ -95,13 +96,13 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     return GEN_STAT(OK);
 }
 
-gen_stat gen_n(alfn *al, frfn *fr, gen *g, void *st, as *a) {
+gen_stat gen_n(gen *g, void *st, as *a) {
     gen_stat stat;
     te *h = g->code->h;
     while (h) {
         te *c = h->d[0].p;
         gen_fn *fn = c->d[4].p;
-        if ((stat = fn(al, fr, g, st, c, a)) != GEN_STAT(OK)) return stat;
+        if ((stat = fn(g, st, c, a)) != GEN_STAT(OK)) return stat;
         h = h->d[2].p;
     }
     return GEN_STAT(OK);
@@ -111,5 +112,5 @@ void gen_f(gen *g) {
     if (!g || --g->r > 0) return;
     tbl_f(g->oci);
     lst_f(g->code);
-    g->gf(g);
+    g->af->f(g);
 }

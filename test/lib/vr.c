@@ -3,7 +3,7 @@
 #include <string.h>
 #include "../../src/lib/vr.h"
 
-static const alfr vm = { .al = &malloc, .fr = &free };
+static const alfr vm = { .a = &malloc, .f = &free };
 
 void itest(void) {
     vr *v = vr_i(2, &vm, NULL);

@@ -9,7 +9,7 @@ te *as_arg_i(const alfr *af, size_t id, un d) {
 }
 
 as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
-    as *a = af->al(sizeof(as));
+    as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;
     a->ta = ta;
@@ -149,5 +149,5 @@ void as_f(as *a) {
     tbl_f(a->lbls);
     tbl_f(a->ops);
     lst_f(a->code);
-    a->af->fr(a);
+    a->af->f(a);
 }

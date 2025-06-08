@@ -2,7 +2,7 @@
 #include "mc.h"
 
 mc *mc_i(size_t s, const alfr *af) {
-    mc *m = af->al(sizeof(mc) + sizeof(uint8_t) * s);
+    mc *m = af->a(sizeof(mc) + sizeof(uint8_t) * s);
     m->r = 1;
     m->s = s;
     m->l = 0;
@@ -32,7 +32,7 @@ void mc_wa(mc **m, uint8_t b) {
         mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->af);
         nm->l = (*m)->l;
         memcpy(nm->d, (*m)->d, nm->l);
-        nm->af->fr(*m);
+        nm->af->f(*m);
         *m = nm;
     }
     (*m)->d[(*m)->l++] = b;
@@ -44,5 +44,5 @@ void mc_wb(mc **m, size_t l, uint8_t *b) {
 
 void mc_f(mc *m) {
     if (!m || --m->r > 0) return;
-    m->af->fr(m);
+    m->af->f(m);
 }

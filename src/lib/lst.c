@@ -2,7 +2,7 @@
 #include "lst.h"
 
 lst *lst_i(const alfr *af, const alfr *ta, frfn *df) {
-    lst *l = af->al(sizeof(lst));
+    lst *l = af->a(sizeof(lst));
     l->r = 1;
     l->l = 0;
     l->af = af;
@@ -88,5 +88,5 @@ void lst_f(lst *l) {
         if (l->df) l->df(tmp->d[0].p);
         te_f(tmp);
     }
-    l->af->fr(l);
+    l->af->f(l);
 }

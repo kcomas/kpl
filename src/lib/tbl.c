@@ -2,7 +2,7 @@
 #include "tbl.h"
 
 tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b) {
-    tbl *t = af->al(sizeof(tbl));
+    tbl *t = af->a(sizeof(tbl));
     t->r = 1;
     t->af = af;
     t->hf = hf;
@@ -118,5 +118,5 @@ void tbl_f(tbl *t) {
     if (!t || --t->r > 0) return;
     te_f(t->b);
     lst_f(t->i);
-    t->af->fr(t);
+    t->af->f(t);
 }

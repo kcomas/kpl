@@ -3,11 +3,11 @@
 
 static void td(void *p) {
     te *t = p;
-    t->af->fr(t);
+    t->af->f(t);
 }
 
 te *te_i(size_t l, const alfr *af, frfn *tf) {
-    te *t = af->al(sizeof(te) + sizeof(un) * l);
+    te *t = af->a(sizeof(te) + sizeof(un) * l);
     t->r = 1;
     t->l = l;
     t->af = af;

@@ -2,7 +2,7 @@
 #include "tkn.h"
 
 tkn *tkn_i(const alfr *af, const alfr *ta, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
-    tkn *t = af->al(sizeof(tkn));
+    tkn *t = af->a(sizeof(tkn));
     t->idc = TOKEN(_);
     t->r = t->lno = t->cno = 1;
     t->pos = 0;
@@ -93,5 +93,5 @@ void tkn_f(tkn *t) {
     if (!t || --t->r > 0) return;
     tbl_f(t->t);
     mc_f(t->s);
-    t->af->fr(t);
+    t->af->f(t);
 }

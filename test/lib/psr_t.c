@@ -1,7 +1,7 @@
 
 #include "psr_t.h"
 
-const alfr pm = { .al = &malloc, .fr = &free };
+const alfr pm = { .a = &malloc, .f = &free };
 
 psr *psr_b(const char *pgm) {
     tkn *t = tkn_i(&pm, &pm, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &pm));
@@ -69,7 +69,7 @@ void psr_entry_f(void *p) {
     te *t = p;
     te_f(t->d[3].p);
     tbl_f(t->d[7].p);
-    t->af->fr(t);
+    t->af->f(t);
 }
 
 static te *node_i(psr *p, node_id nt, size_t size) {
@@ -326,5 +326,5 @@ void node_f(void *p) {
             node_f(n->d[3].p);
             break;
     }
-    n->af->fr(n);
+    n->af->f(n);
 }

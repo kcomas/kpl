@@ -2,7 +2,7 @@
 #include "../../src/lib/mc.h"
 #include <stdio.h>
 
-static const alfr mm = { .al = &malloc, .fr = &free };
+static const alfr mm = { .a = &malloc, .f = &free };
 
 int main(void) {
     mc *m = mc_i(1, &mm);
