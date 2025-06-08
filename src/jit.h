@@ -66,8 +66,10 @@ typedef enum {
     JIT_STAT(INV_REG)
 } jit_stat;
 
+// map page aligned
 uint8_t *jit_mmap(size_t size);
 
+// unmap page aligned
 void jit_munmap(size_t size, uint8_t *m);
 
 jit_stat jit_a(size_t *p, uint8_t *m, uint8_t b);
