@@ -44,6 +44,13 @@ static type_stat type_chk_if(fn_node *const fns, if_node *const in) {
     return TYPE_STAT(OK);
 }
 
+static type_stat type_check_lop(fn_node *const fns, if_itm *const lop) {
+    type_stat tstat;
+    IFTCHK(type_chk, fns, lop->cond);
+    IFTCHK(type_chk_lst, fns, lop->body);
+    return TYPE_STAT(OK);
+}
+
 static bool type_int_is(const type_node *const tn, const type_node *const dnu) {
     (void) dnu;
     return tn->t >= TYPE(U3) && tn->t <= TYPE(I6);
@@ -135,6 +142,16 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
             // TODO
             return TYPE_STAT(INV_SUB);
+        case OP_TYPE(GT):
+            ASTGTNBOP(GT);
+            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
+            // TODO
+            return TYPE_STAT(INV_GT);
+        case OP_TYPE(LT):
+            ASTGTNBOP(LT);
+            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
+            // TODO
+            return TYPE_STAT(INV_LT);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_int_cor(NULL, lt, rt) || type_int_cor(NULL, rt, lt)) {
@@ -248,6 +265,7 @@ type_stat type_chk(fn_node *const fns, ast *const a) {
         case AST_TYPE(OP): return type_chk_op(fns, a->n.op);
         case AST_TYPE(LST): return type_chk_lst(fns, a->n.lst);
         case AST_TYPE(IF): return type_chk_if(fns, a->n.in);
+        case AST_TYPE(LOP): return type_check_lop(fns, a->n.lop);
         case AST_TYPE(FN): return type_chk_fn(a->n.fn);
         case AST_TYPE(CALL): return type_chk_call(fns, a->n.cn);
         case AST_TYPE(RET): return type_chk_ret(fns, a->n.ret);

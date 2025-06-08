@@ -27,6 +27,14 @@ typedef enum {
     TYPE_STAT(INV_SUB_L_T_N),
     TYPE_STAT(INV_SUB_R_T_N),
     TYPE_STAT(INV_SUB),
+    // gt
+    TYPE_STAT(INV_GT_L_T_N),
+    TYPE_STAT(INV_GT_R_T_N),
+    TYPE_STAT(INV_GT),
+    // lt
+    TYPE_STAT(INV_LT),
+    TYPE_STAT(INV_LT_L_T_N),
+    TYPE_STAT(INV_LT_R_T_N),
     // eq
     TYPE_STAT(INV_EQ_L_T_N),
     TYPE_STAT(INV_EQ_R_T_N),
