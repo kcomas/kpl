@@ -32,7 +32,7 @@ const char *type_str(type t) {
         "UN",
         "_END"
     };
-    const char *s = "INV";
+    const char *s = "TINV";
     if (t > TYPE(_START) && t < TYPE(_END)) s = ts[t];
     return s;
 }
@@ -166,7 +166,7 @@ void type_p(const te *t) {
             // TODO
             break;
         default:
-            printf("INV");
+            printf("TINV");
             break;
     }
 }

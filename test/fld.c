@@ -31,6 +31,10 @@ static tbl *type_tbl_i(size_t n, ...) {
     return t;
 }
 
+#define TF(FT, RT, N, ...) type_f_i(&ast_am, TYPE(FT), type_tbl_i(N, __VA_ARGS__), RT)
+
+#define TS(T) type_s_i(&ast_am, TYPE(T))
+
 #define V(PGM, AST) ast *a = ast_b(ast_i(&ast_am, &ast_am, &ast_am, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     te *an = NULL; \
     bast(_t, a, PGM, &an); \
@@ -42,5 +46,5 @@ T(aplyopadd) {
 }
 
 T(typetype) {
-    V(typetype, NULL);
+    V(typetype, RN(NN(T, TF(FN, TF(FN, TS(I6), 1, "z", TS(U6)), 2, "x", TS(I6), "y", TS(F6)))));
 }

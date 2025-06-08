@@ -10,7 +10,7 @@ const char *ast_oc_str(oc o) {
         "SUB",
         "_END"
     };
-    const char *s = "INV";
+    const char *s = "AINV";
     if (o > OC(_START) && o < OC(_END)) s = ocs[o];
     return s;
 }
