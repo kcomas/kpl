@@ -9,6 +9,7 @@ const char *gen_op_str(gen_op go) {
         "LEAVE",
         "CALL",
         "CALLNPR",
+        "CALLV",
         "NEG",
         "ADD",
         "SUB",
@@ -312,6 +313,12 @@ void set_code_s(te *ci, as *a) {
 
 void set_code_e(te *ci, as *a) {
     ci->d[6] = P(te_c(a->code->t));
+}
+
+gen_stat rstk_b(const gen_st *st, uint8_t *r) {
+    if (st->rstk->l == 0) return GEN_STAT(INV);
+    *r = st->rstk->d[0].u3;
+    return GEN_STAT(OK);
 }
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
