@@ -10,10 +10,6 @@ typedef enum {
     CODE_STAT(OK)
 } code_stat;
 
-typedef struct {
-
-} code_st;
-
 #define OP_C(N) OP_C_##N
 
 typedef enum {
@@ -22,9 +18,11 @@ typedef enum {
     OP_C(LG), // load global
     OP_C(SL), // store local
     OP_C(LL), // load local
-    OP_C(PS), // push on stack
     OP_C(SA), // store arg
     OP_C(LA), // load arg
+    OP_C(PG), // push global
+    OP_C(PL), // push local
+    OP_C(PV), // push value
     OP_C(CST)
 } op_c;
 
@@ -37,4 +35,9 @@ typedef struct {
     ast *a; // freed in mod
 } op;
 
-code_stat code_gen(code_st *const cs, const fn_node *const fn, const ast_node *const a);
+typedef struct {
+    size_t len, size;
+    op ops[];
+} bcode;
+
+code_stat code_gen(const ast_node *const a, bcode *const bc);
