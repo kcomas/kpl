@@ -182,6 +182,7 @@ static chk_stat chk_dfn_e_op(chk *c, te *an, err **e) {
     (void) c;
     te *lte = ((te*) an->d[5].p)->d[3].p, *r = an->d[6].p;
     if (lte->d[2].p != NULL || lte->d[3].p != NULL) return chk_err(c, an, e, "chk lte defined");
+    // TODO check if been used before
     an->d[3] = P(te_c(r->d[3].p));
     lte->d[2] = P(te_c(r->d[3].p));
     ast_lst_tbl_e_s_f(lte, LTE_FLG(L));

@@ -193,6 +193,6 @@ T(facloop) {
     te *kv;
     A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
     mc_f(s);
-    A(kv->d[2].i6 == 120, "inv exp value");
+    A(kv->d[1].i6 == 120, "inv exp value");
     tbl_f(et);
 }
