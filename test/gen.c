@@ -203,3 +203,13 @@ T(addaddaddneg) {
     printf("-(%ld+%ld+%ld)=%ld\n", a, b, c, r);
     A(r == z, "addaddaddneg");
 }
+
+T(printf) {
+    gen *g = init();
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    HERE("CALL FNP");
+    S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(I6), 0), NULL, NULL));
+    BUILD(g, m);
+    int64_t a = 789;
+    A(a == ((int64_t(*)(int64_t)) m)(a), "printf");
+}

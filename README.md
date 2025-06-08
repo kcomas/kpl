@@ -15,6 +15,8 @@ GNU Make
 Builds are done in the current working directory
 
 ```
+git clone https://github.com/kcomas/kpl.git
+cd kpl
 make
 ```
 

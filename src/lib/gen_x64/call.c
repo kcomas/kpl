@@ -63,54 +63,58 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     return GEN_STAT(OK);
 }
 
-typedef struct {
-    bool pr, rv;
-} call_ops;
-
 // preserve regs, return value
-static gen_stat call(gen_st *st, te *ci, as *a, te **e, call_ops co) {
-    gen_stat stat;
-    te *kvr;
-    uint8_t rsaves[28];
-    size_t rsl = 0;
-    if (co.rv && (stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
-    if (co.pr) {
-        te *h = st->atm->i->h;
-        while (h) {
-            te *r = h->d[0].p;
-            if (r->d[2].u3 != kvr->d[2].u3) rsaves[rsl++] = r->d[2].u3;
-            h = h->d[2].p;
-        }
-        for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci);
-    }
-    if ((stat = call_arg(st, ci, a)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
-    switch (gen_var_g_c(ci->d[3].p)) {
-        case GEN_CLS(L):
-            AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci);
-            break;
-        default:
-           return gen_err(stat, ci, e);
-    }
-    if (co.rv && (stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
-    if (co.pr) {
-        while (rsl > 0) {
-            AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), ci);
-            rsl--;
-        }
-    }
-    if (co.rv) drop_atm_kv(st, kvr, ci);
-    set_code_e(ci, a);
-    return GEN_STAT(OK);
+#define CALL(PR, RV) static gen_stat call_pr_##PR##_rv_##RV(gen_st *st, te *ci, as *a, te **e) { \
+    gen_stat stat; \
+    te *kvr; \
+    uint8_t rsaves[28]; \
+    size_t rsl = 0; \
+    if (RV) { \
+        if ((stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    } \
+    if (PR) { \
+        te *h = st->atm->i->h; \
+        while (h) { \
+            te *r = h->d[0].p; \
+            if (r->d[2].u3 != kvr->d[2].u3) rsaves[rsl++] = r->d[2].u3; \
+            h = h->d[2].p; \
+        } \
+        for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci); \
+    } \
+    if ((stat = call_arg(st, ci, a)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    te *fn = RV ? ci->d[3].p : ci->d[2].p; \
+    switch (gen_var_g_c(fn)) { \
+        case GEN_CLS(L): \
+            AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
+            break; \
+        default: \
+           return gen_err(stat, ci, e); \
+    } \
+    if (RV) { \
+        if ((stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+    } \
+    if (PR) { \
+        while (rsl > 0) { \
+            AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), ci); \
+            rsl--; \
+        } \
+    } \
+    if (RV) drop_atm_kv(st, kvr, ci); \
+    set_code_e(ci, a); \
+    return GEN_STAT(OK); \
 }
+
+CALL(true, true);
+CALL(false, true);
 
 static gen_stat call_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
-    return call(s, ci, a, e, (call_ops) { .pr = true, .rv = true });
+    return call_pr_true_rv_true(s, ci, a, e);
 }
 
 static gen_stat callnpr_auml_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
-    return call(s, ci, a, e, (call_ops) { .pr = false, .rv = true });
+    return call_pr_false_rv_true(s, ci, a, e);
 }
 
 void gen_call(gen *g) {

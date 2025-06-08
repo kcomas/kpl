@@ -60,7 +60,7 @@ bool atg_x64_enq(const te *an) {
     return false;
 }
 
-x64_type atg_x64_t_m(const te *type) {
+x64_type atg_x64_g_t(const te *type) {
     if (!type) return X64_TYPE(N);
     switch (type->d[1].u4) {
         case TYPE(U3): return X64_TYPE(U3);
@@ -170,7 +170,7 @@ static atg_stat lst_args_var(atg *t, gen *g, te **e, lst *l, vr **v) {
         if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
         switch (an->d[2].u4) {
             case AST_CLS(S):
-                vr_ab(v, P(gen_data(g, atg_x64_t_m(an->d[3].p), an->d[4])));
+                vr_ab(v, P(gen_data(g, atg_x64_g_t(an->d[3].p), an->d[4])));
                 break;
             default:
                 return atg_err(ATG_STAT(INV), an, e);
@@ -187,7 +187,7 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, te **e) {
     if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) return atg_err(stat, an, e);
     gen_op go = GEN_OP(CALL);
     // TODO check if this is the last stmt or parent is return
-    if (gen_a(g, go, gen_tmp(g, atg_x64_t_m(an->d[3].p), t->tc++), gen_call_v(g, v), gen_lbl(g, lbl)) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    if (gen_a(g, go, gen_tmp(g, atg_x64_g_t(an->d[3].p), t->tc++), gen_call_v(g, v), gen_lbl(g, lbl)) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     return stat;
 }
 
