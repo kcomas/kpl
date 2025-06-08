@@ -16,6 +16,7 @@ typedef union {
 } dt; // data type
 
 typedef struct {
+    uint8_t ng; // number of globals
     struct {
         struct stat sb;
         char *path, *str;
@@ -23,7 +24,6 @@ typedef struct {
     fn_node *fns; // ast root
     code *c;
     jit *j;
-    size_t ng; // number of globals
     dt *g; // globals
 } mod;
 
@@ -35,9 +35,9 @@ inline mod *mod_i(void) {
 mod_stat mod_lfile(mod *const m, const char *const path);
 
 // allocate globals
-void mod_ag(mod *const m, size_t ng);
+void mod_ag(mod *const m, uint8_t ng);
 
-void mod_sg_i6(mod *const m, size_t i, int64_t i6);
+void mod_sg_i6(mod *const m, uint8_t i, int64_t i6);
 
 int64_t mod_lg_i6(mod *const m, size_t i);
 
