@@ -39,7 +39,8 @@ static const char *const tss[] = {
     "INV_VR_T",
     "INV_VR_PUSH_R_T",
     "INV_VR_PUSH_T_NEQ",
-    "INV_TE_2_VR",
+    "TE_VR_NUM_CST_INV",
+    "INV_TE_TO_VR",
     "INV_FN_CST",
     "FN_CST_T_NN",
     "INV_FN_CST_ARGS_LEN",
@@ -292,6 +293,38 @@ static bool type_cor(type_st *const ts, type_from_def ff, type_node **tgt, const
     return false;
 }
 
+// num casting for te to vr
+static bool te_vr_num_cst(type_st *const ts, type eq_to, type from, lst_node *const lst) {
+    lst_itm *h = lst->tn->a->n.lst->h;
+    type_node *tn;
+    op_node *op;
+    while (h) { // convert to
+        tn = h->a->n.tn;
+        if (tn->t != eq_to) {
+            if (tn->t == from) {
+                tn->t = eq_to;
+            } else {
+                return false;
+            }
+        }
+        h = h->next;
+    }
+    h = lst->h;
+    while (h) { // cst
+        if (!(tn = ast_gtn(h->a))) return false;
+        if (tn->t == from) {
+            op = op_node_i(ts->r->a, OP_TYPE(CST));
+            op->l = ast_i(ts->r->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(ts->r->a, eq_to, NULL) }, NULL);
+            op->r = h->a;
+            op->ret = type_node_i(ts->r->a, eq_to, NULL);
+            h->a = ast_i(ts->r->a, AST_TYPE(OP), (node) { .op = op }, NULL);
+        }
+        op = NULL;
+        h = h->next;
+    }
+    return true;
+}
+
 static bool type_str_is(const type_node *const tn, const type_node *const dnu) {
     (void) dnu;
     return tn->t == TYPE(STR) || tn->t == TYPE(SG);
@@ -433,7 +466,9 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             ASTGTN(rt, op->r, INV_CST_R_T_N);
             if (lt->t == TYPE(VR) && rt->t == TYPE(TE)) {
                 ASTGTN(ltvr, lt->a, INV_VR_T);
-                if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_2_VR);
+                if (type_int_is(ltvr, NULL) && !te_vr_num_cst(ts, ltvr->t, TYPE(INT), op->r->n.lst)) return TYPE_ER(ts, TE_VR_NUM_CST_INV);
+                if (type_flt_is(ltvr, NULL) && !te_vr_num_cst(ts, ltvr->t, TYPE(FLT), op->r->n.lst)) return TYPE_ER(ts, TE_VR_NUM_CST_INV);
+                if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_TO_VR);
                 rt->t = TYPE(VR);
                 op->ret = type_node_c(ts->r->a, lt);
                 break;
