@@ -84,6 +84,7 @@ static jit_stat jit_if(mod *const m, code *const c, jit **j) {
     int jmpp, jmpl;
     int stki = 0;
     int stk[IF_STK_LEN];
+    memset(stk, 0, sizeof(int) * IF_STK_LEN);
     for (size_t i = 0; i < c->len; i++) {
         o = &c->ops[i];
         op_set_jidx(*j, o);
