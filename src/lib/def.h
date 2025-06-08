@@ -32,7 +32,22 @@ typedef union {
     void *p;
 } un;
 
-#define UN(T, D) ((un) { .T = D })
+#define _UOGH(CT, T) CT T##_g_o(un u, size_t o)
+
+#define _UOSH(CT, T) un T##_s_o(un u, size_t o, CT v)
+
+#define _UOH(CT, T) _UOGH(CT, T); \
+    _UOSH(CT, T)
+
+_UOH(uint8_t, u3);
+_UOH(int8_t, i3);
+_UOH(uint16_t, u4);
+_UOH(int16_t, i4);
+_UOH(uint32_t, u5);
+_UOH(int32_t, i5);
+_UOH(float, f5);
+
+#define UN(T, D) ((un) { .T = (D) })
 #define B(D) UN(b, D)
 #define C4(A, B, C, D) UN(c, ((c4) { .a = A, .b = B, .c = C, .d = D }))
 #define C3(A, B, C) C4(A, B, C, '\0')

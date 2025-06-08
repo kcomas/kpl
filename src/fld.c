@@ -41,7 +41,7 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
         te *tn = zn->d[5].p;
         if (tn->d[2].u6 != AST_CLS(T)) return FLD_STAT(INV);
         ((te*) tn->d[3].p)->d[0] = P(p); // set parent
-        type_tbl_a(t, f->ta, mc_c(zn->d[4].p), i++, te_c(tn->d[3].p));
+        type_tbl_a(t, f->a->ta, mc_c(zn->d[4].p), i++, te_c(tn->d[3].p));
         te_f(zn);
     }
     lst_f(l);

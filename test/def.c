@@ -25,3 +25,29 @@ T(utf8) {
     un o = c4_g("Ω", 0, &e);
     A(c4_eq(l, o) , "Ω");
 }
+
+T(offset8) {
+    un v;
+    for (size_t i = 0; i < 8; i++) v = u3_s_o(v, i, i + 1);
+    for (size_t i = 0; i < 8; i++) {
+        uint8_t a = u3_g_o(v, i);
+        printf("%ld: %d\n", i, a);
+        A(a == i + 1, "u3_g_o");
+    }
+    uint8_t d = 123;
+    v = u3_s_o(v, 5, d);
+    printf("%d: %d\n", 5, u3_g_o(v, 5));
+    A(d == u3_g_o(v, 5), "u3_g_o");
+}
+
+T(offset1632) {
+    int32_t ns = 7000001;
+    un v; //32;16;16
+    v = u4_s_o(v, 0, 12);
+    v = i4_s_o(v, 1, 32);
+    v = i5_s_o(v, 1, ns);
+    A(u4_g_o(v, 0) == 12, "u4_g_o");
+    A(i4_g_o(v, 1) == 32, "i4_g_o");
+    printf("%d\n", i5_g_o(v, 1));
+    A(i5_g_o(v, 1) == ns, "i5_g_o");
+}
