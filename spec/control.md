@@ -3,22 +3,19 @@
 ## If
 
 ### If
-if (cond) { body }
+#? (cond) { body }
 
 ### If with Else If
-if (cond) { body } ei (cond) { body }
+#? (cond) { body } (cond) { body } ...
 
 ### If with else
-if (cond) { body } ee { body }
+#? (cond) { body } { body }
 
 ### If with else if and else
-if (cond) { body } ei (cond) { body } ee { body }
+#? (cond) { body } (cond) { body } { body }
 
 ## While
-we (cond) { body }
-
-## Do While
-do { body } we (cond)
+#@ (cond) { body }
 
 ## For
-fr (var;cond;per) { body }
+#@ (var;cond;per) { body }
