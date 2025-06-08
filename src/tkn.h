@@ -22,10 +22,12 @@ typedef enum {
     TCUST(NUM),
     TCUST(VAR),
     // types
+    TCUST(VD),
     TCUST(I6),
     TCUST(U6),
     TCUST(F6),
     TCUST(FN),
+    TCUST(NF),
     TCUST(UN),
     // keys
     // ops

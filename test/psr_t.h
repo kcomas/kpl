@@ -25,3 +25,5 @@ extern const char *TPGM(facrec);
 extern const char *TPGM(fibrec);
 
 extern const char *TPGM(ackrec);
+
+extern const char *TPGM(scope);

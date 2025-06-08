@@ -391,3 +391,16 @@ T(add_flt_fn) {
     });
     te_f(h);
 }
+
+T(scope) {
+    te *h = ppnode(psr_r(bpsr(TPGM(scope))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(CMD(N(VAR)), N(INT)),
+        OP(N(VAR), OP(APLY(N(TYPE), N(TYPE)), LST(OP(N(VAR), N(INT))))),
+        APLY(N(VAR)),
+        APLY(N(VAR)),
+        APLY(N(VAR)),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}
