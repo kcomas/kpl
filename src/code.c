@@ -258,7 +258,8 @@ static code_stat p_int(const code_st *const cs, type t, const ast *const a, code
         case TYPE(I6):
             OP_A(c, PV, I6, { .i6 = i }, a);
             break;
-        default: return CODE_STAT(INV_INT_CST_PUSH);
+        default:
+            return CODE_STAT(INV_INT_CST_PUSH);
     }
     return CODE_STAT(OK);
 }
@@ -541,7 +542,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
             if (a->n.ret->a->at == AST_TYPE(VAL)) {
                 switch (a->n.ret->a->n.val->tn->t) {
                     case TYPE(INT):
-                        if ((cstat = p_int(cs, TYPE(I6), a->n.ret->a, c)) != CODE_STAT(OK)) return cstat;
+                        if ((cstat = p_int(cs, a->n.ret->tn->t, a->n.ret->a, c)) != CODE_STAT(OK)) return cstat;
                         break;
                     case TYPE(FLT):
                     case TYPE(STR):
@@ -550,7 +551,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                         return CODE_STAT(NO_OP_FOR_RET_VAL_T);
                 }
             } else IFCGEN(code_gen, cs, a->n.ret->a, c);
-            OP_A(c, RFN, CODE, { .t = a->n.ret->tn-> t }, a);
+            OP_A(c, RFN, CODE, { .t = a->n.ret->tn->t }, a);
             break;
         case AST_TYPE(VAR):
             switch (a->n.var->vt) {
