@@ -1,0 +1,7 @@
+
+// factorial TODO mul
+
+n: I6$5
+f:FN(I6;I6)${(x) $(FD;1) << SG$x; #? (x > 1) { #; x + S(x - 1) }; x }
+
+$(FD;1) << $(SG;f(n)), "\n"

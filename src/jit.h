@@ -34,13 +34,8 @@ typedef enum {
 #endif
 
 typedef struct {
-    size_t idx;
-    code *fn;
-} fn_idx;
-
-typedef struct {
-    size_t len, size;
-    fn_idx fx[];
+    size_t len, size, nops;
+    code *fn[];
 } fn_stk;
 
 inline fn_stk *fn_stk_i(size_t size) {
@@ -74,49 +69,37 @@ typedef struct _jit {
     uint8_t *a; // address
 } jit;
 
-#ifndef JIT_NUM_PAGE
-    #define JIT_NUM_PAGE 1
+#ifndef BYTES_PER_OP
+    #define BYTES_PER_OP 10
 #endif
 
-inline jit *jit_i(int np) {
+inline jit *jit_i(size_t nops) {
     jit *j = calloc(1, sizeof(jit));
-    j->np = np;
-    j->size = getpagesize() * np;
+    j->size = (getpagesize() / (int) (nops * BYTES_PER_OP) + 1) * getpagesize();
     j->a = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     return j;
 }
-
-#ifndef JIT_NUM_PAGE_RSIZE
-    #define JIT_NUM_PAGE_RSIZE 2
-#endif
 
 inline void jit_f(jit *j) {
     munmap(j->a, j->size);
     free(j);
 }
 
-inline void jit_a(jit **j, uint8_t b) {
-    if ((*j)->len == (*j)->size) {
-        jit *nj = jit_i((*j)->np * JIT_NUM_PAGE_RSIZE);
-        nj->len = (*j)->len;
-        memcpy(nj->a, (*j)->a, nj->len);
-        jit_f(*j);
-        *j = nj;
-    }
-    (*j)->a[(*j)->len++] = b;
+inline void jit_a(jit *j, uint8_t b) {
+    j->a[j->len++] = b;
 }
 
-inline void jit_b(jit **j, size_t len, ...) {
+inline void jit_b(jit *j, size_t len, ...) {
     va_list args;
     va_start(args, len);
     for (size_t i = 0; i < len; i++) jit_a(j, (uint8_t) va_arg(args, int));
     va_end(args);
 }
 
-inline void jit_c(jit **j, size_t len, uint8_t *b) {
+inline void jit_c(jit *j, size_t len, uint8_t *b) {
     for (size_t i = 0; i < len; i++) jit_a(j, b[i]);
 }
 
-jit_stat jit_code(mod *const m, code *const c, jit **j);
+jit_stat jit_code(mod *const m, code *const c, jit *j);
 
-jit_stat jit_stk(mod *const m, fn_stk *const stk, jit **j);
+jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j);
