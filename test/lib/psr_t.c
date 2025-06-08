@@ -238,11 +238,9 @@ void node_p(const te *const n, size_t idnt) {
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
             printf("|\n");
-            if (n->d[3].p) {
-                node_p(n->d[3].p, idnt + 1);
-                putchar('\n');
-            }
+            node_p(n->d[3].p, idnt + 1);
             h = ((lst*) n->d[4].p)->h;
+            if (h) putchar('\n');
             while (h) {
                 node_p(h->d[0].p, idnt + 1);
                 h = h->d[2].p;
