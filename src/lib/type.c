@@ -30,12 +30,12 @@ const char *type_str(type t) {
         "MC",
         "_H",
         "ST",
+        "UN",
         "_F",
         "FN",
         "NF",
         "_C",
         "TE",
-        "UN",
         "KV",
         "BA",
         "TD",
@@ -360,7 +360,7 @@ size_t type_hsh(const te *t) {
         case TYPE_CLS(C):
             switch (t->d[1].u4){
                 case TYPE(TE):
-                    for (size_t i = 2; i < t->l; i++) hsh += type_hsh(t->d[i].p);
+                    for (size_t i = 2; i < t->l; i++) hsh += (type_hsh(t->d[i].p) << (i % 31));
                     break;
                 default:
                     break;

@@ -20,7 +20,8 @@ typedef enum {
     ARG_ID(B), // byte
     ARG_ID(W), // word
     ARG_ID(DW), // double word
-    ARG_ID(QW) // quad word
+    ARG_ID(QW), // quad word
+    ARG_ID(S), // null terminated array of bytes, string
 } arg_id;
 
 #define AS_X64(N) AS_X64_##N
@@ -95,6 +96,8 @@ void as_code_p(const as *a, const uint8_t *m);
 err_d_p *as_x64_err_g_p(as_stat stat);
 
 bool as_x64_dq(as *a, size_t *p, uint8_t *m, te *dqe);
+
+bool as_x64_dqs(as *a, size_t *p, uint8_t *m, te *dqe);
 
 #define AS_X64_RS_R 1
 #define AS_X64_RS_S 0

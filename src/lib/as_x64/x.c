@@ -22,8 +22,6 @@ INST_XX(ucomisd);
 INST_XX(comisd);
 
 #define INST_XI(N) static bool as_##N##_xi(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) a; \
-    (void) ci; \
     (void) arg3; \
     (void) arg4; \
     as_dq_a(a, ci, sizeof(double), arg2->d[1], as_x64_dq); /* TODO fn to get sizeof*/ \
