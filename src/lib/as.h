@@ -75,8 +75,11 @@ as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl 
 // add and register label, LABEL(UN) for new label id at code
 size_t as_lbl_a(as *const a, size_t lbl_id);
 
+// get lbl entry
+as_stat as_lbl_g_i(as *const a, size_t lbl_id, te **lbl);
+
 // register op, not using varardic to avoid extra checks
-void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn);
+as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn);
 
 // add op
 as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);

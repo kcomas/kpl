@@ -57,6 +57,11 @@ size_t as_lbl_a(as *const a, size_t lbl_id) {
     return add_lbl(a, lbl_id);
 }
 
+as_stat as_lbl_g_i(as *const a, size_t lbl_id, te **lbl) {
+    if (tbl_g_i(a->lbls, U6(lbl_id), lbl) == TBL_STAT(NF)) return AS_STAT(INV);
+    return AS_STAT(OK);
+}
+
 static tbl *add_op_entry(as *const a, tbl *const co, te **kv, size_t id) {
     *kv = te_i(4, a->aa, a->oef);
     (*kv)->d[0] = U6(id);
@@ -65,7 +70,8 @@ static tbl *add_op_entry(as *const a, tbl *const co, te **kv, size_t id) {
     return (*kv)->d[3].p;
 }
 
-void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn) {
+as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn) {
+    if (op_id == LABEL(UN)) return AS_STAT(INV);
     tbl *co = a->ops;
     te *kv;
     if (tbl_g_i(co, U6(op_id), &kv) == TBL_STAT(NF)) co = add_op_entry(a, co, &kv, op_id);
@@ -78,6 +84,7 @@ void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_
     }
     kv->d[1] = P(fn);
     kv->d[2] = P(lbl_fn);
+    return AS_STAT(OK);
 }
 
 as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4) {
