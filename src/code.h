@@ -14,7 +14,10 @@ typedef enum {
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
-    CODE_STAT(OP_NO_T_R)
+    CODE_STAT(OP_NO_T_L), // op no left type
+    CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(INV_CALL_TGT),
+    CODE_STAT(NO_OP_FOR_RET_VAL_T)
 } code_stat;
 
 typedef struct {
@@ -48,7 +51,10 @@ typedef enum {
     // ops
     OP_C(CST),
     OP_C(ADD),
-    OP_C(NOT)
+    OP_C(SUB),
+    OP_C(EQ),
+    OP_C(NOT),
+    OP_C(OR)
 } op_c;
 
 const char *op_c_get_str(op_c oc);
