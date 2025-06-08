@@ -429,11 +429,14 @@ inline void call_node_f(call_node *cn) {
 
 typedef struct {
     type_node *tn;
+    fn_node *fn;
     ast *a;
 } ret_node; // takes next stmt
 
-inline ret_node *ret_node_i(al *const a) {
-    return ala(a, sizeof(ret_node));
+inline ret_node *ret_node_i(al *const a, fn_node *const fn) {
+    ret_node *r = ala(a, sizeof(ret_node));
+    r->fn = fn;
+    return r;
 }
 
 inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt) {

@@ -18,6 +18,7 @@ typedef enum {
     CODE_STAT(NO_T_FOR_LOP_COND),
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
+    CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
     CODE_STAT(INV_CST_INT_TO_FD),
@@ -33,6 +34,7 @@ typedef enum {
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
     CODE_STAT(CALL_T_N_FN),
+    CODE_STAT(CALL_T_ER_T_INV),
     CODE_STAT(CALL_CT_ARG_T_GC_INV),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
@@ -141,6 +143,13 @@ inline void cte_f(cte *te) {
     alf(te);
 }
 
+typedef struct {
+    type t;
+    bool ec;
+} rer;
+
+#define RER(T, EC) .e = (rer) {T, EC}
+
 typedef union _op_d {
     type t;
     bool bl;
@@ -157,6 +166,7 @@ typedef union _op_d {
     int fd;
     slv v;
     code *c;
+    rer e;
     op_if *of;
     char *sg; // null term
     cte *te;
