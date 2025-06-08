@@ -45,7 +45,7 @@ void alf(void *ptr) {
 #ifdef ALD
     ac->a->f++;
 #endif
-    if (ac->aus <= 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
+    if (ac->aus == 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
         al *a = ac->a;
         LST_R(a, alc, ac, alc_f, NULL);
     }

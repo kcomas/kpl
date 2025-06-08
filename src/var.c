@@ -92,8 +92,8 @@ ssize_t var_rcf(var v, type t) {
     return 0;
 }
 
-bool OO0 var_zoo_u6(uint64_t v) { return v != 0; }
-bool OO0 var_zoo_i6(int64_t v) { return v != 0; }
+bool var_zoo_u6(uint64_t v) { return v != 0; }
+bool var_zoo_i6(int64_t v) { return v != 0; }
 
 #ifndef NUM_TO_SG_SIZE
     #define NUM_TO_SG_SIZE 30
@@ -144,7 +144,7 @@ VAR_BOP_T(or, ||, bl, bool)
 VAR_BOP_T(or, ||, i6, int64_t)
 VAR_BOP_T(or, ||, u6, uint64_t)
 
-bool OO0 var_not(bool v) { return !v; }
+bool var_not(bool v) { return !v; }
 
 var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc) {
     var_tsv *vtsv = ala(a, sizeof(var_tsv) + size * sizeof(var));

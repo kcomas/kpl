@@ -41,13 +41,13 @@ typedef union _var {
 
 ssize_t var_rcf(var v, type t);
 
-bool OO0 var_zoo_u6(uint64_t v);
-bool OO0 var_zoo_i6(int64_t v);
+bool var_zoo_u6(uint64_t v);
+bool var_zoo_i6(int64_t v);
 
 var_sg *var_u6_sg(al *const a, uint64_t u6);
 var_sg *var_i6_sg(al *const a, uint64_t i6);
 
-#define VAR_FN_BOP_T(N, T, CT) CT OO0 var_##N##_##T(CT l, CT r)
+#define VAR_FN_BOP_T(N, T, CT) CT var_##N##_##T(CT l, CT r)
 
 // add
 VAR_FN_BOP_T(add, bl, bool);
@@ -84,7 +84,7 @@ VAR_FN_BOP_T(or, bl, bool);
 VAR_FN_BOP_T(or, i6, int64_t);
 VAR_FN_BOP_T(or, u6, uint64_t);
 
-bool OO0 var_not(bool v);
+bool var_not(bool v);
 
 typedef struct _var_tsv {
     RC;
