@@ -39,8 +39,11 @@ static const char *const tss[] = {
     "INV_FN_CST",
     "FN_CST_T_NN",
     "INV_FN_CST_ARGS_LEN",
-    "INV_DEL_R_NN",
-    "INV_DEL_L_NG",
+    "INV_DEL_L_NN",
+    "INV_DEL_R_NG",
+    "INV_LD_L_NN",
+    "INV_LD_ME",
+    "INV_LD",
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
     "INV_ADD",
@@ -99,7 +102,7 @@ const char *type_stat_str(type_stat tstat) {
     return s;
 }
 
-extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *str);
+extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *pp, const char *str);
 
 extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat);
 
@@ -348,10 +351,18 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             return TYPE_ER(ts, INV_CST);
         // TODO ops
         case OP_TYPE(DEL):
-            if (op->l) return TYPE_ER(ts, INV_DEL_R_NN);
-            if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_ER(ts, INV_DEL_L_NG);
+            if (op->l) return TYPE_ER(ts, INV_DEL_L_NN);
+            if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_ER(ts, INV_DEL_R_NG);
             op->ret = type_node_i(ts->a, TYPE(VD), NULL);
             break;
+        case OP_TYPE(LD):
+            if (op->l) return TYPE_ER(ts, INV_LD_L_NN);
+            if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
+                mod *m = mod_i(ts->a, ts->e);
+                if (mod_lfile_tkn(m, ts->pp, str_dir_len(ts->pp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
+                // TODO
+            }
+            return TYPE_ER(ts, INV_LD);
         case OP_TYPE(ADD):
             ASTGTNBOP(ADD);
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;

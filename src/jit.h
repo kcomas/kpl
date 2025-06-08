@@ -2,7 +2,6 @@
 #pragma once
 
 #include "kpl.h"
-#include "mod.h"
 #include "code.h"
 
 #define JIT_STAT(N) JIT_STAT_##N
