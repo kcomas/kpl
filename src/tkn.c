@@ -1,7 +1,7 @@
 
 #include "tkn.h"
 
-extern inline void tkn_st_init(tkn_st *const ts);
+extern inline void tkn_st_i(tkn_st *const ts);
 
 typedef struct {
     tkn_type type;

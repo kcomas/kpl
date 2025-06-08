@@ -1,7 +1,7 @@
 
 #include "mod.h"
 
-extern inline mod *mod_init(void);
+extern inline mod *mod_i(void);
 
 mod_stat mod_lfile(mod *const m, const char *const path) {
     int fd = open(path, O_RDONLY);
