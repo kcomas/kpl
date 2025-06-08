@@ -96,7 +96,7 @@ static bool eq_num(un a, un b) {
 }
 
 T(sort) {
-    lst *l = lst_i_v(&al_lst, &al_te, (void*) mc_f, 4, mc_i_cstr("d", &al_mc), mc_i_cstr("a", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("b", &al_mc));
+    lst *l = lst_i_v(&al_lst, &al_te, (void*) mc_f, 5, mc_i_cstr("d", &al_mc), mc_i_cstr("a", &al_mc), mc_i_cstr("e", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("b", &al_mc));
     te *h = l->h;
     while (h) {
         printf("%s ", (char*) ((mc*) h->d[0].p)->d);
@@ -116,7 +116,7 @@ T(sort) {
         h = h->d[1].p;
     }
     putchar('\n');
-    lst *c = lst_i_v(&al_lst, &al_te, (void*) mc_f, 4, mc_i_cstr("a", &al_mc), mc_i_cstr("b", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("d", &al_mc));
+    lst *c = lst_i_v(&al_lst, &al_te, (void*) mc_f, 5, mc_i_cstr("a", &al_mc), mc_i_cstr("b", &al_mc), mc_i_cstr("c", &al_mc), mc_i_cstr("d", &al_mc), mc_i_cstr("e", &al_mc));
     A(lst_eq(l, c, eq_str), "not sorted");
     lst_f(l);
     lst_f(c);
@@ -142,6 +142,8 @@ T(sort) {
     }
     putchar('\n');
     A(lst_eq(a, b, eq_num), "not sorted num");
+    A(!a->h->d[1].p, "inv head prev");
+    A(!a->t->d[2].p, "inv tail next");
     lst_f(a);
     lst_f(b);
 }
