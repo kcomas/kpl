@@ -2,7 +2,8 @@
 // basic loop
 a: I6$10
 #@ (a > 0) {
-    $(FD;1) << "a: ", $(SG;a), "\n"
+    //$(FD;1) << "a: ", $(SG;a), "\n"
+    $(FD;1) << " ", ["a:";SG$a;"\n"]
     a: a - 1
 }
 $(FD;1) << "lop end a is: ", $(SG;a), "\n"

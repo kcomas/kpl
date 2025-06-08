@@ -7,11 +7,18 @@ extern inline void fn_stk_a(fn_stk **stk, code *const c);
 
 void fn_stk_b(fn_stk **stk, code *const c) {
     for (size_t i = 0; i < c->len; i++) {
-        if (c->ops[i].oc == OP_C(PV) && c->ops[i].ot == TYPE(FN)) fn_stk_b(stk, c->ops[i].od.c);
-        if (c->ops[i].oc == OP_C(CTE) && c->ops[i].ot == TYPE(TE)) fn_stk_b(stk, c->ops[i].od.te->gc);
+        if (c->ops[i].oc == OP_C(PV) && c->ops[i].ot == TYPE(FN)) {
+            fn_stk_b(stk, c->ops[i].od.c);
+            fn_stk_a(stk, c->ops[i].od.c);
+        }
+        if (c->ops[i].oc == OP_C(CTE) && c->ops[i].ot == TYPE(TE)) {
+            fn_stk_b(stk, c->ops[i].od.te->gc);
+            fn_stk_a(stk, c->ops[i].od.te->gc);
+        }
+        if (c->ops[i].oc == OP_C(IF) && c->ops[i].ot == TYPE(IF)) fn_stk_b(stk, c->ops[i].od.c);
+        if ((c->ops[i].oc == OP_C(LOP) && c->ops[i].ot == TYPE(LOP)) || (c->ops[i].oc == OP_C(COND) && c->ops[i].ot == TYPE(COND))) fn_stk_b(stk, c->ops[i].od.of->body);
     }
     (*stk)->nops += c->len;
-    fn_stk_a(stk, c);
 }
 
 extern inline void fn_stk_f(fn_stk *f);
@@ -337,8 +344,8 @@ jit_stat jit_code(mod *const m, code *const c, jit *j) {
                 jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
                 jit_b(j, 2, 0x41, 0x59); // pop r9 cnct sg
                 jit_a(j, 0x50); // push rax
-                jit_b(j, 2, 0x41, 0x51); // push r9
                 jit_b(j, 2, 0x41, 0x52); // push r10
+                jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(j, o);
                 break;
             case OP_C(WFD):
