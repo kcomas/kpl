@@ -6,19 +6,24 @@ static tkn *inc_tkn(ast_st *const at, bool inc) {
 }
 
 typedef struct {
-    tkn_ign flg;
+    tkn_flg flg;
     tkn_type type;
-} tkn_ign_flg;
+} tkn_flg_type;
 
-#define TIF(N) {TKN_IGN(N), TKN_TYPE(N)}
+#define TFT(N) {TKN_FLG(N), TKN_TYPE(N)}
 
-static const tkn_ign_flg tif[] = {
-    TIF(NL),
-    TIF(WS),
-    TIF(CMT)
+static const tkn_flg_type tft[] = {
+    TFT(NB),
+    TFT(NL),
+    TFT(SEMI),
+    TFT(WS),
+    TFT(CMT),
+    TFT(RB),
+    TFT(RS),
+    TFT(RP)
 };
 
-static const size_t tif_len = AL(tif);
+static const size_t tft_len = AL(tft);
 
 ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs) {
     bool l = true;
@@ -26,8 +31,8 @@ ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs) {
         l = false;
         at->tstat = _tkn_get(&at->ts, inc_tkn(at, inc), at->str, inc);
         if (at->tstat != TKN_STAT(OK)) break;
-        for (size_t i = 0; i < tif_len; i++) {
-            if ((tif[i].flg & ign_flgs) && inc_tkn(at, inc)->type == tif[i].type) {
+        for (size_t i = 0; i < tft_len; i++) {
+            if ((tft[i].flg & ign_flgs) && inc_tkn(at, inc)->type == tft[i].type) {
                 l = true;
                 break;
             }
@@ -116,4 +121,4 @@ void ast_f(ast *a) {
     free(a);
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl);
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl, uint8_t stp_flgs);
