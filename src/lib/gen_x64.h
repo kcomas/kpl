@@ -15,6 +15,7 @@ typedef enum {
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
     GEN_OP(CALLV), // varardic
+    GEN_OP(CALLVNPR),
     GEN_OP(NEG),
     GEN_OP(ADD),
     GEN_OP(SUB),
