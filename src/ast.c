@@ -56,7 +56,7 @@ extern inline void op_node_f(op_node *on);
 
 extern inline lst_itm *lst_itm_i(ast *const a);
 
-extern inline void lst_itm_f(lst_itm *itm);
+inline void lst_itm_f(lst_itm *itm, void *fn);
 
 extern inline lst_node *lst_node_i(type_node *const tn);
 

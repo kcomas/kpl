@@ -11,4 +11,4 @@ fib:FN<U6;U6>${[x]
     }
     fib(x - 1) + fib(x - 2)}
 
-1 << " " , ["The";SG$n;"th fibonacci is:";SG$fib(n);"\n"]
+1 << " " , ["The fibonacci of";SG$n;is:";SG$fib(n);"\n"]

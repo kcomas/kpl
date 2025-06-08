@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "lst.h"
 
 typedef struct _fn_node fn_node;
 

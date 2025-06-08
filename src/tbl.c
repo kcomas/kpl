@@ -61,24 +61,13 @@ tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti,
         if (!cur) {
             if ((op_flgs & TBL_OP_FLG(FD)) || op_flgs & TBL_OP_FLG(RM)) return TBL_STAT(NF);
             (*tl)->bucks[(hash + i) % (*tl)->size] = *ti = tbl_itm_i(str, data);
-            if (!(*tl)->h) {
-                (*tl)->h = *ti;
-                (*tl)->h->next = (*tl)->t = *ti;
-            } else (*tl)->t = (*tl)->t->next = *ti;
-            (*tl)->len++;
+            LST_A((*tl), *ti);
             break;
         } else if (strcmp(cur->str, str) == 0) {
             if (op_flgs & TBL_OP_FLG(AD)) return TBL_STAT(AE);
             if (op_flgs & TBL_OP_FLG(RM)) {
-                tbl_itm *h = (*tl)->h;
-                if (cur == h) (*tl)->h = h->next;
-                else {
-                    while (cur != h->next) h = h->next;
-                    h->next = cur->next;
-                }
+                LST_R((*tl), tbl_itm, cur, tbl_itm_f, fn);
                 (*tl)->bucks[(hash + i) % (*tl)->size] = NULL;
-                tbl_itm_f(cur, fn);
-                (*tl)->len--;
             } else {
                 if (data) {
                     fn(cur->data);
