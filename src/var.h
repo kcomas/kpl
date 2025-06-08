@@ -49,6 +49,7 @@ bool var_nvd(var v);
 
 bool var_zoo_u6(uint64_t v);
 bool var_zoo_i6(int64_t v);
+bool var_zoo_er(er_itm *const ei);
 
 var_sg *var_u6_sg(al *const a, uint64_t u6);
 var_sg *var_i6_sg(al *const a, uint64_t i6);

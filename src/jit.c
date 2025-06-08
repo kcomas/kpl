@@ -625,6 +625,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 switch (o->od.t) {
                     CT_SET_FN(U6, var_zoo_u6);
                     CT_SET_FN(I6, var_zoo_i6);
+                    CT_SET_FN(ER, var_zoo_er);
                     default:
                         return JIT_ER(m, ZOO_T_INV, o);
                 }

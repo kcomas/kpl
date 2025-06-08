@@ -11,7 +11,7 @@ f:ft${(x)
     '"This is an error value passed: ", $(SG;x)
     x}
 
-fb:FN(i;ft;ER(i))${(x;y) [z;a]'y(x); 'a; z}
+fb:FN(i;ft;ER(i))${(x;y) [z;a]'y(x); #? (a) {'a}; z} // toggle (a) <> (!a) to stop error throw
 
 // catching
 [v;e]'fb(123;f)
