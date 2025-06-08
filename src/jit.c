@@ -340,6 +340,7 @@ int thread_fn(void *volatile arg) {
     jit_i(td->m->r->a, stk->nops + (td->te->len * 10), &td->m->r->j, JIT_FLG(TD));
     jit_stat jstat;
     if ((jstat = jit_stk(td->m, stk, td->m->r->j, false)) != JIT_STAT(OK)) {
+        fn_stk_f(stk);
         code_p(td->m->c, 0);
         er_p(td->m->r->e);
         printf("THREAD EXIT: %d\n", jstat);
