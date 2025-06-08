@@ -40,6 +40,23 @@ static te *ppnode(te *h) {
     return h;
 }
 
+#define VS(VA) (sizeof(VA) / sizeof(VA[0]))
+
+#define V(H, ...)  const node_id v[] = __VA_ARGS__; \
+    size_t i = 0; \
+    psr_verify(_t, H, v, &i, VS(v)); \
+    A(i == VS(v), "vl")
+
+#define N(X) NODE_TYPE(X)
+
+#define OP(L, R) N(OP), L, R
+
+#define LST(...) N(LST), __VA_ARGS__
+
+#define APLY(...) N(APLY), __VA_ARGS__
+
+#define SYM(TGT) N(SYM), TGT
+
 T(sigma, {
     te *h = ppnode(rpsr(ppsr(psr_b("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]"))));
     V(h, {N(ROOT), OP(N(INT), LST(N(INT), OP(N(FLT), LST(N(INT), N(INT), N(INT))), OP(N(INT), N(INT)), N(INT)))});

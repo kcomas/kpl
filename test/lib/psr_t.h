@@ -92,29 +92,3 @@ void node_f(void *p);
 void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl);
 
 void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size_t vl);
-
-#define VS(VA) (sizeof(VA) / sizeof(VA[0]))
-
-#define V(H, ...)  const node_id v[] = __VA_ARGS__; \
-    size_t i = 0; \
-    psr_verify(_t, H, v, &i, VS(v)); \
-    A(i == VS(v), "vl")
-
-#define V2(N, VA, I, VL) psr_verify(_t, N, VA, I, VL); \
-    if (_t->m) return
-
-#define VN(V, I, VL, NT) A(V[*I] == NODE_TYPE(NT), #NT); \
-    A(++*I <= VL, "verify")
-
-#define VL(L, V, I, VL) psr_verify_lst(_t, L, V, I, VL); \
-    A(*I <= VL, "verify_lst")
-
-#define N(X) NODE_TYPE(X)
-
-#define OP(L, R) N(OP), L, R
-
-#define LST(...) N(LST), __VA_ARGS__
-
-#define APLY(...) N(APLY), __VA_ARGS__
-
-#define SYM(TGT) N(SYM), TGT
