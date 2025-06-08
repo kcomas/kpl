@@ -5,7 +5,6 @@
 int mt(void *volatile args) {
     mod *volatile m = (mod*) args;
     m->c->jf(NULL);
-    mod_done(m);
     return 0;
 }
 
@@ -55,17 +54,15 @@ int main(int argc, char *argv[]) {
     fn_stk_a(r->a, &stk, m->c);
     jit_i(r->a, stk->nops, &r->j);
     jit_stat jstat;
-    if ((jstat = jit_stk(m, stk, r->j)) != JIT_STAT(OK)) {
+    if ((jstat = jit_stk(m, stk, r->j, true)) != JIT_STAT(OK)) {
         code_p(m->c, 0);
         er_p(r->e);
         return jstat;
     }
     fn_stk_f(stk);
     code_p(m->c, 0);
-    clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
-    while (!m->done) {
-        wait(NULL);
-    }
+    pid_t id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    while (!m->done) waitpid(id, NULL, WEXITED);
     code_f(m->c);
     fn_node_f(m->fns);
     FNNF(m->tn, type_node_f);

@@ -16,6 +16,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
 #include "al.h"
 #include "lst.h"
 

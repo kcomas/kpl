@@ -150,13 +150,13 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     for (size_t i = 0; i < c->len; i++) {
         o = &c->ops[i];
         op_set_jidx(j, o);
-        if ((jstat = jit_code(m, o->od.of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+        if ((jstat = jit_code(m, o->od.of->cond, jf, j, false)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
         jit_b(j, 2, 0x41, 0x5B); // pop r11
         jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
         jit_b(j, 2, 0x0F, 0x84); // je 0
         jmpp = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to next cond
-        if ((jstat = jit_code(m, o->od.of->body, jf, j)) != JIT_STAT(OK)) return jstat;
+        if ((jstat = jit_code(m, o->od.of->body, jf, j, false)) != JIT_STAT(OK)) return jstat;
         jit_a(j, 0xE9); // jmp
         stk[stki++] = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if jmp to end of if
@@ -175,13 +175,13 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
 static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     int32_t lops = j->len, lope, bs, jmpl;
-    if ((jstat = jit_code(m, of->cond, jf, j)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+    if ((jstat = jit_code(m, of->cond, jf, j, false)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
     jit_b(j, 2, 0x41, 0x5B); // pop r11
     jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
     jit_b(j, 2, 0x0F, 0x84); // je 0
     bs = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end of lop
-    if ((jstat = jit_code(m, of->body, jf, j)) != JIT_STAT(OK)) return jstat;
+    if ((jstat = jit_code(m, of->body, jf, j, false)) != JIT_STAT(OK)) return jstat;
     jit_a(j, 0xE9); // jmp
     lope = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
@@ -268,7 +268,7 @@ int thread_fn(void *volatile arg) {
     fn_stk_a(td->m->r->a, &stk, td->m->c);
     jit_i(td->m->r->a, stk->nops + (td->te->len * 10), &td->m->r->j);
     jit_stat jstat;
-    if ((jstat = jit_stk(td->m, stk, td->m->r->j)) != JIT_STAT(OK)) {
+    if ((jstat = jit_stk(td->m, stk, td->m->r->j, false)) != JIT_STAT(OK)) {
         code_p(td->m->c, 0);
         er_p(td->m->r->e);
         printf("THREAD EXIT: %d\n", jstat);
@@ -303,16 +303,17 @@ int thread_fn(void *volatile arg) {
 
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
-    clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
+    td->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
+    nanosleep((const struct timespec[]){{0, 5e4L}}, NULL);
     return td;
 }
 
 static var join_thrd(var_td *volatile td) {
-    while (!td->m->done) { wait(NULL); }
+    while (!td->m->done) waitpid(td->id, NULL, WEXITED);
     return td->te->v[td->te->len - 1];
 }
 
-jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
+jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool done) {
     jit_stat jstat;
     op *o;
     void *fp;
@@ -348,6 +349,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(RFN):
                 op_set_jidx(j, o);
+                if (done) {
+                    SET_REG(m, mod*, false, 7);
+                    SET_FP(mod_done);
+                    SET_REG_CALL(false, 0);
+                }
                 jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
                 op_set_jlen(j, o);
                 break;
@@ -422,7 +428,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 fn_stk_b(m->r->a, &stk, o->od.tsv->m->c);
                 fn_stk_a(m->r->a, &stk, o->od.tsv->m->c);
                 jit_i(m->r->a, stk->nops, &o->od.tsv->m->r->j);
-                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->r->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->r->j, true) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
                 SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
@@ -926,11 +932,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
+jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j, bool done) {
     jit_stat jstat;
     for (size_t i = 0; i < stk->len; i++) {
         stk->fn[i]->jf = (jit_fn*) &j->h[j->len];
-        if ((jstat = jit_code(m, stk->fn[i], stk->fn[i]->jf, j)) != JIT_STAT(OK)) return jstat;
+        if ((jstat = jit_code(m, stk->fn[i], stk->fn[i]->jf, j, done && i == stk->len - 1)) != JIT_STAT(OK)) return jstat;
     }
     return JIT_ER(m, OK, NULL);
 }
