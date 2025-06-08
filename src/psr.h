@@ -1,6 +1,6 @@
 
-#include "tkn_t.h"
-#include "../../src/lib/psr.h"
+#include "tkn.h"
+#include "./lib/psr.h"
 
 #define PCUST(N) PCUST_##N
 
@@ -40,11 +40,9 @@ typedef enum {
     NODE_TYPE(SYM)
 } node_id;
 
-psr *psr_b(const char *pgm);
+psr *psr_b(psr *p);
 
 void psr_p(tbl *t, size_t idnt);
-
-tbl *psr_mktbl(void);
 
 void psr_entry_f(void *p);
 
@@ -88,7 +86,3 @@ psr_stat psr_sym_i(psr *p, te **n);
 void node_p(const te *n, size_t idnt);
 
 void node_f(void *p);
-
-void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl);
-
-void psr_verify_lst(_tests *_t, const lst *l, const node_id v[], size_t *i, size_t vl);
