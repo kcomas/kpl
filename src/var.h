@@ -129,7 +129,15 @@ jit_fn *var_tsv_gc(var_tsv *const tsv);
 
 var var_tsv_gidx(var_tsv *const tsv, size_t idx);
 
+var var_tsv_vr_gidx_i6(mod *const m, ast *const a, var_tsv *const tsv, int64_t idx);
+
+var var_tsv_vr_gidx_u6(mod *const m, ast *const a, var_tsv *const tsv, uint64_t idx);
+
 void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v);
+
+void var_tsv_vr_sidx_i6(mod *const m, ast *const a, var_tsv *const tsv, int64_t idx, var v);
+
+void var_tsv_vr_sidx_u6(mod *const m, ast *const a, var_tsv *const tsv, uint64_t idx, var v);
 
 void var_tsv_add(al *const a, var_tsv *const tsv, var v);
 

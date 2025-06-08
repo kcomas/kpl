@@ -57,6 +57,7 @@ typedef enum {
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
+    CODE_STAT(VR_CALL_R_INV),
     CODE_STAT(CALL_T_N_FN),
     CODE_STAT(CALL_T_ER_T_INV),
     CODE_STAT(CALL_CT_ARG_T_GC_INV),
@@ -109,8 +110,10 @@ typedef enum {
     OP_C(LA), // load arg
     OP_C(PV), // push value
     OP_C(CTSV), // create tuple from stack u6 is length
-    OP_C(GIDX), // get index te, vr, st u6 is i
-    OP_C(SIDX), // set idx te, vr, st u6 is i
+    OP_C(GIDX), // get index te, st u6 is i
+    OP_C(VRGIDX), // vr get idx int
+    OP_C(SIDX), // set idx te, st u6 is i
+    OP_C(VRSIDX),  // vr get idx
     OP_C(VRA), // vector add, push
     OP_C(VRS), // vector sub, pop
     // control

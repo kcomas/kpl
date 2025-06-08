@@ -174,7 +174,7 @@ static bool type_lst_contig(const type_node *const tlst, const type_node *const 
 
 #define IFTCHK(FN, TS, FNS, N) if ((tstat = FN(TS, FNS, N)) != TYPE_STAT(OK)) return tstat
 
-#define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_ER(ts, E);
+#define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_ER(ts, E)
 
 static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *const lst) {
     type_stat tstat;

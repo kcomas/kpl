@@ -52,6 +52,7 @@ static const char *const css[] = {
     "INV_CNCT_OP",
     "INV_FD_OP",
     "CALL_RES_NOT_SELF",
+    "VR_CALL_R_INV",
     "CALL_T_N_FN",
     "CALL_T_ER_T_INV",
     "CALL_CT_ARG_T_GC_INV",
@@ -134,7 +135,9 @@ static const char *op_c_str[] = {
     "PV", // push value
     "CTSV", // create tuple from stack u6 is length
     "GIDX", // get index te, vr, st u6 is i
+    "VRGIDX", // vr get idx int
     "SIDX", // set idx te, vr, st u6 is i
+    "VRSIDX",  // vr get idx
     "VRA", // vector add, push
     "VRS", // vector sub, pop
     // control
@@ -706,6 +709,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         case TYPE(ST):
                         case TYPE(ER):
                             OP_A(cs, &gc, GCVR, OP, { .t = tr->t }, NULL);
+                            break;
                         default:
                             break; // no gc for these types
                     }
@@ -927,6 +931,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
+    type_node *tn;
     int64_t tidx;
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
@@ -949,6 +954,17 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             if ((tidx = te_call_idx(cn)) > -1) {
                 IFCGEN(code_gen, cs, cn->tgt, c);
                 OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, a);
+                OP_RCI(cs, c, cn->ret);
+                break;
+            } else if (cn->tgt->n.var->tn->t == TYPE(VR)) {
+                if (!(tn = ast_gtn(cn->args->h->a))) return CODE_ER(cs, VR_CALL_R_INV, a);
+                IFCGEN(code_gen, cs, cn->tgt, c);
+                if (tn->t == TYPE(INT)) {
+                    OP_A(cs, c, VRGIDX, I6, { .i6 = tkn_to_int64_t(&cn->args->h->a->t) }, cn->args->h->a);
+                } else {
+                    IFCGEN(code_gen, cs, cn->args->h->a, c);
+                    OP_A(cs, c, VRGIDX, OP, { .t = tn->t }, cn->args->h->a);
+                }
                 OP_RCI(cs, c, cn->ret);
                 break;
             }
