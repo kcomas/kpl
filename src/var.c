@@ -153,7 +153,7 @@ var_sg *var_u6_sg(al *const a, uint64_t u6) {
     #define FLT_DEC_PREC 6
 #endif
 
-static uint64_t flp10[] = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9};
+static const uint64_t flp10[] = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9};
 
 var_sg *var_f6_sg(al *const a, double f6) {
     size_t len = 0;
