@@ -147,14 +147,104 @@ T(value_hsh, {
     te_f(h);
 });
 
+T(if_else_else, {
+    te *h = ppnode(rpsr(psr_b("?{a?(c:2;a?c:1;c);(b+a)?2;3}")));
+    V(h, {N(ROOT),
+        OP(
+            N(NONE), // ?
+            LST( // {
+                OP( // ?
+                    N(VAR), //a
+                    APLY(N(NONE),
+                        OP(N(VAR), N(INT)), // c:2
+                        OP(N(VAR), OP(N(VAR), N(INT))), // a?c:1
+                        N(VAR) // c
+                    )
+                ),
+                OP( // ?
+                    APLY(N(NONE),
+                        OP(N(VAR), N(VAR)) // b + a
+                    ),
+                    N(INT) // 2
+                ),
+                N(INT) // 3
+            )
+        )
+    });
+    te_f(h);
+});
+
 /*
 T(psr, {
-    te_f(ppnode(rpsr(psr_b("?{a?(c:2;a?c:1;c);(b+a)?2;3}"))));
     te_f(ppnode(rpsr(psr_b("{d:UN(I6`v;FN(I6)`e)$5`v;d?{d`v`v;0`e;2}}"))));
     te_f(ppnode(rpsr(psr_b("{a:1;b:2;{a+b+c}(3`c)}"))));
-    te_f(ppnode(rpsr(psr_b("{f:FN(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}"))));
     te_f(ppnode(rpsr(psr_b("{f:{a:2:x+y()};y:{a};f(1`x)}"))));
-    te_f(ppnode(rpsr(psr_b("FN(U6`n;U6)${?{(n=0)?0;(n<3)?2;S(n-1)+S(n-2)}}(35)"))));
-    te_f(ppnode(rpsr(psr_b("FN(U6`m;U6`n;U6)${?{?(m=0;n+1);(&(m>0;n=0))?S(m-1;1);(m>0;n>0)?S(m-1;S(m;n-1));n+1}}(3;10)"))));
 });
 */
+
+T(add_flt_fn, {
+    te *h = ppnode(rpsr(psr_b("{f:FN(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}")));
+    V(h, {N(ROOT),
+        LST(
+            OP(N(VAR),
+                OP(
+                    APLY(N(TYPE),
+                        SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)
+                    ),
+                    LST(OP(N(VAR), N(VAR)))
+                )
+            ),
+            APLY(N(VAR), N(FLT), N(FLT))
+         )
+    });
+    te_f(h);
+});
+
+T(fib, {
+    te *h = ppnode(rpsr(psr_b("$(FN(U6`n;U6);{?{(n=0)?0;(n<3)?2;S(n-1)+S(n-2)}})(35)")));
+    V(h, {N(ROOT),
+        APLY(APLY(OP(N(NONE), N(NONE)),
+                APLY(N(TYPE), SYM(N(TYPE)), N(TYPE)),
+                LST(OP(N(NONE),
+                    LST(
+                        OP(APLY(N(NONE), OP(N(VAR), N(INT))), N(INT)),
+                        OP(APLY(N(NONE), OP(N(VAR), N(INT))), N(INT)),
+                        OP(
+                            APLY(N(KEY), OP(N(VAR), N(INT))),
+                            APLY(N(KEY), OP(N(VAR), N(INT)))
+                        )
+                    )
+                ))
+            ), N(INT))
+    });
+    te_f(h);
+});
+
+T(ack, {
+    te *h = ppnode(rpsr(psr_b("$(FN(U6`m;U6`n;U6);{?{?(m=0;n+1);(&(m>0;n=0))?S(m-1;1);(m>0;n>0)?S(m-1;S(m;n-1));n+1}})(3;10)")));
+    V(h, {N(ROOT),
+        APLY(APLY(OP(N(NONE), N(NONE)),
+                APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)),
+                LST(OP(N(NONE),
+                    LST(
+                        APLY(OP(N(NONE), N(NONE)),
+                            OP(N(VAR), N(INT)),
+                            OP(N(VAR), N(INT))
+                        ),
+                        OP(
+                            APLY(N(NONE),
+                            APLY(OP(N(NONE), N(NONE)),
+                                OP(N(VAR), N(INT)),
+                                OP(N(VAR), N(INT)))),
+                            APLY(N(KEY), OP(N(VAR), N(INT)), N(INT))
+                        ),
+                        OP(
+                            APLY(N(NONE),
+                                OP(N(VAR), N(INT)), OP(N(VAR), N(INT))),
+                            APLY(N(KEY), OP(N(VAR), N(INT)),
+                                APLY(N(KEY), N(VAR), OP(N(VAR), N(INT))))
+                        ),
+                        OP(N(VAR), N(INT)))
+                ))), N(INT), N(INT))});
+    te_f(h);
+});
