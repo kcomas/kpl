@@ -20,8 +20,6 @@ ph(g)
 
 \d g
 
-// TODO hh with gc
-
 s:FN(VD)${()
     //h:HH{SG}${`a:"a";`b:"b"}
     p:FN(SG;TE[U6;U6];VD)${(k;t)$(FD;1) << " ",[k;"=";SG$t(0);SG$t(1);"\n"]}

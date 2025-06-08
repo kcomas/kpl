@@ -252,16 +252,16 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     return JIT_ER(m, OK, NULL);
 }
 
-#define JIT_TD_GC() jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); /* mov rdi qword ptr [rsp] */ \
+#define JIT_TD_GC() jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); /* mov rdi qword ptr [rsp] */ \
     SET_FP(var_td_te); \
     SET_REG_CALL(false, 0); \
     jit_a(j, 0x50); /* push rax */ \
-    jit_b(j, 4, 0X48, 0X8B, 0X3C, 0X24); /* mov rdi qword ptr [rsp] */ \
+    jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); /* mov rdi qword ptr [rsp] */ \
     SET_FP(var_tsv_gc); \
     SET_REG_CALL(false, 0); \
-    jit_b(j, 2, 0XFF, 0XD0); /* call rax with gc fn */ \
-    jit_a(j, 0X5F); /* pop rdi */ \
-    jit_a(j, 0X5F); /* pop rdi */ \
+    jit_b(j, 2, 0xFF, 0xD0); /* call rax with gc fn */ \
+    jit_a(j, 0x5F); /* pop rdi */ \
+    jit_a(j, 0x5F); /* pop rdi */ \
     SET_FP(var_td_f); \
     SET_REG_CALL(false, 0)
 
