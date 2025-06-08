@@ -170,7 +170,7 @@ static atg_stat run_cc(atg *t, gen *g, te *an, te **e) {
     return cc(t, g, an, e);
 }
 
-atg_stat atg_qn(atg *t, ast *a, te **e) {
+atg_stat atg_qn(atg *t, gen **g, ast *a, te **e) {
     atg_stat stat = ATG_STAT(OK);
     un v;
     if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);
@@ -187,9 +187,9 @@ atg_stat atg_qn(atg *t, ast *a, te **e) {
         h = h->d[2].p;
     }
     if (!sf || !ef) return ATG_STAT(INV);
-    gen *g = gen_cpy(t->bg);
-    if ((stat = sf(t, g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, e)) != ATG_STAT(OK)) return stat;
-    te *nn = ast_an_i(a, (*rn)->d[0].p, (*rn)->d[1].p, AST_CLS(S), P(type_s_i(a->ta, NULL, TYPE(_G))), P(g));
+    *g = gen_cpy(t->bg);
+    if ((stat = sf(t, *g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, *g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, *g, *rn, e)) != ATG_STAT(OK)) return stat;
+    te *nn = ast_an_i(a, (*rn)->d[0].p, (*rn)->d[1].p, AST_CLS(S), P(type_s_i(a->ta, NULL, TYPE(_G))), P(*g));
     te_f(*rn);
     *rn = nn;
     return stat;
