@@ -101,7 +101,7 @@ static const char *op_c_str[] = {
     "LA",
     "PV",
     "CTSV",
-    "IDX",
+    "GIDX",
     "IF",
     "COND",
     "LOP",
@@ -317,7 +317,7 @@ static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code
         tbl_itm *ti;
         if (tbl_op(cs->a, &tn->a->n.tl, sym->s, NULL, &ti, NULL, TBL_OP_FLG(FD)) != TBL_STAT(OK)) return CODE_ER(cs, SYM_INV_TBL_R, sym->a);
         hsh_data *hd = (hsh_data*) ti->data;
-        OP_A(cs, c, IDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
+        OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
         return CODE_ER(cs, OK, NULL);
     }
     return CODE_ER(cs, SYM_INV, NULL);

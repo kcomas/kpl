@@ -350,7 +350,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 op_set_jlen(j, o);
                 break;
-            case OP_C(IDX):
+            case OP_C(GIDX):
                 op_set_jidx(j, o);
                 jit_a(j, 0x5F); // pop rdi
                 SET_REG(o->od.u6, size_t, false, 6);

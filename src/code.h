@@ -95,7 +95,7 @@ typedef enum {
     OP_C(LA), // load arg
     OP_C(PV), // push value
     OP_C(CTSV), // create tuple from stack u6 is length
-    OP_C(IDX), // index te, vr, st u6 is i
+    OP_C(GIDX), // get index te, vr, st u6 is i
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
