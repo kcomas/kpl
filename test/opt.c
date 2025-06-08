@@ -166,3 +166,16 @@ T(scope) {
     te_f(ft);
     te_f(fe);
 }
+
+T(efn) {
+    IC(TPGM(efn));
+    te *tfn = TFN(FN, TS(F6), 3, "z", TS(F6), 0, "y", TS(F6), 1, "x", TS(F6), 2);
+    V(RN(LN(LT(1, "addmul", FLG(-1, LTE_FLG(E) | LTE_FLG(F)), te_c(tfn)), L(1,
+        ON(te_c(tfn), DFN, EN("addmul", FLG(-1, LTE_FLG(E) | LTE_FLG(F)), te_c(tfn)), ON(te_c(tfn), CST, NN(T, te_c(tfn)),
+            LN(LT(3, "z", FLG(0, LTE_FLG(A)), TS(F6), "y", FLG(1, LTE_FLG(A)), TS(F6), "x", FLG(2, LTE_FLG(A)), TS(F6)), L(1,
+                ON(TS(F6), MUL, EN("z", FLG(0, LTE_FLG(A)), TS(F6)),
+                    ON(TS(F6), ADD, EN("y", FLG(1, LTE_FLG(A)), TS(F6)), EN("x", FLG(2, LTE_FLG(A)), TS(F6))))
+            ))))
+    ))));
+    te_f(tfn);
+}
