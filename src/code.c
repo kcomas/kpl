@@ -162,6 +162,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     op_node *opn = a->n.op;
     var_node *var;
     type_node *tl, *tr;
+    int64_t i6;
     switch (opn->ot) {
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
@@ -182,10 +183,34 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             break;
         case OP_TYPE(CST):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, r, c);
             if (opn->r->at == AST_TYPE(FN)) return code_gen(cs, opn->r, c);
             // TODO dynamic cast
-            break;
+            switch (opn->l->n.tn->t) {
+                case TYPE(U3):
+                case TYPE(U4):
+                case TYPE(U5):
+                case TYPE(U6):
+                case TYPE(I3):
+                case TYPE(I4):
+                case TYPE(I5):
+                case TYPE(I6):
+                    if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) return p_int(cs, opn->l->n.tn->t, opn->r, c);
+                    // TODO dynamic case
+                    break;
+                case TYPE(FD):
+                        if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
+                            i6 = tkn_to_int64_t(&opn->r->t, cs->str);
+                            if (i6 >= 0 && i6 <= 2) {
+                                OP_A(c, PV, I5, { .i5 = (int32_t) i6 }, opn->r);
+                            return CODE_STAT(OK);
+                        }
+                        return CODE_STAT(INV_CST_INT_TO_FD);
+                    }
+                    return CODE_STAT(INV_CST_FD);
+                default:
+                    break;
+            }
+            return CODE_STAT(INV_CST);
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
             OP_P_INT_RET(opn, cs, l, c);
@@ -221,6 +246,9 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
             OP_ZOO(tr);
             OP_A(c, OR, OP, { .t = TYPE(BL) }, a);
+            break;
+        case OP_TYPE(RW):
+            // TODO
             break;
     }
     return CODE_STAT(OK);

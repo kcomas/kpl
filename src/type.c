@@ -146,6 +146,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
         case OP_TYPE(NOT):
             // TODO check left
             ASTGTN(rt, op->r, INV_NOT_R_T_N);
+            // TODO check for val
             op->ret = type_node_i(TYPE(BL), NULL);
             break;
         // TODO ops
