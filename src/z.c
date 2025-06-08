@@ -165,6 +165,15 @@ err *z(mc *fn, tbl **et) {
         return e;
     }
     chk_f(zc);
+    fld *zo = fld_i_fld(bo, za);
+    if (fld_n(zf, &an, &e, false) != FLD_STAT(OK)) {
+        fld_f(zo);
+        ast_f(za);
+        te_f(an);
+        mc_f(pgm);
+        return e;
+    }
+    fld_f(zo);
     ast_f(za);
     ast_p(an, 0);
     putchar('\n');

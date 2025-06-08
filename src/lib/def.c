@@ -24,6 +24,24 @@ _UOC(uint32_t, u5, 32);
 _UOC(int32_t, i5, 32);
 _UOC(float, f5, 32);
 
+#define _UN_OP_C(N, S, O, X) un S##_##O(un a, un b) { return N(a.S X b.S); }
+
+#define _UN_OP_CC(O, X) _UN_OP_C(U3, u3, O, X) \
+    _UN_OP_C(U4, u4, O, X) \
+    _UN_OP_C(U5, u5, O, X) \
+    _UN_OP_C(U6, u6, O, X) \
+    _UN_OP_C(I3, i3, O, X) \
+    _UN_OP_C(I4, i4, O, X) \
+    _UN_OP_C(I5, i5, O, X) \
+    _UN_OP_C(I6, i6, O, X) \
+    _UN_OP_C(F5, f5, O, X) \
+    _UN_OP_C(F6, f6, O, X)
+
+_UN_OP_CC(add, +)
+_UN_OP_CC(sub, -)
+_UN_OP_CC(mul, *)
+_UN_OP_CC(div, /)
+
 static bool is_cont(size_t n, ...) {
     va_list args;
     va_start(args, n);

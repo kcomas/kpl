@@ -68,6 +68,24 @@ _UOH(float, f5);
 #define F6(D) UN(f6, D)
 #define P(D) UN(p, (void*) D)
 
+#define _UN_OP_H(S, O) un S##_##O(un a, un b)
+
+#define _UN_OP_HH(O) _UN_OP_H(u3, O); \
+    _UN_OP_H(u4, O); \
+    _UN_OP_H(u5, O); \
+    _UN_OP_H(u6, O); \
+    _UN_OP_H(i3, O); \
+    _UN_OP_H(i4, O); \
+    _UN_OP_H(i5, O); \
+    _UN_OP_H(i6, O); \
+    _UN_OP_H(f5, O); \
+    _UN_OP_H(f6, O)
+
+_UN_OP_HH(add);
+_UN_OP_HH(sub);
+_UN_OP_HH(mul);
+_UN_OP_HH(div);
+
 // get next utf8 char starting at s
 un c4_g(const char *str, size_t s, size_t *e);
 
