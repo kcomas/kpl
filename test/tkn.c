@@ -15,6 +15,6 @@ int main(int argc, char *argv[]) {
     }
     tkn_p(&t, m->src.str);
     putchar('\n');
-    mod_free(m);
+    mod_f(m);
     return 0;
 }

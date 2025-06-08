@@ -31,7 +31,7 @@ inline void mod_psrc(const mod *const m) {
     printf("%s", m->src.str);
 }
 
-inline void mod_free(mod *m) {
+inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
     free(m);

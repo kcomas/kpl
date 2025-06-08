@@ -6,6 +6,6 @@ int main(int argc, char *argv[]) {
     mod *m = mod_i();
     mod_lfile(m, argv[1]);
     mod_psrc(m);
-    mod_free(m);
+    mod_f(m);
     return 0;
 }

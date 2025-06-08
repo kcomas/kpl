@@ -75,7 +75,7 @@ inline val_node *val_node_i(type t) {
     return v;
 }
 
-inline void val_node_free(val_node *v) {
+inline void val_node_f(val_node *v) {
     free(v);
 }
 
