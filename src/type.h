@@ -81,6 +81,14 @@ typedef enum {
     TYPE_STAT(VAR_UT) // var not typed
 } type_stat;
 
-type_stat type_chk(fn_node *const fns, ast *const a);
+typedef struct {
+    al *a;
+} type_st;
 
-type_stat type_chk_fn(fn_node *const fn);
+inline void type_st_i(type_st *const ts, al *const a) {
+    ts->a = a;
+}
+
+type_stat type_chk(type_st *const ts, fn_node *const fns, ast *const a);
+
+type_stat type_chk_fn(type_st *const ts, fn_node *const fn);
