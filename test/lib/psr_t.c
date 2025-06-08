@@ -19,7 +19,7 @@ tbl *psr_mktbl(void) {
     return t;
 }
 
-void psr_entry_free(void *p) {
+void psr_entry_f(void *p) {
     te *t = (te*) p;
     te_f(t->d[3].p);
     tbl_f(t->d[7].p);

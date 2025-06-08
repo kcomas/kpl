@@ -27,7 +27,7 @@ void node_f(void *p);
 
 tbl *psr_mktbl(void);
 
-void psr_entry_free(void *p);
+void psr_entry_f(void *p);
 
 // node te[par;type;tkn;....]
 psr_stat psr_int_i(psr *const p, te **n);
@@ -37,7 +37,7 @@ psr_stat psr_flt_i(psr *const p, te **n);
 
 psr_stat psr_val_m(psr *const p, te *const nh, te *const n);
 
-// node te[....left;right]
+// node te[par;type;left;right]
 psr_stat psr_op_i(psr *const p, te **n);
 
 psr_stat psr_op_m(psr *const p, te *const nh, te *const n);
