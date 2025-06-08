@@ -15,13 +15,13 @@ typedef int64_t add3(int64_t a);
 
 static void radd3(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_mov_rr(&p, m, R(9), R(DI));
-    jit_push(&p, m, R(9));
-    jit_pop(&p, m, R(AX));
+    jit_push_r(&p, m, R(9));
+    jit_pop_r(&p, m, R(AX));
     jit_add_rb(&p, m, R(AX), 3);
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     uint64_t a = 3;
@@ -32,11 +32,11 @@ typedef int64_t add(int64_t a, int64_t b);
 
 static void radd(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_mov_rr(&p, m, R(AX), R(DI));
     jit_add_rr(&p, m, R(AX), R(SI));
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     uint64_t a = 1, b = 3;
@@ -47,13 +47,13 @@ typedef int64_t sub(int64_t a, int64_t b);
 
 static void rsub(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_mov_rr(&p, m, R(12), R(DI));
     jit_sub_rr(&p, m, R(12), R(SI));
     jit_mov_rr(&p, m, R(9), R(12));
     jit_mov_rr(&p, m, R(AX), R(9));
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     uint64_t a = 20, b = 9;
@@ -64,12 +64,12 @@ typedef int64_t loop(int64_t a);
 
 static void rloop(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_mov_rr(&p, m, R(8), R(DI));
-    jit_push(&p, m, R(8));
+    jit_push_r(&p, m, R(8));
     jit_xor_rr(&p, m, R(10), R(10));
-    jit_push(&p, m, R(10));
+    jit_push_r(&p, m, R(10));
     size_t lbl = p;
     jit_mov_rq(&p, m, R(AX), P(&printf));
     jit_mov_rq(&p, m, R(DI), P("V: %ld\n"));
@@ -92,9 +92,9 @@ static void rloop(uint8_t *m) {
 typedef uint64_t fib(uint64_t n);
 
 static void bfib(size_t *p, uint8_t *m) {
-    jit_push(p, m, R(BP));
+    jit_push_r(p, m, R(BP));
     jit_mov_rr(p, m, R(BP), R(SP));
-    jit_push(p, m, R(DI)); // push n
+    jit_push_r(p, m, R(DI)); // push n
     // if n == 0
     jit_mov_rq(p, m, R(9), U6(0));
     jit_mov_rra(p, m, R(DI), R(SP));
@@ -122,13 +122,13 @@ static void bfib(size_t *p, uint8_t *m) {
     jit_sub_rb(p, m, R(DI), 1);
     jit_mov_rq(p, m, R(AX), P(m));
     jit_call_r(p, m, R(AX));
-    jit_push(p, m, R(AX));
+    jit_push_r(p, m, R(AX));
     // fib(n - 2)
     jit_mov_rrab(p, m, R(DI), R(BP), -8);
     jit_sub_rb(p, m, R(DI), 2);
     jit_mov_rq(p, m, R(AX), P(m));
     jit_call_r(p, m, R(AX));
-    jit_pop(p, m, R(DI));
+    jit_pop_r(p, m, R(DI));
     jit_add_rr(p, m, R(AX), R(DI));
     jit_leave(p, m);
     jit_ret(p, m);
@@ -144,11 +144,11 @@ static void rfib(uint8_t *m) {
 
 static void daddsub(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_addsd_rr(&p, m, XMM(0), XMM(1));
     jit_subsd_rr(&p, m, XMM(0), XMM(2));
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     double a = 1.2, b = 3.4, c = 0.15;
@@ -158,11 +158,11 @@ static void daddsub(uint8_t *m) {
 
 static void cmp(uint8_t *m) {
     size_t p = 0;
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_cmp_rr(&p, m, R(DI), R(SI));
     jit_setl_r(&p, m, R(AX));
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     int64_t a = 1, b = 2;
@@ -179,19 +179,19 @@ static void p2p(uint8_t *m) {
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
     printp(&a);
-    jit_push(&p, m, R(BP));
+    jit_push_r(&p, m, R(BP));
     jit_mov_rr(&p, m, R(BP), R(SP));
     jit_mov_rr(&p, m, R(DX), R(DI));
     jit_mov_rq(&p, m, R(DI), I6(0));
     jit_mov_rra(&p, m, R(CX), R(DX));
     jit_mov_rq(&p, m, R(SI), I6(23));
     jit_mov_rar(&p, m, R(CX), R(SI));
-    jit_push(&p, m, R(CX));
+    jit_push_r(&p, m, R(CX));
     jit_lea_rrb(&p, m, R(DI), R(BP), -8);
     jit_mov_rq(&p, m, R(AX), P(&printp));
     jit_call_r(&p, m, R(AX));
-    jit_pop(&p, m, R(CX));
-    jit_pop(&p, m, R(BP));
+    jit_pop_r(&p, m, R(CX));
+    jit_pop_r(&p, m, R(BP));
     jit_ret(&p, m);
     printj(p, m);
     ((void(*)(int64_t**)) m)(&a);

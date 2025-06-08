@@ -79,13 +79,38 @@ void as_code_p(const as *const a) {
             printf("O(%s) ", as_inst_str(c->d[1].u6));
             for (size_t i = 2; i < 6; i++) {
                 te *a = c->d[i].p;
-                if (!a) printf("A(N) ");
-                else printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
+                if (a) printf("A(%s):%lu ", arg_id_str(a->d[0].u6), a->d[1].u6);
+                else break;
             }
             putchar('\n');
         }
         h = h->d[2].p;
     }
+}
+
+bool as_ret(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg1;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    return jit_ret(p, m) == JIT_STAT(OK);
+}
+
+bool as_push_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    return jit_push_r(p, m, arg1->d[0].u6) == JIT_STAT(OK);
+}
+
+bool as_pop_r(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    return jit_pop_r(p, m, arg1->d[0].u6) == JIT_STAT(OK);
 }
 
 bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {

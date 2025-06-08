@@ -97,10 +97,10 @@ jit_stat jit_ret(size_t *p, uint8_t *m);
 jit_stat jit_leave(size_t *p, uint8_t *m);
 
 // push rax
-jit_stat jit_push(size_t *p, uint8_t *m, reg r);
+jit_stat jit_push_r(size_t *p, uint8_t *m, reg r);
 
 // pop rax
-jit_stat jit_pop(size_t *p, uint8_t *m, reg r);
+jit_stat jit_pop_r(size_t *p, uint8_t *m, reg r);
 
 // call rax
 jit_stat jit_call_r(size_t *p, uint8_t *m, reg r);
