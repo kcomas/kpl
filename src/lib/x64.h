@@ -166,7 +166,7 @@ x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x);
 x64_stat x64_mov_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp);
 
 // mov qword ptr[rax+dsp8] imm32
-x64_stat x64_mov_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, int32_t d);
+x64_stat x64_mov_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint32_t d);
 
 // movq rax, xmm0
 x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s);
@@ -223,13 +223,13 @@ x64_stat x64_inc_rm(size_t *p, uint8_t *m, reg r);
 x64_stat x64_inc_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
 
 // add rax, byte
-x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
+x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
 // add qword prt[rax], byte
-x64_stat x64_add_rmb(size_t *p, uint8_t *m, reg r, int8_t b);
+x64_stat x64_add_rmb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
 // add qword prt[rax + dsp8], byte
-x64_stat x64_add_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, int8_t b);
+x64_stat x64_add_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b);
 
 // add rax, rdi
 x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s);
@@ -256,7 +256,7 @@ x64_stat x64_dec_rm(size_t *p, uint8_t *m, reg r);
 x64_stat x64_dec_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
 
 // sub rax, byte
-x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b);
+x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
 // sub rax, rdi
 x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
@@ -316,16 +316,16 @@ x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
 x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp);
 
 // cmp rax, imm8
-x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, int8_t b);
+x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
 // cmp qword ptr[rax], imm8
-x64_stat x64_cmp_rmb(size_t *p, uint8_t *m, reg r, int8_t b);
+x64_stat x64_cmp_rmb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
 // cmp qword ptr[rax+dsp8], imm8
-x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, int8_t b);
+x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b);
 
 // cmp rax, imm32
-x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, int32_t d);
+x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d);
 
 // ucomisd xmm0, xmm1
 x64_stat x64_ucomisd_xx(size_t *p, uint8_t *m, reg r, reg s);

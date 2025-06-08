@@ -102,14 +102,14 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 3, rex, C, MOD(11) | E << 3 | rid(r)); \
 }
 
-#define ZREB(N, C, E) x64_stat x64_##N##_rb(size_t *p, uint8_t *m, reg r, int8_t b) { \
+#define ZREB(N, C, E) x64_stat x64_##N##_rb(size_t *p, uint8_t *m, reg r, uint8_t b) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
     return x64_b(p, m, 4, rex, C, MOD(11) | E << 3 | rid(r), b); \
 }
 
-#define ZRED(N, C, E) x64_stat x64_##N##_rd(size_t *p, uint8_t *m, reg r, int32_t d) { \
+#define ZRED(N, C, E) x64_stat x64_##N##_rd(size_t *p, uint8_t *m, reg r, uint32_t d) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
@@ -126,7 +126,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return X64_STAT(OK); \
 }
 
-#define ZRMEB(N, C, E) x64_stat x64_##N##_rmb(size_t *p, uint8_t *m, reg r, int8_t b) { \
+#define ZRMEB(N, C, E) x64_stat x64_##N##_rmb(size_t *p, uint8_t *m, reg r, uint8_t b) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
@@ -144,7 +144,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
-#define ZRMBEB(N, C, E) x64_stat x64_##N##_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, int8_t b) { \
+#define ZRMBEB(N, C, E) x64_stat x64_##N##_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
@@ -153,7 +153,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_b(p, m, 2, dsp, b); \
 }
 
-#define ZRMBED(N, C, E) x64_stat x64_##N##_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, int32_t d) { \
+#define ZRMBED(N, C, E) x64_stat x64_##N##_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint32_t d) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
     if (r >= R(8)) rex |= REX(B); \
