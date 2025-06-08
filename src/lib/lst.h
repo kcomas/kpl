@@ -34,4 +34,6 @@ lst_stat lst_sb(lst *const l, un *d);
 
 lst_stat lst_sf(lst *const l, un *d);
 
+void lst_li_r(lst *const l, te *li);
+
 void lst_f(lst *l);
