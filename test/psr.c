@@ -272,6 +272,22 @@ T(fibrec) {
     te_f(h);
 }
 
+T(ackrec) {
+    te *h = ppnode(psr_r(bpsr(TPGM(ackrec))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(
+            OP(N(NONE), LST(
+                OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), OP(N(VAR), N(INT))),
+                OP(APLY(OP(N(NONE), N(NONE)), OP(N(VAR), N(INT)), OP(N(VAR), N(INT))), APLY(N(VAR), OP(N(VAR), N(INT)), OP(N(TYPE), N(INT)))),
+                OP(APLY(OP(N(NONE), N(NONE)), OP(N(VAR), N(INT)), OP(N(VAR), N(INT))), APLY(N(VAR), OP(N(VAR), N(INT)), APLY(N(VAR), N(VAR), OP(N(VAR), N(INT))))),
+                OP(N(VAR), N(INT))
+            ))
+        ))),
+        CMD(APLY(N(VAR), OP(N(TYPE), N(INT)), OP(N(TYPE), N(INT))))
+    ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(bpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});
@@ -373,33 +389,5 @@ T(add_flt_fn) {
             APLY(N(VAR), N(FLT), N(FLT))
          )
     });
-    te_f(h);
-}
-
-T(ack) {
-    te *h = ppnode(psr_r(bpsr("$(FN(U6`m;U6`n;U6);{?{?(m=0;n+1);&(m>0;n=0)?S(m-1;1);&(m>0;n>0)?S(m-1;S(m;n-1));n+1}})(3;10)")));
-    V(h, {N(ROOT),
-        APLY(APLY(OP(N(NONE), N(NONE)),
-                APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)),
-                LST(OP(N(NONE),
-                    LST(
-                        APLY(OP(N(NONE), N(NONE)),
-                            OP(N(VAR), N(INT)),
-                            OP(N(VAR), N(INT))
-                        ),
-                        OP(
-                            APLY(OP(N(NONE), N(NONE)),
-                                OP(N(VAR), N(INT)),
-                                OP(N(VAR), N(INT))),
-                            APLY(N(KEY), OP(N(VAR), N(INT)), N(INT))
-                        ),
-                        OP(
-                            APLY(OP(N(NONE), N(NONE)),
-                                OP(N(VAR), N(INT)), OP(N(VAR), N(INT))),
-                            APLY(N(KEY), OP(N(VAR), N(INT)),
-                                APLY(N(KEY), N(VAR), OP(N(VAR), N(INT))))
-                        ),
-                        OP(N(VAR), N(INT)))
-                ))), N(INT), N(INT))});
     te_f(h);
 }
