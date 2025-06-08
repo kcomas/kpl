@@ -375,6 +375,8 @@ inline fn_node *fn_node_i(al *const a, fn_node *const par) {
 
 type_node *fn_node_ret_type(const fn_node *const fn);
 
+bool fn_node_tc(const fn_node *const fn);
+
 const char *fn_vim_str(fn_vim vim);
 
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt);

@@ -10,6 +10,19 @@ typedef enum {
     TYPE_STAT(OK),
     TYPE_STAT(SELF_CALL_IN_MOD), // cannot self call in mod
     TYPE_STAT(VAL_UT), // val is ast type
+    TYPE_STAT(TC_FN_N_TC), // fn does not throw error
+    // erros
+    TYPE_STAT(INV_TC_R),
+    TYPE_STAT(TC_ER_N_STR_SG),
+    TYPE_STAT(TC_ER_L_LST_INV),
+    TYPE_STAT(TC_ER_R_NE),
+    TYPE_STAT(INV_TC_NE_T),
+    TYPE_STAT(TC_ER_L_H_N_VAR),
+    TYPE_STAT(TC_VAR_FN_T_NEQ),
+    TYPE_STAT(TC_ER_L_T_N_VAR),
+    TYPE_STAT(TC_VAR_LT_N_T_ER),
+    TYPE_STAT(INV_TC),
+    // assign
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
     TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
     TYPE_STAT(INV_ASS_TO), // cannot assign to node

@@ -185,12 +185,24 @@ extern inline void if_node_f(if_node *in);
 
 extern inline fn_node *fn_node_i(al *const a, fn_node *const par);
 
-type_node *fn_node_ret_type(const fn_node *const fn) {
+static type_node *_fn_node_ret_type(const fn_node *const fn) {
     type_node *tmpt = NULL;
     if (fn->sig && fn->sig->t == TYPE(FN) && fn->sig->a && fn->sig->a->at == AST_TYPE(LST)) {
         tmpt = ast_gtn(fn->sig->a->n.lst->t->a);
     }
     return tmpt;
+}
+
+type_node *fn_node_ret_type(const fn_node *const fn) {
+    type_node *tmpt = _fn_node_ret_type(fn);
+    if (tmpt->t == TYPE(ER)) tmpt = ast_gtn(tmpt->a);
+    return tmpt;
+}
+
+bool fn_node_tc(const fn_node *const fn) {
+    type_node *tmpt = _fn_node_ret_type(fn);
+    if (tmpt &&  tmpt->t == TYPE(ER)) return true;
+    return false;
 }
 
 const char *const fnvims[] = {
