@@ -140,6 +140,25 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     return GEN_STAT(OK);
 }
 
+static gen_stat call_stk(const gen *g, gen_st *st, te *ci, as *a, err **e, vr *sargs) {
+    te *s, *kv;
+    for (size_t i = 0; i < sargs->l; i++) {
+        s = sargs->d[i].p;
+        switch (gen_var_g_c(s)) {
+            case GEN_CLS(A):
+            case GEN_CLS(T):
+                if (!x64_type_is_ref(gen_var_g_t(s))) return gen_err(g, ci, e, "gen arg tmp stk arg not ref");
+                if (get_reg(st, s, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv arg tmp stk reg");
+                if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                drop_atm_kv(st, kv, ci);
+                break;
+            default:
+                return gen_err(g, ci, e, "gen stk var inv cls");
+        }
+    }
+    return GEN_STAT(OK);
+}
+
 // preserve regs, return value
 #define CALL(PR, RV) static gen_stat call_pr_##PR##_rv_##RV(const gen *g, gen_st *st, te *ci, as *a, err **e) { \
     gen_stat stat; \
@@ -175,12 +194,20 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         } \
         for (size_t i = 0; i < rsl; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     } \
-    vr *args = ((te*) ci->d[RV ? 2 : 1].p)->d[1].p; \
-    if (PR) { \
-        if ((stat = call_arg(st, ci, a, args, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
-    } else { \
-        if ((stat = call_arg(st, ci, a, args, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
+    vr *sargs = NULL; \
+    vr *rargs = NULL; \
+    te *cia = ci->d[RV ? 2 : 1].p; \
+    if (gen_var_g_c(cia) == GEN_CLS(M)) rargs = cia->d[1].p; \
+    else { \
+        sargs = ((te*) cia->d[1].p)->d[0].p; \
+        rargs = ((te*) cia->d[1].p)->d[1].p; \
     } \
+    if (PR) { \
+        if (rargs && (stat = call_arg(st, ci, a, rargs, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
+    } else { \
+        if (rargs && (stat = call_arg(st, ci, a, rargs, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
+    } \
+    if (sargs && (stat = call_stk(g, st, ci, a, e, sargs)) != GEN_STAT(OK)) return stat; \
     te *fn = RV ? ci->d[3].p : ci->d[2].p; \
     uint8_t fr; \
     switch (gen_var_g_c(fn)) { \
@@ -195,6 +222,7 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         default: \
            return gen_err(g, ci, e, "gen inv call cls"); \
     } \
+    if (sargs && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * sargs->l)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (RV) { \
         if ((stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen ret"); \
     } \
@@ -265,6 +293,8 @@ void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnr_fn);
+    GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnr_fn);
+    GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A2(g, GEN_OP(CALLV), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnr_md);
