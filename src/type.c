@@ -6,6 +6,7 @@ static const char *const tss[] = {
     "SELF_CALL_IN_MOD",
     "VAL_UT",
     "TC_FN_N_TC",
+    "INV_TC_DISCARD_ER_T",
     "BLTS_INV_T",
     "BTTS_INV_T",
     "HSH_TBL_INS_F",
@@ -14,9 +15,7 @@ static const char *const tss[] = {
     "SYM_INV_TBL_R",
     "SYM_HSH_DATA_T_INV",
     "INV_TC_R",
-    "TC_ER_N_STR_SG",
     "TC_ER_L_LST_INV",
-    "TC_ER_R_NE",
     "INV_TC_NE_T",
     "TC_ER_L_H_N_VAR",
     "TC_VAR_FN_T_NEQ",
@@ -97,7 +96,6 @@ static const char *const tss[] = {
     "INV_CALL_RET_T",
     "INV_CALL_TGT_ARG_T",
     "INV_CALL_ARG_T",
-    "INV_CALL_ARG_ER",
     "CALL_ARG_T_NEQ",
     "NO_ARGS_TD",
     "INV_TD_T",
@@ -324,17 +322,23 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
     if (op->ot != OP_TYPE(CST)) if (op->r) IFTCHK(type_chk, ts, fns, op->r);
     switch (op->ot) {
         case OP_TYPE(TC):
-            if (!op->l) { // throw
+            if (!op->l) {
+                ASTGTN(rt, op->r, INV_TC_R);
+                if (rt->t == TYPE(STR) || rt->t == TYPE(SG)) { // throw
                     if (!fn_node_tc(fns)) return TYPE_ER(ts, TC_FN_N_TC);
-                    ASTGTN(rt, op->r, INV_TC_R);
-                    if (!(rt->t == TYPE(STR) || rt->t == TYPE(SG))) return TYPE_ER(ts, TC_ER_N_STR_SG);
                     op->ret = type_node_i(ts->r->a, TYPE(ER), NULL);
                     break;
+                } else if (rt->t == TYPE(ER)) { // discard
+                    ASTGTN(rt, rt->a, INV_TC_DISCARD_ER_T);
+                    op->ret = type_node_c(ts->r->a, rt);
+                    op->flgs |= NODE_FLG(DE);
+                    break;
+                }
+                return TYPE_ER(ts, INV_TC);
             } else { // catch
                 if (op->l->at != AST_TYPE(LST)) return TYPE_ER(ts, TC_ER_L_LST_INV);
                 lst = op->l->n.lst;
                 ASTGTN(rt, op->r, INV_TC_R);
-                if (rt->t != TYPE(ER)) return TYPE_ER(ts, TC_ER_R_NE);
                 ASTGTN(tn, rt->a, INV_TC_NE_T);
                 if (tn->t != TYPE(VD)) {
                     if (lst->len != 2) return TYPE_ER(ts, TC_ER_L_LST_INV);
@@ -607,7 +611,6 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
             while (ah) {
                 ASTGTN(tt, th->a, INV_CALL_TGT_ARG_T);
                 ASTGTN(ta, ah->a, INV_CALL_ARG_T);
-                if (ta->t == TYPE(ER)) ASTGTN(ta, ta->a, INV_CALL_ARG_ER);
                 if (!((ta->t == TYPE(INT) && type_int_is(tt, NULL)) || (type_eq(tt, ta)))) return TYPE_ER(ts, CALL_ARG_T_NEQ);
                 th = th->next;
                 ah = ah->next;

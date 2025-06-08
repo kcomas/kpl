@@ -576,10 +576,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     rer erer;
     switch (opn->ot) {
         case OP_TYPE(TC):
-            if (!opn->l) { // throw
+            if (!opn->l) {
                 IFCGEN(code_gen, cs, opn->r, c);
+                if (opn->flgs & NODE_FLG(DE)) return CODE_ER(cs, OK, NULL); // discard
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, TC_R_N, opn->r);
-                OP_A(cs, c, TE, ER, { RER(tr->t, false) }, opn->r);
+                OP_A(cs, c, TE, ER, { RER(tr->t, false) }, opn->r); // throw
                 return CODE_ER(cs, OK, NULL); // stop panic
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
