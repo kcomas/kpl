@@ -17,6 +17,19 @@ tbl *tbl_c(tbl *t) {
     return t;
 }
 
+bool tbl_eq(const tbl *restrict a, const tbl *restrict b, tbl_cmp_fn cmp) {
+   if (!a && !b) return true;
+   if (!a || !b || a->i->l != b->i->l) return false;
+   te *ah = a->i->h;
+   te *bh = b->i->h;
+   while (ah && bh) {
+        if (!cmp(ah->d[0].p, bh->d[0].p)) return false;
+        ah = ah->d[2].p;
+        bh = bh->d[2].p;
+   }
+   return true;
+}
+
 size_t tbl_no_hsh(un d) {
     return d.u6;
 }
@@ -33,10 +46,7 @@ bool tbl_un_eq(un a, un b) {
 }
 
 bool tbl_mc_eq(un a, un b) {
-    mc *ma = a.p, *mb = b.p;
-    if (ma->l != mb->l) return false;
-    for (size_t i = 0; i < ma->l; i++) if (ma->d[i] != mb->d[i]) return false;
-    return true;
+    return mc_eq(a.p, b.p);
 }
 
 size_t tbl_g_l(const tbl *t) {

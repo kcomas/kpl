@@ -29,10 +29,15 @@ static void pt(tbl *t) {
     putchar('\n');
 }
 
-T(tbl) {
+static tbl *mt(size_t s) {
     lst *tl = lst_i(&tm, &tm, (void*) te_f);
-    te *b = te_i(1, &tm, NULL);
+    te *b = te_i(s, &tm, NULL);
     tbl *t = tbl_i(&tm, tbl_mc_sdbm, tbl_mc_eq, tl, b);
+    return t;
+}
+
+T(tbl) {
+    tbl *t = mt(1);
     A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
     pt(t);
     A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");
@@ -69,4 +74,25 @@ T(tbl) {
     }
     pt(t);
     tbl_f(t);
+}
+
+static bool eq_fn(const te *restrict ea, const te *restrict eb) {
+    return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].i6 == eb->d[1].i6;
+}
+
+T(eq) {
+    tbl *a = mt(5);
+    tbl_a(a, kv_i("a", 123));
+    tbl_a(a, kv_i("b", 456));
+    tbl *b = mt(5);
+    tbl_a(b, kv_i("a", 123));
+    tbl_a(b, kv_i("b", 456));
+    A(tbl_eq(a, b, eq_fn), "tbl_eq");
+    tbl *c = mt(5);
+    tbl_a(c, kv_i("a", 123));
+    tbl_a(c, kv_i("b", 789));
+    A(!tbl_eq(a, c, eq_fn), "!tbl_eq");
+    tbl_f(a);
+    tbl_f(b);
+    tbl_f(c);
 }

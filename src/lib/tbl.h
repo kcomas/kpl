@@ -32,6 +32,10 @@ tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
 tbl *tbl_c(tbl *t);
 
+typedef bool tbl_cmp_fn(const te *restrict ea, const te *restrict eb);
+
+bool tbl_eq(const tbl *restrict a, const tbl *restrict b, tbl_cmp_fn cmp);
+
 size_t tbl_no_hsh(un d);
 
 size_t tbl_mc_sdbm(un d);
