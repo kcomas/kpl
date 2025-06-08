@@ -419,6 +419,9 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             break;
         case OP_TYPE(ADD):
             ASTGTNBOP(ADD);
+            if (lt->t == TYPE(VR)) {
+                // TODO
+            }
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             return TYPE_ER(ts, INV_ADD);
         case OP_TYPE(SUB):
