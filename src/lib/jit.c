@@ -64,42 +64,51 @@ jit_stat jit_leave(size_t *p, uint8_t *m) {
     return jit_a(p, m, 0xC9);
 }
 
+#define VALID_R(REG) if (REG > R(15)) return JIT_STAT(INV_REG);
+#define VALID_X(X) if (X < XMM(0)) return JIT_STAT(INV_REG);
+
 #define SET_REX(R1) uint8_t rex = REX(W); \
-    if (R1 > R(15)) return JIT_STAT(INV_REG); \
     if (reg_is_upper(R1)) rex |= REX(B)
 
 #define SET_REX2(R1, R2) uint8_t rex = REX(W); \
-    if (R1 > R(15) || R2 > R(15)) return JIT_STAT(INV_REG); \
     if (reg_is_upper(R1)) rex |= REX(B); \
     if (reg_is_upper(R2)) rex |= REX(R)
 
 jit_stat jit_push(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 2, rex, 0x50 + rid(r));
 }
 
 jit_stat jit_pop(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 2, rex, 0x58 + rid(r));
 }
 
 jit_stat jit_call_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 3, rex, 0xFF, 0xD0 + rid(r));
 }
 
 jit_stat jit_mov_rq(size_t *p, uint8_t *m, reg r, un u) {
+    VALID_R(r);
     SET_REX(r);
     jit_b(p, m, 2, rex, 0xB8 + rid(r));
     return jit_d(p, m, u);
 }
 
 jit_stat jit_mov_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x89, modrm(0xC0, d, s));
 }
 
 jit_stat jit_mov_rar(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     jit_b(p, m, 3, rex, 0x89, modrm(0x00, d, s));
     if (d == R(SP)) return jit_a(p, m, 0x24);
@@ -107,6 +116,8 @@ jit_stat jit_mov_rar(size_t *p, uint8_t *m, reg d, reg s) {
 }
 
 jit_stat jit_mov_rabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     jit_b(p, m, 3, rex, 0x89, modrm(0x40, d, s));
     if (d == R(SP)) return jit_a(p, m, 0x24);
@@ -114,6 +125,8 @@ jit_stat jit_mov_rabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
 }
 
 jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(s, d);
     jit_b(p, m, 3, rex, 0x8B, modrm(0x00, s, d));
     if (s == R(SP)) jit_a(p, m, 0x24);
@@ -121,6 +134,7 @@ jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s) {
 }
 
 jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+    VALID_R(s);
     SET_REX2(s, d);
     jit_b(p, m, 3, rex, 0x8B, modrm(0x40, s, d));
     if (s == R(SP)) jit_a(p, m, 0x24);
@@ -128,46 +142,60 @@ jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
 }
 
 jit_stat jit_inc_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 3, rex, 0xFF, 0xC0 + rid(r));
 }
 
 jit_stat jit_add_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 4, rex, 0x83, 0xC0 + rid(r), b);
 }
 
 jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x01, modrm(0xC0, d, s));
 }
 
 jit_stat jit_dec_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 3, rex, 0xFF, 0xC8 + rid(r));
 }
 
 jit_stat jit_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
+    VALID_R(r);
     SET_REX(r);
     return jit_b(p, m, 4, rex, 0x83, 0xE8 + rid(r), b);
 }
 
 jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x29, modrm(0xC0, d, s));
 }
 
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x31, modrm(0xC0, d, s));
 }
 
 jit_stat jit_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x39, modrm(0xC0, d, s));
 }
 
 jit_stat jit_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_R(d);
+    VALID_R(s);
     SET_REX2(d, s);
     return jit_b(p, m, 3, rex, 0x85, modrm(0xC0, d, s));
 }
