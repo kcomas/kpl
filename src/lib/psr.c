@@ -50,22 +50,19 @@ size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *e
     return nid;
 }
 
-psr_stat psr_n(psr *const p, te *const nh, te *m) {
-    tkn_stat tstat = TKN_STAT(INV);
+psr_stat psr_n(psr *const p, te *const nh) {
+    tkn_stat tstat;
     psr_stat pstat;
-    if (!m) {
-        m = te_i(5, p->pa, p->pf);
-        m->d[0] = U6(TOKEN(UN));
-    }
+    te *m = te_i(5, p->pa, p->pf);
     for (;;) {
+        if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         psr_mode pm = PSR_MODE(NONE);
         te *st = NULL;
         psr_each_fn *ef = NULL;
         psr_megre_fn *mf = NULL;
         psr_node_fn *nf = NULL;
         tbl *pt = p->pt;
-        if (!m->d[0].u6) if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
-        te *kv;
+        te *kv, *pn;
         while (tbl_g_i(pt, m->d[0], &kv) == TBL_STAT(OK)) {
             vr_ab(&p->ts, P(m));
             pm = kv->d[2].u6;
@@ -77,54 +74,35 @@ psr_stat psr_n(psr *const p, te *const nh, te *m) {
             m = te_i(5, p->pa, p->pf);
             if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         }
-        te *pn;
-        if (pm == PSR_MODE(NONE)) {
-            if (p->ts->l == 0) {
-                vr_ab(&p->ts, P(m));
-                return PSR_STAT(NF);
-            }
-            return PSR_STAT(INV);
-        }
-        else if (pm == PSR_MODE(LOOP)) {
+        tkn_s(p->tt, m);
+        if (pm == PSR_MODE(NONE)) return PSR_STAT(INV);
+        else if (pm == PSR_MODE(STOP)) {
+            te_f(m);
+            return PSR_STAT(END);
+        } else if (pm == PSR_MODE(LOOP)) {
             if (!st || !ef || !nf || !mf) return PSR_STAT(INV);
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
+            vr_d(p->ts);
             te *lnh = te_i(3, p->pa, p->pf);
             for (;;) {
                 lnh->d[0] = P(NULL);
                 lnh->d[1] = P(NULL);
                 lnh->d[2] = P(NULL);
-                for (size_t i = 0; i < st->l; i++) if (m->d[0].u6 == st->d[i].u6) break;
-                if ((pstat = psr_n(p, lnh, m)) != PSR_STAT(END)) {
-                    if (pstat == PSR_STAT(NF)) {
-                        un d;
-                        vr_sb(p->ts, &d);
-                        m = d.p;
-                        for (size_t i = 0; i < st->l; i++) if (m->d[0].u6 == st->d[i].u6) goto el;
-                    }
-                    return pstat;
-                }
-                m = te_i(5, p->pa, p->pf);
+                if ((pstat = psr_n(p, lnh)) != PSR_STAT(END)) return pstat;
                 if ((pstat = ef(p, pn, lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p)) != PSR_STAT(OK)) return pstat;
-                if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) return PSR_STAT(INV);
+                for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
             }
             el:
-            if ((pstat = ef(p, pn, lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p)) != PSR_STAT(OK)) return pstat;
             if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
             te_f(lnh);
+            vr_d(p->ts);
             te_f(m);
             m = te_i(5, p->pa, p->pf);
         } else if (nf && mf) {
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
+            vr_d(p->ts);
             if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
-            if (st && tstat == TKN_STAT(OK)) {
-                for (size_t i = 0; i < st->l; i++) if (m->d[0].u6 == st->d[i].u6) {
-                    te_f(m);
-                    return PSR_STAT(END);
-                }
-            }
-            if (tstat != TKN_STAT(OK)) break;
         }
-        vr_d(p->ts);
     }
     te_f(m);
     return tstat == TKN_STAT(END) ? PSR_STAT(END) : PSR_STAT(INV);

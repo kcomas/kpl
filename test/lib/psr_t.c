@@ -6,7 +6,7 @@ void psr_p(tbl *t, size_t idnt) {
     while (h) {
         for (size_t i = 0; i < idnt; i++) putchar(' ');
         te *kv = h->d[0].p;
-        printf("tid:%lu,pid:%lu\n", kv->d[0].u6, kv->d[1].u6);
+        printf("tid:%lu,pid:%lu,mode:%lu\n", kv->d[0].u6, kv->d[1].u6, kv->d[2].u6);
         psr_p(kv->d[7].p, idnt + 1);
         h = h->d[2].p;
     }
