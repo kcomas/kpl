@@ -14,8 +14,16 @@
 
 ### Build
 
+Debug
+
 ```bash
 make
+```
+
+Optimized
+
+```bash
+make DFLAGS="" OO=-O1
 ```
 
 ##### Build Flags
