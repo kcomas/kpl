@@ -138,23 +138,24 @@ MULDIVVUVUAU(imul, IMUL);
 
 MULDIVVUVUVU(imul, IMUL);
 
-#define AUAUDU(N, M, O) static gen_stat N##_auaudu_fn(gen *g, void *s, te *ci, as *a, err **e) { \
+#define UUDU(N, A, M, O, AI) static gen_stat N##_##A##u##A##udu_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     gen_stat stat; \
     te *kv[2]; \
     if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     if (kv[0]->d[2].u3 != kv[1]->d[2].u3 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), as_arg_i(a, ARG_ID(R), kv[1]->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     uint64_t v = ((te*) ci->d[3].p)->d[1].u6; \
     if (v == 1) { \
-        if (gen_as(a, AS_X64(M), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+        if (gen_as(a, AS_X64(M), as_arg_i(a, ARG_ID(AI), kv[0]->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     } else if (v <= INT32_MAX) { \
-        if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), bd_arg(a, v), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+        if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(AI), kv[0]->d[2]), bd_arg(a, v), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     } else return gen_err(g, ci, e, "nyi"); \
     drop_atm_kv_n(s, kv, ci, 2); \
     return GEN_STAT(OK); \
 }
 
-AUAUDU(add, INC, ADD);
-AUAUDU(sub, DEC, SUB);
+UUDU(add, a, INC, ADD, R);
+UUDU(add, am, INC, ADD, RM);
+UUDU(sub, a, DEC, SUB, R);
 
 #define AXAXDX(N, O) static gen_stat N##_axaxdx_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     gen_stat stat; \
@@ -234,6 +235,7 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), add_vuvuvu_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), addsd_axaxdx_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), addsd_axaxax_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), X64_TYPE(MU6), GEN_CLS(A), X64_TYPE(MU6), GEN_CLS(D), X64_TYPE(U6), add_amuamudu_fn);
     GEN_OP_A3(g, GEN_OP(SUB), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), subsd_axaxax_fn);
     GEN_OP_A3(g, GEN_OP(SUB), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U3), sub_auaudu_fn);
     GEN_OP_A3(g, GEN_OP(SUB), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U3), sub_auaudu_fn);

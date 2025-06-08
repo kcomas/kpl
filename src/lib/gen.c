@@ -9,6 +9,7 @@ const char* gen_cls_str(gen_cls cls) {
         case GEN_CLS(I): return "I";
         case GEN_CLS(A): return "A";
         case GEN_CLS(V): return "V";
+        case GEN_CLS(S): return "S";
         case GEN_CLS(T): return "T";
         case GEN_CLS(L): return "L";
         case GEN_CLS(D): return "D";

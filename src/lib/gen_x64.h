@@ -13,6 +13,7 @@ typedef enum {
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
     GEN_OP(SET),
+    GEN_OP(REF),
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
     GEN_OP(CALLV), // varardic
@@ -86,6 +87,8 @@ te *gen_tmp(gen *g, x64_type t, size_t id);
 te *gen_data(gen *g, x64_type t, un d);
 
 te *gen_stkv(gen *g, x64_type t, size_t id);
+
+te *gen_stka(gen *g, x64_type t, size_t id);
 
 // atm entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];reg]
 

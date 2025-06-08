@@ -8,6 +8,7 @@ const char *gen_op_str(gen_op go) {
         "ENTER",
         "LEAVE",
         "SET",
+        "REF",
         "CALL",
         "CALLNPR",
         "CALLV",
@@ -217,6 +218,10 @@ te *gen_stkv(gen *g, x64_type t, size_t id) {
     return gen_var_i(g, NULL, GEN_CLS(V), t, U6(id));
 }
 
+te *gen_stka(gen *g, x64_type t, size_t id) {
+    return gen_var_i(g, NULL, GEN_CLS(S), t, U6(id));
+}
+
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
     st->rac = st->xac = st->rvc = st->xvc = st->rsc = st->xsc = 0;
@@ -325,6 +330,16 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
                     break;
                 default:
                     st->rvc = ovt->d[1].u3 + 1 > st->rvc ? ovt->d[1].u3 + 1 : st->rvc;
+            }
+            break;
+        case GEN_CLS(S):
+             switch (gen_var_g_t(ovt)) {
+                case X64_TYPE(F5):
+                case X64_TYPE(F6):
+                    st->xsc = ovt->d[1].u3 + 1 > st->xsc ? ovt->d[1].u3 + 1 : st->xsc;
+                    break;
+                default:
+                    st->rsc = ovt->d[1].u3 + 1 > st->rsc ? ovt->d[1].u3 + 1 : st->rsc;
             }
             break;
         case GEN_CLS(T):
@@ -476,11 +491,9 @@ void gen_x64_opt(gen *g, gen_st *st) {
     te *h = g->code->h, *c;
     while (h) {
         c = h->d[0].p;
-        if (c->d[0].u6 == GEN_OP(LEAVE)) {
-            if (h->d[1].p) {
-                c = ((te*) h->d[1].p)->d[0].p;
-                if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, c);
-            }
+        if (c->d[0].u6 == GEN_OP(LEAVE) && h->d[1].p) {
+            c = ((te*) h->d[1].p)->d[0].p;
+            if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, c);
         }
         h = h->d[2].p;
     }

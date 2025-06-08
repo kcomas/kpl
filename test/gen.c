@@ -396,11 +396,15 @@ T(updateTE) {
     putchar('\n');
     te_f(t);
 }
-/*
-T(stkargs) {
+
+T(addm) {
     gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
-    S(gen_a(g, GEN_OP(ENTER), gen_data(g, X64_TYPE(U3), U3(1)), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_arg(g, X64_TYPE(MU6), 0), gen_arg(g, X64_TYPE(MU6), 0), gen_data(g, X64_TYPE(U6), U6(3))));
+    S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
     BUILD(g, m);
+    uint64_t a = 2;
+    ((void(*)(uint64_t*)) m)(&a);
+    A(a == 5, "addm");
 }
-*/
