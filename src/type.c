@@ -752,9 +752,9 @@ type_stat type_chk_fn(type_st *const ts, fn_node *const fn) {
     IFTCHK(type_chk_lst, ts, fn, fn->body);
     if (fn->par) {
         type_node *tmpr, *tmpf;
-        ASTGTN(tmpr, fn->body->t->a, INV_IRET_T);
         if (!(tmpf = fn_node_ret_type(fn))) return TYPE_ER(ts, INV_IRET_FNS);
         if (tmpf->t == TYPE(VD)) return TYPE_ER(ts, OK);
+        ASTGTN(tmpr, fn->body->t->a, INV_IRET_T);
         if (!type_eq(tmpf, tmpr)) return TYPE_ER(ts, IRET_T_NEQ);
     }
     return TYPE_ER(ts, OK);
