@@ -3,28 +3,28 @@
 
 const alfr am = { .a = &malloc, .f = &free };
 
-static te *as_arg_v(arg_id id, un v) {
-    return as_arg_i(&am, id, v);
+static te *as_arg_v(as *a, arg_id id, un v) {
+    return as_arg_i(a, id, v);
 }
 
-te *as_arg_r(size_t rid) {
-    return as_arg_v(ARG_ID(R), U3(rid));
+te *as_arg_r(as *a, size_t rid) {
+    return as_arg_v(a, ARG_ID(R), U3(rid));
 }
 
-te *as_arg_rm(size_t rmid) {
-    return as_arg_v(ARG_ID(RM), U3(rmid));
+te *as_arg_rm(as *a, size_t rmid) {
+    return as_arg_v(a, ARG_ID(RM), U3(rmid));
 }
 
-te *as_arg_l(size_t lid) {
-    return as_arg_v(ARG_ID(L), U6(lid));
+te *as_arg_l(as *a, size_t lid) {
+    return as_arg_v(a, ARG_ID(L), U6(lid));
 }
 
-te *as_arg_qw(un v) {
-    return as_arg_v(ARG_ID(QW), v);
+te *as_arg_qw(as *a, un v) {
+    return as_arg_v(a, ARG_ID(QW), v);
 }
 
-te *as_arg_b(uint8_t b) {
-    return as_arg_v(ARG_ID(B), U3(b));
+te *as_arg_b(as *a, uint8_t b) {
+    return as_arg_v(a, ARG_ID(B), U3(b));
 }
 
 lst *as_mklst(void) {

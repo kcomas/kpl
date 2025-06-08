@@ -7,7 +7,7 @@ extern const alfr gm;
 
 void btest(void) {
     printf(">>>> BTEST\n");
-    gen *g = gen_i(&gm, &gm, &gm, &gen_entry_f, &gen_code_entry_f, &gen_cls_info_tbl, gen_op_tbl(10/*TODO*/), gen_mklst());
+    gen *g = gen_i(&gm, &gm, &gen_entry_f, &gen_code_entry_f, &gen_cls_info_tbl, gen_op_tbl(10/*TODO*/), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
     A(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -33,7 +33,7 @@ void btest(void) {
 }
 
 static gen *init(void) {
-    gen *g = gen_i(&gm, &gm, &gm, &gen_entry_f, &gen_code_entry_f, &gen_cls_info_tbl, gen_op_tbl(10/*TODO*/), gen_mklst());
+    gen *g = gen_i(&gm, &gm, &gen_entry_f, &gen_code_entry_f, &gen_cls_info_tbl, gen_op_tbl(10/*TODO*/), gen_mklst());
     gen_b(g);
     return g;
 }

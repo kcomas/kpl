@@ -1,13 +1,6 @@
 
 #include "as.h"
 
-te *as_arg_i(const alfr *af, size_t id, un d) {
-    te *a = te_i(2, af, NULL);
-    a->d[0] = U6(id);
-    a->d[1] = d;
-    return a;
-}
-
 as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
@@ -97,6 +90,13 @@ as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t 
     kv->d[1] = P(fn);
     kv->d[2] = P(lbl_fn);
     return AS_STAT(OK);
+}
+
+te *as_arg_i(as *a, size_t id, un d) {
+    te *arg = te_i(2, a->ta, NULL);
+    arg->d[0] = U6(id);
+    arg->d[1] = d;
+    return arg;
 }
 
 as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {

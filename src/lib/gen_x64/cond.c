@@ -7,8 +7,8 @@
     gen_st *st = s; \
     te *kv[2]; \
     if ((stat = get_reg_n(st, ci, kv, 2)) != GEN_STAT(OK)) return stat; \
-    AS2(a, AS_X64(CMP), as_arg_i(g->aa, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg_i(g->aa, ARG_ID(R), U3(kv[1]->d[2].u3)), ci); \
-    AS1(a, AS_X64(J), as_arg_i(g->aa, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci); \
+    AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(kv[1]->d[2].u3)), ci); \
+    AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci); \
     drop_atm_kv_n(st, kv, ci, 2); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
@@ -24,9 +24,9 @@ AUAUL(gt, JA);
     gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat; \
-    AS2(a, AS_X64(MOV), as_arg_i(g->aa, ARG_ID(R), U3(R(AX))), as_arg_i(g->aa, ARG_ID(QW), ((te*) ci->d[2].p)->d[2]), ci); \
-    AS2(a, AS_X64(CMP), as_arg_i(g->aa, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(g->aa, ARG_ID(R), U3(R(AX))), ci); \
-    AS1(a, AS_X64(J), as_arg_i(g->aa, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci); \
+    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[2]), ci); \
+    AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci); \
+    AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci); \
     drop_atm_kv(st, kv, ci); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
