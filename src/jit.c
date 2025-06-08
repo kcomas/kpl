@@ -113,12 +113,12 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
         stk[stki++] = j->len;
         jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after if jmp to end of if
         jmpl = j->len - jmpp - sizeof(int);
-        memcpy(j->a + jmpp, &jmpl, sizeof(int)); // fill cond skip
+        memcpy(j->h + jmpp, &jmpl, sizeof(int)); // fill cond skip
         op_set_jlen(j, o);
     }
     while (stki > 0) {
         jmpl = j->len - stk[stki - 1] - sizeof(int);
-        memcpy(j->a + stk[stki - 1], &jmpl, sizeof(int)); // fill body skip
+        memcpy(j->h + stk[stki - 1], &jmpl, sizeof(int)); // fill body skip
         stki--;
     }
     return JIT_STAT(OK);
@@ -139,9 +139,9 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     lope = j->len;
     jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after lop jmp to start of if
     jmpl = lops - j->len;
-    memcpy(j->a + lope, &jmpl, sizeof(int));
+    memcpy(j->h + lope, &jmpl, sizeof(int));
     jmpl = j->len - bs - sizeof(int);
-    memcpy(j->a + bs, &jmpl, sizeof(int));
+    memcpy(j->h + bs, &jmpl, sizeof(int));
     return JIT_STAT(OK);
 }
 
@@ -530,7 +530,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
 jit_stat jit_stk(mod *const m, fn_stk *const stk, jit *j) {
     jit_stat jstat;
     for (size_t i = 0; i < stk->len; i++) {
-        stk->fn[i]->jf = (jit_fn*) &j->a[j->len];
+        stk->fn[i]->jf = (jit_fn*) &j->h[j->len];
         if ((jstat = jit_code(m, stk->fn[i], stk->fn[i]->jf, j)) != JIT_STAT(OK)) return jstat;
     }
     return JIT_STAT(OK);

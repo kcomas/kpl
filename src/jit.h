@@ -67,7 +67,7 @@ inline void fn_stk_f(fn_stk *f) {
 
 typedef struct _jit {
     size_t len, size; // len, num pages, total size
-    uint8_t *a; // address
+    uint8_t *h; // address
 } jit;
 
 #ifndef BYTES_PER_OP
@@ -79,17 +79,17 @@ inline jit *jit_i(size_t nops) {
     jit *j = calloc(1, sizeof(jit));
     size_t ps = (size_t) getpagesize();
     j->size = size <= ps ? ps : (size / ps + 1) * ps;
-    j->a = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    j->h = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     return j;
 }
 
 inline void jit_f(jit *j) {
-    munmap(j->a, j->size);
+    munmap(j->h, j->size);
     free(j);
 }
 
 inline void jit_a(jit *j, uint8_t b) {
-    j->a[j->len++] = b;
+    j->h[j->len++] = b;
 }
 
 inline void jit_b(jit *j, size_t len, ...) {

@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "lst.h"
+#include "al.h"
 
 #define KPLE 'k'+'p'+'l'
 
