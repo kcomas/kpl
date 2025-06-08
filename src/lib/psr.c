@@ -48,10 +48,9 @@ size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_megre_fn *
     return nid;
 }
 
-psr_stat psr_n(psr *const p, te **h) {
+psr_stat psr_n(psr *const p, te *const nh) {
     tkn_stat tstat = TKN_STAT(INV);
     psr_stat pstat;
-    void **c = NULL;
     te *m = te_i(5, p->pa, p->pf);
     m->d[0] = U6(TOKEN(UN));
     for (;;) {
@@ -74,7 +73,7 @@ psr_stat psr_n(psr *const p, te **h) {
         if (nf) {
             te *pn;
             if ((pstat = nf(p, &pn)) != PSR_STAT(OK)) return pstat;
-            if ((pstat = mf(p, h, &c, pn)) != PSR_STAT(OK)) return pstat;
+            if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
             if (kv->d[3].p && tstat == TKN_STAT(OK)) {
                 te *st = kv->d[3].p;
                 for (size_t i = 0; i < st->l; i++) if (m->d[0].u6 == st->d[i].u6) return PSR_STAT(END);

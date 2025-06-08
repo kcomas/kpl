@@ -29,12 +29,11 @@ psr_stat psr_val_i(psr *const p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_val_m(psr *const p, te **h, void ***c, te *const n) {
+psr_stat psr_val_m(psr *const p, te *const nh, te *const n) {
     (void) p;
-    (void) h;
-    if (*c && **c) return PSR_STAT(INV);
-    else if (!*c) *h = n;
-    else **c = n;
+    if (nh->d[1].p) ((te*) nh->d[1].p)->d[3].p = n;
+    else if (nh->d[2].p) return PSR_STAT(INV);
+    else nh->d[2].p = n;
     return PSR_STAT(OK);
 }
 
@@ -43,17 +42,18 @@ psr_stat psr_op_i(psr *const p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_op_m(psr *const p, te **h, void ***c, te *const n) {
+psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
     (void) p;
-    if (!*h && !*c) return PSR_STAT(INV);
-    else if (*h && !*c) {
-        n->d[2].p = *h;
-        *h = n;
+    if (!nh->d[0].p) nh->d[0].p = n;
+    if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
+    if (nh->d[2].p) {
+        n->d[2].p = nh->d[2].p;
+        nh->d[2].p = NULL;
     } else {
-        if (!*h) *h = n;
-        n->d[2].p = *c;
+        n->d[2].p = ((te*) nh->d[1].p)->d[3].p;
+        ((te*) nh->d[1].p)->d[3].p = n;
     }
-    *c = &n->d[3].p;
+    nh->d[1].p = n;
     return PSR_STAT(OK);
 }
 
