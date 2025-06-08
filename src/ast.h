@@ -12,18 +12,19 @@ typedef enum {
     AST_STAT(TKN_ERR),
     AST_STAT(TKN_INV), // tkn should not have been found
     AST_STAT(TKN_NF), // no case for tkn
+    AST_STAT(VAL_A_NN), // prev node for val not null
+    AST_STAT(VAR_A_NN), // prev node for var not null
+    AST_STAT(TYPE_A_NN), // prev node for type not null
     AST_STAT(VAR_I_ERR), // failed to add var node
-    AST_STAT(VAR_A_NN), // previous node not null for var
-    AST_STAT(VAL_A_NN), // previous node not null for val
-    AST_STAT(TYPE_A_NN), // previous node not null for type
-    AST_STAT(FH_A_NN), // prev node not null for fn or hash
-    AST_STAT(IF_A_NN), // prev node not null for if
+    AST_STAT(OP_CALL_A_NN), // prev op node for call not null
+    AST_STAT(FH_A_NN), // prev node for fn/hash not null
+    AST_STAT(VT_A_NN), // prev node for vec/tuple not null
+    AST_STAT(CALL_A_N), // prev node for call null
     AST_STAT(IF_INV_FMT), // missing ( after if start
     AST_STAT(IF_INV_BODY), // invalid if body
+    AST_STAT(IF_A_NN), // prev node for if not null
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
-    AST_STAT(OP_CALL_A_NN), // prev node for op call not null
-    AST_STAT(CALL_A_N), // prev node null for call
-    AST_STAT(RET_A_N), // prev node null for ret
+    AST_STAT(RET_A_NN), // prev node for if not null
     AST_STAT(END)
 } ast_stat;
 
@@ -164,7 +165,9 @@ typedef enum {
     OP_TYPE(EQ),
     OP_TYPE(NOT),
     // TODO OP
-    OP_TYPE(OR)
+    OP_TYPE(OR),
+    OP_TYPE(CNCT),
+    OP_TYPE(RW)
 } op_type;
 
 typedef struct {

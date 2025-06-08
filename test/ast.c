@@ -12,10 +12,10 @@ int main(int argc, char *argv[]) {
     ast_st_i(&as, m->src.str);
     if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFLS, TKN_FLG(NB))) != AST_STAT(OK)) {
         if (astat != AST_STAT(END)) {
-            fn_node_p(&as, m->fns, 0);
             return astat;
         }
     }
+    fn_node_p(&as, m->fns, 0);
     fn_node_f(m->fns);
     mod_f(m);
     return 0;
