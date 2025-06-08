@@ -8,8 +8,35 @@ int mt(void *volatile args) {
     return 0;
 }
 
+#ifndef REPL_BUF_SIZE
+    #define REPL_BUF_SIZE 200
+#endif
+
+#define KPL_REPL_MSG "KPL 0.0.0 CTRL-D to exit"
+
+int repl(void) {
+    ssize_t rlen = 0;
+    tds *volatile s = tds_i();
+    tdr *volatile r = tds_g(s, true);
+    mod *volatile m = mod_i(s, r);
+    char rbuf[REPL_BUF_SIZE];
+    m->fns = fn_node_i(r->a, NULL);
+    m->fns->sig = type_node_i(r->a, TYPE(MOD), NULL);
+    m->c = code_i(r->a, CODE_I_SIZE);
+    jit_i(r->a, 100, &r->j, 0);
+    printf("%s\n", KPL_REPL_MSG);
+    for (;;) {
+        memset(rbuf, '\0', REPL_BUF_SIZE);
+        write(STDOUT_FILENO, "> ", 2);
+        rlen = read(STDIN_FILENO, rbuf, REPL_BUF_SIZE);
+        if (rlen == 0) break;
+    }
+    putchar('\n');
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
-    if (argc != 2) return 1;
+    if (argc != 2) return repl();
     tds *volatile s = tds_i();
     tdr *volatile r = tds_g(s, true);
     mod *volatile m = mod_i(s, r);
