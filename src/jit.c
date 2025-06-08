@@ -278,6 +278,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
+            case OP_C(LM):
+                op_set_jidx(j, o);
+                // TODO
+                op_set_jlen(j, o);
+                break;
             case OP_C(AL):
                 op_set_jidx(j, o);
                 jit_b(j, 4, 0x48, 0x83, 0xEC, o->od.u3 * sizeof(void*)); // sub rsp nl * ptrsize
