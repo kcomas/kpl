@@ -129,6 +129,7 @@ static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
             else if (flgs & LTE_FLG(L)) es = gen_stkv(g, xt, id);
             else return atg_err(t, an, e, "atg inv exp type");
             uint32_t idx = sizeof(void*) * 4 + sizeof(void*) * eid;
+            // TODO build more complex types
             if (gen_a(g, GEN_OP(SET), gen_idx_m(g, xt, 2, gen_arg(g, X64_TYPE(M), ATG_EXP_ARG_ID), gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx))), es, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
             h = h->d[2].p;
         }

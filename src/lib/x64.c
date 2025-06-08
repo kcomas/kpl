@@ -5,30 +5,8 @@
 
 #define SIB 4
 
-static bool reg_is_upper(reg r) {
-    return (r >= R(8) && r <= R(15)) || (r >= XMM(8) && r <= XMM(15));
-}
-
 static uint8_t rid(reg r) {
     return r & 7;
-}
-
-// if the source can be memory address regs need to be swapped
-static uint8_t modrm(mod m, reg rm, reg r) {
-    return m | rid(r) << 3 | rid(rm);
-}
-
-static uint8_t sib(scale x, reg b, reg i) {
-    return x | rid(i) << 3 | rid(b);
-}
-
-static x64_stat sib_rm(size_t *p, uint8_t *m, reg r) {
-    if (r == R(SP) || r == R(12)) x64_a(p, m, sib(S1, r, r));
-    return X64_STAT(OK);
-}
-
-static uint8_t roe(mod m, uint8_t e, reg r) {
-    return m | e << 3 | rid(r);
 }
 
 static size_t pg_algn(size_t size) {
@@ -92,502 +70,445 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return X64_STAT(OK);
 }
 
-x64_stat x64_nop(size_t *p, uint8_t *m) {
-    return x64_a(p, m, 0x90);
+#define Z(N, C) x64_stat x64_##N(size_t *p, uint8_t *m) { \
+    return x64_a(p, m, C); \
 }
 
-x64_stat x64_ret(size_t *p, uint8_t *m) {
-    return x64_a(p, m, 0xC3);
+#define ZB(N, C) x64_stat x64_##N##_b(size_t *p, uint8_t *m, uint8_t b) { \
+    return x64_b(p, m, 2, C, b); \
 }
 
-x64_stat x64_leave(size_t *p, uint8_t *m) {
-    return x64_a(p, m, 0xC9);
+#define ZD(N, C) x64_stat x64_##N##_d(size_t *p, uint8_t *m, uint32_t dw) { \
+    x64_a(p, m, C); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dw)); \
 }
 
-#define VALID_R(REG) if (REG > R(15)) return X64_STAT(INV_REG);
-#define VALID_X(X) if (X < XMM(0)) return X64_STAT(INV_REG);
-
-static uint8_t set_rex(reg r) {
-    uint8_t rex = REX(W);
-    if (reg_is_upper(r)) rex |= REX(B);
-    return rex;
+#define ZZD(N, C1, C2) x64_stat x64_##N##_d(size_t *p, uint8_t *m, uint32_t dw) { \
+    x64_b(p, m, 2, C1, C2); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dw)); \
 }
 
-static uint8_t set_rex2(reg b, reg r) {
-    uint8_t rex = REX(W);
-    if (reg_is_upper(b)) rex |= REX(B);
-    if (reg_is_upper(r)) rex |= REX(R);
-    return rex;
+#define ZR(N, C) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 2, rex, MOD(00) | C | rid(r)); \
 }
 
-// only add rex if REX.R or REX.B is set
-static void rex_br(size_t *p, uint8_t *m, reg b, reg r) {
-    uint8_t rex = 0;
-    if (reg_is_upper(b)) rex |= REX(B);
-    if (reg_is_upper(r)) rex |= REX(R);
-    if (rex) x64_a(p, m, rex);
+#define ZRE(N, C, E) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 3, rex, C, MOD(11) | E << 3 | rid(r)); \
 }
 
-x64_stat x64_push_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 2, set_rex(r), 0x50 + rid(r));
+#define ZREB(N, C, E) x64_stat x64_##N##_rb(size_t *p, uint8_t *m, reg r, int8_t b) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 4, rex, C, MOD(11) | E << 3 | rid(r), b); \
 }
 
-x64_stat x64_pop_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 2, set_rex(r), 0x58 + rid(r));
+#define ZRED(N, C, E) x64_stat x64_##N##_rd(size_t *p, uint8_t *m, reg r, int32_t d) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(11) | E << 3 | rid(r)); \
+    return x64_e(p, m, sizeof(uint32_t), U5(d)); \
 }
 
-x64_stat x64_call_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xFF, 0xD0 + rid(r));
+#define ZRME(N, C, E) x64_stat x64_##N##_rm(size_t *p, uint8_t *m, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(00) | E << 3 | rid(r)); \
+    if (r == R(SP) || r == R(12)) x64_a(p, m, S1 | rid(r) << 3 | rid(r)); \
+    return X64_STAT(OK); \
 }
 
-x64_stat x64_call_d(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_a(p, m, 0xE8);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
+#define ZRMEB(N, C, E) x64_stat x64_##N##_rmb(size_t *p, uint8_t *m, reg r, int8_t b) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(00) | E << 3 | rid(r)); \
+    if (r == R(SP) || r == R(12)) x64_a(p, m, S1 | rid(r) << 3 | rid(r)); \
+    return x64_a(p, m, b); \
+}
+
+#define ZRMBE(N, C, E) x64_stat x64_##N##_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(01) | E << 3 | rid(r)); \
+    if (r == R(SP) || r == R(12)) x64_a(p, m, S1 | rid(r) << 3 | rid(r)); \
+    return x64_a(p, m, dsp); \
+}
+
+#define ZRMBEB(N, C, E) x64_stat x64_##N##_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, int8_t b) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(01) | E << 3 | rid(r)); \
+    if (r == R(SP) || r == R(12)) x64_a(p, m, S1 | rid(r) << 3 | rid(r)); \
+    return x64_b(p, m, 2, dsp, b); \
+}
+
+#define ZZRE(N, C1, C2, E) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 4, rex, C1, C2, MOD(11) | E << 3 | rid(r)); \
+}
+
+#define ZZR(N, C1, C2) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 3, rex, C1, MOD(00) | C2 | rid(r)); \
+}
+
+#define ZRQ(N, C) x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 2, rex, MOD(00) | C | rid(r)); \
+    return x64_d(p, m, u); \
+}
+
+#define ZRI(N, C) x64_stat x64_##N##_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(00) | rid(r) << 3 | RIP); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
+}
+
+#define ZRR(N, C, RR, RM) x64_stat x64_##N##_rr(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 3, rex, C, MOD(11) | rid(RR) << 3 | rid(RM)); \
+}
+
+#define ZRMR(N, C, RR, RM) x64_stat x64_##N##_rmr(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return X64_STAT(OK); \
+}
+
+#define ZRMBR(N, C, RR, RM) x64_stat x64_##N##_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | RM << 3 | RM); \
+    return x64_a(p, m, dsp); \
+}
+
+#define ZRMOR(N, C, RR, RS, RM) x64_stat x64_##N##_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 4, rex, C, MOD(00) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+}
+
+#define ZRMOBR(N, C, RR, RS, RM) x64_stat x64_##N##_rmobr(size_t *p, uint8_t *m, reg d, reg o, scale x, uint8_t dsp, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 4, rex, C, MOD(01) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
+}
+
+#define ZRRM(N, C, RR, RM) x64_stat x64_##N##_rrm(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return X64_STAT(OK); \
+}
+
+#define ZRRMB(N, C, RR, RM) x64_stat x64_##N##_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
+}
+
+#define ZRRMO(N, C, RR, RS, RM) x64_stat x64_##N##_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 4, rex, C, MOD(00) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+}
+
+#define ZRRMOB(N, C, RR, RS, RM) x64_stat x64_##N##_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RS > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RS >= R(8)) rex |= REX(X); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 4, rex, C, MOD(01) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
+}
+
+#define ZXI(N, C1, C2, C3) x64_stat x64_##N##_xi(size_t *p, uint8_t *m, reg r, uint32_t dsp) { \
+    if (r < XMM(0)) return X64_STAT(INV_REG); \
+    x64_a(p, m, C1); \
+    uint8_t rex = 0; \
+    if (r >= XMM(8)) rex |= REX(R); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 3, C2, C3, MOD(00) | rid(r) << 3 | RIP); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
+}
+
+#define ZXX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xx(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM < XMM(0)) return X64_STAT(INV_REG); \
+    x64_a(p, m, C1); \
+    uint8_t rex = 0; \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= XMM(8)) rex |= REX(B); \
+    if (rex) x64_a(p, m, rex); \
+    return x64_b(p, m, 3, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
+}
+
+#define ZXR(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xr(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 5, C1, rex, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
 }
 
-x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u) {
-    VALID_R(r);
-    x64_b(p, m, 2, set_rex(r), 0xB8 + rid(r));
-    return x64_d(p, m, u);
+#define ZRX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rx(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    return x64_b(p, m, 5, C1, rex, C2, C3, MOD(11) | rid(RR) << 3 | rid(RM)); \
 }
 
-x64_stat x64_mov_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(11), d, s));
+#define ZRMX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmx(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 5, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return X64_STAT(OK); \
 }
 
-x64_stat x64_mov_rmr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(00), d, s));
-    return sib_rm(p, m, d);
+#define ZRMBX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 5, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
 }
 
-x64_stat x64_mov_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(d, s), 0x89, modrm(MOD(01), d, s));
-    sib_rm(p, m, d);
-    return x64_a(p, m, dsp);
+#define ZXRM(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrm(size_t *p, uint8_t *m, reg d, reg s) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 5, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return X64_STAT(OK); \
 }
 
-x64_stat x64_mov_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s) {
-    VALID_R(d);
-    VALID_R(o);
-    VALID_R(s);
-    return x64_b(p, m, 4, set_rex2(SIB, s), 0x89, modrm(MOD(00), SIB, s), sib(x, d, o));
+#define ZXRMB(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) { \
+    if (RR < XMM(0)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= XMM(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 5, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
+    return x64_a(p, m, dsp); \
 }
 
-x64_stat x64_mov_rmobr(size_t *p, uint8_t *m, reg d, reg o, scale x, uint8_t dsp, reg s) {
-    VALID_R(d);
-    VALID_R(o);
-    VALID_R(s);
-    x64_b(p, m, 4, set_rex2(SIB, s), 0x89, modrm(MOD(01), SIB, s), sib(x, d, o));
-    return x64_a(p, m, dsp);
-}
 
-x64_stat x64_mov_rrm(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(00), s, d));
-    return sib_rm(p, m, s);
-}
+Z(nop, 0x90);
 
-x64_stat x64_mov_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(s, d), 0x8B, modrm(MOD(01), s, d));
-    sib_rm(p, m, s);
-    return x64_a(p, m, dsp);
-}
+Z(ret, 0xC3);
 
-x64_stat x64_mov_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x) {
-    VALID_R(d);
-    VALID_R(s);
-    VALID_R(o);
-    return x64_b(p, m, 4, set_rex2(SIB, d), 0x8B, modrm(MOD(00), SIB, d), sib(x, s, o));
-}
+Z(leave, 0xC9);
 
-x64_stat x64_mov_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp) {
-    VALID_R(d);
-    VALID_R(s);
-    VALID_R(o);
-    x64_b(p, m, 4, set_rex2(SIB, d), 0x8B, modrm(MOD(01), SIB, d), sib(x, s, o));
-    return x64_a(p, m, dsp);
-}
+ZR(push, 0x50);
 
-x64_stat x64_movq_rx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_X(s);
-    return x64_b(p, m, 5, 0x66, set_rex2(d, s), 0x0F, 0x7E, modrm(MOD(11), d, s));
-}
+ZR(pop, 0x58);
 
-x64_stat x64_movq_rmx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_X(s);
-    x64_b(p, m, 5, 0x66, set_rex2(d, s), 0x0F, 0xD6, modrm(MOD(00), d, s));
-    return sib_rm(p, m, d);
-}
+ZZR(call, 0xFF, 0xD0);
 
-x64_stat x64_movq_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
-    VALID_R(d);
-    VALID_X(s);
-    x64_b(p, m, 5, 0x66, set_rex2(d, s), 0x0F, 0xD6, modrm(MOD(01), d, s));
-    sib_rm(p, m, d);
-    return x64_a(p, m, dsp);
-}
+ZD(call, 0xE8);
 
-x64_stat x64_movq_xr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_R(s);
-    return x64_b(p, m, 5, 0x66, set_rex2(s, d), 0x0F, 0x6E, modrm(MOD(11), s, d));
-}
+ZRQ(mov, 0xB8);
 
-x64_stat x64_movq_xrm(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_R(s);
-    x64_b(p, m, 5, 0xF3, set_rex2(s, d), 0x0F, 0x7E, modrm(MOD(00), s, d));
-    return sib_rm(p, m, s);
-}
+ZRR(mov, 0x89, s, d);
 
-x64_stat x64_movq_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
-    VALID_X(d);
-    VALID_R(s);
-    x64_b(p, m, 5, 0xF3, set_rex2(s, d), 0x0F, 0x7E, modrm(MOD(01), s, d));
-    sib_rm(p, m, s);
-    return x64_a(p, m, dsp);
-}
+ZRMR(mov, 0x89, s, d);
 
-x64_stat x64_movq_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF3);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x7E, modrm(MOD(11), s, d));
-}
+ZRMBR(mov, 0x89, s, d);
 
-x64_stat x64_movq_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0xF3);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x7E, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZRMOR(mov, 0x89, s, o, d);
 
-x64_stat x64_movsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x10, modrm(MOD(11), s, d));
-}
+ZRMOBR(mov, 0x89, s, o, d);
 
-x64_stat x64_movsd_xrm(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_R(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    x64_b(p, m, 3, 0x0F, 0x10, modrm(MOD(00), s, d));
-    return sib_rm(p, m, s);
-}
+ZRRM(mov, 0x8B, d, s);
 
-x64_stat x64_movsd_xrmb(size_t *p, uint8_t *m, reg d, reg s, int8_t dsp) {
-    VALID_X(d);
-    VALID_R(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    x64_b(p, m, 3, 0x0F, 0x10, modrm(MOD(01), s, d));
-    sib_rm(p, m, s);
-    return x64_a(p, m, dsp);
-}
+ZRRMB(mov, 0x8B, d, s);
 
-x64_stat x64_movsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x10, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZRRMO(mov, 0x8B, d, o, s);
 
-x64_stat x64_movsd_rmx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, d, s);
-    x64_b(p, m, 3, 0x0F, 0x11, modrm(MOD(00), d, s));
-    return sib_rm(p, m, d);
-}
+ZRRMOB(mov, 0x8B, d, o, s);
 
-x64_stat x64_movsd_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
-    VALID_R(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, d, s);
-    x64_b(p, m, 3, 0x0F, 0x11, modrm(MOD(01), d, s));
-    sib_rm(p, m, d);
-    return x64_a(p, m, dsp);
-}
+ZRX(movq, 0x66, 0x0F, 0x7E, s, d);
 
-x64_stat x64_lea_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(s, d), 0x8D, modrm(MOD(01), s, d));
-    sib_rm(p, m, s);
-    return x64_a(p, m, dsp);
-}
+ZRMX(movq, 0x66, 0x0F, 0xD6, s, d);
 
-x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(11), 0, r));
-}
+ZRMBX(movq, 0x66, 0x0F, 0xD6, s, d);
 
-x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
-    VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), 0, r), b);
-}
+ZXR(movq, 0x66, 0x0F, 0x6E, d, s);
 
-x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d)
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x01, modrm(MOD(11), d, s));
-}
+ZXRM(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-x64_stat x64_add_rmr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d)
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(d, s), 0x01, modrm(MOD(00), d, s));
-    return sib_rm(p, m, d);
-}
+ZXRMB(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-x64_stat x64_add_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
-    VALID_R(d)
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(d, s), 0x01, modrm(MOD(01), d, s));
-    sib_rm(p, m, d);
-    return x64_a(p, m, dsp);
-}
+ZXX(movq, 0xF3, 0x0F, 0x7E, d, s);
 
-x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x58, modrm(MOD(11), s, d));
-}
+ZXI(movq, 0xF3, 0x0F, 0x7E);
 
-x64_stat x64_addsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x58, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZXX(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(11), 1, r));
-}
+ZXRM(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-// dec qword ptr[rax]
-x64_stat x64_dec_rm(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(00), 1, r));
-    return sib_rm(p, m, r);
-}
+ZXRMB(movsd, 0xF2, 0x0F, 0x10, d, s);
 
-// dec qword ptr[rax+dsp8]
-x64_stat x64_dec_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp) {
-    VALID_R(r);
-    x64_b(p, m, 3, set_rex(r), 0xFF, roe(MOD(01), 1, r));
-    sib_rm(p, m, r);
-    return x64_a(p, m, dsp);
-}
+ZXI(movsd, 0xF2, 0x0F, 0x10);
 
-x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
-    VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), 5, r), b);
-}
+ZRMX(movsd, 0xF2, 0x0F, 0x11, s, d);
 
-x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x29, modrm(MOD(11), d, s));
-}
+ZRMBX(movsd, 0xF2, 0x0F, 0x11, s, d);
 
-x64_stat x64_subsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x5C, modrm(MOD(11), s, d));
-}
+ZRRMB(lea, 0x8D, d, s);
 
-x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x5C, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZRE(inc, 0xFF, 0);
 
-x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 3, r));
-}
+ZREB(add, 0x83, 0);
 
-x64_stat x64_mul_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 4, r));
-}
+ZRR(add, 0x01, s, d);
 
-x64_stat x64_imul_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 5, r));
-}
+ZRMR(add, 0x01, s, d);
 
-x64_stat x64_div_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 6, r));
-}
+ZRMBR(add, 0x01, s, d);
 
-x64_stat x64_idiv_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 3, set_rex(r), 0xF7, roe(MOD(11), 7, r));
-}
+ZXX(addsd, 0xF2, 0x0F, 0x58, d, s);
 
-x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x59, modrm(MOD(11), s, d));
-}
+ZXI(addsd, 0xF2, 0x0F, 0x58);
 
-x64_stat x64_divsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0xF2);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x5E, modrm(MOD(11), s, d));
-}
+ZRE(dec, 0xFF, 1);
 
-x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_R(s);
-    return x64_b(p, m, 5, 0xF2, set_rex2(s, d), 0x0F, 0x2A, modrm(MOD(11), s, d));
-}
+ZRME(dec, 0xFF, 1);
 
-x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x21, modrm(MOD(11), d, s));
-}
+ZRMBE(dec, 0xFF, 1);
 
-x64_stat x64_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x31, modrm(MOD(11), d, s));
-}
+ZREB(sub, 0x83, 5);
 
-x64_stat x64_pxor_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0x66);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0xEF, modrm(MOD(11), s, d));
-}
+ZRR(sub, 0x29, s, d);
 
-x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x39, modrm(MOD(11), d, s));
-}
+ZXX(subsd, 0xF2, 0x0F, 0x5C, d, s);
 
-x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    x64_b(p, m, 3, set_rex2(s, d), 0x3B, modrm(MOD(00), s, d));
-    return sib_rm(p, m, s);
-}
+ZXI(subsd, 0xF2, 0x0F, 0x5C);
 
-x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_R(d);
-    x64_b(p, m, 3, set_rex2(RIP, d), 0x3B, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZRE(neg, 0xF7, 3);
 
-x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b) {
-    VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x83, roe(MOD(11), 7, r), b);
-}
+ZRE(mul, 0xF7, 4);
 
-x64_stat x64_cmp_rmb(size_t *p, uint8_t *m, reg r, uint8_t b) {
-    VALID_R(r);
-    x64_b(p, m, 3, set_rex(r), 0x83, roe(MOD(00), 7, r));
-    sib_rm(p, m, r);
-    return x64_a(p, m, b);
-}
+ZRE(imul, 0xF7, 5);
 
-x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b) {
-    VALID_R(r);
-    x64_b(p, m, 3, set_rex(r), 0x83, roe(MOD(01), 7, r));
-    sib_rm(p, m, r);
-    return x64_b(p, m, 2, dsp, b);
-}
+ZRE(div, 0xF7, 6);
 
-x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d) {
-    VALID_R(r);
-    x64_b(p, m, 3, set_rex(r), 0x81, roe(MOD(11), 7, r));
-    return x64_e(p, m, sizeof(uint32_t), U5(d));
-}
+ZRE(idiv, 0xF7, 7);
 
-x64_stat x64_ucomisd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0x66);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x2E, modrm(MOD(11), s, d));
-}
+ZXX(mulsd, 0xF2, 0x0F, 0x59, d, s);
 
-x64_stat x64_ucomisd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0x66);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x2E, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZXX(divsd, 0xF2, 0x0F, 0x5E, d, s);
 
-x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_X(d);
-    VALID_X(s);
-    x64_a(p, m, 0x66);
-    rex_br(p, m, s, d);
-    return x64_b(p, m, 3, 0x0F, 0x2F, modrm(MOD(11), s, d));
-}
+ZXR(cvtsi2sd, 0xF2, 0x0F, 0x2A, d, s);
 
-x64_stat x64_comisd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
-    VALID_X(d);
-    x64_a(p, m, 0x66);
-    rex_br(p, m, RIP, d);
-    x64_b(p, m, 3, 0x0F, 0x2F, modrm(MOD(00), RIP, d));
-    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
-}
+ZRR(and, 0x21, s, d);
 
-x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
-    VALID_R(d);
-    VALID_R(s);
-    return x64_b(p, m, 3, set_rex2(d, s), 0x85, modrm(MOD(11), d, s));
-}
+ZRR(xor, 0x31, s, d);
+
+ZXX(pxor, 0x66, 0x0F, 0xEF, d, s);
+
+ZRR(cmp, 0x39, s, d);
+
+ZRRM(cmp, 0x3B, d, s);
+
+ZRI(cmp, 0x3B);
+
+ZREB(cmp, 0x83, 7);
+
+ZRMEB(cmp, 0x83, 7);
+
+ZRMBEB(cmp, 0x83, 7);
+
+ZRED(cmp, 0x81, 7);
+
+ZXX(ucomisd, 0x66, 0x0F, 0x2E, d, s);
+
+ZXI(ucomisd, 0x66, 0x0F, 0x2E);
+
+ZXX(comisd, 0x66, 0x0F, 0x2F, d, s);
+
+ZXI(comisd, 0x66, 0x0F, 0x2F);
+
+ZRR(test, 0x85, s, d);
 
 uint8_t x64_jmpu_lblb(size_t from, size_t to) {
     return to - from - sizeof(uint8_t);
 }
 
-uint32_t x64_jmpu_lbldw(size_t from, size_t to) {
+uint32_t x64_jmpu_lbld(size_t from, size_t to) {
     return to - from - sizeof(uint32_t);
 }
 
@@ -599,111 +520,53 @@ void x64_jmpd_lblb(uint8_t *byte, size_t from, size_t to) {
     *byte = (uint8_t) to - from;
 }
 
-void x64_jmpd_lbldw(uint8_t *m, size_t from, size_t to) {
+void x64_jmpd_lbld(uint8_t *m, size_t from, size_t to) {
     size_t r = to - from;
     memcpy(m + from - sizeof(uint32_t), &r, sizeof(uint32_t));
 }
 
-x64_stat x64_jmp_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0xEB, b);
-}
+ZB(jmp, 0xEB);
 
-x64_stat x64_jmp_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_a(p, m, 0xE9);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZD(jmp, 0xE9);
 
-x64_stat x64_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x72, b);
-}
+ZB(jbjnaejc, 0x72);
 
-x64_stat x64_jbjnaejc_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x82);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jbjnaejc, 0x0F, 0x82);
 
-x64_stat x64_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x73, b);
-}
+ZB(jnbjaejnc, 0x73);
 
-x64_stat x64_jnbjaejnc_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x83);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jnbjaejnc, 0x0F, 0x83);
 
-x64_stat x64_jzje_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x74, b);
-}
+ZB(jzje, 0x74);
 
-x64_stat x64_jzje_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x84);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jzje, 0x0F, 0x84);
 
-x64_stat x64_jnzjne_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x75, b);
-}
+ZB(jnzjne, 0x75);
 
-x64_stat x64_jnzjne_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x85);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jnzjne, 0x0F, 0x85);
 
-x64_stat x64_jbejna_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x76, b);
-}
+ZB(jbejna, 0x76);
 
-x64_stat x64_jbejna_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x86);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jbejna, 0x0F, 0x86);
 
-x64_stat x64_jnbeja_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x77, b);
-}
+ZB(jnbeja, 0x77);
 
-x64_stat x64_jnbeja_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x87);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jnbeja, 0x0F, 0x87);
 
-x64_stat x64_jljnge_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x7C, b);
-}
+ZB(jljnge, 0x7C);
 
-x64_stat x64_jljnge_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x8C);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jljnge, 0x0F, 0x8C);
 
-x64_stat x64_jnljge_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x7D, b);
-}
+ZB(jnljge, 0x7D);
 
-x64_stat x64_jnljge_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x8D);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jnljge, 0x0F, 0x8D);
 
-x64_stat x64_jlejng_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x7E, b);
-}
+ZB(jlejng, 0x7E);
 
-x64_stat x64_jlejng_dw(size_t *p, uint8_t *m, uint8_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x8E);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jlejng, 0x0F, 0x8E);
 
-x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b) {
-    return x64_b(p, m, 2, 0x7F, b);
-}
+ZB(jnlejg, 0x7F);
 
-x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw) {
-    x64_b(p, m, 2, 0x0F, 0x8F);
-    return x64_e(p, m, sizeof(uint32_t), U5(dw));
-}
+ZZD(jnlejg, 0x0F, 0x8F);
 
-x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r) {
-    VALID_R(r);
-    return x64_b(p, m, 4, set_rex(r), 0x0F, 0x9C, roe(MOD(11), 0, r));
-}
+ZZRE(setlsetnge, 0x0F, 0x9C, 0);
