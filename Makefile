@@ -54,5 +54,9 @@ LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
 psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
+LASM_OBJS = $(LSRC)/asm.o $(LTBL_OBJS)
+asm$(LTNAME): $(LASM_OBJS) $(LTEST)/asm.o
+> $(CCOBJ)
+
 clean:
 > rm -fv $(SRC)/**/*.o $(TEST)/**/*.o $(NAME) *$(TNAME)
