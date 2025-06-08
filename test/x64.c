@@ -108,7 +108,9 @@ T(rloop) {
     x64_ret(&p, m);
     printj(p, m);
     uint64_t a = 12;
+    X64_RS();
     uint64_t b = ((loop*) m)(a);
+    X64_RR();
     printf("%ld\n", b);
     A(b = a + 1, "loop");
 }
