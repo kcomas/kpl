@@ -50,7 +50,18 @@ typedef enum {
     TKN_TYPE(ST),
     TKN_TYPE(FN),
     TKN_TYPE(ER),
-    TKN_TYPE(FD)
+    TKN_TYPE(FD),
+    // controls
+    TKN_TYPE(IF),
+    TKN_TYPE(LOP), // while and for
+    TKN_TYPE(RET),
+    // ops
+    TKN_TYPE(ADD),
+    TKN_TYPE(SUB),
+    TKN_TYPE(MUL),
+    TKN_TYPE(DIV),
+    TKN_TYPE(EXP),
+    TKN_TYPE(MOD)
 } tkn_type;
 
 typedef struct {

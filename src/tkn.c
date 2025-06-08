@@ -71,7 +71,7 @@ static tkn_stat num(tkn *const t, const char *const str) {
     t->len++
 
 tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool inc) {
-    if (ts->lno < t->lno || ts->cno < t->cno || ts->pos < t->pos) return TKN_STAT(END);
+    if (ts->pos < t->pos) return TKN_STAT(END);
     t->lno = ts->lno;
     t->cno = ts->cno;
     t->pos = ts->pos;
@@ -89,6 +89,13 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 break;
             case '\n':
                 T_TYP_LEN(NL);
+                break;
+            case '/':
+                T_TYP_LEN(DIV);
+                if (str[t->pos + t->len] == '/') {
+                    t->type = TKN_TYPE(CMT);
+                    while (str[t->pos + t->len] != '\n' && str[t->pos + t->len] != '\0') t->len++;
+                }
                 break;
             default:
                 return TKN_STAT(INV_CHR);
@@ -115,7 +122,7 @@ static const char *const tkn_type_str[] = {
 void tkn_p(const tkn *const t, const char *const str) {
     const char *const type = "INVALID";
     printf("type: %s, lno: %lu, cno: %lu, str: ", type, t->lno, t->cno);
-    for (size_t i = 0; i < t->len; i++) {
-        putchar(str[t->pos + i]);
-    }
+    if (t->type == TKN_TYPE(NB)) printf("\\0");
+    else if (t->type == TKN_TYPE(NL)) printf("\\n");
+    else for (size_t i = 0; i < t->len; i++) putchar(str[t->pos + i]);
 }
