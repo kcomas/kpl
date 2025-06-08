@@ -93,9 +93,7 @@ typedef struct _var_tsv {
     var v[];
 } var_tsv; // tuple, struct, vec
 
-var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc);
-
-var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc);
+var_tsv *var_tsv_i(al *const a, size_t size, size_t len, jit_fn *gc);
 
 var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc);
 
