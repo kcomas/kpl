@@ -18,6 +18,7 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_t
    t->vt = ati();
    t->at = ati();
    t->ot = ati();
+   t->zt = ati();
    return t;
 }
 
@@ -38,6 +39,7 @@ atg *atg_i_atg(const atg *t) {
     tt->vt = tbl_c(t->vt);
     tt->at = tbl_c(t->at);
     tt->ot = tbl_c(t->ot);
+    tt->zt = tbl_c(t->zt);
     return tt;
 }
 
@@ -181,7 +183,6 @@ atg_stat atg_a_a(atg *t, type rt, ast_cls tc, type tt, atg_cc_fn cc) {
 }
 
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc) {
-    atg_stat stat = ATG_STAT(OK);
     tbl *ot = t->ot;
     te *kv;
     add_e(t, ot, oc, ct, &kv, true);
@@ -191,7 +192,17 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     add_e(t, ot, rc, rt, &kv, false);
     if (kv->d[1].p) return ATG_STAT(INV);
     kv->d[1] = P(cc);
-    return stat;
+    return ATG_STAT(OK);
+}
+
+atg_stat atg_a_z(atg *t, type it, ast_cls nc, type nt, atg_cc_fn cc) {
+    tbl *zt = t->zt;
+    te *kv;
+    add_e(t, zt, AST_CLS(Z), it, &kv, true);
+    zt = kv->d[1].p;
+    add_e(t, zt, nc, nt, &kv, false);
+    kv->d[1] = P(cc);
+    return ATG_STAT(OK);
 }
 
 static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
@@ -212,6 +223,7 @@ static atg_stat cc_r(atg *t, gen *g, te *an, err **e, tbl *tt, size_t n, ...) {
 
 static atg_stat cc(atg *t, gen *g, te *an, err **e) {
     un ha = U6(0);
+    te *tn;
     switch (an->d[2].u4) {
         case AST_CLS(T):
         case AST_CLS(E):
@@ -219,16 +231,25 @@ static atg_stat cc(atg *t, gen *g, te *an, err **e) {
             return ATG_STAT(OK);
         case AST_CLS(V):
             ha = u4_s_o(ha, AST_HSH_C, AST_CLS(V));
-            ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            tn = an->d[3].p;
+            ha = u4_s_o(ha, AST_HSH_T, tn->d[1].u4);
             return cc_r(t, g, an, e, t->vt, 1, ha);
         case AST_CLS(O):
             ha = u4_s_o(ha, AST_HSH_C, an->d[4].u4);
-            ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            tn = an->d[3].p;
+            ha = u4_s_o(ha, AST_HSH_T, tn->d[1].u4);
             return cc_r(t, g, an, e, t->ot, 3, ha, ast_hsh(an->d[5].p), ast_hsh(an->d[6].p));
         case AST_CLS(A):
             ha = u4_s_o(ha, AST_HSH_C, AST_CLS(A));
-            ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            tn = an->d[3].p;
+            ha = u4_s_o(ha, AST_HSH_T, tn->d[1].u4);
             return cc_r(t, g, an, e, t->at, 2, ha, ast_hsh(an->d[4].p));
+        case AST_CLS(Z):
+            ha = u4_s_o(ha, AST_HSH_C, AST_CLS(Z));
+            tn = ((te*) an->d[3].p)->d[2].p;
+            if (tn) ha = u4_s_o(ha, AST_HSH_T, tn->d[1].u4);
+            else u4_s_o(ha, AST_HSH_T, TYPE(_N));
+            return cc_r(t, g, an, e, t->zt, 2, ha, ast_hsh(an->d[4].p));
         case AST_CLS(L):
             return ATG_STAT(OK);
         default:
@@ -317,5 +338,6 @@ void atg_f(atg *t) {
     tbl_f(t->vt);
     tbl_f(t->at);
     tbl_f(t->ot);
+    tbl_f(t->zt);
     t->af->f(t);
 }

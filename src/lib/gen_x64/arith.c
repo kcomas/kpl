@@ -22,21 +22,6 @@ static gen_stat add_auauau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
-static gen_stat stk_va(gen_st *st, te *restrict c, int32_t *restrict v) {
-    if (gen_var_g_c(c) == GEN_CLS(V)) return st_stkv_idx(st, gen_var_g_t(c), c->d[1].u3, v);
-    return st_stka_idx(gen_var_g_t(c), c->d[1].u3, v);
-}
-
-static gen_stat stk_g_idx2(gen_st *st, te *restrict c0, te *restrict c1, int32_t *restrict v0, int32_t *restrict v1) {
-    if (stk_va(st, c0, v0) != GEN_STAT(OK) || stk_va(st, c1, v1) != GEN_STAT(OK)) return GEN_STAT(INV);
-    return GEN_STAT(OK);
-}
-
-static gen_stat stk_g_idx3(gen_st *st, te *restrict c0, te *restrict c1, te *restrict c2, int32_t *restrict v0, int32_t *restrict v1, int32_t *restrict v2) {
-    if (stk_va(st, c0, v0) != GEN_STAT(OK)) return GEN_STAT(INV);
-    return stk_g_idx2(st, c1, c2, v1, v2);
-}
-
 static gen_stat add_vuvuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv;
@@ -53,6 +38,12 @@ static gen_stat add_vuvuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     }
     drop_atm_kv(s, kv, ci);
     return GEN_STAT(OK);
+}
+
+static gen_stat add_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO add_auvudu_fn");
 }
 
 static gen_stat add_susuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
@@ -253,6 +244,12 @@ static gen_stat cvtsi2sd_axau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat cst_auau_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO CST");
+}
+
 void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), add_auauau_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), add_auauau_fn);
@@ -267,6 +264,7 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(I6), add_vuvuau_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), add_vuvudu_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), add_vuvuvu_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), add_auvudu_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), addsd_axaxdx_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), addsd_axaxax_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), addsd_axaxax_fn);
@@ -299,4 +297,5 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), idiv_auauau_fn);
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), divsd_axaxax_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(U6), cvtsi2sd_axau_fn);
+    GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(I6), cst_auau_fn);
 }

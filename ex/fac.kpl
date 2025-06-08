@@ -1,0 +1,8 @@
+
+// iterative factorial
+
+f::n::20
+
+>(n;1)@f*:n-:1
+
+f/p1

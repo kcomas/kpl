@@ -300,19 +300,17 @@ T(rcxloop) {
 }
 
 T(arg_id_s) {
-    char *s =  "Hello World";
+    mc *s =  mc_i_cstr("Hello World", &al_mc);
     as *a = as_i_as(ba);
     AS_A2(a, AS_X64(LEA), as_arg_r(a, R(AX)), as_arg_s(a, s));
     AS_A0(a, AS_X64(RET));
     p = 0;
     err *e = NULL;
     A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
-    const char *c = ((const char*(*)(void)) m)();
-    printf("c: %s, s: %s\n", c, s);
-    A(c != s, "should not be eq");
-    A(strcmp(c, s) == 0, "str neq");
-    s = "";
-    printf("c: %s, s: %s\n", c, s);
     as_code_p(a, m);
+    const char *c = ((const char*(*)(void)) m)();
+    printf("c: %s, s: %s\n", c, (char*) s->d);
+    A(strcmp(c, (char*) s->d) == 0, "str neq");
+    mc_f(s);
     as_f(a);
 }

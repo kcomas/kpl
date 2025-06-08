@@ -33,7 +33,7 @@ te *as_arg_l(as *a, size_t lid) {
     return as_arg_v(a, ARG_ID(L), U6(lid));
 }
 
-te *as_arg_s(as *a, const char *s) {
+te *as_arg_s(as *a, mc *s) {
     return as_arg_v(a, ARG_ID(S), P(s));
 }
 

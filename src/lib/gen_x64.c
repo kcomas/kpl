@@ -4,6 +4,7 @@
 const char *x64_type_str(x64_type xt) {
     switch (xt) {
         case X64_TYPE(N): return "N";
+        case X64_TYPE(S): return "S";
         case X64_TYPE(M): return "M";
         case X64_TYPE(MU3): return "MU3";
         case X64_TYPE(MU4): return "MU4";
@@ -508,6 +509,21 @@ void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n) {
     for (size_t i = 0; i < n; i++) drop_atm_kv(st, atm_kv[i], ci);
 }
 
+gen_stat stk_va(gen_st *st, te *restrict c, int32_t *restrict v) {
+    if (gen_var_g_c(c) == GEN_CLS(V)) return st_stkv_idx(st, gen_var_g_t(c), c->d[1].u3, v);
+    return st_stka_idx(gen_var_g_t(c), c->d[1].u3, v);
+}
+
+gen_stat stk_g_idx2(gen_st *st, te *restrict c0, te *restrict c1, int32_t *restrict v0, int32_t *restrict v1) {
+    if (stk_va(st, c0, v0) != GEN_STAT(OK) || stk_va(st, c1, v1) != GEN_STAT(OK)) return GEN_STAT(INV);
+    return GEN_STAT(OK);
+}
+
+gen_stat stk_g_idx3(gen_st *st, te *restrict c0, te *restrict c1, te *restrict c2, int32_t *restrict v0, int32_t *restrict v1, int32_t *restrict v2) {
+    if (stk_va(st, c0, v0) != GEN_STAT(OK)) return GEN_STAT(INV);
+    return stk_g_idx2(st, c1, c2, v1, v2);
+}
+
 as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci) {
     as_stat stat = AS_STAT(OK);
     stat = as_a(a, op_id, arg1, arg2, arg3, arg4);
@@ -587,6 +603,7 @@ void gen_ref(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(M), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(MM), nop_fn);
     GEN_OP_A1(g, GEN_OP(JMP), GEN_CLS(L), X64_TYPE(N), jmp_fn);
     gen_enter_leave(g);
