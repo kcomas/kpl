@@ -231,7 +231,26 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
-            // TODO
+            case OP_C(AL):
+                op_set_jidx(j, o);
+                jit_b(j, 4, 0x48, 0x83, 0xEC, o->od.u3 * sizeof(void*)); // sub rsp nl * ptrsize
+                op_set_jlen(j, o);
+                break;
+            case OP_C(SL):
+                op_set_jidx(j, o);
+                jit_b(j, 2, 0x41, 0x59); // pop r9
+                vsp = (o->od.v.id + 1) * sizeof(void*) * -1;
+                jit_b(j, 4, 0x4C, 0x89, 0x4D, vsp); // mov qword ptr rbp-vsp r9
+                op_set_jlen(j, o);
+                break;
+            case OP_C(LL):
+                op_set_jidx(j, o);
+                vsp = (o->od.v.id + 1) * sizeof(void*) * -1;
+                jit_b(j, 4, 0x4C, 0x8B, 0x4D, vsp); // mov r9 qword ptr rbp-vsp
+                jit_b(j, 2, 0x41, 0x51); // push r9
+                op_set_jlen(j, o);
+                break;
+                // TODO
             case OP_C(LA):
                 op_set_jidx(j, o);
                 vsp = (o->od.v.id + 2) * sizeof(void*);
