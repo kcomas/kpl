@@ -16,22 +16,24 @@ void bast(_tests *_t, ast *a, const char *pgm, te **an);
 
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
-#define NN(C, T, ...) ast_an_i(a, NULL, NULL, AST_CLS(C), P(T))
+#define NN(C, T) ast_an_i(a, NULL, NULL, AST_CLS(C), P(T))
 
-#define RN(N) ast_an_i(a, NULL, NULL, AST_CLS(R), P(NULL), N)
+#define NNV(C, T, ...) ast_an_i(a, NULL, NULL, AST_CLS(C), P(T), __VA_ARGS__)
 
-#define IN(S) ast_an_i(a, NULL, NULL, AST_CLS(I), P(NULL), mc_i_cstr(S, &ast_am))
+#define RN(N) NNV(R, NULL, N)
 
-#define TN(V) ast_an_i(a, NULL, NULL, AST_CLS(T), P(type_i(&ast_am, TYPE(V))))
+#define IN(S) NNV(I, NULL, mc_i_cstr(S, &ast_am))
 
-#define SN(T, V) ast_an_i(a, NULL, NULL, AST_CLS(S), P(type_i(&ast_am, TYPE(T))), V)
+#define TN(V) NN(T, type_i(&ast_am, TYPE(V)))
 
-#define ON(T, C, L, R) ast_an_i(a, NULL, NULL, AST_CLS(O), T, OC(C), L, R)
+#define SN(T, V) NNV(S, type_i(&ast_am, TYPE(T)), V)
+
+#define ON(T, C, L, R) NNV(O, T, OC(C), L, R)
 
 #define L(n, ...) lst_i_v(&ast_am, &ast_am, (void*) te_f, n, __VA_ARGS__)
 
-#define AN(T, TGT, LST) ast_an_i(a, NULL, NULL, AST_CLS(A), T, TGT, LST)
+#define AN(T, TGT, LST) NNV(A, T, TGT, LST)
 
-#define ZN(S, TGT) ast_an_i(a, NULL, NULL, AST_CLS(Z), P(type_i(&ast_am, TYPE(SL))), mc_i_cstr(S, &ast_am), TGT)
+#define ZN(S, TGT) NNV(Z, type_i(&ast_am, TYPE(SL)), mc_i_cstr(S, &ast_am), TGT)
 
-#define LN(LST) ast_an_i(a, NULL, NULL, AST_CLS(L), P(NULL), LST)
+#define LN(LST) NNV(L, NULL, LST)
