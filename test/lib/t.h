@@ -19,9 +19,8 @@ typedef struct __tests {
 
 void _a(const char *name, _test_fn *tf);
 
-#define FN const char *_f = __FILE__
-#define I _tests *_t = NULL; \
-    FN
+#define I const char *_f = __FILE__; \
+    _tests *_t = NULL;
 
 #define A(S, M) do { \
     if (!(S)) { \
