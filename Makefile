@@ -67,14 +67,14 @@ $(TBL): $(LTBL_OBJS) $(TEST)/tbl.o $(TEST_OBJS)
 
 TKN = tkn$(LTNAME)
 LTT += $(TKN)
-LTKN_OBJS = $(SRC)/tkn.o $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
-$(TKN): $(LTKN_OBJS) $(TEST)/tkn.o $(TEST_OBJS)
+TKN_OBJS = $(SRC)/tkn.o $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
+$(TKN): $(TKN_OBJS) $(TEST)/tkn.o $(TEST_OBJS)
 > $(CCOBJ)
 
 PSR = psr$(LTNAME)
 LTT += $(PSR)
-LPSR_OBJS = $(SRC)/psr.o $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
-$(PSR): $(LPSR_OBJS) $(TEST)/psr.o $(TEST_OBJS)
+PSR_OBJS = $(SRC)/psr.o $(LSRC)/psr.o $(LVR_OBS) $(TKN_OBJS) $(LVR_OBS)
+$(PSR): $(PSR_OBJS) $(TEST)/psr.o $(TEST_OBJS)
 > $(CCOBJ)
 
 AS = as$(LTNAME)
@@ -93,7 +93,7 @@ $(GEN): $(GENX64_OBJS) $(TEST)/gen.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS)
 
 AST = ast$(LTNAME)
 LTT += $(AST)
-AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(LPSR_OBJS)
+AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(PSR_OBJS)
 $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST_OBJS)
 > $(CCOBJ)
 
