@@ -2,19 +2,6 @@
 #include "../as_x64.h"
 
 // gen regs
-#define INST(N) static bool as_##N(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) a; \
-    (void) ci; \
-    (void) arg1; \
-    (void) arg2; \
-    (void) arg3; \
-    (void) arg4; \
-    return x64_##N(p, m) == X64_STAT(OK); \
-}
-
-INST(nop);
-INST(ret);
-INST(leave);
 
 #define INST_R(N) static bool as_##N##_r(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -105,33 +92,10 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_mov_rq(p, m, arg1->d[1].u3, arg2->d[1]) == X64_STAT(OK);
 }
 
-static bool as_call_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
-    (void) a;
-    (void) arg2;
-    (void) arg3;
-    (void) arg4;
-    te *lblc = as_lbl_g_c(a, arg1->d[1].u5);
-    if (!lblc) return false;
-    if (lblc->d[9].u6) return x64_call_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
-    else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
-    for (size_t i = 0; i < 5; i++) x64_nop(p, m);
-    return true;
-}
-
-static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
-    (void) a;
-    size_t p = fc->d[8].u6;
-    return x64_call_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) - sizeof(uint32_t)) == X64_STAT(OK);
-}
-
 as *as_r_b(as *a) {
-    as_op_a(a, AS_X64(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_nop, NULL);
-    as_op_a(a, AS_X64(RET), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_ret, NULL);
-    as_op_a(a, AS_X64(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_leave, NULL);
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_pop_r, NULL);
     as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_r, NULL);
-    as_op_a(a, AS_X64(CALL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_l, as_call_e);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_mov_rr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_mov_rv, NULL);
