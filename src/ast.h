@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "tbl.h"
 #include "tkn.h"
 
 #define AST_STAT(N) ast_stat_##N
@@ -42,29 +43,37 @@ inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs) {
     return _ast_tkn_get(at, false, ign_flgs);
 }
 
-#define AST_TYPE(N) AST_TYPE_##N
+typedef struct _ast ast;
 
-typedef enum {
-    AST_TYPE(TYPE),
-    AST_TYPE(VAL),
-    AST_TYPE(VAR),
-    AST_TYPE(OP),
-    AST_TYPE(LST),
-    AST_TYPE(TBL),
-    AST_TYPE(FN)
-} ast_type;
+void ast_f(ast *a);
 
 #define TYPE(N) TYPE_##N
 
 typedef enum {
-    TYPE(ANON),
+    // ast types
+    TYPE(INT),
+    TYPE(FLT),
+    TYPE(STR),
+    // data types
     TYPE(VD)
 } type;
 
 typedef struct {
     type t;
-    ast *def;
+    ast *a;
 } type_node;
+
+inline type_node *type_node_i(type t, ast *const a) {
+    type_node *tn = calloc(1, sizeof(type_node));
+    tn->t = t;
+    tn->a = a;
+    return tn;
+}
+
+inline void type_node_f(type_node *tn) {
+    FNNF(tn->a, ast_f);
+    free(tn);
+}
 
 typedef struct {
     type t;
@@ -80,28 +89,21 @@ inline void val_node_f(val_node *v) {
     free(v);
 }
 
-typedef struct {
-    uint8_t id;
-    fn_node *scope;
-    ast *def;
-    char str[]; // null term
-} var_node; // tbl itm data TODO struct padding
-
 #define OP_TYPE(N) OP_TYPE_##N
 
 typedef enum {
-    OP_TYPE(ASS),
-    OP_TYPE(CST)
+    OP_TYPE(ASS), // :
+    OP_TYPE(CST) // $
 } op_type;
 
 typedef struct {
     op_type ot;
-    ast *def;
+    type_node *tn;
     ast *l, *r;
 } op_node;
 
 typedef struct _lst_itm {
-    ast *def;
+    ast *a;
     struct _lst_itm *next;
 } lst_itm;
 
@@ -113,22 +115,22 @@ inline lst_itm *lst_itm_i(ast *const a) {
 
 typedef struct _lst_node {
     size_t len;
-    ast *def;
+    type_node *tn;
     lst_itm *h, *t;
 } lst_node;
 
-inline lst_node *lst_node_int(void) {
+inline lst_node *lst_node_i(void) {
     return calloc(1, sizeof(lst_node));
 }
 
-inline void lst_node_add(lst_node *const lst, ast *const a) {
+inline void lst_node_a(lst_node *const lst, ast *const a) {
     if (!lst->h) lst->h = lst->h->next = lst->t = lst_itm_i(a);
     else lst->t = lst->t->next = lst_itm_i(a);
     lst->len++;
 }
 
 typedef struct {
-    ast *def;
+    type_node *tn;
     tbl *tl;
 } tbl_node;
 
@@ -139,16 +141,68 @@ typedef struct _fn_node {
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
 
+typedef struct {
+    uint8_t id;
+    type_node *tn; // null for unknown
+    fn_node *fns; // scope
+    char str[]; // null term
+} var_node; // tbl itm data TODO struct padding
+
+inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
+    var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
+    vn->id = fns->idc++;
+    vn->fns = fns;
+    memcpy(vn->str, str + t->pos, t->len);
+    return vn;
+}
+
+inline void var_node_f(var_node *vn) {
+    FNNF(vn->tn, type_node_f);
+    free(vn);
+}
+
+typedef struct {
+    ast *tgt;
+    type_node *tn;
+    lst_node *args;
+} call_node;
+
+#define AST_TYPE(N) AST_TYPE_##N
+
+typedef enum {
+    AST_TYPE(TYPE),
+    AST_TYPE(VAL),
+    AST_TYPE(OP),
+    AST_TYPE(LST),
+    AST_TYPE(TBL),
+    AST_TYPE(FN),
+    AST_TYPE(VAR),
+    AST_TYPE(CALL)
+} ast_type;
+
+typedef union {
+    type_node *tn;
+    val_node *val;
+    op_node *op;
+    lst_node *lst;
+    tbl_node *tl;
+    fn_node *fn;
+    var_node *var;
+    call_node *cl;
+} node;
+
 typedef struct _ast {
     ast_type at;
-    union {
-        type_node *tn;
-        val_node *val;
-        var_node *var;
-        op_node *op;
-        lst_node *lst;
-        tbl_node *tl;
-        fn_node *fn;
-    } node;
+    node *n;
     tkn t;
 } ast;
+
+inline ast *ast_i(ast_type at, node *const n, tkn *t) {
+    ast *a = calloc(1, sizeof(ast));
+    a->at = at;
+    a->n = n;
+    memcpy(&a->t, t, sizeof(tkn));
+    return a;
+}
+
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, ast **cur);

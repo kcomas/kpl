@@ -180,8 +180,10 @@ static const char *const tkn_type_str[] = {
     "I6",
     "F5",
     "F6",
-    "SG",
+    "DT",
+    "CR",
     "SL",
+    "SG",
     "VR",
     "TE",
     "HH",
@@ -216,7 +218,7 @@ static const char *const tkn_type_str[] = {
     "AND",
     "OR",
     "CNCT",
-    "RW"
+    "RW",
 };
 
 void tkn_p(const tkn *const t, const char *const str) {

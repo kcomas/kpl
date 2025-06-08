@@ -1,11 +1,7 @@
 
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include "kpl.h"
 
 typedef struct _tbl_itm {
     struct _tbl_itm *next;

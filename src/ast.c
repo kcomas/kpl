@@ -41,3 +41,21 @@ ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs) {
 extern inline ast_stat ast_tkn_next(ast_st *const at, uint8_t ign_flgs);
 
 extern inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs);
+
+extern inline type_node *type_node_i(type t, ast *const a);
+
+extern inline void type_node_f(type_node *tn);
+
+extern inline val_node *val_node_i(type t);
+
+extern inline void val_node_f(val_node *v);
+
+extern inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
+
+extern inline void var_node_f(var_node *vn);
+
+void ast_f(ast *a) {
+    // TODO
+}
+
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, ast **cur);
