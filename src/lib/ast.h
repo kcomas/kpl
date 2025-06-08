@@ -22,7 +22,7 @@ typedef enum {
     AST_CLS(S), // scalar type [un[type];un]
     AST_CLS(V), // vector type [te[type];lst]
     AST_CLS(O), // op [te[type];op_id;te;te]
-    AST_CLS(Z), // left target, no arg apply type [te[type];mc;te]
+    AST_CLS(Z), // left target, no arg apply type [te[type];te;mc]
     AST_CLS(A), // apply type [te[type];te;lst]
     AST_CLS(L), // list tbl with scope [tbl[mc;id;type;node];lst]
     AST_CLS(C), // cmd te[cmd;tgt]
@@ -50,6 +50,8 @@ ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst
 ast *ast_c(ast *a);
 
 // ast t te[par;psr;cls;...]
+
+#define AST_MIN_NODE_LEN 4
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);
 
