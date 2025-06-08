@@ -57,7 +57,8 @@ typedef enum {
     TYPE(ST),
     TYPE(FN),
     TYPE(ER),
-    TYPE(FD)
+    TYPE(FD),
+    TYPE(TD)
 } type;
 
 const char *type_get_str(type t);

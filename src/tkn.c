@@ -52,7 +52,8 @@ static const type_var tv[] = {
     TV(ST),
     TV(FN),
     TV(ER),
-    TV(FD)
+    TV(FD),
+    TV(TD)
 };
 
 static const size_t tv_len = AL(tv);
@@ -243,6 +244,7 @@ static const char *const tkn_type_str[] = {
     "FN",
     "ER",
     "FD",
+    "TD",
     // erros
     "TC", // try / catch
     // wraps

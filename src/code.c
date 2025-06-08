@@ -459,10 +459,10 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
 
 #define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
 
-static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_node *const var) {
+static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_node *const var, bool rci) {
     if (var->tn->t == TYPE(VD)) return CODE_ER(cs, INV_TYPE_STORE_VD, a);
     code_stat cstat;
-    OP_RCI(cs, c, var->tn);
+    if (rci) OP_RCI(cs, c, var->tn);
     switch (var->vt) {
         case VAR_TYPE(U):
             return CODE_ER(cs, VAR_TYPE_U, a);
@@ -537,10 +537,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
                 if (opn->l->n.lst->len == 2) {
-                    if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
+                    if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var, false)) != CODE_STAT(OK)) return cstat;
                 }
                 OP_A(cs, c, CE, ER, { RER(TYPE(ER), true) }, opn->r);
-                if ((cstat = store_var(cs, a, c, opn->l->n.lst->t->a->n.var)) != CODE_STAT(OK)) return cstat;
+                if ((cstat = store_var(cs, a, c, opn->l->n.lst->t->a->n.var, false)) != CODE_STAT(OK)) return cstat;
                 break;
             }
             return CODE_ER(cs, INV_TC, a);
@@ -548,7 +548,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
                 if ((opn->flgs & NODE_FLG(GCV)) && (cstat = load_var(cs, opn->l, c, true)) != CODE_STAT(OK)) return cstat;
-                if ((cstat = store_var(cs, a, c, opn->l->n.var)) != CODE_STAT(OK)) return cstat;
+                if ((cstat = store_var(cs, a, c, opn->l->n.var, true)) != CODE_STAT(OK)) return cstat;
                 break;
             } else if (opn->l->at == AST_TYPE(SYM)) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, ASS_R_N, opn->r);
@@ -758,9 +758,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     }
     if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) {
         OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+        if (!(tr = ast_gtn(opn->ret->a))) return CODE_ER(cs, INV_ER_GCR, a);
         if (opn->flgs & NODE_FLG(GCR)) {
-            if (!(tr = ast_gtn(opn->ret->a))) return CODE_ER(cs, INV_ER_GCR, a);
             OP_GC(cs, c, tr, opn->ret->a);
+        } else {
+            OP_RCD(cs, c, tr);
         }
     }
     else if (opn->ret->t != TYPE(ER) && opn->ret->t != TYPE(VD) && (opn->flgs & NODE_FLG(GCR))) OP_GC(cs, c, opn->ret, a);

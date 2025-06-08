@@ -78,7 +78,6 @@ static er_itm *er_var(mod *const m, ast *const a, const char *stat) {
 
 void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
     er_itm *ei = er_var(m, a, NULL);
-    var_sg_rci(sg);
     ei->sg = sg;
     er_a(m->e, ei);
 }

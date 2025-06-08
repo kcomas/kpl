@@ -44,14 +44,17 @@ void er_itm_rcd(er_itm *const ei) {
     ei->rc--;
 }
 
-
-void er_itm_gc(er_itm *ei) {
-    if (--ei->rc >= 0) return; // only check head
+void er_itm_d(er_itm *ei) {
     while (ei) {
         er_itm *tmp = ei;
         ei = ei->next;
         er_itm_f(tmp, NULL);
     }
+}
+
+void er_itm_gc(er_itm *ei) {
+    if (--ei->rc >= 0) return; // only check head
+    er_itm_d(ei);
 }
 
 extern inline er *er_i(al *const a);

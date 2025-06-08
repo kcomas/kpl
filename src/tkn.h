@@ -47,6 +47,7 @@ typedef enum {
     TKN_TYPE(FN),
     TKN_TYPE(ER),
     TKN_TYPE(FD),
+    TKN_TYPE(TD),
     // erros
     TKN_TYPE(TC), // try / catch
     // wraps
