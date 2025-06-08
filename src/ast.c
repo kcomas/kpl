@@ -16,7 +16,7 @@ const char *ast_oc_str(oc o) {
     return s;
 }
 
-const char *cmd_op_str(cc c) {
+const char *ast_cc_str(cc c) {
     static const char *ccs[] = {
         "_START",
         "P1",
@@ -298,7 +298,7 @@ void ast_p(const te *an, size_t idnt) {
             putchar(')');
             break;
         case AST_CLS(C):
-            printf("(C [%s]", cmd_op_str(an->d[3].u6));
+            printf("(C [%s]", ast_cc_str(an->d[3].u6));
             if (an->d[4].p) {
                 putchar('\n');
                 ast_p(an->d[4].p, idnt + 1);
