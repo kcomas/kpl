@@ -19,7 +19,10 @@ typedef enum {
     TYPE_STAT(INV_FN_CST_ARGS_LEN), // length of args does not match type
     TYPE_STAT(INV_FN_ARG_T), // fn arg is not a var
     TYPE_STAT(INV_FN_T_ARG), // type for fn arg is invalid
-    TYPE_STAT(INV_FN_T_RET) // type for fn ret is invalid
+    TYPE_STAT(INV_FN_T_RET), // type for fn ret is invalid
+    TYPE_STAT(INV_NOT_R_T_N), // right type for not null
+    TYPE_STAT(INV_ARGS_OP_CALL), // invalid args for op call
+    TYPE_STAT(INV_OP_CALL_LRR_N_N) // op node for call l r ret not null
 } type_stat;
 
 type_stat type_chk(fn_node *const fns, ast *const a);
