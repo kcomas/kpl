@@ -99,9 +99,19 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt);
 
 void ast_f(ast *a);
 
+
+#define NODE_FLG(N) NODE_FLG_##N
+
+typedef enum {
+    NODE_FLG(EC) = (1 << 0), // error caught
+    NODE_FLG(GCR) = (1 << 1), // gc ret value
+} node_flg;
+
+#define NFEC(FLGS) (FLGS & NODE_FLG(EC))
+
 typedef struct {
     type t;
-    bool ec; // error caught
+    uint8_t flgs;
     ast *a;
 } type_node;
 
@@ -119,7 +129,7 @@ inline void type_node_p(const ast_st *const as, const type_node *const tn, size_
         putchar('\n');
         PCX(' ', idnt);
         printf("%s", type_get_str(tn->t));
-        if (tn->ec) printf(",EC");
+        if (tn->flgs & NODE_FLG(EC)) printf(",EC");
         if (tn->a) {
             putchar('\n');
             PCX(' ', idnt);
@@ -219,6 +229,7 @@ typedef enum {
 
 typedef struct {
     op_type ot;
+    uint8_t flgs;
     type_node *ret;
     ast *l, *r;
 } op_node;
@@ -506,7 +517,7 @@ inline void fn_node_f(fn_node *fn) {
 }
 
 typedef struct {
-    bool gcr; // gc return value
+    uint8_t flgs;
     ast *tgt;
     type_node *ret;
     lst_node *args;
@@ -520,7 +531,7 @@ inline call_node *call_node_i(al *const a, ast *const tgt, lst_node *const args)
 }
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
-    printf(",GCR:%d,", cn->gcr);
+    printf(",GCR:%d,", cn->flgs & NODE_FLG(GCR));
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);

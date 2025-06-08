@@ -132,7 +132,10 @@ static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *c
         lst->tn->a = ast_i(ts->a, AST_TYPE(LST), (node) { .lst = lst_node_i(ts->a, TYPE(STMT)) }, NULL);
     }
     while (h) {
-        if (lst->tn->t == TYPE(STMT) && h->a->at == AST_TYPE(CALL) && (h != lst->t || !fns->par)) h->a->n.cn->gcr = true; // top level call gc return type
+        if (lst->tn->t == TYPE(STMT) && (h != lst->t || !fns->par)) { // gc value on stack
+            if (h->a->at == AST_TYPE(CALL)) h->a->n.cn->flgs |= NODE_FLG(GCR);
+            if (h->a->at == AST_TYPE(OP)) h->a->n.op->flgs |= NODE_FLG(GCR);
+        }
         IFTCHK(type_chk, ts, fns, h->a);
         if (blts) {
             ASTGTN(bs, h->a, BLTS_INV_T);
@@ -268,7 +271,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 } else if (lst->t->a->n.var->tn->t != TYPE(ER)) {
                     return TYPE_ER(ts, TC_VAR_LT_N_T_ER);
                 }
-                rt->ec = true;
+                rt->flgs |= NODE_FLG(EC);
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }
@@ -283,7 +286,8 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     // TODO gc existing data
                     if (!type_eq(lt, rt)) return TYPE_ER(ts, VAR_ASS_N_T_M);
                 } else op->l->n.var->tn = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
-                op->ret = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
+                //op->ret = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
+                op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }
             return TYPE_ER(ts, INV_ASS_TO);
