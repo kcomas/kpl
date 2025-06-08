@@ -385,8 +385,8 @@ static var join_thrd(var_td *volatile td) {
     return td->te->v[td->te->len - 1];
 }
 
-static void deb(void) {
-    printf("?? DEB ??\n");
+static void deb(mod *const m) {
+    printf("?? DEB m: %p ??\n", m);
 }
 
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool done) {
@@ -451,6 +451,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(DEB):
                 op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
                 SET_FP(deb);
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
