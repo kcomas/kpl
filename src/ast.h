@@ -50,6 +50,7 @@ typedef enum {
     AST_TYPE(VAR),
     AST_TYPE(OP),
     AST_TYPE(LST),
+    AST_TYPE(TBL),
     AST_TYPE(FN)
 } ast_type;
 
@@ -62,7 +63,7 @@ typedef enum {
 
 typedef struct {
     type t;
-    ast *data;
+    ast *def;
 } type_node;
 
 typedef struct {
@@ -81,8 +82,10 @@ inline void val_node_f(val_node *v) {
 
 typedef struct {
     uint8_t id;
-    tbl_itm *itm; // data is ast node
-} var_node;
+    fn_node *scope;
+    ast *def;
+    char str[]; // null term
+} var_node; // tbl itm data TODO struct padding
 
 #define OP_TYPE(N) OP_TYPE_##N
 
@@ -93,11 +96,12 @@ typedef enum {
 
 typedef struct {
     op_type ot;
+    ast *def;
     ast *l, *r;
 } op_node;
 
 typedef struct _lst_itm {
-    ast *a;
+    ast *def;
     struct _lst_itm *next;
 } lst_itm;
 
@@ -107,8 +111,9 @@ inline lst_itm *lst_itm_i(ast *const a) {
     return itm;
 }
 
-typedef struct {
+typedef struct _lst_node {
     size_t len;
+    ast *def;
     lst_itm *h, *t;
 } lst_node;
 
@@ -123,7 +128,15 @@ inline void lst_node_add(lst_node *const lst, ast *const a) {
 }
 
 typedef struct {
-    lst_node *args, *body; // tail arg is ret type
+    ast *def;
+    tbl *tl;
+} tbl_node;
+
+typedef struct _fn_node {
+    uint8_t idc; // var id counter
+    tbl *tl; // sym tbl
+    struct _fn_node *par; // parent node
+    lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
 
 typedef struct _ast {
@@ -134,6 +147,7 @@ typedef struct _ast {
         var_node *var;
         op_node *op;
         lst_node *lst;
+        tbl_node *tl;
         fn_node *fn;
     } node;
     tkn t;
