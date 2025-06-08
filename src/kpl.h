@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdbool.h>
-#include <ctypes.h>
+#include <ctype.h>
 
 // free not null
 #define FNN(V) if (V != NULL) free(V)
