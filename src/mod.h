@@ -33,8 +33,14 @@ mod_stat mod_lfile(mod *const m, const char *const path);
 // allocate globals
 void mod_ag(mod *const m, uint8_t ng);
 
-void mod_sg_i6(mod *const m, uint8_t i, int64_t i6);
-int64_t mod_lg_i6(mod *const m, uint8_t i);
+#define MOD_SG(CT, T) void mod_sg_##T(mod *const m, uint8_t i, CT T)
+#define MOD_LG(CT, T) CT mod_lg_##T(mod *const m, uint8_t i)
+
+MOD_SG(int64_t, i6);
+MOD_LG(int64_t, i6);
+
+MOD_SG(uint64_t, u6);
+MOD_LG(uint64_t, u6);
 
 void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg);
 var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
