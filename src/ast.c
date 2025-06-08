@@ -666,6 +666,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         RES_CASE(SELF, NULL);
         RES_CASE(DEB, type_node_i(as->r->a, TYPE(VD), NULL));
         TYPE_NA_CASE(VD);
+        TYPE_NA_CASE(BL);
         TYPE_NA_CASE(U3);
         TYPE_NA_CASE(U4);
         TYPE_NA_CASE(U5);
