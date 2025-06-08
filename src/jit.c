@@ -87,26 +87,30 @@ jit_stat jit_movrr(size_t *p, uint8_t *m, reg d, reg s) {
 
 jit_stat jit_movrar(size_t *p, uint8_t *m, reg d, reg s) {
     SET_REX2(d, s);
-    if (d == R(SP)) return jit_b(p, m, 4, rex, 0x89, 0x04 + rid(s) * 8, 0x24);
-    return jit_b(p, m, 3, rex, 0x89, modrm(0x00, d, s));
+    jit_b(p, m, 3, rex, 0x89, modrm(0x00, d, s));
+    if (d == R(SP)) return jit_a(p, m, 0x24);
+    return JIT_STAT(OK);
 }
 
 jit_stat jit_movrabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
     SET_REX2(d, s);
-    if (d == R(SP)) return jit_b(p, m, 5, rex, 0x89, 0x04 + rid(s) * 8, 0x24, dsp);
-    return jit_b(p, m, 4, rex, 0x89, modrm(0x40, d, s), dsp);
+    jit_b(p, m, 3, rex, 0x89, modrm(0x40, d, s));
+    if (d == R(SP)) return jit_a(p, m, 0x24);
+    return jit_a(p, m, dsp);
 }
 
 jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s) {
     SET_REX2(s, d);
-    if (s == R(SP)) return jit_b(p, m, 4, rex, 0x8B, 0x04 + rid(d) * 8, 0x24);
-    return jit_b(p, m, 3, rex, 0x8B, modrm(0x00, s, d));
+    jit_b(p, m, 3, rex, 0x8B, modrm(0x00, s, d));
+    if (s == R(SP)) jit_a(p, m, 0x24);
+    return JIT_STAT(OK);
 }
 
 jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     SET_REX2(s, d);
-    if (s == R(SP)) return jit_b(p, m, 5, rex, 0x8B, 0x44 + rid(d) * 8, 0x24, dsp);
-    return jit_b(p, m, 4, rex, 0x8B, modrm(0x40, s, d), dsp);
+    jit_b(p, m, 3, rex, 0x8B, modrm(0x40, s, d));
+    if (s == R(SP)) jit_a(p, m, 0x24);
+    return jit_a(p, m, dsp);
 }
 
 jit_stat jit_incr(size_t *p, uint8_t *m, reg r) {
