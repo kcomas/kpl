@@ -30,7 +30,7 @@ typedef enum {
 const char *ast_cc_str(cc c);
 
 // lst tbl entry te[mc;flags;type;ast_node]
-te *ast_lst_tbl_e_i(const ast *a, mc *s);
+te *ast_lst_tbl_e_i(const ast *a, mc *s, te *t);
 
 // get first parent node of cls
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);

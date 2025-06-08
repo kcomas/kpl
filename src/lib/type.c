@@ -78,7 +78,7 @@ void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type) {
 te *type_s_i(const alfr *af, te *p, type t) {
     te *s = te_i(2, af, NULL);
     s->d[0] = P(p);
-    s->d[1] = U6(t);
+    s->d[1] = U4(t);
     return s;
 }
 
@@ -91,7 +91,7 @@ static void type_v_f(void *p) {
 te *type_v_i(const alfr *af, te *restrict p, type v, te *restrict t) {
     te *vv = te_i(3, af, type_v_f);
     vv->d[0] = P(p);
-    vv->d[1] = U6(v);
+    vv->d[1] = U4(v);
     vv->d[2] = P(t);
     return vv;
 }
@@ -105,7 +105,7 @@ static void type_h_f(void *p) {
 te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t) {
     te *hh = te_i(3, af, type_h_f);
     hh->d[0] = P(p);
-    hh->d[1] = U6(h);
+    hh->d[1] = U4(h);
     hh->d[2] = P(t);
     return hh;
 }
@@ -120,7 +120,7 @@ static void type_f_f(void *p) {
 te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *a) {
     te *ff = te_i(4, af, type_f_f);
     ff->d[0] = P(p);
-    ff->d[1] = U6(f);
+    ff->d[1] = U4(f);
     ff->d[2] = P(r);
     ff->d[3] = P(a);
     return ff;

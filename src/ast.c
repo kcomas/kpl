@@ -35,14 +35,15 @@ static void lst_tbl_e_f(void *p) {
     lte->af->f(lte);
 }
 
-te *ast_lst_tbl_e_i(const ast *a, mc *s) {
+te *ast_lst_tbl_e_i(const ast *a, mc *s, te *t) {
     te *lte = te_i(4, a->ta, lst_tbl_e_f);
     lte->d[0] = P(s);
+    lte->d[2] = P(t);
     return lte;
 }
 
 static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
-    return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].u6 == eb->d[1].u6 && ast_eq(ea->d[2].p, eb->d[2].p) && type_eq(ea->d[3].p, eb->d[3].p);
+    return mc_eq(ea->d[0].p, eb->d[0].p) && ea->d[1].u6 == eb->d[1].u6 && type_eq(ea->d[2].p, eb->d[2].p) && ast_eq(ea->d[3].p, eb->d[3].p);
 }
 
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
