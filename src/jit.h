@@ -26,22 +26,32 @@ inline void jit_f(jit *j) {
 }
 
 #ifndef FN_STK_SIZE
-    #define FN_STK_SIZE 20
+    #define FN_STK_SIZE 10
 #endif
 
 typedef struct {
     size_t len, size;
-    const code *fn[FN_STK_SIZE];
+    const code *fn[];
 } fn_stk;
 
-inline void fn_stk_i(fn_stk *const stk) {
-    stk->len = 0;
-    stk->size = FN_STK_SIZE;
-    memset(stk->fn, 0, sizeof(code*) * FN_STK_SIZE);
+inline fn_stk *fn_stk_i(size_t size) {
+    fn_stk *stk = calloc(1, sizeof(fn_stk) + sizeof(code*) * size);
+    stk->size = size;
+    return stk;
 }
 
-inline void fn_stk_a(fn_stk *const stk, const code *const c) {
-    stk->fn[stk->len++] = c;
+#ifndef FN_STK_RSIZE
+    #define FN_STK_RSIZE 2
+#endif
+
+inline void fn_stk_a(fn_stk **stk, const code *const c) {
+    if ((*stk)->len == (*stk)->size) {
+        fn_stk *ns = fn_stk_i((*stk)->size * FN_STK_RSIZE);
+        for (size_t i = 0; i < (*stk)->len; i++) ns->fn[ns->len++] = (*stk)->fn[i];
+        free(*stk);
+        *stk = ns;
+    }
+    (*stk)->fn[(*stk)->len++] = c;
 }
 
-void fn_stk_b(fn_stk *const stk, const code *const c); // create stack from code scan
+void fn_stk_b(fn_stk **stk, const code *const c); // create stack from code scan
