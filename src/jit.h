@@ -77,7 +77,7 @@ typedef enum {
 } jit_flgs;
 
 #ifndef BYTES_PER_OP
-    #define BYTES_PER_OP 10
+    #define BYTES_PER_OP 50
 #endif
 
 inline jit *jit_i(al *const a, size_t nops, jit *j) {
