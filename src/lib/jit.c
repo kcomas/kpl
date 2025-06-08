@@ -10,8 +10,8 @@ static uint8_t rid(reg r) {
 }
 
 // if the source can be memory address they need to be swapped
-static uint8_t modrm(uint8_t mod, reg d, reg s) {
-    return mod + 8 * rid(s) + rid(d);
+static uint8_t modrm(mod m, reg d, reg s) {
+    return m + 8 * rid(s) + rid(d);
 }
 
 static size_t pg_algn(size_t size) {
@@ -104,14 +104,14 @@ jit_stat jit_mov_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x89, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x89, modrm(MOD(11), d, s));
 }
 
 jit_stat jit_mov_rar(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    jit_b(p, m, 3, rex, 0x89, modrm(0x00, d, s));
+    jit_b(p, m, 3, rex, 0x89, modrm(MOD(00), d, s));
     if (d == R(SP)) return jit_a(p, m, 0x24);
     return JIT_STAT(OK);
 }
@@ -120,7 +120,7 @@ jit_stat jit_mov_rabr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    jit_b(p, m, 3, rex, 0x89, modrm(0x40, d, s));
+    jit_b(p, m, 3, rex, 0x89, modrm(MOD(01), d, s));
     if (d == R(SP)) return jit_a(p, m, 0x24);
     return jit_a(p, m, dsp);
 }
@@ -129,7 +129,7 @@ jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(s, d);
-    jit_b(p, m, 3, rex, 0x8B, modrm(0x00, s, d));
+    jit_b(p, m, 3, rex, 0x8B, modrm(MOD(00), s, d));
     if (s == R(SP)) jit_a(p, m, 0x24);
     return JIT_STAT(OK);
 }
@@ -137,7 +137,7 @@ jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s) {
 jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     VALID_R(s);
     SET_REX2(s, d);
-    jit_b(p, m, 3, rex, 0x8B, modrm(0x40, s, d));
+    jit_b(p, m, 3, rex, 0x8B, modrm(MOD(01), s, d));
     if (s == R(SP)) jit_a(p, m, 0x24);
     return jit_a(p, m, dsp);
 }
@@ -145,27 +145,27 @@ jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
 jit_stat jit_inc_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     SET_REX(r);
-    return jit_b(p, m, 3, rex, 0xFF, 0xC0 + rid(r));
+    return jit_b(p, m, 3, rex, 0xFF, MOD(11) + rid(r));
 }
 
 jit_stat jit_add_rb(size_t *p, uint8_t *m, reg r, int8_t b) {
     VALID_R(r);
     SET_REX(r);
-    return jit_b(p, m, 4, rex, 0x83, 0xC0 + rid(r), b);
+    return jit_b(p, m, 4, rex, 0x83, MOD(11) + rid(r), b);
 }
 
 jit_stat jit_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x01, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x01, modrm(MOD(11), d, s));
 }
 
 jit_stat jit_addsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x58, modrm(0xC0, s, d));
+    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x58, modrm(MOD(11), s, d));
 }
 
 jit_stat jit_dec_r(size_t *p, uint8_t *m, reg r) {
@@ -184,35 +184,35 @@ jit_stat jit_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x29, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x29, modrm(MOD(11), d, s));
 }
 
 jit_stat jit_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x5C, modrm(0xC0, s, d));
+    return jit_b(p, m, 5, rex, 0xF2, 0xF, 0x5C, modrm(MOD(11), s, d));
 }
 
 jit_stat jit_xor_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x31, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x31, modrm(MOD(11), d, s));
 }
 
 jit_stat jit_cmp_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x39, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x39, modrm(MOD(11), d, s));
 }
 
 jit_stat jit_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
     SET_REX2(d, s);
-    return jit_b(p, m, 3, rex, 0x85, modrm(0xC0, d, s));
+    return jit_b(p, m, 3, rex, 0x85, modrm(MOD(11), d, s));
 }
 
 uint8_t jit_jmpu_lblb(size_t from, size_t to) {
