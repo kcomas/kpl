@@ -2,8 +2,6 @@
 #pragma once
 
 #include "def.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 typedef void err_d_p(void *d);
 

@@ -45,17 +45,17 @@ void tkn_m_p(const te *m, const mc *s);
 
 size_t tkn_sh(un v);
 
-tkn_stat tkn_df(tkn *t, te *m);
+tkn_stat tkn_df(tkn *t, te *m, err **e);
 
-tkn_stat tkn_num(tkn *t, te *m);
+tkn_stat tkn_num(tkn *t, te *m, err **e);
 
-tkn_stat tkn_nl(tkn *t, te *m);
+tkn_stat tkn_nl(tkn *t, te *m, err **e);
 
-tkn_stat tkn_ft(tkn *t, te *m);
+tkn_stat tkn_ft(tkn *t, te *m, err **e);
 
-tkn_stat tkn_ws(tkn *t, te *m);
+tkn_stat tkn_ws(tkn *t, te *m, err **e);
 
-tkn_stat tkn_sym(tkn *t, te *m);
+tkn_stat tkn_sym(tkn *t, te *m, err **e);
 
 void tkn_b(tkn *t);
 

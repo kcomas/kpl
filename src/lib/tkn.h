@@ -4,6 +4,7 @@
 #include "def.h"
 #include "mc.h"
 #include "tbl.h"
+#include "err.h"
 
 #define TKN_STAT(N) TKN_STAT_##N
 
@@ -18,7 +19,7 @@ typedef tbl *tkn_tbl_i(void);
 typedef struct _tkn tkn;
 
 // on match
-typedef tkn_stat tkn_pf(tkn *t, te *m);
+typedef tkn_stat tkn_pf(tkn *t, te *m, err **e);
 
 // match te[u5(cno)|u4(lno)|u4(id);u5(start)|u5(end)]
 
@@ -59,21 +60,23 @@ typedef struct _tkn {
     uint16_t idc, lno;
     uint32_t cno, pos; // id counter
     ssize_t r;
-    const alfr *af, *ta;
+    const alfr *af, *ta, *ea;
     tkn_tbl_i *ttif;
     tkn_pf *df; // called when nothing matches
     tbl *t; // trie
     mc *s;
 } tkn;
 
-tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s);
+tkn *tkn_i(const alfr *af, const alfr *ta, const alfr *ea, tkn_tbl_i ttif, tkn_pf df, mc *s);
 
 tkn *tkn_i_tkn(const tkn *t, mc *s);
+
+tkn *tkn_c(tkn *t);
 
 // give zero for an assigned id
 uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf);
 
-tkn_stat tkn_n(tkn *t, te *m);
+tkn_stat tkn_n(tkn *t, te *m, err **e);
 
 void tkn_s(tkn *t, te *m);
 

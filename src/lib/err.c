@@ -13,8 +13,8 @@ err *err_i(const alfr *af, err_d_p dp, err_d_f df, void *d, const char *m) {
 }
 
 void err_p(const err *e) {
-    printf("\e[91m%s\e[0m\n", e->m);
-    if (e->d) {
+    printf("\e[1;91m%s\e[0m ", e->m);
+    if (e->d && e->dp) {
         e->dp(e->d);
         putchar('\n');
     }
@@ -22,6 +22,6 @@ void err_p(const err *e) {
 
 void err_f(err *e) {
     if (!e || --e->r > 0) return;
-    if (e->d) e->df(e->d);
+    if (e->d && e->df) e->df(e->d);
     e->af->f(e);
 }

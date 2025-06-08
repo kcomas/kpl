@@ -41,13 +41,14 @@ void tkn_m_s_e(te *m, uint32_t e) {
     m->d[1] = u5_s_o(m->d[1], 1, e);
 }
 
-tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s) {
+tkn *tkn_i(const alfr *af, const alfr *ta, const alfr *ea, tkn_tbl_i ttif, tkn_pf df, mc *s) {
     tkn *t = af->a(sizeof(tkn));
     t->idc = TOKEN(_);
     t->r = t->lno = t->cno = 1;
     t->pos = 0;
     t->af = af;
     t->ta = ta;
+    t->ea = ea;
     t->ttif = ttif;
     t->df = df;
     t->t = ttif();
@@ -62,11 +63,17 @@ tkn *tkn_i_tkn(const tkn *t, mc *s) {
     tt->pos = 0;
     tt->af = t->af;
     tt->ta = t->ta;
+    tt->ea = t->ea;
     tt->ttif = t->ttif;
     tt->df = t->df;
     tt->t = tbl_c(t->t);
     tt->s = s;
     return tt;
+}
+
+tkn *tkn_c(tkn *t) {
+    t->r++;
+    return t;
 }
 
 static void tkn_entry_f(void *v) {
@@ -115,14 +122,14 @@ uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf) {
     return kv->d[1].u4;
 }
 
-tkn_stat tkn_n(tkn *t, te *m) {
-    size_t e = 0;
+tkn_stat tkn_n(tkn *t, te *m, err **e) {
+    size_t ce = 0;
     tkn_m_s_i(m, 0);
     tkn_m_s_l(m, t->lno);
     tkn_m_s_c(m, t->cno);
     tkn_m_s_s(m, t->pos);
     tkn_m_s_e(m, 0);
-    un c = c4_g((char*) t->s->d, t->pos, &e);
+    un c = c4_g((char*) t->s->d, t->pos, &ce);
     if (c.c.a == '\0') return TKN_STAT(END);
     tbl *tl = t->t;
     tkn_pf *pf = t->df;
@@ -130,16 +137,16 @@ tkn_stat tkn_n(tkn *t, te *m) {
     while (c.c.a != '\0') {
         if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) break;
         tl = kv->d[3].p;
-        t->pos = e + 1;
+        t->pos = ce + 1;
         t->cno++;
         if (kv->d[2].p) {
             pf = kv->d[2].p;
             tkn_m_s_i(m, kv->d[1].u4);
             tkn_m_s_e(m, t->pos);
         }
-        c = c4_g((char*) t->s->d, t->pos, &e);
+        c = c4_g((char*) t->s->d, t->pos, &ce);
     }
-    return pf(t, m);
+    return pf(t, m, e);
 }
 
 void tkn_s(tkn *t, te *m) {
