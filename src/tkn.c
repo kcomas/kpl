@@ -95,7 +95,7 @@ static tkn_stat tkn_num(tkn_st *const ts, tkn *const t, const char *const str) {
             }
         } else break;
     }
-    return TKN_STAT(OK);
+    return TKN_ER(ts, OK);
 }
 
 #define T_TYP_LEN(T) t->type = TKN_TYPE(T); \
@@ -127,7 +127,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
         switch (str[t->pos]) {
             case '\0':
                 T_TYP_LEN(NB);
-                return TKN_STAT(END);
+                return TKN_ER(ts, END);
             T_ONE_C('\n', NL);
             T_ONE_C(';', SEMI);
             case ' ':
@@ -179,7 +179,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
         }
     }
     if (inc) tkn_st_u(ts, t);
-    return TKN_STAT(OK);
+    return TKN_ER(ts, OK);
 }
 
 extern inline tkn_stat tkn_next(tkn_st *const ts, tkn *const t, const char *const str);

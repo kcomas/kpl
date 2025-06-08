@@ -1,7 +1,42 @@
 
 #include "ast.h"
 
+static const char *const ass[] = {
+    "OK",
+    "TKN_ERR",
+    "TKN_INV",
+    "TKN_NF",
+    "VAL_A_NN",
+    "RES_A_NN",
+    "VAR_A_NN",
+    "TYPE_A_NN",
+    "VAR_I_ERR",
+    "OP_CALL_A_NN",
+    "FH_A_NN",
+    "VT_A_NN",
+    "CALL_A_N",
+    "IF_INV_BODY",
+    "IF_A_NN",
+    "IF_INV_FMT",
+    "LOP_INV_BODY",
+    "LOP_A_NN",
+    "LOP_INV_FMT",
+    "INV_TYPE_LST_INIT",
+    "RET_A_NN",
+    "END"
+};
+
+const char *ast_stat_str(ast_stat astat) {
+    const char *s = "INVALID_AST_STAT";
+    if (astat >= AST_STAT(OK) && AST_STAT(END)) s = ass[astat];
+    return s;
+}
+
 extern inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str);
+
+extern inline ast_stat ast_er(ast_st *const as, const char *const fnn, ast_stat astat);
+
+#define AST_ER(AS, ASTAT) ast_er(AS, __func__, AST_STAT(ASTAT))
 
 static tkn *inc_tkn(ast_st *const as, bool inc) {
     return inc ? &as->next : &as->peek;
@@ -29,9 +64,7 @@ static const size_t tft_len = AL(tft);
 
 static bool flg_mtch(tkn_type type, uint8_t flgs) {
     for (size_t i = 0; i < tft_len; i++) {
-        if ((tft[i].flg & flgs) && type == tft[i].type) {
-            return true;
-        }
+        if ((tft[i].flg & flgs) && type == tft[i].type) return true;
     }
     return false;
 }
@@ -47,9 +80,9 @@ ast_stat _ast_tkn_get(ast_st *const as, bool inc, uint8_t ign_flgs) {
             if (!inc) tkn_st_u(&as->ts, &as->peek);
         }
     }
-    if (as->tstat == TKN_STAT(OK)) return AST_STAT(OK);
-    else if (as->tstat == TKN_STAT(END)) return AST_STAT(END);
-    return AST_STAT(TKN_ERR);
+    if (as->tstat == TKN_STAT(OK)) return AST_ER(as, OK);
+    else if (as->tstat == TKN_STAT(END)) return AST_ER(as, END);
+    return AST_ER(as, TKN_ERR);
 }
 
 extern inline ast_stat ast_tkn_next(ast_st *const as, uint8_t ign_flgs);
@@ -223,6 +256,7 @@ const char *var_type_str(var_type vt) {
     #define MAX_VAR_LEN 20
 #endif
 
+// TODO better tbl errors
 var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const char *const str) {
     char vstr[MAX_VAR_LEN];
     memset(vstr, '\0', MAX_VAR_LEN);
@@ -326,17 +360,17 @@ void ast_f(ast *a) {
 }
 
 #define TYPE_NA_CASE(T) case TKN_TYPE(T): \
-    if (*a) return AST_STAT(TYPE_A_NN); \
+    if (*a) return AST_ER(as, TYPE_A_NN); \
     *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), NULL) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define VAL_CASE(T) case TKN_TYPE(T): \
-    if (*a) return AST_STAT(VAL_A_NN); \
+    if (*a) return AST_ER(as, VAL_A_NN); \
     *a = ast_i(as->a, AST_TYPE(VAL), (node) { .val = val_node_i(as->a, TYPE(T)) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define RES_CASE(T, TT) case TKN_TYPE(T): \
-    if (*a) return AST_STAT(RES_A_NN); \
+    if (*a) return AST_ER(as, RES_A_NN); \
     *a = ast_i(as->a, AST_TYPE(RES), (node) { .rn = res_node_i(as->a, RES_TYPE(T), TT) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
@@ -361,7 +395,7 @@ static ast_stat ast_parse_op(op_type ot, ast_st *const as, fn_node *const fns, a
         tkn_st_u(&as->ts, &as->peek);
         if (op->l) {
             ast_f(*a);
-            return AST_STAT(OP_CALL_A_NN);
+            return AST_ER(as, OP_CALL_A_NN);
         }
         return ast_parse_call(as, fns, a, stp_flgs, &as->peek);
     }
@@ -375,7 +409,7 @@ static ast_stat ast_parse_if_itm(ast_st *const as, fn_node *const fns, if_node *
     ast_stat astat;
     if (!pc) {
         if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-        if (as->peek.type != TKN_TYPE(LB)) return AST_STAT(OK);
+        if (as->peek.type != TKN_TYPE(LB)) return AST_ER(as, OK);
         tkn_st_u(&as->ts, &as->peek);
     }
     ast *cond = NULL;
@@ -386,14 +420,14 @@ static ast_stat ast_parse_if_itm(ast_st *const as, fn_node *const fns, if_node *
             return astat;
         }
         if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-        if (as->next.type != TKN_TYPE(LB)) return AST_STAT(IF_INV_BODY);
+        if (as->next.type != TKN_TYPE(LB)) return AST_ER(as, IF_INV_BODY);
     }
     if ((astat = ast_parse_stmts(as, fns, body, TFLS, TKN_FLG(RB))) != AST_STAT(OK)) {
         lst_node_f(body);
         return astat;
     }
     if_node_a(as->a, in, cond, body);
-    return AST_STAT(OK);
+    return AST_ER(as, OK);
 }
 
 static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
@@ -426,7 +460,7 @@ static ast_stat ast_parse_lop(ast_st *const as, fn_node *const fns, ast **a, uin
         return astat;
     }
     if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-    if (as->next.type != TKN_TYPE(LB)) return AST_STAT(LOP_INV_BODY);
+    if (as->next.type != TKN_TYPE(LB)) return AST_ER(as, LOP_INV_BODY);
     if ((astat = ast_parse_stmts(as, fns, body, TFLS, TKN_FLG(RB))) != AST_STAT(OK)) {
         lst_node_f(body);
         return astat;
@@ -456,7 +490,7 @@ static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
     ast_stat astat;
     if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
-    if (flg_mtch(as->next.type, stp_flgs)) return AST_STAT(OK);
+    if (flg_mtch(as->next.type, stp_flgs)) return AST_ER(as, OK);
     ast *atmp;
     var_node *var;
     tkn ttmp;
@@ -466,12 +500,12 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         case TKN_TYPE(SEMI):
         case TKN_TYPE(WS):
         case TKN_TYPE(CMT):
-            return AST_STAT(TKN_INV);
+            return AST_ER(as, TKN_INV);
         case TKN_TYPE(VAR):
-            if (*a) return AST_STAT(VAR_A_NN);
+            if (*a) return AST_ER(as, VAR_A_NN);
             if (!(var = var_node_i(as->a, fns, &as->next, as->str))) {
                 var_node_f(var);
-                return AST_STAT(VAR_I_ERR);
+                return AST_ER(as, VAR_I_ERR);
             }
             *a = ast_i(as->a, AST_TYPE(VAR), (node) { .var = var }, &as->next);
             return ast_parse_stmt(as, fns, a, stp_flgs);
@@ -500,10 +534,10 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(FD);
         // TODO TYPES
         case TKN_TYPE(FN):
-            if (*a) return AST_STAT(TYPE_A_NN);
+            if (*a) return AST_ER(as, TYPE_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-            if (as->next.type != TKN_TYPE(LP)) return AST_STAT(INV_TYPE_LST_INIT);
+            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, INV_TYPE_LST_INIT);
             atmp = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(STMT)) }, &as->next);
             if ((astat = ast_parse_stmts(as, fns, atmp->n.lst, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
                 ast_f(atmp);
@@ -530,7 +564,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         // TODO OPS
         // wraps
         case TKN_TYPE(LB):
-            if (*a) return AST_STAT(FH_A_NN);
+            if (*a) return AST_ER(as, FH_A_NN);
             if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->peek.type == TKN_TYPE(LP)) {
                 memcpy(&ttmp, &as->next, sizeof(tkn));
@@ -540,9 +574,9 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             // TODO hash
             break;
         case TKN_TYPE(RB):
-            return AST_STAT(TKN_INV);
+            return AST_ER(as, TKN_INV);
         case TKN_TYPE(LS):
-            if (*a) return AST_STAT(VT_A_NN);
+            if (*a) return AST_ER(as, VT_A_NN);
             *a = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(TE)) }, &as->next);
             if ((astat = ast_parse_stmts(as, fns, (*a)->n.lst, TKN_FLG(SEMI), TKN_FLG(RS))) != AST_STAT(OK)) {
                 ast_f(*a);
@@ -550,34 +584,34 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             }
             return ast_parse_stmt(as, fns, a, stp_flgs);
         case TKN_TYPE(RS):
-            return AST_STAT(TKN_INV);
+            return AST_ER(as, TKN_INV);
         case TKN_TYPE(LP):
-            if (!*a) return AST_STAT(CALL_A_N);
+            if (!*a) return AST_ER(as, CALL_A_N);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             return ast_parse_call(as, fns, a, stp_flgs, &ttmp);
         case TKN_TYPE(RP):
-            return AST_STAT(TKN_INV);
+            return AST_ER(as, TKN_INV);
         case TKN_TYPE(IF):
-            if (*a) return AST_STAT(IF_A_NN);
+            if (*a) return AST_ER(as, IF_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-            if (as->next.type != TKN_TYPE(LP)) return AST_STAT(IF_INV_FMT);
+            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, IF_INV_FMT);
             return ast_parse_if(as, fns, a, stp_flgs, &ttmp);
         case TKN_TYPE(LOP):
-            if (*a) return AST_STAT(LOP_A_NN);
+            if (*a) return AST_ER(as, LOP_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-            if (as->next.type != TKN_TYPE(LP)) return AST_STAT(LOP_INV_FMT);
+            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, LOP_INV_FMT);
             return ast_parse_lop(as, fns, a, stp_flgs, &ttmp);
         case TKN_TYPE(RET):
-            if (*a) return AST_STAT(RET_A_NN);
+           if (*a) return AST_ER(as, RET_A_NN);
            *a = ast_i(as->a, AST_TYPE(RET), (node) { .ret = ret_node_i(as->a) }, &as->next);
            return ast_parse_stmt(as, fns, &(*a)->n.ret->a, stp_flgs);
         // TODO controls
         default:
             break; // TODO remove
     }
-    return AST_STAT(TKN_NF);
+    return AST_ER(as, TKN_NF);
 }
 
 

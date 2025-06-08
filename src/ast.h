@@ -33,6 +33,8 @@ typedef enum {
     AST_STAT(END)
 } ast_stat;
 
+const char *ast_stat_str(ast_stat astat);
+
 typedef struct {
     tkn_stat tstat;
     tkn_st ts;
@@ -49,7 +51,16 @@ inline void ast_st_i(ast_st *const as, al *const a, er *const e, char *const str
     as->str = str;
 }
 
-#define TKN_FLG(N) TKN_IGN_##N
+inline ast_stat ast_er(ast_st *const as, const char *const fnn, ast_stat astat) {
+    if (astat == AST_STAT(OK) || astat == AST_STAT(END)) return astat;
+    er_itm *ei = er_itm_i(as->a, ER(AST), fnn, ast_stat_str(astat));
+    ei->lno = as->next.lno;
+    ei->cno = as->next.cno;
+    er_a(as->e, ei);
+    return astat;
+}
+
+#define TKN_FLG(N) TKN_FLG_##N
 
 typedef enum {
     TKN_FLG(NB) = (1 << 0),
