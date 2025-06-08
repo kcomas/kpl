@@ -14,6 +14,7 @@ typedef enum {
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(NO_T_FOR_IF_COND), // cannot not get if conds type
+    CODE_STAT(NO_T_FOR_LOP_COND),
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(VAR_TYPE_U),
@@ -67,6 +68,7 @@ typedef enum {
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
+    OP_C(LOP),
     // coalesce
     OP_C(ZOO), // convert to zero or one
     // ops
@@ -76,6 +78,8 @@ typedef enum {
     OP_C(SUB),
     OP_C(EQ),
     OP_C(NOT),
+    OP_C(GT),
+    OP_C(LT),
     OP_C(OR),
     OP_C(CNCTSG), // sg cnct op type is ethier sg or te
     OP_C(WFD), // OP_T is type to be written

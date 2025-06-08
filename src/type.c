@@ -142,16 +142,6 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
             // TODO
             return TYPE_STAT(INV_SUB);
-        case OP_TYPE(GT):
-            ASTGTNBOP(GT);
-            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
-            // TODO
-            return TYPE_STAT(INV_GT);
-        case OP_TYPE(LT):
-            ASTGTNBOP(LT);
-            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
-            // TODO
-            return TYPE_STAT(INV_LT);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_int_cor(NULL, lt, rt) || type_int_cor(NULL, rt, lt)) {
@@ -167,7 +157,17 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             // TODO check for val
             op->ret = type_node_i(TYPE(BL), NULL);
             break;
-        // TODO ops
+            // TODO ops
+        case OP_TYPE(GT):
+            ASTGTNBOP(GT);
+            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
+            // TODO
+            return TYPE_STAT(INV_GT);
+        case OP_TYPE(LT):
+            ASTGTNBOP(LT);
+            if (type_int_cor(&op->ret, lt, rt) || type_int_cor(&op->ret, rt, lt)) break;
+            // TODO
+            return TYPE_STAT(INV_LT);
         case OP_TYPE(OR):
             ASTGTNBOP(OR);
             op->ret = type_node_i(TYPE(BL), NULL);

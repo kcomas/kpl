@@ -69,11 +69,8 @@ typedef enum {
     // cmp
     TKN_TYPE(EQ),
     TKN_TYPE(NOT),
-    TKN_TYPE(NEQ),
     TKN_TYPE(GT),
     TKN_TYPE(LT),
-    TKN_TYPE(GTEQ),
-    TKN_TYPE(LTEQ),
     TKN_TYPE(AND),
     TKN_TYPE(OR),
     // type specific

@@ -27,6 +27,12 @@ typedef enum {
     TYPE_STAT(INV_SUB_L_T_N),
     TYPE_STAT(INV_SUB_R_T_N),
     TYPE_STAT(INV_SUB),
+    // eq
+    TYPE_STAT(INV_EQ_L_T_N),
+    TYPE_STAT(INV_EQ_R_T_N),
+    TYPE_STAT(INV_EQ),
+    // not
+    TYPE_STAT(INV_NOT_R_T_N), // right type for not null
     // gt
     TYPE_STAT(INV_GT_L_T_N),
     TYPE_STAT(INV_GT_R_T_N),
@@ -35,12 +41,7 @@ typedef enum {
     TYPE_STAT(INV_LT),
     TYPE_STAT(INV_LT_L_T_N),
     TYPE_STAT(INV_LT_R_T_N),
-    // eq
-    TYPE_STAT(INV_EQ_L_T_N),
-    TYPE_STAT(INV_EQ_R_T_N),
-    TYPE_STAT(INV_EQ),
-    // not
-    TYPE_STAT(INV_NOT_R_T_N), // right type for not null
+
     // or
     TYPE_STAT(INV_OR_L_T_N),
     TYPE_STAT(INV_OR_R_T_N),

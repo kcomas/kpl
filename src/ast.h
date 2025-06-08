@@ -89,6 +89,7 @@ typedef enum {
     TYPE(OP),
     TYPE(IF),
     TYPE(COND),
+    TYPE(LOP),
     TYPE(VAR),
     TYPE(CODE),
     // ast types
