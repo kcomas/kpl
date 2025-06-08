@@ -44,7 +44,7 @@ typedef struct _tkn {
 
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
-ssize_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf);
+size_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf);
 
 tkn_stat tkn_n(tkn *const t, te *const m);
 
