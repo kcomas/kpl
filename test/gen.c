@@ -460,3 +460,35 @@ T(vrpushprint) {
     A(v->d[2].f6 == c, "vr_d");
     vr_f(v);
 }
+
+T(argclash) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(I6), 0), gen_call_m(g, 2, gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 0)), gen_lbl(g, 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 1), NULL, NULL));
+    BUILD(g, m);
+    int64_t a = 1, b = 2;
+    int64_t c = ((int64_t(*)(int64_t,int64_t)) m)(a, b);
+    A(c == a + b, "arg clash");
+}
+
+T(argclashxmm) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(F6), 0), gen_call_m(g, 2, gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 0)), gen_lbl(g, 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(F6), 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(F6), 1), NULL, NULL));
+    BUILD(g, m);
+    double a = 1.2, b = 2.2;
+    double c = ((double(*)(double,double)) m)(a, b);
+    A(c == a + b, "arg clash");
+}
