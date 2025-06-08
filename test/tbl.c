@@ -51,6 +51,9 @@ int main(void) {
     tbl_bucksp(tl, &ex_p, '\n');
     tbl_lstp(tl, &ex_p, '\n');
     printf("\n--------------------\n");
+    printf("-----LIST REVERSE-----\n");
+    tbl_lstpr(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("----END TBL TEST-----\n");
     tbl_f(tl, &ex_f);
     return 0;

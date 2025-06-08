@@ -4,7 +4,7 @@
 #include "kpl.h"
 
 typedef struct _tbl_itm {
-    struct _tbl_itm *next;
+    struct _tbl_itm *prev, *next;
     void *data;
     char str[]; // null term
 } tbl_itm;
@@ -79,6 +79,16 @@ inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
         tbl_itm_p(h, fn);
         if (h->next) putchar(sep);
         h = h->next;
+    }
+}
+
+// print reverse
+inline void tbl_lstpr(const tbl *const tl, tbl_itm_data_p *fn, char sep) {
+    tbl_itm *t = tl->t;
+    while (t) {
+        tbl_itm_p(t, fn);
+        if (t->prev) putchar(sep);
+        t = t->prev;
     }
 }
 

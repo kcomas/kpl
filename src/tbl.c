@@ -86,4 +86,6 @@ extern inline void tbl_bucksp(const tbl *const tl, tbl_itm_data_p *fn, char sep)
 
 extern inline void tbl_lstp(const tbl *const tl, tbl_itm_data_p *fn, char sep);
 
+extern inline void tbl_lstpr(const tbl *const tl, tbl_itm_data_p *fn, char sep);
+
 extern inline void tbl_f(tbl *t, tbl_itm_data_f *fn);

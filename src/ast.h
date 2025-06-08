@@ -255,7 +255,7 @@ inline void op_node_f(op_node *on) {
 
 typedef struct _lst_itm {
     ast *a;
-    struct _lst_itm *next;
+    struct _lst_itm *prev, *next;
 } lst_itm;
 
 inline lst_itm *lst_itm_i(ast *const a) {
@@ -302,7 +302,7 @@ inline void lst_node_f(lst_node *lst) {
 }
 
 typedef struct _if_itm {
-    struct _if_itm *next;
+    struct _if_itm *prev, *next;
     ast *cond; // null for else
     lst_node *body;
 } if_itm;

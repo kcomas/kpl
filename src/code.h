@@ -30,8 +30,7 @@ typedef enum {
     CODE_STAT(INV_FD_OP),
     CODE_STAT(CALL_RES_NOT_SELF),
     CODE_STAT(CALL_VAR_N_FN),
-    CODE_STAT(CALL_ARG_T_INV),
-    CODE_STAT(CALL_TYPE_T_INV),
+    CODE_STAT(CALL_CT_ARG_T_GC_INV),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
 } code_stat;
@@ -48,6 +47,7 @@ inline void code_st_i(code_st *const cs, const char *str) {
 
 typedef enum {
     OP_C(EFN), // enter fn
+    OP_C(PUSH),
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
