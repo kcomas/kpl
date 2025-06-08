@@ -162,17 +162,26 @@ x64_stat x64_xor_rr(size_t *p, uint8_t *m, reg d, reg s);
 // cmp rax, rdi
 x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 
+// cmp rax, qword ptr[rsp]
+x64_stat x64_cmp_rra(size_t *p, uint8_t *m, reg d, reg s);
+
 // test rax, rdi
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s);
 
-// jump down
+// jump up byte
 uint8_t x64_jmpu_lblb(size_t from, size_t to);
+
+// jump up dword
+uint32_t x64_jmpu_lbldw(size_t from, size_t to);
 
 // get current btye
 uint8_t *x64_lb(size_t p, uint8_t *m);
 
-// jump up
+// jump down byte
 void x64_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
+
+// jump down dword
+void x64_jmpd_lbldw(uint8_t *m, size_t from, size_t to);
 
 // jmp byte
 x64_stat x64_jmp_b(size_t *p, uint8_t *m, uint8_t b);
@@ -182,6 +191,9 @@ x64_stat x64_jmp_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jb jnae jc byte
 x64_stat x64_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jb jnae jc dword
+x64_stat x64_jbjnaejc_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jnb jae jnc byte
 x64_stat x64_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b);

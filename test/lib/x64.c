@@ -206,11 +206,25 @@ static void p2p(uint8_t *m) {
 
 static void rskiploop(uint8_t *m) {
     size_t p = 0;
-    uint32_t start = p;
-    // if zero jmp end
-    // inc and jmp to start
+    x64_mov_rq(&p, m, R(AX), U6(1));
+    x64_push_r(&p, m, R(AX));
+    x64_mov_rr(&p, m, R(SI), R(DI));
+    uint32_t loop = p;
+    x64_mov_rra(&p, m, R(AX), R(SP));
+    x64_cmp_rr(&p, m, R(SI), R(AX));
+    x64_jbjnaejc_dw(&p, m, 0);
+    uint32_t test = p;
+    x64_push_r(&p, m, R(SI));
+    x64_printf(&p, m, "Dec: %d\n");
+    x64_pop_r(&p, m, R(SI));
+    x64_dec_r(&p, m, R(SI));
+    x64_jmp_dw(&p, m, x64_jmpu_lbldw(p, loop));
     uint32_t end = p;
+    x64_jmpd_lbldw(m, test, end);
+    x64_pop_r(&p, m, R(AX));
     x64_ret(&p, m);
+    printj(p, m);
+    ((void(*)(int32_t)) m)(5);
 }
 
 int main(void) {
@@ -223,6 +237,7 @@ int main(void) {
     daddsub(m);
     cmp(m);
     p2p(m);
+    rskiploop(m);
     x64_munmap(1, m);
     return 0;
 }
