@@ -21,7 +21,7 @@ inline tbl_itm *tbl_itm_i(const char *const str, void *const data) {
 
 typedef void tbl_itm_data_f(void *data);
 
-inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
+inline void tbl_itm_f(tbl_itm *ti, const tbl_itm_data_f *const fn) {
     fn(ti->data);
     free(ti);
 }
@@ -37,7 +37,7 @@ inline tbl* tbl_i(size_t size) {
     return tl;
 }
 
-inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
+inline void tbl_f(tbl *tl, const tbl_itm_data_f *const fn) {
     tbl_itm *h = tl->h;
     while (h) {
         tbl_itm *tmp = h;
@@ -63,4 +63,4 @@ typedef enum {
     TBL_OP_FLG(RM) = (1 << 2) // remove
 } tbl_op_flg;
 
-tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, uint8_t op_flgs);
+tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, const tbl_itm_data_f *const fn, uint8_t op_flgs);
