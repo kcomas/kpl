@@ -164,6 +164,10 @@ static type_stat type_chk_hsh(type_st *const ts, fn_node *const fns, hsh_node *c
     return TYPE_ER(ts, OK);
 }
 
+static type_chk_sym(type_st *const st, fn_node *const fns, sym_node *const sym) {
+
+}
+
 static type_stat type_chk_if(type_st *const ts, fn_node *const fns, if_node *const in) {
     type_stat tstat;
     if_itm *h = in->h;
@@ -442,6 +446,7 @@ type_stat type_chk(type_st *const ts, fn_node *const fns, ast *const a) {
         case AST_TYPE(LST): return type_chk_lst(ts, fns, a->n.lst);
         case AST_TYPE(HSH): return type_chk_hsh(ts, fns, a->n.hsh);
         case AST_TYPE(TBL): return TYPE_ER(ts, TBL_FOUND);
+        case AST_TYPE(SYM): return type_chk_sym(ts, fns, a->n.sym);
         case AST_TYPE(IF): return type_chk_if(ts, fns, a->n.in);
         case AST_TYPE(LOP): return type_check_lop(ts, fns, a->n.lop);
         case AST_TYPE(FN): return type_chk_fn(ts, a->n.fn);
