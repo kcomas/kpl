@@ -65,6 +65,7 @@ void btable(void) {
     if ((tstat = tbl_s(t, P("Hello"), &kv)) != TBL_STAT(OK)) exit(tstat);
     printf("%lu\n", kv->d[1].i6);
     kv_f(kv);
+    if ((tstat = tbl_g_i(t, P("asdf"), &kv)) != TBL_STAT(NF)) exit(tstat);
     h = t->i->h;
     while (h) {
         printf("%s\n", (char*) ((te*) h->d[0].p)->d[0].p);
