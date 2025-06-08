@@ -2,6 +2,7 @@
 #include "er.h"
 
 static const char *const ets[] = {
+   "OK",
    "MOD",
    "TKN",
    "AST",
