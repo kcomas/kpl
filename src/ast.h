@@ -84,6 +84,7 @@ typedef enum {
     // internal
     TYPE(STMT),
     TYPE(OP),
+    TYPE(IF),
     TYPE(COND),
     TYPE(VAR),
     // ast types

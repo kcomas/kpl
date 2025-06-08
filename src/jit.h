@@ -11,8 +11,10 @@ typedef enum {
     JIT_STAT(OK),
     JIT_STAT(SG_T_INV), // inv type for sg
     JIT_STAT(PV_T_INV), // no push for type
+    JIT_STAT(ZOO_T_INV),
     JIT_STAT(ADD_T_INV),
     JIT_STAT(SUB_T_INV),
+    JIT_STAT(CSTSG_T_INV),
     JIT_STAT(WFD_T_INV),
     JIT_STAT(INV_CODE)
 } jit_stat;

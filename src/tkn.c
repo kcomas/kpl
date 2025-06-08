@@ -42,7 +42,7 @@ static const size_t tv_len = AL(tv);
     t->type = TKN_TYPE(C); \
     break
 
-static tkn_stat var(tkn *const t, const char *const str) {
+static tkn_stat tkn_var(tkn *const t, const char *const str) {
     char c = str[t->pos];
     while (isalpha(c) || isdigit(c)) c = str[t->pos + ++t->len];
     t->type = TKN_TYPE(VAR);
@@ -63,7 +63,7 @@ static tkn_stat var(tkn *const t, const char *const str) {
     return TKN_STAT(OK);
 }
 
-static tkn_stat num(tkn *const t, const char *const str) {
+static tkn_stat tkn_num(tkn *const t, const char *const str) {
     t->type = TKN_TYPE(INT);
     for (;;) {
         char c = str[t->pos + t->len];
@@ -102,9 +102,9 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
     t->len = 0;
     tkn_stat tsr;
     if (isalpha(str[t->pos])) {
-        if ((tsr = var(t, str)) != TKN_STAT(OK)) return tsr;
+        if ((tsr = tkn_var(t, str)) != TKN_STAT(OK)) return tsr;
     } else if (isdigit(str[t->pos])) {
-        if ((tsr = num(t, str)) != TKN_STAT(OK)) return tsr;
+        if ((tsr = tkn_num(t, str)) != TKN_STAT(OK)) return tsr;
     } else {
         switch (str[t->pos]) {
             case '\0':

@@ -13,6 +13,7 @@ typedef enum {
     CODE_STAT(INV_R_ASS), // right side : invalid
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
+    CODE_STAT(NO_T_FOR_IF_COND), // cannot not get if conds type
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
@@ -59,6 +60,7 @@ typedef enum {
     OP_C(PV), // push value
     OP_C(CTE), // create tuple from stack u6 is length
     // control
+    OP_C(IF),
     OP_C(COND), // jmp if false
     // coalesce
     OP_C(ZOO), // convert to zero or one
@@ -91,6 +93,7 @@ typedef struct _op_d_te op_d_te;
 
 typedef union _op_d {
     type t;
+    bool bl;
     uint8_t u3;
     uint16_t u4;
     uint32_t u5;
