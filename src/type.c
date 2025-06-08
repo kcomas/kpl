@@ -43,6 +43,8 @@ static const char *const tss[] = {
     "INV_CST_L_A", // invalid node for left side of cst
     "INV_CST_L_T_N", // left side type for cst null
     "INV_CST_R_T_N", // right side type for cst null
+    "INV_HH_T",
+    "INV_TE_TO_VR",
     // vr
     "INV_VR_T",
     "INV_VR_PUSH_R_T",
@@ -201,6 +203,16 @@ static bool type_lst_contig(const type_node *const tlst, const type_node *const 
         h = h->next;
     }
     return true;
+}
+
+static bool type_tbl_contig(const tbl *const tl, const type_node *const tn, type_eq_fn *const fn) {
+   tbl_itm *h = tl->h;
+   while (h) {
+        hsh_data *hd = (hsh_data*) h->data;
+        if (!fn(hd->tn, tn)) return false;
+        h = h->next;
+   }
+   return true;
 }
 
 #define IFTCHK(FN, TS, FNS, N) if ((tstat = FN(TS, FNS, N)) != TYPE_STAT(OK)) return tstat
@@ -502,6 +514,13 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 if (type_flt_is(ltvr, NULL) && !te_vr_num_cst(ts, ltvr->t, TYPE(FLT), op->r->n.lst)) return TYPE_ER(ts, TE_VR_NUM_CST_INV);
                 if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_TO_VR);
                 rt->t = TYPE(VR);
+                op->ret = type_node_c(ts->r->a, lt);
+                break;
+            }
+            if (lt->t == TYPE(HH) && rt->t == TYPE(ST)) {
+                ASTGTN(ltvr, lt->a, INV_HH_T);
+                if (!type_tbl_contig(rt->a->n.tl, ltvr, type_eq)) return TYPE_ER(ts, INV_ST_TO_HH);
+                rt->t = TYPE(HH);
                 op->ret = type_node_c(ts->r->a, lt);
                 break;
             }

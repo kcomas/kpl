@@ -17,4 +17,4 @@ then
     make clean && make jit_test
 fi
 
-gdb -ex "b src/jit.c:`cat src/jit.c | grep -n "?? DEB" | cut -d":" -f 1`" -ex "r $1" ./jit_test
+gdb -ex "b src/jit.c:$(cat src/jit.c | grep -n "?? DEB" | cut -d":" -f 1)" -ex "r $1" ./jit_test

@@ -49,6 +49,9 @@ typedef enum {
     TYPE_STAT(INV_CST_L_A), // invalid node for left side of cst
     TYPE_STAT(INV_CST_L_T_N), // left side type for cst null
     TYPE_STAT(INV_CST_R_T_N), // right side type for cst null
+    // hh
+    TYPE_STAT(INV_HH_T),
+    TYPE_STAT(INV_ST_TO_HH),
     // vr
     TYPE_STAT(INV_VR_T),
     TYPE_STAT(INV_VR_PUSH_R_T),
