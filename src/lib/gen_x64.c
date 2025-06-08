@@ -608,6 +608,7 @@ void gen_set(gen *g);
 void gen_arith(gen *g);
 void gen_cond(gen *g);
 void gen_call(gen *g);
+void gen_ref(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
@@ -617,5 +618,6 @@ gen *gen_b(gen *g) {
     gen_arith(g);
     gen_cond(g);
     gen_call(g);
+    gen_ref(g);
     return g;
 }
