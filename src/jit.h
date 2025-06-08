@@ -75,6 +75,9 @@ jit_stat jit_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
 jit_stat jit_d(size_t *p, uint8_t *m, void *v);
 
+// nop
+jit_stat jit_nop(size_t *p, uint8_t *m);
+
 // ret
 jit_stat jit_ret(size_t *p, uint8_t *m);
 
@@ -134,7 +137,18 @@ jit_stat jit_cmprr(size_t *p, uint8_t *m, reg d, reg s);
 // test rax, rdi
 jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s);
 
-uint8_t jit_jmp_lblb(size_t from, size_t to);
+uint8_t jit_jmpu_lblb(size_t from, size_t to);
+
+void jit_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
+
+// jmp byte
+jit_stat jit_jmpb(size_t *p, uint8_t *m, uint8_t b);
+
+// jc byte
+jit_stat jit_jcb(size_t *p, uint8_t *m, uint8_t b);
 
 // jne byte
 jit_stat jit_jneb(size_t *p, uint8_t *m, uint8_t b);
+
+// jna byte
+jit_stat jit_jnab(size_t *p, uint8_t *m, uint8_t b);
