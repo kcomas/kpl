@@ -5,7 +5,9 @@ f:FN(I6;I6)${(x)
     a: I6$3
     b: I6$5
     x: x + 1
-    //$(FD;1) << ,(SG$b;"\n")
+    y:FN(SG;VD)${(x) $(FD;1) << x }
+    z:"Hello\n";
+    y(z)
     a + b + x}
 
 $(FD;1) << $(SG;f(2)), "\n"

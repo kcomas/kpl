@@ -51,15 +51,17 @@ typedef enum {
    TBL_STAT(OK),
    TBL_STAT(NF), // not found
    TBL_STAT(AE), // already exists
-   TBL_STAT(OAE) // open address error
+   TBL_STAT(OAE), // open address error
+   TBL_STAT(NOFN) // no function for removing data
 } tbl_stat;
 
 #define TBL_OP_FLG(N) TBL_OP_FLG_##N
 
 typedef enum {
-    TBL_OP_FLG(FD) = (1 << 0), // find
-    TBL_OP_FLG(AD) = (1 << 1), // add only
-    TBL_OP_FLG(RM) = (1 << 2) // remove
+    TBL_OP_FLG(UT) = (1 << 0), // upsert
+    TBL_OP_FLG(FD) = (1 << 1), // find
+    TBL_OP_FLG(AD) = (1 << 2), // add only
+    TBL_OP_FLG(RM) = (1 << 3) // remove
 } tbl_op_flg;
 
 tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);

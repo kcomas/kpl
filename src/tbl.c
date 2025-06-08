@@ -70,6 +70,7 @@ tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, 
                 (*tl)->bucks[(hash + i) % (*tl)->size] = NULL;
             } else {
                 if (data) {
+                    if (!fn) return TBL_STAT(NOFN);
                     fn(cur->data);
                     cur->data = data;
                 }

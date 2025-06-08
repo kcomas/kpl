@@ -1,0 +1,10 @@
+
+// Calculate fibonacci to n
+
+fib:FN(U6;U6)${(x)
+    #? (!x) {
+        #; x
+    } (|(x = 1;x = 2)) {
+        #; 1
+    }
+    S(x - 1) + S(x - 2)}
