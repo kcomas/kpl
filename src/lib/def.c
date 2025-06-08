@@ -29,3 +29,7 @@ un c4_g(const char *const str, size_t s, size_t *e) {
     }
     return C1('\0');
 }
+
+bool c4_eq(un a, un b) {
+    return a.c.a == b.c.a && a.c.b == b.c.b && a.c.c == b.c.c && a.c.d == b.c.d;
+}
