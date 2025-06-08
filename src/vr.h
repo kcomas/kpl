@@ -7,6 +7,7 @@
 
 typedef enum {
     VR_STAT(OK),
+    VR_STAT(IDX),
     VR_STAT(RES),
     VR_STAT(SUB)
 } vr_stat;
@@ -27,6 +28,8 @@ vr *vr_c(vr *v);
 size_t vr_g_s(const vr *const v);
 
 size_t vr_g_l(const vr *const v);
+
+vr_stat vr_g_i(vr *const v, size_t i, un *d);
 
 #ifndef VR_RES
     #define VR_RES 2

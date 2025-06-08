@@ -2,7 +2,7 @@
 #include "jit.h"
 
 static bool reg_is_upper(reg r) {
-    return (r >= R(8) && r <= R(15)) || (r >= XMM(8) && r <= XMM(0));
+    return (r >= R(8) && r <= R(15)) || (r >= XMM(8) && r <= XMM(15));
 }
 
 static uint8_t rid(reg r) {
@@ -13,16 +13,16 @@ static uint8_t modrm(uint8_t mod, reg d, reg s) {
     return mod + 8 * rid(s) + rid(d);
 }
 
-static size_t pg_align(size_t size) {
+static size_t pg_algn(size_t size) {
     return (size / getpagesize() + 1) * getpagesize();
 }
 
 uint8_t *jit_mmap(size_t size) {
-    return mmap(NULL, pg_align(size), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    return mmap(NULL, pg_algn(size), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 }
 
 void jit_munmap(size_t size, uint8_t *m) {
-    munmap(m, pg_align(size));
+    munmap(m, pg_algn(size));
 }
 
 jit_stat jit_a(size_t *p, uint8_t *m, uint8_t b) {
