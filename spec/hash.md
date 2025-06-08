@@ -2,9 +2,9 @@
 # Hashs
 
 ## Operators
-? keys ?hash
+? keys k: ?hash
 
-?? values ??hash
+? keys/values [k;v]: ?hash
 
 () Index hash(symbol_var)
 

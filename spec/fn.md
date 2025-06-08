@@ -8,4 +8,4 @@ x:fn<i6;i6<i6>>[;|\n] define a type without a function
 
 x:{[x;y] x+y} define a function and infer its type on calls
 
-;; return {[x] ;;x+1; 2 } returns x+1
+rn return {[x] rn x+1; 2 } returns x+1
