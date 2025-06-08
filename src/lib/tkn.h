@@ -18,7 +18,7 @@ typedef tbl *tkn_tbl_i(void);
 typedef struct _tkn tkn;
 
 // on match
-typedef tkn_stat tkn_pf(tkn *const t, te *const m);
+typedef tkn_stat tkn_pf(tkn *t, te *m);
 
 // match te[id;lno;cno;start;end]
 
@@ -44,10 +44,10 @@ typedef struct _tkn {
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
 // give zero for an assigned id
-size_t tkn_a(tkn *const t, size_t tid, const char *const s, tkn_pf *pf);
+size_t tkn_a(tkn *t, size_t tid, const char *s, tkn_pf *pf);
 
-tkn_stat tkn_n(tkn *const t, te *const m);
+tkn_stat tkn_n(tkn *t, te *m);
 
-void tkn_s(tkn *const t, te *const m);
+void tkn_s(tkn *t, te *m);
 
 void tkn_f(tkn *t);

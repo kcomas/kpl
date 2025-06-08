@@ -18,21 +18,21 @@ vr *vr_c(vr *v) {
     return v;
 }
 
-size_t vr_g_s(const vr *const v) {
+size_t vr_g_s(const vr *v) {
     return v->s;
 }
 
-size_t vr_g_l(const vr *const v) {
+size_t vr_g_l(const vr *v) {
     return v->l;
 }
 
-vr_stat vr_g_i(vr *const v, size_t i, un *d) {
+vr_stat vr_g_i(vr *v, size_t i, un *d) {
     if (i >= v->l) return VR_STAT(IDX);
     *d = v->d[i];
     return VR_STAT(OK);
 }
 
-vr_stat vr_s_i(vr *const v, size_t i, un d) {
+vr_stat vr_s_i(vr *v, size_t i, un d) {
     if (i >= v->l) return VR_STAT(IDX);
     if (v->df) v->df(v->d[i].p);
     v->d[i] = d;
@@ -73,13 +73,13 @@ vr_stat vr_af(vr **v, un d) {
     return vstat;
 }
 
-vr_stat vr_sb(vr *const v, un *d) {
+vr_stat vr_sb(vr *v, un *d) {
     if (v->l == 0) return VR_STAT(SUB);
      *d = v->d[--v->l];
      return VR_STAT(OK);
 }
 
-vr_stat vr_sf(vr *const v, un *d) {
+vr_stat vr_sf(vr *v, un *d) {
     if (v->l == 0) return VR_STAT(SUB);
     *d = v->d[0];
     v->l--;
@@ -87,7 +87,7 @@ vr_stat vr_sf(vr *const v, un *d) {
     return VR_STAT(OK);
 }
 
-void vr_r(vr *const v) {
+void vr_r(vr *v) {
     un d;
     for (size_t i = 0; i < v->l / 2; i++) {
         d = v->d[i];

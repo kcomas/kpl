@@ -15,7 +15,7 @@ psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts) {
     return p;
 }
 
-size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...) {
+size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...) {
     tbl *pt = p->pt;
     te *kv;
     size_t nid = 0;
@@ -50,7 +50,7 @@ size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *e
     return nid;
 }
 
-psr_stat psr_n(psr *const p, te *const nh) {
+psr_stat psr_n(psr *p, te *nh) {
     psr_stat pstat;
     te *m = te_i(5, p->pa, p->pf);
     for (;;) {

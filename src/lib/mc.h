@@ -14,7 +14,7 @@ typedef struct {
 
 mc *mc_i(size_t s, alfn *ma, frfn *mf);
 
-mc *mc_i_cstr(const char *const s, alfn *ma, frfn *mf);
+mc *mc_i_cstr(const char *s, alfn *ma, frfn *mf);
 
 mc *mc_c(mc *m);
 

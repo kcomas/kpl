@@ -39,9 +39,9 @@ typedef enum {
     AS_INST(_END)
 } as_inst;
 
-void as_code_p(const as *const a, const uint8_t *const m);
+void as_code_p(const as *a, const uint8_t *m);
 
-void as_op_p(tbl *const ot, bool args, size_t idnt);
+void as_op_p(tbl *ot, bool args, size_t idnt);
 
-as *as_b(as *const a);
+as *as_b(as *a);
 

@@ -13,7 +13,7 @@ static bool is_cont(size_t n, ...) {
     return true;
 }
 
-un c4_g(const char *const str, size_t s, size_t *e) {
+un c4_g(const char *str, size_t s, size_t *e) {
     if ((str[s] & 0x80) == 0x0) {
         *e = s;
         return C1(str[s]);

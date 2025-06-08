@@ -1,7 +1,7 @@
 
 #include "psr_t.h"
 
-psr *psr_b(const char *const pgm) {
+psr *psr_b(const char *pgm) {
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     tkn_standard(t);
     vr *v = vr_i(10, &malloc, (void*) &te_f, &free);
@@ -66,7 +66,7 @@ void psr_entry_f(void *p) {
     free(t);
 }
 
-static te *node_i(psr *const p, node_id nt, size_t size) {
+static te *node_i(psr *p, node_id nt, size_t size) {
     te *n = te_i(size, p->pa, &node_f);
     n->d[1] = U6(nt);
     un m;
@@ -75,22 +75,22 @@ static te *node_i(psr *const p, node_id nt, size_t size) {
     return n;
 }
 
-psr_stat psr_var_i(psr *const p, te **n) {
+psr_stat psr_var_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(VAR), 3);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_id_i(psr *const p, te **n) {
+psr_stat psr_id_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(TYPE), 3);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_int_i(psr *const p, te **n) {
+psr_stat psr_int_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(INT), 3);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_flt_i(psr *const p, te **n) {
+psr_stat psr_flt_i(psr *p, te **n) {
     *n = te_i(5, p->pa, &node_f);
     (*n)->d[1] = U6(NODE_TYPE(FLT));
     un m;
@@ -101,7 +101,7 @@ psr_stat psr_flt_i(psr *const p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_val_m(psr *const p, te *const nh, te *const n) {
+psr_stat psr_val_m(psr *p, te *nh, te *n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (nh->d[1].p) {
@@ -112,12 +112,12 @@ psr_stat psr_val_m(psr *const p, te *const nh, te *const n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_op_i(psr *const p, te **n) {
+psr_stat psr_op_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(OP), 5);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
+psr_stat psr_op_m(psr *p, te *nh, te *n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (!nh->d[1].p && !nh->d[2].p) {
@@ -138,27 +138,27 @@ psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_lst_i(psr *const p, te **n) {
+psr_stat psr_lst_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(LST), 4);
     (*n)->d[3].p = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_lst_e(psr *const p, te *const e, te *const n) {
+psr_stat psr_lst_e(psr *p, te *e, te *n) {
     (void) p;
     n->d[0] = P(e);
     lst_ab(e->d[3].p, P(n));
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_i(psr *const p, te **n) {
+psr_stat psr_aply_i(psr *p, te **n) {
     (void) p;
     *n = node_i(p, NODE_TYPE(APLY), 5);
     (*n)->d[4].p = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_m(psr *const p, te *const nh, te *const n) {
+psr_stat psr_aply_m(psr *p, te *nh, te *n) {
     (void) p;
     if (!nh->d[1].p && !nh->d[2].p) {
         nh->d[2] = P(n);
@@ -188,24 +188,24 @@ psr_stat psr_aply_m(psr *const p, te *const nh, te *const n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_e(psr *const p, te *const e, te *const n) {
+psr_stat psr_aply_e(psr *p, te *e, te *n) {
     (void) p;
     n->d[0] = P(e);
     lst_ab(e->d[4].p, P(n));
     return PSR_STAT(OK);
 }
 
-psr_stat psr_sym_i(psr *const p, te **n) {
+psr_stat psr_sym_i(psr *p, te **n) {
     *n = node_i(p, NODE_TYPE(SYM), 4);
     return PSR_STAT(OK);
 }
 
-static const mc *node_root_mc(const te *const n) {
+static const mc *node_root_mc(const te *n) {
     if (n->d[1].u6 != NODE_TYPE(ROOT)) return node_root_mc(n->d[0].p);
     return ((psr*) n->d[0].p)->tt->s;
 }
 
-void node_p(const te *const n, size_t idnt) {
+void node_p(const te *n, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
     printf("(id:%lu", n->d[1].u6);

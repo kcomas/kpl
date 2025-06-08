@@ -16,7 +16,7 @@ te *te_c(te *t) {
     return t;
 }
 
-size_t te_g_l(const te *const t) {
+size_t te_g_l(const te *t) {
     return t->l;
 }
 

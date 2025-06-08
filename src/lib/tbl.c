@@ -18,7 +18,7 @@ tbl *tbl_c(tbl *t) {
     return t;
 }
 
-size_t tbl_g_l(const tbl *const t) {
+size_t tbl_g_l(const tbl *t) {
     return t->i->l;
 }
 

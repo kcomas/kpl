@@ -51,6 +51,6 @@ typedef union {
 #define P(D) UN(p, (void*) D)
 
 // get next utf8 char starting at s
-un c4_g(const char *const str, size_t s, size_t *e);
+un c4_g(const char *str, size_t s, size_t *e);
 
 bool c4_eq(un a, un b);

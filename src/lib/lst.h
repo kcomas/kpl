@@ -24,16 +24,16 @@ lst *lst_i(alfn *la, alfn *ta, frfn *tf, frfn *df, frfn *lf);
 
 lst *lst_c(lst *l);
 
-size_t lst_g_l(const lst *const l);
+size_t lst_g_l(const lst *l);
 
-lst_stat lst_ab(lst *const l, un d);
+lst_stat lst_ab(lst *l, un d);
 
-lst_stat lst_af(lst *const l, un d);
+lst_stat lst_af(lst *l, un d);
 
-lst_stat lst_sb(lst *const l, un *d);
+lst_stat lst_sb(lst *l, un *d);
 
-lst_stat lst_sf(lst *const l, un *d);
+lst_stat lst_sf(lst *l, un *d);
 
-void lst_li_d(lst *const l, te *li);
+void lst_li_d(lst *l, te *li);
 
 void lst_f(lst *l);

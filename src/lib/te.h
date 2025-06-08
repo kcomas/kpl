@@ -16,6 +16,6 @@ te *te_i(size_t l, alfn *ta, frfn *tf);
 
 te *te_c(te *t);
 
-size_t te_g_l(const te *const t);
+size_t te_g_l(const te *t);
 
 void te_f(te *t);
