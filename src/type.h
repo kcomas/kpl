@@ -96,7 +96,8 @@ typedef enum {
     TYPE_STAT(INV_IRET_T),
     TYPE_STAT(INV_IRET_FNS),
     TYPE_STAT(IRET_T_NEQ),
-    TYPE_STAT(VAR_UT) // var not typed
+    TYPE_STAT(VAR_UT), // var not typed
+    TYPE_STAT(TBL_FOUND) // should not happen
 } type_stat;
 
 const char *type_stat_str(type_stat tstat);

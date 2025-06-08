@@ -343,6 +343,30 @@ inline void hsh_node_f(hsh_node *const hsh) {
     alf(hsh);
 }
 
+typedef struct {
+    size_t id;
+    type_node *tn;
+} hsh_data; // for hash types in tbl
+
+inline hsh_data *hsh_data_i(al *const a, size_t id, type_node *const tn) {
+    hsh_data *hd = ala(a, sizeof(hsh_data));
+    hd->id = id;
+    hd->tn = tn;
+    return hd;
+}
+
+inline void hsh_data_p(const ast_st *const as, const tbl *const tl, size_t idnt) {
+    tbl_itm *h = tl->h;
+    while (h) {
+        hsh_data *hd = (hsh_data*) h->data;
+        printf("%lu,%s,", hd->id, h->str);
+        type_node_p(as, hd->tn, idnt);
+        h = h->next;
+    }
+}
+
+void hsh_data_f(void *data);
+
 typedef struct _if_itm {
     struct _if_itm *prev, *next;
     ast *cond; // null for else
@@ -550,6 +574,7 @@ typedef enum {
     AST_TYPE(OP),
     AST_TYPE(LST),
     AST_TYPE(HSH),
+    AST_TYPE(TBL),
     AST_TYPE(IF),
     AST_TYPE(LOP),
     AST_TYPE(FN),
@@ -565,6 +590,7 @@ typedef union {
     op_node *op;
     lst_node *lst;
     hsh_node *hsh;
+    tbl *tl;
     if_node *in;
     if_itm *lop;
     fn_node *fn;
@@ -597,6 +623,7 @@ inline type_node *ast_gtn(const ast *const a) {
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
         case AST_TYPE(HSH): return a->n.hsh->tn;
+        case AST_TYPE(TBL): return NULL;
         case AST_TYPE(IF): return NULL;
         case AST_TYPE(LOP): return NULL;
         case AST_TYPE(FN): return a->n.fn->sig;
