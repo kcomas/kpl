@@ -65,20 +65,6 @@ lst *lst_c(lst *l) {
 static te *ms(te *h, size_t c, lst_cmp_fn fn) {
     te *th = NULL, *n = NULL, *t, *l, *r;
     if (c < 2) return h;
-    else if (c == 2) {
-        t = h->d[2].p;
-        h->d[1] = h->d[2] = t->d[1] = t->d[2] = P(NULL);
-        if (fn(h->d[0], t->d[0]) < 1) {
-            h->d[2] = P(t);
-            t->d[1] = P(h);
-            th = h;
-        } else {
-            t->d[2] = P(h);
-            h->d[1] = P(t);
-            th = t;
-        }
-        return th;
-    }
     t = h;
     size_t ch = c / 2;
     for (size_t i = 0; i < ch; i++) t = t->d[2].p;

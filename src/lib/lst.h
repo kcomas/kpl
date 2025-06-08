@@ -14,14 +14,13 @@ typedef enum {
    LST_STAT(SUB)
 } lst_stat;
 
-// linked list
 typedef struct {
     ssize_t r; // ref count
     size_t l; // len
     const alfr *af, *ta;
     frfn *df; // data free
     te *h, *t; // head, tail
-} lst;
+} lst; // linked list
 
 lst *lst_i(const alfr *af, const alfr *ta, frfn *df);
 
