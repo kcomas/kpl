@@ -134,7 +134,7 @@ void as_code_p(const as *const a, const uint8_t *const m) {
     (void) arg2; \
     (void) arg3; \
     (void) arg4; \
-    return jit_##N(p, m) == JIT_STAT(OK); \
+    return x64_##N(p, m) == X64_STAT(OK); \
 }
 
 INST(nop);
@@ -147,7 +147,7 @@ INST(leave);
     (void) arg2; \
     (void) arg3; \
     (void) arg4; \
-    return jit_##N##_r(p, m, arg1->d[1].u6) == JIT_STAT(OK); \
+    return x64_##N##_r(p, m, arg1->d[1].u6) == X64_STAT(OK); \
 }
 
 INST_R(push);
@@ -159,7 +159,7 @@ INST_R(call);
     (void) ci; \
     (void) arg3; \
     (void) arg4; \
-    return jit_##N##_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == JIT_STAT(OK); \
+    return x64_##N##_rr(p, m, arg1->d[1].u6, arg2->d[1].u6) == X64_STAT(OK); \
 }
 
 INST_RR(mov);
@@ -171,7 +171,7 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
     (void) ci;
     (void) arg3;
     (void) arg4;
-    return jit_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == JIT_STAT(OK);
+    return x64_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == X64_STAT(OK);
 }
 
 #define INST_J_B(N, M) static bool as_##N##_b(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) { \
@@ -180,7 +180,7 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
     (void) arg2; \
     (void) arg3; \
     (void) arg4; \
-    return jit_##M##_b(p, m, arg1->d[1].u3) == JIT_STAT(OK); \
+    return x64_##M##_b(p, m, arg1->d[1].u3) == X64_STAT(OK); \
 }
 
 //INST_J_B(jmp, jmp);
@@ -192,9 +192,9 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
     (void) arg4; \
     te *lblc = as_lbl_g_c(a, arg1->d[1].u6); \
     if (!lblc) return false; \
-    if (lblc->d[9].u6) return jit_##N##_b(p, m, lblc->d[8].u6 - *p - 2) == JIT_STAT(OK); /* TODO check distance */ \
+    if (lblc->d[9].u6) return x64_##N##_b(p, m, lblc->d[8].u6 - *p - 2) == X64_STAT(OK); /* TODO check distance */ \
     else if (as_lbl_s_c(a, 1, ci) != AS_STAT(OK)) return false; \
-    for (size_t i = 0; i < 6; i++) jit_nop(p, m); \
+    for (size_t i = 0; i < 6; i++) x64_nop(p, m); \
     return true; \
 }
 
@@ -202,7 +202,7 @@ bool as_mov_rv(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, t
 #define INST_J_F(N) static bool as_##N##_f(as *const a, uint8_t *m, te *const lc, te *const fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
-    return jit_##N##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == JIT_STAT(OK); \
+    return x64_##N##_b(&p, m, lc->d[8].u6 - fc->d[8].u6 - 2) == X64_STAT(OK); \
 }
 
 INST_J_L(jnljge);
@@ -211,6 +211,7 @@ INST_J_F(jnljge);
 static void jmps(as *a) {
     //as_op_a(a, AS_INST(JMP), ARG_ID(B), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jmp_b, NULL);
     as_op_a(a, AS_INST(JNL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
+    as_op_a(a, AS_INST(JGE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_jnljge_l, &as_jnljge_f);
 }
 
 as *as_b(void) {
