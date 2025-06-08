@@ -4,6 +4,7 @@
 const char *type_str(type t) {
     static const char *ts[] = {
         "_START",
+        "_A", // used for type checking only
         // scalar
         "_S",
         "DL",
