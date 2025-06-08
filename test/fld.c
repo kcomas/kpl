@@ -79,3 +79,17 @@ T(fibrec) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("fib", U6(0), NULL), L(1, SN(I6, I6(8)))))
     )), NULL)));
 }
+
+T(ackrec) {
+    V(TPGM(ackrec), RN(AN(NULL, LN(LT(1, "ack", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("ack", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(U6), 2, "m", TS(U6), 0, "n", TS(U6), 1)), LN(LT(3, "m", U6(0), NULL, "n", U6(0), NULL, "ack", U6(0), NULL), L(1,
+            ON(NULL, IF, LN(NULL, NULL), LN(NULL, L(4,
+                ON(NULL, IF, LN(NULL, L(1, ON(NULL, EQ, EN("m", U6(0), NULL), SN(I6, I6(0))))), LN(NULL, L(1, ON(NULL, ADD, EN("n", U6(0), NULL), SN(I6, I6(1)))))),
+                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))), ON(NULL, EQ, EN("n", U6(0), NULL), SN(I6, I6(0)))))), LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), ON(NULL, CST, TN(U6), SN(I6, I6(1)))))))),
+                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))), ON(NULL, GT, EN("n", U6(0), NULL), SN(I6, I6(0)))))), LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), AN(NULL, EN("ack", U6(0), NULL), L(2, EN("m", U6(0), NULL), ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(1)))))))))),
+                ON(NULL, ADD, EN("n", U6(0), NULL), SN(I6, I6(1)))
+            )))
+        )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, CST, TN(U6), SN(I6, I6(2))), ON(NULL, CST, TN(U6), SN(I6, I6(1))))))
+    )), NULL)));
+}
