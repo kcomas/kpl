@@ -102,6 +102,7 @@ static gen_stat set_ad_fn(gen *g, void *s, te *ci, as *a, err **e) {
 
 void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), set_du_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), set_du_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), set_dx_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), set_iu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), set_iv_fn);
