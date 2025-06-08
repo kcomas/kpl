@@ -1,21 +1,6 @@
 
 #include "tkn_t.h"
 
-static void tkn_p(tbl *tl, size_t idnt) {
-    te *h = tl->i->h;
-    while (h) {
-        for (size_t i = 0; i < idnt; i++) putchar(' ');
-        te *kv = h->d[0].p;
-        c4 c = kv->d[0].c;
-        printf("%c%c%c%c ", c.a, c.b, c.c, c.d);
-        ssize_t id = kv->d[1].i6;
-        if (id > -1) printf(",%ld", id);
-        putchar('\n');
-        if (kv->d[3].p) tkn_p(kv->d[3].p, idnt + 1);
-        h = h->d[2].p;
-    }
-}
-
 static void tknize(tkn *const t) {
     tkn_stat tstat;
     te *m = te_i(5, &malloc, &free);

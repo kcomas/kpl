@@ -9,6 +9,7 @@
 
 typedef enum {
     PSR_STAT(OK), // continue success
+    PSR_STAT(NF), // exists with no action exit tkn
     PSR_STAT(INV), // exit error
     PSR_STAT(END) // exit success
 } psr_stat;
@@ -39,7 +40,10 @@ typedef psr_stat psr_node_fn(psr *const p, te **n);
 // node holder, ok to continue end to stop
 typedef psr_stat psr_megre_fn(psr *const p, te *const nh, te *const n);
 
-// psr entry te[tkn_id;psr_id;mode;te[stop_tkns];merge_fn;node_fn(null for none);tbl]
+// node for each, next node
+typedef psr_stat psr_each_fn(psr *const p, te *const en, te *const n);
+
+// psr entry te[tkn_id;psr_id;mode;te[stop_tkns];each_fn;merge_fn;node_fn(null for none);tbl]
 
 typedef struct _psr {
     ssize_t r;
@@ -55,9 +59,9 @@ typedef struct _psr {
 psr *psr_i(alfn *pa, frfn *pf, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts);
 
 // returns 0 for insert fail
-size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
+size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...);
 
-// start tkn_id node zero for none
-psr_stat psr_n(psr *const p, te *const nh);
+// node holder, tkn match
+psr_stat psr_n(psr *const p, te *const nh, te *m);
 
 void psr_f(psr *p);
