@@ -1,7 +1,7 @@
 
 #include "as_t.h"
 
-const alfr am = { .a = &malloc, .f = &free };
+const alfr am = { .a = malloc, .f = free };
 
 static te *as_arg_v(as *a, arg_id id, un v) {
     return as_arg_i(a, id, v);
