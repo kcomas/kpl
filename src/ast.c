@@ -55,6 +55,8 @@ extern inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs);
 
 extern inline type_node *type_node_i(type t, ast *const a);
 
+extern inline void type_node_p(const type_node *const tn, size_t idnt);
+
 extern inline void type_node_f(type_node *tn);
 
 extern inline val_node *val_node_i(type t);
@@ -67,7 +69,9 @@ extern inline void op_node_f(op_node *on);
 
 extern inline lst_itm *lst_itm_i(ast *const a);
 
-extern inline void lst_itm_f(lst_itm *itm, void *fn);
+extern inline void lst_itm_p(const lst_itm *const li, void *fn, size_t idnt);
+
+extern inline void lst_itm_f(lst_itm *li, void *fn);
 
 extern inline lst_node *lst_node_i(type t);
 
@@ -86,6 +90,8 @@ extern inline void if_node_a(if_node *const in, ast* const cond, lst_node *const
 extern inline void if_node_f(if_node *in);
 
 extern inline fn_node *fn_node_i(fn_node *const par);
+
+extern inline void fn_node_p(const fn_node *const fn, size_t idnt);
 
 void fn_node_tbl_data_f(void *data) {
     var_node_f((var_node*) data);
@@ -137,6 +143,10 @@ extern inline void var_node_f(var_node *vn);
     break
 
 extern inline ast *ast_i(ast_type at, node const n, tkn *t);
+
+void ast_p(ast *a, size_t idnt) {
+    // TODO
+}
 
 void ast_f(ast *a) {
     switch (a->at) {

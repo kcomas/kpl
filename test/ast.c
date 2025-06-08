@@ -11,6 +11,8 @@ int main(int argc, char *argv[]) {
     ast_st as;
     ast_st_i(&as, m->src.str);
     if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFBLS)) != AST_STAT(OK)) {
+        fn_node_p(m->fns, 0);
+        putchar('\n');
         return astat;
     }
     fn_node_f(m->fns);

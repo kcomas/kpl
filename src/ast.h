@@ -57,6 +57,8 @@ inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs) {
 
 typedef struct _ast ast;
 
+void ast_p(ast *a, size_t idnt);
+
 void ast_f(ast *a);
 
 #define TYPE(N) TYPE_##N
@@ -101,6 +103,13 @@ inline type_node *type_node_i(type t, ast *const a) {
     tn->t = t;
     tn->a = a;
     return tn;
+}
+
+inline void type_node_p(const type_node *const tn, size_t idnt) {
+    PCX(' ', idnt);
+    if (tn) {
+        // TODO
+    } else putchar('?');
 }
 
 inline void type_node_f(type_node *tn) {
@@ -159,10 +168,15 @@ inline lst_itm *lst_itm_i(ast *const a) {
     return itm;
 }
 
-inline void lst_itm_f(lst_itm *itm, void *fn) {
+inline void lst_itm_p(const lst_itm *const li, void *fn, size_t idnt) {
     (void) fn;
-    FNNF(itm->a, ast_f);
-    free(itm);
+    ast_p(li->a, idnt);
+}
+
+inline void lst_itm_f(lst_itm *li, void *fn) {
+    (void) fn;
+    FNNF(li->a, ast_f);
+    free(li);
 }
 
 typedef struct _lst_node {
@@ -225,8 +239,8 @@ inline void if_node_f(if_node *in) {
 typedef struct _fn_node {
     uint8_t idc; // var id counter
     tbl *tl; // sym tbl
-    type_node *ret;
     struct _fn_node *par; // parent node
+    type_node *ret;
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
 
@@ -237,6 +251,15 @@ inline fn_node *fn_node_i(fn_node *const par) {
     fn->args = lst_node_i(TYPE(TE));
     fn->body = lst_node_i(TYPE(TE));
     return fn;
+}
+
+inline void fn_node_p(const fn_node *const fn, size_t idnt) {
+    PCX(' ', idnt);
+    printf("%d,", fn->idc);
+    tbl_lstp(fn->tl, NULL, ' ');
+    printf("\n%p", fn->par);
+    putchar('\n');
+    type_node_p(fn->ret, idnt);
 }
 
 void fn_node_tbl_data_f(void *data);

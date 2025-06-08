@@ -13,7 +13,7 @@ void ex_f(void *data) {
 void ex_p(void *data) {
     if (!data) return;
     ex *e = (ex*) data;
-    printf("{%d %s}", e->i, e->c);
+    printf(",{%d %s}", e->i, e->c);
 }
 
 #define EXT 26
@@ -29,28 +29,28 @@ int main(void) {
     }
     printf("----START TBL TEST---\n");
     printf("-----BUCKETS---------\n");
-    tbl_bucksp(tl, &ex_p);
-    printf("---------------------\n");
+    tbl_bucksp(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("-----LIST------------\n");
-    tbl_lstp(tl, &ex_p);
-    printf("---------------------\n");
+    tbl_lstp(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("-----REMOVE LIST-----\n");
     if ((st = tbl_op(&tl, "az", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
     if ((st = tbl_op(&tl, "by", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
     if ((st = tbl_op(&tl, "cx", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
-    tbl_bucksp(tl, &ex_p);
-    tbl_lstp(tl, &ex_p);
-    printf("---------------------\n");
+    tbl_bucksp(tl, &ex_p, '\n');
+    tbl_lstp(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("-----ADD LIST--------\n");
     if ((st = tbl_op(&tl, "asdf", &tests[0], &ti, &ex_f, TBL_OP_FLG(AD))) != TBL_STAT(OK)) return st;
-    tbl_bucksp(tl, &ex_p);
-    tbl_lstp(tl, &ex_p);
-    printf("---------------------\n");
+    tbl_bucksp(tl, &ex_p, '\n');
+    tbl_lstp(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("-----UPDATE LIST--------\n");
     if ((st = tbl_op(&tl, "asdf", &tests[5], &ti, &ex_f, TBL_OP_FLG(FD))) != TBL_STAT(OK)) return st;
-    tbl_bucksp(tl, &ex_p);
-    tbl_lstp(tl, &ex_p);
-    printf("---------------------\n");
+    tbl_bucksp(tl, &ex_p, '\n');
+    tbl_lstp(tl, &ex_p, '\n');
+    printf("\n--------------------\n");
     printf("----END TBL TEST-----\n");
     tbl_f(tl, &ex_f);
     return 0;
