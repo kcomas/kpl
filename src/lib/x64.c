@@ -19,7 +19,7 @@ static uint8_t sib(mod m, reg d, reg s) {
 }
 
 static uint8_t roe(mod m, reg r, uint8_t e) {
-    return m | e << 3 | r;
+    return m | e << 3 | rid(r);
 }
 
 static size_t pg_algn(size_t size) {
