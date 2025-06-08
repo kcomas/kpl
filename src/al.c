@@ -18,8 +18,6 @@ extern inline void al_f(al *a);
 void *ala(al *const a, size_t size) {
     a->u++;
     size += sizeof(alci);
-    size_t mo = size % sizeof(alci);
-    if (mo) size = size - mo + sizeof(alci);
     alc *ac = a->h;
     while (ac) {
         if (ac->size - ac->len >= size) break;
