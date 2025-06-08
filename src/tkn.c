@@ -61,7 +61,7 @@ static const size_t tv_len = AL(tv);
     break
 
 static tkn_stat tkn_var(tkn *const t, const char *const str) {
-    char c = str[t->pos + t->len];
+    char c = str[t->pos + t->len]; // for symbols
     while (isalpha(c) || isdigit(c)) c = str[t->pos + ++t->len];
     t->type = TKN_TYPE(VAR);
     if (t->len == 2) {
