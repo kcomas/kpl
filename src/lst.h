@@ -53,4 +53,5 @@ typedef struct _lst_ex {
             h = h->next; \
             ITMF(tmp, DATAF); \
         } \
+        L->h = L->t = NULL; \
     } while (0)

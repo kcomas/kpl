@@ -1,6 +1,20 @@
 
 #include "tkn.h"
 
+static const char *const tss[] = {
+    "OK",
+    "FLT",
+    "CHR",
+    "CTRL",
+    "END"
+};
+
+static const char *tkn_stat_str(tkn_stat tstat) {
+    const char *s = "INVALID_TKN_STAT";
+    if (tstat >= TKN_STAT(OK) && <= TKN_STAT(END)) s = tss[tstat];
+    return s;
+}
+
 extern inline void tkn_st_i(tkn_st *const ts);
 
 extern inline void tkn_st_u(tkn_st *const ts, const tkn *const t);
