@@ -100,7 +100,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
     int fd;
-    if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
+    if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "inv file, all paths relative to exec");
     struct statx sx;
     if (statx(fd, "", AT_EMPTY_PATH, STATX_SIZE, &sx) == -1) {
         close(fd);
