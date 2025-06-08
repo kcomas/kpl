@@ -24,7 +24,7 @@ void fast(_tests *_t, ast *a, te **an, const fld *bf, bool rr) {
     fld_f(f);
 }
 
-// char *, te[type] un(flags)
+// char *, un te[type]
 tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
     tbl *t = ati();
     va_list args;

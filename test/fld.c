@@ -171,3 +171,13 @@ T(st) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(import) {
+    V(TPGM(import), RN(AN(NULL, LN(LT(2, "i", U6(0), NULL, "v", FLG(0, LTE_FLG(E)), NULL), L(4,
+        ON(NULL, DFN, EN("i", U6(0), NULL), SST(1, "b", P(NULL), TS(I6))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("i", U6(0), NULL)),
+        ON(NULL, DFN, EN("v", FLG(0, LTE_FLG(E)), NULL),
+            ON(NULL, ADD, SN(I6, I6(1)), ON(NULL, MUL, ZN("b", EN("i", U6(0), NULL)), SN(I6, I6(2))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}

@@ -19,6 +19,8 @@ tbl *fld_type_tbl_i(bool gid, size_t n, ...);
 
 #define LT(N, ...) fld_lst_tbl_i(a, N, __VA_ARGS__)
 
+#define SST(N, ...) ast_s_i(a, NULL, NULL, fld_s_st_et_f, P(type_h_i(&al_te, NULL, TYPE(ST), fld_lst_tbl_i(a, N, __VA_ARGS__))), P(NULL))
+
 #define TF(FT, RT) type_f_i(&al_te, NULL, TYPE(FT), RT, NULL, NULL)
 
 #define TFN(FT, RT, N, ...) type_f_i(&al_te, NULL, TYPE(FT), RT, fld_type_tbl_i(true, N, __VA_ARGS__), NULL)

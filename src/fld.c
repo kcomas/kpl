@@ -16,7 +16,10 @@ static fld_stat s_cs_sg_r(fld *f, te **an, err **e) {
 }
 
 static bool s_cs_sg_t(const te *an) {
-    return an->d[3].p && ((te*) an->d[3].p)->d[1].u4 == TYPE(CS);
+    te *pn;
+    if (!an->d[3].p || ((te*) an->d[3].p)->d[1].u4 != TYPE(CS)) return false;
+    pn = an->d[0].p;
+    return !pn || pn->d[2].u4 != AST_CLS(C) || pn->d[3].u4 != CC(L);
 }
 
 static fld_stat idnt_lst_r(fld *f, te **an, err **e) {
@@ -233,13 +236,31 @@ static bool aply_type_b_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(T);
 }
 
+void fld_s_st_et_f(void *p) {
+    te *n = p;
+    tbl *et = ((te*) n->d[3].p)->d[2].p;
+    opt_exp_tbl_f(et);
+    ((te*) n->d[3].p)->d[2].p = NULL;
+    te_f(n->d[3].p);
+    n->af->f(n);
+}
+
 static fld_stat cmd_r(fld *f, te **an, err **e) {
     te *nn;
+    tbl *et = NULL;
     switch ((*an)->d[3].u4) {
         case CC(E):
             if (((te*) (*an)->d[4].p)->d[2].u4 != AST_CLS(E)) return fld_err(f, *an, e, "fld not exportable entry");
             nn = te_c((*an)->d[4].p);
             ast_lst_tbl_e_s_f(nn->d[3].p, LTE_FLG(E));
+            break;
+        case CC(L):
+            nn = (*an)->d[4].p;
+            if (nn->d[2].u4 != AST_CLS(S) || ((te*) nn->d[3].p)->d[1].u4 != TYPE(CS)) return fld_err(f, *an, e, "fld CMD L inv import");
+            *e = z(nn->d[4].p, &et, 0);
+            if (*e) return FLD_STAT(INV);
+            if (!et) return fld_err(f, *an, e, "fld file has no exports");
+            nn = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, fld_s_st_et_f, P(type_h_i(f->a->ta, NULL, TYPE(ST), et)), P(NULL));
             break;
         case CC(P1):
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U4(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(U5))), U5(1)), te_c((*an)->d[4].p));

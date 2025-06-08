@@ -23,7 +23,7 @@ static fld_stat lst_inv_o(fld *f, te **an, err **e) {
 static void export_tbl_f(void *p) {
     te *t = p;
     mc_f(t->d[0].p);
-    // TODO jit destructor
+    // d[1] is freed in opt_exp_tbl_f
     te_f(t->d[2].p);
     t->af->f(t);
 }
