@@ -39,7 +39,8 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
         lei = h->d[0].p;
         if (tbl_g_i(fat, lei->d[0], &kv) == TBL_STAT(OK)) {
             lei->d[2] = P(te_c(kv->d[2].p));
-            // TODO set arg flag
+            ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
+            ast_lst_tbl_e_s_i(lei, kv->d[1].u5);
         }
         h = h->d[2].p;
     }
@@ -87,17 +88,35 @@ static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
 }
 
 static chk_stat chk_dfn_e_op(chk *c, te *an, te **e) {
-    (void) c;
     (void) e;
-    an->d[3] = P(te_c(((te*) an->d[6].p)->d[3].p));
-    ((te*) ((te*) an->d[5].p)->d[3].p)->d[2] = P(te_c(an->d[3].p));
-    // TODO set local flag on entry
+    te *lte = ((te*) an->d[5].p)->d[3].p;
+    if (lte->d[2].p != NULL || lte->d[3].p != NULL) { // already set
+       *e = an;
+       return CHK_STAT(INV);
+    }
+    te *r = an->d[6].p;
+    if (r->d[2].u4 == AST_CLS(L)) {
+        lte->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(DL)));
+        an->d[3] = P(te_c(lte->d[2].p));
+        lte->d[3] = P(ast_cpy(r));
+    } else if (r->d[2].u4 == AST_CLS(T)) {
+        an->d[3] = P(te_c(r->d[3].p));
+        lte->d[2] = P(te_c(r->d[3].p));
+        ast_lst_tbl_e_s_f(lte, LTE_FLG(T));
+    } else {
+        an->d[3] = P(te_c(r->d[3].p));
+        lte->d[2] = P(te_c(r->d[3].p));
+        type_cls cls = type_g_c(((te*) lte->d[2].p)->d[1].u4);
+        if (cls == TYPE_CLS(F)) ast_lst_tbl_e_s_f(lte, LTE_FLG(F));
+        else ast_lst_tbl_e_s_f(lte, LTE_FLG(L));
+    }
     return CHK_STAT(OK);
 }
 
 static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
     (void) c;
     (void) e;
+    // TODO check locals
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
     return CHK_STAT(OK);
 }

@@ -24,7 +24,7 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define TN(V) NN(T, type_i(&ast_am, NULL, TYPE(V)))
 
-#define EN(S, T) NN(E, ast_lst_tbl_e_i(a, mc_i_cstr(S, &ast_am), T))
+#define EN(S, F, T) NN(E, ast_lst_tbl_e_i(a, mc_i_cstr(S, &ast_am), F, T))
 
 #define IN(S) NN(I, mc_i_cstr(S, &ast_am))
 

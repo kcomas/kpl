@@ -16,11 +16,11 @@ T(typetype) {
 }
 
 T(fnadd3) {
-    V(fnadd3, RN(AN(NULL, LN(LT(1, "f", NULL), L(2,
-        ON(NULL, DFN, EN("f", NULL),
+    V(fnadd3, RN(AN(NULL, LN(LT(1, "f", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("f", U6(0), NULL),
             ON(NULL, CST,
             NN(T, TF(FN, TS(I6), 3, "a", TS(I6), "b", TS(I6), "c", TS(I6))),
-            LN(LT(3, "a", NULL, "b", NULL,  "c", NULL), L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, EN("a", NULL), ON(NULL, ADD, EN("b", NULL), EN("c", NULL))))))
+            LN(LT(3, "a", U6(0), NULL, "b", U6(0), NULL,  "c", U6(0), NULL), L(1, ON(NULL, SUB, NULL, ON(NULL, ADD, EN("a", U6(0), NULL), ON(NULL, ADD, EN("b", U6(0), NULL), EN("c", U6(0), NULL))))))
         )),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", NULL), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))), NULL)));
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))), NULL)));
 }
