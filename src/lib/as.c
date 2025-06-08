@@ -178,19 +178,18 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     return AS_STAT(OK);
 }
 
-as_stat as_n(as *a, uint8_t *m, err **e) {
-    size_t p = 0;
+as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
     te *h = a->code->h;
     while (h) {
         te *c = h->d[0].p;
-        c->d[8] = U6(p);
+        c->d[8] = U6(*p);
         if (c->d[0].u6 == CODE_ID(O)) {
             as_code_fn *fn = c->d[6].p;
-            if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
+            if (!fn || !fn(a, c, p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
                 *e = err_i(a->ea, a->gep(AS_STAT(CODE)), (void*) te_f, te_c(c), "as code");
                 return AS_STAT(INV);
             }
-            c->d[9] = U6(p - c->d[8].u6);
+            c->d[9] = U6(*p - c->d[8].u6);
         } else c->d[9] = U6(1);
         h = h->d[2].p;
     }
@@ -212,7 +211,7 @@ as_stat as_n(as *a, uint8_t *m, err **e) {
     while (h) {
         te *dqe = h->d[0].p;
         as_dq_fn *dfn = dqe->d[3].p;
-        if (!dfn || !dfn(a, &p, m, dqe)) {
+        if (!dfn || !dfn(a, p, m, dqe)) {
             *e = err_i(a->ea, a->gep(AS_STAT(DATA)), (void*) te_f, te_c(dqe), "as data");
             return AS_STAT(INV);
         }

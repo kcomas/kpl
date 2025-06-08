@@ -41,7 +41,7 @@ tbl *fld_lst_tbl_i(ast *a, size_t n, ...) {
     return t;
 }
 
-// char*, te[type] ....
+// char*, te[type] id ....
 tbl *fld_type_tbl_i(size_t n, ...) {
     tbl *t = ati();
     va_list args;
@@ -49,7 +49,8 @@ tbl *fld_type_tbl_i(size_t n, ...) {
     for (size_t i = 0; i < n; i++) {
         mc *s = mc_i_cstr(va_arg(args, char*), &ast_am);
         te *type = va_arg(args, te*);
-        type_tbl_a(t, &ast_am, s, i, type);
+        size_t id = va_arg(args, size_t);
+        type_tbl_a(t, &ast_am, s, id, type);
     }
     va_end(args);
     return t;

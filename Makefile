@@ -1,15 +1,15 @@
 
 CC = gcc
 OO = -g -Og
-FHARDEND := -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -ftrivial-auto-var-init=pattern -fPIE -pie -fstack-protector-strong -fstack-clash-protection -Wl,-z,relro,-z,now -fcf-protection=full
-FFLAGS = -fno-omit-frame-pointer $(FHARDEND)
+FFLAGS = -fno-omit-frame-pointer -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -ftrivial-auto-var-init=pattern -fPIE -fstack-protector-all -fstack-clash-protection -fcf-protection=full
 MFLAGS = -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
 CFLAGS = -std=gnu99 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 SRC = ./src
 LSRC = $(SRC)/lib
 TEST = ./test
-CCOBJ = $(CC) -o $@ $^ -pie
+LFLAGS = -pie -Wl,-z,relro,-z,now
+CCOBJ = $(CC) -o $@ $^ $(LFLAGS)
 NAME = kpl
 TNAME = _test
 TESTS = tests
@@ -133,12 +133,14 @@ $(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/
 
 OBJS := $(sort $(OBJS))
 
+FSAN = -fsanitize=address -fsanitize=leak -fsanitize=undefined
 #$(TESTS): OO = -O3
 $(TESTS): FLAGS += -DNTO
-$(TESTS): FFLAGS += -fsanitize=address -fsanitize=leak -fsanitize=undefined
+$(TESTS): FFLAGS += $(FSAN)
+$(TESTS): LFLAGS += $(FSAN)
 $(TESTS): WFLAGS += -Werror
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
-> $(CCOBJ) -fsanitize=address -fsanitize=leak -fsanitize=undefined
+> $(CCOBJ)
 
 show_$(TESTS):
 > find ./test -type f -name "*.c" | grep -v -E "(_t|\/t\.c)" | cut -d "/" -f3 | sed 's/\.c/$(TNAME)/'

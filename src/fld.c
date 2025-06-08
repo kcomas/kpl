@@ -75,7 +75,7 @@ static bool aply_op_t(const te *an) {
 static fld_stat z_type_i(fld *f, lst *l, te *p) {
     tbl *t = p->d[3].p = f->fti();
     un ln;
-    size_t i = 0;
+    size_t ra = 0, xa = 0;
     while (l->l) {
         if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
         te *zn = ln.p;
@@ -83,7 +83,15 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
         te *tn = zn->d[4].p;
         if (tn->d[2].u4 != AST_CLS(T)) return FLD_STAT(INV);
         ((te*) tn->d[3].p)->d[0] = P(p); // set parent
-        type_tbl_a(t, f->a->ta, mc_c(zn->d[5].p), i++, te_c(tn->d[3].p));
+        switch (((te*) tn->d[3].p)->d[1].u4) {
+            case TYPE(F5):
+            case TYPE(F6):
+                type_tbl_a(t, f->a->ta, mc_c(zn->d[5].p), xa++, te_c(tn->d[3].p));
+                break;
+            default:
+                type_tbl_a(t, f->a->ta, mc_c(zn->d[5].p), ra++, te_c(tn->d[3].p));
+                break;
+        }
         te_f(zn);
     }
     lst_f(l);
