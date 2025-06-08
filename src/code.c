@@ -660,6 +660,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tl = ast_gtn(opn->l))) return CODE_ER(cs, INV_ADD_T_L, opn->r);
             if (tl->t == TYPE(VR)) {
                 OP_A(cs, c, VRA, OP, { .t = opn->ret->t }, a);
+                OP_GC(cs, c, tl, opn->l);
                 break;
             }
             OP_P_INT_RET(opn, cs, l, c);
@@ -674,6 +675,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, INV_SUB_VR_T_R, opn->r);
                 if ((cstat = er_rer(cs, opn->ret, &erer)) != CODE_STAT(OK)) return cstat;
                 OP_A(cs, c, VRS, ER, { .e = erer }, a);
+                OP_A(cs, c, SWAP, VD, {}, NULL);
+                OP_GC(cs, c, tr, opn->r);
                 break;
             }
             IFCGEN(code_gen, cs, opn->l, c);

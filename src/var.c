@@ -193,7 +193,6 @@ void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
 }
 
 void var_tsv_add(al *const a, var_tsv *const tsv, var v) {
-    var_tsv_rcd(tsv);
     if (tsv->len == tsv->size) {
         size_t nsize = tsv->size * TSVML;
         var *nv = ala(a, nsize * sizeof(var));
@@ -206,7 +205,6 @@ void var_tsv_add(al *const a, var_tsv *const tsv, var v) {
 }
 
 var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv) {
-    var_tsv_rcd(tsv);
     if (tsv->len == 0) {
         er_itm *ei = er_var(m, a, "VRS");
         er_a(m->e, ei);
