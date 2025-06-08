@@ -328,3 +328,14 @@ T(muldiv) {
     printf("%lu * %lu / %lu = %lu\n", a, b, c, r);
     A(r == 21, "eq");
 }
+
+T(set) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(I6), 0), gen_data(g, X64_TYPE(I6), I6(1234)), NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_stkv(g, X64_TYPE(I6), 0), gen_stkv(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 0)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_stkv(g, X64_TYPE(I6), 0), NULL, NULL));
+    BUILD(g, m);
+    int64_t r = ((int64_t(*)(int64_t)) m)(5);
+    A(r == 1239, "seteq");
+}

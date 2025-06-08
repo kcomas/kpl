@@ -12,6 +12,7 @@ typedef enum {
     GEN_OP(LBL),
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
+    GEN_OP(SET),
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
     GEN_OP(CALLV), // varardic
@@ -65,6 +66,8 @@ te *gen_tmp(gen *g, x64_type t, size_t id);
 
 te *gen_data(gen *g, x64_type t, un d);
 
+te *gen_stkv(gen *g, x64_type t, size_t id);
+
 // atm entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];reg]
 
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
@@ -91,6 +94,13 @@ void set_code_s(te *ci, as *a);
 void set_code_e(te *ci, as *a);
 
 gen_stat rstk_b(const gen_st *st, uint8_t *r);
+
+// get idx for stack var
+gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int16_t *idx);
+
+void gen_as_rmbdr(as *a, as_inst i, reg d, int16_t dsp, reg s, te *ci);
+
+void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int16_t dsp, te *ci);
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv);
 

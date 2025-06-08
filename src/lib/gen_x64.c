@@ -7,6 +7,7 @@ const char *gen_op_str(gen_op go) {
         "LBL",
         "ENTER",
         "LEAVE",
+        "SET",
         "CALL",
         "CALLNPR",
         "CALLV",
@@ -102,21 +103,26 @@ static void ovt_p(const te *ovt) {
     }
 }
 
+static void gen_ci_p(const te *ci) {
+    printf("(%s", gen_op_str(ci->d[0].u6));
+    for (size_t i = 1; i < 4; i++) {
+        te *ovt = ci->d[i].p;
+        if (!ovt) {
+            printf(" (N)");
+            continue;
+        }
+        putchar(' ');
+        ovt_p(ovt);
+    }
+    putchar(')');
+}
+
 void gen_p(const gen *g, const uint8_t *m) {
     te *h = g->code->h;
     while (h) {
         te *o = h->d[0].p;
-        printf("(%s", gen_op_str(o->d[0].u6));
-        for (size_t i = 1; i < 4; i++) {
-            te *ovt = o->d[i].p;
-            if (!ovt) {
-                printf(" (N)");
-                continue;
-            }
-            putchar(' ');
-            ovt_p(ovt);
-        }
-        printf(")\n");
+        gen_ci_p(o);
+        putchar('\n');
         te *cli = o->d[5].p;
         if (cli) {
             while (cli != o->d[6].p) {
@@ -167,6 +173,10 @@ te *gen_data(gen *g, x64_type t, un d) {
     return gen_var_i(g, NULL, GEN_CLS(D), t, d);
 }
 
+te *gen_stkv(gen *g, x64_type t, size_t id) {
+    return gen_var_i(g, NULL, GEN_CLS(V), t, U6(id));
+}
+
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
     gen_st *st = af->a(sizeof(gen_st));
     st->rac = st->xac = 0;
@@ -186,7 +196,7 @@ gen_st *gen_st_i_gen_st(const gen_st *st) {
 }
 
 void gen_st_p(const gen_st *st) {
-    printf("rac: %u, xac: %u, rvc: %u, xvc: %u\n", st->rac, st->xac, st->rvc, st->xvc);
+    printf("rvc: %u, xvc: %u, rac: %u, xac: %u\n", st->rvc, st->xvc, st->rac, st->xac);
     printf("atm_l: %lu, lat_l: %lu\nR:", st->atm->i->l, st->lat->i->l);
     for (size_t i = 0; i < st->rstk->l; i++) printf("%s ", reg_str(st->rstk->d[i].u3));
     printf("\nX:");
@@ -331,6 +341,33 @@ gen_stat rstk_b(const gen_st *st, uint8_t *r) {
     return GEN_STAT(OK);
 }
 
+gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int16_t *idx) {
+    switch (t) {
+        case X64_TYPE(F5):
+        case X64_TYPE(F6):
+            if (v >= st->xvc) return GEN_STAT(INV);
+            *idx = st->xvc * sizeof(void*) * 2 * (v + 1);
+            break;
+        default:
+            if (v >= st->rvc) return GEN_STAT(INV);
+            *idx = st->xvc * sizeof(void*) * 2;
+            *idx += st->rvc * sizeof(void*) * (v + 1);
+            break;
+    }
+    *idx = -*idx;
+    return GEN_STAT(OK);
+}
+
+void gen_as_rmbdr(as *a, as_inst i, reg d, int16_t dsp, reg s, te *ci) {
+    if (dsp >= INT8_MIN && dsp <= INT8_MAX) AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), as_arg_i(a, ARG_ID(B), I3(dsp)), as_arg_i(a, ARG_ID(R), U3(s)), ci);
+    else HERE("TODO");
+}
+
+void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int16_t dsp, te *ci) {
+    if (dsp >= INT8_MIN && dsp <= INT8_MAX) AS3(a, i, as_arg_i(a, ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), as_arg_i(a, ARG_ID(B), I3(dsp)), ci);
+    else HERE("TODO");
+}
+
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
     if (!ovt) return GEN_STAT(INV);
     un hsh = gen_var_hsh(ovt);
@@ -371,8 +408,7 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
 }
 
 static void gen_err_p(void *d) {
-    HERE("TODO");
-    printf("%p", d);
+    gen_ci_p(d);
 }
 
 gen_stat gen_err(const gen *g, te *ci, err **e, const char *m) {

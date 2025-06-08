@@ -203,6 +203,12 @@ x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 // add rax, rdi
 x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 
+// add qword ptr[rsp] rax
+x64_stat x64_add_rmr(size_t *p, uint8_t *m, reg d, reg s);
+
+// add qword ptr[rsp+dsp8] rax
+x64_stat x64_add_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+
 // addsd xmm0, xmm1
 x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 

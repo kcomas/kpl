@@ -208,6 +208,8 @@ as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
         h = h->d[2].p;
     }
     h = a->dq->h;
+    size_t mod = *p & 0x0F;
+    if (mod) *p = *p - mod + 0x10;
     while (h) {
         te *dqe = h->d[0].p;
         as_dq_fn *dfn = dqe->d[3].p;
