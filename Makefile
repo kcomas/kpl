@@ -33,6 +33,10 @@ TYPE_OBJS = $(SRC)/type.o $(AST_OBJS)
 type$(TNAME): $(TYPE_OBJS) $(TEST)/type.o
 > $(CCOBJ)
 
+CODE_OBJS = $(SRC)/code.o $(TYPE_OBJS)
+code$(TNAME): $(CODE_OBJS) $(TEST)/code.o
+> $(CCOBJ)
+
 $(NAME):
 
 %.o: %.c

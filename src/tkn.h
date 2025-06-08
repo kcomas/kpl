@@ -19,6 +19,7 @@ typedef enum {
     TKN_TYPE(TRUE),
     TKN_TYPE(FALSE),
     TKN_TYPE(SELF),
+    // TODO LOCAL
     // built in type names
     TKN_TYPE(VD),
     TKN_TYPE(BL),
