@@ -12,3 +12,8 @@ bool atg_x64_enq(const te *an) {
     }
     return false;
 }
+
+atg *atg_b(atg *t) {
+    HERE("TODO");
+    return t;
+}

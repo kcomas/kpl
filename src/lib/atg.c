@@ -1,7 +1,7 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, lst *q, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, atg_lst_i ali, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->lc = 0;
    t->r = 1;
@@ -10,15 +10,17 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg
    t->saf = saf;
    t->sta = sta;
    t->aoti = aoti;
-   t->q = q;
+   t->ali = ali;
    t->g = g;
    t->a = a;
+   t->q = ali();
+   t->se = ali();
    t->at = aoti();
    t->ot = aoti();
    return t;
 }
 
-static atg_stat atg_lst_q(atg *t, lst *l, atg_enq enq) {
+static atg_stat atg_lst_q(atg *t, lst *l, atg_test_fn enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;
     te *h = l->h;
@@ -29,7 +31,7 @@ static atg_stat atg_lst_q(atg *t, lst *l, atg_enq enq) {
     return stat;
 }
 
-atg_stat atg_q(atg *t, te *an, atg_enq enq) {
+atg_stat atg_q(atg *t, te *an, atg_test_fn enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!an) return stat;
     if (enq(an)) lst_ab(t->q, P(&an));
@@ -53,10 +55,20 @@ atg_stat atg_q(atg *t, te *an, atg_enq enq) {
     return stat;
 }
 
+atg_stat atg_qn(atg *t) {
+    un v;
+    if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);
+    te **an = v.p;
+    HERE("TODO");
+    return ATG_STAT(OK);
+}
+
 void atg_f(atg *t) {
     if (!t || --t->r > 0) return;
     gen_f(t->g);
     as_f(t->a);
+    lst_f(t->q);
+    lst_f(t->se);
     tbl_f(t->at);
     tbl_f(t->ot);
     t->af->f(t);
