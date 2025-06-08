@@ -25,6 +25,7 @@ typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 
 typedef struct _tkn {
     ssize_t r;
+    ssize_t idc; // id counter
     size_t lno, cno, pos;
     alfn *ta;
     frfn *tf, *ef; // entry free
@@ -36,7 +37,7 @@ typedef struct _tkn {
 
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
-void tkn_a(tkn *const t, const char *const s, ssize_t id, tkn_pf *pf);
+ssize_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf);
 
 tkn_stat tkn_n(tkn *const t, te *const m);
 

@@ -3,24 +3,6 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#define TOKEN(N) TOKEN_##N
-
-typedef enum {
-    TOKEN(SWORD),
-    TOKEN(WS),
-    TOKEN(SC),
-    TOKEN(SCOC),
-    TOKEN(SIG),
-    TOKEN(NL),
-    TOKEN(VAR),
-    TOKEN(NUM),
-    TOKEN(SEMI),
-    TOKEN(LS),
-    TOKEN(RS),
-    TOKEN(BAR),
-    TOKEN(BEE)
-} token;
-
 static size_t sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
@@ -99,18 +81,18 @@ static void tkn_p(tbl *tl, size_t idnt) {
 }
 
 static void standard(tkn *const t) {
-    tkn_a(t, " ", TOKEN(WS), &ws);
-    tkn_a(t, "\n", TOKEN(NL), &nl);
-    tkn_a(t, "0", TOKEN(NUM), &num);
-    tkn_a(t, "1", TOKEN(NUM), &num);
-    tkn_a(t, "2", TOKEN(NUM), &num);
-    tkn_a(t, "3", TOKEN(NUM), &num);
-    tkn_a(t, "4", TOKEN(NUM), &num);
-    tkn_a(t, "5", TOKEN(NUM), &num);
-    tkn_a(t, "6", TOKEN(NUM), &num);
-    tkn_a(t, "7", TOKEN(NUM), &num);
-    tkn_a(t, "8", TOKEN(NUM), &num);
-    tkn_a(t, "9", TOKEN(NUM), &num);
+    tkn_a(t, " ", &ws);
+    tkn_a(t, "\n", &nl);
+    tkn_a(t, "0", &num);
+    tkn_a(t, "1", &num);
+    tkn_a(t, "2", &num);
+    tkn_a(t, "3", &num);
+    tkn_a(t, "4", &num);
+    tkn_a(t, "5", &num);
+    tkn_a(t, "6", &num);
+    tkn_a(t, "7", &num);
+    tkn_a(t, "8", &num);
+    tkn_a(t, "9", &num);
 }
 
 static void tknize(tkn *const t) {
@@ -130,12 +112,12 @@ static void btest(void) {
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, "sigma", TOKEN(SWORD), &ft);
-    tkn_a(t, "sig", TOKEN(SIG), &ft);
-    tkn_a(t, "Σ", TOKEN(SC), &ft);
-    tkn_a(t, "ΣΩ", TOKEN(SCOC), &ft);
-    tkn_a(t, "bar", TOKEN(BAR), &ft);
-    tkn_a(t, "bee", TOKEN(BEE), &ft);
+    tkn_a(t, "sigma", &ft);
+    tkn_a(t, "sig", &ft);
+    tkn_a(t, "Σ", &ft);
+    tkn_a(t, "ΣΩ", &ft);
+    tkn_a(t, "bar", &ft);
+    tkn_a(t, "bee", &ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
@@ -146,10 +128,10 @@ static void stest(void) {
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, "Σ", TOKEN(SC), &ft);
-    tkn_a(t, ";", TOKEN(SEMI), &ft);
-    tkn_a(t, "[", TOKEN(LS), &ft);
-    tkn_a(t, "]", TOKEN(RS), &ft);
+    tkn_a(t, "Σ", &ft);
+    tkn_a(t, ";", &ft);
+    tkn_a(t, "[", &ft);
+    tkn_a(t, "]", &ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
