@@ -123,9 +123,6 @@ jit_stat jit_mov_rra(size_t *p, uint8_t *m, reg d, reg s);
 // mov rax, qword ptr[rdi+dsp8]
 jit_stat jit_mov_rrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
-// lea rax [rax]
-jit_stat jit_lea_rr(size_t *p, uint8_t *m, reg d, reg s);
-
 // inc rax
 jit_stat jit_inc_r(size_t *p, uint8_t *m, reg r);
 
