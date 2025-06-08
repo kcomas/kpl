@@ -104,7 +104,6 @@ static chk_stat chk_dfn_e_op(chk *c, te *an, te **e) {
 static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
     (void) c;
     (void) e;
-    // TODO check locals
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
     return CHK_STAT(OK);
 }
