@@ -458,11 +458,12 @@ gen_stat gen_err(const gen *g, te *ci, err **e, const char *m) {
     return GEN_STAT(INV);
 }
 
-static void jmp_2_leave(gen *g, te *restrict lve, te *restrict lbl) {
-    te *h = g->code->h, *c;
-    while (h) {
+static void jmp_2_leave(gen *g, te *restrict hlve, te *restrict lbl) {
+    te *h = g->code->h, *c, *lve;
+    while (h != hlve) {
         c = h->d[0].p;
         if (c->d[0].u6 == GEN_OP(JMP) && ((te*) c->d[1].p)->d[1].u6 == ((te*) lbl->d[1].p)->d[1].u6) {
+            lve = hlve->d[0].p;
             c->d[0] = lve->d[0];
             te_f(c->d[1].p);
             c->d[1] = P(te_c(lve->d[1].p));
@@ -480,7 +481,7 @@ void gen_x64_opt(gen *g, gen_st *st) {
         if (c->d[0].u6 == GEN_OP(LEAVE)) {
             if (h->d[1].p) {
                 c = ((te*) h->d[1].p)->d[0].p;
-                if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h->d[0].p, c);
+                if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, c);
             }
         }
         h = h->d[2].p;
