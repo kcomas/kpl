@@ -211,3 +211,12 @@ bool type_eq(const te *restrict a, const te *restrict b) {
     }
     return false;
 }
+
+bool type_ic(const te *restrict a, const te *restrict b) {
+    te *pn = a->d[0].p;
+    while (pn) {
+        if (b == pn) return true;
+        pn = pn->d[0].p;
+    }
+    return false;
+}

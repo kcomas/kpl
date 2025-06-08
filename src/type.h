@@ -73,3 +73,6 @@ te *type_i(const alfr *af, te *restrict p, type t);
 void type_p(const te *t);
 
 bool type_eq(const te *restrict a, const te *restrict b);
+
+// check if b exists on on a parents
+bool type_ic(const te *restrict a, const te *restrict b);
