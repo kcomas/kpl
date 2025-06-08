@@ -21,10 +21,10 @@ typedef enum {
     TYPE(U6),
     TYPE(F5),
     TYPE(F6),
+    TYPE(SL),
     TYPE(C4),
     TYPE(SG),
     // vector
-    TYPE(SL),
     TYPE(VR),
     TYPE(LT),
     // hash
