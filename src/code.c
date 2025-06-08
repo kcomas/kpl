@@ -397,7 +397,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     }
     while (h) {
         if (hsh->tn->t == TYPE(HH)) {
-            sg = ala(cs->r->a, strlen(h->k - 1) + sizeof(char)); // null byte
+            sg = ala(cs->r->a, strlen(h->k - 1) + sizeof(char)); // remove ` and + for null byte
             strcpy(sg, h->k + 1);
             OP_A(cs, c, PV, STR, { .sg = sg }, h->a);
         }
@@ -430,18 +430,18 @@ static code_stat sym_get_hd(code_st *const cs, const type_node *const tn, const 
 static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code **c) {
     code_stat cstat;
     type_node *tn;
+    hsh_data *hd;
     // TODO no ast with symbol
     IFCGEN(code_gen, cs, sym->a, c);
     if (!(tn = ast_gtn(sym->a))) return CODE_ER(cs, SYM_NO_T_FOR_A, sym->a);
     if (tn->t == TYPE(HH)) {
         // TODO check for HH
         // runtime look up and error
-        exit(13);
+    } else {
+        if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
+        OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
+        OP_RCI(cs, c, hd->tn);
     }
-    hsh_data *hd;
-    if ((cstat = sym_get_hd(cs, tn, sym, &hd)) != CODE_STAT(OK)) return cstat;
-    OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) hd->id }, sym->a);
-    OP_RCI(cs, c, hd->tn);
     return CODE_ER(cs, OK, NULL);
 }
 
@@ -655,9 +655,9 @@ static code_stat op_chk_er(code_st *const cs, const ast *const a, code **c) {
 }
 
 static code_stat gen_vr_hh_gc(code_st *const cs, code **gc, type t, const type_node *const gct) {
-    OP_A(cs, gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
+    OP_A(cs, gc, EFN, CODE, { .t = t }, NULL);
     OP_A(cs, gc, LA, VAR, { SLV(0, TYPE(VR)) }, NULL);
-    OP_A(cs, gc, RCF, OP, { .t = TYPE(VR) }, NULL);
+    OP_A(cs, gc, RCF, OP, { .t = t }, NULL);
     switch (gct->t) {
         case TYPE(STR):
         case TYPE(SG):

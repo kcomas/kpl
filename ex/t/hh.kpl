@@ -1,13 +1,12 @@
 
 // hashmap example
 
-//ph:FN(HH{SG};VD)${(h)
-//    $(FD;1) << " ",["a =";'h`a;"\n"]
-//    $(FD;1) << " ",["b =";'h`b;"\n"]}
-//
+ph:FN(HH{I6};VD)${(h)
+    $(FD;1) << " ",["a =";SG$'h`a;"\n"]
+    $(FD;1) << " ",["b =";SG$'h`b;"\n"]}
+
 f:FN(VD)${()
     h:HH{I6}${`a:1;`b:2}
-    //ph(h)
-    }
+    ph(h)}
 
 f()
