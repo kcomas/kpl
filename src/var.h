@@ -153,6 +153,8 @@ typedef struct _var_hh {
 
 var_hh *var_hh_i(al *const a, size_t len, jit_fn *gc);
 
+tbl_itm* var_hh_tl_s(var_hh *const hh);
+
 void var_hh_rci(var_hh *const hh);
 
 void var_hh_rcd(var_hh *const hh);
