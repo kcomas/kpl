@@ -1,13 +1,14 @@
 
 #include "as.h"
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, op_tbl_i oti, tbl *lbls, lst *code) {
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;
     a->ta = ta;
     a->la = la;
     a->ea = ea;
+    a->gep = gep;
     a->oti = oti;
     a->lbls = lbls;
     a->ops = oti();
@@ -23,6 +24,7 @@ as *as_i_as(const as *a) {
     aa->ta = a->ta;
     aa->la = a->la;
     aa->ea = a->ea;
+    aa->gep = a->gep;
     aa->oti = a->oti;
     aa->lbls = tbl_i_tbl(a->lbls);
     aa->ops = tbl_c(a->ops);
@@ -179,8 +181,8 @@ as_stat as_n(as *a, uint8_t *m, err **e) {
         if (c->d[0].u6 == CODE_ID(O)) {
             as_code_fn *fn = c->d[6].p;
             if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
-                *e = err_i(a->ea, NULL, (void*) te_f, te_c(c), "as code");
-                return AS_STAT(CODE);
+                *e = err_i(a->ea, a->gep(AS_STAT(CODE)), (void*) te_f, te_c(c), "as code");
+                return AS_STAT(INV);
             }
             c->d[9] = U6(p - c->d[8].u6);
         } else c->d[9] = U6(1);
@@ -193,8 +195,8 @@ as_stat as_n(as *a, uint8_t *m, err **e) {
         while (lh) {
             as_lbl_fn *lfn = ((te*) lh->d[0].p)->d[7].p;
             if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) {
-                *e = err_i(a->ea, NULL, (void*) te_f, te_c(lbl), "as lbl");
-                return AS_STAT(LBL);
+                *e = err_i(a->ea, a->gep(AS_STAT(LBL)), (void*) te_f, te_c(lbl), "as lbl");
+                return AS_STAT(INV);
             }
             lh = lh->d[2].p;
         }
@@ -205,8 +207,8 @@ as_stat as_n(as *a, uint8_t *m, err **e) {
         te *dqe = h->d[0].p;
         as_dq_fn *dfn = dqe->d[3].p;
         if (!dfn || !dfn(a, &p, m, dqe)) {
-            *e = err_i(a->ea, NULL, (void*) te_f, te_c(dqe), "as data");
-            return AS_STAT(DATA);
+            *e = err_i(a->ea, a->gep(AS_STAT(DATA)), (void*) te_f, te_c(dqe), "as data");
+            return AS_STAT(INV);
         }
         h = h->d[2].p;
     }

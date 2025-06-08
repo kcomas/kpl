@@ -180,11 +180,14 @@ void as_code_p(const as *a, const uint8_t *m) {
     if (a->dq->l && m) as_data_p(a, m);
 }
 
-void as_x64_err_p(as_stat stat, te *e) {
+static void as_code_err_p(void *d) {
+    as_code_i_p(d, NULL);
+}
+
+err_d_p *as_x64_err_g_p(as_stat stat) {
     switch (stat) {
         case AS_STAT(CODE):
-            as_code_i_p(e, NULL);
-            break;
+            return as_code_err_p;
         case AS_STAT(LBL):
             HERE("TODO LBL ERR");
             break;
@@ -194,6 +197,7 @@ void as_x64_err_p(as_stat stat, te *e) {
         default:
             break;
     }
+    return NULL;
 }
 
 bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe) {

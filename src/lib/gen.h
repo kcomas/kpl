@@ -34,19 +34,19 @@ typedef tbl *cls_tbl_i(void);
 typedef struct {
     uint32_t lbl; // not used internally
     ssize_t r;
-    const alfr *af, *ta, *va; // al for gen, te, vr
+    const alfr *af, *ta, *va, *ea; // al for gen, te, vr, er
     cls_tbl_i *cti;
     tbl *oci; // op cls op tbl given at start
     lst *code;
 } gen;
 
-gen *gen_i(const alfr *af, const alfr *ta, const alfr *va, cls_tbl_i cti, tbl *oci, lst *code);
+gen *gen_i(const alfr *af, const alfr *ta, const alfr *va, const alfr *ea, cls_tbl_i cti, tbl *oci, lst *code);
 
 gen *gen_i_gen(const gen *g);
 
 bool gen_code_eq(const gen *restrict a, const gen *restrict b);
 
-typedef gen_stat gen_fn(gen *g, void *s, te *ci, as *a, te **e); // state
+typedef gen_stat gen_fn(gen *g, void *s, te *ci, as *a, err **e); // state
 
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, uint16_t type1, gen_cls cls2, uint16_t type2, gen_cls cls3, uint16_t type3, gen_fn *fn);
 
@@ -71,6 +71,6 @@ un gen_var_hsh(const te *var);
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
-gen_stat gen_n(gen *g, void *st, as *a, te **e);
+gen_stat gen_n(gen *g, void *st, as *a, err **e);
 
 void gen_f(gen *g);

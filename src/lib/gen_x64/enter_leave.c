@@ -1,14 +1,14 @@
 
 #include "../gen_x64.h"
 
-static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, te **e) {
+static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     (void) g;
     gen_st *st = s;
     AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), ci);
     AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), ci);
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
-        if (stks > UINT8_MAX) return gen_err(GEN_STAT(INV), ci, e);
+        if (stks > UINT8_MAX) return gen_err(g, ci, e, "gen too many vars");
         AS2(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(stks)), ci);
     }
     if (st->rac >= 3) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), ci);
@@ -18,10 +18,10 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, te **e) {
     return GEN_STAT(OK);
 }
 
-static gen_stat leave_e(gen_st *st, te *ci, as *a, te **e)  {
+static gen_stat leave_e(gen *g, gen_st *st, te *ci, as *a, err **e)  {
     if (st->vc > 0) {
         size_t stks = st->vc * sizeof(void*);
-        if (stks > UINT8_MAX) return gen_err(GEN_STAT(INV), ci, e);
+        if (stks > UINT8_MAX) return gen_err(g, ci, e, "gen too many vars");
         AS2(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(stks)), ci);
     }
     AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(R(BP))), ci);
@@ -30,45 +30,40 @@ static gen_stat leave_e(gen_st *st, te *ci, as *a, te **e)  {
     return GEN_STAT(OK);
 }
 
-static gen_stat leave_au_fn(gen *g, void *s, te *ci, as *a, te **e)  {
-    (void) g;
+static gen_stat leave_au_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     gen_stat stat;
     gen_st *st = s;
     te *ovt = ci->d[1].p, *kv;
-    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
+    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
     AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), ci);
     drop_atm_kv(st, kv, ci);
-    return leave_e(st, ci, a, e);
+    return leave_e(g, st, ci, a, e);
 }
 
-static gen_stat leave_ax_fn(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
+static gen_stat leave_ax_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     gen_st *st = s;
     te *ovt = ci->d[1].p, *kv;
-    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(stat, ci, e);
+    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
     AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(X), U3(kv->d[2].u3)), ci);
     drop_atm_kv(st, kv, ci);
-    return leave_e(st, ci, a, e);
+    return leave_e(g, st, ci, a, e);
 }
 
-static gen_stat leave_du_fn(gen *g, void *s, te *ci, as *a, te **e)  {
-    (void) g;
+static gen_stat leave_du_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     gen_st *st = s; AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), ci);
-    return leave_e(st, ci, a, e);
+    return leave_e(g, st, ci, a, e);
 }
 
-static gen_stat leave_dx_fn(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
+static gen_stat leave_dx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_st *st = s;
     AS2(a, AS_X64(MOVQ), as_arg_i(a, ARG_ID(X), U3(XMM(0))), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), ci);
-    return leave_e(st, ci, a, e);
+    return leave_e(g, st, ci, a, e);
 }
 
-gen_stat leave_fn(gen *g, void *s, te *ci, as *a, te **e)  {
-    (void) g;
+gen_stat leave_fn(gen *g, void *s, te *ci, as *a, err **e)  {
     gen_st *st = s;
-    return leave_e(st, ci, a, e);
+    return leave_e(g, st, ci, a, e);
 }
 
 void gen_enter_leave(gen *g) {

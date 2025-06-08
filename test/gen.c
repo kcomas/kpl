@@ -3,39 +3,41 @@
 
 static uint8_t *m = NULL;
 
+extern const alfr am;
+
+static gen *bg = NULL;
+
+static as *ba = NULL;
+
 static __attribute__((constructor)) void gen_c(void) {
+    bg = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
+    ba = as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     m = x64_mmap(1);
 }
 
 static __attribute__((destructor)) void gen_d(void) {
+    gen_f(bg);
+    as_f(ba);
     x64_munmap(1, m);
-}
-
-extern const alfr am;
-
-static gen *init(void) {
-    gen *g = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
-    gen_b(g);
-    return g;
 }
 
 static void build(_tests *_t, gen *g, uint8_t *m) {
     E();
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
-    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_i_as(ba);
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    te *e = NULL;
+    err *e = NULL;
     gen_stat stat = gen_n(g, st, a, &e);
     if (e) {
-        printf("CODE ERROR %p\n", e);
+        err_p(e);
+        err_f(e);
     }
     A(stat == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
     e = NULL;
     as_stat astat = as_n(a, m, &e);
-    as_x64_err_p(astat, e);
     A(astat == AS_STAT(OK), "as_n");
     gen_p(g, m);
     printf("DATA\n");
@@ -49,17 +51,16 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     E()
 
 T(b) {
-    gen *g = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
-    gen_b(g);
+    gen *g = gen_i_gen(bg);
     gen_op_p(g->oci, false, 0);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(ADD), gen_arg(g, X64_TYPE(U6), 0),  gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 1)));
     S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(U6), 0), NULL, NULL));
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
-    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_i_as(ba);
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    te *e = NULL;
+    err *e = NULL;
     A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
     printf("STATE AFTER\n");
     gen_st_p(st);
@@ -76,11 +77,10 @@ T(b) {
 }
 
 T(call) {
-    te *e = NULL;
-    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    gen *ga = gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    err *e = NULL;
+    as *a = as_i_as(ba);
+    gen *ga = gen_i_gen(bg);
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
-    gen_b(ga);
     S(gen_a(ga, GEN_OP(LBL), gen_lbl(ga, 0), NULL, NULL));
     S(gen_a(ga, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(ga, GEN_OP(ADD), gen_tmp(ga, X64_TYPE(U6), 0),  gen_arg(ga, X64_TYPE(U6), 0), gen_arg(ga, X64_TYPE(U6), 1)));
@@ -116,7 +116,7 @@ T(call) {
 static const char *t_eq_str = "%lu\n";
 
 T(eq) {
-    gen *a = gen_b(gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
+    gen *a = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
     S(gen_a(a, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(a, GEN_OP(ADD), gen_tmp(a, X64_TYPE(U6), 0),  gen_arg(a, X64_TYPE(U6), 0), gen_arg(a, X64_TYPE(U6), 1)));
     S(gen_a(a, GEN_OP(CALLV), gen_call_m(a, 2, gen_data(a, X64_TYPE(M), P(t_eq_str)), gen_arg(a, X64_TYPE(U6), 0)), gen_data(a, X64_TYPE(M), P(printf)), NULL));
@@ -138,7 +138,7 @@ T(eq) {
 }
 
 T(fib) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     // n == 0
@@ -164,7 +164,7 @@ T(fib) {
 }
 
 T(ack) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     // m == 0
@@ -202,7 +202,7 @@ T(ack) {
 }
 
 T(addaddaddneg) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2)));
@@ -217,7 +217,7 @@ T(addaddaddneg) {
 }
 
 T(printf) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P("printf: %ld\n")), gen_arg(g, X64_TYPE(I6), 0)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(LEAVE), gen_arg(g, X64_TYPE(I6), 0), NULL, NULL));
@@ -233,7 +233,7 @@ T(printf) {
 
 
 T(fibxmm) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     // n == 0
@@ -264,7 +264,7 @@ T(fibxmm) {
 //}
 
 T(ackxmm) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     // m == 0
@@ -302,7 +302,7 @@ T(ackxmm) {
 }
 
 T(printfxmm) {
-    gen *g = init();
+    gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 8, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf, ai:%ld, bi:%ld, ci:%ld, di:%ld)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2), gen_arg(g, X64_TYPE(I6), 0), gen_arg(g, X64_TYPE(I6), 1), gen_arg(g, X64_TYPE(I6), 2), gen_arg(g, X64_TYPE(I6), 3)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 4, gen_data(g, X64_TYPE(M), P("printf(ad:%lf, bd:%lf, cd:%lf)\n")), gen_arg(g, X64_TYPE(F6), 0), gen_arg(g, X64_TYPE(F6), 1), gen_arg(g, X64_TYPE(F6), 2)), gen_data(g, X64_TYPE(M), P(printf)), NULL));

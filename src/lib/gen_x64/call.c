@@ -134,14 +134,14 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
 }
 
 // preserve regs, return value
-#define CALL(PR, RV) static gen_stat call_pr_##PR##_rv_##RV(gen_st *st, te *ci, as *a, te **e, size_t nva) { \
+#define CALL(PR, RV) static gen_stat call_pr_##PR##_rv_##RV(const gen *g, gen_st *st, te *ci, as *a, err **e, size_t nva) { \
     gen_stat stat; \
     te *kvr; \
     static uint8_t rsaves[11]; \
     static uint8_t xsaves[15]; \
     size_t rsl = 0, xsl = 0; \
     if (RV) { \
-        if ((stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+        if ((stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     } \
     if (PR) { \
         te *h = st->atm->i->h; \
@@ -168,9 +168,9 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
         for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci); \
     } \
     if (PR) { \
-        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, rsaves, rsl, xsaves, xsl)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
     } else { \
-        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+        if ((stat = call_arg(st, ci, a, RV ? 2 : 1, NULL, 0, NULL, 0)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call"); \
     } \
     if (nva) { \
         AS2(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * nva)), ci); \
@@ -186,16 +186,16 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
             AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), fn->d[1]), ci); \
             break; \
         case GEN_CLS(D): \
-            if ((stat = rstk_b(st, &fr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+            if ((stat = rstk_b(st, &fr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen no reg for call"); \
             AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(fr)), as_arg_i(a, ARG_ID(QW), fn->d[1]), ci); \
             AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), U3(fr)), ci); \
             break; \
         default: \
-           return gen_err(stat, ci, e); \
+           return gen_err(g, ci, e, "gen inv call cls"); \
     } \
     if (nva) AS2(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * nva)), ci); \
     if (RV) { \
-        if ((stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
+        if ((stat = call_ret(ci, a, kvr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen ret"); \
     } \
     if (PR) { \
         while (rsl > 0) { \
@@ -222,19 +222,16 @@ CALL(false, true);
 CALL(true, false);
 CALL(false, false);
 
-static gen_stat call_fn(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
-    return call_pr_true_rv_true(s, ci, a, e, 0);
+static gen_stat call_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    return call_pr_true_rv_true(g, s, ci, a, e, 0);
 }
 
-static gen_stat callnr_fn(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
-    return call_pr_true_rv_false(s, ci, a, e, 0);
+static gen_stat callnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    return call_pr_true_rv_false(g, s, ci, a, e, 0);
 }
 
-static gen_stat callnpr_fn(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
-    return call_pr_false_rv_true(s, ci, a, e, 0);
+static gen_stat callnpr_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    return call_pr_false_rv_true(g, s, ci, a, e, 0);
 }
 
 static size_t num_vec_args(as *a, te *ci, size_t arg_i) {
@@ -254,14 +251,12 @@ static size_t num_vec_args(as *a, te *ci, size_t arg_i) {
     return nva;
 }
 
-static gen_stat callvnr_md(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
-    return call_pr_true_rv_false(s, ci, a, e, num_vec_args(a, ci, 1));
+static gen_stat callvnr_md(gen *g, void *s, te *ci, as *a, err **e) {
+    return call_pr_true_rv_false(g, s, ci, a, e, num_vec_args(a, ci, 1));
 }
 
-static gen_stat callvnprnr_md(gen *g, void *s, te *ci, as *a, te **e) {
-    (void) g;
-    return call_pr_false_rv_false(s, ci, a, e, num_vec_args(a, ci, 1));
+static gen_stat callvnprnr_md(gen *g, void *s, te *ci, as *a, err **e) {
+    return call_pr_false_rv_false(g, s, ci, a, e, num_vec_args(a, ci, 1));
 }
 void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);

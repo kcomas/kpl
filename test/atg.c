@@ -9,13 +9,13 @@ T(fnadd3) {
     IC(fnadd3);
     RC();
     fast(_t, a, &an, opt_b, false);
-    atg *t = atg_b(atg_i(&ast_am, &ast_am, cti, lst_i(&am, &am, NULL), ali(), gen_b(gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()))));
-    gen *gb = gen_b(gen_i(&am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
+    atg *t = atg_b(atg_i(&ast_am, &ast_am, cti, lst_i(&am, &am, NULL), ali(), gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst())), as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()))));
+    gen *gb = gen_b(gen_i(&am, &am, &am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
     gen *g;
-    te *ae = NULL, *ce = NULL;
+    te *ae = NULL;
     atg_stat astat = atg_n(t, &g, a, &ae);
     if (ae) {
         ast_p(ae, 0);
@@ -46,8 +46,9 @@ T(fnadd3) {
     gen_f(gc);
     gen_st *sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
-    gen_stat gstat = gen_n(g, sc, t->a, &ce);
-    if (ce) printf("CODE ERROR %p\n", ce);
+    err *ge = NULL;
+    gen_stat gstat = gen_n(g, sc, t->a, &ge);
+    if (ge) err_p(ge);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     sc = NULL;
@@ -75,8 +76,8 @@ T(fnadd3) {
     gen_f(gc);
     sc = gen_st_i_gen_st(st);
     A(gen_st_p1(g, sc) == GEN_STAT(OK), "gen_st_p1");
-    gstat = gen_n(g, sc, t->a, &ce);
-    if (ce) printf("CODE ERROR %p\n", ce);
+    gstat = gen_n(g, sc, t->a, &ge);
+    if (ge) err_p(ge);
     A(gstat == GEN_STAT(OK), "gen_n");
     gen_st_f(sc);
     uint8_t *m = x64_mmap(1);
@@ -84,7 +85,8 @@ T(fnadd3) {
     gen_st_f(st);
     gen_f(gb);
     ast_f(a);
-    A(as_n(t->a, m, &ae) == AS_STAT(OK), "as_n");
+    err *ce = NULL;
+    A(as_n(t->a, m, &ce) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
     te_f(an);
