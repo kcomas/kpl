@@ -96,6 +96,9 @@ typedef enum {
     TYPE_STAT(INV_OP_CALL_LRR_N_N), // op node for call l r ret not null
     TYPE_STAT(INV_CALL_TGT), // cannot get type for call tgt
     TYPE_STAT(INV_CALL_TGT_T), // invalid call target type
+    TYPE_STAT(INV_TE_CALL),
+    TYPE_STAT(INV_TE_CALL_IDX),
+    TYPE_STAT(INV_TE_CALL_IDX_T),
     TYPE_STAT(INV_CALL_ARGS_LEN), // too little or too many args
     TYPE_STAT(INV_CALL_TGT_ARG_T), // invalid arg type for call
     TYPE_STAT(INV_CALL_ARG_T), // arg type in call inv
@@ -117,11 +120,13 @@ const char *type_stat_str(type_stat tstat);
 typedef struct {
     al *a;
     er *e;
+    const char *str;
 } type_st;
 
-inline void type_st_i(type_st *const ts, al *const a, er *const e) {
+inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *str) {
     ts->a = a;
     ts->e = e;
+    ts->str = str;
 }
 
 inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat) {

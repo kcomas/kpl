@@ -74,6 +74,9 @@ static const char *const tss[] = {
     "INV_OP_CALL_LRR_N_N",
     "INV_CALL_TGT",
     "INV_CALL_TGT_T",
+    "INV_TE_CALL",
+    "INV_TE_CALL_IDX",
+    "INV_TE_CALL_IDX_T",
     "INV_CALL_ARGS_LEN",
     "INV_CALL_TGT_ARG_T",
     "INV_CALL_ARG_T",
@@ -94,7 +97,7 @@ const char *type_stat_str(type_stat tstat) {
     return s;
 }
 
-extern inline void type_st_i(type_st *const ts, al *const a, er *const e);
+extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *str);
 
 extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat);
 
@@ -110,9 +113,9 @@ static bool type_eq(const type_node *const ta, const type_node *tb) {
 
 typedef bool type_eq_fn(const type_node *const ta, const type_node *const tb);
 
-static bool type_lst_contig(const lst_node *const lst, const type_node *const tn, type_eq_fn *const fn) {
+static bool type_lst_contig(const type_node *const tlst, const type_node *const tn, type_eq_fn *const fn) {
     type_node *cmp;
-    lst_itm *h = lst->h;
+    lst_itm *h = tlst->a->n.lst->h;
     while (h) {
         if (!(cmp = ast_gtn(h->a))) return false;
         if (!fn(cmp, tn)) return false;
@@ -390,7 +393,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 if (!type_str_is(rt, NULL)) {
                     // TODO check if vr of sg or cr
                     if (rt->t == TYPE(TE))
-                        if (!type_lst_contig(op->r->n.lst, NULL, type_str_is)) return TYPE_ER(ts, INV_STR_CNCT);
+                        if (!type_lst_contig(rt, NULL, type_str_is)) return TYPE_ER(ts, INV_STR_CNCT);
                 }
                 op->ret = type_node_i(ts->a, TYPE(SG), NULL);
                 break;
@@ -431,8 +434,20 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
     type_node *tt, *ta;
     ASTGTN(tt, cn->tgt, INV_CALL_TGT);
     lst_itm *th, *ah;
+    int64_t tidx;
     switch (tt->t) {
-        // TODO vr and hh
+        case TYPE(TE):
+            if (cn->args->len != 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t != TYPE(INT)) return TYPE_ER(ts, INV_TE_CALL);
+            tidx = tkn_to_int64_t(&cn->args->h->a->t, ts->str);
+            if (tidx < 0 || tidx > (int64_t) cn->tgt->n.lst->len - 1) return TYPE_ER(ts, INV_TE_CALL_IDX);
+            th = tt->a->n.lst->h;
+            while (tidx > 0) {
+               tidx--;
+               th = th->next;
+            }
+            ASTGTN(tt, th->a, INV_TE_CALL_IDX_T);
+            cn->ret = type_node_c(ts->a, tt);
+            break;
         case TYPE(FN):
             if (tt->a->n.lst->len - 1 != cn->args->len) return TYPE_ER(ts, INV_CALL_ARGS_LEN);
             cn->ret = type_node_c(ts->a, tt->a->n.lst->t->a->n.tn);
