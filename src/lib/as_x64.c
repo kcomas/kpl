@@ -157,6 +157,17 @@ void as_code_i_p(const te *c, const uint8_t *m) {
     }
 }
 
+void as_data_p(const as *a, const uint8_t *m) {
+    te* h = a->dq->h;
+    while (h) {
+        te *dqe = h->d[0].p;
+        printf("%05lu:", dqe->d[4].u6);
+        for (size_t i = 0; i < dqe->d[1].u6; i++) printf("%02X ", m[dqe->d[4].u6 + i]);
+        putchar('\n');
+        h = h->d[2].p;
+    }
+}
+
 void as_code_p(const as *a, const uint8_t *m) {
     te *h = a->code->h;
     while (h) {
@@ -164,16 +175,7 @@ void as_code_p(const as *a, const uint8_t *m) {
         as_code_i_p(c, m);
         h = h->d[2].p;
     }
-    if (a->dq->l && m) {
-        h = a->dq->h;
-        while (h) {
-            te *dqe = h->d[0].p;
-            printf("%05lu:", dqe->d[4].u6);
-            for (size_t i = 0; i < dqe->d[1].u6; i++) printf("%02X ", m[dqe->d[4].u6 + i]);
-            putchar('\n');
-            h = h->d[2].p;
-        }
-    }
+    if (a->dq->l && m) as_data_p(a, m);
 }
 
 bool as_dq_x64(as *a, size_t *p, uint8_t *m, te *dqe) {

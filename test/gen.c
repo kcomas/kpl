@@ -35,6 +35,8 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     gen_st_p(st);
     A(as_n(a, m) == AS_STAT(OK), "as_n");
     gen_p(g, m);
+    printf("DATA\n");
+    as_data_p(a, m);
     gen_st_f(st);
     gen_f(g);
     as_f(a);
@@ -185,6 +187,7 @@ T(fibxmm) {
     as_f(a);
 }
 */
+
 T(ack) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
