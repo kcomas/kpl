@@ -16,6 +16,8 @@ OBJS = $(patsubst %.c, %.o, $(SRCS))
 NAME = kpl
 TNAME = _test
 
+all: $(NAME)
+
 VAR_OBJS = $(SRC)/var.o
 var$(TNAME): $(VAR_OBJS) $(TEST)/var.o
 > $(CCOBJ)
