@@ -14,13 +14,13 @@ const char *ast_op_str(op o) {
 }
 
 static ast_stat err(ast_stat stat, te *pn, te **e) {
-    *e = pn;
+    *e = te_c(pn);
     return stat;
 }
 
 static ast_stat root(ast *a, te *pn, void **vn, te **e) {
     te **an = (te**) vn;
-    *an = ast_an_i(a, NULL, pn, AST_CLS(R), P(a->ati()));
+    *an = ast_an_i(a, NULL, pn, AST_CLS(R), P(NULL)); // a->ati()
     if (!pn->d[2].p) return AST_STAT(OK);
     return ast_n(a, pn->d[2].p, &(*an)->d[4].p, e);
 }
@@ -136,22 +136,30 @@ void ast_p(const te *an, size_t idnt) {
     }
 }
 
-bool ast_eq(const te *a, const te *b) {
+static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
+    if (t->d[0].u6 == TYPE(VD)) return true;
+    if (t->d[0].u6 >= TYPE(I3) && t->d[0].u6 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
+    if (t->d[0].u6 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
+    return false;
+}
+
+bool ast_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
     if (!a || !b || a->d[2].u6 != b->d[2].u6) return false;
     switch (a->d[2].u6) {
         case AST_CLS(R):
+            // TODO compare tbls
             return ast_eq(a->d[4].p, b->d[4].p);
         case AST_CLS(T):
             break;
         case AST_CLS(I):
             break;
         case AST_CLS(S):
-            break;
+            return type_eq(a->d[3].p, b->d[3].p) && ast_v_eq(a->d[3].p, a, b);
         case AST_CLS(V):
             break;
         case AST_CLS(O):
-            break;
+            return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && ast_eq(a->d[5].p, b->d[5].p) && a->d[6].u6 == b->d[6].u6;
         case AST_CLS(Z):
             break;
         case AST_CLS(A):

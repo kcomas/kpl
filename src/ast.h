@@ -20,4 +20,4 @@ ast *ast_b(ast *a);
 
 void ast_p(const te *an, size_t idnt);
 
-bool ast_eq(const te *a, const te *b);
+bool ast_eq(const te *restrict a, const te *restrict b);

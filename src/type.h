@@ -65,4 +65,4 @@ te *type_f_i(const alfr *af, type f, tbl *a, te *r);
 
 void type_p(const te *t);
 
-bool type_eq(const te *a, const te *b);
+bool type_eq(const te *restrict a, const te *restrict b);
