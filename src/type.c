@@ -114,3 +114,26 @@ void type_p(const te *t) {
             break;
     }
 }
+
+bool type_eq(const te *a, const te *b) {
+    if (a->d[0].u6 != b->d[0].u6) return false;
+    type_cls cls = type_c(a->d[0].u6);
+    switch (cls) {
+        case TYPE_CLS(I):
+            break;
+        case TYPE_CLS(S):
+            return true;
+        case TYPE_CLS(V):
+            return type_eq(a->d[1].p, b->d[1].p);
+        case TYPE_CLS(H):
+            // TODO
+            break;
+        case TYPE_CLS(F):
+            // TODO
+            break;
+        case TYPE_CLS(C):
+            // TODO
+            break;
+    }
+    return false;
+}
