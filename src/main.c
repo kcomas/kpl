@@ -47,7 +47,7 @@ int run(mod *volatile m, bool repl) {
         return jstat;
     }
     fn_stk_f(stk);
-    m->id = clone(m->c->jf, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
+    m->id = clone(m->c->jf, m->r->stk + m->r->stks, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
     sem_wait(&m->done);
     return 0;
 }
