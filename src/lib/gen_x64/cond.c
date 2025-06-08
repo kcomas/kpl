@@ -46,21 +46,21 @@ AUDUL(eq, JE);
 AUDUL(ne, JNE);
 AUDUL(gt, JA);
 
-#define AXDXL(N, J) static gen_stat N##_axdxl_fn(gen *g, void *s, te *ci, as *a, te **e)  { \
+#define AXDXL(N, C, J) static gen_stat N##_axdxl_fn(gen *g, void *s, te *ci, as *a, te **e)  { \
     (void) g; \
     gen_stat stat; \
     gen_st *st = s; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
-    AS2(a, AS_X64(COMISD), as_arg_i(a, ARG_ID(X), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci); \
+    AS2(a, AS_X64(C), as_arg_i(a, ARG_ID(X), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci); \
     AS1(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), ci); \
     drop_atm_kv(st, kv, ci); \
     set_code_e(ci, a); \
     return GEN_STAT(OK); \
 }
 
-AXDXL(ne, JNE);
-AXDXL(gt, JA);
+AXDXL(ne, UCOMISD, JNE);
+AXDXL(gt, COMISD, JA);
 
 void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_auaul_fn);
