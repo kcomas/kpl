@@ -52,7 +52,8 @@ static void iftest(void) {
     uint8_t *m = jit_mmap(1);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
-    ((void(*)(uint8_t)) m)(6);
+    ((void(*)(uint8_t)) m)(2);
+    ((void(*)(uint8_t)) m)(7);
     jit_munmap(1, m);
     as_f(a);
     printf("<<<< IFTEST\n");
