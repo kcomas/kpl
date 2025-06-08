@@ -4,6 +4,7 @@
 const char* gen_cls_str(gen_cls cls) {
     switch (cls) {
         case GEN_CLS(N): return "N";
+        case GEN_CLS(M): return "M";
         case GEN_CLS(A): return "A";
         case GEN_CLS(V): return "V";
         case GEN_CLS(T): return "T";
