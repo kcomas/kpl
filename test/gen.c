@@ -45,33 +45,32 @@ T(b) {
 T(call) {
     te *e;
     as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    gen *g = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen *ga = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_st *st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
-    gen_b(g);
-    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
-    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(U6), 0),  gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 1)));
-    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 0), NULL, NULL));
-    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
-    A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
+    gen_b(ga);
+    S(gen_a(ga, GEN_OP(LBL), gen_lbl(ga, 0), NULL, NULL));
+    S(gen_a(ga, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(ga, GEN_OP(ADD), gen_tmp(ga, X64_TYPE(U6), 0),  gen_arg(ga, X64_TYPE(U6), 0), gen_arg(ga, X64_TYPE(U6), 1)));
+    S(gen_a(ga, GEN_OP(LEAVE), gen_tmp(ga, X64_TYPE(U6), 0), NULL, NULL));
+    A(gen_st_p1(ga, st) == GEN_STAT(OK), "gen_st_p1");
+    A(gen_n(ga, st, a, &e) == GEN_STAT(OK), "gen");
     printf("FN0\n");
-    gen_p(g, NULL);
+    gen_p(ga, NULL);
     gen_st_f(st);
-    gen_f(g);
-    g = gen_i(&gm, &gm, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
+    gen *gc = gen_cpy(ga);
+    gen_f(ga);
     st = gen_st_i(&gm, &gm, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &gm, NULL), vr_i(16, &gm, NULL));
-    gen_b(g);
-    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
-    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(g, GEN_OP(SUB), gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 0), gen_data(g, X64_TYPE(U3), U3(1))));
-    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(U6), 0), gen_call_m(g, 2, gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 1)), gen_lbl(g, 0)));
-    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 0), NULL, NULL));
-    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
-    A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SUB), gen_arg(gc, X64_TYPE(U6), 0), gen_arg(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U3), U3(1))));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(U6), 0), gen_call_m(gc, 2, gen_arg(gc, X64_TYPE(U6), 0), gen_arg(gc, X64_TYPE(U6), 1)), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(U6), 0), NULL, NULL));
+    A(gen_st_p1(gc, st) == GEN_STAT(OK), "gen_st_p1");
+    A(gen_n(gc, st, a, &e) == GEN_STAT(OK), "gen");
     printf("FN1\n");
-    gen_p(g, NULL);
+    gen_p(gc, NULL);
     gen_st_f(st);
-    gen_f(g);
+    gen_f(gc);
     A(as_n(a, m) == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t x = 3, y = 5, z = 7;
@@ -79,7 +78,6 @@ T(call) {
     A(l1c, "l1c");
     A(((int64_t(*)(int64_t, int64_t)) &m[l1c->d[8].u6])(x, y) == z, "call");
     as_f(a);
-
 }
 
 static gen *init(void) {
