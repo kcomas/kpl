@@ -11,7 +11,9 @@ void ex_f(void *data) {
 }
 
 void ex_p(void *data) {
-    (void) data;
+    if (!data) return;
+    ex *e = (ex*) data;
+    printf("{%d %s}", e->i, e->c);
 }
 
 #define EXT 26
@@ -36,6 +38,7 @@ int main(void) {
     if ((st = tbl_op(&tl, "a", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
     if ((st = tbl_op(&tl, "b", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
     if ((st = tbl_op(&tl, "c", NULL, &ti, &ex_f, TBL_OP_FLG(RM))) != TBL_STAT(OK)) return st;
+    tbl_bucksp(tl, &ex_p);
     tbl_lstp(tl, &ex_p);
     printf("-----------------\n");
     printf("-----ADD LIST----\n");

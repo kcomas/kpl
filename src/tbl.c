@@ -76,6 +76,7 @@ tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti,
                     while (cur != h->next) h = h->next;
                     h->next = cur->next;
                 }
+                (*tl)->bucks[(hash + i) % (*tl)->size] = NULL;
                 tbl_itm_f(cur, fn);
             } else {
                 fn(cur->data);
