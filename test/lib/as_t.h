@@ -5,6 +5,8 @@
 
 te *as_arg_r(size_t rid);
 
+te *as_arg_rm(size_t rmid);
+
 te *as_arg_l(size_t lid);
 
 te *as_arg_qw(un v);

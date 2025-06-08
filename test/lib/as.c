@@ -62,14 +62,22 @@ static void iftest(void) {
 static void looptest(void) {
     as *a = as_b(as_i(&malloc, &free, &label_entry_f, &op_entry_f, &code_entry_f, &as_mktbl, as_mktbl(), as_mklst()));
     printf(">>>> LOOPTEST\n");
+    as_a(a, AS_INST(MOV), as_arg_r(R(AX)), as_arg_qw(U6(2)), NULL, NULL);
+    as_a(a, AS_INST(PUSH), as_arg_r(R(AX)), NULL, NULL, NULL);
     as_a(a, AS_INST(MOV), as_arg_r(R(SI)), as_arg_r(R(DI)), NULL, NULL);
-    as_a(a, AS_INST(INC), as_arg_r(R(SI)), NULL, NULL, NULL);
-    as_printf(a, "V: %d\n");
+    as_lbl_a(a, 1);
+    as_a(a, AS_INST(PUSH), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_printf(a, "V >= 2: %d\n");
+    as_a(a, AS_INST(POP), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_a(a, AS_INST(DEC), as_arg_r(R(SI)), NULL, NULL, NULL);
+    as_a(a, AS_INST(CMP), as_arg_r(R(SI)), as_arg_rm(R(SP)), NULL, NULL);
+    as_a(a, AS_INST(JAE), as_arg_l(1), NULL, NULL, NULL);
+    as_a(a, AS_INST(POP), as_arg_r(R(AX)), NULL, NULL, NULL);
     as_a(a, AS_INST(RET), NULL, NULL, NULL, NULL);
     uint8_t *m = x64_mmap(1);
-    as_code_p(a, NULL);
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
-    ((void(*)(int32_t)) m)(31);
+    as_code_p(a, m);
+    ((void(*)(int32_t)) m)(5);
     as_f(a);
     printf("<<<< LOOPTEST\n");
 }
