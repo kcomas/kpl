@@ -50,6 +50,20 @@ extern inline val_node *val_node_i(type t);
 
 extern inline void val_node_f(val_node *v);
 
+extern inline op_node *op_node_i(op_type ot);
+
+extern inline void op_node_f(op_node *on);
+
+extern inline lst_itm *lst_itm_i(ast *const a);
+
+extern inline void lst_itm_f(lst_itm *itm);
+
+extern inline lst_node *lst_node_i(type_node *const tn);
+
+extern inline void lst_node_a(lst_node *const lst, ast *const a);
+
+extern inline void lst_node_f(lst_node *lst);
+
 extern inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
 
 extern inline void var_node_f(var_node *vn);
