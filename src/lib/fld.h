@@ -33,6 +33,6 @@ typedef fld_stat fld_fn(fld *f, te **restrict an, te **restrict e);
 
 void fld_a(fld *f, ast_cls cls, fld_test_fn test, fld_fn fn);
 
-fld_stat fld_n(fld *f, te **restrict an, te **restrict e); // modifies in place
+fld_stat fld_n(fld *f, te **restrict an, te **restrict e, bool rr); // modifies in place
 
 void fld_f(fld *f);

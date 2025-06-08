@@ -1,5 +1,6 @@
 
 #pragma once
 
-#include "./lib/opt.h"
 #include "chk.h"
+
+fld *opt_b(fld *f);
