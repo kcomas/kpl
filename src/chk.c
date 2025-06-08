@@ -29,6 +29,11 @@ void chk_p(const tbl *ct, size_t idnt) {
     }
 }
 
+static chk_stat chk_cst_b(chk *c, te *an, te **e) {
+    printf("cst b\n");
+    return CHK_STAT(INV);
+}
+
 static chk_stat chk_nop(chk *c, te *an, te **e) {
     (void) c;
     (void) an;
@@ -37,6 +42,9 @@ static chk_stat chk_nop(chk *c, te *an, te **e) {
 }
 
 chk *chk_b(chk *c) {
-    chk_a(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(_N));
+    // before
+    CHK_AB(c, chk_cst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
+    // after
+    CHK_AA(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(_N));
     return c;
 }

@@ -20,7 +20,7 @@ typedef struct {
     const alfr *af, *ta;
     chk_tbl_i *cti;
     ast *a;
-    tbl *ct;
+    tbl *bt, *at; // before, after
 } chk;
 
 chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a);
@@ -33,7 +33,10 @@ typedef chk_stat chk_fn(chk *c, te *an, te **e);
 #define CHK_HSH_T 0
 
 // cls is also used for op codes
-chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...);
+chk_stat chk_a(chk *c, tbl *t, chk_fn cf, uint16_t cls, uint16_t type, ...);
+
+#define CHK_AB(C, CF, CLS, TYPE, ...) chk_a(C, C->bt, CF, CLS, TYPE, __VA_ARGS__)
+#define CHK_AA(C, CF, CLS, TYPE, ...) chk_a(C, C->at, CF, CLS, TYPE, __VA_ARGS__)
 
 chk_stat chk_n(chk *c, te *an, te **e);
 

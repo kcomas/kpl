@@ -8,7 +8,8 @@ chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a) {
     c->ta = ta;
     c->cti = cti;
     c->a = ast_c(a);
-    c->ct = cti();
+    c->bt = cti();
+    c->at = cti();
     return c;
 }
 
@@ -45,8 +46,8 @@ static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uin
     }
 }
 
-chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...) {
-    tbl *ct = c->ct;
+chk_stat chk_a(chk *c, tbl *t, chk_fn cf, uint16_t cls, uint16_t type, ...) {
+    tbl *ct = t;
     uint8_t n = chk_cls_conts[cls];
     if (!n) return CHK_STAT(INV);
     te *kv;
@@ -76,10 +77,33 @@ static un chk_hsh(const te *an) {
             break;
         default:
             if (!an->d[3].p) hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
-            else hsh = u4_s_o(hsh, CHK_HSH_T, ((te*) an->d[3].p)->d[0].u4);
+            else hsh = u4_s_o(hsh, CHK_HSH_T, ((te*) an->d[3].p)->d[1].u4);
             break;
     }
     return hsh;
+}
+
+static chk_stat chk_foe(bool foe) {
+    return foe ? CHK_STAT(INV) : CHK_STAT(OK);
+}
+
+static chk_stat chk_r(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
+    un hsh = chk_hsh(an);
+    te *kv;
+    if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe);
+    while (n > 0) {
+        n--;
+        t = kv->d[1].p;
+        if (!t) return chk_foe(foe);
+        if (n == 2 && an->d[2].u4 == AST_CLS(O)) {
+            hsh = U6(0);
+            hsh = u4_s_o(hsh, CHK_HSH_C, an->d[ncmp++].u4);
+            hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
+        } else hsh = chk_hsh(an->d[ncmp++].p);
+        if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe);
+    }
+    if (!kv->d[1].p) return chk_foe(foe);
+    return ((chk_fn*) kv->d[1].p)(c, an, e);
 }
 
 static chk_stat chk_lst_n(chk *c, lst *l, te **e) {
@@ -96,6 +120,8 @@ static chk_stat chk_lst_n(chk *c, lst *l, te **e) {
 chk_stat chk_n(chk *c, te *an, te **e) {
     chk_stat stat = CHK_STAT(OK);
     if (!an) return stat;
+    const uint8_t n = chk_cls_conts[an->d[2].u4], ncmp = AST_MIN_LEN;
+    if (n && (stat = chk_r(c, c->bt, an, e, n, ncmp, false)) != CHK_STAT(OK)) return stat;
     switch (an->d[2].u4) {
         case AST_CLS(R):
             if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
@@ -120,21 +146,14 @@ chk_stat chk_n(chk *c, te *an, te **e) {
         default:
             return CHK_STAT(INV); // nodes should have been removed
     }
-    uint8_t n = chk_cls_conts[an->d[2].u4], ncmp = AST_MIN_NODE_LEN;
     if (!n) return CHK_STAT(OK); // do not test
-    un hsh = chk_hsh(an);
-    te *kv;
-    if (tbl_g_i(c->ct, hsh, &kv) == TBL_STAT(NF)) return CHK_STAT(INV);
-    while (n > 0) {
-        n--;
-        tbl *ct = kv->d[1].p;
-        if (!ct) return CHK_STAT(INV);
-    }
+    return chk_r(c, c->at, an, e, n, ncmp, true);
 }
 
 void chk_f(chk *c) {
     if (!c || --c->r > 0) return;
     ast_f(c->a);
-    tbl_f(c->ct);
+    tbl_f(c->bt);
+    tbl_f(c->at);
     c->af->f(c);
 }

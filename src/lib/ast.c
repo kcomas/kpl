@@ -111,7 +111,7 @@ static void t_c_f(void *p) {
 }
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...) {
-    size_t len = AST_MIN_NODE_LEN;
+    size_t len = AST_MIN_LEN;
     frfn *nf = NULL;
     switch (cls) {
         case AST_CLS(R):

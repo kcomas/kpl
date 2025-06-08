@@ -51,7 +51,7 @@ ast *ast_c(ast *a);
 
 // ast t te[par;psr;cls;...]
 
-#define AST_MIN_NODE_LEN 4
+#define AST_MIN_LEN 4
 
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...);
 
