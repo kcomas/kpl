@@ -9,7 +9,7 @@ const char *gen_op_str(gen_op go) {
         "LEAVE",
         "ADD",
         "NE",
-        "ULTE",
+        "UGT",
         "_END"
     };
     const char *s = "INV";
@@ -71,6 +71,7 @@ void gen_p(const gen *g, const uint8_t *m) {
                 case GEN_CLS(A):
                 case GEN_CLS(V):
                 case GEN_CLS(T):
+                case GEN_CLS(D):
                     printf("%s ", x64_type_str(ovt->d[1].u3));
                     break;
                 default:

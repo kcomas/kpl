@@ -15,7 +15,7 @@
 }
 
 AUAUL(ne, JNE);
-AUAUL(ulte, JBE);
+AUAUL(ugt, JA);
 
 #define AUDUL(N, J) static gen_stat N##_audul_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  { \
     (void) g; \
@@ -23,7 +23,7 @@ AUAUL(ulte, JBE);
     gen_st *st = (gen_st*) s; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat; \
-    AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(QW), ((te*) ci->d[1].p)->d[2]), ci); \
+    AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(QW), ((te*) ci->d[2].p)->d[2]), ci); \
     AS2(a, AS_X64(CMP), as_arg(al, fr, ARG_ID(R), U3(kv->d[2].u3)), as_arg(al, fr, ARG_ID(R), U3(R(AX))), ci); \
     AS1(a, AS_X64(J), as_arg(al, fr, ARG_ID(L), ((te*) ci->d[3].p)->d[2]), ci); \
     drop_atm_kv(st, kv, ci); \
@@ -32,12 +32,12 @@ AUAUL(ulte, JBE);
 }
 
 AUDUL(ne, JNE);
-AUDUL(ulte, JBE);
+AUDUL(ugt, JA);
 
 void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ne_auaul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ne_audul_fn);
-    GEN_OP_A3(g, GEN_OP(ULTE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ulte_auaul_fn);
-    GEN_OP_A3(g, GEN_OP(ULTE), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ulte_audul_fn);
+    GEN_OP_A3(g, GEN_OP(UGT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ugt_auaul_fn);
+    GEN_OP_A3(g, GEN_OP(UGT), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U6)), GEN_CLS(L), U3(X64_TYPE(N)), &ugt_audul_fn);
 
 }
