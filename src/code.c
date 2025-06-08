@@ -155,6 +155,8 @@ static code_stat cor_int(const code_st *const cs, const ast *const a, const ast 
 
 #define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
 
+#define OP_ZOO(TN) if (TN->t != TYPE(BL)) OP_A(c, ZOO, OP, { .t = TN->t }, a);
+
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     op_node *opn = a->n.op;
@@ -208,16 +210,16 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
         case OP_TYPE(NOT):
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-            OP_A(c, ZOO, OP, { .t = tr->t }, a);
+            OP_ZOO(tr);
             OP_A(c, NOT, OP, { .t = TYPE(BL) }, a);
             break;
         case OP_TYPE(OR):
             IFCGEN(code_gen, cs, opn->l, c);
             if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
-            OP_A(c, ZOO, OP, { .t = tl->t }, a);
+            OP_ZOO(tl);
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-            OP_A(c, ZOO, OP, { .t = tr->t }, a);
+            OP_ZOO(tr);
             OP_A(c, OR, OP, { .t = TYPE(BL) }, a);
             break;
     }
