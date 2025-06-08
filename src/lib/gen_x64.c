@@ -218,7 +218,7 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     te_f(kv);
 }
 
-as_stat gen_sas(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci) {
+as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci) {
     as_stat stat = AS_STAT(OK);
     stat = as_a(a, op_id, arg1, arg2, arg3, arg4);
     set_code_s(ci, a);
@@ -235,11 +235,10 @@ static gen_stat add_auauau_fn(alfn *al, frfn *af, gen *g, void *s, te *ci, as *a
     if (kv[0]->d[2].u3 == kv[2]->d[2].u3) return GEN_STAT(INV); // second reg cannot be dest
     if (kv[0]->d[2].u3 == kv[1]->d[2].u3) {
         // add in place op
-        as_a(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(kv[1]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[2]->d[2].u3)), NULL, NULL);
-        set_code_s(ci, a);
+        AS2(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(kv[1]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[2]->d[2].u3)), ci);
     } else {
-        as_a(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[1]->d[2].u3)), NULL, NULL);
-        as_a(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[2]->d[2].u3)), NULL, NULL);
+        AS2(a, AS_X64(MOV), as_arg(al, af, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[1]->d[2].u3)), ci);
+        AS2(a, AS_X64(ADD), as_arg(al, af, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg(al, af, ARG_ID(R), U3(kv[2]->d[2].u3)), ci);
     }
     for (size_t i = 0; i < 3; i++) drop_atm_kv(st, kv[i], ci);
     set_code_e(ci, a);
