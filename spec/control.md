@@ -1,6 +1,5 @@
 
 # Control Flow
-
 ## If
 
 ### If
@@ -12,7 +11,7 @@
 ### If with else
 ?{(cond) body }?{ body }
 
-### If with else if and else .....
+### If with else if and else
 ?{(cond) body }?{(cond) body }?{ body }
 
 ## While

@@ -13,9 +13,9 @@ $ Define
 
 Sets a type
 
-x:u64$1 - value and type set
+x:u6$1 - value and type set
 
-x:u64 - type set
+x:u6 - type set
 
 ## Comments
 
