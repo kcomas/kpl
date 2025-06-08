@@ -21,7 +21,7 @@ typedef struct {
     const alfr *af, *ta, *saf, *sta; // alloc for gen st
     atg_tbl_i *aoti;
     atg_lst_i *ali;
-    gen *g; // for base gens
+    gen *bg; // for base gens
     as *a;
     lst *q, *se; // queue of weak ref **an, start end fns
     tbl *at, *ot; // not op, op
@@ -31,10 +31,12 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg
 
 typedef bool atg_test_fn(const te *an);
 
-atg_stat atg_q(atg *t, te *an, atg_test_fn enq);
+atg_stat atg_q(atg *t, te **an, atg_test_fn enq);
 
-// current return type
-typedef atg_stat atg_cc_fn(atg *t, const te *an, te **e);
+// keep root node
+typedef atg_stat atg_cc_fn(atg *t, gen *g, const te *restrict rn, const te *restrict an, te **e);
+
+void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e);
 
 atg_stat atg_qn(atg *t);
 
