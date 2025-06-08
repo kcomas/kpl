@@ -67,7 +67,8 @@ atg_stat atg_err(atg_stat stat, te *an, te **e) {
 
 static atg_stat cst_type_lst_s(atg *t, gen *g, te *an, te **e) {
     (void) t;
-    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, t->lc++), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
+    g->lbl = t->lc++;
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     // TODO zero ref counted vars
     return ATG_STAT(OK);
@@ -131,11 +132,8 @@ static atg_stat neg_i6_o_i6(atg *t, gen *g, te *an, te **e) {
 
 static atg_stat dfn_fn_e_fn_s__g(atg *t, gen *g, te *an, te **e) {
     (void) g;
-    gen *sg = ((te*) an->d[6].p)->d[4].p;
-    gen_st *st = gen_st_i_gen_st(t->bst);
-    // TODO run asm
-    gen_st_f(st);
-    gen_f(sg);
+    uint32_t lbl = ((te*) an->d[6].p)->d[4].u5;
+    HERE("TODO");
     te *lte = ((te*) an->d[5].p)->d[3].p;
     return ATG_STAT(INV);
 }
