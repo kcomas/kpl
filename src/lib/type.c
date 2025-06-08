@@ -169,6 +169,12 @@ te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...) {
     return t;
 }
 
+te *type_te_g_t(const te *t, size_t n) {
+    n += 2;
+    if (n < t->l) return t->d[n].p;
+    return NULL;
+}
+
 static void type_tbl_p(const tbl *t) {
     if (!t) {
         printf("``");

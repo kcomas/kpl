@@ -43,7 +43,10 @@ T(tetype) {
     putchar('\n');
     te *b = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
     A(type_eq(a, b), "type_eq");
+    te *c = type_te_i_v(&al_te, NULL, 2, arr[0], arr[1]);
+    A(!type_eq(b, c), "!type_eq");
     for (size_t i = 0; i < 3; i++) te_f(arr[i]);
     te_f(a);
     te_f(b);
+    te_f(c);
 }
