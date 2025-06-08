@@ -45,6 +45,7 @@ inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs) {
 #define AST_TYPE(N) AST_TYPE_##N
 
 typedef enum {
+    AST_TYPE(TYPE).
     AST_TYPE(VAL),
     AST_TYPE(VAR),
     AST_TYPE(OP),
@@ -62,11 +63,15 @@ typedef enum {
 typedef struct {
     type t;
     ast *data;
-} val_node;
+} type_node;
+
+typedef struct {
+    type t;
+} val_node; // val is tkn str
 
 typedef struct {
     uint8_t id;
-    val_node *val;
+    ast *def;
     char str[]; // null term
 } var_node;
 
@@ -112,13 +117,13 @@ inline void lst_node_add(lst_node *const lst, ast *const a) {
 }
 
 typedef struct {
-    ast *ret;
-    lst_node *args, *body;
+    lst_node *args, *body; // tail arg is ret type
 } fn_node;
 
 typedef struct _ast {
     ast_type at;
     union {
+        type_node *tn;
         val_node *val;
         var_node *var;
         op_node *op;
