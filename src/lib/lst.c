@@ -62,11 +62,78 @@ lst *lst_c(lst *l) {
     return l;
 }
 
-size_t lst_g_l(const lst *l) {
-    return l->l;
+static te *ms(te *h, size_t c, lst_cmp_fn fn) {
+    te *th = NULL, *n = NULL, *t, *l, *r;
+    t = h;
+    if (c < 2) return h;
+    else if (c == 2) {
+        t = h->d[2].p;
+        h->d[1] = P(NULL);
+        h->d[2] = P(NULL);
+        t->d[1] = P(NULL);
+        t->d[2] = P(NULL);
+        if (fn(h->d[0], t->d[0]) < 1) {
+            h->d[2] = P(t);
+            t->d[1] = P(h);
+            th = h;
+        } else {
+            t->d[2] = P(h);
+            h->d[1] = P(t);
+            th = t;
+        }
+        return th;
+    }
+    size_t ch = c / 2;
+    t = h;
+    for (size_t i = 0; i < ch; i++) t = t->d[2].p;
+    l = t->d[1].p;
+    l->d[2] = P(NULL);
+    t->d[1] = P(NULL);
+    l = ms(h, ch, fn);
+    r = ms(t, c - ch, fn);
+    while (l && r) {
+        if (fn(l->d[0], r->d[0]) < 1) {
+            t = l;
+            l = l->d[2].p;
+        } else {
+            t = r;
+            r = r->d[2].p;
+        }
+        if (!th) {
+            th = n = t;
+        } else {
+            n->d[2] = P(t);
+            t->d[1] = P(n);
+            n = n->d[2].p;
+        }
+    }
+    while (l) {
+        n->d[2] = P(l);
+        l->d[1] = P(n);
+        n = n->d[2].p;
+        l = l->d[2].p;
+    }
+    while (r) {
+        n->d[2] = P(r);
+        r->d[1] = P(n);
+        n = n->d[2].p;
+        r = r->d[2].p;
+    }
+    return th;
 }
 
-bool lst_eq(const lst *restrict a, const lst *restrict b, lst_cmp_fn fn) {
+void lst_s(lst *l, lst_cmp_fn fn) {
+    te *h = l->h, *nh;
+    l->h = l->t = NULL;
+    nh = ms(h, l->l, fn);
+    l->h = nh;
+    while (nh) {
+        l->t = nh;
+        nh = nh->d[2].p;
+    }
+}
+
+bool lst_eq(const lst *restrict a, const lst *restrict b, lst_eq_fn fn) {
     if (!a && !b) return true;
     if (!a || !b || a->l != b->l) return false;
     te *ah = a->h, *bh = b->h;
@@ -75,7 +142,7 @@ bool lst_eq(const lst *restrict a, const lst *restrict b, lst_cmp_fn fn) {
         ah = ah->d[2].p;
         bh = bh->d[2].p;
     }
-    return true;
+    return (ah || bh) ? false : true;
 }
 
 lst_stat lst_ab(lst *l, un d) {

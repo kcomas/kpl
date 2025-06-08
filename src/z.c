@@ -67,7 +67,7 @@ static __attribute__((constructor)) void z_con(void) {
     bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &al_mc))), vr_i(10, &al_vr, (void*) te_f)));
     ba = ast_b(ast_i(&z_al, &al_te, &al_mc, &z_al, node_err_p, pig, ali, mktbls(NODE_TYPE(_END)), mktbls(TCUST(_END))));
     bf = fld_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
-    bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, mktbl, NULL));
+    bc = chk_b(chk_i(&z_al, &al_te, &al_lst, &al_tbl, &z_al, chk_err, mktbl, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
     bs = as_b(as_i(&z_al, &al_te, &al_lst, &z_al, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bst = gen_st_i(&z_al, &al_te, mktbls(10), mktbls(10), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL));

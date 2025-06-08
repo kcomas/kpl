@@ -397,7 +397,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(Z):
             printf("(Z ");
             type_p(an->d[3].p);
-            printf(" `%s", (char*) ((mc*) an->d[5].p)->d);
+            printf("`%s", (char*) ((mc*) an->d[5].p)->d);
             if (an->d[4].p) {
                 putchar('\n');
                 ast_p(an->d[4].p, idnt + 1);

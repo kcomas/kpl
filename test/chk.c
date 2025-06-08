@@ -211,3 +211,9 @@ T(vrmul) {
     te_f(ve);
     te_f(ie);
 }
+/*
+T(st) {
+    IC(TPGM(st));
+    V(NULL);
+}
+*/

@@ -160,7 +160,7 @@ T(st) {
         ON(NULL, DFN, EN("a", U6(0), NULL), SN(I6, I6(1))),
         ON(NULL, DFN, EN("b", U6(0), NULL), SN(F6, F6(2.2))),
         ON(NULL, DFN, EN("s", FLG(0, LTE_FLG(E)), NULL),
-            ON(NULL, MTCH, NULL, LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(4,
+            ON(NULL, MTCH, LN(NULL, NULL), LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(4,
                 ZN("a", EN("a", U6(0), NULL)),
                 ZN("b", EN("b", U6(0), NULL)),
                 ZN("c", ON(NULL, CST, TN(U6), ON(NULL, ADD, EN("a", U6(0), NULL), SN(I6, I6(2))))),
