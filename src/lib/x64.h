@@ -103,8 +103,6 @@ x64_stat x64_d(size_t *p, uint8_t *m, un u);
 x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
 #define X64_RS() asm("push %rbx\n\t" \
-        "push %rcx\n\t" \
-        "push %rdx\n\t" \
         "push %r12\n\t" \
         "push %r13\n\t" \
         "push %r14\n\t" \
@@ -114,8 +112,6 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
         "pop %r14\n\t" \
         "pop %r13\n\t" \
         "pop %r12\n\t" \
-        "pop %rdx\n\t" \
-        "pop %rcx\n\t" \
         "pop %rbx\n\t")
 
 // nop
