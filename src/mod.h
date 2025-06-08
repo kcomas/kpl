@@ -3,6 +3,7 @@
 
 #include "kpl.h"
 #include "var.h"
+#include "er.h"
 
 #define MOD_STAT(N) MOD_STAT_##N
 
@@ -18,17 +19,21 @@ typedef struct {
         char *path, *str;
     } src;
     al *a; // allocator
+    er *e; // error
     fn_node *fns; // ast root
     code *c;
     jit *j;
     var *g; // globals
 } mod;
 
-inline mod *mod_i(al *const a) {
+inline mod *mod_i(al *const a, er *const e) {
     mod *m = ala(a, sizeof(mod));
     m->a = a;
+    m->e = e;
     return m;
 }
+
+mod_stat mod_er(mod *const m, mod_stat ms);
 
 // load file
 mod_stat mod_lfile(mod *const m, const char *const path);
