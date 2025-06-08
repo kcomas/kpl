@@ -7,8 +7,7 @@
 
 typedef enum {
     AS_STAT(OK),
-    AS_STAT(INV),
-    AS_STAT(END)
+    AS_STAT(INV)
 } as_stat;
 
 // arg te[id;data]

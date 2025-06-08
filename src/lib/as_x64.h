@@ -19,6 +19,8 @@ typedef enum {
     ARG_ID(QW) // quad word
 } arg_id;
 
+te *as_arg(alfn *aa, frfn *af, arg_id id, un v);
+
 #define AS_X64(N) AS_X64_##N
 
 typedef enum {
@@ -28,10 +30,11 @@ typedef enum {
     AS_X64(LEAVE),
     AS_X64(PUSH),
     AS_X64(POP),
-    AS_X64(MOV),
     AS_X64(CALL),
+    AS_X64(MOV),
     AS_X64(INC),
     AS_X64(DEC),
+    AS_X64(AND),
     AS_X64(XOR),
     AS_X64(CMP),
     AS_X64(JMP),
@@ -65,4 +68,3 @@ void as_code_p(const as *a, const uint8_t *m);
 void as_op_p(tbl *ot, bool args, size_t idnt);
 
 as *as_b(as *a);
-

@@ -15,7 +15,9 @@ te *as_arg_b(uint8_t b);
 
 lst *as_mklst(void);
 
-tbl *as_mktbl(void);
+tbl *as_arg_tbl(void);
+
+tbl *as_op_tbl(size_t bcks);
 
 void label_entry_f(void *p);
 

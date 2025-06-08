@@ -171,8 +171,8 @@ static void cmp(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     int64_t a = 1, b = 2;
-    printf("cmp(%ld < %ld): %ld\n", a, b, ((int64_t(*)(int64_t, int64_t)) m)(a, b));
-    printf("cmp(%ld < %ld): %ld\n", b, a, ((int64_t(*)(int64_t, int64_t)) m)(b, a));
+    printf("cmp(%ld < %ld): %d\n", a, b, ((uint8_t(*)(int64_t, int64_t)) m)(a, b));
+    printf("cmp(%ld < %ld): %d\n", b, a, ((uint8_t(*)(int64_t, int64_t)) m)(b, a));
 }
 
 static void printp(int64_t **a) {

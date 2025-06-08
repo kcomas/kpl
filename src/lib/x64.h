@@ -108,6 +108,9 @@ x64_stat x64_pop_r(size_t *p, uint8_t *m, reg r);
 // call rmx
 x64_stat x64_call_r(size_t *p, uint8_t *m, reg r);
 
+// call dword
+x64_stat x64_call_dw(size_t *p, uint8_t *m, uint32_t dw);
+
 // mov rmx, 64bit value
 x64_stat x64_mov_rq(size_t *p, uint8_t *m, reg r, un u);
 
@@ -249,5 +252,5 @@ x64_stat x64_jnlejg_b(size_t *p, uint8_t *m, uint8_t b);
 // jnle jg dword
 x64_stat x64_jnlejg_dw(size_t *p, uint8_t *m, uint32_t dw);
 
-// setl rax
+// setl setnge rax
 x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r);
