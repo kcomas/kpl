@@ -89,17 +89,15 @@ atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, 
     return stat;
 }
 
-atg_stat atg_err(atg_stat stat, te *an, te **e) {
-    *e = te_c(an);
-    return stat;
-}
-
 static atg_stat cc_r(atg *t, gen *g, te *an, te **e, tbl *tt, size_t n, ...) {
     te *kv;
     va_list args;
     va_start(args, n);
     while (n > 0) {
-        if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) return atg_err(ATG_STAT(INV), an, e);
+        if (tbl_g_i(tt, va_arg(args, un), &kv) == TBL_STAT(NF)) {
+            *e = te_c(an);
+            return ATG_STAT(INV);
+        }
         n--;
         if (n > 0) tt = kv->d[1].p;
     }
@@ -120,7 +118,8 @@ static atg_stat cc(atg *t, gen *g, te *an, te **e) {
         default:
             break;
     }
-    return atg_err(ATG_STAT(INV), an, e);
+    *e = te_c(an);
+    return ATG_STAT(INV);
 }
 
 static atg_stat run_cc(atg *t, gen *g, te *an, te **e);
