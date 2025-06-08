@@ -108,3 +108,12 @@ void tkn_b(tkn *t) {
     tkn_a(t, TCUST(NUM), "9", tkn_num);
     tkn_a(t, TCUST(SYM), "`", tkn_sym);
 }
+
+int64_t tkn_g_i6(const te *t, const mc *s) {
+    int64_t i = 0;
+    for(size_t p = t->d[3].u6; p < t->d[4].u6; p++) {
+        i *= 10;
+        i += s->d[p] - '0';
+    }
+    return i;
+}

@@ -20,7 +20,6 @@ typedef enum {
     TCUST(SYM)
 } tcust;
 
-
 void tkn_p(tbl *tl, size_t idnt);
 
 void tkn_m_p(const te *m, const mc *s);
@@ -42,3 +41,5 @@ tkn_stat tkn_ws(tkn *t, te *m);
 tkn_stat tkn_sym(tkn *t, te *m);
 
 void tkn_b(tkn *t);
+
+int64_t tkn_g_i6(const te *t, const mc *s);

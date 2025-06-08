@@ -66,6 +66,8 @@ psr_stat psr_aply_e(psr *p, te *e, te *n);
 // node te[par;id;tkn;tgt]
 psr_stat psr_sym_i(psr *p, te **n);
 
+const mc *node_root_mc(const te *n);
+
 void node_p(const te *n, size_t idnt);
 
 void node_f(void *p);
