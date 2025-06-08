@@ -21,9 +21,13 @@ TKN_OBJS = $(SRC)/tkn.o $(MOD_OBJS)
 tkn$(TNAME): $(TKN_OBJS) $(TEST)/tkn.o
 > $(CCOBJ)
 
+AST_OBJS = $(SRC)/ast.o $(TKN_OBJS)
+ast$(TNAME): $(AST_OBJS) $(TEST)/ast.o
+> $(CCOBJ)
+
 %.o: %.c
 > $(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
-> rm -f $(SRC)/*.o $(TEST)/*.o $(NAME) *$(TNAME)
+> rm -fv $(SRC)/*.o $(TEST)/*.o $(NAME) *$(TNAME)
