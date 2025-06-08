@@ -14,10 +14,6 @@ const char *mod_stat_str(mod_stat ms) {
 
 extern inline mod *mod_i(tds *const s, tdr *const r);
 
-void mod_done(mod *const m) {
-    sem_post(&m->done);
-}
-
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 
 #define MOD_ER(M, MS) mod_er(m, __func__, MOD_STAT(MS))

@@ -113,8 +113,8 @@ typedef struct _tds {
 } tds; // threads
 
 typedef struct {
-    sem_t done;
     uint8_t ng; // number of globals
+    sem_t done;
     struct {
         struct statx sxb;
         char *path, *str;
@@ -126,6 +126,8 @@ typedef struct {
     var *g; // globals
     type_node *tn;
 } mod;
+
+void mod_done(mod *const m);
 
 #define RC ssize_t rc
 
