@@ -36,7 +36,17 @@ void er_itm_f(er_itm *ei, void *fn) {
     alf(ei);
 }
 
+void er_itm_rci(er_itm *const ei) {
+    ei->rc++;
+}
+
+void er_itm_rcd(er_itm *const ei) {
+    ei->rc--;
+}
+
+
 void er_itm_gc(er_itm *ei) {
+    if (--ei->rc >= 0) return; // only check head
     while (ei) {
         er_itm *tmp = ei;
         ei = ei->next;

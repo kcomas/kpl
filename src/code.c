@@ -239,6 +239,7 @@ static code_stat code_gen_rc(code_st *const cs, const type_node *const tn, code 
         case TYPE(VR):
         case TYPE(TE):
         case TYPE(ST):
+        case TYPE(ER):
             if (inc) OP_A(cs, c, RCI, OP, { .t = tn->t }, NULL);
             else OP_A(cs, c, RCD, OP, { .t = tn->t }, NULL);
             break;
@@ -347,7 +348,6 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
         IFCGEN(code_gen, cs, h->a, c);
         if (hsh->tn->t == TYPE(ST)) {
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_ST_IDX, h->a);
-            OP_RCI(cs, c, th);
             OP_RCD(cs, &gc, th);
             OP_GCTSVI(cs, &gc, th, h->a, ++id); // h->a node tkn in gc fn
         }
