@@ -39,6 +39,8 @@ make
 ./kpl ./ex/fib.kpl
 ```
 
+##### Examples can be found in the ex folder
+
 ## Tests
 
 All Tests:
