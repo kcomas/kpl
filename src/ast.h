@@ -21,6 +21,7 @@ typedef enum {
     AST_STAT(IF_INV_FMT), // missing ( after if start
     AST_STAT(IF_INV_BODY), // invalid if body
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
+    AST_STAT(CALL_A_N), // prev node null for call
     AST_STAT(END)
 } ast_stat;
 
@@ -228,21 +229,31 @@ inline void lst_node_f(lst_node *lst) {
 
 typedef struct _if_itm {
     struct _if_itm *next;
-    ast *c; // null for else
-    lst_node *b;
+    ast *cond; // null for else
+    lst_node *body;
 } if_itm;
 
-inline if_itm *if_itm_i(ast *const c, lst_node *const b) {
+inline if_itm *if_itm_i(ast *const cond, lst_node *const body) {
     if_itm *im = calloc(1, sizeof(if_itm));
-    im->c = c;
-    im->b = b;
+    im->cond = cond;
+    im->body = body;
     return im;
+}
+
+inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt) {
+    (void) fn;
+    PCX(' ', idnt);
+    printf("C-");
+    ast_p(as, ii->cond, idnt);
+    PCX(' ', idnt);
+    printf("B-");
+    lst_node_p(as, ii->body, idnt);
 }
 
 inline void if_itm_f(if_itm *im, void *fn) {
     (void) fn;
-    ast_f(im->c);
-    lst_node_f(im->b);
+    ast_f(im->cond);
+    lst_node_f(im->body);
     free(im);
 }
 
@@ -255,8 +266,13 @@ inline if_node *if_node_i(void) {
     return calloc(1, sizeof(if_node));
 }
 
-inline void if_node_a(if_node *const in, ast* const c, lst_node *const b) {
-    LST_A(in, if_itm_i(c, b));
+inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) {
+    LST_A(in, if_itm_i(cond, body));
+}
+
+inline void if_node_p(const ast_st *const as, const if_node *const in, size_t idnt) {
+    printf("%lu,", in->len);
+    LST_P(in, if_itm, if_itm_p, as, NULL, idnt, '\n');
 }
 
 inline void if_node_f(if_node *in) {
@@ -303,6 +319,16 @@ inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
     cn->tgt = tgt;
     cn->args = args;
     return cn;
+}
+
+inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
+    ast_p(as, cn->tgt, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    type_node_p(as, cn->ret, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    lst_node_p(as, cn->args, idnt);
 }
 
 inline void call_node_f(call_node *cn) {
