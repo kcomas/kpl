@@ -3,6 +3,7 @@
 
 static const char *const css[] = {
     "OK",
+    "INV_ER_T",
     "ER_N_ER_T",
     "INV_TC",
     "INV_L_ASS",
@@ -38,6 +39,9 @@ static const char *const css[] = {
     "OP_NO_T_L",
     "OP_NO_T_R",
     "LD_MOD_F",
+    "INV_ADD_T_L",
+    "INV_SUB_T_R",
+    "INV_SUB_VR_T_R",
     "INV_SG_CNCT",
     "INV_CNCT_OP",
     "INV_FD_OP",
@@ -122,6 +126,8 @@ static const char *op_c_str[] = {
     "CTSV",
     "GIDX",
     "SIDX",
+    "VRA",
+    "VRS",
     "IF",
     "COND",
     "LOP",
@@ -497,6 +503,13 @@ static int64_t te_call_idx(code_st *const cs, const call_node *const cn) {
     }
     return -1;
 }
+static code_stat er_rer(code_st *const cs, type_node *tn, rer *const erer) {
+    if (tn->t != TYPE(ER)) return CODE_ER(cs, INV_ER_T, NULL);
+    erer->ec = NFEC(tn->flgs);
+    if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, INV_ER_T, tn->a);
+    erer->t = tn->t;
+    return CODE_ER(cs, OK, NULL);
+}
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
@@ -506,6 +519,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     hsh_data *hd;
     code *gc;
     code_st ldcs;
+    rer erer;
     switch (opn->ot) {
         case OP_TYPE(TC):
             if (!opn->l) { // throw
@@ -635,15 +649,29 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break; // no code
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tl = ast_gtn(opn->l))) return CODE_ER(cs, INV_ADD_T_L, opn->r);
+            if (tl->t == TYPE(VR)) {
+                OP_A(cs, c, VRA, OP, { .t = opn->ret->t }, a);
+                break;
+            }
+            OP_P_INT_RET(opn, cs, l, c);
             OP_P_INT_RET(opn, cs, r, c);
             OP_A(cs, c, ADD, OP, { .t = opn->ret->t }, a);
             break;
+
         case OP_TYPE(SUB):
+            if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, INV_SUB_T_R, opn->r);
+            if (tr->t == TYPE(VR)) {
+                IFCGEN(code_gen, cs, opn->r, c);
+                if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, INV_SUB_VR_T_R, opn->r);
+                if ((cstat = er_rer(cs, opn->ret, &erer)) != CODE_STAT(OK)) return cstat;
+                OP_A(cs, c, VRS, ER, { .e = erer }, a);
+                break;
+            }
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
+            OP_P_INT_RET(opn, cs, l, c);
             OP_P_INT_RET(opn, cs, r, c);
             OP_A(cs, c, SUB, OP, { .t = opn->ret->t }, a);
             break;
