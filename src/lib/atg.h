@@ -30,10 +30,10 @@ typedef struct _atg {
     gen *bg; // for base gens
     as *a;
     lst *q, *se; // queue of weak ref **an, start end fns
-    tbl *at, *ot; // aply, op
+    tbl *dt, *vt, *at, *ot; // destructors[type;fn_ptr] vec, aply, op
 } atg; // ast to gen
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, tbl *dt, gen *g, as *a);
 
 atg *atg_i_atg(const atg *t);
 
@@ -49,15 +49,21 @@ typedef atg_stat atg_cc_fn(atg *t, gen *g, te *an, err **e);
 
 void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e);
 
-// te[u4(code)|u4(type);cc]
+// te[u4(AST_CLS(V))|u4(type)|cc]
+atg_stat atg_a_v(atg *t, type vt, atg_cc_fn cc);
+
+// te[u4(cls)|u4(type);cc]
 atg_stat atg_a_a(atg *t, type rt, ast_cls tc, type tt, atg_cc_fn cc);
 
-// te[u4(code)|u4(type)...;[tbl;cc]]
+// te[u4(cls)|u4(type)...;[tbl;cc]]
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc);
 
 atg_stat atg_lst_r(atg *t, gen *g, lst *l, err **e);
 
 atg_stat atg_r(atg *t, gen *g, te *an, err **e);
+
+// generate code for the destructors
+atg_stat atg_d_n(atg *t, te *h, gen **g, err **e); // dh->d[0] entry in dt
 
 atg_stat atg_n(atg *t, gen **g, ast *a, err **e);
 

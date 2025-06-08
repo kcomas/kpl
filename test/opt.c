@@ -179,3 +179,26 @@ T(efn) {
     ))));
     te_f(tfn);
 }
+
+T(teadd) {
+    IC(TPGM(teadd));
+    te *tte = type_te_i(&al_te, NULL, 3);
+    te *ta = type_i(&al_te, tte, TYPE(I6));
+    tte->d[2] = P(te_c(ta));
+    te *tb = type_i(&al_te, tte, TYPE(I6));
+    tte->d[3] = P(te_c(tb));
+    te *tc = type_i(&al_te, tte, TYPE(I6));
+    tte->d[4] = P(te_c(tc));
+    te *ae = EN("a", FLG(0, LTE_FLG(L)), te_c(tte));
+    V(RN(LN(LT(1, "a", FLG(0, LTE_FLG(L)), te_c(tte)), L(3,
+        ON(te_c(tte), DFN, te_c(ae), VN(te_c(tte), L(3, SN(I6, I6(1)), SN(I6, I6(0)), SN(I6, I6(3))))),
+        ON(TS(I6), AGN, AN(TS(I6), te_c(ae), L(1, SN(I6, I6(1)))),
+            ON(TS(I6), ADD, AN(TS(I6), te_c(ae), L(1, SN(I6, I6(0)))), AN(TS(I6), te_c(ae), L(1, SN(I6, I6(2)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), te_c(ae))
+    ))));
+    te_f(tte);
+    te_f(ta);
+    te_f(tb);
+    te_f(tc);
+    te_f(ae);
+}

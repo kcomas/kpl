@@ -1,7 +1,7 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_tbl_i ati, lst *q, lst *se, tbl *dt, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->tc = t->lc = 0;
    t->r = 1;
@@ -14,6 +14,8 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, atg_err_fn efn, atg_t
    t->a = a;
    t->q = q;
    t->se = se;
+   t->dt = dt;
+   t->vt = ati();
    t->at = ati();
    t->ot = ati();
    return t;
@@ -31,7 +33,9 @@ atg *atg_i_atg(const atg *t) {
     tt->bg = gen_i_gen(t->bg);
     tt->a = as_i_as(t->a);
     tt->q = lst_i_lst(t->q);
+    tt->dt = tbl_i_tbl(t->dt);
     tt->se = lst_c(t->se);
+    tt->vt = tbl_c(t->vt);
     tt->at = tbl_c(t->at);
     tt->ot = tbl_c(t->ot);
     return tt;
@@ -96,16 +100,27 @@ static atg_stat atg_lst_q(atg *t, lst *l, atg_test_fn enq) {
     return stat;
 }
 
+static void atg_dt_f(void *p) {
+    te *t = p;
+    te_f(t->d[0].p);
+    t->af->f(t);
+}
+
 atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {
+    te *nt, *kv;
     atg_stat stat = ATG_STAT(OK);
     if (!*an) return stat;
+    if (ast_g_t(*an, &nt) == AST_STAT(OK) && type_is_des(nt->d[1].u4) && tbl_g_i(t->dt, P(nt), &kv) != TBL_STAT(OK)) {
+        kv = te_i(2, t->ta, atg_dt_f);
+        kv->d[0] = P(te_c(nt));
+        tbl_a(t->dt, kv);
+    }
     if (enq(*an)) lst_ab(t->q, P(an));
     switch ((*an)->d[2].u4) {
         case AST_CLS(R):
             return atg_q(t, (te**) &(*an)->d[4].p, enq);
         case AST_CLS(V):
-            // TODO
-            break;
+            return atg_lst_q(t, (*an)->d[4].p, enq);
         case AST_CLS(O):
             if ((stat = atg_q(t, (te**) &(*an)->d[5].p, enq)) != ATG_STAT(OK)) return stat;
             return atg_q(t, (te**) &(*an)->d[6].p, enq);
@@ -144,6 +159,13 @@ static void add_e(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
         if (at) (*kv)->d[1] = P(t->ati());
         tbl_a(ot, *kv);
     }
+}
+
+atg_stat atg_a_v(atg *t, type vt, atg_cc_fn cc) {
+    te *kv;
+    add_e(t, t->vt, AST_CLS(V), vt, &kv, false);
+    kv->d[1] = P(cc);
+    return ATG_STAT(OK);
 }
 
 atg_stat atg_a_a(atg *t, type rt, ast_cls tc, type tt, atg_cc_fn cc) {
@@ -193,6 +215,10 @@ static atg_stat cc(atg *t, gen *g, te *an, err **e) {
         case AST_CLS(E):
         case AST_CLS(S):
             return ATG_STAT(OK);
+        case AST_CLS(V):
+            ha = u4_s_o(ha, AST_HSH_C, AST_CLS(V));
+            ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
+            return cc_r(t, g, an, e, t->vt, 1, ha);
         case AST_CLS(O):
             ha = u4_s_o(ha, AST_HSH_C, an->d[4].u4);
             ha = u4_s_o(ha, AST_HSH_T, ((te*) an->d[3].p)->d[1].u4);
@@ -230,21 +256,15 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
         case AST_CLS(T):
         case AST_CLS(E):
         case AST_CLS(S):
-            break;
         case AST_CLS(V):
-            // TODO
-            break;
+            break; // items called when building
         case AST_CLS(O):
-            if (an->d[5].p && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(L) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L)) break; // for loops and ifs match cc in op...
-            if ((stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK) || (stat = atg_r(t, g, an->d[6].p, e)) != ATG_STAT(OK)) return stat;
+            if (an->d[5].p && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(L) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L)) break; // for loops ifs match cc in op...
+            if ((stat = atg_r(t, g, an->d[6].p, e)) != ATG_STAT(OK) || (stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat; // right before left
             break;
         case AST_CLS(Z):
-            if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
-            break;
         case AST_CLS(A):
-            if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
-            // args have to be called while building for gen
-            break;
+            break; // called when building
         case AST_CLS(L):
             if ((stat = atg_lst_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
             break;
@@ -252,6 +272,16 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
             return t->efn(t, an, e, "atg_r");
     }
     return cc(t, g, an, e);
+}
+
+atg_stat atg_d_n(atg *t, te *h, gen **g, err **e) {
+    if (!h) return ATG_STAT(INV);
+    (void) t;
+    (void) g;
+    (void) e;
+    if (!type_has_refs(h->d[0].p)) return ATG_STAT(OK);
+    STOP("TODO BUILD");
+    return ATG_STAT(INV);
 }
 
 atg_stat atg_n(atg *t, gen **g, ast *a, err **e) {
@@ -285,6 +315,8 @@ void atg_f(atg *t) {
     as_f(t->a);
     lst_f(t->q);
     lst_f(t->se);
+    tbl_f(t->dt);
+    tbl_f(t->vt);
     tbl_f(t->at);
     tbl_f(t->ot);
     t->af->f(t);

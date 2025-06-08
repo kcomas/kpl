@@ -178,6 +178,10 @@ static void gen_ci_p(const te *ci) {
 }
 
 void gen_p(const gen *g, const uint8_t *m) {
+    if (!g) {
+        printf("(N)\n");
+        return;
+    }
     te *h = g->code->h;
     while (h) {
         te *o = h->d[0].p;
@@ -189,7 +193,7 @@ void gen_p(const gen *g, const uint8_t *m) {
                 as_code_i_p(cli->d[0].p, m);
                 cli = cli->d[2].p;
             }
-            as_code_i_p(((te*) o->d[6].p)->d[0].p, m);
+            if (o->d[6].p) as_code_i_p(((te*) o->d[6].p)->d[0].p, m);
         }
         h = h->d[2].p;
     }
@@ -444,6 +448,7 @@ gen_stat gen_st_p1(gen *g, gen_st *st) {
 }
 
 void gen_st_f(gen_st *st) {
+    if (!st || --st->r > 0) return;
     tbl_f(st->atm);
     tbl_f(st->lat);
     vr_f(st->rstk);

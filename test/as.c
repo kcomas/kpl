@@ -259,3 +259,25 @@ T(sib) {
     as_f(a);
     te_f(t);
 }
+
+typedef int64_t retlbladd(int64_t a, int64_t b);
+
+T(retlbl) {
+    as *a = as_i_as(ba);
+    as_lbl_a(a, 0);
+    AS_A1(a, AS_X64(JMP), as_arg_l(a, 2));
+    as_lbl_a(a, 1);
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
+    AS_A2(a, AS_X64(ADD), as_arg_r(a, R(AX)), as_arg_r(a, R(SI)));
+    AS_A0(a, AS_X64(RET));
+    as_lbl_a(a, 2);
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_l(a, 1));
+    AS_A0(a, AS_X64(RET));
+    size_t p = 0;
+    err *e = NULL;
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    retlbladd *f = ((retlbladd*(*)(void)) m)();
+    A(f(1, 2) == 3, "retlbladd");
+    as_f(a);
+}

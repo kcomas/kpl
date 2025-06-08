@@ -200,11 +200,13 @@ static chk_stat chk_l_lst_bl(chk *c, te *an, err **e) {
 
 static chk_stat chk_lst_l(chk *c, te *an, err **e) {
     te *h = ((tbl*) ((te*) an->d[4].p)->d[3].p)->i->h, *lte;
-    uint32_t r = 0, x = 0;
+    uint32_t r = 0, x = 0, flgs;
     while (h) {
         lte = h->d[0].p;
         if (!lte->d[2].p) return chk_err(c, an, e, "chk lst var type inv");
-        if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) chk_lte_s_i(lte, &r, &x);
+        flgs = ast_lst_tbl_e_g_f(lte);
+        if (flgs & LTE_FLG(L)) chk_lte_s_i(lte, &r, &x);
+        if (flgs & LTE_FLG(E) && !(flgs & LTE_FLG(O)) && (!an->d[0].p || ((te*) an->d[0].p)->d[2].u4 != AST_CLS(R))) return chk_err(c, an, e, "chk inv exp");
         h = h->d[2].p;
     }
     return chk_vd(c, an, e);

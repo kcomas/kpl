@@ -17,6 +17,10 @@ te *var_arg(gen *g, te *lte, x64_type xt);
 
 extern const char *atg_dump_strs[TYPE(_END)];
 
+extern const char *atg_dump_end;
+
+extern const char *atg_dump_idnt;
+
 atg *atg_b(atg *t);
 
 typedef err *atg_jit(te *x);

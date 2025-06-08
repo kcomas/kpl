@@ -47,6 +47,33 @@ const char *type_str(type t) {
     return s;
 }
 
+typedef enum {
+    REF = 1 << 0,
+    DES = 1 << 1
+} prop_flgs;
+
+static uint8_t props[TYPE(_END)] = {
+    [TYPE(SL)] = REF,
+    [TYPE(SG)] = REF,
+    [TYPE(VR)] = REF | DES,
+    [TYPE(LT)] = REF | DES,
+    [TYPE(MC)] = REF,
+    [TYPE(UN)] = REF | DES,
+    [TYPE(HH)] = REF | DES,
+    [TYPE(ST)] = REF | DES,
+    [TYPE(TE)] = REF | DES
+};
+
+bool type_is_ref(type t) {
+    if (t >= TYPE(_END)) return false;
+    return props[t] & REF;
+}
+
+bool type_is_des(type t) {
+    if (t >= TYPE(_END)) return false;
+    return props[t] & DES;
+}
+
 type_cls type_g_c(type t) {
     if (t > TYPE(_S) && t < TYPE(_V)) return TYPE_CLS(S);
     if (t > TYPE(_V) && t < TYPE(_H)) return TYPE_CLS(V);
@@ -195,8 +222,7 @@ void type_p(const te *t) {
         printf("??");
         return;
     }
-    type_cls cls = type_g_c(t->d[1].u4);
-    switch (cls) {
+    switch (type_g_c(t->d[1].u4)) {
         case TYPE_CLS(S):
             printf("%s", type_str(t->d[1].u4));
             break;
@@ -256,14 +282,13 @@ static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
 bool type_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
     if (!a || !b || a->d[1].u4 != b->d[1].u4 || a->l != b->l) return false;
-    type_cls cls = type_g_c(a->d[1].u4);
-    switch (cls) {
+    switch (type_g_c(a->d[1].u4)) {
         case TYPE_CLS(S):
             return true;
         case TYPE_CLS(V):
             return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(H):
-            // TODO
+            STOP("TODO TYPE CLS H EQ");
             break;
         case TYPE_CLS(F):
             return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p) && type_tbl_eq(a->d[4].p, b->d[4].p);
@@ -282,11 +307,78 @@ bool type_eq(const te *restrict a, const te *restrict b) {
     return false;
 }
 
+bool type_un_eq(un a, un b) {
+    if (a.p == b.p) return true; // pointer check
+    return type_eq(a.p, b.p);
+}
+
 bool type_ic(const te *restrict a, const te *restrict b) {
     te *pn = a->d[0].p;
     while (pn) {
         if (b == pn) return true;
         pn = pn->d[0].p;
+    }
+    return false;
+}
+
+size_t type_hsh(const te *t) {
+    size_t hsh = 0;
+    if (!t) return hsh;
+    hsh += t->d[1].u4;
+    switch (type_g_c(t->d[1].u4)) {
+        case TYPE_CLS(V):
+            hsh += type_hsh(t->d[2].p);
+            break;
+        case TYPE_CLS(H):
+            STOP("TODO TYPE CLS H HASH");
+            break;
+        case TYPE_CLS(F):
+            STOP("TODO TYPE CLS F HASH");
+            break;
+        case TYPE_CLS(C):
+            switch (t->d[1].u4){
+                case TYPE(TE):
+                    for (size_t i = 2; i < t->l; i++) hsh += type_hsh(t->d[i].p);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+    return hsh;
+}
+
+size_t type_un_hsh(un v) {
+    return type_hsh(v.p);
+}
+
+bool type_has_refs(const te *t) {
+    te *st = NULL;
+    if (!t) return false;
+    switch (type_g_c(t->d[1].u4)) {
+        case TYPE_CLS(V):
+            st = t->d[2].p;
+            if (st && type_is_ref(st->d[1].u4)) return true;
+            break;
+        case TYPE_CLS(H):
+            STOP("TODO TYPE CLS H HAS REFS");
+            break;
+        case TYPE_CLS(C):
+            switch (t->d[1].u4){
+                case TYPE(TE):
+                    for (size_t i = 2; i < t->l; i++) {
+                        st = t->d[i].p;
+                        if (st && type_is_ref(st->d[1].u4)) return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
     }
     return false;
 }
