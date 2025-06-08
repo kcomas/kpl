@@ -95,6 +95,10 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
     return GEN_STAT(OK);
 }
 
+gen_stat gen_n(gen *g, void *st, as *a) {
+
+}
+
 void gen_f(gen *g) {
     if (!g || --g->r > 0) return;
     tbl_f(g->oci);

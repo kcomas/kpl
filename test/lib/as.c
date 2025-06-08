@@ -82,9 +82,31 @@ static void looptest(void) {
     printf("<<<< LOOPTEST\n");
 }
 
+static void calltest(void) {
+    printf(">>>> CALLTEST\n");
+    as *a = as_b(as_i(&malloc, &free, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    AS_A2(a, AS_X64(MOV), as_arg_r(R(AX)), as_arg_r(R(DI)));
+    AS_A1(a, AS_X64(JMP), as_arg_l(2));
+    as_lbl_a(a, 1);
+    AS_A1(a, AS_X64(INC), as_arg_r(R(AX)));
+    AS_A0(a, AS_X64(RET));
+    as_printf(a, "CALL SHOULD NOT SHOW\n");
+    as_lbl_a(a, 2);
+    AS_A1(a, AS_X64(CALL), as_arg_l(1));
+    AS_A0(a, AS_X64(RET));
+    uint8_t *m = x64_mmap(1);
+    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    as_code_p(a, m);
+    int32_t v = 5;
+    printf("call %d, inc: %d\n", v, ((int32_t(*)(int32_t)) m)(v));
+    as_f(a);
+    printf("<<<< CALLTEST\n");
+}
+
 int main(void) {
     btest();
     iftest();
     looptest();
+    calltest();
     return 0;
 }

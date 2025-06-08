@@ -68,6 +68,8 @@ static const char *as_inst_str(size_t id) {
         "POP",
         "CALL",
         "MOV",
+        "ADD",
+        "SUB",
         "INC",
         "DEC",
         "AND",
@@ -122,37 +124,41 @@ void as_op_p(const tbl *ot, bool args, size_t idnt) {
     }
 }
 
+void as_code_i_p(const te *c, const uint8_t *m) {
+    if (m) printf("%05lu:", c->d[8].u6);
+    if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
+    else {
+        printf("O(%s) ", as_inst_str(c->d[1].u6));
+        for (size_t i = 2; i < 6; i++) {
+            te *arg = c->d[i].p;
+            if (!arg) break;
+            printf("A(%s):", arg_id_str(arg->d[0].u6));
+            switch (arg->d[0].u6) {
+                case ARG_ID(R):
+                    printf("%s", reg_str(arg->d[1].u6));
+                    break;
+                case ARG_ID(RM):
+                    printf("[%s]", reg_str(arg->d[1].u6));
+                    break;
+                default:
+                    printf("%lu", arg->d[1].u6);
+                    break;
+            }
+            putchar(' ');
+        }
+        if (m) {
+            printf("\n ");
+            for (size_t x = 0; x < c->d[9].u6; x++) printf("%02X ", m[c->d[8].u6 + x]);
+        }
+        putchar('\n');
+    }
+}
+
 void as_code_p(const as *a, const uint8_t *m) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
-        if (m) printf("%05lu:", c->d[8].u6);
-        if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
-        else {
-            printf("O(%s) ", as_inst_str(c->d[1].u6));
-            for (size_t i = 2; i < 6; i++) {
-                te *a = c->d[i].p;
-                if (!a) break;
-                printf("A(%s):", arg_id_str(a->d[0].u6));
-                switch (a->d[0].u6) {
-                    case ARG_ID(R):
-                        printf("%s", reg_str(a->d[1].u6));
-                        break;
-                    case ARG_ID(RM):
-                        printf("[%s]", reg_str(a->d[1].u6));
-                        break;
-                    default:
-                        printf("%lu", a->d[1].u6);
-                        break;
-                }
-                putchar(' ');
-            }
-            if (m) {
-                printf("\n ");
-                for (size_t x = 0; x < c->d[9].u6; x++) printf("%02X ", m[c->d[8].u6 + x]);
-            }
-            putchar('\n');
-        }
+        as_code_i_p(c, m);
         h = h->d[2].p;
     }
 }
@@ -195,20 +201,11 @@ INST_R(dec);
 }
 
 INST_RR(mov);
+INST_RR(add);
+INST_RR(sub);
 INST_RR(and);
 INST_RR(xor);
 INST_RR(cmp);
-
-#define INST_DW(N) static bool as_##N##_dw(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) a; \
-    (void) ci; \
-    (void) arg2; \
-    (void) arg3; \
-    (void) arg4; \
-    return x64_##N##_dw(p, m, arg1->d[1].u5) == X64_STAT(OK); \
-}
-
-INST_DW(call);
 
 #define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -257,16 +254,25 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_mov_rq(p, m, arg1->d[1].u6, arg2->d[1]) == X64_STAT(OK);
 }
 
-#define INST_J_B(N, M) static bool as_##N##_b(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) a; \
-    (void) ci; \
-    (void) arg2; \
-    (void) arg3; \
-    (void) arg4; \
-    return x64_##M##_b(p, m, arg1->d[1].u3) == X64_STAT(OK); \
+static bool as_call_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
+    (void) a;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    te *lblc = as_lbl_g_c(a, arg1->d[1].u6);
+    if (!lblc) return false;
+    if (lblc->d[9].u6) {
+        return x64_call_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
+    } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
+    for (size_t i = 0; i < 5; i++) x64_nop(p, m);
+    return true;
 }
 
-//INST_J_B(jmp, jmp);
+static bool as_call_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
+    (void) a;
+    size_t p = fc->d[8].u6;
+    return x64_call_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) - sizeof(uint32_t)) == X64_STAT(OK);
+}
 
 #define INST_J_L(N) static bool as_##N##_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -279,7 +285,7 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
         ssize_t diff = lblc->d[8].u6 - *p - sizeof(uint8_t); \
         if (diff > INT8_MIN && diff < INT8_MAX) return x64_##N##_b(p, m, diff) == X64_STAT(OK); \
         return x64_##N##_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK); \
-    } else if (as_lbl_s_c(a, 1, ci) != AS_STAT(OK)) return false; \
+    } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false; \
     for (size_t i = 0; i < 6; i++) x64_nop(p, m); \
     return true; \
 }
@@ -288,9 +294,9 @@ bool as_mov_rv(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
 #define INST_J_E(N) static bool as_##N##_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
-    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t); \
+    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) * 2; \
     if (diff > INT8_MIN && diff < INT8_MAX) return x64_##N##_b(&p, m, diff) == X64_STAT(OK); \
-    return x64_##N##_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint32_t)) == X64_STAT(OK); \
+    return x64_##N##_dw(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) * 2 - sizeof(uint32_t)) == X64_STAT(OK); \
 }
 
 #define INST_J_LE(N) INST_J_L(N) \
@@ -315,7 +321,7 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_pop_r, NULL);
     as_op_a(a, AS_X64(CALL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_r, NULL);
-    as_op_a(a, AS_X64(CALL), ARG_ID(DW), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_dw, NULL);
+    as_op_a(a, AS_X64(CALL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_call_l, &as_call_e);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_mov_rr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(QW), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_mov_rv, NULL);
@@ -323,6 +329,8 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), &as_mov_rmbr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_mov_rrm, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), &as_mov_rrmb, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_add_rr, NULL);
+    as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_sub_rr, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
     as_op_a(a, AS_X64(AND), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_and_rr, NULL);
