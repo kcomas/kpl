@@ -56,6 +56,8 @@ typedef enum {
     TKN_TYPE(LOP), // while and for
     TKN_TYPE(RET),
     // ops
+    TKN_TYPE(ASS), // :
+    TKN_TYPE(CST), // $
     TKN_TYPE(ADD),
     TKN_TYPE(SUB),
     TKN_TYPE(MUL),
