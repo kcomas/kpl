@@ -1,6 +1,6 @@
 # Tour
 
-### Comments
+## Comments
 
 Double slash until end of line
 
@@ -8,7 +8,7 @@ Double slash until end of line
 // my comment
 ```
 
-### Values
+## Values
 
 Integer: 1, 234, -123
 
@@ -16,11 +16,11 @@ Float: 0.1, 3.14
 
 String: "Hello World\n"
 
-### Variables
+## Variables
 
 UTF8 alpha numeric, first character cannot be numeric
 
-#### : Assign
+### : Assign
 
 ```
 a: 1
@@ -28,37 +28,37 @@ a: 1
 c: "Hello Word\n"
 ```
 
-### Lists
+## Lists
 
 All statements in lists are separated by ; or \n
 
-#### {} Deferred
+### {} Deferred
 
 A list of statements of which the context it is used determines how it's evaluated
 
-#### () Apply
+### () Apply
 
-#### [] Value
+### [] Value
 
-### Symbols
+## Symbols
 
-##### SL
+#### SL
 
 ```
 `key
 ```
 
-### Tag
+## Tag
 
-##### TYPE\`SYMBOL
+#### TYPE\`SYMBOL
 
 ```
 value`key
 ```
 
-### Unions
+## Unions
 
-##### UN(TYPE`key;TAG;....)
+#### UN(TYPE`key;TAG;....)
 
 Tagged Union
 
@@ -67,7 +67,7 @@ a`a: 1 -> UN(I6`a;`a)
 a`b:2.2 -> UN(I6`a;F6`b;`b)
 ```
 
-#### Match ?
+### Match ?
 
 Get a floating value from var a because the a\`a tag is an int it must be changed
 
@@ -75,9 +75,9 @@ Get a floating value from var a because the a\`a tag is an int it must be change
 c: a?{1.0`a;a`b`b}
 ```
 
-### Numbers
+## Numbers
 
-#### Number Ops
+### Number Ops
 
 ```
 + Add
@@ -87,32 +87,32 @@ c: a?{1.0`a;a`b`b}
 % Rem
 ```
 
-#### Number Types
+### Number Types
 
 ```
 a: 1 -> I6
 Π: 3.14 -> F6
 ```
 
-##### U6 - Unsigned 64bit integer
+#### U6 - Unsigned 64bit integer
 
-##### I6 - Signed 64bit integer
+#### I6 - Signed 64bit integer
 
-##### F6 - 64bit floating point
+#### F6 - 64bit floating point
 
-### Casting
+## Casting
 
-#### TO$FROM
+### TO$FROM
 
 Convert data from one type to another
 
-###### Int To Float Example
+##### Int To Float Example
 
 ```
 a: F6$1 -> a = 1.0
 ```
 
-#### Checked Number Types
+### Checked Number Types
 
 Operations on these types result in a union of value and error to check for underflow/overflow
 
@@ -121,25 +121,25 @@ a: I3$128 + I3$1 -> UN(I3`v;TODO`e)
 v: a?{a`v`v;0`e} -> v = 0
 ```
 
-##### U3 - Unsigned 8bit integer
+#### U3 - Unsigned 8bit integer
 
-##### I3 - Signed 8bit integer
+#### I3 - Signed 8bit integer
 
-##### U4 - Unsigned 16bit integer
+#### U4 - Unsigned 16bit integer
 
-##### I4 - Signed 16bit integer
+#### I4 - Signed 16bit integer
 
-##### U5 - Unsigned 32bit integer
+#### U5 - Unsigned 32bit integer
 
-##### I5 - Signed 32bit integer
+#### I5 - Signed 32bit integer
 
-##### F5 - 32bit floating point
+#### F5 - 32bit floating point
 
-### Functions
+## Functions
 
 Create a function by casting a deferred list to a function
 
-##### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
+#### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
 ```
 
@@ -155,7 +155,7 @@ f(1) -> FN(I6`b)${1+b} -> f(2) -> 3
 
 ```
 
-### Operator Functions
+## Operator Functions
 
 All operators can be called as a function
 
@@ -164,15 +164,15 @@ All operators can be called as a function
 +(1;2) -> 3
 ```
 
-### Bool
+## Bool
 
-#### BL
+### BL
 
-##### T = 1 F = 0
+#### T = 1 F = 0
 
 Bool's are a result of logical operators
 
-### Logical
+## Logical
 
 ```
 & And
@@ -186,7 +186,7 @@ Bool's are a result of logical operators
 != Not Eq
 ```
 
-#### If ?
+### If ?
 
 ```
 a?b -> if a then b
