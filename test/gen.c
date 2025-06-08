@@ -315,3 +315,16 @@ T(fnmulcstdiv) {
     printf("%lf * %lf / %ld = %lf\n", a, b, c, d);
     A(d == 14.52, "eq");
 }
+
+T(muldiv) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(MUL), gen_tmp(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 1)));
+    S(gen_a(g, GEN_OP(DIV), gen_tmp(g, X64_TYPE(U6), 1), gen_tmp(g, X64_TYPE(U6), 0), gen_arg(g, X64_TYPE(U6), 2)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 1), NULL, NULL));
+    BUILD(g, m);
+    uint64_t a = 6, b = 7, c = 2;
+    uint64_t r = ((uint64_t(*)(uint64_t, uint64_t, uint64_t)) m)(a, b, c);
+    printf("%lu * %lu / %lu = %lu\n", a, b, c, r);
+    A(r == 21, "eq");
+}

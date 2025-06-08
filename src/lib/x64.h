@@ -91,7 +91,11 @@ x64_stat x64_d(size_t *p, uint8_t *m, un u);
 x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
 #define X64_RS() \
-        asm("push %r12\n\t" \
+        asm("push %rax\n\t" \
+        "push %rbx\n\t" \
+        "push %rcx\n\t" \
+        "push %rdx\n\t" \
+        "push %r12\n\t" \
         "push %r13\n\t" \
         "push %r14\n\t" \
         "push %r15\n\t")
@@ -100,7 +104,11 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
         asm("pop %r15\n\t" \
         "pop %r14\n\t" \
         "pop %r13\n\t" \
-        "pop %r12")
+        "pop %r12\n\t" \
+        "pop %rdx\n\t" \
+        "pop %rcx\n\t" \
+        "pop %rbx\n\t" \
+        "pop %rax\n\t")
 
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
@@ -218,6 +226,18 @@ x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // neg rax
 x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r);
+
+// mul rsi
+x64_stat x64_mul_r(size_t *p, uint8_t *m, reg r);
+
+// imul rsi
+x64_stat x64_imul_r(size_t *p, uint8_t *m, reg r);
+
+// div rsi
+x64_stat x64_div_r(size_t *p, uint8_t *m, reg r);
+
+// idiv rsi
+x64_stat x64_idiv_r(size_t *p, uint8_t *m, reg r);
 
 // mulsd xmm0, xmm1
 x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s);

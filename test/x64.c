@@ -72,9 +72,9 @@ T(rsub) {
     int64_t a = 20, b = 9;
     X64_RS();
     int64_t r = ((sub*) m)(a, b);
-    X64_RR();
     printf("sub: %ld - %ld = %ld\n", a, b, r);
     A(r == a - b, "sub");
+    X64_RR();
 }
 
 typedef int64_t loop(int64_t a);
@@ -310,4 +310,20 @@ T(cmprip) {
     int64_t r = ((int64_t(*)(int64_t)) m)(INT64_MAX);
     printf("rip disp32: %d, %ld == %ld\n", ripe - rips, c, r);
     A(c == r, "ne");
+}
+
+T(imulidiv) {
+    size_t p = 0;
+    x64_mov_rr(&p, m, R(AX), R(DI));
+    x64_mov_rr(&p, m, R(BX), R(DX));
+    x64_imul_r(&p, m, R(SI));
+    x64_idiv_r(&p, m, R(BX));
+    x64_ret(&p, m);
+    printj(p, m);
+    int64_t a = 6, b = 7, c = 2;
+    X64_RS();
+    int64_t r =  ((int64_t(*)(int64_t, int64_t, int64_t)) m)(a, b, c);
+    printf("%ld * %ld / %ld = %ld\n", a, b, c, r);
+    A(r == 21, "imulidiv");
+    X64_RR();
 }
