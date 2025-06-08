@@ -61,9 +61,10 @@ int main(int argc, char *argv[]) {
     }
     fn_stk_f(stk);
     code_p(m->c, 0);
-    m->id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
+    m->c->jf(NULL);
+    //m->id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
     //waitpid(m->id, NULL, WEXITED);
-    sem_wait(&m->done);
+    //sem_wait(&m->done);
     code_f(m->c);
     fn_node_f(m->fns);
     FNNF(m->tn, type_node_f);

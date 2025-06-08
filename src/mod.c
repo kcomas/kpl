@@ -63,6 +63,9 @@ MOD_LG_FN(int64_t, i6)
 MOD_SG_FN(uint64_t, u6)
 MOD_LG_FN(uint64_t, u6)
 
+MOD_SG_FN(double, f6);
+MOD_LG_FN(double, f6);
+
 MOD_SG_FN(int, fd);
 MOD_LG_FN(int, fd);
 

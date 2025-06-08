@@ -121,20 +121,48 @@ static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
     op_set_jlen(j, o); \
     break
 
-// TODO float and double xmm regs
+// ids start at zero
+static void j_pop(jit *j, type t, uint8_t rid, uint8_t xid) {
+    switch (t) {
+        case TYPE(F5):
+        case TYPE(F6):
+            jit_b(j, 5, 0xF2, 0x0F, 0x10, 0x04 + (xid * 8), 0x24); // movsd x + xd qword ptr rsp
+            jit_b(j, 4, 0x48, 0x83, 0xC4, 0x08); // add rsp 8
+            break;
+        default:
+            jit_a(j, 0x58 + rid); // pop r + id
+            break;
+    }
+}
+
+// ids start at zero
+static void j_push(jit *j, type t, uint8_t rid, uint8_t xid) {
+    switch (t) {
+        case TYPE(F5):
+        case TYPE(F6):
+            jit_b(j, 4, 0x48, 0x83, 0xEC, 0x08); // sub rsp 8
+            jit_b(j, 5, 0xF2, 0x0F, 0x11, 0x04 + (xid * 8), 0x24); // mov qword ptr rsp x + xid
+            break;
+        default:
+            jit_a(j, 0x50 + rid); // push r + id
+            break;
+    }
+}
+
 #define C_OP_C_BOP(N, FN) case OP_C(N): \
     op_set_jidx(j, o); \
-    jit_a(j, 0x5E); \
-    jit_a(j, 0x5F); \
+    j_pop(j, o->od.t, 6, 1); \
+    j_pop(j, o->od.t, 7, 0); \
     switch (o->od.t) { \
         CT_SET_FN(BL, var_##FN##_bl); \
         CT_SET_FN(I6, var_##FN##_i6); \
         CT_SET_FN(U6, var_##FN##_u6); \
+        CT_SET_FN(F6, var_##FN##_f6); \
         default: \
             return JIT_ER(m, N##_T_INV, o); \
     } \
     SET_REG_CALL(false, 0); \
-    jit_a(j, 0x50); \
+    j_push(j, o->od.t, 0, 0); \
     op_set_jlen(j, o); \
     break
 
@@ -428,11 +456,12 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 op_set_jidx(j, o);
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->od.v.id, uint8_t, false, 6);
-                jit_a(j, 0x5A); // pop rdx
+                j_pop(j, o->od.v.t, 2, 0);
                 switch (o->od.v.t) {
                     CT_SET_FN(STR, mod_sg_var_sg);
                     CT_SET_FN(I6, mod_sg_i6);
                     CT_SET_FN(U6, mod_sg_u6);
+                    CT_SET_FN(F6, mod_sg_f6);
                     CT_SET_FN(SG, mod_sg_var_sg);
                     CT_SET_FN(VR, mod_sg_var_tsv);
                     CT_SET_FN(TE, mod_sg_var_tsv);
@@ -455,6 +484,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     CT_SET_FN(STR, mod_lg_var_sg);
                     CT_SET_FN(I6, mod_lg_i6);
                     CT_SET_FN(U6, mod_lg_u6);
+                    CT_SET_FN(F6, mod_lg_f6);
                     CT_SET_FN(SG, mod_lg_var_sg);
                     CT_SET_FN(VR, mod_lg_var_tsv);
                     CT_SET_FN(TE, mod_lg_var_tsv);
@@ -467,7 +497,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                         return JIT_ER(m, LG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
-                jit_a(j, 0x50); // push rax
+                j_push(j, o->od.v.t, 0, 0);
                 op_set_jlen(j, o);
                 break;
             case OP_C(LM):
@@ -538,6 +568,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     // TODO
                     OPPVT(I6, i6, int64_t);
                     // TODO
+                    OPPVT(F6, f6, double);
                     OPPVT(SG, sg, var_sg*);
                     OPPVT(FN, c->jf, jit_fn*);
                     OPPVT(FD, fd, int);
@@ -674,15 +705,16 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(CSTSG):
                 op_set_jidx(j, o);
                 SET_REG(m->r->a, al*, false, 7);
-                jit_a(j, 0x5E); // pop rsi
+                j_pop(j, o->od.t, 6, 0);
                 switch (o->od.t) {
                     CT_SET_FN(U6, var_u6_sg);
                     CT_SET_FN(I6, var_i6_sg);
+                    CT_SET_FN(F6, var_f6_sg);
                     default:
                         return JIT_ER(m, CSTSG_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
-                jit_a(j, 0x50); // push rax
+                j_push(j, o->od.t, 0, 0);
                 op_set_jlen(j, o);
                 break;
             C_OP_C_BOP(ADD, add);
