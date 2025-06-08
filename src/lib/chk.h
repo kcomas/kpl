@@ -9,3 +9,5 @@ typedef struct {
     chk_tbl_i *cti;
     tbl *ct;
 } chk;
+
+void chk_f(chk *c);
