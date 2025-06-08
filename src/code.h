@@ -48,6 +48,7 @@ typedef enum {
     CODE_STAT(INV_ADD_T_L),
     CODE_STAT(INV_SUB_T_R),
     CODE_STAT(INV_SUB_VR_T_R),
+    CODE_STAT(INV_MUL_T),
     CODE_STAT(INV_SG_CNCT),
     CODE_STAT(INV_CNCT_OP),
     CODE_STAT(INV_FD_OP),
@@ -131,6 +132,8 @@ typedef enum {
     OP_C(OR),
     OP_C(CNCTSG), // sg cnct op type is either sg or te
     OP_C(WFD), // OP_T is type to be written
+    // thread
+    OP_C(TDI), // thread init
     // GC
     OP_C(RCI),
     OP_C(RCD),

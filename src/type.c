@@ -61,6 +61,7 @@ static const char *const tss[] = {
     "INV_SUB",
     "INV_MUL_L_T_N",
     "INV_MUL_R_T_N",
+    "TD_TE_FN_T_NEQ",
     "INV_MUL",
     "INV_EQ_L_T_N",
     "INV_EQ_R_T_N",
@@ -118,11 +119,34 @@ extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_s
 
 #define TYPE_ER(TS, TSTAT) type_er(TS, __func__, TYPE_STAT(TSTAT))
 
+static bool type_eq(const type_node *const ta, const type_node *tb);
+
+static bool lst_node_eq(const lst_node *const la, const lst_node *const lb) {
+    if (la->len != lb->len) return false;
+    type_node *ta, *tb;
+    lst_itm *ha = la->h, *hb = lb->h;
+    while (ha && hb) {
+        if (!(ta = ast_gtn(ha->a))) return false;
+        if (!(tb = ast_gtn(hb->a))) return false;
+        if (!type_eq(ta, tb)) return false;
+        ha = ha->next;
+        hb = hb->next;
+    }
+    if (ha || hb) return false;
+    return true;
+}
+
 static bool type_eq(const type_node *const ta, const type_node *tb) {
     if (!ta || !tb) return false;
     if ((ta->t == TYPE(SG) && tb->t == TYPE(STR)) || (ta->t == TYPE(STR) && tb->t == TYPE(SG))) return true;
     if (ta->t != tb->t) return false;
-    // TODO deep check
+    switch (ta->t) {
+        case TYPE(TE):
+        case TYPE(TD):
+            return lst_node_eq(ta->a->n.lst, tb->a->n.lst);
+        default:
+            break; // TODO specify all types
+    }
     return true;
 }
 
@@ -451,7 +475,9 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(MUL):
             ASTGTNBOP(MUL);
             if (lt->t == TYPE(TE) && rt->t == TYPE(FN)) {
-                // TODO create thread
+                if (!lst_node_eq(lt->a->n.lst, rt->a->n.lst)) return TYPE_ER(ts, TD_TE_FN_T_NEQ);
+                op->ret = type_lst_i(ts->a, TYPE(TD), 2, lt, rt);
+                break;
             }
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             return TYPE_ER(ts, INV_MUL);

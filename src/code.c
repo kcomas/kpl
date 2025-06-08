@@ -153,6 +153,7 @@ static const char *op_c_str[] = {
     "OR",
     "CNCTSG", // sg cnct op type is either sg or te
     "WFD", // OP_T is type to be written
+    "TDI",
     // GC
     "RCI",
     "RCD",
@@ -300,9 +301,9 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
     return CODE_ER(cs, OK, NULL);
 }
 
-#define OP_GC(CS, C, TN, A) if ((cstat = code_gen_gc(CS, TN, A, C, -1)) != CODE_STAT(OK)) return cstat;
+#define OP_GC(CS, C, TN, A) if ((cstat = code_gen_gc(CS, TN, A, C, -1)) != CODE_STAT(OK)) return cstat
 
-#define OP_GCTSVI(CS, C, TN, A, I) if ((cstat = code_gen_gc(CS, TN, A, C, I)) != CODE_STAT(OK)) return cstat;
+#define OP_GCTSVI(CS, C, TN, A, I) if ((cstat = code_gen_gc(CS, TN, A, C, I)) != CODE_STAT(OK)) return cstat
 
 #define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
 
@@ -455,9 +456,9 @@ static code_stat cor_int(code_st *const cs, const ast *const a, const ast *const
     return p_int(cs, tb->t, a, c);
 }
 
-#define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
+#define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat
 
-#define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a);
+#define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a)
 
 static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_node *const var, bool rci) {
     if (var->tn->t == TYPE(VD)) return CODE_ER(cs, INV_TYPE_STORE_VD, a);
@@ -517,6 +518,9 @@ static code_stat er_rer(code_st *const cs, type_node *tn, rer *const erer) {
     erer->t = tn->t;
     return CODE_ER(cs, OK, NULL);
 }
+
+#define ASTGLRTN(L, R, E, A) if (!(tl = ast_gtn(L))) return CODE_ER(cs, E, A); \
+    if (!(tr = ast_gtn(R))) return CODE_ER(cs, E, A)
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
@@ -667,7 +671,6 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             OP_P_INT_RET(opn, cs, r, c);
             OP_A(cs, c, ADD, OP, { .t = opn->ret->t }, a);
             break;
-
         case OP_TYPE(SUB):
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, INV_SUB_T_R, opn->r);
             if (tr->t == TYPE(VR)) {
@@ -687,8 +690,13 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             break;
         case OP_TYPE(MUL):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
+            ASTGLRTN(opn->l, opn->r, INV_MUL_T, a);
+            if (tl->t == TYPE(TE) && tr->t == TYPE(FN)) {
+                OP_A(cs, c, TDI, TD, {}, a);
+                break;
+            }
+            OP_P_INT_RET(opn, cs, l, c);
             OP_P_INT_RET(opn, cs, r, c);
             OP_A(cs, c, MUL, OP, { .t = opn->ret->t }, a);
             break;
