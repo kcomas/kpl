@@ -54,8 +54,17 @@ T(facloop) {
         CN(P1, IN("f"))
     )), NULL)));
 }
-/*
+
 T(facrec) {
-    V(facrec, NULL);
+    V(facrec, RN(AN(NULL, LN(NULL, L(2,
+        ON(NULL, DFN, IN("fac"), ON(NULL, CST, TN(FN), LN(NULL, L(1,
+            ON(NULL, IF,
+                AN(NULL, ON(NULL, GT, NULL, NULL), L(2, AN(NULL, TN(U6), L(1, IN("n"))), SN(I6, I6(1)))),
+                LN(NULL, L(2,
+                    ON(NULL, MUL, IN("n"), AN(NULL, IN("fac"), L(1, ON(NULL, SUB, IN("n"), SN(I6, I6(1)))))),
+                    SN(I6, I6(1))
+                ))
+        ))))),
+        CN(P1, AN(NULL, IN("fac"), L(1, SN(I6, I6(5)))))
+    )), NULL)));
 }
-*/
