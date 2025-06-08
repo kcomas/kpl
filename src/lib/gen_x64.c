@@ -250,19 +250,23 @@ te *gen_tmp(gen *g, x64_type t, size_t id) {
     return gen_var_i(g, NULL, GEN_CLS(T), t, U6(id));
 }
 
-static void gen_data_sg_f(void *p) {
+static void gen_data_s_f(void *p) {
     te *t = p;
     mc_f(t->d[1].p);
     t->af->f(t);
 }
 
 te *gen_data(gen *g, x64_type t, un d) {
-    void *fn = t == X64_TYPE(S) ? gen_data_sg_f : NULL;
+    void *fn = NULL;
+    if (t == X64_TYPE(S)) {
+        mc_c(d.p);
+        fn = gen_data_s_f;
+    }
     return gen_var_i(g, fn, GEN_CLS(D), t, d);
 }
 
 te *gen_char(gen *g, const char *s) {
-    return gen_var_i(g, gen_data_sg_f, GEN_CLS(D), X64_TYPE(S), P(mc_i_cstr(s, &al_mc)));
+    return gen_var_i(g, gen_data_s_f, GEN_CLS(D), X64_TYPE(S), P(mc_i_cstr(s, &al_mc)));
 }
 
 te *gen_stkv(gen *g, x64_type t, size_t id) {
