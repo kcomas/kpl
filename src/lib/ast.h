@@ -64,7 +64,7 @@ ast_stat ast_g_pn(ast_cls cls, te *an, te **pn);
 // get type, not null
 ast_stat ast_g_t(te *an, te **type);
 
-// ast t te[par;psr;cls;...]
+// ast t te[par;psr;cls;...;slot]
 
 #define AST_MIN_LEN 4
 

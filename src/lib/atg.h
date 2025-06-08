@@ -39,6 +39,9 @@ atg *atg_i_atg(const atg *t);
 
 typedef bool atg_test_fn(const te *an);
 
+// use last node of ast for ref to its gen code
+te *atg_g_g(te *an);
+
 atg_stat atg_q(atg *t, te **an, atg_test_fn enq);
 
 // keep root node do not modify nodes
@@ -51,6 +54,8 @@ atg_stat atg_a_a(atg *t, type rt, ast_cls tc, type tt, atg_cc_fn cc);
 
 // te[u4(code)|u4(type)...;[tbl;cc]]
 atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc);
+
+atg_stat atg_lst_r(atg *t, gen *g, lst *l, err **e);
 
 atg_stat atg_r(atg *t, gen *g, te *an, err **e);
 

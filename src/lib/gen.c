@@ -173,6 +173,7 @@ gen_stat gen_n(gen *g, void *st, as *a, err **e) {
         te *c = h->d[0].p;
         gen_fn *fn = c->d[4].p;
         if ((stat = fn(g, st, c, a, e)) != GEN_STAT(OK)) return stat;
+        c->d[6] = P(te_c(a->code->t)); // set code e
         h = h->d[2].p;
     }
     return GEN_STAT(OK);

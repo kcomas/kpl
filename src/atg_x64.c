@@ -97,10 +97,12 @@ static atg_stat cst_type_lst_s(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat cst_type_lst_e(atg *t, gen *g, te *an, err **e) {
     // TODO gc ref counted vars
-    te *rt = ((te*) ((te*) an->d[5].p)->d[3].p)->d[2].p, *ct = g->code->t;
+    te *rt = ((te*) ((te*) an->d[5].p)->d[3].p)->d[2].p, *ct = g->code->t, *ret;
     if (rt->d[1].u4 != TYPE(VD)) {
         while (((te*) ct->d[0].p)->d[0].u4 == GEN_OP(LBL)) ct = ct->d[1].p;
-        if (gen_a(g, GEN_OP(LEAVE), te_c(((te*) ct->d[0].p)->d[1].p), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        ret = ((te*) ct->d[0].p)->d[1].p;
+        if (!ret) return atg_err(t, an, e, "atg inv ret for LEAVE");
+        if (gen_a(g, GEN_OP(LEAVE), te_c(ret), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     } else if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
@@ -219,11 +221,18 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat if_cond(atg *t, gen *g, te *an, err **e, uint32_t tl) {
     atg_stat stat;
+    te *h;
     if (an->d[2].u4 == AST_CLS(S)) {
         x64_type xt = type_g_x64_type(an->d[3].p);
         if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, tl), gen_data(g, xt, an->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
     } else {
-        if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
+        if (an->d[2].u4 == AST_CLS(L)) {
+            h = ((lst*) an->d[4].p)->h;
+            while (h) {
+                if ((stat = if_cond(t, g, h->d[0].p, e, tl)) != ATG_STAT(OK)) return stat;
+                h= h->d[2].p;
+            }
+        } else if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
         te *c = g->code->t->d[0].p;
         if (gen_var_g_c(c->d[1].p) != GEN_CLS(T)) return atg_err(t, an, e, "atg inv if case");
         ((te*) c->d[1].p)->d[1] = U5(tl);
@@ -247,12 +256,35 @@ static atg_stat if_l_l_2(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat if_l_l_n(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat;
+    uint32_t ml, el = t->lc++, tl = t->tc++;
+    lst *bl = ((te*) an->d[6].p)->d[4].p;
+    te *h = bl->h, *c, *l, *r;
+    while (h != bl->t) {
+        l = ((te*) h->d[0].p)->d[5].p;
+        r = ((te*) h->d[0].p)->d[6].p;
+        ml = t->lc++;
+        c = g->code->t;
+        if ((stat = atg_lst_r(t, g, l->d[4].p, e)) != ATG_STAT(OK)) return stat;
+        c = c->d[2].p; // gen code gen by cond
+        if ((stat = cond_s_lbl(c, ml)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg if cond not lbl");
+        if ((stat = if_cond(t, g, r, e, tl)) != ATG_STAT(OK)) return stat;
+        if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (gen_a(g, GEN_OP(LBL), gen_lbl(g, ml), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        h = h->d[2].p;
+    }
+    if ((stat = if_cond(t, g, bl->t->d[0].p, e, tl)) != ATG_STAT(OK)) return stat;
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 static atg_stat if_l_l(atg *t, gen *g, te *an, err **e) {
     lst *ic = ((te*) an->d[5].p)->d[4].p;
     lst *ib = ((te*) an->d[6].p)->d[4].p;
     if (ic && ib->l == 1) return atg_err(t, an, e, "nyi");
     else if (ic && ib->l == 2) return  if_l_l_2(t, g, an, e);
-    else if (!ic && ib->l > 2) return atg_err(t, an, e, "TODO if NULL ? {}");
+    else if (!ic && ib->l > 2) return if_l_l_n(t, g, an, e);
     return atg_err(t, an, e, "atg if inv");
 }
 
@@ -281,7 +313,7 @@ static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
         if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
         switch (an->d[2].u4) {
             case AST_CLS(O):
-                vr_ab(v, P(te_c(((te*) g->code->t->d[0].p)->d[1].p)));
+                vr_ab(v, P(te_c((atg_g_g(an))->d[1].p)));
                 break;
             case AST_CLS(S):
                 vr_ab(v, P(gen_data(g, atg_x64_g_t(an->d[3].p), an->d[4])));
@@ -406,7 +438,7 @@ static atg_stat dump_vd(atg *t, gen *g, te *restrict an, err **e, te *restrict c
 }
 
 static atg_stat dump_vd_s_u5_aply(atg *t, gen *g, te *an, err **e) {
-    return dump_vd(t, g, an, e, te_c(((te*) g->code->t->d[0].p)->d[1].p));
+    return dump_vd(t, g, an, e, te_c(atg_g_g(an->d[6].p)->d[1].p));
 }
 
 static atg_stat dump_vd_s_u5_e_i6(atg *t, gen *g, te *an, err **e) {
@@ -427,6 +459,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(CST), TYPE(F6), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6), cst_f6_e_u6);
     atg_a_o(t, OC(LOOP), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), loop_l_l);
     atg_a_o(t, OC(IF), TYPE(U6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
+    atg_a_o(t, OC(IF), TYPE(I6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
     atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
     atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), cond_bl_e_u6_s_u6);
     atg_a_o(t, OC(LT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);

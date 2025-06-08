@@ -108,10 +108,6 @@ void gen_st_p(const gen_st *st);
 // pass 1
 gen_stat gen_st_p1(gen *g, gen_st *st);
 
-void set_code_s(te *ci, as *a);
-
-void set_code_e(te *ci, as *a);
-
 gen_stat rstk_b(const gen_st *st, uint8_t *r);
 
 // get idx for stack var
@@ -137,5 +133,7 @@ void gen_st_f(gen_st *st);
 as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci);
 
 gen_stat gen_err(const gen *g, te *ci, err **e, const char *m);
+
+void gen_x64_opt(gen *g, gen_st *st);
 
 gen *gen_b(gen *g);
