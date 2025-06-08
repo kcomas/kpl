@@ -671,10 +671,12 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(I5):
                 case TYPE(I6):
                     if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) return p_int(cs, opn->l->n.tn->t, opn->r, c);
+                    // TODO dynamic
                     break;
                 case TYPE(F5):
                 case TYPE(F6):
                     if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(FLT)) return p_flt(cs, opn->l->n.tn->t, opn->r, c);
+                    // TODO dynamic
                     break;
                 // TODO
                 case TYPE(SG):
