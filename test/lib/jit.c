@@ -167,6 +167,7 @@ static void cmp(uint8_t *m) {
     printj(p, m);
     int64_t a = 1, b = 2;
     printf("cmp(%ld < %ld): %d\n", a, b, ((bool(*)(int64_t, int64_t)) m)(a, b));
+    printf("cmp(%ld < %ld): %d\n", b, a, ((bool(*)(int64_t, int64_t)) m)(b, a));
 }
 
 int main(void) {
