@@ -4,6 +4,7 @@
 const char *type_str(type t) {
     static const char *ts[] = {
         "_START",
+        "VD",
         "BL",
         "I3",
         "I4",
@@ -17,14 +18,14 @@ const char *type_str(type t) {
         "F6",
         "C4",
         "SG",
-        "TE",
         "VR",
         "LT",
-        "ST",
         "HH",
+        "ST",
         "FN",
         "SF",
         "CF",
+        "TE",
         "BA",
         "TD",
         "_END"
@@ -100,8 +101,9 @@ void type_p(const te *t) {
             printf("%s", type_str(t->d[0].u6));
             break;
         case TYPE_CLS(V):
-            printf("%s", type_str(t->d[0].u6));
+            printf("%s(", type_str(t->d[0].u6));
             type_p(t->d[1].p);
+            putchar(')');
             break;
         case TYPE_CLS(H):
             // TODO
