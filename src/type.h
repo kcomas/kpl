@@ -32,10 +32,14 @@ typedef enum {
     TYPE_STAT(TC_VAR_LT_N_T_ER),
     TYPE_STAT(INV_TC),
     // assign
+    TYPE_STAT(INV_ASS), // cannot assign
+    TYPE_STAT(INV_ASS_ER), // cannot assign from error
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
-    TYPE_STAT(INV_VAR_ASS_ER), // cannot assign to var from error
     TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
+    TYPE_STAT(INV_SYM_ASS),
+    TYPE_STAT(SYM_ASS_N_T_M),
     TYPE_STAT(INV_ASS_TO), // cannot assign to node
+    // cast
     TYPE_STAT(INV_CST), // invalid cast
     TYPE_STAT(INV_CST_L_A), // invalid node for left side of cst
     TYPE_STAT(INV_CST_L_T_N), // left side type for cst null

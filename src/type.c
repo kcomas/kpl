@@ -23,9 +23,12 @@ static const char *const tss[] = {
     "TC_ER_L_T_N_VAR",
     "TC_VAR_LT_N_T_ER",
     "INV_TC",
+    "INV_ASS",
+    "INV_ASS_ER",
     "INV_VAR_ASS",
-    "INV_VAR_ASS_ER",
     "VAR_ASS_N_T_M",
+    "INV_SYM_ASS",
+    "SYM_ASS_N_T_M",
     "INV_ASS_TO",
     "INV_CST",
     "INV_CST_L_A",
@@ -277,15 +280,21 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             return TYPE_ER(ts, INV_TC);
         case OP_TYPE(ASS):
+            if (!op->r) return TYPE_ER(ts, INV_ASS);
+            ASTGTN(rt, op->r, INV_ASS);
+            if (rt->t == TYPE(ER)) ASTGTN(rt, rt->a, INV_ASS_ER);
             if (op->l->at == AST_TYPE(VAR)) {
-                if (!op->r) return TYPE_ER(ts, INV_VAR_ASS);
-                ASTGTN(rt, op->r, INV_VAR_ASS);
-                if (rt->t == TYPE(ER)) ASTGTN(rt, rt->a, INV_VAR_ASS_ER);
                 if (op->l->n.var->tn) {
                     ASTGTN(lt, op->l, INV_VAR_ASS);
                     if (!type_eq(lt, rt)) return TYPE_ER(ts, VAR_ASS_N_T_M);
                     op->flgs |= NODE_FLG(GCV);
                 } else op->l->n.var->tn = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
+                op->ret = type_node_i(ts->a, TYPE(VD), NULL);
+                break;
+            } else if (op->l->at == AST_TYPE(SYM)) {
+                IFTCHK(type_chk, ts, fns, op->l);
+                ASTGTN(lt, op->l, INV_SYM_ASS);
+                if (!type_eq(lt, rt)) return TYPE_ER(ts, SYM_ASS_N_T_M);
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }
