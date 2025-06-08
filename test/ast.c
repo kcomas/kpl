@@ -73,7 +73,7 @@ T(fibrec) {
     V(TPGM(fibrec), RN(AN(NULL, LN(NULL, L(2,
         ON(NULL, DFN, IN("fib"), ON(NULL, CST, AN(NULL, TN(FN), L(2, ZN("n", TN(I6)), TN(I6))), LN(NULL, L(1, ON(NULL, IF, NULL,
             LN(NULL, L(3,
-                ON(NULL, IF, AN(NULL, ON(NULL, LTEQ, NULL, NULL), L(2, IN("n"), SN(I6, I6(0)))), SN(I6, I6(0))),
+                ON(NULL, IF, AN(NULL, ON(NULL, LTE, NULL, NULL), L(2, IN("n"), SN(I6, I6(0)))), SN(I6, I6(0))),
                 ON(NULL, IF, AN(NULL, ON(NULL, LT, NULL, NULL), L(2, IN("n"), SN(I6, I6(3)))), SN(I6, I6(1))),
                 ON(NULL, ADD,
                     AN(NULL, IN("fib"), L(1, ON(NULL, SUB, IN("n"), SN(I6, I6(1))))),
