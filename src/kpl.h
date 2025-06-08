@@ -78,7 +78,7 @@ typedef struct _type_node type_node;
 
 typedef struct _code code;
 
-typedef void *jit_fn(void*);
+typedef int jit_fn(void*);
 
 typedef struct _jit {
     uint8_t flgs;
@@ -122,7 +122,7 @@ typedef struct {
         struct stat sb;
         char *path, *str;
     } src;
-    tds *s;
+    tds *volatile s;
     tdr *r; // thread resource
     fn_node *fns; // ast root
     code *c;

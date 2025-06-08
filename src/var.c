@@ -225,3 +225,26 @@ var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {
     td->te = te;
     return td;
 }
+
+void var_td_rci(var_td *const td) {
+    td->rc++;
+}
+
+void var_td_rcd(var_td *const td) {
+    td->rc--;
+}
+
+var_tsv *var_td_te(var_td *const td) {
+    return td->te;
+}
+
+void var_td_d(var_td *td) {
+    tds_a(td->m->s, td->m->r);
+    mod_f(td->m);
+    alf(td);
+}
+
+void var_td_f(var_td *td) {
+    if (--td->rc >= 0) return;
+    var_td_d(td);
+}

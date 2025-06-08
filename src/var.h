@@ -98,9 +98,9 @@ var_tsv *var_tsv_i(al *const a, size_t size, size_t len, jit_fn *gc);
 
 var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc);
 
-void var_tsv_rci(var_tsv *const tsv);
-
 size_t var_tsv_len(var_tsv *const tsv);
+
+void var_tsv_rci(var_tsv *const tsv);
 
 void var_tsv_rcd(var_tsv *const tsv);
 
@@ -117,8 +117,19 @@ var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv);
 void var_tsv_d(var_tsv *tsv);
 
 typedef struct _var_td {
+    RC;
     mod *m; // has code
     var_tsv *te; // te->v[te->len - 1] is return value
 } var_td; // thread
 
 var_td *var_td_i(mod *const m, var_tsv *const te, code *const c);
+
+void var_td_rci(var_td *const td);
+
+void var_td_rcd(var_td *const td);
+
+var_tsv *var_td_te(var_td *const td);
+
+void var_td_d(var_td *td);
+
+void var_td_f(var_td *td);

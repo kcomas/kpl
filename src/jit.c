@@ -287,13 +287,13 @@ static int thread_fn(void *arg) {
     return 0;
 }
 
-static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
+static var_td *jit_thrd(mod *m, var_tsv *const te, code *const c) {
     var_td *td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
     clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
     return td;
 }
 
-static var join_thrd(var_td *const td) {
+static var join_thrd(var_td *volatile td) {
     while (!td->m->done) { wait(NULL); }
     return td->te->v[td->te->len - 1];
 }
@@ -702,6 +702,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(ER):
                         SET_FP(er_itm_rci);
                         break;
+                    case TYPE(TD):
+                        SET_FP(var_td_rci);
+                        break;
                     default:
                         return JIT_ER(m, RCI_T_INV, o);
                 }
@@ -723,6 +726,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     case TYPE(ER):
                         SET_FP(er_itm_rcd);
+                        break;
+                     case TYPE(TD):
+                        SET_FP(var_td_rcd);
                         break;
                     default:
                         return JIT_ER(m, RCD_T_INV, o);
@@ -786,7 +792,18 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         SET_REG_CALL(false, 0);
                         break;
                     case TYPE(TD):
-                        // TODO
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                        SET_FP(var_td_te);
+                        SET_REG_CALL(false, 0);
+                        jit_a(j, 0x50); // push rax
+                        jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                        SET_FP(var_tsv_gc);
+                        SET_REG_CALL(false, 0);
+                        jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
+                        jit_a(j, 0x5F); // pop rdi
+                        jit_a(j, 0x5F); // pop rdi
+                        SET_FP(var_td_f);
+                        SET_REG_CALL(false, 0);
                         break;
                     default:
                         return JIT_ER(m, GC_T_INV, o);
@@ -812,6 +829,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(TE):
                     case TYPE(ST):
                     case TYPE(ER):
+                    case TYPE(TD):
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_REG(o->od.v.id, uint8_t, false, 6);
                         SET_FP(var_tsv_gidx);
