@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
     code_p(&cs, m->c, 0);
     code_f(m->c);
     fn_node_f(m->fns);
+    FNNF(m->tn, type_node_f);
     mod_f(m);
     er_f(e);
     al_f(a);

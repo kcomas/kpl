@@ -43,6 +43,7 @@ static const char *const tss[] = {
     "INV_DEL_R_NG",
     "INV_LD_L_NN",
     "INV_LD_ME",
+    "LD_MOD_TBL_AD_F",
     "INV_LD",
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
@@ -244,13 +245,37 @@ static bool type_str_is(const type_node *const tn, const type_node *const dnu) {
     return tn->t == TYPE(STR) || tn->t == TYPE(SG);
 }
 
+static type_stat mod_tn_i(type_st *const ts, mod *const m) {
+    tbl_itm *h = m->fns->tl->h;
+    char vstr[MAX_VAR_LEN + 1]; // for `
+    m->tn = type_node_i(ts->a, TYPE(ST), ast_i(ts->a, AST_TYPE(TBL), (node) { .tl = tbl_i(ts->a, TBL_I_SIZE) }, NULL));
+    while (h) {
+        // TODO make var private
+        var_node *var = (var_node*) h->data;
+        memset(vstr, '\0', MAX_VAR_LEN + 1);
+        vstr[0] = '`';
+        strcpy(vstr + 1, var->str);
+        tbl_itm *ti;
+        hsh_data *hd = hsh_data_i(ts->a, var->id, type_node_c(ts->a, var->tn));
+        if (tbl_op(ts->a, &m->tn->a->n.tl, vstr, hd, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
+            hsh_data_f(hd);
+            return TYPE_ER(ts, LD_MOD_TBL_AD_F);
+        }
+        h = h->next;
+    }
+    return TYPE_ER(ts, OK);
+}
+
 #define ASTGTNBOP(OP) ASTGTN(lt, op->l, INV_##OP##_L_T_N); \
             ASTGTN(rt, op->r, INV_##OP##_R_T_N)
 
 static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *const op) {
     type_stat tstat;
     type_node *lt = NULL, *rt = NULL, *tn = NULL;
+    ast *atmp;
     lst_node *lst;
+    ast_st ld_as;
+    type_st ld_ts;
     if (op->ot != OP_TYPE(TC) && op->ot != OP_TYPE(ASS)) if (op->l) IFTCHK(type_chk, ts, fns, op->l);
     if (op->ot != OP_TYPE(CST)) if (op->r) IFTCHK(type_chk, ts, fns, op->r);
     switch (op->ot) {
@@ -360,7 +385,18 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
                 mod *m = mod_i(ts->a, ts->e);
                 if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
-                // TODO
+                m->fns = fn_node_i(ts->a, NULL);
+                m->fns->sig = type_node_i(ts->a, TYPE(MOD), NULL);
+                ast_st_i(&ld_as, ts->a, ts->e, m->src.str);
+                if (ast_parse_stmts(&ld_as, m->fns, m->fns->body, TFLS, TKN_FLG(NB)) != AST_STAT(END)) return TYPE_ER(ts, INV_LD_ME);
+                type_st_i(&ld_ts, ts->a, ts->e, m->src.path, m->src.str);
+                if (type_chk_fn(&ld_ts, m->fns) != TYPE_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
+                if ((tstat = mod_tn_i(ts, m)) != TYPE_STAT(OK)) return tstat;
+                atmp = op->r;
+                op->r = ast_i(ts->a, AST_TYPE(MOD), (node) { .m = m }, &op->r->t);
+                ast_f(atmp);
+                op->ret = type_node_c(ts->a, op->r->n.m->tn);
+                break;
             }
             return TYPE_ER(ts, INV_LD);
         case OP_TYPE(ADD):
