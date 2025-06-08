@@ -36,8 +36,8 @@ void _a(const char *name, const char *sf, _test_fn *tf);
     if (_t->ln) return; \
 } while (0)
 
-#define T(N)  static void _##N(__attribute__((unused)) _tests *_t); \
+#define T(N)  static void test_##N(__attribute__((unused)) _tests *_t); \
     static __attribute__((constructor)) void __##N(void) { \
-        _a(#N, __FILE__, _##N); \
+        _a(#N, __FILE__, test_##N); \
     } \
-static void _##N(__attribute__((unused)) _tests *_t)
+static void test_##N(__attribute__((unused)) _tests *_t)
