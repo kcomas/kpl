@@ -87,7 +87,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                     if (!type_eq(lt, rt)) return TYPE_STAT(VAR_ASS_N_T_M);
                 } else op->l->n.var->tn = type_node_c(rt);
                 op->ret = type_node_c(rt);
-                return TYPE_STAT(OK);
+                break;
             }
             return TYPE_STAT(INV_ASS_TO);
         case OP_TYPE(CST):
