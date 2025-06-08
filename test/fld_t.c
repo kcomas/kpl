@@ -3,10 +3,9 @@
 
 void fast(_tests *_t, ast *a, te **an) {
     E();
-    fld_stat stat;
     fld *f = fld_b(fld_i(&ast_am, &ast_am, ati, ali, a, mktbl(AST_CLS(_))));
     te *e = NULL;
-    stat = fld_n(f, an, &e);
+    fld_stat stat = fld_n(f, an, &e);
     if (e) {
         ast_p(e, 0);
         putchar('\n');

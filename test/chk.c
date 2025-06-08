@@ -16,6 +16,13 @@ T(fnadd3) {
     chk *c = chk_i(&ast_am, &ast_am, cti, a);
     chk_b(c);
     chk_p(c->ct, 0);
+    te *e = NULL;
+    chk_stat stat = chk_n(c, an, &e);
+    if (e) {
+        ast_p(e, 0);
+        putchar('\n');
+    }
+    A(stat == CHK_STAT(OK), "chk_n");
     chk_f(c);
     ast_f(a);
     te_f(an);

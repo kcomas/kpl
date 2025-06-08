@@ -27,7 +27,10 @@ chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a);
 
 extern const uint8_t chk_cls_conts[AST_CLS(_)];
 
-typedef chk_stat chk_fn(chk *c, te *an);
+typedef chk_stat chk_fn(chk *c, te *an, te **e);
+
+#define CHK_HSH_C 1
+#define CHK_HSH_T 0
 
 // cls is also used for op codes
 chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...);
