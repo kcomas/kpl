@@ -7,10 +7,10 @@ static void kv_f(te *t) {
     t->af->f(t);
 }
 
-static const alfr tm = { .a = malloc, .f = free };
+const alfr tm = { .a = malloc, .f = free };
 
 static te *kv_i(const char *s, int64_t v) {
-    te *t = te_i(2, &tm, (void*) kv_f);
+    te *t = te_i(2, &al_te, (void*) kv_f);
     t->d[0] = P(mc_i_cstr(s, &tm));
     t->d[1] = I6(v);
     return t;
@@ -30,14 +30,14 @@ static void pt(tbl *t) {
 }
 
 static tbl *mt(size_t s) {
-    lst *tl = lst_i(&tm, &tm, (void*) te_f);
-    te *b = te_i(s, &tm, NULL);
-    tbl *t = tbl_i(&tm, tbl_mc_sdbm, tbl_mc_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(s, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tbl_mc_sdbm, tbl_mc_eq, tl, b);
     return t;
 }
 
 T(tbl) {
-    tbl *t = mt(1);
+    tbl *t = mt(2);
     A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
     pt(t);
     A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");
@@ -98,16 +98,16 @@ T(eq) {
 }
 
 static te *se(uint64_t a, uint64_t b) {
-    te *t = te_i(2, &tm, NULL);
+    te *t = te_i(2, &al_te, NULL);
     t->d[0].u6 = a;
     t->d[1].u6 = b;
     return t;
 }
 
 T(sparse) {
-    lst *tl = lst_i(&tm, &tm, (void*) te_f);
-    te *b = te_i(20, &tm, NULL);
-    tbl *t = tbl_i(&tm, tbl_no_hsh, tbl_un_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(20, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
     uint64_t x = 131081;
     tbl_a(t, se(x, 1));
     uint64_t y = 4295229449;

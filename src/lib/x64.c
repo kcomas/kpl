@@ -3,6 +3,8 @@
 
 #define RIP 5
 
+#define SIB 4
+
 static bool reg_is_upper(reg r) {
     return (r >= R(8) && r <= R(15)) || (r >= XMM(8) && r <= XMM(15));
 }

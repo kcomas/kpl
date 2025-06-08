@@ -6,7 +6,7 @@
 atg *batg = NULL;
 
 static __attribute__((constructor(107))) void atg_con(void) {
-    batg = atg_b(atg_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, lst_i(&am, &am, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
+    batg = atg_b(atg_i(&ast_am, &al_te, &ast_am, ast_err_p, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
 }
 
 static __attribute__((destructor)) void atg_des(void) {
@@ -67,7 +67,7 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     RC(); \
     fast(_t, a, &an, bopt, false); \
     atg *t = atg_i_atg(batg); \
-    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL)); \
+    gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL)); \
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == QL, "atg_q")
 
 T(tbl) {

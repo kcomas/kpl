@@ -4,26 +4,26 @@
 static const alfr pm = { .a = malloc, .f = free };
 
 static tbl *tkn_mktbl(void) {
-    lst *tl = lst_i(&pm, &pm, (void*) te_f);
-    te *b = te_i(10, &pm, NULL);
-    tbl *t = tbl_i(&pm, tkn_sh, c4_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(10, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tkn_sh, c4_eq, tl, b);
     return t;
 }
 
 static tbl *mktbl(void) {
-    lst *tl = lst_i(&pm, &pm, (void*) te_f);
-    te *b = te_i(10, &pm, NULL);
-    tbl *t = tbl_i(&pm, tbl_no_hsh, tbl_un_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(10, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
     return t;
 }
 
 static psr *bp = NULL;
 
 static __attribute__((constructor)) void psr_con(void) {
-    tkn *t = tkn_i(&pm, &pm, &pm, tkn_mktbl, tkn_df, mc_i(0, &pm));
+    tkn *t = tkn_i(&pm, &al_te, &pm, tkn_mktbl, tkn_df, mc_i(0, &pm));
     tkn_b(t);
     vr *v = vr_i(10, &pm, (void*) te_f);
-    bp = psr_i(&pm, &pm, &pm, &pm, psr_entry_f, mktbl, t, v);
+    bp = psr_i(&pm, &al_te, &al_lst, &pm, psr_entry_f, mktbl, t, v);
     psr_a(bp, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(bp->tt, TOKEN(UN), "Σ", tkn_ft));
     psr_b(bp);
 }

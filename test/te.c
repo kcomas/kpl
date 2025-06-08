@@ -8,10 +8,8 @@ void node_free(te *t) {
     t->af->f(t);
 }
 
-static const alfr tm = { .a = malloc, .f = free };
-
 static te *node(const char *v) {
-    te *t = te_i(3, &tm, (void*) node_free);
+    te *t = te_i(3, &al_te, (void*) node_free);
     t->d[0] = P(v);
     return t;
 }

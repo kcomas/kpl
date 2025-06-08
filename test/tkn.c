@@ -5,16 +5,16 @@
 static const alfr tm = { .a = malloc, .f = free };
 
 static tbl *tkn_mktbl(void) {
-    lst *tl = lst_i(&tm, &tm, (void*) te_f);
-    te *b = te_i(10, &tm, NULL);
-    tbl *t = tbl_i(&tm, tkn_sh, c4_eq, tl, b);
+    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
+    te *b = te_i(10, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tkn_sh, c4_eq, tl, b);
     return t;
 }
 
 static tkn *btkn = NULL;
 
 static __attribute__((constructor)) void tkn_con(void) {
-    btkn = tkn_i(&tm, &tm, &tm, tkn_mktbl, tkn_df, mc_i(0, &tm));
+    btkn = tkn_i(&tm, &al_te, &tm, tkn_mktbl, tkn_df, mc_i(0, &tm));
     tkn_b(btkn);
 }
 
@@ -23,7 +23,7 @@ static __attribute__((destructor)) void tkn_des(void) {
 }
 
 #define R(T, IDS) tkn_stat tstat; \
-    te *m = te_i(2, &tm, NULL); \
+    te *m = te_i(2, &al_te, NULL); \
     err *e = NULL; \
     size_t id = 0; \
     while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) { \
@@ -71,7 +71,7 @@ T(symtest) {
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
     tkn_p(t->t, 0);
     tkn_stat tstat;
-    te *m = te_i(2, &tm, NULL);
+    te *m = te_i(2, &al_te, NULL);
     err *e = NULL;
     size_t id = 0;
     while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
@@ -100,7 +100,7 @@ T(inttest) {
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
     tkn_p(t->t, 0);
     tkn_stat tstat;
-    te *m = te_i(2, &tm, NULL);
+    te *m = te_i(2, &al_te, NULL);
     err *e = NULL;
     size_t id = 0;
     while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
@@ -123,7 +123,7 @@ T(err) {
     printf("%s\n", pgm);
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
     tkn_stat tstat;
-    te *m = te_i(2, &tm, NULL);
+    te *m = te_i(2, &al_te, NULL);
     err *e = NULL;
     while ((tstat = tkn_n(t, m, &e)) == TKN_STAT(OK)) {
         tkn_m_p(m, t->s);

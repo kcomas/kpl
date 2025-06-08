@@ -3,6 +3,8 @@
 
 #include "def.h"
 
+extern const alfr al_te;
+
 // tuple
 typedef struct {
     ssize_t r;

@@ -5,11 +5,11 @@ psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(TAB));
     // end stmt
-    te *vec_stp = te_i(1, p->ta, NULL);
+    te *vec_stp = te_i(2, p->ta, NULL);
     vec_stp->d[0] = U4(tkn_a(p->tt, TCUST(RS), "]", tkn_ft));
-    te *lst_stp = te_i(1, p->ta, NULL);
+    te *lst_stp = te_i(2, p->ta, NULL);
     lst_stp->d[0] = U4(tkn_a(p->tt, TCUST(RB), "}", tkn_ft));
-    te *aply_stp = te_i(1, p->ta, NULL);
+    te *aply_stp = te_i(2, p->ta, NULL);
     aply_stp->d[0] = U4(tkn_a(p->tt, TCUST(RP), ")", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(SEMI));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(NL));

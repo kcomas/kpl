@@ -9,7 +9,7 @@ as *ba = NULL;
 
 static __attribute__((constructor(101))) void as_c(void) {
     m = x64_mmap(1e6);
-    ba = as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    ba = as_b(as_i(&am, &al_te, &al_lst, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
 }
 
 static __attribute__((destructor)) void as_d(void) {
@@ -42,7 +42,7 @@ te *as_arg_b(as *a, uint8_t b) {
 }
 
 lst *as_mklst(void) {
-    return lst_i(&am, &am, (void*) te_f);
+    return lst_i(&al_lst, &al_te, (void*) te_f);
 }
 
 tbl *as_arg_tbl(void) {
@@ -51,7 +51,7 @@ tbl *as_arg_tbl(void) {
 
 tbl *as_op_tbl(size_t bcks) {
     lst *tl = as_mklst();
-    te *b = te_i(bcks, &am, NULL);
-    tbl *t = tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
+    te *b = te_i(bcks, &al_te, NULL);
+    tbl *t = tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
     return t;
 }
