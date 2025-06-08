@@ -268,7 +268,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 op_set_jidx(j, o);
                 switch (o->ot) {
                     case TYPE(STR):
-                        SET_REG(o->od.sg, char*, false, 7);
+                        SET_REG(m->a, al*, false, 7);
+                        SET_REG(o->od.sg, char*, false, 6);
                         SET_FP(var_sg_i_str);
                         SET_REG_CALL(false, 0);
                         jit_a(j, 0x50); // push rax
@@ -288,8 +289,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(CTE):
                 op_set_jidx(j, o);
-                SET_REG(o->od.te->len, size_t, false, 7);
-                SET_REG(o->od.te->gc->jf, jit_fn*, false, 6);
+                SET_REG(m->a, al*, false, 7);
+                SET_REG(o->od.te->len, size_t, false, 6);
+                SET_REG(o->od.te->gc->jf, jit_fn*, false, 2);
                 SET_FP(var_te_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -330,7 +332,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             // TODO
             case OP_C(CSTSG):
                 op_set_jidx(j, o);
-                jit_a(j, 0x5F); // pop rdi
+                SET_REG(m->a, al*, false, 7);
+                jit_a(j, 0x5E); // pop rsi
                 switch (o->od.t) {
                     CT_SET_FN(U6, var_u6_sg);
                     CT_SET_FN(I6, var_i6_sg);
@@ -359,8 +362,9 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             C_OP_C_BOP(OR, or);
             case OP_C(CNCTSG):
                 op_set_jidx(j, o);
-                jit_b(j, 5, 0x48, 0x8B, 0x7C, 0x24, 0x08); // mov rdi qword ptr [rsp+8] sg
-                jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr [rsp] sg/te
+                SET_REG(m->a, al*, false, 7);
+                jit_b(j, 5, 0x48, 0x8B, 0x74, 0x24, 0x08); // mov rsi qword ptr [rsp+8] sg
+                jit_b(j, 4, 0x48, 0x8B, 0x14, 0x24); // mov rdx qword ptr [rsp] sg/te
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
