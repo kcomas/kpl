@@ -688,6 +688,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
+    int64_t tidx;
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
             if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_ER(cs, CALL_RES_NOT_SELF, a);
@@ -704,7 +705,13 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             opn->l = opn->r = NULL;
             break;
         case AST_TYPE(VAR):
-            // TODO check if the var is te
+            if (cn->tgt->n.var->tn->t == TYPE(TE) && cn->args->len == 1 && cn->args->h->a->at == AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t == TYPE(INT)) {
+                IFCGEN(code_gen, cs, cn->tgt, c);
+                tidx = tkn_to_int64_t(&cn->args->h->a->t, cs->str);
+                OP_A(cs, c, GIDX, U6, { .u6 = (uint64_t) tidx }, a);
+                OP_RCI(cs, c, cn->ret);
+                break;
+            }
             return code_gen_call_res_var(cs, a, c, false);
         default:
             return CODE_ER(cs, INV_CALL_TGT, a);
