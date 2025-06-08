@@ -8,6 +8,7 @@
 
 typedef enum {
     TYPE_STAT(OK),
+    TYPE_STAT(SELF_CALL_IN_MOD), // cannot self call in mod
     TYPE_STAT(VAL_UT), // val is ast type
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
     TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
