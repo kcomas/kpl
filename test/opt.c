@@ -207,8 +207,8 @@ T(vrmul) {
     IC(TPGM(vrmul));
     te *vr = type_v_i(&al_te, NULL, TYPE(VR), type_s_i(&al_te, NULL, TYPE(F6)));
     te *ve = EN("v", FLG(0, LTE_FLG(L)), te_c(vr));
-    te *ie = EN("i", FLG(1, LTE_FLG(L)), TS(F6));
-    V(RN(LN(LT(2, "v", FLG(0, LTE_FLG(L)), te_c(vr), "i", FLG(1, LTE_FLG(L)), TS(F6)), L(3,
+    te *ie = EN("i", FLG(0, LTE_FLG(L)), TS(F6));
+    V(RN(LN(LT(2, "v", FLG(0, LTE_FLG(L)), te_c(vr), "i", FLG(0, LTE_FLG(L)), TS(F6)), L(3,
         ON(te_c(vr), DFN, te_c(ve), VN(te_c(vr), L(1, ON(TS(F6), DFN, te_c(ie), SN(F6, F6(1.1)))))),
         ON(TS(VD), LOOP,
             LN(NULL, L(1, ON(TS(BL), LT, te_c(ie), SN(F6, F6(100))))),

@@ -11,9 +11,17 @@ bool atg_x64_enq(const te *an);
 
 x64_type atg_x64_g_t(const te *type);
 
+x64_type type_g_x64_type(te *tn);
+
 atg_stat atg_err(const atg *t, te *an, err **e, const char *m);
 
+te *atg_te_idx_d(gen *g, uint32_t id);
+
+te *atg_vr_idx_d(gen *g, uint32_t id);
+
 te *var_arg(gen *g, te *lte, x64_type xt);
+
+atg_stat call_npr(gen_op *go, const te *an);
 
 extern const char *atg_dump_strs[TYPE(_END)];
 

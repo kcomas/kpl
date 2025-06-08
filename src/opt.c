@@ -74,11 +74,21 @@ static fld_stat aply_lst_o(fld *f, te **an, err **e) {
         ln->d[0] = (*an)->d[0];
         te_f(*an);
         *an = ln;
-        uint32_t lc = 0; // update idxs of locals
+        uint32_t lrc = 0, lxc = 0;
         h = ((tbl*) ln->d[3].p)->i->h;
         while (h) {
             lte = h->d[0].p;
-            if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) ast_lst_tbl_e_s_i(lte, lc++);
+            if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) {
+                switch (((te*) lte->d[2].p)->d[1].u4) {
+                    case TYPE(F5):
+                    case TYPE(F6):
+                        ast_lst_tbl_e_s_i(lte, lxc++);
+                        break;
+                    default:
+                        ast_lst_tbl_e_s_i(lte, lrc++);
+                        break;
+                }
+            }
             h = h->d[2].p;
         }
     }

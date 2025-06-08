@@ -274,7 +274,7 @@ x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 // subsd xmm0, xmm1
 x64_stat x64_subsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 
-// addsd xmm0, qword ptr[rip+dsp32]
+// subsd xmm0, qword ptr[rip+dsp32]
 x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // neg rax
@@ -300,6 +300,9 @@ x64_stat x64_idiv_r(size_t *p, uint8_t *m, reg r);
 
 // mulsd xmm0, xmm1
 x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
+// mulsd xmm0, qword ptr[rip+dsp32]
+x64_stat x64_mulsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // divsd xmm0, xmm1
 x64_stat x64_divsd_xx(size_t *p, uint8_t *m, reg d, reg s);
