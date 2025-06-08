@@ -62,27 +62,27 @@ T(rsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
-    x64_mov_rr(&p, m, R(12), R(DI));
-    x64_sub_rr(&p, m, R(12), R(SI));
-    x64_mov_rr(&p, m, R(9), R(12));
+    x64_mov_rr(&p, m, R(13), R(DI));
+    x64_sub_rr(&p, m, R(13), R(SI));
+    x64_mov_rr(&p, m, R(9), R(13));
     x64_mov_rr(&p, m, R(AX), R(9));
     x64_pop_r(&p, m, R(BP));
     x64_ret(&p, m);
     printj(p, m);
-    uint64_t a = 20, b = 9;
-    uint64_t r = ((sub*) m)(a, b);
+    int64_t a = 20, b = 9;
+    int64_t r = ((sub*) m)(a, b);
     printf("sub: %ld - %ld = %ld\n", a, b, r);
-    A(r = a - b, "sub");
+    A(r == a - b, "sub");
 }
 
 typedef int64_t loop(int64_t a);
 
 static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
     x64_xor_rr(p, m, R(AX), R(AX));
-    x64_mov_rq(p, m, R(15), P(&printf));
+    x64_mov_rq(p, m, R(13), P(&printf));
     x64_mov_rq(p, m, R(DI), P(fmt));
     x64_mov_rrm(p, m, R(SI), R(SP));
-    x64_call_r(p, m, R(15));
+    x64_call_r(p, m, R(13));
 }
 
 T(rloop) {
@@ -240,12 +240,11 @@ T(rskiploop) {
     x64_jbjnaejc_dw(&p, m, 0);
     uint32_t test = p;
     x64_push_r(&p, m, R(SI));
-    x64_printf(&p, m, "Dec: %d\n");
+    x64_printf(&p, m, "Dec: %lu\n");
     x64_pop_r(&p, m, R(SI));
     x64_dec_r(&p, m, R(SI));
     x64_jmp_dw(&p, m, x64_jmpu_lbldw(p, loop));
-    uint32_t end = p;
-    x64_jmpd_lbldw(m, test, end);
+    x64_jmpd_lbldw(m, test, p);
     x64_pop_r(&p, m, R(AX));
     x64_ret(&p, m);
     printj(p, m);

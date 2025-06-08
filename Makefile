@@ -126,11 +126,12 @@ $(ATG): $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o 
 
 OBJS := $(sort $(OBJS))
 
-$(TESTS): OO = -O3
+$(TESTS): OO = -g -Og
+#$(TESTS): FLAGS += -DNTO
+$(TESTS): FFLAGS += -fsanitize=address -fsanitize=leak -fsanitize=undefined
 $(TESTS): WFLAGS += -Werror
-$(TESTS): FLAGS += -DNTO
 $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
-> $(CCOBJ)
+> $(CCOBJ) -fsanitize=address -fsanitize=leak -fsanitize=undefined
 
 show_$(TESTS):
 > find ./test -type f -name "*.c" | grep -v -E "(_t|\/t\.c)" | cut -d "/" -f3 | sed 's/\.c/$(TNAME)/'
