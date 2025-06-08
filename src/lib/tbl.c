@@ -51,14 +51,6 @@ tbl_stat tbl_g_i(tbl *t, un k, te **kv) {
     return fdrm(t, k, kv, false);
 }
 
-#ifndef TBL_RES
-    #define TBL_RES ((double) 0.9)
-#endif
-
-#ifndef TBL_MUL
-    #define TBL_MUL 2
-#endif
-
 static bool ins(tbl *t, te *kv) {
     size_t idx = t->hf(kv->d[0]) % t->b->l;
     size_t i = idx;
@@ -77,6 +69,14 @@ static bool ins(tbl *t, te *kv) {
     } while (i != idx);
     return false;
 }
+
+#ifndef TBL_RES
+    #define TBL_RES ((double) 0.9)
+#endif
+
+#ifndef TBL_MUL
+    #define TBL_MUL 2
+#endif
 
 tbl_stat tbl_a(tbl *t, te *kv) {
     tbl_stat tstat = TBL_STAT(OK);

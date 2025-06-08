@@ -18,6 +18,10 @@ LTNAME = _lib$(TNAME)
 
 all: $(NAME)
 
+LMC_OBJS = $(LSRC)/mc.o
+mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o
+> $(CCOBJ)
+
 LJIT_OBJS = $(LSRC)/jit.o
 jit$(LTNAME): $(LJIT_OBJS) $(LTEST)/jit.o
 > $(CCOBJ)
@@ -36,6 +40,10 @@ lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o
 
 LTBL_OBJS = $(LSRC)/tbl.o $(LLST_OBJS)
 tbl$(LTNAME): $(LTBL_OBJS) $(LTEST)/tbl.o
+> $(CCOBJ)
+
+LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS)
+tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o
 > $(CCOBJ)
 
 clean:
