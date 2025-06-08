@@ -107,7 +107,10 @@ extern inline op_node *op_node_i(op_type ot);
 
 static const char *const op_type_str[] = {
     "ASS",
-    "CST"
+    "CST",
+    "EQ",
+    "NOT",
+    "OR"
 };
 
 void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
@@ -227,7 +230,7 @@ extern inline void var_node_f(var_node *vn);
     FNNF(a->n.N, F); \
     break
 
-extern inline ast *ast_i(ast_type as, node const n, tkn *t);
+extern inline ast *ast_i(ast_type as, node const n, const tkn *const t);
 
 #ifndef IDNT_ADD
     #define IDNT_ADD 4
@@ -309,21 +312,31 @@ static ast_stat ast_parse_op(op_type ot, ast_st *const as, fn_node *const fns, a
     return ast_parse_op(OP_TYPE(T), as, fns, a, stp_flgs)
 
 static ast_stat ast_parse_if_itm(ast_st *const as, fn_node *fns, if_node *in, bool pc) {
-    ast *a = NULL;
-    lst_node *b = lst_node_i(TYPE(STMT));
     ast_stat astat;
-    if (pc) {
-       if ((astat = ast_parse_stmt(as, fns, &a, TKN_FLG(RP))) != AST_STAT(OK)) {
-            FNNF(a, ast_f);
-            return AST_STAT(IF_INV_COND);
-       }
-       if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-       if (as->next.type != TKN_TYPE(LB)) return AST_STAT(IF_INV_BODY);
-       // TODO body
+    if (!pc) {
+        if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+        if (as->peek.type != TKN_TYPE(LB)) return AST_STAT(OK);
+        tkn_st_u(&as->ts, &as->peek);
     }
+    ast *c = NULL;
+    lst_node *b = lst_node_i(TYPE(STMT));
+    if (pc) {
+        if ((astat = ast_parse_stmt(as, fns, &c, TKN_FLG(RP))) != AST_STAT(OK)) {
+            FNNF(c, ast_f);
+            return astat;
+        }
+        if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+        if (as->next.type != TKN_TYPE(LB)) return AST_STAT(IF_INV_BODY);
+    }
+    if ((astat = ast_parse_stmts(as, fns, b, TFLS, TKN_FLG(RB))) != AST_STAT(OK)) {
+        lst_node_f(b);
+        return astat;
+    }
+    if_node_a(in, c, b);
+    return AST_STAT(OK);
 }
 
-static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a) {
+static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, const tkn *const tkn_s) {
     bool pc = true;
     if_node *in = if_node_i();
     ast_stat astat;
@@ -332,9 +345,15 @@ static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a) {
             if_node_f(in);
             return astat;
         }
-        // TODO check next ( or {
+        if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+        if (as->peek.type != TKN_TYPE(LP)) pc = false;
     }
-    return 123;
+    if ((astat = ast_parse_if_itm(as, fns, in, pc)) != AST_STAT(OK)) {
+        if_node_f(in);
+        return astat;
+    }
+    *a = ast_i(AST_TYPE(IF), (node) { .in = in }, tkn_s);
+    return AST_STAT(OK);
 }
 
 static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a) {
@@ -362,6 +381,12 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     var_node *var;
     tkn ttmp;
     switch (as->next.type) {
+        case TKN_TYPE(NB):
+        case TKN_TYPE(NL):
+        case TKN_TYPE(SEMI):
+        case TKN_TYPE(WS):
+        case TKN_TYPE(CMT):
+            return AST_STAT(TKN_INV);
         case TKN_TYPE(VAR):
             AST_N_CHK(VAR_A_NN);
             if (!(var = var_node_i(fns, &as->next, as->str))) {
@@ -405,6 +430,11 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(ASS);
         OP_CASE(CST);
         // TODO OPS
+        OP_CASE(EQ);
+        OP_CASE(NOT);
+        // TODO OPS
+        OP_CASE(OR);
+        // TODO OPS
         // TODO WRAPS
         case TKN_TYPE(LB):
             AST_N_CHK(FH_A_NN);
@@ -418,9 +448,10 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         // TODO controls
         case TKN_TYPE(IF):
             AST_N_CHK(IF_A_NN);
+            memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->next.type != TKN_TYPE(LP)) return AST_STAT(IF_INV_FMT);
-            return ast_parse_if(as, fns, a);
+            return ast_parse_if(as, fns, a, &ttmp);
         // TODO controls
         default:
             break; // TODO remove
