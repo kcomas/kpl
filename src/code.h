@@ -35,6 +35,7 @@ typedef enum {
     CODE_STAT(INV_TYPE_STORE_VD),
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
+    CODE_STAT(INV_FLT_CST_PUSH),
     CODE_STAT(INV_CST_INT_TO_FD),
     CODE_STAT(INV_CST_SG),
     CODE_STAT(NO_T_VR_GC),
@@ -199,8 +200,8 @@ typedef union _op_d {
     int16_t i4;
     int32_t i5;
     int64_t i6;
-    float f;
-    double d;
+    float f5;
+    double f6;
     int fd;
     slv v;
     code *c;

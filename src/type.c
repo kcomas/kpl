@@ -449,7 +449,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(LD):
             if (op->l) return TYPE_ER(ts, INV_LD_L_NN);
             if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
-                mod *m = mod_i(ts->s, tds_g(ts->s));
+                mod *m = mod_i(ts->s, tds_g(ts->s, false));
                 if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 m->fns = fn_node_i(m->r->a, NULL);
                 m->fns->sig = type_node_i(m->r->a, TYPE(MOD), NULL);

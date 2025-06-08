@@ -11,7 +11,7 @@ int mt(void *volatile args) {
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
     tds *volatile s = tds_i();
-    tdr *volatile r = tds_g(s);
+    tdr *volatile r = tds_g(s, true);
     mod *volatile m = mod_i(s, r);
     mod_stat mstat;
     if ((mstat = mod_lfile(m, argv[1])) != MOD_STAT(OK)) {
