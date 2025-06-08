@@ -27,7 +27,7 @@ void node_p(const te *t, size_t idnt) {
     node_p(t->d[2].p, idnt);
 }
 
-T(tree, {
+T(tree) {
     te *n = node("5");
     n->d[1].p = node("3");
     ((te*)n->d[1].p)->d[1].p = node("2");
@@ -38,4 +38,4 @@ T(tree, {
     node_p(n, 0);
     A(strcmp(((te*)((te*)n->d[2].p)->d[2].p)->d[0].p, "8") == 0, "tree insert fail");
     te_f(n);
-});
+}

@@ -4,7 +4,7 @@
 
 I;
 
-T(utf8, {
+T(utf8) {
     const char *greek = "AΑΔΓΦΠΣZΩ";
     /*
     putchar(greek[0]);
@@ -26,4 +26,4 @@ T(utf8, {
     }
     un o = c4_g("Ω", 0, &e);
     A(c4_eq(l, o) , "Ω");
-});
+}
