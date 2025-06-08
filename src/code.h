@@ -125,8 +125,8 @@ typedef enum {
     OP_C(VRA), // vector add, push
     OP_C(VRS), // vector sub, pop
     OP_C(CHH), // create runtime hash
-    OP_C(HHSK), // hash set key
     OP_C(HHGK), // hash get key
+    OP_C(HHSK), // hash set key
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false

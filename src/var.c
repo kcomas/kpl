@@ -292,6 +292,51 @@ var_hh *var_hh_i(al *const a, jit_fn *gc) {
     return hh;
 }
 
+void var_hh_rci(var_hh *const hh) {
+    hh->rc++;
+}
+
+void var_hh_rcd(var_hh *const hh) {
+    hh->rc--;
+}
+
+jit_fn *var_hh_gc(var_hh *const hh) {
+    return hh->gc;
+}
+
+var var_hh_gk(mod *const m, ast *const a, var_sg *sg, var_hh *const hh, bool throw) {
+    tbl_itm *ti;
+    tbl_stat tstat = tbl_op(m->r->a, &hh->tl, sg->str, NULL, &ti, NULL, TBL_OP_FLG(FD));
+    if (tstat != TBL_STAT(OK)) {
+        if (throw) {
+            er_itm *ei = er_var(m, a, "HHGK");
+            er_a(m->r->e, ei);
+        }
+        return (var) { .vd = NULL };
+    }
+    return *(var*) ti->data;
+}
+
+static void var_hh_rm(void *data) {
+    FNNF(data, alf);
+}
+
+void var_hh_sk(mod *const m, ast *const a, var_sg *sg, var v, var_hh *const hh, bool throw) {
+    tbl_itm *ti;
+    var *data = ala(m->r->a, sizeof(var));
+    *data = v;
+    tbl_stat tstat = tbl_op(m->r->a, &hh->tl, sg->str, data, &ti, &var_hh_rm, TBL_OP_FLG(UT));
+    if (tstat != TBL_STAT(OK) && throw) {
+        er_itm *ei = er_var(m, a, "HHSK");
+        er_a(m->r->e, ei);
+    }
+}
+
+void var_hh_d(var_hh *hh) {
+    tbl_f(hh->tl, var_hh_rm);
+    alf(hh);
+}
+
 var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {
     var_td *td = ala(m->r->a, sizeof(var_td));
     td->m = m;
