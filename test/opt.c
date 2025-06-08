@@ -63,7 +63,7 @@ T(facloop) {
     A(ept, "exports");
     A(ept->i->l == 1, "exports len");
     te *kv;
-    mc *f = mc_i_cstr("f", &ast_am);
+    mc *f = mc_i_cstr("f", &al_mc);
     A(tbl_g_i(ept, P(f), &kv) == TBL_STAT(OK), "exp not found");
     A(((te*) kv->d[2].p)->d[1].u6 == TYPE(I6), "inv exp type");
     uint32_t id = opt_exp_id(kv);

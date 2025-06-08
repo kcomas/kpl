@@ -1,8 +1,48 @@
 
 #include "mc.h"
 
+static mc *mah = NULL;
+
+#define MC_S_MIN (sizeof(void*) * 2)
+
+static void *al(size_t s) {
+    if (s < MC_S_MIN) s = MC_S_MIN;
+    mc *h = mah;
+    while (h) {
+        if (h->s >= s) break;
+        h = ((mc**) h->d)[1];
+    }
+    if (h && h == mah) mah = ((mc**) mah->d)[1];
+    else if (h) {
+        ((mc**) ((mc**) h->d)[0]->d)[1] = ((mc**) h->d)[1];
+        if (((mc**) h->d)[1]) ((mc**) ((mc**) h->d)[1]->d)[0] = ((mc**) h->d)[0];
+    } else h = malloc(sizeof(mc) + sizeof(uint8_t) * s);
+    return h;
+}
+
+static void fr(void *p) {
+    mc *m = p;
+    ((mc**) m->d)[0] = NULL;
+    ((mc**) m->d)[1] = NULL;
+    if (mah) {
+        ((mc**) mah->d)[0] = m;
+        ((mc**) m->d)[1] = mah;
+    }
+    mah = m;
+}
+
+const alfr al_mc = { .a = al, .f = fr };
+
+static __attribute__((destructor(103))) void al_mc_f(void) {
+    while (mah) {
+        mc *tmp = mah;
+        mah = ((mc**) mah->d)[1];
+        free(tmp);
+    }
+}
+
 mc *mc_i(size_t s, const alfr *af) {
-    mc *m = af->a(sizeof(mc) + sizeof(uint8_t) * s);
+    mc *m = af->a(s);
     m->r = 1;
     m->s = s;
     m->l = 0;

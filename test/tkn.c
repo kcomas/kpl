@@ -14,7 +14,7 @@ static tbl *tkn_mktbl(void) {
 static tkn *btkn = NULL;
 
 static __attribute__((constructor)) void tkn_con(void) {
-    btkn = tkn_i(&tm, &al_te, &tm, tkn_mktbl, tkn_df, mc_i(0, &tm));
+    btkn = tkn_i(&tm, &al_te, &tm, tkn_mktbl, tkn_df, mc_i(0, &al_mc));
     tkn_b(btkn);
 }
 
@@ -38,7 +38,7 @@ T(btest) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     const uint16_t tids[] = {1, TCUST(WS), TCUST(NUM), TCUST(WS), 3, TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NL), TCUST(WS), 5, TCUST(WS), 6, TCUST(WS), 2, TCUST(WS), 4};
     printf("%s\n", pgm);
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     tkn_a(t, TOKEN(UN), "sigma", tkn_ft); // 1
     tkn_a(t, TOKEN(UN), "sig", tkn_ft); // 2
     tkn_a(t, TOKEN(UN), "Σ", tkn_ft); // 3
@@ -53,7 +53,7 @@ T(btest) {
 T(stest) {
     const char *pgm = "0 Σ [12;44;67]\n";
     const uint16_t tids[] = {TCUST(NUM), TCUST(WS), 3, TCUST(WS), TCUST(LS), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(RS), TCUST(NL)};
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     printf("%s\n", pgm);
     tkn_a(t, TCUST(LS), "[", tkn_ft);
     tkn_a(t, TCUST(RS), "]", tkn_ft);
@@ -65,7 +65,7 @@ T(stest) {
 T(cmt) {
     const char *pgm = "// a b c\nd";
     const uint16_t tids[] = {TCUST(CMT), TCUST(VAR)};
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     printf("%s\n", pgm);
     tkn_a(t, TCUST(CMT), "//", tkn_cmt);
     tkn_p(t->t, 0);
@@ -79,7 +79,7 @@ T(symtest) {
     size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(SYM), TCUST(WS), TCUST(VAR), TCUST(SYM)};
     printf("%s\n", pgm);
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     tkn_p(t->t, 0);
     tkn_stat tstat;
     te *m = te_i(2, &al_te, NULL);
@@ -108,7 +108,7 @@ T(inttest) {
     size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM), TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NUM)};
     printf("%s\n", pgm);
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     tkn_p(t->t, 0);
     tkn_stat tstat;
     te *m = te_i(2, &al_te, NULL);
@@ -132,7 +132,7 @@ T(inttest) {
 T(err) {
     const char *pgm = "a`$";
     printf("%s\n", pgm);
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     tkn_stat tstat;
     te *m = te_i(2, &al_te, NULL);
     err *e = NULL;
@@ -151,7 +151,7 @@ T(err) {
 T(str) {
     const char *pgm = "a \"b\" c";
     const uint16_t tids[] = {TCUST(VAR), TCUST(WS), TCUST(STR), TCUST(WS), TCUST(VAR)};
-    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &tm));
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     printf("%s\n", pgm);
     tkn_p(t->t, 0);
     R(t, tids);

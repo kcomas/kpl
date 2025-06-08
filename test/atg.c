@@ -239,7 +239,7 @@ T(facloop) {
     tbl *et = tbl_c(an->d[3].p);
     AR(0);
     A(et->i->l == 1, "inv et");
-    mc *s = mc_i_cstr("f", &ast_am);
+    mc *s = mc_i_cstr("f", &al_mc);
     te *kv;
     A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
     mc_f(s);
@@ -420,7 +420,7 @@ T(scope) {
     tbl *et = tbl_c(an->d[3].p);
     AR(0);
     A(et->i->l == 1, "inv et");
-    mc *s = mc_i_cstr("s", &ast_am);
+    mc *s = mc_i_cstr("s", &al_mc);
     te *kv;
     A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
     mc_f(s);
@@ -457,7 +457,7 @@ T(efn) {
     tbl *et = tbl_c(an->d[3].p);
     AR(0);
     A(et->i->l == 1, "inv et");
-    mc *s = mc_i_cstr("addmul", &ast_am);
+    mc *s = mc_i_cstr("addmul", &al_mc);
     te *kv;
     A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
     double x = 1.1, y = 2.2, z = 3.3;

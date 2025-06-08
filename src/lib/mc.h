@@ -4,6 +4,8 @@
 #include "def.h"
 #include <string.h>
 
+extern const alfr al_mc;
+
 typedef struct {
     ssize_t r; // ref count
     size_t s, l; // size, len
