@@ -20,15 +20,14 @@ typedef bool cmpfn(un a, un b); // compare
 // hashmap open address
 typedef struct {
     ssize_t r;
-    alfn *ta;
-    frfn *tf;
+    const alfr *af;
     hhfn *hf;
     cmpfn *cf;
     lst *i; // items
     te *b; // buckets
 } tbl;
 
-tbl *tbl_i(alfn *at, frfn *ft, hhfn *hf, cmpfn *cf, lst *i, te *b);
+tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b);
 
 tbl *tbl_c(tbl *t);
 

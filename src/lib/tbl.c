@@ -1,11 +1,10 @@
 
 #include "tbl.h"
 
-tbl *tbl_i(alfn *ta, frfn *tf, hhfn *hf, cmpfn *cf, lst *i, te *b) {
-    tbl *t = ta(sizeof(tbl));
+tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b) {
+    tbl *t = af->al(sizeof(tbl));
     t->r = 1;
-    t->ta = ta;
-    t->tf = tf;
+    t->af = af;
     t->hf = hf;
     t->cf = cf;
     t->i = i;
@@ -88,7 +87,7 @@ tbl_stat tbl_a(tbl *t, te *kv) {
     tbl_stat tstat = TBL_STAT(OK);
     if (!ins(t, kv)) return TBL_STAT(OAE);
     if ((double) t->i->l / (double) t->b->l >= TBL_RES) {
-        te *nb = te_i(t->b->l * TBL_MUL, t->b->ta, t->b->tf);
+        te *nb = te_i(t->b->l * TBL_MUL, t->b->af, t->b->tf);
         te_f(t->b);
         t->b = nb;
         te *h = t->i->h;
@@ -119,5 +118,5 @@ void tbl_f(tbl *t) {
     if (!t || --t->r > 0) return;
     te_f(t->b);
     lst_f(t->i);
-    t->tf(t);
+    t->af->fr(t);
 }
