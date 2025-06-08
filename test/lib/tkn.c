@@ -1,69 +1,5 @@
 
-#include "../../src/lib/tkn.h"
-#include <ctype.h>
-#include <stdio.h>
-
-static size_t sh(un v) {
-    return v.c.a + v.c.b + v.c.c + v.c.d;
-}
-
-static tbl *mktbl(void) {
-    lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
-    te *b = te_i(10, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &sh, &c4_eq, tl, b);
-    return t;
-}
-
-static void entry_free(void *v) {
-    te *t = (te*) v;
-    tbl_f(t->d[3].p);
-    free(t);
-}
-
-static tkn_stat df(tkn *const t, te *const m) {
-    t->cno = m->d[2].u6;
-    t->pos = m->d[3].u6;
-    size_t e = 0;
-    un c = c4_g((char*) t->s->d, t->pos, &e);
-    if (!isalnum(c.c.a)) return TKN_STAT(INV);
-    while (isalnum(c.c.a)) {
-        t->cno++;
-        t->pos = e + 1;
-        c = c4_g((char*) t->s->d, t->pos, &e);
-    }
-    m->d[0].u6 = TOKEN(VAR);
-    m->d[4].u6 = t->pos;
-    return TKN_STAT(OK);
-}
-
-static tkn_stat num(tkn *const t, te *const m) {
-    while (isdigit(t->s->d[t->pos])) {
-        t->pos++;
-        m->d[4].u6++;
-    }
-    return TKN_STAT(OK);
-}
-
-static tkn_stat nl(tkn *const t, te *const m) {
-    (void) m;
-    t->lno++;
-    t->cno = 1;
-    return TKN_STAT(OK);
-}
-
-static tkn_stat ft(tkn *const t, te *const m) {
-    (void) t;
-    (void) m;
-    return TKN_STAT(OK);
-}
-
-static tkn_stat ws(tkn *const t, te *const m) {
-    while (t->s->d[t->pos] == ' ') {
-        t->pos++;
-        m->d[4].u6++;
-    }
-    return TKN_STAT(OK);
-}
+#include "tkn_t.h"
 
 static void tkn_p(tbl *tl, size_t idnt) {
     te *h = tl->i->h;
@@ -81,18 +17,18 @@ static void tkn_p(tbl *tl, size_t idnt) {
 }
 
 static void standard(tkn *const t) {
-    tkn_a(t, TOKEN(UN), " ", &ws);
-    tkn_a(t, TOKEN(UN), "\n", &nl);
-    tkn_a(t, TOKEN(NUM), "0", &num);
-    tkn_a(t, TOKEN(NUM), "1", &num);
-    tkn_a(t, TOKEN(NUM), "2", &num);
-    tkn_a(t, TOKEN(NUM), "3", &num);
-    tkn_a(t, TOKEN(NUM), "4", &num);
-    tkn_a(t, TOKEN(NUM), "5", &num);
-    tkn_a(t, TOKEN(NUM), "6", &num);
-    tkn_a(t, TOKEN(NUM), "7", &num);
-    tkn_a(t, TOKEN(NUM), "8", &num);
-    tkn_a(t, TOKEN(NUM), "9", &num);
+    tkn_a(t, TOKEN(WS), " ", &tkn_ws);
+    tkn_a(t, TOKEN(NL), "\n", &tkn_nl);
+    tkn_a(t, TOKEN(NUM), "0", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "1", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "2", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "3", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "4", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "5", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "6", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "7", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "8", &tkn_num);
+    tkn_a(t, TOKEN(NUM), "9", &tkn_num);
 }
 
 static void tknize(tkn *const t) {
@@ -110,14 +46,14 @@ static void tknize(tkn *const t) {
 static void btest(void) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, TOKEN(UN), "sigma", &ft);
-    tkn_a(t, TOKEN(UN), "sig", &ft);
-    tkn_a(t, TOKEN(UN), "Σ", &ft);
-    tkn_a(t, TOKEN(UN), "ΣΩ", &ft);
-    tkn_a(t, TOKEN(UN), "bar", &ft);
-    tkn_a(t, TOKEN(UN), "bee", &ft);
+    tkn_a(t, TOKEN(UN), "sigma", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "sig", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "ΣΩ", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "bar", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "bee", &tkn_ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
@@ -126,12 +62,12 @@ static void btest(void) {
 static void stest(void) {
     const char *pgm = "0 Σ [12;44;67]\n";
     printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, TOKEN(UN), "Σ", &ft);
-    tkn_a(t, TOKEN(UN), ";", &ft);
-    tkn_a(t, TOKEN(UN), "[", &ft);
-    tkn_a(t, TOKEN(UN), "]", &ft);
+    tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
+    tkn_a(t, TOKEN(SEMI), ";", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "[", &tkn_ft);
+    tkn_a(t, TOKEN(UN), "]", &tkn_ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
