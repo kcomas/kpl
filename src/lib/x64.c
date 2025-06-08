@@ -249,7 +249,7 @@ x64_stat x64_movsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     x64_a(p, m, 0xF2);
-    rex_br(p, m, d, s);
+    rex_br(p, m, s, d);
     return x64_b(p, m, 3, 0x0F, 0x10, modrm(MOD(11), s, d));
 }
 
