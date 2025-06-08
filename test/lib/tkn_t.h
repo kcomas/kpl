@@ -3,6 +3,16 @@
 #include <ctype.h>
 #include <stdio.h>
 
+#define TCUST(N) TCUST_##N
+
+typedef enum {
+    TCUST(NL) = TOKEN(USR),
+    TCUST(WS),
+    TCUST(NUM),
+    TCUST(SEMI),
+    TCUST(VAR)
+} tcust;
+
 size_t tkn_sh(un v);
 
 tbl *tkn_mktbl(void);
@@ -18,3 +28,5 @@ tkn_stat tkn_nl(tkn *const t, te *const m);
 tkn_stat tkn_ft(tkn *const t, te *const m);
 
 tkn_stat tkn_ws(tkn *const t, te *const m);
+
+void tkn_standard(tkn *const t);

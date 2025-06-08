@@ -16,21 +16,6 @@ static void tkn_p(tbl *tl, size_t idnt) {
     }
 }
 
-static void standard(tkn *const t) {
-    tkn_a(t, TOKEN(WS), " ", &tkn_ws);
-    tkn_a(t, TOKEN(NL), "\n", &tkn_nl);
-    tkn_a(t, TOKEN(NUM), "0", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "1", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "2", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "3", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "4", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "5", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "6", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "7", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "8", &tkn_num);
-    tkn_a(t, TOKEN(NUM), "9", &tkn_num);
-}
-
 static void tknize(tkn *const t) {
     tkn_stat tstat;
     te *m = te_i(5, &malloc, &free);
@@ -47,7 +32,7 @@ static void btest(void) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
-    standard(t);
+    tkn_standard(t);
     tkn_a(t, TOKEN(UN), "sigma", &tkn_ft);
     tkn_a(t, TOKEN(UN), "sig", &tkn_ft);
     tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
@@ -63,9 +48,9 @@ static void stest(void) {
     const char *pgm = "0 Σ [12;44;67]\n";
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &tkn_entry_free, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
-    standard(t);
+    tkn_standard(t);
     tkn_a(t, TOKEN(UN), "Σ", &tkn_ft);
-    tkn_a(t, TOKEN(SEMI), ";", &tkn_ft);
+    tkn_a(t, TCUST(SEMI), ";", &tkn_ft);
     tkn_a(t, TOKEN(UN), "[", &tkn_ft);
     tkn_a(t, TOKEN(UN), "]", &tkn_ft);
     tkn_p(t->t, 0);

@@ -29,7 +29,7 @@ tkn_stat tkn_df(tkn *const t, te *const m) {
         t->pos = e + 1;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
-    m->d[0].u6 = TOKEN(VAR);
+    m->d[0].u6 = TCUST(VAR);
     m->d[4].u6 = t->pos;
     return TKN_STAT(OK);
 }
@@ -61,4 +61,19 @@ tkn_stat tkn_ws(tkn *const t, te *const m) {
         m->d[4].u6++;
     }
     return TKN_STAT(OK);
+}
+
+void tkn_standard(tkn *const t) {
+    tkn_a(t, TCUST(WS), " ", &tkn_ws);
+    tkn_a(t, TCUST(NL), "\n", &tkn_nl);
+    tkn_a(t, TCUST(NUM), "0", &tkn_num);
+    tkn_a(t, TCUST(NUM), "1", &tkn_num);
+    tkn_a(t, TCUST(NUM), "2", &tkn_num);
+    tkn_a(t, TCUST(NUM), "3", &tkn_num);
+    tkn_a(t, TCUST(NUM), "4", &tkn_num);
+    tkn_a(t, TCUST(NUM), "5", &tkn_num);
+    tkn_a(t, TCUST(NUM), "6", &tkn_num);
+    tkn_a(t, TCUST(NUM), "7", &tkn_num);
+    tkn_a(t, TCUST(NUM), "8", &tkn_num);
+    tkn_a(t, TCUST(NUM), "9", &tkn_num);
 }
