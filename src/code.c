@@ -688,7 +688,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
-        switch (cn->tgt->at) {
+    switch (cn->tgt->at) {
         case AST_TYPE(RES):
             if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_ER(cs, CALL_RES_NOT_SELF, a);
             return code_gen_call_res_var(cs, a, c, true);
@@ -704,6 +704,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             opn->l = opn->r = NULL;
             break;
         case AST_TYPE(VAR):
+            // TODO check if the var is te
             return code_gen_call_res_var(cs, a, c, false);
         default:
             return CODE_ER(cs, INV_CALL_TGT, a);
