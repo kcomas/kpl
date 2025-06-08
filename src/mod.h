@@ -1,11 +1,7 @@
 
 #pragma once
 
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
+#include "kpl.h"
 
 #define MOD_STAT(NAME) MOD_STAT_##NAME
 
@@ -16,9 +12,26 @@ typedef enum {
 
 typedef struct {
     struct {
-        struct statx info;
+        struct stat sb;
         char *path, *str;
     } src;
 } mod;
 
-mod_stat mod_file(mod *const m, const char *const path);
+inline mod *mod_init(void) {
+    return calloc(1, sizeof(mod));
+}
+
+// load file
+mod_stat mod_lfile(mod *const m, const char *const path);
+
+// print src
+inline void mod_psrc(const mod *const m) {
+    if (m->src.path != NULL) printf("%s\n", m->src.path);
+    printf("%s", m->src.str);
+}
+
+inline void mod_free(mod *m) {
+    FNN(m->src.path);
+    FNN(m->src.str);
+    free(m);
+}

@@ -1,0 +1,4 @@
+src/*.o
+test/*.o
+kpl
+*_test
