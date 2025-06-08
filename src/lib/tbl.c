@@ -5,7 +5,7 @@
 
 static tbl *tblp[TBL_POOL];
 
-static _Atomic size_t tpi = 0;
+static size_t tpi = 0;
 
 static void *al(size_t n) {
     (void) n;

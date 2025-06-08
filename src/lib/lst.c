@@ -5,7 +5,7 @@
 
 static lst *lstp[LST_POOL];
 
-static _Atomic size_t lpi = 0;
+static size_t lpi = 0;
 
 static void *al(size_t n) {
     (void) n;

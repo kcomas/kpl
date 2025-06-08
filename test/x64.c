@@ -337,3 +337,21 @@ T(pxor) {
     A(!((double(*)(double)) m)(1.1), "xor");
     X64_RR();
 }
+
+T(sib) {
+    size_t p = 0;
+    int64_t a[] = {1, 2, 3};
+    int64_t v = 5;
+    x64_mov_rrmo(&p, m, R(AX), R(DI), R(SI), S8);
+    x64_ret(&p, m);
+    printj(p, m);
+    int64_t r = ((int64_t(*)(int64_t*, size_t)) m)(a, 2);
+    A(r == a[2], "inv sib");
+    p = 0;
+    x64_mov_rmor(&p, m, R(DI), R(SI), S8, R(DX));
+    x64_ret(&p, m);
+    printj(p, m);
+    ((void(*)(int64_t*, size_t, int64_t)) m)(a, 1, v);
+    A(a[1] = v, "inv sib");
+    for (size_t i = 0; i < 3; i++) printf("%ld\n", a[i]);
+}
