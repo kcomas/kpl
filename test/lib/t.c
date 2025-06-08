@@ -18,20 +18,21 @@ void _a(const char *name, _test_fn *tf) {
 
 int main(void) {
     volatile int p = 0, f = 0; // can't optimize with jit fns
-    printf("\e[3m%s\n\e[0m", __f);
+    printf("\e[1m%s\n\e[0m", __f);
     while (__t) {
         _tests *ct = __t;
         __t = __t->n;
         ct->tf(ct);
+        printf("\e[%dm%s %s\e[0m", ct->m ? 91 : 92, __f, ct->name);
         if (ct->m) {
-            printf("\e[1;31m%s\e[0m\e[1;90m:\e[34m%d\e[0m \e[1m%s\n\e[0m", ct->name, ct->ln, ct->m);
+            printf("\e[90m:\e[96m%d\e[0m %s\n", ct->ln, ct->m);
             f++;
         } else {
-            printf("\e[1;32m%s\n\e[0m", ct->name);
+            putchar('\n');
             p++;
         }
         free(ct);
     }
-    printf("\e[3;%dm%s\e[0m \e[92m%d \e[91m%d\n\e[0m", f ? 91 : 92, __f, p, f);
+    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", f ? 91 : 92, __f, p, f);
     return f ? f : 0;
 }
