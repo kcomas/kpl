@@ -1,15 +1,15 @@
 
 #include "ast.h"
 
-const char *ast_op_str(op o) {
-    static const char *ops[] = {
+const char *ast_oc_str(oc o) {
+    static const char *ocs[] = {
         "_START",
         "ADD",
         "SUB",
         "_END"
     };
     const char *s = "INV";
-    if (o > OP(_START) && o < OP(_END)) s = ops[o];
+    if (o > OC(_START) && o < OC(_END)) s = ocs[o];
     return s;
 }
 
@@ -65,8 +65,8 @@ static ast_stat aply(ast *a, te *pn, void **vn, te **e) {
 }
 
 static ast *ast_tkn(ast *a) {
-    ast_t_a(a, TCUST(ADD), OP(ADD));
-    ast_t_a(a, TCUST(SUB), OP(SUB));
+    ast_t_a(a, TCUST(ADD), OC(ADD));
+    ast_t_a(a, TCUST(SUB), OC(SUB));
     return a;
 }
 
@@ -96,7 +96,7 @@ void ast_p(const te *an, size_t idnt) {
                     printf(" %ld", an->d[4].i6);
                     break;
                 default:
-                    printf("INV");
+                    printf("INV S");
                     break;
             }
             putchar(')');
@@ -106,7 +106,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(O):
             printf("(O ");
             type_p(an->d[3].p);
-            printf(" [%s]", ast_op_str(an->d[6].u6));
+            printf(" [%s]", ast_oc_str(an->d[6].u6));
             putchar(')');
             break;
         case AST_CLS(Z):
@@ -131,7 +131,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(L):
             break;
         default:
-            printf("INV");
+            printf("INV CLS");
             break;
     }
 }
@@ -141,6 +141,10 @@ static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restr
     if (t->d[0].u6 >= TYPE(I3) && t->d[0].u6 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
     if (t->d[0].u6 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
     return false;
+}
+
+static bool ast_un_eq(un a, un b) {
+    return ast_eq(a.p, b.p);
 }
 
 bool ast_eq(const te *restrict a, const te *restrict b) {
@@ -163,7 +167,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(Z):
             break;
         case AST_CLS(A):
-            return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_eq);
+            return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_un_eq);
         case AST_CLS(L):
             break;
         default:
