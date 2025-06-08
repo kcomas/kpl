@@ -292,6 +292,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             } else if (op->l->at == AST_TYPE(SYM)) {
+                if (!op->l->n.sym->a) return TYPE_ER(ts, INV_SYM_ASS);
                 IFTCHK(type_chk, ts, fns, op->l);
                 ASTGTN(lt, op->l, INV_SYM_ASS);
                 if (!type_eq(lt, rt)) return TYPE_ER(ts, SYM_ASS_N_T_M);

@@ -27,6 +27,7 @@ typedef enum {
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
     CODE_STAT(TC_R_N), // right side for try catch null
+    CODE_STAT(ASS_R_N),
     CODE_STAT(INV_TYPE_STORE_VD),
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
@@ -96,6 +97,7 @@ typedef enum {
     OP_C(PV), // push value
     OP_C(CTSV), // create tuple from stack u6 is length
     OP_C(GIDX), // get index te, vr, st u6 is i
+    OP_C(SIDX), // set idx te, vr, st u6 is i
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
@@ -117,14 +119,14 @@ typedef enum {
     OP_C(GT),
     OP_C(LT),
     OP_C(OR),
-    OP_C(CNCTSG), // sg cnct op type is ethier sg or te
+    OP_C(CNCTSG), // sg cnct op type is either sg or te
     OP_C(WFD), // OP_T is type to be written
     // GC
     OP_C(RCI),
     OP_C(RCD),
     OP_C(RCF), // dec ref count of type ret if gt 0
     OP_C(GC), // type is base type
-    OP_C(GCTEI), //
+    OP_C(GCTSV), //
     OP_C(DEL) // delete top of stack free ptr
 } op_c;
 

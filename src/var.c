@@ -171,12 +171,12 @@ jit_fn *var_tsv_gc(var_tsv *const tsv) {
     return tsv->gc;
 }
 
-void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
-    tsv->v[idx] = v;
-}
-
 var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
     return tsv->v[idx];
+}
+
+void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v) {
+    tsv->v[idx] = v;
 }
 
 void var_tsv_d(var_tsv *tsv) {

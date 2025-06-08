@@ -7,8 +7,10 @@ f:FN(v;VD)${(x)
 
 f(v)
 
-v`a:"A"
+v`a:"A Changed"
 
 f(v)
 
+\d v`a
+\d v`b
 \d v
