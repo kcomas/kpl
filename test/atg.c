@@ -73,7 +73,7 @@ T(tbl) {
 }
 
 T(fnadd3) {
-    AI(fnadd3, 2);
+    AI(TPGM(fnadd3), 2);
     te *ft = TFN(FN, TS(I6), 3, "a", TS(I6), 0, "b", TS(I6), 1, "c", TS(I6), 2);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
@@ -105,7 +105,7 @@ T(fnadd3) {
 }
 
 T(fnf6muli6cstdiv) {
-    AI(fnf6muli6cstdiv, 2);
+    AI(TPGM(fnf6muli6cstdiv), 2);
     te *ft = TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
@@ -137,7 +137,7 @@ T(fnf6muli6cstdiv) {
 }
 
 T(apltypefn) {
-    AI(apltypefn, 2);
+    AI(TPGM(apltypefn), 2);
     te *ft = TFN(FN, TS(I6), 2, "a", TS(I6), 0, "b", TS(I6), 1);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
@@ -167,7 +167,7 @@ T(apltypefn) {
 }
 
 T(facloop) {
-    AI(facloop, 1);
+    AI(TPGM(facloop), 1);
     te *cn = RN(SN(_G, I5(0)));
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
@@ -198,7 +198,7 @@ T(facloop) {
 }
 
 T(facrec) {
-    AI(facrec, 2);
+    AI(TPGM(facrec), 2);
     te *ft = TFN(FN, TS(U6), 1, "n", TS(U6), 0);
     te *cn = RN(LN(LT(1, "fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),

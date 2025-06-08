@@ -248,7 +248,7 @@ static atg_stat if_l_l(atg *t, gen *g, te *an, err **e) {
     lst *ib = ((te*) an->d[6].p)->d[4].p;
     if (ic && ib->l == 1) return atg_err(t, an, e, "nyi");
     else if (ic && ib->l == 2) return  if_l_l_2(t, g, an, e);
-    else if (ic && ib->l > 2) return atg_err(t, an, e, "nyi");
+    else if (!ic && ib->l > 2) return atg_err(t, an, e, "TODO if NULL ? {}");
     return atg_err(t, an, e, "atg if inv");
 }
 
