@@ -36,8 +36,9 @@ void alf(void *ptr) {
     alci *ai = ptr - sizeof(alci);
     alc *ac = ai->ac;
     ac->aus -= ai->size;
-    if (ac->aus <= 0 && ((float) ac->len / (float) ac->size > ALC_USED_FREE_PCT)) {
-        LST_R(ac->a, alc, ac, alc_f, NULL);
+    if (ac->aus <= 0 && ((double) ac->len / (double) ac->size >= ALC_USED_FREE_PCT)) {
+        al *a = ac->a;
+        LST_R(a, alc, ac, alc_f, NULL);
     }
     // TODO move small pieces
 }

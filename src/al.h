@@ -5,7 +5,6 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdint.h>
-#include <stdio.h>
 #include "lst.h"
 
 typedef struct _alc alc;
