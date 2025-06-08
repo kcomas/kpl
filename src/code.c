@@ -602,6 +602,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             OP_A(cs, &mgc, RFN, CODE, { .t = TYPE(VD) }, NULL);
             OP_A(cs, c, LM, MOD, { .tsv = ctsv_i(cs->a, 0, opn->r->n.m, mgc) }, opn->r);
             break;
+        case OP_TYPE(VH):
+            break; // no code
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
             OP_P_INT_RET(opn, cs, l, c);

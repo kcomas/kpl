@@ -45,6 +45,8 @@ static const char *const tss[] = {
     "INV_LD_ME",
     "LD_MOD_TBL_AD_F",
     "INV_LD",
+    "INV_VH_L_NN",
+    "INV_VH_R_NG",
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
     "INV_ADD",
@@ -251,8 +253,11 @@ static type_stat mod_tn_i(type_st *const ts, mod *const m) {
     char vstr[MAX_VAR_LEN + 1]; // for `
     m->tn = type_node_i(ts->a, TYPE(ST), ast_i(ts->a, AST_TYPE(TBL), (node) { .tl = tbl_i(ts->a, TBL_I_SIZE) }, NULL));
     while (h) {
-        // TODO make var private
         var_node *var = (var_node*) h->data;
+        if (var->flgs & NODE_FLG(VH)) {
+            h = h->next;
+            continue;
+        }
         memset(vstr, '\0', MAX_VAR_LEN + 1);
         vstr[0] = '`';
         strcpy(vstr + 1, var->str);
@@ -400,6 +405,12 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 break;
             }
             return TYPE_ER(ts, INV_LD);
+        case OP_TYPE(VH):
+            if (op->l) return TYPE_ER(ts, INV_VH_L_NN);
+            if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_ER(ts, INV_VH_R_NG);
+            op->r->n.var->flgs |= NODE_FLG(VH);
+            op->ret = type_node_i(ts->a, TYPE(VD), NULL);
+            break;
         case OP_TYPE(ADD):
             ASTGTNBOP(ADD);
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;

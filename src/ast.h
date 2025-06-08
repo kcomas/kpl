@@ -106,7 +106,8 @@ void ast_f(ast *a);
 typedef enum {
     NODE_FLG(EC) = (1 << 0), // error caught
     NODE_FLG(GCR) = (1 << 1), // gc ret value
-    NODE_FLG(GCV) = (1 << 2) // gc var for storing new var
+    NODE_FLG(GCV) = (1 << 2), // gc var for storing new var
+    NODE_FLG(VH) = (1 << 3)  // var hidden does not get exported
 } node_flg;
 
 #define NFEC(FLGS) (FLGS & NODE_FLG(EC))
@@ -216,6 +217,7 @@ typedef enum {
     OP_TYPE(CST), // $
     OP_TYPE(DEL), // \d
     OP_TYPE(LD), // \l
+    OP_TYPE(VH), // \h
     OP_TYPE(ADD),
     OP_TYPE(SUB),
     OP_TYPE(MUL),
@@ -594,7 +596,7 @@ typedef enum {
 const char *var_type_str(var_type vt);
 
 typedef struct {
-    uint8_t id;
+    uint8_t id, flgs;
     var_type vt;
     type_node *tn; // null for unknown
     fn_node *fns; // scope

@@ -5,5 +5,6 @@ sub:FN(I6;I6;I6)${(x;y) x - y }
 
 x:I6$4
 y:I6$5
-
+z:I6$6
+\h z
 $(FD;1) << " ", ["x:";SG$x;"y:";SG$y;"\n"]
