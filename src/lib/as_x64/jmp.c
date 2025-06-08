@@ -3,6 +3,10 @@
 
 // jmps
 
+#define JBS (sizeof(uint8_t) * 2)
+
+#define JDS (JBS + sizeof(uint32_t))
+
 #define INST_J_L(N) static bool as_##N##_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) arg2; \
@@ -11,9 +15,9 @@
     te *lblc = as_lbl_g_c(a, arg1->d[1].u6); \
     if (!lblc) return false; \
     if (lblc->d[9].u6) { \
-        ssize_t diff = lblc->d[8].u6 - *p - sizeof(uint8_t) * 2; \
+        ssize_t diff = lblc->d[8].u6 - *p - JBS; \
         if (diff >= INT8_MIN && diff <= INT8_MAX) return x64_##N##_b(p, m, diff) == X64_STAT(OK); \
-        return x64_##N##_d(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK); \
+        return x64_##N##_d(p, m, lblc->d[8].u6 - *p - JDS) == X64_STAT(OK); \
     } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false; \
     for (size_t i = 0; i < 6; i++) x64_nop(p, m); \
     return true; \
@@ -23,9 +27,9 @@
 #define INST_J_E(N) static bool as_##N##_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) { \
     (void) a; \
     size_t p = fc->d[8].u6; \
-    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) * 2; \
+    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - JBS; \
     if (diff >= INT8_MIN && diff <= INT8_MAX) return x64_##N##_b(&p, m, diff) == X64_STAT(OK); \
-    return x64_##N##_d(&p, m, lc->d[8].u6 - fc->d[8].u6 - sizeof(uint8_t) * 2 - sizeof(uint32_t)) == X64_STAT(OK); \
+    return x64_##N##_d(&p, m, lc->d[8].u6 - fc->d[8].u6 - JDS) == X64_STAT(OK); \
 }
 
 #define INST_J_LE(N) INST_J_L(N) \
