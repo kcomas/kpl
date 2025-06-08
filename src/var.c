@@ -17,7 +17,7 @@ var_sg *var_sg_i_str(al *const a, const char *const str) {
 }
 
 void var_sg_rci(var_sg *const sg) {
-    sg->rc++;
+    if (sg) sg->rc++;
 }
 
 void var_sg_rcd(var_sg *const sg) {
@@ -205,7 +205,7 @@ size_t var_tsv_len(var_tsv *const tsv) {
 }
 
 void var_tsv_rci(var_tsv *const tsv) {
-    tsv->rc++;
+    if (tsv) tsv->rc++;
 }
 
 void var_tsv_rcd(var_tsv *const tsv) {
@@ -301,7 +301,7 @@ tbl_itm* var_hh_tl_s(var_hh *const hh) {
 }
 
 void var_hh_rci(var_hh *const hh) {
-    hh->rc++;
+    if (hh) hh->rc++;
 }
 
 void var_hh_rcd(var_hh *const hh) {
@@ -354,7 +354,7 @@ var_td *var_td_i(mod *const m, var_tsv *const te, code *const c) {
 }
 
 void var_td_rci(var_td *const td) {
-    td->rc++;
+    if (td) td->rc++;
 }
 
 void var_td_rcd(var_td *const td) {

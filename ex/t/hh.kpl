@@ -26,6 +26,6 @@ s:FN(VD)${()
     h:HH{TE[U6;U6]}${`b:[U6$3;U6$4]}
     h`a:[U6$7;U6$8]
     p("b";'h`b)
-    p("a";'h`a)}
+    p("a";'h`a)} // change key for runtime error
 
 s()
