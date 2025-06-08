@@ -31,6 +31,7 @@ const char *type_str(type t) {
         "MC",
         "_H",
         "ST",
+        "ET",
         "UN",
         "_F",
         "FN",

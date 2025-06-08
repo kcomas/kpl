@@ -231,3 +231,9 @@ T(st) {
     )), NULL)));
     te_f(st);
 }
+/*
+T(import) {
+    IC(TPGM(import));
+    V(NULL);
+}
+*/

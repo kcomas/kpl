@@ -40,6 +40,7 @@ typedef enum {
     // hash
     TYPE(_H),
     TYPE(ST),
+    TYPE(ET),
     TYPE(UN),
     // function
     TYPE(_F),
