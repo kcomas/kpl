@@ -171,6 +171,8 @@ static const char *op_c_str[] = {
     "OR",
     "CNCTSG", // sg cnct op type is either sg or te
     "WFD", // OP_T is type to be written
+    "RFD",
+    "OFD",
     "TDI",
     "TDJ",
     // GC
@@ -181,7 +183,8 @@ static const char *op_c_str[] = {
     "GC", // type is base type
     "GCTSVI", // gc idx in tsv
     "GCVR", // gc vr of type
-    "DEL" // delete top of stack free ptr
+    "DEL", // delete top of stack free ptr
+    "CLSE" // general close eg file descriptor
 };
 
 const char *op_c_get_str(op_c oc) {
@@ -773,13 +776,25 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                             }
                         return CODE_ER(cs, INV_CST_INT_TO_FD, a);
                     }
+                    IFCGEN(code_gen, cs, opn->r, c);
+                    if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
+                    switch (tr->t) {
+                        case TYPE(STR):
+                        case TYPE(SG):
+                            OP_A(cs, c, OFD, OP, { .t = tr->t }, a);
+                           return CODE_ER(cs, OK, a);
+                        default:
+                            break;
+                    }
                     return CODE_ER(cs, INV_CST_FD, a);
                 default:
                     break;
             }
             return CODE_ER(cs, INV_CST, a);
         case OP_TYPE(CLSE):
-            // TODO
+            IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
+            OP_A(cs, c, CLSE, OP, { .t = tr->t }, a);
             break;
         case OP_TYPE(DEL):
             IFCGEN(code_gen, cs, opn->r, c);
@@ -916,7 +931,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_A(cs, c, WFD, OP, { .t = tr->t }, a);
                 OP_GC(cs, c, tr, a);
             } else if  (tl->t != TYPE(FD) && tr->t == TYPE(FD)) { // read
-                // TODO
+                OP_A(cs, c, RFD, OP, { .t = tl->t }, a);
             }
             else return CODE_ER(cs, INV_FD_OP, a);
             break;

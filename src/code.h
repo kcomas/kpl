@@ -147,6 +147,8 @@ typedef enum {
     OP_C(OR),
     OP_C(CNCTSG), // sg cnct op type is either sg or te
     OP_C(WFD), // OP_T is type to be written
+    OP_C(RFD), // OP_T is type to be read
+    OP_C(OFD), // open fd
     // thread
     OP_C(TDI), // thread init
     OP_C(TDJ), // thread join
@@ -158,7 +160,8 @@ typedef enum {
     OP_C(GC), // type is base type
     OP_C(GCTSVI), // gc idx in tsv
     OP_C(GCVR), // gc vr of type
-    OP_C(DEL) // delete top of stack free ptr
+    OP_C(DEL), // delete top of stack free ptr
+    OP_C(CLSE) // general close eg file descriptor
 } op_c;
 
 const char *op_c_get_str(op_c oc);
