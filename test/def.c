@@ -51,3 +51,14 @@ T(offset1632) {
     printf("%d\n", i5_g_o(v, 1));
     A(i5_g_o(v, 1) == ns, "i5_g_o");
 }
+
+T(offsetf5f5) {
+    float a = 3.14, b = 14.3;
+    un v;
+    v = f5_s_o(v, 0, a);
+    v = f5_s_o(v, 1, b);
+    float c = f5_g_o(v, 0);
+    float d = f5_g_o(v, 1);
+    printf("%f %f\n", c, d);
+    A(a == c && b == d, "f5_g_o");
+}

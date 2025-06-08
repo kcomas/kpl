@@ -27,8 +27,8 @@ typedef union {
     int16_t i4;
     int32_t i5;
     int64_t i6;
-    float f;
-    double d;
+    float f5;
+    double f6;
     void *p;
 } un;
 
@@ -61,8 +61,8 @@ _UOH(float, f5);
 #define I4(D) UN(i4, D)
 #define I5(D) UN(i5, D)
 #define I6(D) UN(i6, D)
-#define F(D) UN(f, D)
-#define D(D) UN(d, D)
+#define F5(D) UN(f5, D)
+#define F6(D) UN(f6, D)
 #define P(D) UN(p, (void*) D)
 
 // get next utf8 char starting at s
