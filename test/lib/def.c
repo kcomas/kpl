@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int main(void) {
-    const char *greek = "ΑΔΓΦΠΣΩ";
+    const char *greek = "AΑΔΓΦΠΣZΩ";
     /*
     putchar(greek[0]);
     putchar('\n');
@@ -12,6 +12,7 @@ int main(void) {
     for (;;) {
         un u = c4_g(greek, s, &e);
         if (u.c.a == '\0') break;
+        printf("Conts %lu, ", e - s);
         putchar(u.c.a);
         putchar(u.c.b);
         putchar(u.c.c);
