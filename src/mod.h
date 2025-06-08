@@ -11,7 +11,8 @@ typedef enum {
 } mod_stat;
 
 typedef union {
-
+    int64_t i6;
+    uint64_t u6;
 } dt; // data type
 
 typedef struct {
@@ -36,6 +37,11 @@ mod_stat mod_lfile(mod *const m, const char *const path);
 // allocate globals
 void mod_ag(mod *const m, size_t ng);
 
+void mod_sg_i6(mod *const m, size_t i, int64_t i6);
+
+int64_t mod_lg_i6(mod *const m, size_t i);
+
+// free globals
 void mod_fg(mod *const m);
 
 // print src

@@ -27,6 +27,14 @@ void mod_ag(mod *const m, size_t ng) {
     m->ng = ng;
 }
 
+void mod_sg_i6(mod *const m, size_t i, int64_t i6) {
+    m->g[i].i6 = i6;
+}
+
+int64_t mod_lg_i6(mod *const m, size_t i) {
+    return m->g[i].i6;
+}
+
 void mod_fg(mod *const m) {
     free(m->g);
 }
