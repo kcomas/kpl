@@ -73,6 +73,15 @@ void var_p(var *const v, size_t idnt) {
         case VAR_TYPE(F6):
             printf("%lf", v->d.f6);
             break;
+        case VAR_TYPE(CR):
+            putchar(v->d.cr.a);
+            putchar(v->d.cr.b);
+            putchar(v->d.cr.c);
+            putchar(v->d.cr.d);
+            break;
+         case VAR_TYPE(SG):
+            printf("%s", v->d.sg);
+            break;
     }
 }
 
