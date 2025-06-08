@@ -34,48 +34,55 @@ static chk_stat chk_err(chk *c, te *an, err **e, const char *m) {
     return CHK_STAT(INV);
 }
 
+static void chk_lte_s_i(te *lte, uint32_t *r, uint32_t *x) {
+    switch (((te*) lte->d[2].p)->d[1].u4) {
+        case TYPE(F5):
+        case TYPE(F6):
+            ast_lst_tbl_e_s_i(lte, (*x)++);
+            break;
+        case TYPE(FN):
+            ast_lst_tbl_e_s_f(lte, LTE_FLG(F));
+            break;
+        default:
+            ast_lst_tbl_e_s_i(lte, (*r)++);
+            break;
+    }
+}
+
 static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     (void) c;
     (void) e;
     tbl **fat = (tbl**) &((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
-    te *h, *lei, *kv;
+    te *h, *lte, *kv;
     if (!*fat) {
         *fat = tbl_i_tbl(lt);
         h = lt->i->h;
         uint32_t ra = 0, xa = 0;
         while (h) {
-            lei = h->d[0].p;
-            if (!ast_lst_tbl_e_g_f(lei)) {
-                if (!lei->d[2].p) return chk_err(c, an, e, "chk fn infer arg type not set");
-                ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
-                switch (((te*) lei->d[2].p)->d[1].u4) {
-                    case TYPE(F5):
-                    case TYPE(F6):
-                        ast_lst_tbl_e_s_i(lei, ra++);
-                        break;
-                    default:
-                        ast_lst_tbl_e_s_i(lei, xa++);
-                        break;
-                }
-                type_tbl_a(*fat, c->a->ta, mc_c(lei->d[0].p), ast_lst_tbl_e_g_i(lei), te_c(lei->d[2].p));
+            lte = h->d[0].p;
+            if (!ast_lst_tbl_e_g_f(lte)) {
+                if (!lte->d[2].p) return chk_err(c, an, e, "chk fn infer arg type not set");
+                ast_lst_tbl_e_s_f(lte, LTE_FLG(A));
+                chk_lte_s_i(lte, &ra, &xa);
+                type_tbl_a(*fat, c->a->ta, mc_c(lte->d[0].p), ast_lst_tbl_e_g_i(lte), te_c(lte->d[2].p));
             }
             h = h->d[2].p;
         }
     } else {
         h = lt->i->h;
         while (h) {
-            lei = h->d[0].p;
-            if (tbl_g_i(*fat, lei->d[0], &kv) == TBL_STAT(OK)) {
-                if (lei->d[2].p && !type_eq(kv->d[2].p, lei->d[2].p)) return chk_err(c, an, e, "chk fn type neq");
-                lei->d[2] = P(te_c(kv->d[2].p));
-                ast_lst_tbl_e_s_f(lei, LTE_FLG(A));
-                ast_lst_tbl_e_s_i(lei, kv->d[1].u5);
+            lte = h->d[0].p;
+            if (tbl_g_i(*fat, lte->d[0], &kv) == TBL_STAT(OK)) {
+                if (lte->d[2].p && !type_eq(kv->d[2].p, lte->d[2].p)) return chk_err(c, an, e, "chk fn type neq");
+                lte->d[2] = P(te_c(kv->d[2].p));
+                ast_lst_tbl_e_s_f(lte, LTE_FLG(A));
+                ast_lst_tbl_e_s_i(lte, kv->d[1].u5);
             }
             h = h->d[2].p;
         }
     }
-    te *p = an->d[0].p, *lte;
+    te *p = an->d[0].p;
     if (p->d[2].u4 == AST_CLS(O) && p->d[4].u4 == OC(DFN) && p->d[5].p && ((te*) p->d[5].p)->d[2].u4 == AST_CLS(E)) { // set var so functions can be used before define
         lte = ((te*) p->d[5].p)->d[3].p;
         lte->d[2] = P(te_c(((te*) an->d[5].p)->d[3].p));
@@ -85,21 +92,25 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+te *chk_g_pn_lte(te *an, const mc *s) {
+    te *plns = an, *pln, *kv;
+    do {
+        pln = NULL;
+        if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
+        plns = pln->d[0].p;
+        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK)) return kv;
+    } while (pln);
+    return NULL;
+}
+
 static chk_stat chk_op_lst_b(chk *c, te *an, err **e) {
     (void) c;
-    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *plns, *pln, *kv;
+    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *kv;
     while (h) {
         lte = h->d[0].p;
-        if (!lte->d[2].p) {
-            plns = an;
-            do {
-                pln = NULL;
-                if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) break;
-                plns = pln->d[0].p;
-                if (tbl_g_i(pln->d[3].p, P(lte->d[0].p), &kv) == TBL_STAT(NF)) continue;
-                ast_lst_tbl_e_s_f(lte, LTE_FLG(O));
-                lte->d[2] = P(te_c(kv->d[2].p));
-            } while (pln);
+        if (!lte->d[2].p && (kv = chk_g_pn_lte(an, lte->d[0].p))) {
+            ast_lst_tbl_e_s_f(lte, LTE_FLG(O));
+            lte->d[2] = P(te_c(kv->d[2].p));
         }
         if (!lte->d[2].p) return chk_err(c, an, e, "chk lst var not resolved");
         h = h->d[2].p;
@@ -126,17 +137,7 @@ static chk_stat chk_lst_l(chk *c, te *an, err **e) {
     while (h) {
         lte = h->d[0].p;
         if (!lte->d[2].p) return chk_err(c, an, e, "chk lst var type inv");
-        if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) {
-            switch (((te*) lte->d[2].p)->d[1].u4) {
-                case TYPE(F5):
-                case TYPE(F6):
-                    ast_lst_tbl_e_s_i(lte, x++);
-                    break;
-                default:
-                    ast_lst_tbl_e_s_i(lte, r++);
-                    break;
-            }
-        }
+        if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) chk_lte_s_i(lte, &r, &x);
         h = h->d[2].p;
     }
     return chk_vd(c, an, e);
