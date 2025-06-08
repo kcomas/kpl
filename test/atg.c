@@ -500,3 +500,13 @@ T(teadd) {
     gen_f(gc);
     AR(0);
 }
+
+/*
+T(vrmul) {
+    AI(TPGM(vrmul), 1, 1);
+    te *tvr = type_v_i(&al_te, NULL, TYPE(VR), type_i(&al_te, NULL, TYPE(F6)));
+    D(tvr, NULL);
+    te_f(tvr);
+    V(NULL, NULL);
+}
+*/

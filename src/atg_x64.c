@@ -222,7 +222,7 @@ static atg_stat v_te_fn(atg *t, gen *g, te *an, err **e) {
     uint32_t ti = t->tc++, eid = 0;
     lst *l = an->d[4].p;
     if (!l || l->l < 2) return atg_err(t, an, e, "atg inv te len");
-    if (tbl_g_i(t->dt, an->d[3], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv des");
+    if (tbl_g_i(t->dt, an->d[3], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv te des");
     if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), ti), gen_call_m(g, 3, gen_data(g, X64_TYPE(U6), U6(l->l)), gen_data(g, X64_TYPE(M), P(&al_te)), gen_data(g, X64_TYPE(M), kv->d[1])), gen_data(g, X64_TYPE(M), P(te_i))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     h = l->h;
     while (h) {
@@ -238,6 +238,17 @@ static atg_stat v_te_fn(atg *t, gen *g, te *an, err **e) {
         h = h->d[2].p;
     }
     return ATG_STAT(OK);
+}
+
+static atg_stat v_vr_fn(atg *t, gen *g, te *an, err **e) {
+    te *kv;
+    uint32_t ti = t->tc++;
+    lst *l = an->d[4].p;
+    if (tbl_g_i(t->dt, an->d[3], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv vr des");
+    (void) g;
+    (void) ti;
+    (void) l;
+    return atg_err(t, an, e, "TODO BUILD VR");
 }
 
 static atg_stat cst_f6_e_u6(atg *t, gen *g, te *an, err **e) {
@@ -710,6 +721,7 @@ atg *atg_b(atg *t) {
     atg_a_se(t, dfn_cst_type_lst_t, cst_type_lst_s, cst_type_lst_e);
     atg_a_se(t, root_lst_t, root_lst_s, root_lst_e);
     atg_a_v(t, TYPE(TE), v_te_fn);
+    atg_a_v(t, TYPE(VR), v_vr_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(U6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
