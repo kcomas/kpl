@@ -29,6 +29,11 @@ void chk_p(const tbl *ct, size_t idnt) {
     }
 }
 
+chk_stat chk_err(chk_stat stat, te *an, te **e) {
+    *e = te_c(an);
+    return stat;
+}
+
 static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
     (void) c;
     (void) e;
@@ -72,21 +77,12 @@ static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
     te *t = ((te*) ((te*) an->d[4].p)->d[3].p)->d[2].p;
     tbl *fa = t->d[3].p;
     lst *l = an->d[5].p;
-    if (fa->i->l != l->l) { // args len
-        *e = an;
-        return CHK_STAT(INV);
-    }
+    if (fa->i->l != l->l) return chk_err(CHK_STAT(INV), an, e); // args len
     te *fh = fa->i->h, *lh = l->h, *ft, *lt;
     while (fh && lh) {
         ft = ((te*) fh->d[0].p)->d[2].p;
-        if (ast_g_t(lh->d[0].p, &lt) != AST_STAT(OK)) {
-            *e = an;
-            return CHK_STAT(INV);
-        }
-        if (!type_eq(ft, lt)) {
-            *e = an;
-            return CHK_STAT(INV);
-        }
+        if (ast_g_t(lh->d[0].p, &lt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
+        if (!type_eq(ft, lt)) return chk_err(CHK_STAT(INV), an, e);
         fh = fh->d[2].p;
         lh = lh->d[2].p;
     }
@@ -98,10 +94,7 @@ static chk_stat chk_dfn_e_op(chk *c, te *an, te **e) {
     (void) c;
     (void) e;
     te *lte = ((te*) an->d[5].p)->d[3].p, *r = an->d[6].p;
-    if (lte->d[2].p != NULL || lte->d[3].p != NULL) { // already set
-       *e = an;
-       return CHK_STAT(INV);
-    }
+    if (lte->d[2].p != NULL || lte->d[3].p != NULL) return chk_err(CHK_STAT(INV), an, e);
     an->d[3] = P(te_c(r->d[3].p));
     lte->d[2] = P(te_c(r->d[3].p));
     ast_lst_tbl_e_s_f(lte, LTE_FLG(L));
@@ -119,18 +112,9 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, te **e) {
 static chk_stat chk_op_lr_teq(chk *c, te *an, te **e) {
     (void) c;
     te *lt, *rt;
-    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) {
-        *e = an->d[5].p;
-        return CHK_STAT(INV);
-    }
-    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) {
-        *e = an->d[6].p;
-        return CHK_STAT(INV);
-    }
-    if (!type_eq(lt, rt)) {
-        *e = an;
-        return CHK_STAT(INV);
-    }
+    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an->d[5].p, e);
+    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an->d[6].p, e);
+    if (!type_eq(lt, rt)) return chk_err(CHK_STAT(INV), an, e);
     an->d[3] = P(te_c(lt));
     return CHK_STAT(OK);
 }
@@ -138,10 +122,7 @@ static chk_stat chk_op_lr_teq(chk *c, te *an, te **e) {
 static chk_stat chk_op_mon(chk *c, te *an, te **e) {
     (void) c;
     te *t;
-    if (ast_g_t(an->d[6].p, &t) != AST_STAT(OK)) {
-        *e = an;
-        return CHK_STAT(INV);
-    }
+    if (ast_g_t(an->d[6].p, &t) != AST_STAT(OK)) return chk_err(CHK_STAT(INV), an, e);
     an->d[3] = P(te_c(t));
     return CHK_STAT(OK);
 }

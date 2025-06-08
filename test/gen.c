@@ -26,7 +26,8 @@ T(b) {
     as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    A(gen_n(g, st, a) == GEN_STAT(OK), "gen");
+    te *e;
+    A(gen_n(g, st, a, &e) == GEN_STAT(OK), "gen");
     printf("STATE AFTER\n");
     gen_st_p(st);
     A(as_n(a, m) == AS_STAT(OK), "as");
@@ -52,7 +53,9 @@ static void build(_tests *_t, gen *g, uint8_t *m) {
     as *a = as_b(as_i(&gm, &gm, &gm, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
     gen_st_p(st);
-    A(gen_n(g, st, a) == GEN_STAT(OK), "gen_n");
+    te *e;
+    gen_stat stat = gen_n(g, st, a, &e);
+    A(stat == GEN_STAT(OK), "gen_n");
     printf("STATE AFTER\n");
     gen_st_p(st);
     A(as_n(a, m) == AS_STAT(OK), "as_n");
