@@ -8,7 +8,7 @@ static te *as_arg_v(as *a, arg_id id, un v) {
 }
 
 te *as_arg_r(as *a, size_t rid) {
-    return as_arg_v(a, ARG_ID(R), U3(rid));
+    return as_arg_v(a, rid < XMM(0) ? ARG_ID(R) : ARG_ID(X), U3(rid));
 }
 
 te *as_arg_rm(as *a, size_t rmid) {

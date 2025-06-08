@@ -1,6 +1,8 @@
 
 #include "../as_x64.h"
 
+// jmps
+
 #define INST_J_L(N) static bool as_##N##_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) arg2; \

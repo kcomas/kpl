@@ -51,7 +51,6 @@ te *as_lbl_g_c(as *a, size_t lbl_id);
 as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c);
 
 // arg te[id;data]
-
 te *as_arg_i(as *a, size_t id, un d);
 
 // register op, not using varardic to avoid extra checks

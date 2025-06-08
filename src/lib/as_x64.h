@@ -11,8 +11,9 @@ const char *reg_str(size_t rid);
 
 typedef enum {
     ARG_ID(N), // none passed as NULL
-    ARG_ID(R), // reg
+    ARG_ID(R), // gen reg
     ARG_ID(RM), // reg mem
+    ARG_ID(X), // sse
     ARG_ID(L), // label
     ARG_ID(M), // mem
     ARG_ID(B), // byte
@@ -32,11 +33,15 @@ typedef enum {
     AS_X64(POP),
     AS_X64(CALL),
     AS_X64(MOV),
+    AS_X64(MOVQ),
     AS_X64(ADD),
+    AS_X64(ADDSD),
     AS_X64(SUB),
+    AS_X64(SUBSD),
     AS_X64(NEG),
     AS_X64(INC),
     AS_X64(DEC),
+    AS_X64(CVTSI2SD),
     AS_X64(AND),
     AS_X64(XOR),
     AS_X64(CMP),
