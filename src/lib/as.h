@@ -75,6 +75,12 @@ as_stat as_op_a(as *a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t 
 // add op
 as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4);
 
+#define AS_A4(A, OP_ID, ARG1, ARG2, ARG3, ARG4) as_a(A, OP_ID, ARG1, ARG2, ARG3, ARG4)
+#define AS_A3(A, OP_ID, ARG1, ARG2, ARG3) AS_A4(A, OP_ID, ARG1, ARG2, ARG3, NULL)
+#define AS_A2(A, OP_ID, ARG1, ARG2) AS_A3(A, OP_ID, ARG1, ARG2, NULL)
+#define AS_A1(A, OP_ID, ARG1) AS_A2(A, OP_ID, ARG1, NULL)
+#define AS_A0(A, OP_ID) AS_A1(A, OP_ID, NULL)
+
 as_stat as_n(as *a, uint8_t *m);
 
 void as_f(as *a);
