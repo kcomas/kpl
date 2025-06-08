@@ -8,6 +8,11 @@
 #define AS_INST(N) AS_INST_##N
 
 typedef enum {
+    AS_INST(NOP),
+    AS_INST(RET),
+    AS_INST(LEAVE),
+    AS_INST(PUSH),
+    AS_INST(POP),
     AS_INST(MOV)
 } as_inst;
 
