@@ -39,6 +39,7 @@ typedef enum {
     TYPE(MC),
     // hash
     TYPE(_H),
+    TYPE(UN),
     TYPE(HH),
     TYPE(ST),
     // function
@@ -51,7 +52,6 @@ typedef enum {
     TYPE(TE),
     TYPE(BA),
     TYPE(TD),
-    TYPE(UN),
     TYPE(_END)
 } type;
 

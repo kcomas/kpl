@@ -5,6 +5,7 @@ static fld_stat entry_o(fld *f, te **restrict an, te **restrict e) {
     (void) f;
     te *lte = (*an)->d[3].p;
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
+    if (!flgs) return fld_err(FLD_STAT(INV), *an, e);
     if (flgs & LTE_FLG(A)) return FLD_STAT(OK);
     if ((flgs & LTE_FLG(L) || flgs & LTE_FLG(T) || flgs & LTE_FLG(F)) && lte->r < 3) return fld_err(FLD_STAT(INV), *an, e); // unused
     return FLD_STAT(OK);
@@ -28,10 +29,6 @@ static fld_stat aply_lst_o(fld *f, te **restrict an, te **restrict e) {
     (void) f;
     (void) e;
     te *lp, *ln, *h, *lte;
-    lst *al = (*an)->d[5].p;
-    if (al && al->l > 0) {
-        HERE("TODO add aply vars to head of lst");
-    }
     if (ast_g_pn(AST_CLS(L), *an, &lp) == AST_STAT(OK)) {
         HERE("TODO add to parent lst");
     } else {
