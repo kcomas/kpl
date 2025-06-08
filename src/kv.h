@@ -13,4 +13,8 @@ typedef struct {
 
 kv *kv_i(alfn *a, frfm *kf, frfn *vf, frfn *f);
 
+un kv_g_k(kv *const p);
+
+un kv_g_v(kv *const p);
+
 void kv_f(kv *p);

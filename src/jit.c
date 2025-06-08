@@ -14,7 +14,9 @@ static uint8_t modrm(uint8_t mod, reg d, reg s) {
 }
 
 static size_t pg_algn(size_t size) {
-    return (size / getpagesize() + 1) * getpagesize();
+    size_t mod = size % getpagesize();
+    if (mod) size = size - mod + getpagesize();
+    return size;
 }
 
 uint8_t *jit_mmap(size_t size) {

@@ -3,6 +3,13 @@
 
 #include "def.h"
 
+#define LST_STAT(N) LST_STAT_##N
+
+typedef enum {
+   LST_STAT(OK),
+   LST_STAT(SUB)
+} lst_stat;
+
 typedef struct _lst_itm {
     struct _lst_itm *p, *n;
     un d;
@@ -22,5 +29,13 @@ lst *lst_i(alfn *la, alfn *ta, frfn *tf, frfn *df, frfn *lf);
 lst *lst_c(lst *l);
 
 size_t lst_g_l(const lst *const l);
+
+lst_stat lst_ab(lst *const l, un d);
+
+lst_stat lst_af(lst *const l, un d);
+
+lst_stat lst_sb(lst *const l, un *d);
+
+lst_stat lst_sf(lst *const l, un *d);
 
 void lst_f(lst *l);
