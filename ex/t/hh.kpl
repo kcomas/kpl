@@ -1,0 +1,12 @@
+
+// hashmap example
+
+ph:FN(HH{SG};VD)${(h)
+    $(FD;1) << " ",["a";h`a;"\n"]}
+
+
+f:FN(VD)${()
+    h:HH{SG}${`a:"a";`b:"b"}
+    ph(h)}
+
+f()
