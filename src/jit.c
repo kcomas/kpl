@@ -285,6 +285,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 fn_stk_a(m->a, &stk, o->od.tsv->m->c);
                 o->od.tsv->m->j = jit_i(m->a, stk->nops);
                 if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                fn_stk_f(stk);
                 SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
                 SET_REG(m->a, al*, false, 7);
