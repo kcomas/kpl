@@ -177,7 +177,13 @@ var_sg *var_f6_sg(al *const a, double f6) {
     uint64_t frac = (uint64_t) tmp;
     if (FLT_ROUND && (double) (tmp - frac) > 0.5) frac++;
     if (frac == 0) sg->str[--len] = '0';
-    else str_w_dig(sg, &len, frac);
+    else {
+        for (size_t i = FLT_DEC_PREC; i > 0; i--) {
+            tmp = (f6 - up) * flp10[i];
+            frac = (uint64_t) tmp;
+            sg->str[--len] = frac % 10 + '0';
+        }
+    }
     sg->str[--len] = '.';
     if (up == 0) sg->str[--len] = '0';
     else str_w_dig(sg, &len, up);
