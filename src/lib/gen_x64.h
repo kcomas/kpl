@@ -72,7 +72,7 @@ typedef struct {
 
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk);
 
-gen_st *gen_st_i_st(const gen_st *st);
+gen_st *gen_st_i_gen_st(const gen_st *st);
 
 void gen_st_p(const gen_st *st);
 

@@ -12,7 +12,7 @@ vr *vr_i(size_t s, const alfr *af, frfn *df) {
     return v;
 }
 
-vr *vr_i_v(const vr *v) {
+vr *vr_i_vr(const vr *v) {
     return vr_i(v->s, v->af, v->df);
 }
 

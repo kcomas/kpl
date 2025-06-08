@@ -16,7 +16,7 @@ te *te_i(size_t l, const alfr *af, frfn *tf) {
     return t;
 }
 
-te *te_i_t(const te *t) {
+te *te_i_te(const te *t) {
     return te_i(t->l, t->af, t->tf);
 }
 
