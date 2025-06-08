@@ -12,7 +12,7 @@ ast_stat pig(te *pn, size_t *pid) {
 tbl *ati(void) {
     lst *tl = lst_i(&ast_am, &ast_am, (void*) te_f);
     te *b = te_i(10, &ast_am, NULL);
-    return tbl_i(&ast_am, tbl_sdbm, tbl_str_eq, tl, b);
+    return tbl_i(&ast_am, tbl_mc_sdbm, tbl_mc_eq, tl, b);
 }
 
 lst *ali(void) {

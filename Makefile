@@ -58,7 +58,7 @@ $(LST): $(LLST_OBJS) $(TEST)/lst.o $(TEST_OBJS)
 > $(CCOBJ)
 
 TBL = tbl$(LTNAME)
-LTBL_OBJS = $(LSRC)/tbl.o $(LLST_OBJS)
+LTBL_OBJS = $(LSRC)/tbl.o $(LLST_OBJS) $(LMC_OBJS)
 OBJS += $(LTBL_OBJS)
 $(TBL): $(LTBL_OBJS) $(TEST)/tbl.o $(TEST_OBJS)
 > $(CCOBJ)
