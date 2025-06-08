@@ -180,13 +180,21 @@ extern inline void if_node_f(if_node *in);
 
 extern inline fn_node *fn_node_i(fn_node *const par);
 
+type_node *fn_node_ret_type(const fn_node *const fn) {
+    type_node *tmpt = NULL;
+    if (fn->sig && fn->sig->t == TYPE(FN) && fn->sig->a && fn->sig->a->at == AST_TYPE(LST)) {
+        tmpt = ast_gtn(fn->sig->a->n.lst->t->a);
+    }
+    return tmpt;
+}
+
 void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     printf("%p,%d,", fn, fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
     putchar('\n');
     PCX(' ', idnt);
     printf("%p", fn->par);
-    type_node_p(as, fn->ret, idnt);
+    type_node_p(as, fn->sig, idnt);
     putchar('\n');
     PCX(' ', idnt);
     printf("A-");

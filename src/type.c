@@ -69,7 +69,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
             if (lt->t == TYPE(FN)) {
                 if (op->r->at != AST_TYPE(FN)) return TYPE_STAT(INV_FN_CST);
                 fn_node *fn = op->r->n.fn;
-                if (fn->ret) return TYPE_STAT(FN_CST_T_NN);
+                if (fn->sig) return TYPE_STAT(FN_CST_T_NN);
                 if (fn->args->len != lt->a->n.lst->len - 1) return TYPE_STAT(INV_FN_CST_ARGS_LEN);
                 lst_itm *th = lt->a->n.lst->h;
                 lst_itm *fh = fn->args->h;
@@ -81,8 +81,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                     fh = fh->next;
                     th = th->next;
                 }
-                ASTGTN(tmpt, lt->a->n.lst->t->a, INV_FN_T_RET);
-                fn->ret = type_node_c(tmpt);
+                fn->sig = type_node_c(lt);
                 return type_chk_fn(fn);
             }
             if (op->r) IFTCHK(type_chk, fns, op->r);
@@ -141,7 +140,6 @@ type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
         return TYPE_STAT(OK);
     }
     IFTCHK(type_chk, fns, cn->tgt);
-    // TODO recursion
     // TODO type check tgt and args
     return TYPE_STAT(OK);
 }
@@ -149,11 +147,12 @@ type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
 type_stat type_chk_ret(fn_node *const fns, ret_node *const ret) {
     type_stat tstat;
     IFTCHK(type_chk, fns, ret->a);
-    type_node *tmpt;
-    ASTGTN(tmpt, ret->a, INV_RET_T);
-    if (type_int_cor(&ret->tn, tmpt, fns->ret)) return TYPE_STAT(OK);
-    if (!type_eq(fns->ret, tmpt)) return TYPE_STAT(RET_T_NEQ);
-    ret->tn = type_node_c(fns->ret);
+    type_node *tmpr, *tmpf;
+    ASTGTN(tmpr, ret->a, INV_RET_T);
+    if (!(tmpf = fn_node_ret_type(fns))) return TYPE_STAT(INV_RET_FNS);
+    if (type_int_cor(&ret->tn, tmpr, tmpf)) return TYPE_STAT(OK);
+    if (!type_eq(tmpf, tmpr)) return TYPE_STAT(RET_T_NEQ);
+    ret->tn = type_node_c(tmpf);
     return TYPE_STAT(OK);
 }
 
@@ -161,7 +160,7 @@ type_stat type_chk(fn_node *const fns, ast *const a) {
     switch (a->at) {
         case AST_TYPE(TYPE): break;
         case AST_TYPE(RES):
-            if (a->n.rn->rt == RES_TYPE(SELF) && !a->n.rn->tn) a->n.rn->tn = type_node_c(fns->ret);
+            if (a->n.rn->rt == RES_TYPE(SELF) && !a->n.rn->tn) a->n.rn->tn = type_node_c(fns->sig);
             break;
         case AST_TYPE(VAL):
             if (a->n.val->tn->t >= TYPE(STMT) && a->n.val->tn->t <= TYPE(MOD)) return TYPE_STAT(VAL_UT);
