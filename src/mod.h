@@ -30,6 +30,9 @@ inline mod *mod_i(void) {
 // load file
 mod_stat mod_lfile(mod *const m, const char *const path);
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+
 // allocate globals
 void mod_ag(mod *const m, uint8_t ng);
 
@@ -48,6 +51,8 @@ var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
 void mod_sg_jf(mod *const m, uint8_t i, jit_fn *const jf);
 jit_fn *mod_lg_jf(mod *const m, uint8_t i);
 
+#pragma GCC pop_options
+
 // print src
 inline void mod_psrc(const mod *const m) {
     if (m->src.path != NULL) printf("%s\n", m->src.path);
@@ -57,7 +62,6 @@ inline void mod_psrc(const mod *const m) {
 inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
-    // TODO use fn scope symtbl to free globals
     free(m->g);
     free(m);
 }
