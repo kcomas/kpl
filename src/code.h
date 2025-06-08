@@ -148,12 +148,14 @@ typedef struct {
 
 typedef struct {
     size_t len;
+    mod *m;
     code *gc;
 } ctsv; // create tuple, strut, vec
 
-inline ctsv *ctsv_i(al *const a, size_t len, code *const gc) {
+inline ctsv *ctsv_i(al *const a, size_t len, mod *const m, code *const gc) {
     ctsv *tsv = ala(a, sizeof(ctsv));
     tsv->len = len;
+    tsv->m = m;
     tsv->gc = gc;
     return tsv;
 }
@@ -161,7 +163,7 @@ inline ctsv *ctsv_i(al *const a, size_t len, code *const gc) {
 void code_f(code *c);
 
 inline void ctsv_f(ctsv *tsv) {
-    code_f(tsv->gc);
+    FNNF(tsv->gc, code_f);
     alf(tsv);
 }
 
@@ -192,7 +194,6 @@ typedef union _op_d {
     op_if *of;
     char *sg; // null term
     ctsv *tsv;
-    mod *m;
 } op_d;
 
 typedef struct {

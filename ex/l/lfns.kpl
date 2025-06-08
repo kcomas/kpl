@@ -3,4 +3,7 @@ add:FN(I6;I6;I6)${(x;y) x + y }
 
 sub:FN(I6;I6;I6)${(x;y) x - y }
 
-$(FD;1) << "Loaded add and sub\n"
+x:I6$4
+y:I6$5
+
+$(FD;1) << " ", ["x:";SG$x;"y:";SG$y;"\n"]

@@ -97,6 +97,8 @@ var_tsv *var_tsv_i(al *const a, size_t size, jit_fn *gc);
 
 var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc);
 
+var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc);
+
 void var_tsv_rci(var_tsv *const tsv);
 
 void var_tsv_rcd(var_tsv *const tsv);

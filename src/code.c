@@ -59,7 +59,7 @@ extern inline code_stat code_er(code_st *const cs, const char *const fnn, code_s
 
 #define CODE_ER(CS, CSTAT, A) code_er(CS, __func__, CODE_STAT(CSTAT), A)
 
-extern inline ctsv *ctsv_i(al *const a, size_t len, code *const gc);
+extern inline ctsv *ctsv_i(al *const a, size_t len, mod *const m, code *const gc);
 
 #define CODE_F_T(T, FN, P) case TYPE(T): \
     FN(c->ops[i].od.P); \
@@ -69,8 +69,8 @@ void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
         switch (c->ops[i].ot) {
             case TYPE(MOD):
-                code_f(c->ops[i].od.m->c);
-                FNNF(c->ops[i].od.m->j, jit_f);
+                FNNF(c->ops[i].od.tsv->m->j, jit_f);
+                ctsv_f(c->ops[i].od.tsv);
                 break;
             CODE_F_T(FN, code_f, c);
             CODE_F_T(IF, code_f, c);
@@ -156,9 +156,6 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
         PCX(' ', idnt);
         printf("%lu: C:%s,T:%s", i, op_c_get_str(c->ops[i].oc), type_get_str(c->ops[i].ot));
         switch (c->ops[i].ot) {
-            case TYPE(MOD):
-                printf(",%p", c->ops[i].od.m);
-                break;
             // TODO
             case TYPE(OP):
                 printf(",%s", type_get_str(c->ops[i].od.t));
@@ -196,11 +193,13 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
             case TYPE(SG):
                 printf(",%s", c->ops[i].od.sg);
                 break;
+            case TYPE(MOD):
             case TYPE(TE):
             case TYPE(ST):
-                printf(",%lu", c->ops[i].od.tsv->len);
+                if (c->ops[i].od.tsv->len > 0) printf(",%lu", c->ops[i].od.tsv->len);
+                if (c->ops[i].od.tsv->m) printf(",%p", c->ops[i].od.tsv->m);
                 putchar('\n');
-                code_p(cs, c->ops[i].od.tsv->gc, idnt + 4);
+                if (c->ops[i].od.tsv->gc) code_p(cs, c->ops[i].od.tsv->gc, idnt + 4);
                 break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
@@ -319,7 +318,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     if (lst->tn->t == TYPE(TE)) {
         OP_A(cs, &gc, DEL, OP, { . t = TYPE(TE) }, NULL);
         OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-        OP_A(cs, c, CTSV, TE, { .tsv = ctsv_i(cs->a, lst->len, gc) }, NULL);
+        OP_A(cs, c, CTSV, TE, { .tsv = ctsv_i(cs->a, lst->len, NULL, gc) }, NULL);
     }
     return CODE_ER(cs, OK, NULL);
 }
@@ -349,7 +348,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     if (hsh->tn->t == TYPE(ST)) {
         OP_A(cs, &gc, DEL, OP, { . t = TYPE(ST) }, NULL);
         OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-        OP_A(cs, c, CTSV, ST, { .tsv = ctsv_i(cs->a, hsh->len, gc) }, NULL);
+        OP_A(cs, c, CTSV, ST, { .tsv = ctsv_i(cs->a, hsh->len, NULL, gc) }, NULL);
     }
     return CODE_ER(cs, OK, NULL);
 }
@@ -497,6 +496,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     type_node *tl, *tr;
     int64_t i6, tidx;
     hsh_data *hd;
+    code *mgc;
     code_st ldcs;
     switch (opn->ot) {
         case OP_TYPE(TC):
@@ -594,7 +594,12 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             code_st_i(&ldcs, cs->a, cs->e, opn->r->n.m->src.str);
             opn->r->n.m->c = code_i(cs->a, CODE_I_SIZE);
             if (code_gen_fn(&ldcs, opn->r->n.m->fns, &opn->r->n.m->c) != CODE_STAT(OK)) return CODE_ER(cs, LD_MOD_F, opn->r);
-            OP_A(cs, c, LM, MOD, { .m = opn->r->n.m }, opn->r);
+            mgc = code_i(cs->a, CODE_I_SIZE);
+            OP_A(cs, &mgc, EFN, CODE, { .t = TYPE(VD) }, NULL);
+            OP_A(cs, &mgc, LA, VAR, { SLV(0, TYPE(ST)) }, NULL);
+            OP_A(cs, &mgc, DEL, OP, { . t = TYPE(ST) }, NULL);
+            OP_A(cs, &mgc, RFN, CODE, { .t = TYPE(VD) }, NULL);
+            OP_A(cs, c, LM, MOD, { .tsv = ctsv_i(cs->a, 0, opn->r->n.m, mgc) }, opn->r);
             break;
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);

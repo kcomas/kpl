@@ -159,6 +159,12 @@ var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc) {
     return ts;
 }
 
+var_tsv *var_ts_fm(al *const a, mod *const m, jit_fn *gc) {
+    var_tsv *ts = var_ts_i(a, (size_t) m->ng, gc);
+    for (uint8_t i = 0; i < m->ng; i++) ts->v[i] = m->g[i];
+    return ts;
+}
+
 void var_tsv_rci(var_tsv *const tsv) {
     tsv->rc++;
 }
