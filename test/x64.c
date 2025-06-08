@@ -352,6 +352,6 @@ T(sib) {
     x64_ret(&p, m);
     printj(p, m);
     ((void(*)(int64_t*, size_t, int64_t)) m)(a, 1, v);
-    A(a[1] = v, "inv sib");
+    A(a[1] == v, "inv sib");
     for (size_t i = 0; i < 3; i++) printf("%ld\n", a[i]);
 }
