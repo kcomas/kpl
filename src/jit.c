@@ -244,8 +244,8 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-static int thread_fn(void *arg) {
-    var_td *td = (var_td*) arg;
+int thread_fn(void *volatile arg) {
+    var_td *volatile td = (var_td*) arg;
     void *fp;
     uint8_t buf[sizeof(void*)];
     size_t i = 0;
@@ -273,10 +273,10 @@ static int thread_fn(void *arg) {
     }
     SET_REG(td->m->c->jf, jit_fn*, false, 0);
     jit_b(j, 2, 0xFF, 0xD0); // call rax
+    jit_b(j, 3, 0x48, 0x89, 0xC2); // mov rdx rax
     SET_REG(td->te, var_tsv*, false, 7);
     i = td->te->len - 1;
     SET_REG(i, size_t, false, 6);
-    jit_b(j, 3, 0x48, 0x89, 0xC2); // mov rdx rax
     SET_FP(var_tsv_sidx);
     SET_REG_CALL(false, 0);
     SET_REG(td->m, mod*, false, 7);
@@ -287,8 +287,8 @@ static int thread_fn(void *arg) {
     return 0;
 }
 
-static var_td *jit_thrd(mod *m, var_tsv *const te, code *const c) {
-    var_td *td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
+static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
+    var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
     clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
     return td;
 }

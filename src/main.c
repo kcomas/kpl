@@ -3,12 +3,8 @@
 #include "../src/jit.h"
 
 int mt(void *args) {
-    mod *m = (mod*) args;
+    mod *volatile m = (mod*) args;
     m->c->jf(NULL);
-    code_f(m->c);
-    fn_node_f(m->fns);
-    FNNF(m->tn, type_node_f);
-    tds_a(m->s, m->r);
     mod_done(m);
     return 0;
 }
@@ -66,10 +62,13 @@ int main(int argc, char *argv[]) {
     }
     fn_stk_f(stk);
     clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
-    wait(NULL);
     while (!m->done) {
         wait(NULL);
     }
+    code_f(m->c);
+    fn_node_f(m->fns);
+    FNNF(m->tn, type_node_f);
+    tds_a(m->s, m->r);
     mod_f(m);
     tds_f(s);
     return 0;

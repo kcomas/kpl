@@ -4,8 +4,8 @@
 
 int mt(void *args) {
     mod *volatile m = (mod*) args;
-    mod_done(m);
     m->c->jf(NULL);
+    mod_done(m);
     return 0;
 }
 

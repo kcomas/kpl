@@ -31,7 +31,7 @@ inline tds *tds_i() {
     return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
 }
 
-inline void tds_a(tds *volatile s, tdr *const r) {
+inline void tds_a(tds *const s, tdr *const r) {
     while (s->lock) {}
     s->lock = true;
     er_c(r->e);
@@ -39,7 +39,7 @@ inline void tds_a(tds *volatile s, tdr *const r) {
     s->lock = false;
 }
 
-inline tdr *tds_g(tds *volatile s) {
+inline tdr *tds_g(tds *const s) {
     while (s->lock) {}
     s->lock = true;
     tdr *r = NULL;
