@@ -80,6 +80,12 @@ tkn_stat tkn_n(tkn *const t, te *const m) {
     return pf(t, m);
 }
 
+void tkn_s(tkn *const t, te *const m) {
+    t->lno = m->d[1].u6;
+    t->cno = m->d[2].u6;
+    t->pos = m->d[3].u6;
+}
+
 void tkn_f(tkn *t) {
     if (!t || --t->r > 0) return;
     tbl_f(t->t);

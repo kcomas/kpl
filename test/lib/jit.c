@@ -187,7 +187,7 @@ static void p2p(uint8_t *m) {
     jit_mov_rq(&p, m, R(SI), I6(23));
     jit_mov_rar(&p, m, R(CX), R(SI));
     jit_push(&p, m, R(CX));
-    jit_mov_rr(&p, m, R(DI), R(SP));
+    jit_lea_rrb(&p, m, R(DI), R(BP), -8);
     jit_mov_rq(&p, m, R(AX), P(&printp));
     jit_call_r(&p, m, R(AX));
     jit_pop(&p, m, R(CX));
