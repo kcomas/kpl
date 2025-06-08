@@ -51,9 +51,11 @@ typedef enum {
     OP_C(SG), // store global
     OP_C(LG), // load global
     OP_C(AL), // allocate locals
+    OP_C(GCL), // garbage collect locals
     OP_C(FL), // free loacls
     OP_C(SL), // store local
     OP_C(LL), // load local
+    OP_C(GCA), // garbage collect args
     OP_C(SA), // store arg
     OP_C(LA), // load arg
     OP_C(PV), // push value

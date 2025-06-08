@@ -45,6 +45,10 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
 
 #define SET_FP(FN) fp = (void*) &FN
 
+#define CT_SET_FN(T, FN) case TYPE(T): \
+    SET_FP(FN); \
+    break
+
 #define SET_REG_CALL(REXRW, REGN) SET_REG(fp, void*, REXRW, REGN); \
     jit_b(j, 2, 0xFF, 0xD##REGN);
 
@@ -52,8 +56,23 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
     SET_BUF(buf, o->od.D, sizeof(CT)); \
     break
 
+#define C_OP_C_BOP(N, FN) case OP_C(N): \
+    op_set_jidx(*j, o); \
+    jit_a(j, 0x5E); \
+    jit_a(j, 0x5F); \
+    switch (o->od.t) { \
+        case TYPE(I6): \
+            SET_FP(var_##FN##_i6); \
+            break; \
+        default: \
+            return JIT_STAT(N##_T_INV); \
+    } \
+    SET_REG_CALL(false, 0); \
+    jit_a(j, 0x50); \
+    op_set_jlen(*j, o); \
+    break
+
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
-    jit_stat jstat;
     op *o;
     void *fp;
     uint8_t buf[sizeof(void*)];
@@ -90,9 +109,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 jit_a(j, 0x5A); // pop rdx
                 switch (o->od.v.t) {
-                    case TYPE(I6):
-                        SET_FP(mod_sg_i6);
-                        break;
+                    CT_SET_FN(I6, mod_sg_i6);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -104,9 +121,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->od.v.id, uint8_t, false, 6);
                 switch (o->od.v.t) {
-                    case TYPE(I6):
-                        SET_FP(mod_lg_i6);
-                        break;
+                    CT_SET_FN(I6, mod_lg_i6);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -127,6 +142,9 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 jit_b(j, 2, 0x4C, 0x51); // push r9
                 op_set_jlen(*j, o);
                 break;
+            // TODO
+            C_OP_C_BOP(ADD, add);
+            C_OP_C_BOP(SUB, sub);
             default:
                 return JIT_STAT(INV_CODE);
         }

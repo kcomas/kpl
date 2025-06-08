@@ -23,7 +23,7 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
 }
 
 void mod_ag(mod *const m, uint8_t ng) {
-    m->g = calloc(ng, sizeof(dt));
+    m->g = calloc(ng, sizeof(var));
     m->ng = ng;
 }
 
