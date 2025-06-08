@@ -496,6 +496,7 @@ typedef enum {
 
 static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_m lvm) {
     code_stat cstat;
+    op_if *of;
     switch (a->n.var->vt) {
         case VAR_TYPE(U):
             return CODE_ER(cs, VAR_TYPE_U, a);
@@ -582,7 +583,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         case TYPE(ST):
                         case TYPE(ER):
                         case TYPE(TD):
-                            // TODO gc with null check
+                            if ((cstat = load_var(cs, opn->l, c, LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                             break;
                         default:
                             break;
