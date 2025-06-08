@@ -3,8 +3,6 @@
 
 #include "kpl.h"
 
-typedef struct _ast ast;
-
 #define MOD_STAT(N) MOD_STAT_##N
 
 typedef enum {
@@ -17,6 +15,7 @@ typedef struct {
         struct stat sb;
         char *path, *str;
     } src;
+    ast *root;
 } mod;
 
 inline mod *mod_init(void) {

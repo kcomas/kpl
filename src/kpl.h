@@ -11,5 +11,7 @@
 #include <stdint.h>
 #include <ctype.h>
 
+typedef struct _ast ast;
+
 // free not null
 #define FNN(V) if (V != NULL) free(V)
