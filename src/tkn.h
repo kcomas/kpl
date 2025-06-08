@@ -1,5 +1,6 @@
 
 #include "./lib/tkn.h"
+#include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
 
@@ -59,6 +60,8 @@ tkn_stat tkn_sym(tkn *t, te *m);
 void tkn_b(tkn *t);
 
 tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i);
+
+tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restrict tl, const mc *s, double *d);
 
 // byte offset + for off start - for off end
 tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v);

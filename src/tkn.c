@@ -115,6 +115,26 @@ tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i) {
     return TKN_STAT(OK);
 }
 
+#define MAX_F6 21
+
+tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restrict tl, const mc *s, double *d) {
+    uint32_t pos = 0;
+    char buf[MAX_F6];
+    const te *uml[] = {tu, tm, tl};
+    for (size_t i = 0; i < 3; i++) {
+        uint32_t ss = tkn_m_g_s(uml[i]);
+        uint32_t ee = tkn_m_g_e(uml[i]);
+        if (pos + ee - ss >= MAX_F6) return TKN_STAT(INV);
+        memcpy(buf + pos, s->d + ss, ee - ss);
+        pos += ee - ss;
+    }
+    buf[pos] = '\0';
+    char *ep;
+    *d = strtod(buf, &ep);
+    if (*d == 0 && errno == ERANGE) return TKN_STAT(INV);
+    return TKN_STAT(OK);
+}
+
 tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v) {
     ssize_t start = tkn_m_g_s(t);
     ssize_t end = tkn_m_g_e(t);
