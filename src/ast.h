@@ -119,7 +119,7 @@ typedef enum {
 
 typedef struct {
     op_type ot;
-    type_node *tn;
+    type_node *ret;
     ast *l, *r;
 } op_node;
 
@@ -130,7 +130,7 @@ inline op_node *op_node_i(op_type ot) {
 }
 
 inline void op_node_f(op_node *on) {
-    FNNF(on->tn, type_node_f);
+    FNNF(on->ret, type_node_f);
     FNNF(on->l, ast_f);
     FNNF(on->r, ast_f);
     free(on);
@@ -155,13 +155,13 @@ inline void lst_itm_f(lst_itm *itm, void *fn) {
 
 typedef struct _lst_node {
     size_t len;
-    type_node *tn;
+    type typ;
     lst_itm *h, *t;
 } lst_node;
 
-inline lst_node *lst_node_i(type_node *const tn) {
+inline lst_node *lst_node_i(type typ) {
     lst_node *ln = calloc(1, sizeof(lst_node));
-    ln->tn = tn;
+    ln->typ = typ;
     return ln;
 }
 
@@ -170,7 +170,6 @@ inline void lst_node_a(lst_node *const lst, ast *const a) {
 }
 
 inline void lst_node_f(lst_node *lst) {
-    FNNF(lst->tn, type_node_f);
     LST_F(lst, lst_itm, lst_itm_f, NULL);
 }
 
@@ -180,11 +179,18 @@ typedef struct _if_itm {
     lst_node *body;
 } if_itm;
 
-inline if_item *if_itm_i(ast *const cond, lst_node *body) {
-    if_item *im = calloc(1, sizeof(if_itm));
+inline if_itm *if_itm_i(ast *const cond, lst_node *const body) {
+    if_itm *im = calloc(1, sizeof(if_itm));
     im->cond = cond;
     im->body = body;
     return im;
+}
+
+inline void if_itm_f(if_itm *im, void *fn) {
+    (void) fn;
+    ast_f(im->cond);
+    lst_node_f(im->body);
+    free(im);
 }
 
 typedef struct {
@@ -196,23 +202,74 @@ inline if_node *if_node_i(void) {
     return calloc(1, sizeof(if_node));
 }
 
-inline void if_node_a(if_node *const in, if_itm *const ii) {
+inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) {
+    LST_A(in, if_itm_i(cond, body));
+}
 
+inline void if_node_f(if_node *in) {
+    LST_F(in, if_itm, if_itm_f, NULL);
 }
 
 typedef struct _fn_node {
     uint8_t idc; // var id counter
-    type_node *tn;
     tbl *tl; // sym tbl
+    type_node *ret;
     struct _fn_node *par; // parent node
     lst_node *args, *body; // tail arg is ret type only mods have NULL args
 } fn_node;
 
+inline fn_node *fn_node_i(fn_node *const par) {
+    fn_node *fn = calloc(1, sizeof(fn_node));
+    fn->tl = tbl_i(TBL_I_SIZE);
+    fn->par = par;
+    fn->args = lst_node_i(TYPE(TE));
+    fn->body = lst_node_i(TYPE(TE));
+    return fn;
+}
+
+void fn_node_tbl_data_f(void *data);
+
+inline void fn_node_f(fn_node *fn) {
+    tbl_f(fn->tl, &fn_node_tbl_data_f);
+    FNNF(fn->ret, type_node_f);
+    lst_node_f(fn->args);
+    lst_node_f(fn->body);
+    free(fn);
+}
+
 typedef struct {
     ast *tgt;
-    type_node *tn;
+    type_node *ret;
     lst_node *args;
 } call_node;
+
+inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
+    call_node *cn = calloc(1, sizeof(call_node));
+    cn->tgt = tgt;
+    cn->args = args;
+    return cn;
+}
+
+inline void call_node_f(call_node *cn) {
+    ast_f(cn->tgt);
+    FNNF(cn->ret, type_node_f);
+    lst_node_f(cn->args);
+}
+
+typedef struct {
+    ast *a;
+} ret_node; // takes next stmt
+
+inline ret_node *ret_node_i(ast *const a) {
+    ret_node *r = calloc(1, sizeof(ret_node));
+    r->a = a;
+    return r;
+}
+
+inline void ret_node_f(ret_node *r) {
+    ast_f(r->a);
+    free(r);
+}
 
 typedef struct {
     uint8_t id;
@@ -222,6 +279,7 @@ typedef struct {
 } var_node; // tbl itm data TODO struct padding
 
 inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
+    // TODO check if this var node exists
     var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
     vn->id = fns->idc++;
     vn->fns = fns;
@@ -243,8 +301,9 @@ typedef enum {
     AST_TYPE(LST),
     AST_TYPE(IF),
     AST_TYPE(FN),
-    AST_TYPE(VAR),
-    AST_TYPE(CALL)
+    AST_TYPE(CALL),
+    AST_TYPE(RET),
+    AST_TYPE(VAR)
 } ast_type;
 
 typedef union {
@@ -252,18 +311,20 @@ typedef union {
     val_node *val;
     op_node *op;
     lst_node *lst;
+    if_node *in;
     fn_node *fn;
-    call_node *cl;
+    call_node *cn;
+    ret_node *ret;
     var_node *var;
 } node;
 
 typedef struct _ast {
     ast_type at;
-    node *n;
+    node n;
     tkn t;
 } ast;
 
-inline ast *ast_i(ast_type at, node *const n, tkn *t) {
+inline ast *ast_i(ast_type at, node const n, tkn *t) {
     ast *a = calloc(1, sizeof(ast));
     a->at = at;
     a->n = n;
@@ -271,4 +332,4 @@ inline ast *ast_i(ast_type at, node *const n, tkn *t) {
     return a;
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, ast **cur);
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl);

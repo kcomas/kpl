@@ -15,9 +15,8 @@ typedef struct _lst_ex {
     // your data
 } lst_ex;
 
-#define LST_A(L, I) if (!L->h) { \
-    L->t = L->h = I; \
-    } else L->t = L->t->next = I; \
+#define LST_A(L, I) if (!L->h) L->t = L->h = I; \
+    else L->t = L->t->next = I; \
     L->len++
 
 #define LST_R(L, ITT, RTGT, ITMF, DATAF) ITT *h = L->h; \
