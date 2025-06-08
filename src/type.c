@@ -29,6 +29,7 @@ static const char *const tss[] = {
     "INV_SYM_AGN",
     "SYM_AGN_N_T_M",
     "INV_CALL_AGN",
+    "INV_CALL_AGN_T",
     "CALL_AGN_N_T_M",
     "INV_AGN_TO",
     "INV_CST",
@@ -359,7 +360,6 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     if (lst->h->a->at != AST_TYPE(VAR)) return TYPE_ER(ts, TC_ER_L_H_N_VAR);
                     if (!lst->h->a->n.var->tn) {
                         lst->h->a->n.var->tn = type_node_c(ts->r->a, tn);
-                        op->flgs |= NODE_FLG(GCV);
                     } else if (!type_eq(lst->h->a->n.var->tn, tn)) {
                         return TYPE_ER(ts, TC_VAR_FN_T_NEQ);
                     }
@@ -396,9 +396,14 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                 break;
             } else if (op->l->at == AST_TYPE(CALL)) {
                 ASTGTN(lt, op->l->n.cn->tgt, INV_CALL_AGN);
-                if (lt->t != TYPE(TE) || lt->t != TYPE(VR)) return TYPE_ER(ts, INV_CALL_AGN);
+                if (!(lt->t == TYPE(TE) || lt->t == TYPE(VR))) return TYPE_ER(ts, INV_CALL_AGN);
                 IFTCHK(type_chk, ts, fns, op->l);
-                if (!type_eq(op->l->n.cn->ret, rt)) return TYPE_ER(ts, CALL_AGN_N_T_M);
+                if (lt->t == TYPE(VR)) {
+                    ASTGTN(lt, op->l->n.cn->ret->a, INV_CALL_AGN_T);
+                } else {
+                    lt = op->l->n.cn->ret;
+                }
+                if (!type_eq(lt, rt)) return TYPE_ER(ts, CALL_AGN_N_T_M);
                 op->ret = type_node_i(ts->r->a, TYPE(VD), NULL);
                 break;
             }

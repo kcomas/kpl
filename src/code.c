@@ -53,6 +53,7 @@ static const char *const css[] = {
     "INV_FD_OP",
     "CALL_RES_NOT_SELF",
     "VR_CALL_R_INV",
+    "VR_CALL_ER_T_INV",
     "CALL_T_N_FN",
     "CALL_T_ER_T_INV",
     "CALL_CT_ARG_T_GC_INV",
@@ -627,9 +628,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
                 if (opn->l->n.lst->len == 2) {
+                if ((cstat = load_var(cs, opn->l->n.lst->h->a, c, (opn->flgs & NODE_FLG(GCV)) ? LD_V_M(GC) : LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                     if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var, false)) != CODE_STAT(OK)) return cstat;
                 }
                 OP_A(cs, c, CE, ER, { RER(TYPE(ER), true) }, opn->r);
+                if ((cstat = load_var(cs, opn->l->n.lst->t->a, c, (opn->flgs & NODE_FLG(GCV)) ? LD_V_M(GC) : LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                 if ((cstat = store_var(cs, a, c, opn->l->n.lst->t->a->n.var, false)) != CODE_STAT(OK)) return cstat;
                 break;
             }
@@ -965,7 +968,13 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
                     IFCGEN(code_gen, cs, cn->args->h->a, c);
                     OP_A(cs, c, VRGIDX, OP, { .t = tn->t }, cn->args->h->a);
                 }
-                OP_RCI(cs, c, cn->ret);
+                if (cn->ret->t == TYPE(ER)){
+                    if (!NFEC(cn->ret->flgs)) OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+                    if (!(tn = ast_gtn(cn->ret->a))) return CODE_ER(cs, VR_CALL_ER_T_INV, a);
+                    OP_RCI(cs, c, tn);
+                } else {
+                    OP_RCI(cs, c, cn->ret);
+                }
                 break;
             }
             return code_gen_call_ftn(cs, a, c, cn->tgt->n.var->tn, false);
