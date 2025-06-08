@@ -37,6 +37,8 @@ static const char *const tss[] = {
     "INV_CST_L_T_N",
     "INV_CST_R_T_N",
     "INV_VR_T",
+    "INV_VR_PUSH_R_T",
+    "INV_VR_PUSH_T_NEQ",
     "INV_TE_2_VR",
     "INV_FN_CST",
     "FN_CST_T_NN",
@@ -52,6 +54,8 @@ static const char *const tss[] = {
     "INV_ADD_L_T_N",
     "INV_ADD_R_T_N",
     "INV_ADD",
+    "INV_UNARY_SUB_T",
+    "INV_UNARY_SUB",
     "INV_SUB_L_T_N",
     "INV_SUB_R_T_N",
     "INV_SUB",
@@ -306,6 +310,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     if (lst->h->a->at != AST_TYPE(VAR)) return TYPE_ER(ts, TC_ER_L_H_N_VAR);
                     if (!lst->h->a->n.var->tn) {
                         lst->h->a->n.var->tn = type_node_c(ts->a, tn);
+                        op->flgs |= NODE_FLG(GCV);
                     } else if (!type_eq(lst->h->a->n.var->tn, tn)) {
                         return TYPE_ER(ts, TC_VAR_FN_T_NEQ);
                     }
@@ -420,12 +425,25 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(ADD):
             ASTGTNBOP(ADD);
             if (lt->t == TYPE(VR)) {
-                // TODO push
+                ASTGTN(ltvr, lt->a, INV_VR_T);
+                ASTGTN(rt, op->r, INV_VR_PUSH_R_T);
+                if (!type_eq(ltvr, rt)) return TYPE_ER(ts, INV_VR_PUSH_T_NEQ);
+                op->ret = type_node_i(ts->a, TYPE(VD), NULL);
+                break;
             }
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             return TYPE_ER(ts, INV_ADD);
         case OP_TYPE(SUB):
-            // TODO negate
+            if (!op->l) {
+                ASTGTN(rt, op->r, INV_UNARY_SUB_T);
+                if (rt->t == TYPE(VR)) {
+                    ASTGTN(rt, rt->a, INV_VR_T);
+                    op->ret = type_node_i(ts->a, TYPE(ER), ast_i(ts->a, AST_TYPE(TYPE), (node) { .tn = type_node_c(ts->a, rt) }, &op->r->t));
+                    break;
+                }
+                // TODO negate
+                return TYPE_ER(ts, INV_UNARY_SUB);
+            }
             ASTGTNBOP(SUB);
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             // TODO
