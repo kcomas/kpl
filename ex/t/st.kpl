@@ -11,6 +11,12 @@ v`a:"A Changed"
 
 f(v)
 
+t:FN(VD)${()
+    c:{`a:SG$I6$6;`b:SG$I6$7}
+    f(c)}
+
+t()
+
 \d v`a
 \d v`b
 \d v

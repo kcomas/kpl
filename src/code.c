@@ -768,7 +768,6 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     OP_GC(cs, c, hd->tn, opn->l);
                     IFCGEN(code_gen, cs, opn->l->n.sym->a, c);
                     OP_A(cs, c, SIDX, U6, { .u6 = (uint64_t) hd->id }, opn->l);
-                    // TODO gc bug?
                 }
                 break;
             } else if (opn->l->at == AST_TYPE(CALL)) {
