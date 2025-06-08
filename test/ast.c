@@ -53,19 +53,24 @@ static te *aply(ast *a, un type, te *tgt, size_t n, ...) {
 
 #define APLY(T, TGT, N, ...) aply(a, T, TGT, N, __VA_ARGS__)
 
-T(aplyopadd, {
-    printf("%s\n", aplyopadd);
-    te *pn = psr_r(bpsr(aplyopadd)), *an = NULL, *e = NULL;
+static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
+    printf("%s\n", pgm);
+    te *pn = psr_r(bpsr(pgm)), *an = NULL, *e = NULL;
     A(pn != NULL, "psr_r");
-    ast *a = ai();
     A(ast_n(a, pn, (void**) &an, &e) == AST_STAT(OK), "ast_n");
     ast_p(an, 0);
     putchar('\n');
-    te *cn = ROOT(APLY(P(NULL), OP(P(NULL), NULL, NULL, ADD), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2))));
     ast_p(cn, 0);
     putchar('\n');
     A(ast_eq(an, cn), "ast_eq");
     ast_f(a);
     te_f(an);
     te_f(cn);
+}
+
+#define V(PGM, AST) ast *a = ai(); \
+    ast_verify(_t, a, PGM, AST)
+
+T(aplyopadd, {
+    V(aplyopadd, ROOT(APLY(P(NULL), OP(P(NULL), NULL, NULL, ADD), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2)))));
 });
