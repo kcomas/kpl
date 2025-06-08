@@ -6,7 +6,7 @@
 
 ?? values ??hash
 
-[] Index hash[symbol_var]
+() Index hash(symbol_var)
 
 \` Index hash\`symbol
 

@@ -7,7 +7,7 @@ TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)
 TSRCS = $(wildcard $(TEST)/*.c)
 CCOBJ = $(CC) -o $@ $^
-OBJS = $(patsubst %.c, %.o, $(SOURCES))
+OBJS = $(patsubst %.c, %.o, $(SRCS))
 NAME = kpl
 TNAME = _test
 

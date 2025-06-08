@@ -6,9 +6,9 @@
 
 / Map function/vector /(function;vector)
 
-/ Reduce (starting_value;function)/vector /(starting_value;function;vector)
+/ Reduce [starting_value;function]/vector /(starting_value;function;vector)
 
-[] Index vector[int_type]
+() Index vector(int_type)
 
 @ Push vector@value
 

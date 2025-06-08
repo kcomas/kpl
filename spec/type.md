@@ -26,9 +26,9 @@ Struct: st<key1:type1;...keyn:typen> fixed hash of different types
 
 Union: un<st> only allocates enough space for largest type
 
-Function: fn<argtype1;...argtypen<returntype>> {(x;y) x+y}
+Function: fn<argtype1;...argtypen<returntype>> {[x;y] x+y}
 
-Bound Function: bf<fn> {(x;y) x + y }(1;) > {(y) 1 + y} type cannot be explicitly created
+Bound Function: bf<fn> {[x;y] x + y }(1;) > {[y] 1 + y} type cannot be explicitly created
 
 Error: er 'Error Message'
 
