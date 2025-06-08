@@ -22,13 +22,13 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define RN(N) NNV(R, NULL, N)
 
-#define TN(V) NN(T, type_i(&ast_am, TYPE(V)))
+#define TN(V) NN(T, type_i(&ast_am, NULL, TYPE(V)))
 
 #define EN(S) NN(E, ast_lst_tbl_e_i(a, mc_i_cstr(S, &ast_am)))
 
 #define IN(S) NN(I, mc_i_cstr(S, &ast_am))
 
-#define SN(T, V) NNV(S, type_i(&ast_am, TYPE(T)), V)
+#define SN(T, V) NNV(S, type_i(&ast_am, NULL, TYPE(T)), V)
 
 #define ON(T, C, L, R) NNV(O, T, OC(C), L, R)
 
@@ -36,6 +36,6 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define AN(T, TGT, LST) NNV(A, T, TGT, LST)
 
-#define ZN(S, TGT) NNV(Z, type_i(&ast_am, TYPE(SL)), mc_i_cstr(S, &ast_am), TGT)
+#define ZN(S, TGT) NNV(Z, type_i(&ast_am, NULL, TYPE(SL)), mc_i_cstr(S, &ast_am), TGT)
 
 #define LN(TBL, LST) NNV(L, TBL, LST)

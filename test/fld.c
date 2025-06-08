@@ -44,9 +44,9 @@ static tbl *type_tbl_i(size_t n, ...) {
     return t;
 }
 
-#define TF(FT, RT, N, ...) type_f_i(&ast_am, TYPE(FT), RT, type_tbl_i(N, __VA_ARGS__))
+#define TF(FT, RT, N, ...) type_f_i(&ast_am, NULL, TYPE(FT), RT, type_tbl_i(N, __VA_ARGS__))
 
-#define TS(T) type_s_i(&ast_am, TYPE(T))
+#define TS(T) type_s_i(&ast_am, NULL, TYPE(T))
 
 #define V(PGM, AST) ast *a = ast_b(ast_i(&ast_am, &ast_am, &ast_am, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     te *an = NULL; \
