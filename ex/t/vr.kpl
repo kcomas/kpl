@@ -9,7 +9,7 @@ f:FN(VD)${()
     $(FD;1) << ,(" ";v),"\n"
     [d;e]'-v
     -v
-    b:-v
+    b:'-v
     $(FD;1) << d," and ",b," popped \n"
     $(FD;1) << ,(" ";v),"\n"
     // errors throw
