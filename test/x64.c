@@ -62,15 +62,17 @@ T(rsub) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
-    x64_mov_rr(&p, m, R(13), R(DI));
-    x64_sub_rr(&p, m, R(13), R(SI));
-    x64_mov_rr(&p, m, R(9), R(13));
+    x64_mov_rr(&p, m, R(12), R(DI));
+    x64_sub_rr(&p, m, R(12), R(SI));
+    x64_mov_rr(&p, m, R(9), R(12));
     x64_mov_rr(&p, m, R(AX), R(9));
     x64_pop_r(&p, m, R(BP));
     x64_ret(&p, m);
     printj(p, m);
     int64_t a = 20, b = 9;
+    asm("push %r12");
     int64_t r = ((sub*) m)(a, b);
+    asm("pop %r12");
     printf("sub: %ld - %ld = %ld\n", a, b, r);
     A(r == a - b, "sub");
 }
