@@ -21,7 +21,7 @@ extern inline er_itm *er_itm_i(al *const a, er_type et, const char *const fnn, c
 
 void er_itm_p(er_itm *const ei) {
     printf("!!%s", er_type_str(ei->et));
-    if (ei->fnn) printf(",%s",ei->fnn);
+    if (ei->fnn[0]) printf(",%s",ei->fnn);
     if (ei->stat) printf(",%s", ei->stat);
     if (ei->path) printf(",%s,l:%lu,c:%lu,", ei->path, ei->lno, ei->cno);
     if (ei->msg) printf(",%s", ei->msg->str);
