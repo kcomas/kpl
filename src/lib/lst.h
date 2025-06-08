@@ -25,6 +25,8 @@ lst *lst_i(const alfr *af, const alfr *ta, frfn *df);
 
 lst *lst_i_v(const alfr *af, const alfr *ta, frfn *df, size_t n, ...);
 
+lst *lst_i_l(const lst *l);
+
 lst *lst_c(lst *l);
 
 size_t lst_g_l(const lst *l);

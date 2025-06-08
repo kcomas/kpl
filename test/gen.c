@@ -54,7 +54,7 @@ T(call) {
     printf("FN0\n");
     gen_p(ga, NULL);
     gen_st_f(st);
-    gen *gc = gen_cpy(ga);
+    gen *gc = gen_i_g(ga);
     gen_f(ga);
     st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
@@ -82,11 +82,11 @@ T(eq) {
     S(gen_a(a, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(a, GEN_OP(ADD), gen_tmp(a, X64_TYPE(U6), 0),  gen_arg(a, X64_TYPE(U6), 0), gen_arg(a, X64_TYPE(U6), 1)));
     S(gen_a(a, GEN_OP(LEAVE), gen_tmp(a, X64_TYPE(U6), 0), NULL, NULL));
-    gen *b = gen_cpy(a);
+    gen *b = gen_i_g(a);
     S(gen_a(b, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(b, GEN_OP(ADD), gen_tmp(b, X64_TYPE(U6), 0),  gen_arg(b, X64_TYPE(U6), 0), gen_arg(b, X64_TYPE(U6), 1)));
     S(gen_a(b, GEN_OP(LEAVE), gen_tmp(b, X64_TYPE(U6), 0), NULL, NULL));
-    gen *c = gen_cpy(b);
+    gen *c = gen_i_g(b);
     S(gen_a(c, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(c, GEN_OP(ADD), gen_tmp(c, X64_TYPE(I6), 0),  gen_arg(c, X64_TYPE(I6), 0), gen_arg(c, X64_TYPE(I6), 1)));
     S(gen_a(c, GEN_OP(LEAVE), gen_tmp(c, X64_TYPE(I6), 0), NULL, NULL));

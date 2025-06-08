@@ -12,6 +12,10 @@ tbl *tbl_i(const alfr *af, hhfn *hf, cmpfn *cf, lst *i, te *b) {
     return t;
 }
 
+tbl *tbl_i_t(const tbl *t) {
+    return tbl_i(t->af, t->hf, t->cf, lst_i_l(t->i), te_i_t(t->b));
+}
+
 tbl *tbl_c(tbl *t) {
     t->r++;
     return t;

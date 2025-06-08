@@ -11,9 +11,13 @@ te *te_i(size_t l, const alfr *af, frfn *tf) {
     t->r = 1;
     t->l = l;
     t->af = af;
-    t->tf = tf ? tf : &td;
+    t->tf = tf ? tf : td;
     for (size_t i = 0; i < l; i++) t->d[i] = P(NULL);
     return t;
+}
+
+te *te_i_t(const te *t) {
+    return te_i(t->l, t->af, t->tf);
 }
 
 te *te_c(te *t) {

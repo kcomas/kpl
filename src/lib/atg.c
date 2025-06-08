@@ -1,15 +1,15 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, atg_tbl_i ati, lst *q, lst *se, void *st, atg_st_f sf, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->tc = t->lc = 0;
    t->r = 1;
    t->af = af;
    t->ta = ta;
-   t->saf = saf;
-   t->sta = sta;
    t->ati = ati;
+   t->bst = st;
+   t->sf = sf;
    t->bg = g;
    t->a = a;
    t->q = q;
@@ -115,6 +115,7 @@ static atg_stat cc(atg *t, gen *g, te *an, te **e) {
     switch (an->d[2].u4) {
         case AST_CLS(T):
         case AST_CLS(E):
+        case AST_CLS(S):
             return ATG_STAT(OK);
         case AST_CLS(O):
             ha = u4_s_o(ha, AST_HSH_C, an->d[4].u4);
@@ -192,7 +193,7 @@ atg_stat atg_qn(atg *t, gen **g, ast *a, te **e) {
         h = h->d[2].p;
     }
     if (!sf || !ef) return ATG_STAT(INV);
-    *g = gen_cpy(t->bg);
+    *g = gen_i_g(t->bg);
     if ((stat = sf(t, *g, *rn, e)) != ATG_STAT(OK) || (stat = run_cc(t, *g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, *g, *rn, e)) != ATG_STAT(OK)) return stat;
     te *nn = ast_an_i(a, (*rn)->d[0].p, (*rn)->d[1].p, AST_CLS(S), P(type_s_i(a->ta, NULL, TYPE(_G))), P(*g)); // weak ref to gen
     te_f(*rn);

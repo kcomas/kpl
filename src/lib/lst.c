@@ -27,6 +27,10 @@ lst *lst_i_v(const alfr *af, const alfr *ta, frfn *df, size_t n, ...) {
     return l;
 }
 
+lst *lst_i_l(const lst *l) {
+    return lst_i(l->af, l->ta, l->df);
+}
+
 lst *lst_c(lst *l) {
     l->r++;
     return l;

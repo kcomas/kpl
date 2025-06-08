@@ -166,6 +166,10 @@ gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, v
     return st;
 }
 
+gen_st *gen_st_i_st(const gen_st *st) {
+    return gen_st_i(st->af, st->ta, tbl_i_t(st->atm), tbl_i_t(st->lat), vr_i_v(st->rstk), vr_i_v(st->xstk));
+}
+
 void gen_st_p(const gen_st *st) {
     printf("vc: %u, rac: %u, xac: %u\n", st->vc, st->rac, st->xac);
     printf("atm_l: %lu, lat_l: %lu\nR:", st->atm->i->l, st->lat->i->l);

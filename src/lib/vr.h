@@ -23,6 +23,8 @@ typedef struct {
 
 vr *vr_i(size_t s, const alfr *af, frfn *df);
 
+vr *vr_i_v(const vr *v);
+
 vr *vr_c(vr *v);
 
 size_t vr_g_s(const vr *v);
