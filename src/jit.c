@@ -705,21 +705,32 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 SET_FP(var_hh_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
-                for (size_t i = 0; i < o->od.tsvm->len; i++) {
-                    SET_REG(m, mod*, false, 7);
-                    SET_REG(o->a, ast*, false, 6);
-                    jit_b(j, 2, 0x41, 0x58); // pop r8 hh
-                    jit_a(j, 0x59); // pop rcx value
-                    jit_a(j, 0x5A); // pop rdx key
-                    jit_b(j, 3, 0x4D, 0x31, 0xC9); // xor r9 r9
-                    jit_b(j, 2, 0x41, 0x50); // push r8 hh
-                    jit_a(j, 0x52); // push rdx key
-                    SET_FP(var_hh_sk);
-                    SET_REG_CALL(false, 0);
-                    jit_a(j, 0x5F); // pop rdi
-                    SET_FP(var_sg_f); // gc key
-                    SET_REG_CALL(false, 0);
-                }
+                op_set_jlen(j, o);
+                break;
+            case OP_C(HHGK):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                jit_a(j, 0x5A); // pop rdx key
+                jit_a(j, 0x59); // pop rcx hh
+                jit_a(j, 0x52); // push rdx key
+                SET_REG(o->od.bl, bool, true, 0);
+                SET_FP(var_hh_gk);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
+            case OP_C(HHSK):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                jit_b(j, 2, 0x41, 0x58); // pop r8 hh
+                jit_a(j, 0x59); // pop rcx value
+                jit_a(j, 0x5A); // pop rdx key
+                jit_b(j, 2, 0x41, 0x50); // push r8 hh
+                jit_a(j, 0x52); // push rdx key
+                SET_FP(var_hh_sk);
+                SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
             case OP_C(IF):
