@@ -13,6 +13,7 @@ static te *rpsr(psr *p) {
     if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) {
         printf("%s|", p->tt->s->d);
         printf("PSTAT: %u|", pstat);
+        printf("lno:%lu,cno:%lu\n", p->tt->lno, p->tt->cno);
         psr_f(p);
         nh->d[1] = P(NULL);
         te_f(nh);
