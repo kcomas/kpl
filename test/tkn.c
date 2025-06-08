@@ -57,12 +57,27 @@ T(stest, {
 
 T(symtest, {
     const char *pgm = "a`b asdf`1234";
+    const char *syms[] = {"b", "1234"};
+    size_t i = 0;
     const size_t tids[] = {TCUST(VAR), TCUST(SYM), TCUST(WS), TCUST(VAR), TCUST(SYM)};
     printf("%s\n", pgm);
     tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
     tkn_b(t);
     tkn_p(t->t, 0);
-    R(t, tids);
+    tkn_stat tstat;
+    te *m = te_i(5, &tm, NULL);
+    size_t id = 0;
+    while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
+        tkn_m_p(m, t->s);
+        putchar('\n');
+        A(m->d[0].u6 == tids[id++], "tid");
+        if (m->d[0].u6 == TCUST(SYM)) {
+            mc *v;
+            A(tkn_g_mc(m, t->s, 1, &tm, &v) == TKN_STAT(OK), "tkn_g_mc");
+            A(strcmp(syms[i++], (char*) v->d) == 0, "sym");
+            mc_f(v);
+        }
+    }
     tkn_f(t);
 });
 

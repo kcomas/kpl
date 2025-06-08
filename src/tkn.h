@@ -19,6 +19,11 @@ typedef enum {
     TCUST(NUM),
     TCUST(VAR),
     // types
+    TCUST(I6),
+    TCUST(U6),
+    TCUST(F6),
+    TCUST(FN),
+    TCUST(UN),
     // keys
     // ops
     TCUST(ADD),
@@ -49,3 +54,6 @@ tkn_stat tkn_sym(tkn *t, te *m);
 void tkn_b(tkn *t);
 
 tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i);
+
+// byte offset + for off start - for off end
+tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v);

@@ -121,3 +121,15 @@ tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i) {
     *i = v;
     return TKN_STAT(OK);
 }
+
+tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v) {
+    ssize_t start = t->d[3].i6;
+    ssize_t end = t->d[4].i6;
+    size_t i = 0;
+    if (off > 0) start += off;
+    else end += off;
+    if (start < 0 || end < 0 || start > end) return TKN_STAT(INV);
+    *v = mc_i(end - start + sizeof(char), af);
+    while (start < end) (*v)->d[i++] = s->d[start++];
+    return TKN_STAT(OK);
+}

@@ -12,6 +12,8 @@ static tbl *mktbl(void) {
 
 const char *aplyopadd = "+(1;2)";
 
+const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
+
 psr *bpsr(const char *pgm) {
     tkn *t = tkn_i(&pm, &pm, tkn_entry_f, mktbl, tkn_df, mc_i_cstr(pgm, &pm));
     tkn_b(t);

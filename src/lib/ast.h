@@ -2,6 +2,7 @@
 #pragma once
 
 #include <stdarg.h>
+#include "mc.h"
 #include "tbl.h"
 
 #define AST_STAT(N) AST_STAT_##N
@@ -19,8 +20,8 @@ typedef enum {
     AST_CLS(I), // identifier [te[type];te]
     AST_CLS(S), // scalar type [un[type];un]
     AST_CLS(V), // vector type [te[type];lst]
-    AST_CLS(O), // op [te[type];te;te;op_id]
-    AST_CLS(Z), // left target, no arg apply type [te[type];te;te]
+    AST_CLS(O), // op [te[type];op_id;te;te]
+    AST_CLS(Z), // left target, no arg apply type [te[type];mc;te]
     AST_CLS(A), // apply type [te[type];te;lst]
     AST_CLS(L) // list tbl with scope [tbl;lst]
 } ast_cls;
