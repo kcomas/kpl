@@ -75,8 +75,9 @@ typedef struct _jit {
 #endif
 
 inline jit *jit_i(size_t nops) {
+    int size = nops * BYTES_PER_OP;
     jit *j = calloc(1, sizeof(jit));
-    j->size = (getpagesize() / (int) (nops * BYTES_PER_OP) + 1) * getpagesize();
+    j->size = size <= getpagesize() ? getpagesize() : (size / getpagesize() + 1) * getpagesize();
     j->a = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     return j;
 }

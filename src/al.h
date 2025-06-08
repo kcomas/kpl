@@ -1,0 +1,44 @@
+
+#pragma once
+
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <stdint.h>
+#include "lst.h"
+
+typedef struct _alc alc;
+
+typedef struct {
+    size_t len;
+    alc *h, *t;
+} al;
+
+inline al *al_i(void) {
+    return calloc(1, sizeof(al));
+}
+
+typedef struct _alc {
+    al *a;
+    alc *prev, *next;
+    int aus, len, size; // active used size, total used, size of chunk cmpt with getpagesize
+    uint8_t *h; // memmap
+} alc; // allocator chunk no frees filled then freed
+
+inline alc *alc_i(al *const a, int size) {
+    alc *ac = calloc(1, sizeof(alc));
+    ac->a = a;
+    LST_A(a, ac);
+    ac->size = size <= getpagesize() ? 1 : ((int) size / getpagesize()) + 1;
+    ac->h = mmap(NULL, ac->size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    return ac;
+}
+
+typedef struct {
+    size_t size;
+    alc *ac;
+} alci;
+
+void *ala(al *const a, size_t size);
+
+void alf(void *ptr);
