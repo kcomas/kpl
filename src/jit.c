@@ -602,7 +602,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(CTSV):
                 op_set_jidx(j, o);
                 SET_REG(m->r->a, al*, false, 7);
-                tsvs = o->od.tsvm->len;
+                tsvs = o->od.tsvm->len > 0 ? o->od.tsvm->len : TSV_INIT_SIZE;
                 if (o->ot == TYPE(VR)) tsvs *= TSVML;
                 SET_REG(tsvs, size_t, false, 6);
                 SET_REG(o->od.tsvm->len, size_t, false, 2);

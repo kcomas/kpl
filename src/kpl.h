@@ -170,3 +170,7 @@ inline size_t str_dir_len(const char *const s) {
 #ifndef TSVML
     #define TSVML 4 // vr mul
 #endif
+
+#ifndef TSV_DEF_SIZE
+    #define TSV_INIT_SIZE 1
+#endif
