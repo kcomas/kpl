@@ -6,7 +6,7 @@
 
 Copies scalar values, hash, and vector types are pointer copied
 
-x:1 - value set as i64 type infered
+x:1 - value set as i6 type infered
 
 ## Define Type
 $ Define

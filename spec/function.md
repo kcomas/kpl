@@ -2,9 +2,9 @@
 # Functions
 Implicit and explicit return
 
-x:fn<i64;i64<i64>>${(x;y) x+y} define a function with its type
+x:fn<i6;i6<i6>>${(x;y) x+y} define a function with its type
 
-x:fn<i64;i64<i64>>(;|\n) define a type without a function
+x:fn<i6;i6<i6>>(;|\n) define a type without a function
 
 x:{(x;y) x+y} define a function and infer its type on calls
 
