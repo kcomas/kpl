@@ -264,14 +264,6 @@ void var_tsv_rcd(var_tsv *const tsv) {
     tsv->rc--;
 }
 
-jit_fn *var_tsv_gc(var_tsv *const tsv) {
-    return tsv->gc;
-}
-
-var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
-    return tsv->v[idx];
-}
-
 #define VAR_ER_RET return (var) { .i6 = 0 }
 
 #define VAR_VR_IDX_ER(STR, RET) er_itm *ei = er_var(m, a, STR); \
@@ -282,6 +274,14 @@ var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
     if (idx < 0 || (size_t) idx > tsv->len - 1) { \
         VAR_VR_IDX_ER(STR, RET); \
     }
+
+jit_fn *var_tsv_gc(var_tsv *const tsv) {
+    return tsv->gc;
+}
+
+var var_tsv_gidx(var_tsv *const tsv, size_t idx) {
+    return tsv->v[idx];
+}
 
 #define VAR_VR_U6(STR, RET) if ((size_t) idx > tsv->len - 1) { \
         VAR_VR_IDX_ER(STR, RET); \
