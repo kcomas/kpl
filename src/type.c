@@ -36,6 +36,8 @@ static const char *const tss[] = {
     "INV_CST_L_A",
     "INV_CST_L_T_N",
     "INV_CST_R_T_N",
+    "INV_VR_T",
+    "INV_TE_2_VR",
     "INV_FN_CST",
     "FN_CST_T_NN",
     "INV_FN_CST_ARGS_LEN",
@@ -122,6 +124,7 @@ static bool type_eq(const type_node *const ta, const type_node *tb) {
 
 typedef bool type_eq_fn(const type_node *const ta, const type_node *const tb);
 
+// all elements are the same type
 static bool type_lst_contig(const type_node *const tlst, const type_node *const tn, type_eq_fn *const fn) {
     type_node *cmp;
     lst_itm *h = tlst->a->n.lst->h;
@@ -277,7 +280,7 @@ static type_stat mod_tn_i(type_st *const ts, mod *const m) {
 
 static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *const op) {
     type_stat tstat;
-    type_node *lt = NULL, *rt = NULL, *tn = NULL;
+    type_node *lt = NULL, *ltvr = NULL, *rt = NULL, *tn = NULL;
     ast *atmp;
     lst_node *lst;
     ast_st ldas;
@@ -369,13 +372,17 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             }
             if (op->r) IFTCHK(type_chk, ts, fns, op->r);
             ASTGTN(rt, op->r, INV_CST_R_T_N);
-            if (type_int_cor(ts, &op->ret, rt, lt)) break;
-            if (lt->t == TYPE(SG)) {
-                op->ret = type_node_i(ts->a, TYPE(SG), NULL);
-                break;
+            if (lt->t == TYPE(VR)) {
+                if (rt->t == TYPE(TE)) {
+                    ASTGTN(ltvr, lt->a, INV_VR_T);
+                    if (!type_lst_contig(rt, ltvr, type_eq)) return TYPE_ER(ts, INV_TE_2_VR);
+                    op->ret = type_node_c(ts->a, lt);
+                    break;
+                }
             }
-            if (lt->t == TYPE(FD)) {
-                op->ret = type_node_i(ts->a, TYPE(FD), NULL);
+            if (type_int_cor(ts, &op->ret, rt, lt)) break;
+            if (lt->t == TYPE(SG) || lt->t == TYPE(FD)) {
+                op->ret = type_node_i(ts->a, lt->t, NULL);
                 break;
             }
             // TODO cst

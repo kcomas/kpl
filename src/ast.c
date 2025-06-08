@@ -24,6 +24,7 @@ static const char *const ass[] = {
     "LOP_INV_BODY",
     "LOP_A_NN",
     "LOP_INV_FMT",
+    "INV_TYPE_INIT",
     "INV_TYPE_LST_INIT",
     "RET_A_NN",
     "END"
@@ -429,6 +430,18 @@ void ast_f(ast *a) {
     *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), NULL) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
+#define TYPE_A_CASE(T, TL, TR) case TKN_TYPE(T): \
+    if (*a) return AST_ER(as, TYPE_A_NN); \
+    memcpy(&ttmp, &as->next, sizeof(tkn)); \
+    if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat; \
+    if (as->next.type != TKN_TYPE(TL)) return AST_ER(as, INV_TYPE_INIT); \
+    if ((astat = ast_parse_stmt(as, fns, &atmp, TKN_FLG(TR))) != AST_STAT(OK)) { \
+        ast_f(atmp); \
+        return astat; \
+    } \
+    *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), atmp) }, &ttmp); \
+    return ast_parse_stmt(as, fns, a, stp_flgs)
+
 #define TYPE_A_LST_CASE(T, TL, TR) case TKN_TYPE(T): \
     if (*a) return AST_ER(as, TYPE_A_NN); \
     memcpy(&ttmp, &as->next, sizeof(tkn)); \
@@ -643,19 +656,9 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(SG);
         // TODO TYPES
         // TODO TYPES
-        TYPE_A_LST_CASE(VR, LS, RS);
+        TYPE_A_CASE(VR, LS, RS);
         TYPE_A_LST_CASE(FN, LP, RP);
-        case TKN_TYPE(ER):
-            if (*a) return AST_ER(as, TYPE_A_NN);
-            memcpy(&ttmp, &as->next, sizeof(tkn));
-            if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, INV_TYPE_LST_INIT);
-            if ((astat = ast_parse_stmt(as, fns, &atmp, TKN_FLG(RP))) != AST_STAT(OK)) {
-                ast_f(atmp);
-                return astat;
-            }
-            *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(ER), atmp) }, &ttmp);
-            return ast_parse_stmt(as, fns, a, stp_flgs);
+        TYPE_A_CASE(ER, LP, RP);
         TYPE_NA_CASE(FD);
         // TODO TYPES
         OP_CASE(TC);

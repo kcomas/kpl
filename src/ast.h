@@ -31,6 +31,7 @@ typedef enum {
     AST_STAT(LOP_INV_BODY), // missing ( after lop start
     AST_STAT(LOP_A_NN), // prev node for lop not null
     AST_STAT(LOP_INV_FMT), // missing ( after lop start
+    AST_STAT(INV_TYPE_INIT), // type must start with ( [ {
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
     AST_STAT(RET_A_NN), // prev node for if not null
     AST_STAT(END)
