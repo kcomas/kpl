@@ -234,7 +234,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             OP_P_INT_COR(cs, opn->l, opn->r, c);
             IFCGEN(code_gen, cs, opn->r, c);
             OP_P_INT_COR(cs, opn->r, opn->l, c);
-            OP_A(c, EQ, OP, { .t = TYPE(BL) }, a);
+            OP_A(c, EQ, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(NOT):
             IFCGEN(code_gen, cs, opn->r, c);
@@ -259,9 +259,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
-                OP_A(c, WFD, OP, { .t = tr->t }, a);
-            } else return CODE_STAT(INV_FD_OP);
+            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) OP_A(c, WFD, OP, { .t = tr->t }, a);
+            else return CODE_STAT(INV_FD_OP);
             break;
     }
     return CODE_STAT(OK);
