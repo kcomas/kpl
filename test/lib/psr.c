@@ -51,6 +51,6 @@ static te *ppnode(te *h) {
 
 int main(void) {
     te_f(ppnode(rpsr(ppsr(bpsr("0 Σ [12;5.4 Σ [1;2;3];5 - 4;15]")))));
-    te_f(ppnode(rpsr(bpsr("{3.2 - 2.1\n1 Σ [1;2;3]}"))));
+    te_f(ppnode(rpsr(bpsr("{\n3.2 - 2.1\n1 Σ [1;2;3]\n}"))));
     return 0;
 }
