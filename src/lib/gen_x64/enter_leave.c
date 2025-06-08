@@ -64,7 +64,7 @@ static gen_stat leave_dx_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat leave_v_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    int16_t idx;
+    int32_t idx;
     te *tgt = ci->d[1].p;
     if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
     switch (gen_var_g_t(tgt)) {
@@ -84,7 +84,7 @@ gen_stat leave_fn(gen *g, void *s, te *ci, as *a, err **e)  {
 }
 
 static gen_stat set_d_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    int16_t idx;
+    int32_t idx;
     te *tgt = ci->d[1].p;
     if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
     switch (gen_var_g_t(tgt)) {

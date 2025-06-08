@@ -341,7 +341,7 @@ gen_stat rstk_b(const gen_st *st, uint8_t *r) {
     return GEN_STAT(OK);
 }
 
-gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int16_t *idx) {
+gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
     switch (t) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
@@ -358,14 +358,19 @@ gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int16_t *idx) {
     return GEN_STAT(OK);
 }
 
-void gen_as_rmbdr(as *a, as_inst i, reg d, int16_t dsp, reg s, te *ci) {
-    if (dsp >= INT8_MIN && dsp <= INT8_MAX) AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), as_arg_i(a, ARG_ID(B), I3(dsp)), as_arg_i(a, ARG_ID(R), U3(s)), ci);
-    else HERE("TODO");
+static te *mbdr_arg(as *a, int32_t dsp) {
+    te *arg;
+    if (dsp >= INT8_MIN && dsp <= INT8_MAX) arg = as_arg_i(a, ARG_ID(B), I3(dsp));
+    else arg = as_arg_i(a, ARG_ID(DW), I5(dsp));
+    return arg;
 }
 
-void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int16_t dsp, te *ci) {
-    if (dsp >= INT8_MIN && dsp <= INT8_MAX) AS3(a, i, as_arg_i(a, ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), as_arg_i(a, ARG_ID(B), I3(dsp)), ci);
-    else HERE("TODO");
+void gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci) {
+    AS3(a, i, as_arg_i(a, ARG_ID(RM), U3(d)), mbdr_arg(a, dsp), as_arg_i(a, ARG_ID(R), U3(s)), ci);
+}
+
+void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci) {
+    AS3(a, i, as_arg_i(a, ARG_ID(R), U3(d)), as_arg_i(a, ARG_ID(RM), U3(s)), mbdr_arg(a, dsp), ci);
 }
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {

@@ -28,12 +28,14 @@ static gen_stat add_vuvuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *c0 = ci->d[1].p, *c1 = ci->d[2].p, *kv;
     if ((stat = get_reg(s, ci->d[3].p, &kv) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
-    int16_t v0, v1;
+    int32_t v0, v1;
     if (st_stkv_idx(s, gen_var_g_t(c0), c0->d[1].u3, &v0) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
     if (st_stkv_idx(s, gen_var_g_t(c1), c1->d[1].u3, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
     if (v0 == v1) gen_as_rmbdr(a, AS_X64(ADD), R(BP), v0, kv->d[2].u3, ci);
     else {
-        HERE("TODO DW");
+        gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v1, ci);
+        AS2(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
+        gen_as_rmbdr(a, AS_X64(ADD), R(BP), v0, R(AX), ci);
     }
     drop_atm_kv(s, kv, ci);
     set_code_e(ci, a);

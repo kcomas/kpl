@@ -96,11 +96,11 @@ void set_code_e(te *ci, as *a);
 gen_stat rstk_b(const gen_st *st, uint8_t *r);
 
 // get idx for stack var
-gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int16_t *idx);
+gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx);
 
-void gen_as_rmbdr(as *a, as_inst i, reg d, int16_t dsp, reg s, te *ci);
+void gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci);
 
-void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int16_t dsp, te *ci);
+void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci);
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv);
 
