@@ -4,18 +4,18 @@
 psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
     // end stmt
+    te *vec_stp = te_i(1, p->ta, NULL);
+    vec_stp->d[0] = U4(tkn_a(p->tt, TCUST(RS), "]", tkn_ft));
     te *lst_stp = te_i(1, p->ta, NULL);
-    lst_stp->d[0] = U4(tkn_a(p->tt, TCUST(RS), "]", tkn_ft));
-    te *blk_stp = te_i(1, p->ta, NULL);
-    blk_stp->d[0] = U4(tkn_a(p->tt, TCUST(RB), "}", tkn_ft));
+    lst_stp->d[0] = U4(tkn_a(p->tt, TCUST(RB), "}", tkn_ft));
     te *aply_stp = te_i(1, p->ta, NULL);
     aply_stp->d[0] = U4(tkn_a(p->tt, TCUST(RP), ")", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(SEMI));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(NL));
     // lists
-    psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, psr_lst_e, psr_val_m, psr_lst_i, 1, tkn_a(p->tt, TCUST(LS), "[", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), vec_stp, psr_lst_e, psr_val_m, psr_vec_i, 1, tkn_a(p->tt, TCUST(LS), "[", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RS));
-    psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, psr_lst_e, psr_val_m, psr_lst_i, 1, tkn_a(p->tt, TCUST(LB), "{", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, psr_lst_e, psr_val_m, psr_lst_i, 1, tkn_a(p->tt, TCUST(LB), "{", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RB));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, psr_aply_e, psr_aply_m, psr_aply_i, 1, tkn_a(p->tt, TCUST(LP), "(", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RP));
@@ -193,14 +193,20 @@ psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n) {
     return PSR_STAT(OK);
 }
 
-static void p_l_f(te *n) {
+static void p_vl_f(te *n) {
     te_f(n->d[2].p);
     lst_f(n->d[3].p);
     n->af->f(n);
 }
 
+psr_stat psr_vec_i(psr *p, te **n) {
+    *n = node_i(p, NODE_TYPE(VEC), 4, p_vl_f);
+    (*n)->d[3].p = lst_i(p->la, p->ta, (void*) te_f);
+    return PSR_STAT(OK);
+}
+
 psr_stat psr_lst_i(psr *p, te **n) {
-    *n = node_i(p, NODE_TYPE(LST), 4, p_l_f);
+    *n = node_i(p, NODE_TYPE(LST), 4, p_vl_f);
     (*n)->d[3].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
@@ -319,6 +325,7 @@ void node_p(const te *n, size_t idnt) {
             if (n->d[4].p) node_p(n->d[4].p, idnt + 1);
             putchar(')');
             break;
+        case NODE_TYPE(VEC):
         case NODE_TYPE(LST):
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));

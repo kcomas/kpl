@@ -81,7 +81,8 @@ static un chk_hsh(const te *an) {
             hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
             break;
         case AST_CLS(E):
-            // TODO
+            if (!((te*) an->d[3].p)->d[2].p) hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
+            else hsh = u4_s_o(hsh, CHK_HSH_T, ((te*) ((te*) an->d[3].p)->d[2].p)->d[1].u4);
             break;
         default:
             if (!an->d[3].p) hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_N));
