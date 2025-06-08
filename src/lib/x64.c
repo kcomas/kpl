@@ -314,6 +314,12 @@ x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     return X64_STAT(OK);
 }
 
+x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_X(s);
+    return x64_b(p, m, 5, 0x66, set_rex2(s, d), 0x0F, 0x2F, modrm(MOD(11), s, d));
+}
+
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);

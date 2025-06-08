@@ -263,3 +263,25 @@ T(cvtsi2sd) {
     int64_t r = 123; double x = 123.0;
     A(((double(*)(int64_t)) m)(r) == x, "cvtsi2sd");
 }
+
+static const char *comisdg = "Greater Equal";
+
+static const char *comisdl = "Less";
+
+T(comisd) {
+    size_t p = 0;
+    x64_comisd_xx(&p, m, XMM(0), XMM(1));
+    x64_jbejna_b(&p, m, 0);
+    uint8_t *byte = x64_lb(p, m);
+    size_t lbl = p;
+    x64_mov_rq(&p, m, R(AX), P(comisdg));
+    x64_ret(&p, m);
+    x64_jmpd_lblb(byte, lbl, p);
+    x64_mov_rq(&p, m, R(AX), P(comisdl));
+    x64_ret(&p, m);
+    printj(p, m);
+    double x = 1.2, y = 3.4;
+    const char *r = ((char*(*)(double, double)) m)(x, y);
+    printf("comisd(%lf, %lf): %s\n", x, y, r);
+    A(r == comisdl, "Less");
+}

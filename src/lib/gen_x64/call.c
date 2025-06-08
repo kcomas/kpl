@@ -15,6 +15,7 @@ static void reg_gen_stk(const reg *ir, size_t *iri, te *ci, as *a, te *kv, const
 static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t *rsaves, size_t rsl) {
     gen_stat stat;
     static const reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
+    static const reg xr[] = {XMM(0), XMM(1), XMM(2), XMM(3), XMM(4), XMM(5), XMM(6)};
     size_t iri = 0, xri = 0;
     te *ovt, *kv;
     vr *args = ((te*) ci->d[arg_i].p)->d[1].p;
