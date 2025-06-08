@@ -423,3 +423,12 @@ T(callwstck) {
     ((void(*)(uint64_t*)) m)(&a);
     A(a == 7, "stk");
 }
+
+/*
+T(vrpushprint) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
+    BUILD(g, m);
+}
+*/

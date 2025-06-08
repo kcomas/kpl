@@ -38,7 +38,7 @@ static tbl *mt(size_t s) {
 
 T(tbl) {
     tbl *t = mt(2);
-    A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
+    A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(OK), "tbl_a");
     pt(t);
     A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");
     pt(t);
@@ -53,7 +53,7 @@ T(tbl) {
     A(tbl_g_i(t, P(m), &kv) == TBL_STAT(OK), "tbl_g_i");
     mc_f(m);
     printf("%lu\n", kv->d[1].i6);
-    A(tbl_a(t, kv_i("World", 789)) == TBL_STAT(RES), "tbl_a");
+    A(tbl_a(t, kv_i("World", 789)) == TBL_STAT(OK), "tbl_a");
     m = mc_i_cstr("World", &tm);
     A(tbl_g_i(t, P(m), &kv) == TBL_STAT(OK), "tbl_g_i");
     mc_f(m);
