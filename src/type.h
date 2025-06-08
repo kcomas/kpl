@@ -8,6 +8,7 @@
 
 typedef enum {
     TYPE(_START),
+    TYPE(_N), // none
     TYPE(_A), // used for type checking only
     // scalar
     TYPE(_S),
