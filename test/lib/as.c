@@ -24,8 +24,8 @@ static void btest(void) {
     te *l1;
     if (as_lbl_g_i(a, 1, &l1) == AS_STAT(INV)) exit(66);
     l1 = l1->d[1].p;
-    printf("Return: %ld\n", ((int64_t(*)(int64_t)) m)(1337));
-    printf("Return: %ld\n", ((int64_t(*)(int64_t)) &m[l1->d[8].u6])(1337));
+    printf("Call At Start: %ld\n", ((int64_t(*)(int64_t)) m)(1337));
+    printf("Call at L(1): %ld\n", ((int64_t(*)(int64_t)) &m[l1->d[8].u6])(1337));
     jit_munmap(1, m);
     as_f(a);
 }
