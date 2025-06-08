@@ -2,7 +2,7 @@
 #include "kpl.h"
 #include "er.h"
 
-#define THREAD_STACK_PAGE_MUL 50
+#define THREAD_STACK_PAGE_MUL 100
 
 inline tdr *tdr_i(tds *const s) {
     al *a = al_i(s->nal);
