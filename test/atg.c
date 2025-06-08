@@ -3,11 +3,21 @@
 #include "opt_t.h"
 #include "gen_t.h"
 
+atg *batg = NULL;
+
+static __attribute__((constructor(107))) void atg_con(void) {
+    batg = atg_b(atg_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, lst_i(&am, &am, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
+}
+
+static __attribute__((destructor)) void atg_des(void) {
+    atg_f(batg);
+}
+
 T(fnadd3) {
     IC(fnadd3);
     RC();
     fast(_t, a, &an, bopt, false);
-    atg *t = atg_b(atg_i(&ast_am, &ast_am, &ast_am, ast_err_p, cti, lst_i(&am, &am, NULL), ali(), gen_i_gen(bg), as_i_as(ba)));
+    atg *t = atg_i_atg(batg);
     gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
     atg_tbl_p(t->ot, AST_CLS(O), 0);
     A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->q->l == 2, "atg_q");
@@ -87,8 +97,8 @@ T(fnadd3) {
     A(l1c, "lc");
     size_t ep = l1c->d[8].u6;
     atg_f(t);
-    asm("push %r13");
+    X64_RS();
     ((void (*)(void)) &m[ep])();
-    asm("pop %r13");
+    X64_RR();
     x64_munmap(1, m);
 }

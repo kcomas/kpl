@@ -70,9 +70,9 @@ T(rsub) {
     x64_ret(&p, m);
     printj(p, m);
     int64_t a = 20, b = 9;
-    asm("push %r12");
+    X64_RS();
     int64_t r = ((sub*) m)(a, b);
-    asm("pop %r12");
+    X64_RR();
     printf("sub: %ld - %ld = %ld\n", a, b, r);
     A(r == a - b, "sub");
 }

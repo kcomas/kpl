@@ -90,6 +90,14 @@ x64_stat x64_d(size_t *p, uint8_t *m, un u);
 
 x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v);
 
+#define X64_RS() \
+        asm("push %r12\n\t" \
+        "push %r13")
+
+#define X64_RR() \
+        asm("pop %r13\n\t" \
+        "pop %r12")
+
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
 

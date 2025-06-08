@@ -7,7 +7,7 @@ uint8_t *m = NULL;
 
 as *ba = NULL;
 
-static __attribute__((constructor)) void as_c(void) {
+static __attribute__((constructor(101))) void as_c(void) {
     m = x64_mmap(1);
     ba = as_b(as_i(&am, &am, &am, &am, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
 }

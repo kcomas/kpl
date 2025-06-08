@@ -31,6 +31,8 @@ typedef struct {
 
 atg *atg_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p edp, atg_tbl_i ati, lst *q, lst *se, gen *g, as *a);
 
+atg *atg_i_atg(const atg *t);
+
 typedef bool atg_test_fn(const te *an);
 
 atg_stat atg_q(atg *t, te **an, atg_test_fn enq);
