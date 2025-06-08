@@ -64,9 +64,7 @@ static tbl *gen_cls_info_tbl(void) {
 }
 
 static __attribute__((constructor)) void z_con(void) {
-    tkn *t = tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &z_al)));
-    vr *v = vr_i(10, &z_al, (void*) te_f);
-    bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, t, v));
+    bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, tkn_b(tkn_i(&z_al, &al_te, &z_al, tkn_mktbl, tkn_df, mc_i(0, &z_al))), vr_i(10, &z_al, (void*) te_f)));
     ba = ast_b(ast_i(&z_al, &al_te, &z_al, &z_al, node_err_p, pig, ali, mktbls(NODE_TYPE(_END)), mktbls(TCUST(_END))));
     bf = fld_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
     bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, mktbl, NULL));

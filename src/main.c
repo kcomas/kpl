@@ -24,17 +24,23 @@ int main(int argc, char *argv[]) {
     int i = 1, x = 1, o = 0;
     uint8_t dflgs = 0;
     while (i < argc && argv[i][0] == '-') {
-        if (argv[i][x] == 'h') return usage(argv[0]);
-        if (argv[i][x] == 'd') {
-            while (argv[i][++x] != '\0') {
-                o = argv[i][x] - 'a';
-                if (o < 0 || o > 25 || !dopts[o]) {
-                    printf("\e[1;91minv -d opt: %c\n\e[0m", argv[i][x]);
-                    return usage(argv[0]);
+        switch (argv[i][x]) {
+            case 'h':
+                return usage(argv[0]);
+            case 'd':
+                while (argv[i][++x] != '\0') {
+                    o = argv[i][x] - 'a';
+                    if (o < 0 || o > 25 || !dopts[o]) {
+                        printf("\e[1;91minv -d opt: %c\n\e[0m", argv[i][x]);
+                        return usage(argv[0]);
+                    }
+                    dflgs |= dopts[o];
                 }
-                dflgs |= dopts[o];
-            }
-            x = 1;
+                x = 1;
+                break;
+            default:
+                printf("\e[1;91minv opt -%c\n\e[0m", argv[i][x]);
+                return usage(argv[0]);
         }
         i++;
     }
