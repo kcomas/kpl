@@ -39,6 +39,10 @@ vr_stat vr_s_i(vr *const v, size_t i, un d) {
     return VR_STAT(OK);
 }
 
+#ifndef VR_RES
+    #define VR_RES 2
+#endif
+
 static vr *resize(vr *v) {
     vr *nv = vr_i(v->s * VR_RES, v->va, v->df, v->vf);
     nv->l = v->l;

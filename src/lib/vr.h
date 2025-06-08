@@ -33,10 +33,6 @@ size_t vr_g_l(const vr *const v);
 
 vr_stat vr_g_i(vr *const v, size_t i, un *d);
 
-#ifndef VR_RES
-    #define VR_RES 2
-#endif
-
 vr_stat vr_ab(vr **v, un d);
 
 vr_stat vr_af(vr **v, un d);
