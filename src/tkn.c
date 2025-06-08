@@ -64,14 +64,17 @@ tkn_stat tkn_ft(tkn *t, te *m, err **e) {
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_ws(tkn *t, te *m, err **e) {
-    (void) e;
-    while (t->s->d[t->pos] == ' ') {
-        t->pos++;
-        tkn_m_s_e(m, tkn_m_g_e(m) + 1);
-    }
-    return TKN_STAT(OK);
+#define TKN_SKIP(N, C) tkn_stat tkn_##N(tkn *t, te *m, err **e) { \
+    (void) e; \
+    while (t->s->d[t->pos] == C) { \
+        t->pos++; \
+        tkn_m_s_e(m, tkn_m_g_e(m) + 1); \
+    } \
+    return TKN_STAT(OK); \
 }
+
+TKN_SKIP(ws, ' ');
+TKN_SKIP(tab, '\t');
 
 tkn_stat tkn_sym(tkn *t, te *m, err **e) {
     (void) e;
@@ -94,6 +97,7 @@ void tkn_b(tkn *t) {
     tkn_a(t, TCUST(NL), "\n", tkn_nl);
     tkn_a(t, TCUST(SEMI), ";", tkn_ft);
     tkn_a(t, TCUST(WS), " ", tkn_ws);
+    tkn_a(t, TCUST(TAB), "\t", tkn_tab);
     tkn_a(t, TCUST(NUM), "0", tkn_num);
     tkn_a(t, TCUST(NUM), "1", tkn_num);
     tkn_a(t, TCUST(NUM), "2", tkn_num);

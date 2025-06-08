@@ -8,6 +8,7 @@
 
 typedef enum {
     TCUST(WS) = TOKEN(USR),
+    TCUST(TAB),
     TCUST(SEMI),
     TCUST(NL),
     TCUST(LB),
@@ -30,11 +31,17 @@ typedef enum {
     TCUST(DFN),
     TCUST(AGN),
     TCUST(CST),
+    TCUST(IF),
+    TCUST(LOOP),
     TCUST(ADD),
     TCUST(SUB),
+    TCUST(SUBA),
     TCUST(MUL),
+    TCUST(MULA),
     TCUST(DIV),
+    TCUST(GT),
     // cmds
+    TCUST(E),
     TCUST(P1),
     TCUST(_END)
 } tcust;

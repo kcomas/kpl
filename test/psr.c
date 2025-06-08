@@ -223,6 +223,23 @@ T(apltypefn) {
     te_f(h);
 }
 
+T(facloop) {
+    te *h = ppnode(psr_r(bpsr(facloop)));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), N(INT)),
+        OP(CMD(N(VAR)), N(INT)),
+        OP(
+            APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)),
+            LST(
+                OP(N(VAR), N(VAR)),
+                OP(N(VAR), N(INT))
+            )
+        ),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}
+
 T(prec) {
     te *h = ppnode(psr_r(bpsr("a:-(w) + -(x;y) + -z")));
     V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});
