@@ -112,7 +112,7 @@ static uint8_t set_rex2(reg b, reg r) {
 }
 
 // only add rex if REX.R or REX.B is set
-static void rex_rb(size_t *p, uint8_t *m, reg b, reg r) {
+static void rex_br(size_t *p, uint8_t *m, reg b, reg r) {
     uint8_t rex = 0;
     if (reg_is_upper(b)) rex |= REX(B);
     if (reg_is_upper(r)) rex |= REX(R);
@@ -231,7 +231,7 @@ x64_stat x64_movq_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     x64_a(p, m, 0xF3);
-    rex_rb(p, m, s, d);
+    rex_br(p, m, s, d);
     return x64_b(p, m, 3, 0x0F, 0x7E, modrm(MOD(11), s, d));
 }
 
@@ -263,7 +263,7 @@ x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     x64_a(p, m, 0xF2);
-    rex_rb(p, m, s, d);
+    rex_br(p, m, s, d);
     return x64_b(p, m, 3, 0xF, 0x58, modrm(MOD(11), s, d));
 }
 
@@ -287,7 +287,7 @@ x64_stat x64_subsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     x64_a(p, m, 0xF2);
-    rex_rb(p, m, s, d);
+    rex_br(p, m, s, d);
     return x64_b(p, m, 3, 0xF, 0x5C, modrm(MOD(11), s, d));
 }
 
@@ -328,11 +328,17 @@ x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s) {
     return X64_STAT(OK);
 }
 
+x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp) {
+    VALID_R(d);
+    x64_b(p, m, 3, set_rex2(RIP, d), 0x3B, modrm(MOD(00), RIP, d));
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp));
+}
+
 x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     x64_a(p, m, 0x66);
-    rex_rb(p, m, s, d);
+    rex_br(p, m, s, d);
     return x64_b(p, m, 3, 0x0F, 0x2F, modrm(MOD(11), s, d));
 }
 

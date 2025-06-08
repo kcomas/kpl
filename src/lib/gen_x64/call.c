@@ -59,32 +59,32 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t 
                         if (rsl > 0) reg_gen_stk(ir, &iri, ci, a, kv, rsaves, rsl);
                         else AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
                         iri++;
-                        drop_atm_kv(st, kv, ci);
                         break;
                 }
+                drop_atm_kv(st, kv, ci);
                 break;
             case GEN_CLS(T):
                 if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat;
                 switch (gen_var_g_t(ovt)) {
                     case X64_TYPE(F5):
                     case X64_TYPE(F6):
-                        // TODO xmm
+                        AS2(a, AS_X64(MOVQ), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(X), kv->d[2]), ci);
                         break;
                     default:
                         AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
-                        drop_atm_kv(st, kv, ci);
                         break;
                 }
+                drop_atm_kv(st, kv, ci);
                 break;
             case GEN_CLS(V):
                 // TODO move rsp into reg
                 break;
             case GEN_CLS(D):
-                // TODO load data into reg
                 switch (gen_var_g_t(ovt)) {
                     case X64_TYPE(F5):
                     case X64_TYPE(F6):
-                        // TODO xmm
+                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ovt->d[1]), ci);
+                        AS2(a, AS_X64(MOVQ), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
                         break;
                     case X64_TYPE(M):
                     case X64_TYPE(U6):
@@ -119,8 +119,9 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
 #define CALL(PR, RV) static gen_stat call_pr_##PR##_rv_##RV(gen_st *st, te *ci, as *a, te **e) { \
     gen_stat stat; \
     te *kvr; \
-    uint8_t rsaves[28]; \
+    static uint8_t rsaves[11]; \
     size_t rsl = 0; \
+    /* TODO XMM */ \
     if (RV) { \
         if ((stat = get_reg(st, ci->d[1].p, &kvr)) != GEN_STAT(OK)) return gen_err(stat, ci, e); \
     } \

@@ -135,9 +135,11 @@ T(fib) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    // n == 0
     S(gen_a(g, GEN_OP(NE), gen_arg(g, X64_TYPE(U6), 0), gen_data(g, X64_TYPE(U6), U6(0)), gen_lbl(g, 1)));
     S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(U6), U6(0)), NULL, NULL));
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    // n > 2
     S(gen_a(g, GEN_OP(GT), gen_arg(g, X64_TYPE(U6), 0), gen_data(g, X64_TYPE(U6), U6(2)), gen_lbl(g, 2)));
     S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(U6), U6(1)), NULL, NULL));
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 2), NULL, NULL));
@@ -154,7 +156,35 @@ T(fib) {
     printf("Fib(%lu): %lu\n", n, r);
     A(r == y, "fib");
 }
-
+/*
+T(fibxmm) {
+    gen *g = init();
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    // n == 0
+    //S(gen_a(g, GEN_OP(NE), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(0)), gen_lbl(g, 1)));
+    S(gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(F6), U6(0)), NULL, NULL));
+    //S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    //S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(F6), 0), NULL, NULL));
+    gen_st *st = gen_st_i(&am, &am, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &am, NULL), vr_i(16, &am, NULL));
+    as *a = as_b(as_i(&am, &am, &am, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    A(gen_st_p1(g, st) == GEN_STAT(OK), "gen_st_p1");
+    gen_st_p(st);
+    te *e = NULL;
+    gen_stat stat = gen_n(g, st, a, &e);
+    if (e) {
+        printf("CODE ERROR %p\n", e);
+    }
+    A(stat == GEN_STAT(OK), "gen_n");
+    printf("STATE AFTER\n");
+    gen_st_p(st);
+    //A(as_n(a, m) == AS_STAT(OK), "as_n");
+    gen_p(g, NULL);
+    gen_st_f(st);
+    gen_f(g);
+    as_f(a);
+}
+*/
 T(ack) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));

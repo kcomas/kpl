@@ -270,7 +270,8 @@ static const char *comisdl = "Less";
 
 T(comisd) {
     size_t p = 0;
-    x64_comisd_xx(&p, m, XMM(0), XMM(1));
+    x64_movq_xx(&p, m, XMM(15), XMM(0));
+    x64_comisd_xx(&p, m, XMM(15), XMM(1));
     x64_jbjnaejc_b(&p, m, 0);
     uint8_t *byte = x64_lb(p, m);
     size_t lbl = p;
@@ -284,4 +285,26 @@ T(comisd) {
     const char *r = ((char*(*)(double, double)) m)(x, y);
     printf("comisd(%lf, %lf): %s\n", x, y, r);
     A(r == comisdl, "Less");
+}
+
+T(cmprip) {
+    int64_t c = 123;
+    size_t p = 0;
+    x64_cmp_ri(&p, m, R(DI), 0); // ripe - rips
+    uint32_t rips = p;
+    x64_jzje_b(&p, m, 0);
+    uint8_t *byte = x64_lb(p, m);
+    size_t lbl = p;
+    x64_mov_rq(&p, m, R(AX), P(0));
+    x64_ret(&p, m);
+    x64_jmpd_lblb(byte, lbl, p);
+    x64_mov_rr(&p, m, R(AX), R(DI));
+    x64_ret(&p, m);
+    uint32_t ripe = p;
+    x64_jmpd_lbldw(m, rips, ripe);
+    x64_e(&p, m, sizeof(int64_t), I6(c));
+    printj(p, m);
+    int64_t r = ((int64_t(*)(int64_t)) m)(c);
+    printf("rip disp32: %d, %ld == %ld\n", ripe - rips, c, r);
+    A(c == r, "ne");
 }
