@@ -910,6 +910,16 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                         return JIT_ER(m, GCTSV_T_INV, o);
                 }
                 switch (o->od.v.t) {
+                    case TYPE(U3):
+                    case TYPE(U4):
+                    case TYPE(U5):
+                    case TYPE(U6):
+                    case TYPE(I3):
+                    case TYPE(I4):
+                    case TYPE(I5):
+                    case TYPE(I6):
+                    case TYPE(FN):
+                        break;
                     case TYPE(TD):
                         jit_a(j, 0x50); // push rax
                         break;
