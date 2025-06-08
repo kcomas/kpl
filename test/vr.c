@@ -21,7 +21,13 @@ void dtest(void) {
     vr_a(&v, D(3.3));
     vr_a(&v, D(4.4));
     for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].d);
+    un u;
+    for (size_t i = 0; i < 4; i++) {
+        if (vr_s(v, &u) != VR_STAT(OK)) exit(12);
+        printf("%f ", u.d);
+    }
     putchar('\n');
+    if (vr_s(v, &u) != VR_STAT(SUB)) exit(13);
     vr_f(v);
 }
 

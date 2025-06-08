@@ -9,10 +9,12 @@ typedef void *alfn(size_t s);
 
 typedef void frfn(void *v);
 
+// utf8 char
 typedef struct {
     uint8_t a, b, c, d;
 } c4;
 
+// union of types
 typedef union {
     bool b;
     c4 c;
@@ -30,12 +32,11 @@ typedef union {
 } un;
 
 #define UN(T, D) ((un) { .T = D })
-
 #define B(D) UN(b, D)
 #define C4(A, B, C, D) UN(c, (c4) { .a = A, .b = B, .c = C, .d = D })
-#define C1(A) C4(A, '\0', '\0', '\0')
-#define C2(A, B) C4(A, B, '\0', '\0')
 #define C3(A, B, C) C4(A, B, C, '\0')
+#define C2(A, B) C3(A, B, '\0')
+#define C1(A) C2(A, '\0')
 #define U3(D) UN(u3, D)
 #define U4(D) UN(u4, D)
 #define U5(D) UN(u5, D)

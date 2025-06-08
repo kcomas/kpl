@@ -26,6 +26,10 @@ VR_OBS = $(SRC)/vr.o
 vr$(TNAME): $(VR_OBS) $(TEST)/vr.o
 > $(CCOBJ)
 
+LST_OBJS = $(SRC)/lst.o
+lst$(TNAME): $(LST_OBJS) $(TEST)/lst.o
+> $(CCOBJ)
+
 %.o: %.c %.h
 > $(CC) $(CFLAGS) -c $< -o $@
 
