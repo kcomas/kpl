@@ -24,13 +24,24 @@ static type_stat type_chk_if(fn_node *const fns, if_node *const in) {
     return TYPE_STAT(OK);
 }
 
+static bool type_int_cor(op_node *const op, const type_node *const a, const type_node *const b) {
+    if (a->t == TYPE(INT) && (b->t >= TYPE(U3) && b->t <= TYPE(I6))) {
+        op->ret = type_node_c(b);
+        return true;
+    }
+    return false;
+}
+
 #define ASTGTN(T, N, E) if (!(T = ast_gtn(N))) return TYPE_STAT(E);
+
+#define ASTGTNBOP(OP) ASTGTN(lt, op->l, INV_##OP##_L_T_N); \
+            ASTGTN(rt, op->r, INV_##OP##_R_T_N)
 
 static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
     type_stat tstat;
     type_node *lt = NULL, *rt = NULL;
     if (op->l) IFTCHK(type_chk, fns, op->l);
-    if (op->r) IFTCHK(type_chk, fns, op->r);
+    if (op->ot != OP_TYPE(CST)) if (op->r) IFTCHK(type_chk, fns, op->r);
     switch (op->ot) {
         case OP_TYPE(ASS):
             if (op->l->at == AST_TYPE(VAR)) {
@@ -67,27 +78,37 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                 fn->ret = type_node_c(tmpt);
                 return type_chk_fn(fn);
             }
+            if (op->r) IFTCHK(type_chk, fns, op->r);
             ASTGTN(rt, op->r, INV_CST_R_T_N);
-            if (rt->t == TYPE(INT)) {
-                if (lt->t >= TYPE(U3) && lt->t <= TYPE(I6)) {
-                    op->ret = type_node_c(lt);
-                    break;
-                }
-            }
+            if (type_int_cor(op, rt, lt)) break;
             // TODO cst
-            break;
+            return TYPE_STAT(INV_CST);
         // TODO ops
-        case OP_TYPE(EQ):
+        case OP_TYPE(ADD):
+            ASTGTNBOP(ADD);
+            if (type_int_cor(op, lt, rt) || type_int_cor(op, rt, lt)) break;
+            return TYPE_STAT(INV_ADD);
+        case OP_TYPE(SUB):
+            // TODO negate
+            ASTGTNBOP(SUB);
+            if (type_int_cor(op, lt, rt) || type_int_cor(op, rt, lt)) break;
             // TODO
-            break;
+            return TYPE_STAT(INV_SUB);
+        case OP_TYPE(EQ):
+            ASTGTNBOP(EQ);
+            if (type_int_cor(op, lt, rt) || type_int_cor(op, rt, lt)) break;
+            // TODO
+            return TYPE_STAT(INV_EQ);
         case OP_TYPE(NOT):
             // TODO check left
             ASTGTN(rt, op->r, INV_NOT_R_T_N);
-            op->ret = type_node_c(rt);
+            op->ret = type_node_i(TYPE(U3), NULL);
             break;
         // TODO ops
         case OP_TYPE(OR):
-            // TODO
+            ASTGTN(lt, op->l, INV_OR_L_T_N);
+            ASTGTN(rt, op->r, INV_OR_R_T_N);
+            op->ret = type_node_i(TYPE(U3), NULL);
             break;
 
     }
@@ -96,20 +117,20 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
 
 type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
     type_stat tstat;
-    IFTCHK(type_chk, fns, cn->tgt);
     IFTCHK(type_chk_lst, fns, cn->args);
     if (cn->tgt->at == AST_TYPE(OP)) {
         if (cn->args->len > 2) return TYPE_STAT(INV_ARGS_OP_CALL);
         op_node *op = cn->tgt->n.op;
         if (op->ret || op->l || op->r) return TYPE_STAT(INV_OP_CALL_LRR_N_N);
-        if ((tstat = type_chk_op(fns, op)) != TYPE_STAT(OK)) return tstat;
         op->l = cn->args->h->a;
         op->r = cn->args->h->next->a;
+        if ((tstat = type_chk_op(fns, op)) != TYPE_STAT(OK)) return tstat;
         cn->ret = op->ret;
         op->ret = NULL;
         op->l = op->r = NULL;
         return TYPE_STAT(OK);
     }
+    IFTCHK(type_chk, fns, cn->tgt);
     return TYPE_STAT(OK);
 }
 
