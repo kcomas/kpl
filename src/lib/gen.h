@@ -55,6 +55,6 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
-gen_stat gen_n(gen *g, void *st, as *a);
+gen_stat gen_n(alfn *al, frfn *fr, gen *g, void *st, as *a);
 
 void gen_f(gen *g);

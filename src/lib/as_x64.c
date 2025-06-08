@@ -8,7 +8,7 @@ const char *reg_str(size_t rid) {
         case R(DX): return "RDX";
         case R(BX): return "RBX";
         case R(SP): return "RSP";
-        case R(BP): return "RSP";
+        case R(BP): return "RBP";
         case R(SI): return "RSI";
         case R(DI): return "RDI";
         case R(8): return "R8";
@@ -207,6 +207,17 @@ INST_RR(and);
 INST_RR(xor);
 INST_RR(cmp);
 
+#define INST_RB(N) static bool as_##N##_rb(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_rb(p, m, arg1->d[1].u6, arg2->d[1].u3) == X64_STAT(OK); \
+}
+
+INST_RB(add);
+INST_RB(sub);
+
 #define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
     (void) ci; \
@@ -261,9 +272,8 @@ static bool as_call_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restric
     (void) arg4;
     te *lblc = as_lbl_g_c(a, arg1->d[1].u6);
     if (!lblc) return false;
-    if (lblc->d[9].u6) {
-        return x64_call_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
-    } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
+    if (lblc->d[9].u6) return x64_call_dw(p, m, lblc->d[8].u6 - *p - sizeof(uint32_t)) == X64_STAT(OK);
+    else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
     for (size_t i = 0; i < 5; i++) x64_nop(p, m);
     return true;
 }
@@ -330,7 +340,9 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), &as_mov_rrm, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), &as_mov_rrmb, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_add_rr, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_add_rb, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_sub_rr, NULL);
+    as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), &as_sub_rb, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_inc_r, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), &as_dec_r, NULL);
     as_op_a(a, AS_X64(AND), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), &as_and_rr, NULL);
