@@ -104,12 +104,12 @@ psr_stat psr_flt_i(psr *const p, te **n) {
 
 psr_stat psr_val_m(psr *const p, te *const nh, te *const n) {
     (void) p;
+    if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
     if (nh->d[1].p) {
+        if (((te*) nh->d[1].p)->d[4].p) return PSR_STAT(INV);
         ((te*) nh->d[1].p)->d[4] = P(n);
         n->d[0] = nh->d[1];
-    }
-    else if (nh->d[2].p) return PSR_STAT(INV);
-    else nh->d[2] = P(n);
+    } else nh->d[2] = P(n);
     return PSR_STAT(OK);
 }
 
