@@ -190,5 +190,26 @@ T(ucomisdrip) {
 }
 
 T(err) {
-    HERE("TODO");
+    as *a = as_i_as(ba);
+    AS_A1(a, AS_X64(JE), as_arg_l(a, 1));
+    err *e = NULL;
+    A(as_n(a, m, &e) != AS_STAT(OK), "as");
+    err_p(e);
+    err_f(e);
+    as_f(a);
+}
+
+T(mulsddivsd) {
+    as *s = as_i_as(ba);
+    AS_A2(s, AS_X64(MULSD), as_arg_r(s, XMM(0)), as_arg_r(s, XMM(1)));
+    AS_A2(s, AS_X64(DIVSD), as_arg_r(s, XMM(0)), as_arg_r(s, XMM(2)));
+    AS_A0(s, AS_X64(RET));
+    err *e = NULL;
+    A(as_n(s, m, &e) == AS_STAT(OK), "as");
+    as_code_p(s, m);
+    double a = 3.4, b = 5.6, c = 1.2;
+    double d = ((double(*)(double, double, double)) m)(a, b, c);
+    printf("%lf * %lf / %lf = %lf\n", a, b, c, d);
+    A(d - 15.866667 < 0.00001, "eq");
+    as_f(s);
 }

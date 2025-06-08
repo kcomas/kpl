@@ -78,6 +78,8 @@ static const char *as_inst_str(size_t id) {
         "NEG",
         "INC",
         "DEC",
+        "MULSD",
+        "DIVSD",
         "CVTSI2SD",
         "AND",
         "XOR",

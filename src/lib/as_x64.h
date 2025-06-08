@@ -42,6 +42,8 @@ typedef enum {
     AS_X64(NEG),
     AS_X64(INC),
     AS_X64(DEC),
+    AS_X64(MULSD),
+    AS_X64(DIVSD),
     AS_X64(CVTSI2SD),
     AS_X64(AND),
     AS_X64(XOR),

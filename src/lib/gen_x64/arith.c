@@ -56,18 +56,20 @@ AUAUBU(sub, SUB);
 AXAXDX(addsd, ADD);
 AXAXDX(subsd, SUB);
 
-static gen_stat addsd_axaxax_fn(gen *g, void *s, te *ci, as *a, err **e)  {
-    gen_stat stat;
-    gen_st *st = s;
-    te *kv[3];
-    if ((stat = get_reg_n(st, ci, kv, 3)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
-    if (kv[0]->d[2].u3 == kv[2]->d[2].u3) return gen_err(g, ci, e, "gen inv reg dest"); /* second reg cannot be dest */
-    if (kv[0]->d[2].u3 != kv[1]->d[2].u3) AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(X), U3(kv[1]->d[2].u3)), ci); /* not in place */
-    AS2(a, AS_X64(ADDSD), as_arg_i(a, ARG_ID(X), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(X), U3(kv[2]->d[2].u3)), ci);
-    drop_atm_kv_n(st, kv, ci, 3);
-    set_code_e(ci, a);
-    return GEN_STAT(OK);
+#define AXAXAX(N, O) static gen_stat N##_axaxax_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
+    gen_stat stat; \
+    gen_st *st = s; \
+    te *kv[3]; \
+    if ((stat = get_reg_n(st, ci, kv, 3)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if (kv[0]->d[2].u3 == kv[2]->d[2].u3) return gen_err(g, ci, e, "gen inv reg dest"); /* second reg cannot be dest */ \
+    if (kv[0]->d[2].u3 != kv[1]->d[2].u3) AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(X), U3(kv[1]->d[2].u3)), ci); /* not in place */ \
+    AS2(a, AS_X64(O##SD), as_arg_i(a, ARG_ID(X), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(X), U3(kv[2]->d[2].u3)), ci); \
+    drop_atm_kv_n(st, kv, ci, 3); \
+    set_code_e(ci, a); \
+    return GEN_STAT(OK); \
 }
+
+AXAXAX(addsd, ADD);
 
 void gen_arith(gen *g) {
     GEN_OP_A2(g, GEN_OP(NEG), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(I6), neg_auau_fn);
