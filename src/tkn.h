@@ -31,6 +31,8 @@ typedef enum {
     TCUST(CST),
     TCUST(ADD),
     TCUST(SUB),
+    TCUST(MUL),
+    TCUST(DIV),
     // cmds
     TCUST(P1),
     TCUST(_END)

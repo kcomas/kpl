@@ -1,6 +1,8 @@
 
 #include "t.h"
 
+bool _tl = false;
+
 _tests *__t = NULL;
 
 static void add(_tests **r, _tests *t) {
