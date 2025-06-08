@@ -33,7 +33,6 @@ inline void tdr_f(tdr *r, void *fn) {
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     s->size = algn(sizeof(tds), DEFALGN);
-    sem_init(&s->rl, -1, 1);
     return s;
 }
 
@@ -46,6 +45,5 @@ inline void tds_f(tds *s) {
     printf("**RT: %lu, RR: %lu**\n", s->total, s->len);
 #endif
     LST_F(s, tdr, tdr_f, NULL);
-    sem_destroy(&s->rl);
     munmap(s, getpagesize());
 }
