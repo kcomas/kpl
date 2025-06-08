@@ -442,3 +442,16 @@ T(argclash) {
     int64_t c = ((int64_t(*)(int64_t,int64_t)) m)(a, b);
     A(c == a + b, "arg clash");
 }
+
+T(printfstkf6) {
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(3.14)), NULL));
+    S(gen_a(g, GEN_OP(SET), gen_arg(g, X64_TYPE(F6), 0), gen_data(g, X64_TYPE(F6), F6(0)), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P("%lf\n")), gen_stkv(g, X64_TYPE(F6), 0)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_stkv(g, X64_TYPE(F6), 0), NULL, NULL));
+    BUILD(g, m);
+    double x = ((double(*)(void)) m)();
+    A(x == 3.14, "print");
+}

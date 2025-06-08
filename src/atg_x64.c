@@ -777,19 +777,18 @@ atg *atg_b(atg *t) {
 }
 
 static err *__attribute__((noinline)) jit_run(const uint8_t *m, size_t ep, te *x) {
-    if (!x) return ((atg_jit*) &m[ep])(x);
+    if (!x) return ((atg_jit*) &m[ep])();
     err *e; // set to null if no err
     X64_RS();
-    e = ((atg_jit*) &m[ep])(x);
+    e = ((atg_jit_exp*) &m[ep])(x);
     X64_RR();
     return e;
 }
 
 err *atg_z(const atg *t, tbl *volatile et, const uint8_t *m, size_t ep) {
-    err *e;
     te *x = NULL, *h, *d;
     if (et) x = te_i(et->i->l > 1 ? et->i->l : 2, t->ta, NULL);
-    e = jit_run(m, ep, x);
+    err *e = jit_run(m, ep, x);
     if (et) {
         h = et->i->h;
         while (h) {

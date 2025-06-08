@@ -152,11 +152,13 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                     switch (gen_var_g_t(ovt)) {
                         case X64_TYPE(F5):
                         case X64_TYPE(F6):
+                            args[xa].i = i;
                             if (gen_as_rrmbd(a, AS_X64(MOVSD), args[xa].r, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                             args[xa].a = args[xa].r;
                             xa++;
                             break;
                         default:
+                            args[ra].i = i;
                             if (gen_as_rrmbd(a, AS_X64(MOV), args[ra].r, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                             args[ra].a = args[ra].r;
                             ra++;
