@@ -12,7 +12,7 @@ const char *mod_stat_str(mod_stat ms) {
     return s;
 }
 
-extern inline mod *mod_i(al *const a, er *const e);
+inline mod *mod_i(tds *const s, tdr *const r);
 
 extern inline mod_stat mod_er(mod *const m, const char *const fnn, mod_stat ms);
 
@@ -25,7 +25,7 @@ static mod_stat _mod_lfile(mod *const m) {
         close(fd);
         return MOD_ER(m, FLF);
     }
-    m->src.str = ala(m->a, m->src.sb.st_size * sizeof(char) + sizeof(char));
+    m->src.str = ala(m->r->a, m->src.sb.st_size * sizeof(char) + sizeof(char));
     if (read(fd, m->src.str, m->src.sb.st_size) != m->src.sb.st_size) {
         alf(m->src.str);
         close(fd);
@@ -36,20 +36,20 @@ static mod_stat _mod_lfile(mod *const m) {
 }
 
 mod_stat mod_lfile(mod *const m, const char *const path) {
-    m->src.path = ala(m->a, strlen(path) * sizeof(char) + sizeof(char));
+    m->src.path = ala(m->r->a, strlen(path) * sizeof(char) + sizeof(char));
     strcpy(m->src.path, path);
     return _mod_lfile(m);
 }
 
 mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t) {
-    m->src.path = ala(m->a, dirl + (t->len - 1) * sizeof(char)); // null byte
+    m->src.path = ala(m->r->a, dirl + (t->len - 1) * sizeof(char)); // null byte
     memcpy(m->src.path, dirs, dirl);
     memcpy(m->src.path + dirl, t->str + t->pos + 1, t->len - 2);
     return _mod_lfile(m);
 }
 
 void mod_ag(mod *const m, uint8_t ng) {
-    m->g = ala(m->a, sizeof(var) * ng);
+    m->g = ala(m->r->a, sizeof(var) * ng);
     m->ng = ng;
 }
 

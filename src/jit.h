@@ -80,9 +80,15 @@ typedef enum {
     #define BYTES_PER_OP 10
 #endif
 
-inline jit *jit_i(al *const a, size_t nops) {
+inline jit *jit_i(al *const a, size_t nops, jit *j) {
     size_t size = nops * BYTES_PER_OP;
-    jit *j = ala(a, sizeof(jit));
+    if (j && j->size <= size) {
+        j->len = 0;
+        return j;
+    } else if (j) {
+        jit_f(j);
+    }
+    j = ala(a, sizeof(jit));
     size_t ps = (size_t) getpagesize();
     j->size = size <= ps ? ps : (size / ps + 1) * ps;
     j->h = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
@@ -91,12 +97,12 @@ inline jit *jit_i(al *const a, size_t nops) {
 
 inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o) {
     if (jstat == JIT_STAT(OK)) return jstat;
-    er_itm *ei = er_itm_i(m->a, ER(JIT), fnn, jit_stat_str(jstat));
+    er_itm *ei = er_itm_i(m->r->a, ER(JIT), fnn, jit_stat_str(jstat));
     if (o && o->a) {
         ei->lno = o->a->t.lno;
         ei->cno = o->a->t.cno;
     }
-    er_a(m->e, ei);
+    er_a(m->r->e, ei);
     return jstat;
 }
 

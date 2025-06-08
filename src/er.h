@@ -2,6 +2,7 @@
 #pragma once
 
 #include "kpl.h"
+#include "er.h"
 
 #define ER(N) ER_##N
 

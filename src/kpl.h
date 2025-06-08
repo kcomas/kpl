@@ -91,14 +91,27 @@ typedef union _var var;
 
 typedef struct _var_td var_td;
 
+typedef struct _tdr {
+    struct _tdr *prev, *next;
+    al *a;
+    er *e;
+    jit *j;
+} tdr; // thread resource
+
+typedef struct _tds {
+    size_t len, total; // len is number in lst, total is number used
+    pthread_mutex_t pm;
+    tdr *h, *t;
+} tds; // threads
+
 typedef struct {
     uint8_t ng; // number of globals
     struct {
         struct stat sb;
         char *path, *str;
     } src;
-    al *a; // allocator
-    er *e; // error
+    tds *s;
+    tdr *r; // thread resource
     fn_node *fns; // ast root
     code *c;
     jit *j;

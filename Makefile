@@ -20,9 +20,13 @@ AL_OBJS = $(SRC)/al.o $(SRC)/kpl.o
 al$(TNAME): $(AL_OBJS) $(TEST)/al.o
 > $(CCOBJ)
 
-ER_OBJS = $(SRC)/er.o $(AL_OBJS)
+ER_OBJS = $(SRC)/er.o $(SRC)/var.o $(AL_OBJS)
 
-MOD_OBJS = $(SRC)/mod.o $(SRC)/var.o $(ER_OBJS)
+TD_OBJS = $(SRC)/td.o $(ER_OBJS)
+td$(TNAME): $(TD_OBJS) $(TEST)/td.o
+> $(CCOBJ)
+
+MOD_OBJS = $(SRC)/mod.o $(TD_OBJS)
 mod$(TNAME): $(MOD_OBJS) $(TEST)/mod.o
 > $(CCOBJ)
 

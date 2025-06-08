@@ -4,24 +4,24 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
-    al *a = al_i();
-    er *e = er_i(a);
-    mod *m = mod_i(a, e);
+    tds *s = tds_i();
+    tdr *r = tds_g(s);
+    mod *m = mod_i(s, r);
     mod_stat mstat;
     if ((mstat = mod_lfile(m, argv[1])) != MOD_STAT(OK)) {
-        er_p(e);
+        er_p(r->e);
         return mstat;
     }
-    m->fns = fn_node_i(a, NULL);
-    m->fns->sig = type_node_i(a, TYPE(MOD), NULL);
+    m->fns = fn_node_i(r->a, NULL);
+    m->fns->sig = type_node_i(r->a, TYPE(MOD), NULL);
     ast_stat astat;
     ast_st as;
-    ast_st_i(&as, m->a, m->e, m->src.str);
+    ast_st_i(&as, r, m->src.str);
     if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFLS, TKN_FLG(NB))) != AST_STAT(OK)) {
         if (astat != AST_STAT(END)) {
             fn_node_p(&as, m->fns, 0);
             putchar('\n');
-            er_p(e);
+            er_p(r->e);
             return astat;
         }
     }
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     putchar('\n');
     fn_node_f(m->fns);
     mod_f(m);
-    er_f(e);
-    al_f(a);
+    tds_a(s, r);
+    tds_f(s);
     return 0;
 }

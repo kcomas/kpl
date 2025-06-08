@@ -139,21 +139,21 @@ typedef enum {
 const char *type_stat_str(type_stat tstat);
 
 typedef struct {
-    al *a;
-    er *e;
+    tds *s;
+    tdr *r;
     const char *mp; // mod path
 } type_st;
 
-inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp) {
-    ts->a = a;
-    ts->e = e;
+inline void type_st_i(type_st *const ts, tds *const s, tdr *const r, const char *mp) {
+    ts->s = s;
+    ts->r = r;
     ts->mp = mp;
 }
 
 inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat) {
     if (tstat == TYPE_STAT(OK)) return tstat;
-    er_itm *ei = er_itm_i(ts->a, ER(TYPE), fnn, type_stat_str(tstat));
-    er_a(ts->e, ei);
+    er_itm *ei = er_itm_i(ts->r->a, ER(TYPE), fnn, type_stat_str(tstat));
+    er_a(ts->r->e, ei);
     return tstat;
 }
 

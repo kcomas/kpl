@@ -3,16 +3,16 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
-    al *a = al_i();
-    er *e = er_i(a);
-    mod *m = mod_i(a, e);
+    tds *s = tds_i();
+    tdr *r = tds_g(s);
+    mod *m = mod_i(s, r);
     if (mod_lfile(m, argv[1]) != MOD_STAT(OK)) {
-        er_p(e);
+        er_p(r->e);
         return 1;
     }
     mod_psrc(m);
     mod_f(m);
-    er_f(e);
-    al_f(a);
+    tds_a(s, r);
+    tds_f(s);
     return 0;
 }

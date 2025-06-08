@@ -16,7 +16,7 @@ const char *tkn_stat_str(tkn_stat tstat) {
     return s;
 }
 
-extern inline void tkn_st_i(tkn_st *const ts, al *const a, er *const e);
+extern inline void tkn_st_i(tkn_st *const ts, tdr *const r);
 
 extern inline tkn_stat tkn_er(tkn_st *const ts, const char *const fnn, tkn_stat tstat);
 

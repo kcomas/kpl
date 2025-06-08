@@ -64,23 +64,21 @@ typedef enum {
 const char *code_stat_str(code_stat cstat);
 
 typedef struct {
-    al *a;
-    er *e;
+    tdr *r;
 } code_st;
 
-inline void code_st_i(code_st *const cs, al *const a, er *const e) {
-    cs->a = a;
-    cs->e = e;
+inline void code_st_i(code_st *const cs, tdr *const r) {
+    cs->r = r;
 }
 
 inline code_stat code_er(code_st *const cs, const char *const fnn, code_stat cstat, const ast *const a) {
     if (cstat == CODE_STAT(OK)) return cstat;
-    er_itm *ei = er_itm_i(cs->a, ER(CODE), fnn, code_stat_str(cstat));
+    er_itm *ei = er_itm_i(cs->r->a, ER(CODE), fnn, code_stat_str(cstat));
     if (a) {
         ei->lno = a->t.lno;
         ei->cno = a->t.cno;
     }
-    er_a(cs->e, ei);
+    er_a(cs->r->e, ei);
     return cstat;
 }
 
@@ -261,7 +259,7 @@ inline void op_if_f(op_if *of) {
 
 void code_p(const code_st *const cs, const code *const c, size_t idnt);
 
-#define OP_A(CS, C, OC, OT, OD, A) code_a(CS->a, C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
+#define OP_A(CS, C, OC, OT, OD, A) code_a(CS->r->a, C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
 
 code_stat code_gen(code_st *const cs, const ast *const a, code **c);
 
