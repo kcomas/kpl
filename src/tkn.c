@@ -38,7 +38,9 @@ static const type_var tv[] = {
 
 static const size_t tv_len = AL(tv);
 
-#define TKN_C(C, c) if (str[t->pos] == c) t->type = TKN_TYPE(C);
+#define TKN_C(c, C) case c: \
+    t->type = TKN_TYPE(C); \
+    break
 
 static tkn_stat var(tkn *const t, const char *const str) {
     char c = str[t->pos];
@@ -51,11 +53,12 @@ static tkn_stat var(tkn *const t, const char *const str) {
                 break;
             }
         }
-    }
-    if (t->len == 1) {
-        TKN_C(TRUE, 'T');
-        TKN_C(FALSE, 'F');
-        TKN_C(SELF, 'S');
+    } else if (t->len == 1) {
+        switch (str[t->pos]) {
+            TKN_C('T', TRUE);
+            TKN_C('F', FALSE);
+            TKN_C('S', SELF);
+        }
     }
     return TKN_STAT(OK);
 }
