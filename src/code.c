@@ -22,6 +22,8 @@ extern inline void op_if_f(op_if *of);
 static const char *op_c_str[] = {
     "EFN",
     "RFN",
+    "CFN",
+    "CS",
     "AG",
     "SG",
     "LG",
@@ -103,13 +105,13 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
 static code_stat code_gen_if(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     if_itm *h = a->n.in->h;
-    op_if *of = op_if_i(CODE_I_SIZE);
     while (h) {
+        op_if *of = op_if_i(CODE_I_SIZE);
         if (h->cond) IFCGEN(code_gen, cs, h->cond, of->cond);
         IFCGEN(code_gen_lst, cs, h->body, of->body);
+        OP_A(c, COND, COND, { .of = of }, a);
         h = h->next;
     }
-    OP_A(c, COND, COND, { .of = of }, a);
     return CODE_STAT(OK);
 }
 
@@ -140,7 +142,18 @@ static code_stat p_int(const code_st *const cs, type t, const ast *const a, code
     return CODE_STAT(OK);
 }
 
-#define OP_P_INT(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT) && (cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
+#define OP_P_INT_RET(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT) && (cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
+
+static code_stat cor_int(const code_st *const cs, const ast *const a, const ast *const b, code *c) {
+    if (a->at != AST_TYPE(VAL)) return CODE_STAT(OK);
+    if (a->n.val->tn->t != TYPE(INT)) return CODE_STAT(OK);
+    if (b->at == AST_TYPE(VAL) && b->n.val->tn->t == TYPE(INT)) return p_int(cs, TYPE(I6), a, c);
+    type_node *tb;
+    if (!(tb = ast_gtn(b))) return CODE_STAT(NO_TYPE_COR_INT);
+    return p_int(cs, tb->t, a, c);
+}
+
+#define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
@@ -167,31 +180,29 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             break;
         case OP_TYPE(CST):
             IFCGEN(code_gen, cs, opn->l, c);
-            OP_P_INT(opn, cs, r, c);
+            OP_P_INT_RET(opn, cs, r, c);
             if (opn->r->at == AST_TYPE(FN)) return code_gen(cs, opn->r, c);
             // TODO dynamic cast
             break;
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
+            OP_P_INT_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT(opn, cs, l, c);
-            OP_P_INT(opn, cs, r, c);
+            OP_P_INT_RET(opn, cs, r, c);
             OP_A(c, ADD, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(SUB):
             IFCGEN(code_gen, cs, opn->l, c);
+            OP_P_INT_RET(opn, cs, l, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            OP_P_INT(opn, cs, l, c);
-            OP_P_INT(opn, cs, r, c);
+            OP_P_INT_RET(opn, cs, r, c);
             OP_A(c, SUB, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(EQ):
             IFCGEN(code_gen, cs, opn->l, c);
-            if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
-            OP_A(c, ZOO, OP, { .t = tl->t }, a);
+            OP_P_INT_COR(cs, opn->l, opn->r, c);
             IFCGEN(code_gen, cs, opn->r, c);
-            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-            OP_A(c, ZOO, OP, { .t = tr->t }, a);
+            OP_P_INT_COR(cs, opn->r, opn->l, c);
             OP_A(c, EQ, OP, { .t = TYPE(BL) }, a);
             break;
         case OP_TYPE(NOT):
@@ -216,16 +227,25 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
 code_stat code_gen_call(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
-    op_node *op = cn->tgt->n.op;
+    op_node *opn;
     switch (cn->tgt->at) {
+        case AST_TYPE(RES):
+            if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_STAT(CALL_RES_NOT_SELF);
+            IFCGEN(code_gen_lst, cs, cn->args, c);
+            OP_A(c, CS, OP, { .t = cn->ret->t }, a);
+            break;
         case AST_TYPE(OP):
+            opn = cn->tgt->n.op;
             if (cn->args->h) {
-                op->l = cn->args->h->a;
-                if (cn->args->h->next) op->r = cn->args->h->next->a;
+                opn->l = cn->args->h->a;
+                if (cn->args->h->next) opn->r = cn->args->h->next->a;
             }
             IFCGEN(code_gen_op, cs, cn->tgt, c);
-            op->ret = NULL;
-            op->l = op->r = NULL;
+            opn->ret = NULL;
+            opn->l = opn->r = NULL;
+            break;
+        case AST_TYPE(FN):
+            // TODO
             break;
         default:
             return CODE_STAT(INV_CALL_TGT);

@@ -14,8 +14,10 @@ typedef enum {
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
+    CODE_STAT(NO_TYPE_COR_INT),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type
+    CODE_STAT(CALL_RES_NOT_SELF),
     CODE_STAT(INV_CALL_TGT),
     CODE_STAT(NO_OP_FOR_RET_VAL_T)
 } code_stat;
@@ -33,6 +35,8 @@ inline void code_st_i(code_st *const cs, const char *str) {
 typedef enum {
     OP_C(EFN), // enter fn
     OP_C(RFN), // return fn
+    OP_C(CFN), // call fn
+    OP_C(CS), // call self
     // data
     OP_C(AG), // allocate globals
     OP_C(SG), // store global
