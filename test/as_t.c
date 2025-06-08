@@ -28,7 +28,7 @@ te *as_arg_b(as *a, uint8_t b) {
 }
 
 lst *as_mklst(void) {
-    return lst_i(&am, &am, (void*) &te_f);
+    return lst_i(&am, &am, (void*) te_f);
 }
 
 tbl *as_arg_tbl(void) {
@@ -38,7 +38,7 @@ tbl *as_arg_tbl(void) {
 tbl *as_op_tbl(size_t bcks) {
     lst *tl = as_mklst();
     te *b = te_i(bcks, &am, NULL);
-    tbl *t = tbl_i(&am, &tbl_no_hsh, &tbl_un_eq, tl, b);
+    tbl *t = tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
     return t;
 }
 

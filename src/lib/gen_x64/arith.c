@@ -32,8 +32,8 @@ AUAUBU(sub, SUB);
 AUAUBU(add, ADD);
 
 void gen_arith(gen *g) {
-    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), &add_auauau_fn);
-    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(T), U3(X64_TYPE(U6)), &add_auauau_fn);
-    GEN_OP_A3(g, GEN_OP(SUB), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U3)), &sub_auaubu_fn);
-    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U3)), &add_auaubu_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), add_auauau_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(T), U3(X64_TYPE(U6)), add_auauau_fn);
+    GEN_OP_A3(g, GEN_OP(SUB), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U3)), sub_auaubu_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), U3(X64_TYPE(U6)), GEN_CLS(A), U3(X64_TYPE(U6)), GEN_CLS(D), U3(X64_TYPE(U3)), add_auaubu_fn);
 }

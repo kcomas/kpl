@@ -312,7 +312,7 @@ void gen_cond(gen *g);
 void gen_call(gen *g);
 
 gen *gen_b(gen *g) {
-    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), &lbl_fn);
+    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), lbl_fn);
     gen_enter_leave(g);
     gen_arith(g);
     gen_cond(g);

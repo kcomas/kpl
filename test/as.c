@@ -25,7 +25,7 @@ extern const alfr am;
 typedef int64_t btestfn(int64_t x);
 
 T(b, {
-    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_op_p(a->ops, false, 0);
     as_a(a, AS_X64(NOP), NULL, NULL, NULL, NULL);
     as_a(a, AS_X64(RET), NULL, NULL, NULL, NULL);
@@ -55,7 +55,7 @@ T(b, {
 typedef const char *iftfn(uint8_t x);
 
 T(ift, {
-    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     as_a(a, AS_X64(PUSH), as_arg_r(a, R(DI)), NULL, NULL, NULL);
     as_a(a, AS_X64(MOV), as_arg_r(a, R(CX)), as_arg_b(a, 5), NULL, NULL);
     as_a(a, AS_X64(CMP), as_arg_r(a, R(DI)), as_arg_r(a, R(CX)), NULL, NULL);
@@ -77,7 +77,7 @@ T(ift, {
 });
 
 T(loop, {
-    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, U6(2)));
     AS_A1(a, AS_X64(PUSH), as_arg_r(a, R(AX)));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(SI)), as_arg_r(a, R(DI)));
@@ -99,7 +99,7 @@ T(loop, {
 });
 
 T(call, {
-    as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    as *a = as_b(as_i(&am, &am, &am, as_label_entry_f, as_op_entry_f, as_code_entry_f, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
     AS_A1(a, AS_X64(JMP), as_arg_l(a, 2));
     as_lbl_a(a, 1);
