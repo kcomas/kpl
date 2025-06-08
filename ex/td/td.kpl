@@ -31,6 +31,13 @@ $(FD;1) << " ", ["C:";SG$vc();"\n"]
 $(FD;1) << " ", ["B:";SG$vb();"\n"]
 $(FD;1) << " ", ["A:";SG$va();"\n"]
 
+va: [x;U6$0]*tf${(x)
+    f: \l "fibp.kpl"
+    r:f`fibp(x)
+    r}
+$(FD;1) << " ", ["A:";SG$va();"\n"]
+
+
 \d va
 \d vb
 \d vc
