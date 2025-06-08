@@ -67,11 +67,13 @@ tkn_stat tkn_n(tkn *const t, te *const m) {
     while (c.c.a != '\0') {
         if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) break;
         tl = (tbl*) kv->d[3].p;
-        pf = (tkn_pf*) kv->d[2].p;
-        m->d[0] = kv->d[1];
         t->pos = e + 1;
         t->cno++;
-        m->d[4].u6 = t->pos;
+        if ((tkn_pf*) kv->d[2].p) {
+            pf = (tkn_pf*) kv->d[2].p;
+            m->d[0] = kv->d[1];
+            m->d[4].u6 = t->pos;
+        }
         if (t->pos >= t->s->l) break;
         c = c4_g((char*) t->s->d, t->pos, &e);
     }
