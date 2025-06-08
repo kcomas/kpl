@@ -45,8 +45,8 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
             fn_stk_a(a, stk, c->ops[i].od.c);
         }
         if (c->ops[i].oc == OP_C(CTSV) || c->ops[i].oc == OP_C(LM)) {
-            fn_stk_b(a, stk, c->ops[i].od.tsv->gc);
-            fn_stk_a(a, stk, c->ops[i].od.tsv->gc);
+            fn_stk_b(a, stk, c->ops[i].od.tsvm->gc);
+            fn_stk_a(a, stk, c->ops[i].od.tsvm->gc);
         }
         if (c->ops[i].oc == OP_C(IF) && c->ops[i].ot == TYPE(IF)) fn_stk_b(a, stk, c->ops[i].od.c);
         if ((c->ops[i].oc == OP_C(LOP) && c->ops[i].ot == TYPE(LOP)) || (c->ops[i].oc == OP_C(COND) && c->ops[i].ot == TYPE(COND))) fn_stk_b(a, stk, c->ops[i].od.of->body);
@@ -304,13 +304,13 @@ int thread_fn(void *volatile arg) {
 static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
     var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s)), te, c);
     td->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
-    nanosleep((const struct timespec[]){{0, 1e5L}}, NULL);
+    nanosleep((const struct timespec[]){{0, 1e5L}}, NULL); // TODO find better way to start threads
     return td;
 }
 
 static var join_thrd(var_td *volatile td) {
-    sem_wait(&td->m->done);
     waitpid(td->id, NULL, WEXITED);
+    sem_wait(&td->m->done);
     return td->te->v[td->te->len - 1];
 }
 
@@ -426,16 +426,16 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(LM):
                 op_set_jidx(j, o);
                 stk = fn_stk_i(m->r->a, FN_STK_SIZE);
-                fn_stk_b(m->r->a, &stk, o->od.tsv->m->c);
-                fn_stk_a(m->r->a, &stk, o->od.tsv->m->c);
-                jit_i(m->r->a, stk->nops, &o->od.tsv->m->r->j);
-                if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->r->j, true) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
+                fn_stk_b(m->r->a, &stk, o->od.tsvm->m->c);
+                fn_stk_a(m->r->a, &stk, o->od.tsvm->m->c);
+                jit_i(m->r->a, stk->nops, &o->od.tsvm->m->r->j);
+                if (jit_stk(o->od.tsvm->m, stk, o->od.tsvm->m->r->j, true) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
-                SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);
+                SET_REG(o->od.tsvm->m->c->jf, jit_fn*, false, 0);
                 jit_b(j, 2, 0xFF, 0xD0); // call rax
                 SET_REG(m->r->a, al*, false, 7);
-                SET_REG(o->od.tsv->m, mod*, false, 6);
-                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 2);
+                SET_REG(o->od.tsvm->m, mod*, false, 6);
+                SET_REG(o->od.tsvm->gc->jf, jit_fn*, false, 2);
                 SET_FP(var_ts_fm);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
@@ -502,15 +502,15 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(CTSV):
                 op_set_jidx(j, o);
                 SET_REG(m->r->a, al*, false, 7);
-                tsvs = o->od.tsv->len;
+                tsvs = o->od.tsvm->len;
                 if (o->ot == TYPE(VR)) tsvs *= TSVML;
                 SET_REG(tsvs, size_t, false, 6);
-                SET_REG(o->od.tsv->len, size_t, false, 2);
-                SET_REG(o->od.tsv->gc->jf, jit_fn*, false, 1);
+                SET_REG(o->od.tsvm->len, size_t, false, 2);
+                SET_REG(o->od.tsvm->gc->jf, jit_fn*, false, 1);
                 SET_FP(var_tsv_i);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
-                for (ssize_t i = (ssize_t) o->od.tsv->len - 1; i >= 0; i--) { // TODO better algo for underflow
+                for (ssize_t i = (ssize_t) o->od.tsvm->len - 1; i >= 0; i--) { // TODO better algo for underflow
                     jit_a(j, 0x5F); // pop rdi
                     SET_REG(i, ssize_t, false, 6);
                     jit_a(j, 0x5A); // pop rdx

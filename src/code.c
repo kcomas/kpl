@@ -68,7 +68,7 @@ extern inline code_stat code_er(code_st *const cs, const char *const fnn, code_s
 
 #define CODE_ER(CS, CSTAT, A) code_er(CS, __func__, CODE_STAT(CSTAT), A)
 
-extern inline ctsv *ctsv_i(al *const a, size_t len, mod *const m, code *const gc);
+extern inline ctsvm *ctsvm_i(al *const a, size_t len, mod *const m, code *const gc);
 
 #define CODE_F_T(T, FN, P) case TYPE(T): \
     FN(c->ops[i].od.P); \
@@ -78,8 +78,8 @@ void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
         switch (c->ops[i].ot) {
             case TYPE(MOD):
-                code_f(c->ops[i].od.tsv->m->c);
-                ctsv_f(c->ops[i].od.tsv);
+                code_f(c->ops[i].od.tsvm->m->c);
+                ctsvm_f(c->ops[i].od.tsvm);
                 break;
             CODE_F_T(FN, code_f, c);
             CODE_F_T(TD, code_f, c);
@@ -88,9 +88,9 @@ void code_f(code *c) {
             CODE_F_T(LOP, op_if_f, of);
             CODE_F_T(SG, alf, sg);
             CODE_F_T(STR, alf, sg);
-            CODE_F_T(VR, ctsv_f, tsv);
-            CODE_F_T(TE, ctsv_f, tsv);
-            CODE_F_T(ST, ctsv_f, tsv);
+            CODE_F_T(VR, ctsvm_f, tsvm);
+            CODE_F_T(TE, ctsvm_f, tsvm);
+            CODE_F_T(ST, ctsvm_f, tsvm);
             default:
                 break;
         }
@@ -98,7 +98,7 @@ void code_f(code *c) {
     alf(c);
 }
 
-extern inline void ctsv_f(ctsv *tsv);
+extern inline void ctsvm_f(ctsvm *tsvm);
 
 extern inline code *code_i(al *const a, size_t size);
 
@@ -219,10 +219,10 @@ void code_p(const code *const c, size_t idnt) {
             case TYPE(VR):
             case TYPE(TE):
             case TYPE(ST):
-                if (c->ops[i].od.tsv->len > 0) printf(",%lu", c->ops[i].od.tsv->len);
-                if (c->ops[i].od.tsv->m) printf(",%p", c->ops[i].od.tsv->m);
+                if (c->ops[i].od.tsvm->len > 0) printf(",%lu", c->ops[i].od.tsvm->len);
+                if (c->ops[i].od.tsvm->m) printf(",%p", c->ops[i].od.tsvm->m);
                 putchar('\n');
-                if (c->ops[i].od.tsv->gc) code_p(c->ops[i].od.tsv->gc, idnt + 4);
+                if (c->ops[i].od.tsvm->gc) code_p(c->ops[i].od.tsvm->gc, idnt + 4);
                 break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
@@ -347,7 +347,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
     }
     if (lst->tn->t == TYPE(TE) || lst->tn->t == TYPE(VR)) {
-        code_a(cs->r->a, c, (op) {OP_C(CTSV), lst->tn->t, 0, 0, (op_d) { .tsv = ctsv_i(cs->r->a, lst->len, NULL, gc) }, NULL});
+        code_a(cs->r->a, c, (op) {OP_C(CTSV), lst->tn->t, 0, 0, (op_d) { .tsvm = ctsvm_i(cs->r->a, lst->len, NULL, gc) }, NULL});
     }
     return CODE_ER(cs, OK, NULL);
 }
@@ -376,7 +376,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     if (hsh->tn->t == TYPE(ST)) {
         OP_A(cs, &gc, DEL, OP, { . t = TYPE(ST) }, NULL);
         OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-        OP_A(cs, c, CTSV, ST, { .tsv = ctsv_i(cs->r->a, hsh->len, NULL, gc) }, NULL);
+        OP_A(cs, c, CTSV, ST, { .tsvm = ctsvm_i(cs->r->a, hsh->len, NULL, gc) }, NULL);
     }
     return CODE_ER(cs, OK, NULL);
 }
@@ -659,7 +659,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     }
                     OP_A(cs, &gc, DEL, OP, { . t = TYPE(VR) }, NULL);
                     OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-                    (*c)->ops[(*c)->len - 1].od.tsv->gc = gc;
+                    (*c)->ops[(*c)->len - 1].od.tsvm->gc = gc;
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
@@ -690,7 +690,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             OP_A(cs, &gc, LA, VAR, { SLV(0, TYPE(ST)) }, NULL);
             OP_A(cs, &gc, DEL, OP, { . t = TYPE(ST) }, NULL);
             OP_A(cs, &gc, RFN, CODE, { .t = TYPE(VD) }, NULL);
-            OP_A(cs, c, LM, MOD, { .tsv = ctsv_i(cs->r->a, 0, opn->r->n.m, gc) }, opn->r);
+            OP_A(cs, c, LM, MOD, { .tsvm = ctsvm_i(cs->r->a, 0, opn->r->n.m, gc) }, opn->r);
             break;
         case OP_TYPE(VH):
             break; // no code

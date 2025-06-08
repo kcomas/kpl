@@ -21,10 +21,6 @@
 #include "al.h"
 #include "lst.h"
 
-#ifndef KPL_ALD
-    #define KPL_ALD 0
-#endif
-
 #define KPLE 'k'+'p'+'l'
 
 #define TYPE(N) TYPE_##N

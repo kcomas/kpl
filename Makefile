@@ -2,7 +2,7 @@
 .PHONY: clean
 .RECIPEPREFIX = >
 CC = gcc
-DFLAGS = -DKPL_ALD=1
+DFLAGS = -DKPL_ALD
 OO = -g -Og
 CFLAGS = $(DFLAGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
 SRC = ./src

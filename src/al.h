@@ -20,7 +20,7 @@ inline al *al_i(void *nal) {
 }
 
 #ifndef ALC_USED_FREE_PCT
-    #define ALC_USED_FREE_PCT 0.95
+    #define ALC_USED_FREE_PCT 0.90
 #endif
 
 typedef struct _alc {
@@ -58,7 +58,7 @@ inline alc *alc_i(al *const a, size_t size) {
 void alc_f(alc *ac, void *fn);
 
 inline void al_f(al *a) {
-#if KPL_ALD
+#ifdef KPL_ALD
     printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
 #endif
     LST_F(a, alc, alc_f, NULL);

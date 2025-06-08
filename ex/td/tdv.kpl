@@ -9,15 +9,15 @@ gt:FN(U6;tt)${(y)
         r:f`fibp(x)
         r}}
 
-t:VR[tt]$[gt(x);gt(x);gt(x);gt(x);gt(x)]
+//t:VR[tt]$[gt(x);gt(x);gt(x);gt(x);gt(x)]
 
-//t:VR[tt]$[]
-//
-//n:U6$0
-//#@ (n < 5) {
-//    t + gt(x)
-//    n: n + 1
-//}
+t:VR[tt]$[]
+
+n:U6$0
+#@ (n < 5) {
+    t + gt(x)
+    n: n + 1
+}
 
 n:U6$0
 #@ (n < 5) {

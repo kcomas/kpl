@@ -57,7 +57,7 @@ inline tdr *tds_g(tds *volatile s) {
 }
 
 inline void tds_f(tds *s) {
-#if KPL_ALD // thread resources taken and returned
+#ifdef KPL_ALD // thread resources taken and returned
     printf("**RT: %lu, RR: %lu**\n", s->total, s->len);
 #endif
     LST_F(s, tdr, tdr_f, NULL);
