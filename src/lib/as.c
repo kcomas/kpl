@@ -127,11 +127,7 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     const te *args[] = {arg1, arg2, arg3, arg4};
     for (size_t i = 0; i < 4; i++) {
         if (!args[i]) break;
-        if (tbl_g_i(co, args[i]->d[0], &kv) == TBL_STAT(NF)) {
-            HERE("CALLED");
-            printf("%lu\n", co->i->l);
-            return AS_STAT(INV);
-        }
+        if (tbl_g_i(co, args[i]->d[0], &kv) == TBL_STAT(NF)) return AS_STAT(INV);
         co = kv->d[3].p;
     }
     fn = kv->d[1].p;
