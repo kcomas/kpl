@@ -70,6 +70,7 @@ void code_f(code *c) {
         switch (c->ops[i].ot) {
             case TYPE(MOD):
                 FNNF(c->ops[i].od.tsv->m->j, jit_f);
+                code_f(c->ops[i].od.tsv->m->c);
                 ctsv_f(c->ops[i].od.tsv);
                 break;
             CODE_F_T(FN, code_f, c);
