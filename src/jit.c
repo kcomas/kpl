@@ -94,7 +94,7 @@ static void op_set_jlen(const jit *const j, op *const o) {
 }
 
 static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
-    jit_a(j, rexwr ? 0x4C : 0x48);
+    jit_a(j, rexwr ? 0x49 : 0x48);
     jit_a(j, 0xB8 + reg);
     jit_c(j, sizeof(void*), buf);
 }
@@ -117,7 +117,7 @@ static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
 #define OPPVT(T, D, CT) case TYPE(T): \
     SET_BUF(buf, o->od.D, sizeof(CT)); \
     mov_reg(j, true, 0x01, buf); \
-    jit_b(j, 2, 0x4C, 0x51); \
+    jit_b(j, 2, 0x49, 0x51); \
     op_set_jlen(j, o); \
     break
 
@@ -145,7 +145,6 @@ static void mov_reg(jit *j, bool rexwr, uint8_t reg, uint8_t *buf) {
 static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
-    // int for compat with getpagesize
     int32_t jmpp, jmpl;
     int32_t stki = 0;
     int32_t stk[IF_STK_LEN];
@@ -337,11 +336,6 @@ static var join_thrd(var_td *volatile td) {
     return td->te->v[td->te->len - 1];
 }
 
-void deb(mod *volatile m) {
-    (void) m;
-    printf("?DEB?\n");
-}
-
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool done) {
     jit_stat jstat;
     op *o;
@@ -476,8 +470,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(AL):
                 op_set_jidx(j, o);
-                SET_REG(vn, var, false, 0);
-                for (uint8_t i = 0; i < o->od.u3; i++) jit_a(j, 0x50); // push rax
+                SET_REG(vn, var, true, 1);
+                for (uint8_t i = 0; i < o->od.u3; i++) jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(j, o);
                 break;
             case OP_C(SL):
