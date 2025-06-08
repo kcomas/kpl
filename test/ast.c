@@ -33,10 +33,11 @@ static ast *ai(void) {
 }
 
 T(aplyopadd, {
-    te *pn = psr_r(bpsr(aplyopadd)), *an = NULL;
+    printf("%s\n", aplyopadd);
+    te *pn = psr_r(bpsr(aplyopadd)), *an = NULL, *e = NULL;
     A(pn != NULL, "psr_r");
     ast *a = ai();
-    A(ast_n(a, pn, (void**) &an) == AST_STAT(OK), "ast_n");
+    A(ast_n(a, pn, (void**) &an, &e) == AST_STAT(OK), "ast_n");
     ast_p(an, 0);
     putchar('\n');
     ast_f(a);
