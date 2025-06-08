@@ -3,7 +3,7 @@
 
 #include "kpl.h"
 
-#define RC size_t rc
+#define RC ssize_t rc
 
 typedef struct {
     RC;
