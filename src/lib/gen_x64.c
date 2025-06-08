@@ -459,11 +459,10 @@ gen_stat gen_err(const gen *g, te *ci, err **e, const char *m) {
 }
 
 static void jmp_2_leave(gen *g, te *restrict hlve, te *restrict lbl) {
-    te *h = g->code->h, *c, *lve;
+    te *h = g->code->h, *c, *lve = hlve->d[0].p;
     while (h != hlve) {
         c = h->d[0].p;
         if (c->d[0].u6 == GEN_OP(JMP) && ((te*) c->d[1].p)->d[1].u6 == ((te*) lbl->d[1].p)->d[1].u6) {
-            lve = hlve->d[0].p;
             c->d[0] = lve->d[0];
             te_f(c->d[1].p);
             c->d[1] = P(te_c(lve->d[1].p));
