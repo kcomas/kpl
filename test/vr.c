@@ -1,5 +1,5 @@
 
-#include "../../src/lib/vr.h"
+#include "../src/lib/vr.h"
 #include "t.h"
 
 I;

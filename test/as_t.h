@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../src/lib/as_x64.h"
+#include "../src/lib/as_x64.h"
 #include "t.h"
 
 te *as_arg_r(as *a, size_t rid);

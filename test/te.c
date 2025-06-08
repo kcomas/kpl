@@ -1,5 +1,5 @@
 
-#include "../../src/lib/te.h"
+#include "../src/lib/te.h"
 #include "t.h"
 
 I;

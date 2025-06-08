@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../src/lib/gen_x64.h"
+#include "../src/lib/gen_x64.h"
 #include "as_t.h"
 
 lst *gen_mklst(void);

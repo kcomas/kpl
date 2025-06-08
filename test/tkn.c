@@ -1,5 +1,5 @@
 
-#include "../../src/tkn.h"
+#include "../src/tkn.h"
 #include "t.h"
 
 I;

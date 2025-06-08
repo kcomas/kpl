@@ -1,5 +1,5 @@
 
-#include "../../src/ast.h"
+#include "../src/ast.h"
 #include "t.h"
 
 I;

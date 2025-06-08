@@ -1,5 +1,5 @@
 
-#include "../../src/lib/def.h"
+#include "../src/lib/def.h"
 #include "t.h"
 
 I;

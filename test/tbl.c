@@ -1,5 +1,5 @@
 
-#include "../../src/lib/tbl.h"
+#include "../src/lib/tbl.h"
 #include "t.h"
 
 I;
