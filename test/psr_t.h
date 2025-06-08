@@ -35,3 +35,5 @@ extern const char *TPGM(teadd);
 extern const char *TPGM(vrmul);
 
 extern const char *TPGM(st);
+
+extern const char *TPGM(import);

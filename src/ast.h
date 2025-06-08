@@ -41,6 +41,7 @@ const char *ast_oc_str(oc o);
 typedef enum {
     CC(_START),
     CC(E),
+    CC(L),
     CC(P1),
     CC(_END)
 } cc; // cmd code

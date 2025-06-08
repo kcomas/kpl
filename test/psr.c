@@ -454,3 +454,14 @@ T(st) {
     ))});
     te_f(h);
 }
+
+T(import) {
+    te *h = ppnode(psr_r(bpsr(TPGM(import))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), CMD(N(STR))),
+        CMD(N(VAR)),
+        OP(CMD(N(VAR)), OP(N(INT), OP(SYM(N(VAR)), N(INT)))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}

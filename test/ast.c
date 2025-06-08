@@ -154,3 +154,12 @@ T(st) {
         CN(P1, IN("s"))
     )), NULL)));
 }
+
+T(import) {
+    V(TPGM(import), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("i"), CN(L, CS("./ex/sum.kpl"))),
+        CN(P1, IN("i")),
+        ON(NULL, DFN, CN(E, IN("v")), ON(NULL, ADD, SN(I6, I6(1)), ON(NULL, MUL, ZN("b", IN("i")), SN(I6, I6(2))))),
+        CN(P1, IN("v"))
+    )), NULL)));
+}

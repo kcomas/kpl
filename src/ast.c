@@ -37,6 +37,7 @@ const char *ast_cc_str(cc c) {
     static const char *ccs[] = {
         "_START",
         "E",
+        "L",
         "P1",
         "_END"
     };
@@ -272,6 +273,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(CNCTA), OC(CNCTA));
     // cmds
     ast_t_a(a, TCUST(E), CC(E));
+    ast_t_a(a, TCUST(L), CC(L));
     ast_t_a(a, TCUST(P1), CC(P1));
     return a;
 }
