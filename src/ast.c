@@ -131,6 +131,7 @@ static const char *const op_type_str[] = {
     "ADD",
     "SUB",
     "MUL",
+    "DIV",
     // TODO OP
     "EQ",
     "NOT",
@@ -696,6 +697,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         OP_CASE(ADD);
         OP_CASE(SUB);
         OP_CASE(MUL);
+        OP_CASE(DIV);
         // TODO OPS
         OP_CASE(EQ);
         OP_CASE(NOT);

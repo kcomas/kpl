@@ -76,6 +76,12 @@ VAR_FN_BOP_T(mul, i6, int64_t);
 VAR_FN_BOP_T(mul, u6, uint64_t);
 VAR_FN_BOP_T(mul, f6, double);
 
+// div
+VAR_FN_BOP_T(div, bl, bool);
+VAR_FN_BOP_T(div, i6, int64_t);
+VAR_FN_BOP_T(div, u6, uint64_t);
+VAR_FN_BOP_T(div, f6, double);
+
 // eq
 VAR_FN_BOP_T(eq, bl, bool);
 VAR_FN_BOP_T(eq, i6, int64_t);

@@ -16,6 +16,7 @@ typedef enum {
     JIT_STAT(ADD_T_INV),
     JIT_STAT(SUB_T_INV),
     JIT_STAT(MUL_T_INV),
+    JIT_STAT(DIV_T_INV),
     JIT_STAT(EQ_T_INV),
     JIT_STAT(GT_T_INV),
     JIT_STAT(LT_T_INV),

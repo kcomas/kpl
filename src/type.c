@@ -63,6 +63,9 @@ static const char *const tss[] = {
     "TD_TE_FN_T_NEQ",
     "FN_NO_TD",
     "INV_MUL",
+    "INV_DIV_L_T_N",
+    "INV_DIV_R_T_N",
+    "INV_DIV",
     "INV_EQ_L_T_N",
     "INV_EQ_R_T_N",
     "INV_EQ",
@@ -508,6 +511,11 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             TYPE_COR_LR(INT, I6, type_int_is);
             TYPE_COR_LR(FLT, F6, type_flt_is);
             return TYPE_ER(ts, INV_MUL);
+        case OP_TYPE(DIV):
+            ASTGTNBOP(DIV);
+            TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
+            return TYPE_ER(ts, INV_DIV);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
             if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, lt, rt, &type_int_is) || type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, rt, lt, &type_int_is)) {
@@ -630,7 +638,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
             while (ah) {
                 ASTGTN(tt, th->a, INV_CALL_TGT_ARG_T);
                 ASTGTN(ta, ah->a, INV_CALL_ARG_T);
-                if (!((ta->t == TYPE(INT) && type_int_is(tt, NULL)) || (type_eq(tt, ta)))) return TYPE_ER(ts, CALL_ARG_T_NEQ);
+                if (!((ta->t == TYPE(INT) && type_int_is(tt, NULL)) || (ta->t == TYPE(FLT) && type_flt_is(tt, NULL)) || (type_eq(tt, ta)))) return TYPE_ER(ts, CALL_ARG_T_NEQ);
                 th = th->next;
                 ah = ah->next;
             }

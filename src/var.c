@@ -170,7 +170,8 @@ var_sg *var_f6_sg(al *const a, double f6) {
     var_sg *sg = var_sg_i(a, len);
     sg->len = len;
     int64_t frac = (f6 - up) * flp10[FLT_DEC_PREC];
-    str_w_dig(sg, &len, frac);
+    if (frac == 0) sg->str[--len] = '0';
+    else str_w_dig(sg, &len, frac);
     sg->str[--len] = '.';
     if (up == 0) sg->str[--len] = '0';
     else str_w_dig(sg, &len, up);
@@ -197,6 +198,12 @@ VAR_BOP_T(mul, &&, bl, bool)
 VAR_BOP_T(mul, *, i6, int64_t)
 VAR_BOP_T(mul, *, u6, uint64_t)
 VAR_BOP_T(mul, *, f6, double)
+
+// div
+VAR_BOP_T(div, ||, bl, bool)
+VAR_BOP_T(div, /, i6, int64_t)
+VAR_BOP_T(div, /, u6, uint64_t)
+VAR_BOP_T(div, /, f6, double)
 
 // eq
 VAR_BOP_T(eq, ==, bl, bool)
