@@ -144,9 +144,9 @@ T(lfile) {
 }
 
 T(vrmul) {
-    V(TPGM(vrmul), RN(AN(NULL, LN(LT(2, "i", U6(0), NULL, "v", U6(0), NULL), L(4,
-        ON(NULL, DFN, EN("i", U6(0), NULL), SN(F6, F6(1.1))),
-        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, TN(VR), VN(NULL, L(1, EN("i", U6(0), NULL))))),
+    V(TPGM(vrmul), RN(AN(NULL, LN(LT(2, "v", U6(0), NULL, "i", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, TN(VR),
+            VN(NULL, L(1, ON(NULL, DFN, EN("i", U6(0), NULL), SN(F6, F6(1.1))))))),
         ON(NULL, LOOP,
             LN(NULL, L(1, ON(NULL, LT, EN("i", U6(0), NULL), SN(I6, I6(100))))),
             LN(NULL, L(1, ON(NULL, CNCTA, EN("v", U6(0), NULL), ON(NULL, MULA, EN("i", U6(0), NULL), SN(I6, I6(2))))))

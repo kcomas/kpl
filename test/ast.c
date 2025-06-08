@@ -130,9 +130,8 @@ T(teadd) {
 }
 
 T(vrmul) {
-    V(TPGM(vrmul), RN(AN(NULL, LN(NULL, L(4,
-        ON(NULL, DFN, IN("i"), SN(F6, F6(1.1))),
-        ON(NULL, DFN, IN("v"), ON(NULL, CST, TN(VR), VN(NULL, L(1, IN("i"))))),
+    V(TPGM(vrmul), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("v"), ON(NULL, CST, TN(VR), VN(NULL, L(1, ON(NULL, DFN, IN("i"), SN(F6, F6(1.1))))))),
         ON(NULL, LOOP,
             AN(NULL, ON(NULL, LT, NULL, NULL), L(2, IN("i"), SN(I6, I6(100)))),
             ON(NULL, CNCTA, IN("v"), ON(NULL, MULA, IN("i"), SN(I6, I6(2))))

@@ -51,6 +51,32 @@ T(tetype) {
     te_f(c);
 }
 
+T(typeteeq) {
+    te *arr[] = {type_s_i(&al_te, NULL, TYPE(U6)), type_s_i(&al_te, NULL, TYPE(U6)), type_s_i(&al_te, NULL, TYPE(U6))};
+    te *a = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
+    type_p(a);
+    putchar('\n');
+    A(type_te_eq(a), "type_te_eq");
+    for (size_t i = 0; i < 3; i++) te_f(arr[i]);
+    te_f(a);
+    arr[0] = type_s_i(&al_te, NULL, TYPE(U6));
+    arr[1] = type_s_i(&al_te, NULL, TYPE(I6));
+    arr[2] = type_s_i(&al_te, NULL, TYPE(F6));
+    a = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
+    type_p(a);
+    putchar('\n');
+    A(!type_te_eq(a), "!type_te_eq");
+    for (size_t i = 0; i < 3; i++) te_f(arr[i]);
+    te_f(a);
+    te *b = type_s_i(&al_te, NULL, TYPE(F6));
+    a = type_te_i_v(&al_te, NULL, 1, b);
+    type_p(a);
+    putchar('\n');
+    A(type_te_eq(a), "type_te_eq");
+    te_f(b);
+    te_f(a);
+}
+
 T(is_ref) {
     A(type_is_ref(TYPE(SG)), "sg");
     A(!type_is_ref(TYPE(I6)), "!i6");
@@ -81,10 +107,12 @@ T(has_refs) {
     for (size_t i = 0; i < 3; i++) te_f(arr[i]);
     te_f(a);
     te *s = type_s_i(&al_te, NULL, TYPE(SG));
-    te *b = type_te_i_v(&al_te, NULL, 1, s);
+    te *i = type_s_i(&al_te, NULL, TYPE(U6));
+    te *b = type_te_i_v(&al_te, NULL, 2, s, i);
     type_p(b);
     putchar('\n');
     A(type_has_refs(b), "has_refs");
     te_f(s);
+    te_f(i);
     te_f(b);
 }

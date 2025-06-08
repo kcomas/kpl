@@ -95,6 +95,8 @@ te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...);
 
 te *type_te_g_t(const te *t, size_t n); // zero indexed
 
+bool type_te_eq(const te *t); // if all types in te are the same
+
 void type_p(const te *t);
 
 bool type_eq(const te *restrict a, const te *restrict b);

@@ -202,6 +202,12 @@ te *type_te_g_t(const te *t, size_t n) {
     return NULL;
 }
 
+bool type_te_eq(const te *t) {
+    if (!t->d[2].p) return false;
+    for (size_t i = 3; i < t->l; i++) if (!type_eq(t->d[2].p, t->d[i].p)) return false;
+    return true;
+}
+
 static void type_tbl_p(const tbl *t) {
     if (!t) {
         printf("``");
