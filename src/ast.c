@@ -84,13 +84,24 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(I):
             break;
         case AST_CLS(S):
+            printf("(S ");
+            type_p(an->d[3].p);
+            switch (((te*) an->d[3].p)->d[0].u6) {
+                case TYPE(I6):
+                    printf(" %ld", an->d[4].i6);
+                    break;
+                default:
+                    printf("INV");
+                    break;
+            }
+            putchar(')');
             break;
         case AST_CLS(V):
             break;
         case AST_CLS(O):
             printf("(O ");
             type_p(an->d[3].p);
-            printf(" [%s)]", ast_op_str(an->d[6].u6));
+            printf(" [%s]", ast_op_str(an->d[6].u6));
             putchar(')');
             break;
         case AST_CLS(Z):
@@ -101,6 +112,14 @@ void ast_p(const te *an, size_t idnt) {
             if (an->d[4].p) {
                 putchar('\n');
                 ast_p(an->d[4].p, idnt + 1);
+            }
+            if (an->d[5].p) {
+                te *h = ((lst*) an->d[5].p)->h;
+                while (h) {
+                    putchar('\n');
+                    ast_p(h->d[0].p, idnt + 2);
+                    h = h->d[2].p;
+                }
             }
             putchar(')');
             break;
