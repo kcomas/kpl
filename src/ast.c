@@ -16,17 +16,22 @@ static ast_stat i(ast *a, te *pn, void **vn) {
     return AST_STAT(OK);
 }
 
-static ast_stat op(ast *a, te *pn, void **vn) {
+static ast_stat o(ast *a, te *pn, void **vn) {
+    ast_stat stat;
     te **an = (te**) vn;
-    // TODO
-    return AST_STAT(INV);
+    size_t oid;
+    if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &oid)) != AST_STAT(OK)) return stat;
+    *an = ast_an_i(a, *an, pn, AST_CLS(O), P(NULL), NULL, NULL, U6(oid));
+    if (pn->d[3].p && (stat = ast_n(a, pn->d[3].p, &(*an)->d[4].p)) != AST_STAT(OK)) return stat;
+    if (!pn->d[4].p) return AST_STAT(OK);
+    return ast_n(a, pn->d[4].p, &(*an)->d[5].p);
 }
 
 static ast_stat aply(ast *a, te *pn, void **vn) {
     ast_stat stat;
     void *ln;
     te **an = (te**) vn;
-    *an = ast_an_i(a, *an, pn, AST_CLS(A), P(NULL), NULL, P(NULL));
+    *an = ast_an_i(a, *an, pn, AST_CLS(A), P(NULL), NULL, NULL);
     if (pn->d[3].p && (stat = ast_n(a, pn->d[3].p, &(*an)->d[4].p)) != AST_STAT(OK)) return stat;
     if (!pn->d[4].p) return AST_STAT(OK);
     lst *pl = pn->d[4].p;
@@ -51,7 +56,7 @@ static ast *ast_tkn(ast *a) {
 ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(ROOT), root);
     ast_a(a, NODE_TYPE(INT), i);
-    ast_a(a, NODE_TYPE(OP), op);
+    ast_a(a, NODE_TYPE(OP), o);
     ast_a(a, NODE_TYPE(APLY), aply);
     return ast_tkn(a);
 }

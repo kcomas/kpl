@@ -165,6 +165,13 @@ ast_stat ast_t_a(ast *a, size_t tid, size_t id) {
     return AST_STAT(OK);
 }
 
+ast_stat ast_t_n(ast *a, size_t tid, size_t *id) {
+    te *kv;
+    if (tbl_g_i(a->tt, U6(tid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
+    *id = kv->d[1].u6;
+    return AST_STAT(OK);
+}
+
 void ast_f(ast *a) {
     tbl_f(a->pt);
     tbl_f(a->tt);
