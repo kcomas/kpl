@@ -326,8 +326,8 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
                 jit_b(j, 2, 0x41, 0x59); // pop r9 cnct sg
                 jit_a(j, 0x50); // push rax
-                jit_b(j, 2, 0x41, 0x52); // push r10
                 jit_b(j, 2, 0x41, 0x51); // push r9
+                jit_b(j, 2, 0x41, 0x52); // push r10
                 op_set_jlen(*j, o);
                 break;
             case OP_C(WFD):
@@ -398,7 +398,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                         jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
                         SET_FP(var_te_vr_gc);
                         SET_REG_CALL(false, 0);
-                        SET_REG_CALL(false, 0); // call rax with gc fn
+                        jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         jit_a(j, 0x5F); // pop rdi
                         break;
                     default:
@@ -448,7 +448,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     case TYPE(TE):
                         SET_FP(var_te_vr_gc);
                         SET_REG_CALL(false, 0);
-                        SET_REG_CALL(false, 0); // call rax with gc fn
+                        jit_b(j, 2, 0xFF, 0xD0); // call rax with gc fn
                         break;
                     default:
                         return JIT_STAT(GCTEI_T_INV);
@@ -457,7 +457,8 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(DEL):
                 op_set_jidx(*j, o);
-                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                //jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
                     case TYPE(TE):
                     case TYPE(VR):
