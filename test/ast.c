@@ -140,8 +140,17 @@ T(vrmul) {
     )), NULL)));
 }
 
-/*
 T(st) {
-    V(TPGM(st), RN(AN(NULL, NULL, NULL)));
+    V(TPGM(st), RN(AN(NULL, LN(NULL, L(5,
+        ON(NULL, DFN, IN("a"), SN(I6, I6(1))),
+        ON(NULL, DFN, IN("b"), SN(F6, F6(2.2))),
+        ON(NULL, DFN, CN(E, IN("s")), ON(NULL, MTCH, NULL, LN(NULL, L(4,
+            ZN("a", IN("a")),
+            ZN("b", IN("b")),
+            ZN("c", AN(NULL, ON(NULL, CST, NULL, NULL), L(2, TN(U6), ON(NULL, ADD, IN("a"), SN(I6, I6(2)))))),
+            ZN("d", SG("Hi"))
+        )))),
+        ON(NULL, AGN, ZN("a", IN("s")), ON(NULL, MUL, SN(I6, I6(2)), ON(NULL, CST, TN(I6), ZN("c", IN("s"))))),
+        CN(P1, IN("s"))
+    )), NULL)));
 }
-*/

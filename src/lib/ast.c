@@ -124,10 +124,26 @@ static void t_i_f(void *p) {
     n->af->f(n);
 }
 
-static void t_s_f(void *p) {
+void ast_s_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
-    // TODO data like sg
+    n->af->f(n);
+}
+
+te *ast_s_i(ast *a, te *restrict pan, te *restrict psr, frfn nf, un ct, un v) {
+    te *an = te_i(AST_MIN_LEN + 2, a->ta, nf);
+    an->d[0] = P(pan);
+    an->d[1] = P(psr);
+    an->d[2] = U6(AST_CLS(S));
+    an->d[3] = ct;
+    an->d[4] = v;
+    return an;
+}
+
+void ast_s_sg_f(void *p) {
+    te *n = p;
+    te_f(n->d[3].p);
+    mc_f(n->d[4].p);
     n->af->f(n);
 }
 
@@ -192,7 +208,7 @@ te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...
             break;
         case AST_CLS(S):
             len += 1;
-            nf = t_s_f;
+            nf = ast_s_f;
             break;
         case AST_CLS(V):
             len += 1;
