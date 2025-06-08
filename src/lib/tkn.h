@@ -23,10 +23,17 @@ typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 
 // match te[id;lno;cno;start;end]
 
+#define TOKEN(N) TOKEN_##N
+
+typedef enum {
+    TOKEN(NF) = 0,
+    TOKEN(VAR) = 1,
+    TOKEN(USR) = 2
+} token;
+
 typedef struct _tkn {
     ssize_t r;
-    ssize_t idc; // id counter
-    size_t lno, cno, pos;
+    size_t idc, lno, cno, pos; // id counter
     alfn *ta;
     frfn *tf, *ef; // entry free
     tkn_tbl_i *ttif;
