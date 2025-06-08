@@ -3,7 +3,7 @@
 .RECIPEPREFIX = >
 CC = gcc
 # DFLAGS
-CFLAGS = $(DFLAGS) -g -Og -fstack-protector-all -fno-omit-frame-pointer -Wall -Wextra -Wstack-protector # TODO specify std
+CFLAGS = $(DFLAGS) -g -Og -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)

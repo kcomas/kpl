@@ -22,7 +22,7 @@ extern inline er_itm *er_itm_i(al *const a, er_type et, const char *const fnn, c
 
 void er_itm_p(er_itm *const ei) {
     printf("!!%s", er_type_str(ei->et));
-    if (ei->fnn[0]) printf(",%s",ei->fnn);
+    if (ei->fnn[0]) printf(",%s", ei->fnn);
     if (ei->stat) printf(",%s", ei->stat);
     if (ei->path) printf(",%s", ei->path);
     if (ei->lno > 0 && ei->cno > 0) printf(",l:%lu,c:%lu", ei->lno, ei->cno);
