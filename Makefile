@@ -1,7 +1,7 @@
 
 .RECIPEPREFIX = >
 CC = gcc
-CFLAGS = -std=c17 -g -Wall -Wextra
+CFLAGS = -g -Wall -Wextra # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)
@@ -35,6 +35,10 @@ type$(TNAME): $(TYPE_OBJS) $(TEST)/type.o
 
 CODE_OBJS = $(SRC)/code.o $(TYPE_OBJS)
 code$(TNAME): $(CODE_OBJS) $(TEST)/code.o
+> $(CCOBJ)
+
+JIT_OBJS = $(SRC)/jit.o $(CODE_OBJS)
+jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
 > $(CCOBJ)
 
 $(NAME):

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
 #include "lst.h"
@@ -19,6 +20,8 @@ typedef struct _fn_node fn_node;
 typedef struct _code code;
 
 typedef void jit_fn(void);
+
+typedef struct _jit jit;
 
 // free not null w fn
 #define FNNF(V, F) if (V) F(V)
