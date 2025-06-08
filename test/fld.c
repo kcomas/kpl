@@ -107,3 +107,13 @@ T(scope) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(efn) {
+    V(TPGM(efn), RN(AN(NULL, LN(LT(1, "addmul", FLG(0, LTE_FLG(E)), NULL), L(1,
+        ON(NULL, DFN, EN("addmul", FLG(0, LTE_FLG(E)), NULL), ON(NULL, CST, TN(FN),
+            LN(LT(3, "z", U6(0), TS(F6), "y", U6(0), TS(F6), "x", U6(0), TS(F6)), L(1,
+                ON(NULL, MUL, EN("z", U6(0), TS(F6)),
+                    ON(NULL, ADD, EN("y", U6(0), TS(F6)), EN("x", U6(0), TS(F6))))
+            ))))
+    )), NULL)));
+}
