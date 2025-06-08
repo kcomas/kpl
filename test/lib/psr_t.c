@@ -94,7 +94,7 @@ psr_stat psr_lst_e(psr *const p, te *const e, te *const n) {
 void node_p(const te *const n, const mc *const s, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
-    printf("(type:%lu,", n->d[0].u6);
+    printf("(type:%lu", n->d[0].u6);
     switch (n->d[0].u6) {
         case NODE_TYPE(INT):
             putchar('|');
