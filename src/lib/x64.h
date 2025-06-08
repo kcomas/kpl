@@ -54,8 +54,6 @@ typedef enum {
     XMM(15)
 } reg;
 
-#define RIP 5
-
 // 0-7 gen lower, 8-15 // gen upper
 // 16-23 xmm lower 24-32 xmm upper
 
@@ -152,6 +150,9 @@ x64_stat x64_movq_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 // movq xmm0, xmm1
 x64_stat x64_movq_xx(size_t *p, uint8_t *m, reg d, reg s);
 
+// movq xmm0, qword ptr[rip+dsp32]
+x64_stat x64_movq_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
+
 // lea rax, [rax+dsp8]
 x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
@@ -167,6 +168,9 @@ x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s);
 // addsd xmm0, xmm1
 x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 
+// addsd xmm0, qword ptr[rip+dsp32]
+x64_stat x64_addsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
+
 // dec rax
 x64_stat x64_dec_r(size_t *p, uint8_t *m, reg r);
 
@@ -178,6 +182,9 @@ x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // subsd xmm0, xmm1
 x64_stat x64_subsd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
+// addsd xmm0, qword ptr[rip+dsp32]
+x64_stat x64_subsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // neg rax
 x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r);
@@ -200,8 +207,17 @@ x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
 // cmp rax, qword ptr[rip+disp32]
 x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
+// cmp rax, imm8
+x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
+
+// cmp rax, imm32
+x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d);
+
 // comisd xmm0, xmm1
 x64_stat x64_comisd_xx(size_t *p, uint8_t *m, reg d, reg s);
+
+// comisd xmm0, aword ptr[rip+disp32]
+x64_stat x64_comisd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
 // test rax, rdi
 x64_stat x64_test_rr(size_t *p, uint8_t *m, reg d, reg s);

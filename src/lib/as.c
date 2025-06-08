@@ -154,7 +154,7 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     return AS_STAT(OK);
 }
 
-as_stat as_n(as *a, uint8_t *m) {
+as_stat as_n(as *a, uint8_t *m, te **e) {
     size_t p = 0;
     te *h = a->code->h;
     while (h) {
@@ -162,7 +162,10 @@ as_stat as_n(as *a, uint8_t *m) {
         c->d[8] = U6(p);
         if (c->d[0].u6 == CODE_ID(O)) {
             as_code_fn *fn = c->d[6].p;
-            if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) return AS_STAT(INV);
+            if (!fn || !fn(a, c, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
+                *e = te_c(c);
+                return AS_STAT(CODE);
+            }
             c->d[9] = U6(p - c->d[8].u6);
         } else c->d[9] = U6(1);
         h = h->d[2].p;
@@ -173,7 +176,10 @@ as_stat as_n(as *a, uint8_t *m) {
         te *lh = ((lst*) lbl->d[2].p)->h;
         while (lh) {
             as_lbl_fn *lfn = ((te*) lh->d[0].p)->d[7].p;
-            if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) return AS_STAT(INV);
+            if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) {
+                *e = te_c(lbl);
+                return AS_STAT(LBL);
+            }
             lh = lh->d[2].p;
         }
         h = h->d[2].p;
@@ -182,7 +188,10 @@ as_stat as_n(as *a, uint8_t *m) {
     while (h) {
         te *dqe = h->d[0].p;
         as_dq_fn *dfn = dqe->d[3].p;
-        if (!dfn || !dfn(a, &p, m, dqe)) return AS_STAT(INV);
+        if (!dfn || !dfn(a, &p, m, dqe)) {
+            *e = te_c(dqe);
+            return AS_STAT(DATA);
+        }
         h = h->d[2].p;
     }
     return AS_STAT(OK);
