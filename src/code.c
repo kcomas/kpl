@@ -126,7 +126,6 @@ static const char *op_c_str[] = {
     "PUSH",
     "POP",
     "SWAP",
-    "DONE",
     "RFN", // return fn
     "CFN", // call fn
     "CS", // call self
@@ -686,6 +685,7 @@ static code_stat gen_vr_hh_gc(code_st *const cs, code **gc, type t, const type_n
         case TYPE(TE):
         case TYPE(ST):
         case TYPE(ER):
+        case TYPE(TD):
             if (t == TYPE(VR)) {
                 OP_A(cs, gc, GCVR, OP, { .t = gct->t }, NULL);
             } else if (t == TYPE(HH)) {
@@ -1174,11 +1174,9 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
     }
     if (t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, FN_RET_ER_T_INV, NULL);
-        OP_A(cs, c, DONE, VD, {}, NULL);
         if (tn->t != TYPE(VD)) OP_A(cs, c, POP, VAR, { SLV(0, tn->t) }, NULL);
         OP_A(cs, c, RFN, ER, { RER(tn->t, NFEC(tn->flgs)) }, NULL);
     } else {
-        OP_A(cs, c, DONE, VD, {}, NULL);
         if (t != TYPE(VD)) OP_A(cs, c, POP, VAR, { SLV(0, t) }, NULL);
         OP_A(cs, c, RFN, CODE, { .t = t }, NULL);
     }

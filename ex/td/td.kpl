@@ -1,49 +1,54 @@
 
 // basic thread example
 
-tf:FN(U6;U6)
-x:U6$35
+run:FN(VD)${()
+    tf:FN(U6;U6)
+    x:U6$35
 
-va: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-vb: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-vc: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-vd: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-ve: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
+    va: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    vb: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    vc: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    vd: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    ve: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
 
-$(FD;1) << " ", ["E:";SG$ve();"\n"]
-$(FD;1) << " ", ["D:";SG$vd();"\n"]
-$(FD;1) << " ", ["C:";SG$vc();"\n"]
-$(FD;1) << " ", ["B:";SG$vb();"\n"]
-$(FD;1) << " ", ["A:";SG$va();"\n"]
+    $(FD;1) << " ", ["E:";SG$ve();"\n"]
+    $(FD;1) << " ", ["D:";SG$vd();"\n"]
+    $(FD;1) << " ", ["C:";SG$vc();"\n"]
+    $(FD;1) << " ", ["B:";SG$vb();"\n"]
+    $(FD;1) << " ", ["A:";SG$va();"\n"]
 
-va: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-$(FD;1) << " ", ["A:";SG$va();"\n"]
-va: [x;U6$0]*tf${(x)
-    f: \l "fibp.kpl"
-    r:f`fibp(x)
-    r}
-$(FD;1) << " ", ["A:";SG$va();"\n"]
+    va: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    $(FD;1) << " ", ["A:";SG$va();"\n"]
+    va: [x;U6$0]*tf${(x)
+        f: \l "fibp.kpl"
+        r:f`fibp(x)
+        r}
+    $(FD;1) << " ", ["A:";SG$va();"\n"]
+}
 
-\d va
-\d vb
-\d vc
-\d vd
-\d ve
+
+n:U6$0
+b:U6$20
+#@ (n < b) {
+    $(FD;1) << "Batch: ",$(SG;n + 1),"\n"
+    run()
+    n: n + 1
+}

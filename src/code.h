@@ -101,7 +101,6 @@ typedef enum {
     OP_C(PUSH),
     OP_C(POP),
     OP_C(SWAP),
-    OP_C(DONE),
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
