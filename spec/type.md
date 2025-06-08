@@ -2,7 +2,8 @@
 # Types
 
 ## Internal
-Void: u0
+Void: vd
+Bool: bl - b0, b1
 Integer: i8, i16, i32, i64, u8, u16, u32, u64
 Float: f32, f64
 Char: uc - Utf8 char "a"
