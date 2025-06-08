@@ -27,6 +27,7 @@ static const char *op_c_str[] = {
     "RFN",
     "CFN",
     "CS",
+    "CALL",
     "AG",
     "SG",
     "LG",
@@ -105,7 +106,7 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
 
 #define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
 
-static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code *c) {
+static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code **c) {
     code_stat cstat;
     lst_itm *h = lst->h;
     while (h) {
@@ -116,13 +117,13 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     return CODE_STAT(OK);
 }
 
-static code_stat code_gen_if(code_st *const cs, const ast *const a, code *c) {
+static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     if_itm *h = a->n.in->h;
     while (h) {
         op_if *of = op_if_i(CODE_I_SIZE);
-        if (h->cond) IFCGEN(code_gen, cs, h->cond, of->cond);
-        IFCGEN(code_gen_lst, cs, h->body, of->body);
+        if (h->cond) IFCGEN(code_gen, cs, h->cond, &of->cond);
+        IFCGEN(code_gen_lst, cs, h->body, &of->body);
         OP_A(c, COND, COND, { .of = of }, a);
         h = h->next;
     }
@@ -140,7 +141,7 @@ static int64_t tkn_to_int64_t(const tkn *const t, const char *const str) {
     return strtoll(istr, &eptr, 10);
 }
 
-static code_stat p_int(const code_st *const cs, type t, const ast *const a, code *c) {
+static code_stat p_int(const code_st *const cs, type t, const ast *const a, code **c) {
     int64_t i = tkn_to_int64_t(&a->t, cs->str);
     switch (t) {
         // TODO
@@ -158,7 +159,7 @@ static code_stat p_int(const code_st *const cs, type t, const ast *const a, code
 
 #define OP_P_INT_RET(OPN, CS, TGT, C) if (OPN->TGT->at == AST_TYPE(VAL) && OPN->TGT->n.val->tn->t == TYPE(INT) && (cstat = p_int(cs, OPN->ret->t, OPN->TGT, C)) != CODE_STAT(OK)) return cstat
 
-static code_stat cor_int(const code_st *const cs, const ast *const a, const ast *const b, code *c) {
+static code_stat cor_int(const code_st *const cs, const ast *const a, const ast *const b, code **c) {
     if (a->at != AST_TYPE(VAL)) return CODE_STAT(OK);
     if (a->n.val->tn->t != TYPE(INT)) return CODE_STAT(OK);
     if (b->at == AST_TYPE(VAL) && b->n.val->tn->t == TYPE(INT)) return p_int(cs, TYPE(I6), a, c);
@@ -171,7 +172,7 @@ static code_stat cor_int(const code_st *const cs, const ast *const a, const ast 
 
 #define OP_ZOO(TN) if (TN->t != TYPE(BL)) OP_A(c, ZOO, OP, { .t = TN->t }, a);
 
-static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
+static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     op_node *opn = a->n.op;
     var_node *var;
@@ -215,7 +216,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
                 case TYPE(SG):
                     IFCGEN(code_gen, cs, opn->r, c);
                     if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-                    if (tr->t >= TYPE(U3) && tr->t <= TYPE(F6)) OP_A(c, CSTSG, OP, { .t = tr->t }, a);
+                    if (tr->t >= TYPE(U3) && tr->t <= TYPE(F6)) {
+                        OP_A(c, CSTSG, OP, { .t = tr->t }, a);
+                        return CODE_STAT(OK);
+                    }
                     // TODO
                     break;
                 case TYPE(FD):
@@ -275,10 +279,9 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
             switch  (opn->ret->t) {
                 case TYPE(SG):
-                    if (tr->t == TYPE(TE)) {
-                        // TODO cnct te
-                    }
-                    // TODO SG
+                    if (tr->t == TYPE(TE)) OP_A(c, SGCNCT, OP, { .t = TYPE(TE) }, a);
+                    else if (tr->t == TYPE(SG)) OP_A(c, SGCNCT, OP, { .t = TYPE(SG) }, a);
+                    else return CODE_STAT(INV_SG_CNCT);
                     break;
                 default: return CODE_STAT(INV_CNCT_OP);
             }
@@ -295,7 +298,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     return CODE_STAT(OK);
 }
 
-code_stat code_gen_call(code_st *const cs, const ast *const a, code *c) {
+code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
@@ -315,8 +318,11 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code *c) {
             opn->ret = NULL;
             opn->l = opn->r = NULL;
             break;
-        case AST_TYPE(FN):
-            // TODO
+        case AST_TYPE(VAR):
+            IFCGEN(code_gen_lst, cs, cn->args, c);
+            if (cn->tgt->n.var->tn->t != TYPE(FN)) return CODE_STAT(CALL_VAR_N_FN);
+            IFCGEN(code_gen, cs, cn->tgt, c);
+            OP_A(c, CALL, OP, { .t = cn->ret->t }, a);
             break;
         default:
             return CODE_STAT(INV_CALL_TGT);
@@ -324,7 +330,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code *c) {
     return CODE_STAT(OK);
 }
 
-code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
+code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     code *cfn;
     char *sg;
@@ -357,7 +363,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
         case AST_TYPE(IF): return code_gen_if(cs, a, c);
         case AST_TYPE(FN):
             cfn = code_i(CODE_I_SIZE);
-            IFCGEN(code_gen_fn, cs, a->n.fn, cfn);
+            IFCGEN(code_gen_fn, cs, a->n.fn, &cfn);
             OP_A(c, PV, FN, { .c = cfn }, a);
             break;
         case AST_TYPE(CALL): return code_gen_call(cs, a, c);
@@ -394,7 +400,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
     return CODE_STAT(OK);
 }
 
-code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code *c) {
+code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
     code_stat cstat;
     if (fn->idc < fn->args->len) return CODE_STAT(ARG_LEN_GT_LOCAL_LEN);
     OP_A(c, EFN, VD, {}, NULL);

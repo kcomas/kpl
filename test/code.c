@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     code_stat cstat;
     code_st_i(&cs, m->src.str);
     m->c = code_i(CODE_I_SIZE);
-    if ((cstat = code_gen_fn(&cs, m->fns, m->c)) != CODE_STAT(OK)) {
+    if ((cstat = code_gen_fn(&cs, m->fns, &m->c)) != CODE_STAT(OK)) {
         code_p(&cs, m->c, 0);
         printf("EC: %d\n", cstat);
         return cstat;
