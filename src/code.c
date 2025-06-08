@@ -12,6 +12,7 @@ extern inline void code_a(code **c, op o);
 void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
         CODE_F_T(FN, code_f, c);
+        CODE_F_T(IF, code_f, c);
         CODE_F_T(COND, op_if_f, of);
         CODE_F_T(SG, free, sg);
         CODE_F_T(STR, free, sg);
