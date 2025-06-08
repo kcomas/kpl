@@ -20,6 +20,7 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PCUST(INT), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_int_i, 1, TCUST(NUM));
     psr_a(p, PCUST(VAR), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_var_i, 1, TCUST(VAR));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "I6", &tkn_ft));
+    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "F6", &tkn_ft));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "FN", &tkn_ft));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "DL", &tkn_ft));
     psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "UN", &tkn_ft));
@@ -160,11 +161,15 @@ psr_stat psr_aply_i(psr *const p, te **n) {
 
 psr_stat psr_aply_m(psr *const p, te *const nh, te *const n) {
     (void) p;
-    if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
+    if ((nh->d[1].p && nh->d[2].p) || (!nh->d[1].p && !nh->d[2].p)) return PSR_STAT(INV);
     if (nh->d[1].p && ((te*) nh->d[1].p)->d[3].p && ((te*) nh->d[1].p)->d[4].p) {
         n->d[3] = ((te*) nh->d[1].p)->d[4];
         ((te*) nh->d[1].p)->d[4] = P(n);
         n->d[0] = nh->d[1];
+    } else if (nh->d[1].p && !((te*) nh->d[1].p)->d[3].p && ((te*) nh->d[1].p)->d[4].p) {
+        n->d[0] = ((te*) ((te*) nh->d[1].p)->d[4].p)->d[0];
+        n->d[3] = ((te*) nh->d[1].p)->d[4];
+        ((te*) nh->d[1].p)->d[4] = ((te*) ((te*) nh->d[1].p)->d[4].p)->d[0] = P(n);
     } else if (nh->d[1].p) {
         if (((te*) nh->d[1].p)->d[3].p || ((te*) nh->d[1].p)->d[4].p) return PSR_STAT(INV);
         n->d[3] = nh->d[1];
