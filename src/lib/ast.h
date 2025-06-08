@@ -19,7 +19,7 @@ typedef enum {
     AST_CLS(T), // type te[type]
     AST_CLS(E), // lst entry te[mc;id;type;node]
     AST_CLS(I), // identifier [mc]
-    AST_CLS(S), // scalar type [un[type];un]
+    AST_CLS(S), // scalar type [te[type];un]
     AST_CLS(V), // vector type [te[type];lst]
     AST_CLS(O), // op [te[type];op_id;te;te]
     AST_CLS(Z), // left target, no arg apply type [te[type];te;mc]

@@ -237,8 +237,14 @@ void ast_p(const te *an, size_t idnt) {
             printf("(S ");
             type_p(an->d[3].p);
             switch (((te*) an->d[3].p)->d[1].u4) {
+                case TYPE(U5):
+                    printf(" %u", an->d[4].i5);
+                    break;
                 case TYPE(I5):
                     printf(" %d", an->d[4].i5);
+                    break;
+                case TYPE(U6):
+                    printf(" %lu", an->d[4].i6);
                     break;
                 case TYPE(I6):
                     printf(" %ld", an->d[4].i6);
@@ -267,8 +273,8 @@ void ast_p(const te *an, size_t idnt) {
             break;
         case AST_CLS(Z):
             printf("(Z ");
-            printf("`%s ", (char*) ((mc*) an->d[5].p)->d);
             type_p(an->d[3].p);
+            printf(" `%s", (char*) ((mc*) an->d[5].p)->d);
             if (an->d[4].p) {
                 putchar('\n');
                 ast_p(an->d[4].p, idnt + 1);
