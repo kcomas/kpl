@@ -205,8 +205,6 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     return CODE_STAT(OK);
 }
 
-#define OP_ZOO(TN, C) if (TN->t != TYPE(BL)) OP_A(C, ZOO, OP, { .t = TN->t }, a);
-
 static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     code *ifc = code_i(CODE_I_SIZE);
@@ -217,7 +215,6 @@ static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
         if (h->cond) {
             IFCGEN(code_gen, cs, h->cond, &of->cond);
             if (!(tc = ast_gtn(h->cond))) return CODE_STAT(NO_T_FOR_IF_COND);
-            OP_ZOO(tc, &of->cond);
         }
         IFCGEN(code_gen_lst, cs, h->body, &of->body);
         OP_A(&ifc, COND, COND, { .of = of }, a);
@@ -277,6 +274,8 @@ static code_stat cor_int(const code_st *const cs, const ast *const a, const ast 
 }
 
 #define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
+
+#define OP_ZOO(TN, C) if (TN->t != TYPE(BL)) OP_A(C, ZOO, OP, { .t = TN->t }, a);
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
@@ -526,6 +525,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
             break;
         case AST_TYPE(CALL): return code_gen_call(cs, a, c);
         case AST_TYPE(RET):
+            // TODO possible dead code
             if (a->n.ret->a->at == AST_TYPE(VAL)) {
                 switch (a->n.ret->a->n.val->tn->t) {
                     case TYPE(INT):
@@ -538,7 +538,7 @@ code_stat code_gen(code_st *const cs, const ast *const a, code **c) {
                         return CODE_STAT(NO_OP_FOR_RET_VAL_T);
                 }
             } else IFCGEN(code_gen, cs, a->n.ret->a, c);
-            OP_A(c, RFN, VD, {}, a);
+            OP_A(c, RFN, CODE, { .t = a->n.ret->tn-> t }, a);
             break;
         case AST_TYPE(VAR):
             switch (a->n.var->vt) {
