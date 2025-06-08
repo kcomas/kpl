@@ -120,6 +120,7 @@ typedef enum {
     OP_C(CNCTSG), // sg cnct op type is ethier sg or te
     OP_C(WFD), // OP_T is type to be written
     // GC
+    OP_C(RCI),
     OP_C(RCD), // dec ref count of type ret if gt 0
     OP_C(GC), // type is base type
     OP_C(GCTEI), //
