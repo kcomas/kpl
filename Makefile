@@ -50,7 +50,7 @@ LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
 tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o
 > $(CCOBJ)
 
-LPSR_OBJS = $(LSRC)/psr.o $(LTKN_OBJS)
+LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS)
 psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o
 > $(CCOBJ)
 

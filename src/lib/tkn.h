@@ -26,9 +26,10 @@ typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 #define TOKEN(N) TOKEN_##N
 
 typedef enum {
-    TOKEN(NF) = 0,
+    TOKEN(UN) = 0, // unknown
     TOKEN(VAR) = 1,
-    TOKEN(USR) = 2
+    TOKEN(NUM) = 2,
+    TOKEN(USR) = 3
 } token;
 
 typedef struct _tkn {
@@ -44,7 +45,8 @@ typedef struct _tkn {
 
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
-size_t tkn_a(tkn *const t, const char *const s, tkn_pf *pf);
+// give zero for an assigned id
+size_t tkn_a(tkn *const t, const char *const s, size_t id, tkn_pf *pf);
 
 tkn_stat tkn_n(tkn *const t, te *const m);
 

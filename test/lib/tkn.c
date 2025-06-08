@@ -81,18 +81,18 @@ static void tkn_p(tbl *tl, size_t idnt) {
 }
 
 static void standard(tkn *const t) {
-    tkn_a(t, " ", &ws);
-    tkn_a(t, "\n", &nl);
-    tkn_a(t, "0", &num);
-    tkn_a(t, "1", &num);
-    tkn_a(t, "2", &num);
-    tkn_a(t, "3", &num);
-    tkn_a(t, "4", &num);
-    tkn_a(t, "5", &num);
-    tkn_a(t, "6", &num);
-    tkn_a(t, "7", &num);
-    tkn_a(t, "8", &num);
-    tkn_a(t, "9", &num);
+    tkn_a(t, " ", TOKEN(UN), &ws);
+    tkn_a(t, "\n", TOKEN(UN), &nl);
+    tkn_a(t, "0", TOKEN(NUM), &num);
+    tkn_a(t, "1", TOKEN(NUM), &num);
+    tkn_a(t, "2", TOKEN(NUM), &num);
+    tkn_a(t, "3", TOKEN(NUM), &num);
+    tkn_a(t, "4", TOKEN(NUM), &num);
+    tkn_a(t, "5", TOKEN(NUM), &num);
+    tkn_a(t, "6", TOKEN(NUM), &num);
+    tkn_a(t, "7", TOKEN(NUM), &num);
+    tkn_a(t, "8", TOKEN(NUM), &num);
+    tkn_a(t, "9", TOKEN(NUM), &num);
 }
 
 static void tknize(tkn *const t) {
@@ -112,12 +112,12 @@ static void btest(void) {
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, "sigma", &ft);
-    tkn_a(t, "sig", &ft);
-    tkn_a(t, "Σ", &ft);
-    tkn_a(t, "ΣΩ", &ft);
-    tkn_a(t, "bar", &ft);
-    tkn_a(t, "bee", &ft);
+    tkn_a(t, "sigma", TOKEN(UN), &ft);
+    tkn_a(t, "sig", TOKEN(UN), &ft);
+    tkn_a(t, "Σ", TOKEN(UN), &ft);
+    tkn_a(t, "ΣΩ", TOKEN(UN), &ft);
+    tkn_a(t, "bar", TOKEN(UN), &ft);
+    tkn_a(t, "bee", TOKEN(UN), &ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
@@ -128,10 +128,10 @@ static void stest(void) {
     printf("%s\n", pgm);
     tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
     standard(t);
-    tkn_a(t, "Σ", &ft);
-    tkn_a(t, ";", &ft);
-    tkn_a(t, "[", &ft);
-    tkn_a(t, "]", &ft);
+    tkn_a(t, "Σ", TOKEN(UN), &ft);
+    tkn_a(t, ";", TOKEN(UN), &ft);
+    tkn_a(t, "[", TOKEN(UN), &ft);
+    tkn_a(t, "]", TOKEN(UN), &ft);
     tkn_p(t->t, 0);
     tknize(t);
     tkn_f(t);
