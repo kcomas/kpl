@@ -144,6 +144,8 @@ void var_sg_f(var_sg *sg);
 
 typedef struct _var_tsv var_tsv;
 
+typedef struct _var_hh var_hh;
+
 // free not null w fn
 #define FNNF(V, F) if (V) F(V)
 

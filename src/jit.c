@@ -488,6 +488,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     CT_SET_FN(VR, mod_sg_var_tsv);
                     CT_SET_FN(TE, mod_sg_var_tsv);
                     CT_SET_FN(ST, mod_sg_var_tsv);
+                    CT_SET_FN(HH, mod_sg_var_hh);
                     CT_SET_FN(FN, mod_sg_jf);
                     CT_SET_FN(FD, mod_sg_fd);
                     CT_SET_FN(ER, mod_sg_er);
@@ -511,6 +512,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                     CT_SET_FN(VR, mod_lg_var_tsv);
                     CT_SET_FN(TE, mod_lg_var_tsv);
                     CT_SET_FN(ST, mod_lg_var_tsv);
+                    CT_SET_FN(HH, mod_lg_var_hh);
                     CT_SET_FN(FN, mod_lg_jf);
                     CT_SET_FN(FD, mod_lg_fd);
                     CT_SET_FN(ER, mod_lg_er);

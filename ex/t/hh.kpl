@@ -14,4 +14,10 @@ f:FN(VD)${()
 
 f()
 
+g:HH{I6}${`a:5;`b:6;`c:7}
+
+ph(g)
+
+\d g
+
 // TODO hh with gc
