@@ -27,11 +27,11 @@ genm:FN(U6;U6;VD)${(c;r)
     }}
 
 getm:FN(U6;U6;ER(F6))${(y;x)
-    [t;e]'m(y)
-    #? (BL$e) { 'e }
-    [v;e]'t(x)
-    #? (BL$e) { 'e }
-    v}
+   [t;e]'m(y)
+   #? (BL$e) { 'e; #; 0.0 }
+   [v;e]'t(x)
+   #? (BL$e) { 'e; #; 0.0 }
+   v}
 
 printm:FN(U6;U6;VD)${(c;r)
     y:U6$0

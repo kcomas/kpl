@@ -1044,6 +1044,7 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
         tbl_itm *ti = fn->tl->t;
         while (ngl > 0) {
             if (t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = t }, NULL);
+            OP_RCD(cs, c, ((var_node*) ti->data)->tn);
             OP_GC(cs, c, ((var_node*) ti->data)->tn, NULL);
             ti = ti->prev;
             ngl--;
