@@ -20,6 +20,7 @@ typedef enum {
     TKN_TYPE(FALSE),
     TKN_TYPE(SELF),
     // TODO LOCAL
+    // TODO DEBUGGER
     // built in type names
     TKN_TYPE(VD),
     TKN_TYPE(BL),
