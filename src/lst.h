@@ -16,8 +16,7 @@ typedef struct _lst_ex {
 } lst_ex;
 
 #define LST_A(L, I) if (!L->h) { \
-    L->h = I; \
-    L->h->next = L->t = I; \
+    L->t = L->h = I; \
     } else L->t = L->t->next = I; \
     L->len++
 

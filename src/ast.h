@@ -180,6 +180,13 @@ typedef struct _if_itm {
     lst_node *body;
 } if_itm;
 
+inline if_item *if_itm_i(ast *const cond, lst_node *body) {
+    if_item *im = calloc(1, sizeof(if_itm));
+    im->cond = cond;
+    im->body = body;
+    return im;
+}
+
 typedef struct {
     size_t len;
     if_itm *h, *t;
