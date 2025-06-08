@@ -169,7 +169,9 @@ var_sg *var_f6_sg(al *const a, double f6) {
     len += FLT_DEC_PREC + 1; // for .
     var_sg *sg = var_sg_i(a, len);
     sg->len = len;
-    int64_t frac = (f6 - up) * flp10[FLT_DEC_PREC];
+    double tmp = (f6 - up) * flp10[FLT_DEC_PREC];
+    uint64_t frac = (uint64_t) tmp;
+    if ((double) (tmp - frac) > 0.5) frac++;
     if (frac == 0) sg->str[--len] = '0';
     else str_w_dig(sg, &len, frac);
     sg->str[--len] = '.';
