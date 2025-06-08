@@ -75,7 +75,7 @@ lst_stat lst_sf(lst *const l, un *d) {
 }
 
 void lst_f(lst *l) {
-    if (--l->r > 0) return;
+    if (!l || --l->r > 0) return;
     lst_itm *h = l->h;
     while (h) {
         lst_itm *tmp = h;

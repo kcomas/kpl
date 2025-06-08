@@ -1,0 +1,25 @@
+
+#include "te.h"
+
+te *te_i(size_t l, alfn *ta, frfn *tf) {
+    te *t = ta(sizeof(te) + sizeof(un) * l);
+    t->r = 0;
+    t->l = l;
+    t->ta = ta;
+    t->tf = tf;
+    return t;
+}
+
+te *te_c(te *t) {
+    t->r++;
+    return t;
+}
+
+size_t te_g_l(const te *const t) {
+    return t->l;
+}
+
+void te_f(te *t) {
+    if (!t || --t->r > 0) return;
+    t->tf(t);
+}

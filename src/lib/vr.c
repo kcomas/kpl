@@ -2,7 +2,7 @@
 #include "vr.h"
 
 vr *vr_i(size_t s, alfn *va, frfn *df, frfn *vf) {
-    vr *v = va(sizeof(vr) + s * sizeof(void*));
+    vr *v = va(sizeof(vr) + sizeof(un) * s);
     v->r = 1;
     v->s = s;
     v->l = 0;
@@ -52,7 +52,7 @@ vr_stat vr_s(vr *const v, un *d) {
 }
 
 void vr_f(vr *v) {
-    if (--v->r > 0) return;
+    if (!v || --v->r > 0) return;
     if (v->df) for (size_t i = 0; i < v->l; i++) v->df(v->d[i].p);
     v->vf(v);
 }
