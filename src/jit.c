@@ -244,6 +244,10 @@ static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
+var_td jit_thread(mod *const m, var_tsv *const tsv, code *const c) {
+    exit(33);
+}
+
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     op *o;
@@ -416,6 +420,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     OPPVT(SG, sg, var_sg*);
                     OPPVT(FN, c->jf, jit_fn*);
                     OPPVT(FD, fd, int);
+                    OPPVT(TD, c, code*);
                     default:
                         return JIT_ER(m, PV_T_INV, o);
                 }
@@ -613,9 +618,12 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(TDI):
                 op_set_jidx(j, o);
-                jit_a(j, 0x5E); // pop rsi fn code
-                jit_a(j, 0x5F); // pop rdi te with arhs and return
-                // TODO push te and code on to stack and call fn to create thread
+                SET_REG(m, mod*, false, 7);
+                jit_a(j, 0x5E); // pop rsi te
+                jit_a(j, 0x5A); // pop rdx fn
+                SET_FP(jit_thread);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(RCI):

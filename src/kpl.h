@@ -77,6 +77,7 @@ typedef struct _code code;
 typedef void jit_fn(void);
 
 typedef struct _jit {
+    uint8_t flgs;
     size_t len, size; // len, num pages, total size
     uint8_t *h; // address
 } jit;

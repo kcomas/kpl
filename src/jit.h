@@ -70,6 +70,12 @@ inline void fn_stk_f(fn_stk *f) {
     alf(f);
 }
 
+#define JIT_FLG(N) JIT_FLG_##N
+
+typedef enum {
+    JIT_FLG(TD) = (1 << 0) // thread code
+} jit_flgs;
+
 #ifndef BYTES_PER_OP
     #define BYTES_PER_OP 10
 #endif

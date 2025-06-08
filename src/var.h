@@ -117,7 +117,7 @@ var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv);
 void var_tsv_d(var_tsv *tsv);
 
 typedef struct _var_td {
-    mod *tm; // has code, allocator and error
+    mod *tm; // has code, jit, allocator and error
     var_tsv *te; // te->v[te->len - 1] is return value
     pthread_t *t;
 } var_td; // thread
