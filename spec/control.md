@@ -4,18 +4,16 @@
 ## If
 
 ### If
-(cond)?{ body }
+?{(cond) body }
 
 ### If with Else If
-(cond)?{ body }?(else if cond)?{ else if body }
+?{(cond) body }?{(cond) body }.....
 
 ### If with else
-
-(cond)?{ body }?{ else body }
+?{(cond) body }?{ body }
 
 ### If with else if and else .....
-(cond)?{ body }?(else if cond)?{ else if body }?{ else body }
+?{(cond) body }?{(cond) body }?{ body }
 
 ## While
-
-(cond)??{ body }
+??{(cond) body }
