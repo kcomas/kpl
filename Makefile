@@ -4,7 +4,9 @@
 CC = gcc
 DFLAGS = -DKPL_ALD
 OO = -g -Og
-CFLAGS = $(DFLAGS) $(FLAGS) $(OO) -fstack-protector-all -Wall -Wextra -Wstack-protector # TODO specify std
+FFLAGS = -fstack-protector-all -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
+WFLAGS = -Wall -Wextra -Wstack-protector
+CFLAGS = $(DFLAGS) $(FLAGS) $(OO) $(FFLAGS) $(WFLAGS) # TODO specify std
 SRC = ./src
 TEST = ./test
 SRCS = $(wildcard $(SRC)/*.c)
