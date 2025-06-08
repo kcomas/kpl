@@ -81,19 +81,74 @@ T(inv, {
     A(h == NULL, "not null");
 });
 
+T(aply_prec, {
+    te *h = ppnode(rpsr(psr_b("(1+3)")));
+    V(h, {N(ROOT), APLY(N(NONE), OP(N(INT), N(INT)))});
+    te_f(h);
+});
+
+T(sym_add, {
+    te *h = ppnode(rpsr(psr_b("+`a")));
+    V(h, {N(ROOT), SYM(OP(N(NONE), N(NONE)))});
+    te_f(h);
+});
+
+T(sym_lst, {
+    te *h = ppnode(rpsr(psr_b("[`a;`b;`c]")));
+    V(h, {N(ROOT), LST(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE)))});
+    te_f(h);
+});
+
+T(var_op_op_aply, {
+    te *h = ppnode(rpsr(psr_b("x:+(1;2)")));
+    V(h, {N(ROOT), OP(N(VAR), APLY(OP(N(NONE), N(NONE)), N(INT), N(INT)))});
+    te_f(h);
+});
+
+T(neg, {
+    te *h = ppnode(rpsr(psr_b("x:-1+2")));
+    V(h, {N(ROOT), OP(N(VAR), OP(N(NONE), OP(N(INT), N(INT))))});
+    te_f(h);
+});
+
+T(op_op, {
+    te *h = ppnode(rpsr(psr_b("{-+4;-(+4)}")));
+    V(h, {N(ROOT), LST(OP(N(NONE), OP(N(NONE), N(INT))), APLY(OP(N(NONE), N(NONE)), OP(N(NONE), N(INT))))});
+    te_f(h);
+});
+
+T(fn, {
+    te *h = ppnode(rpsr(psr_b("f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c}")));
+    V(h, {N(ROOT), OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)), LST(OP(N(NONE), OP(N(VAR), OP(N(VAR), N(VAR)))))))});
+    te_f(h);
+});
+
+T(prec, {
+    te *h = ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z")));
+    V(h, {N(ROOT), OP(N(VAR), OP(APLY(OP(N(NONE), N(NONE)), N(VAR)), OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), OP(N(NONE), N(VAR)))))});
+    te_f(h);
+});
+
+T(call_call_call, {
+    te *h = ppnode(rpsr(psr_b("a(1;2)(3.3)()")));
+    V(h, {N(ROOT), APLY(APLY(APLY(N(VAR), N(INT), N(INT)), N(FLT)))});
+    te_f(h);
+});
+
+T(defer_hsh, {
+    te *h = ppnode(rpsr(psr_b("d:#{1`x;(1+5-4)`y;3`z}")));
+    V(h, {N(ROOT), OP(N(VAR), OP(N(NONE), LST(SYM(N(INT)), SYM(APLY(N(NONE), OP(N(INT), OP(N(INT), N(INT))))), SYM(N(INT)))))});
+    te_f(h);
+});
+
+T(value_hsh, {
+    te *h = ppnode(rpsr(psr_b("[`a;`b;`c]#[1;2;3]")));
+    V(h, {N(ROOT), OP(LST(SYM(N(NONE)), SYM(N(NONE)), SYM(N(NONE))), LST(N(INT), N(INT), N(INT)))});
+    te_f(h);
+});
+
 /*
 T(psr, {
-    te_f(ppnode(rpsr(psr_b("(1+3)"))));
-    te_f(ppnode(rpsr(psr_b("+`a"))));
-    te_f(ppnode(rpsr(psr_b("[`a;`b;`c]"))));
-    te_f(ppnode(rpsr(psr_b("x:+(1;2)"))));
-    te_f(ppnode(rpsr(psr_b("x:-1+2"))));
-    te_f(ppnode(rpsr(psr_b("{-+4;-(+4)}"))));
-    te_f(ppnode(rpsr(psr_b("f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c}"))));
-    te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
-    te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
-    te_f(ppnode(rpsr(psr_b("d:#{1`x;(1+5-4)`y;3`z}"))));
-    te_f(ppnode(rpsr(psr_b("[`a;`b;`c]#[1;2;3]"))));
     te_f(ppnode(rpsr(psr_b("?{a?(c:2;a?c:1;c);(b+a)?2;3}"))));
     te_f(ppnode(rpsr(psr_b("{d:UN(I6`v;FN(I6)`e)$5`v;d?{d`v`v;0`e;2}}"))));
     te_f(ppnode(rpsr(psr_b("{a:1;b:2;{a+b+c}(3`c)}"))));
