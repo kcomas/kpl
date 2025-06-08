@@ -270,6 +270,9 @@ void ast_p(const te *an, size_t idnt) {
             printf("(S ");
             type_p(an->d[3].p);
             switch (((te*) an->d[3].p)->d[1].u4) {
+                case TYPE(_G):
+                    printf(" GEN");
+                    break;
                 case TYPE(U5):
                     printf(" %u", an->d[4].i5);
                     break;

@@ -3,9 +3,9 @@
 
 static void atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
     n--;
-    for (size_t i = 0; i < idnt; i++) putchar(' ');
     te *h = t->i->h;
     while (h) {
+        for (size_t i = 0; i < idnt; i++) putchar(' ');
         te *kv = h->d[0].p;
         uint16_t hc = u4_g_o(kv->d[0], AST_HSH_C);
         uint16_t ht = u4_g_o(kv->d[0], AST_HSH_T);
@@ -15,6 +15,7 @@ static void atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
             atg_add_e_p(kv->d[1].p, n, idnt + 1);
         }
         h = h->d[2].p;
+        if (h) putchar('\n');
     }
 }
 
@@ -70,12 +71,11 @@ static atg_stat lst_cst_s(atg *t, gen *g, te *an, te **e) {
 
 static atg_stat lst_cst_e(atg *t, gen *g, te *an, te **e) {
     (void) t;
+    // TODO gc ref counted vars
     te *rt = ((te*) ((te*) an->d[5].p)->d[3].p)->d[2].p;
     if (rt->d[1].u4 != TYPE(VD)) {
-        // TODO gc ref counted vars
         if (gen_a(g, GEN_OP(LEAVE), te_c(((te*) g->code->t->d[0].p)->d[1].p), NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
     } else if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), an, e);
-    gen_p(g, NULL);
     return ATG_STAT(OK);
 }
 
