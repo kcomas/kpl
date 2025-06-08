@@ -57,6 +57,7 @@ static bool type_int_cor(type_node **tgt, const type_node *const a, const type_n
     }
     if (a->t == TYPE(INT) && b->t == TYPE(INT)) {
         if (tgt) *tgt = type_node_i(TYPE(I6), NULL);
+        return true;
     }
     return false;
 }
