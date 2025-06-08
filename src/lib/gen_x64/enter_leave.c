@@ -32,16 +32,24 @@ static gen_stat leave_e(alfn *al, frfn *fr, gen_st *st, te *ci, as *a)  {
 
 static gen_stat leave_au_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
     (void) g;
+    gen_stat stat;
     gen_st *st = (gen_st*) s;
     te *ovt = ci->d[1].p, *kv;
-    if (!ovt) return GEN_STAT(INV);
-    if (tbl_g_i(st->atm, ovt_hsh(ovt), &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+    if ((stat = get_reg(st, ovt, &kv)) != GEN_STAT(OK)) return stat;
     AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(R), U3(kv->d[2].u3)), ci);
     drop_atm_kv(st, kv, ci);
+    return leave_e(al, fr, st, ci, a);
+}
+
+static gen_stat leave_du_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
+    (void) g;
+    gen_st *st = (gen_st*) s;
+    AS2(a, AS_X64(MOV), as_arg(al, fr, ARG_ID(R), U3(R(AX))), as_arg(al, fr, ARG_ID(QW), ((te*) ci->d[1].p)->d[2]), ci);
     return leave_e(al, fr, st, ci, a);
 }
 
 void gen_enter_leave(gen *g) {
     GEN_OP_A0(g, GEN_OP(ENTER), &enter_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), U3(X64_TYPE(U6)), &leave_au_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), U3(X64_TYPE(U6)), &leave_du_fn);
 }

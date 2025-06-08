@@ -4,9 +4,12 @@
 const char *gen_op_str(gen_op go) {
     static const char *gos[] = {
         "_START",
+        "LBL",
         "ENTER",
         "LEAVE",
         "ADD",
+        "NE",
+        "ULTE",
         "_END"
     };
     const char *s = "INV";
@@ -47,7 +50,6 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
             for (size_t i = 0; i < idnt; i++) putchar(' ');
             printf("(%s %s)", gen_cls_str(o->d[1].u3), x64_type_str(o->d[2].u3));
             gen_op_p(o->d[4].p, true, idnt + 1);
-            if (h->d[2].p) putchar('\n');
         }
         h = h->d[2].p;
     }
@@ -180,6 +182,8 @@ gen_stat gen_st_p1(gen *g, gen_st *st) {
                 case GEN_CLS(T):
                     update_lat(st, ovt, o);
                     break;
+                default:
+                    break;
             }
         }
         h = h->d[2].p;
@@ -207,6 +211,18 @@ void set_code_e(te *ci, as *a) {
     ci->d[6] = P(te_c(a->code->t));
 }
 
+gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
+    if (!ovt) return GEN_STAT(INV);
+    if (tbl_g_i(st->atm, ovt_hsh(ovt), kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+    return GEN_STAT(OK);
+}
+
+gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n) {
+    if (n == 0 || n > 3) return GEN_STAT(INV);
+    for (size_t i = 1; i < n + 1; i++) if (!ci->d[i].p || tbl_g_i(st->atm, ovt_hsh(ci->d[i].p), &kv[i - 1]) == TBL_STAT(NF)) return GEN_STAT(INV);
+    return GEN_STAT(OK);
+}
+
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     te *kv;
     if (tbl_g_i(st->lat, atm_kv->d[0], &kv) == TBL_STAT(NF)) return;
@@ -218,11 +234,27 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     te_f(kv);
 }
 
+void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n) {
+    for (size_t i = 0; i < n; i++) drop_atm_kv(st, atm_kv[i], ci);
+}
+
 as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci) {
     as_stat stat = AS_STAT(OK);
     stat = as_a(a, op_id, arg1, arg2, arg3, arg4);
     set_code_s(ci, a);
     return stat;
+}
+
+static gen_stat lbl_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a)  {
+    (void) al;
+    (void) fr;
+    (void) g;
+    (void) s;
+    te *lbl = ci->d[1].p;
+    as_lbl_a(a, lbl->d[2].u6);
+    set_code_s(ci, a);
+    set_code_e(ci, a);
+    return GEN_STAT(OK);
 }
 
 // not meant to be used outside
@@ -231,6 +263,7 @@ void gen_arith(gen *g);
 void gen_cond(gen *g);
 
 gen *gen_b(gen *g) {
+    GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), U3(X64_TYPE(N)), &lbl_fn);
     gen_enter_leave(g);
     gen_arith(g);
     gen_cond(g);

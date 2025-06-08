@@ -7,9 +7,12 @@
 
 typedef enum {
     GEN_OP(_START),
+    GEN_OP(LBL),
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
     GEN_OP(ADD),
+    GEN_OP(NE),
+    GEN_OP(ULTE), // unsigned lte
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 
@@ -64,8 +67,14 @@ void set_code_s(te *ci, as *a);
 
 void set_code_e(te *ci, as *a);
 
+gen_stat get_reg(gen_st *st, te *ovt, te **kv);
+
+gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n);
+
 // check if reg can be freed
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci);
+
+void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n);
 
 void gen_st_f(gen_st *st);
 
