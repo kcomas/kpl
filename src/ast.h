@@ -87,6 +87,7 @@ typedef enum {
     TYPE(IF),
     TYPE(COND),
     TYPE(VAR),
+    TYPE(CODE),
     // ast types
     TYPE(MOD), // file
     TYPE(INT),

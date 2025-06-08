@@ -116,6 +116,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
     jit_stat jstat;
     op *o;
     void *fp;
+    uint32_t asp; // arg stack pos
     static uint8_t buf[sizeof(void*)];
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
@@ -127,13 +128,15 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 break;
             case OP_C(RFN):
                 op_set_jidx(*j, o);
-                jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
+                if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
+                jit_b(j, 2, 0xC9, 0xC3); // leave, ret
                 op_set_jlen(*j, o);
                 break;
             // TODO
             case OP_C(CFN):
                 op_set_jidx(*j, o);
                 jit_b(j, 3, 0x58, 0xFF, 0xD0); // pop rax, call rax
+                if (o->od.t != TYPE(VD)) jit_a(j, 0x50); // push rax TODO xmm
                 op_set_jlen(*j, o);
                 break;
             case OP_C(AG):
@@ -153,6 +156,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     CT_SET_FN(STR, mod_sg_var_sg);
                     CT_SET_FN(I6, mod_sg_i6);
                     CT_SET_FN(SG, mod_sg_var_sg);
+                    CT_SET_FN(FN, mod_sg_jf);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -167,6 +171,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     CT_SET_FN(STR, mod_lg_var_sg);
                     CT_SET_FN(I6, mod_lg_i6);
                     CT_SET_FN(SG, mod_lg_var_sg);
+                    CT_SET_FN(FN, mod_lg_jf);
                     default:
                         return JIT_STAT(LG_T_INV);
                 }
@@ -175,22 +180,30 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 op_set_jlen(*j, o);
                 break;
             // TODO
+            case OP_C(LA):
+                op_set_jidx(*j, o);
+                asp = (o->od.v.id + 2) * sizeof(void);
+                SET_REG(asp, uint32_t, true, 1);
+                jit_b(j, 2, 0x41, 0x51); // push r9
+                op_set_jlen(*j, o);
+                break;
             case OP_C(PV):
                 op_set_jidx(*j, o);
                 switch (o->ot) {
-                    // TODO
-                    OPPVT(U6, u6, uint64_t);
-                    // TODO
-                    OPPVT(I6, i6, int64_t);
-                    // TODO
                     case TYPE(STR):
-                    case TYPE(SG):
                         SET_REG(o->od.sg, char*, false, 7);
                         SET_FP(var_sg_i_str);
                         SET_REG_CALL(false, 0);
                         jit_a(j, 0x50); // push rax
                         op_set_jlen(*j, o);
                         break;
+                    // TODO
+                    OPPVT(U6, u6, uint64_t);
+                    // TODO
+                    OPPVT(I6, i6, int64_t);
+                    // TODO
+                    OPPVT(SG, sg, var_sg*);
+                    OPPVT(FN, c->jf, jit_fn*);
                     OPPVT(FD, fd, int);
                     default:
                         return JIT_STAT(PV_T_INV);

@@ -62,6 +62,7 @@ static const char *const tgs[] = {
     "IF",
     "COND",
     "VAR",
+    "CODE",
     "MOD",
     "INT",
     "FLT",
