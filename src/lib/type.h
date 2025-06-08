@@ -45,12 +45,12 @@ typedef enum {
     TYPE(_F),
     TYPE(FN),
     TYPE(NF),
-    TYPE(CJ),
     // collection
     TYPE(_C),
     TYPE(TE),
     TYPE(BA),
     TYPE(TD),
+    TYPE(CJ),
     TYPE(_END)
 } type;
 
@@ -63,7 +63,7 @@ typedef enum {
     TYPE_CLS(S), // te[parent;type]
     TYPE_CLS(V), // te[parent;type;te[...]]
     TYPE_CLS(H), // te[parent;type;tbl[mc;id;type]]
-    TYPE_CLS(F), // te[parent;type;te[...];tbl[mc;id;type]]
+    TYPE_CLS(F), // te[parent;type;te[...];tbl[mc;id;type];tbl[mc;id;type]]
     TYPE_CLS(C), // te[parent;type;...]
     TYPE_CLS(_)
 } type_cls; // how type is stored
@@ -79,7 +79,7 @@ te *type_v_i(const alfr *af, te *restrict p, type v, te *restrict t);
 
 te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t);
 
-te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *a);
+te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *restrict a, tbl *restrict s);
 
 te *type_i(const alfr *af, te *restrict p, type t);
 

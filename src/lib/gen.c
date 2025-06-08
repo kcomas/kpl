@@ -44,6 +44,10 @@ static bool gen_vr_m_eq(un x, un y) {
     return true;
 }
 
+static bool gen_w_eq(const te *l, const te *r) {
+    return vr_eq(l->d[0].p, r->d[0].p, gen_vr_m_eq) && vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq);
+}
+
 static bool gen_lst_eq(un x, un y) {
     te *a = x.p;
     te *b = y.p;
@@ -56,6 +60,8 @@ static bool gen_lst_eq(un x, un y) {
         if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
         if (gen_var_g_c(l) == GEN_CLS(M) || gen_var_g_c(l) == GEN_CLS(I)) {
             if (!vr_eq(l->d[1].p, r->d[1].p, gen_vr_m_eq)) return false;
+        } else if (gen_var_g_c(l) == GEN_CLS(W)) {
+            if (!gen_w_eq(l->d[1].p, r->d[1].p)) return false;
         } else if (l->d[1].u6 != r->d[1].u6) return false;
     }
     return true;

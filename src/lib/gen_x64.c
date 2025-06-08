@@ -69,6 +69,26 @@ bool x64_type_is_ref(x64_type xt) {
     return false;
 }
 
+x64_type x64_type_to_ref(x64_type xt) {
+    if (x64_type_is_ref(xt)) return xt;
+    switch (xt) {
+        case X64_TYPE(M): return X64_TYPE(MM);
+        case X64_TYPE(U3): return X64_TYPE(MU3);
+        case X64_TYPE(U4): return X64_TYPE(MU4);
+        case X64_TYPE(U5): return X64_TYPE(MU5);
+        case X64_TYPE(U6): return X64_TYPE(MU6);
+        case X64_TYPE(I3): return X64_TYPE(MI3);
+        case X64_TYPE(I4): return X64_TYPE(MI4);
+        case X64_TYPE(I5): return X64_TYPE(MI5);
+        case X64_TYPE(I6): return X64_TYPE(MI6);
+        case X64_TYPE(F5): return X64_TYPE(MF5);
+        case X64_TYPE(F6): return X64_TYPE(MF6);
+        default:
+            break;
+    }
+    return X64_TYPE(N);
+}
+
 void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
     te *h = ot->i->h;
     while (h) {

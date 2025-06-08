@@ -95,7 +95,8 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     chk_stat stat;
     if ((stat = chk_cst_fn_lst_b(c, an, e)) != CHK_STAT(OK)) return stat;
-    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *kv;
+    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *kv, *tc;
+    tbl *fst = tbl_i_tbl(((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p);
     uint32_t si = 0;
     while (h) {
         lte = h->d[0].p;
@@ -109,7 +110,13 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
         ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
         lte->d[2] = P(te_c(kv->d[2].p));
         h = h->d[2].p;
+        tc = te_i_te(lte);
+        tc->d[0] = P(mc_c(lte->d[0].p));
+        tc->d[1] = U6(ast_lst_tbl_e_g_i(lte));
+        tc->d[2] = P(te_c(lte->d[2].p));
+        tbl_a(fst, tc);
     }
+    ((te*) ((te*) an->d[5].p)->d[3].p)->d[4] = P(fst);
     return CHK_STAT(OK);
 }
 
@@ -120,6 +127,7 @@ te *chk_g_pn_lte(te *an, const mc *s) {
         if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
         plns = pln->d[0].p;
         if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) return kv;
+        // TODO don't continue past FN
     } while (pln);
     return NULL;
 }

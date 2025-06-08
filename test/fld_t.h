@@ -19,8 +19,11 @@ tbl *fld_type_tbl_i(size_t n, ...);
 
 #define LT(N, ...) fld_lst_tbl_i(a, N, __VA_ARGS__)
 
-#define TF(FT, RT) type_f_i(&al_te, NULL, TYPE(FT), RT, NULL)
+#define TF(FT, RT) type_f_i(&al_te, NULL, TYPE(FT), RT, NULL, NULL)
 
-#define TFN(FT, RT, N, ...) type_f_i(&al_te, NULL, TYPE(FT), RT, fld_type_tbl_i(N, __VA_ARGS__))
+#define TFN(FT, RT, N, ...) type_f_i(&al_te, NULL, TYPE(FT), RT, fld_type_tbl_i(N, __VA_ARGS__), NULL)
+
+#define TFS(FT, RT, A, S) type_f_i(&al_te, NULL, TYPE(FT), RT, A, S)
+
 
 #define TS(T) type_s_i(&al_te, NULL, TYPE(T))

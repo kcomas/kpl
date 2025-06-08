@@ -68,6 +68,8 @@ const char *x64_type_str(x64_type xt);
 
 bool x64_type_is_ref(x64_type xt);
 
+x64_type x64_type_to_ref(x64_type xt);
+
 void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
 void gen_p(const gen *g, const uint8_t *m);

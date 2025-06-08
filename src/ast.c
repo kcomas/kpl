@@ -89,12 +89,6 @@ void node_err_f(void *d) {
     te_f(node_g_root(d));
 }
 
-te *ast_g_root(te *an) {
-    te *rn = NULL;
-    ast_g_pn(AST_CLS(R), an, &rn);
-    return rn;
-}
-
 void ast_err_p(void *d) {
     te *t = d;
     node_err_p(t->d[1].p);

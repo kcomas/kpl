@@ -72,6 +72,7 @@ static const char *as_inst_str(size_t id) {
         "MOV",
         "MOVQ",
         "MOVSD",
+        "LEA",
         "ADD",
         "ADDSD",
         "SUB",

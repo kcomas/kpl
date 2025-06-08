@@ -209,7 +209,6 @@ static atg_stat cc(atg *t, gen *g, te *an, err **e) {
     return t->efn(t, an, e, "atg_r_cc");
 }
 
-
 atg_stat atg_lst_r(atg *t, gen *g, lst *l, err **e) {
     atg_stat stat = ATG_STAT(OK);
     if (!l) return stat;
