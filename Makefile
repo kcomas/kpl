@@ -8,30 +8,27 @@ MFLAGS = -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
 CFLAGS = $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 SRC = ./src
+LSRC = $(SRC)/lib
 TEST = ./test
-SRCS = $(wildcard $(SRC)/*.c)
-TSRCS = $(wildcard $(TEST)/*.c)
+LTEST = $(TEST)/lib
 CCOBJ = $(CC) -o $@ $^
-OBJS = $(patsubst %.c, %.o, $(SRCS))
 NAME = kpl
 TNAME = _test
+LTNAME = _lib$(TNAME)
 
 all: $(NAME)
 
-JIT_OBJS = $(SRC)/jit.o
-jit$(TNAME): $(JIT_OBJS) $(TEST)/jit.o
+LJIT_OBJS = $(LSRC)/jit.o
+jit$(LTNAME): $(LJIT_OBJS) $(LTEST)/jit.o
 > $(CCOBJ)
 
-VR_OBS = $(SRC)/vr.o
-vr$(TNAME): $(VR_OBS) $(TEST)/vr.o
+LVR_OBS = $(LSRC)/vr.o
+vr$(LTNAME): $(LVR_OBS) $(LTEST)/vr.o
 > $(CCOBJ)
 
-LST_OBJS = $(SRC)/lst.o
-lst$(TNAME): $(LST_OBJS) $(TEST)/lst.o
+LLST_OBJS = $(LSRC)/lst.o
+lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o
 > $(CCOBJ)
-
-%.o: %.c %.h
-> $(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-> rm -fv $(SRC)/*.o $(TEST)/*.o $(NAME) *$(TNAME)
+> rm -fv $(SRC)/**/*.o $(TEST)/**/*.o $(NAME) *$(TNAME)

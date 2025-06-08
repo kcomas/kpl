@@ -1,4 +1,4 @@
-src/*.o
-test/*.o
+src/**/*.o
+test/**/*.o
 kpl
 *_test
