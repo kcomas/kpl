@@ -13,21 +13,18 @@ static atg_stat add_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
     return op_tel_ter_t(t, g, an, e, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->tc++), __FUNCTION__);
 }
 
-static atg_stat adda_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
-    te *l = ((te*) an->d[5].p)->d[3].p;
-    if (!(l = var_arg(g, l, X64_TYPE(I6)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
-    return op_tel_ter_t(t, g, an, e, GEN_OP(ADD), l, __FUNCTION__);
-}
-
 static atg_stat mul_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
     return op_tel_ter_t(t, g, an, e, GEN_OP(MUL), gen_tmp(g, X64_TYPE(I6), t->tc++), __FUNCTION__);
 }
 
-static atg_stat mula_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) {
-    te *l = ((te*) an->d[5].p)->d[3].p;
-    if (!(l = var_arg(g, l, X64_TYPE(I6)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
-    return op_tel_ter_t(t, g, an, e, GEN_OP(MUL), l, __FUNCTION__);
+#define A_E_E(N, O, T) static atg_stat N##_i6_e_i6_e_i6(atg *t, gen *g, te *an, err **e) { \
+    te *l = ((te*) an->d[5].p)->d[3].p; \
+    if (!(l = var_arg(g, l, X64_TYPE(T)))) return atg_err(t, an->d[5].p, e, "atg op l inv"); \
+    return op_tel_ter_t(t, g, an, e, GEN_OP(O), l, __FUNCTION__); \
 }
+
+A_E_E(adda, ADD, I6);
+A_E_E(mula, MUL, I6);
 
 static atg_stat op_e_o(atg *t, gen *g, te *an, err **e, gen_op op, x64_type xt, const char *pf) {
     te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) g->code->t->d[0].p)->d[1].p;

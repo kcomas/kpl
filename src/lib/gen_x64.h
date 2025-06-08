@@ -39,7 +39,18 @@ const char *gen_op_str(gen_op go);
 
 typedef enum {
     X64_TYPE(N), // none
-    X64_TYPE(M), // mem
+    X64_TYPE(M), // *
+    X64_TYPE(MU3),
+    X64_TYPE(MU4),
+    X64_TYPE(MU5),
+    X64_TYPE(MU6),
+    X64_TYPE(MI3),
+    X64_TYPE(MI4),
+    X64_TYPE(MI5),
+    X64_TYPE(MI6),
+    X64_TYPE(MF5),
+    X64_TYPE(MF6),
+    X64_TYPE(MM), // **
     X64_TYPE(U3),
     X64_TYPE(U4),
     X64_TYPE(U5),
@@ -49,7 +60,7 @@ typedef enum {
     X64_TYPE(I5),
     X64_TYPE(I6),
     X64_TYPE(F5),
-    X64_TYPE(F6)
+    X64_TYPE(F6),
 } x64_type;
 
 const char *x64_type_str(x64_type xt);
