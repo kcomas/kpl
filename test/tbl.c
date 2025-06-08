@@ -46,7 +46,11 @@ int main(void) {
     tbl_bucksp(tl, &ex_p);
     tbl_lstp(tl, &ex_p);
     printf("---------------------\n");
-    if ((st = tbl_op(&tl, "asdf", &tests[0], &ti, &ex_f, TBL_OP_FLG(FD))) != TBL_STAT(OK)) return st;
+    printf("-----UPDATE LIST--------\n");
+    if ((st = tbl_op(&tl, "asdf", &tests[5], &ti, &ex_f, TBL_OP_FLG(FD))) != TBL_STAT(OK)) return st;
+    tbl_bucksp(tl, &ex_p);
+    tbl_lstp(tl, &ex_p);
+    printf("---------------------\n");
     printf("----END TBL TEST-----\n");
     tbl_f(tl, &ex_f);
     return 0;
