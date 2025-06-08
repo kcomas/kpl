@@ -11,6 +11,7 @@ inline void tdr_stk_i(tdr *const r) {
 }
 
 inline tdr *tdr_i(tds *const s) {
+    sem_wait(&s->a);
     al *a = al_i((void*) s + s->size);
     s->size += algn(sizeof(al), DEFALGN);
     er *e = er_i(a);
@@ -18,6 +19,7 @@ inline tdr *tdr_i(tds *const s) {
     r->a = a;
     r->e = e;
     r->j = ala(a, sizeof(jit));
+    sem_post(&s->a);
     return r;
 }
 
@@ -33,14 +35,17 @@ inline void tdr_f(tdr *r, void *fn) {
 
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    sem_init(&s->a, -1, 1);
     sem_init(&s->l, -1, 0);
     s->size = algn(sizeof(tds), DEFALGN);
     return s;
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
+    sem_wait(&s->a);
     er_c(r->e);
     LST_A(s, r);
+    sem_post(&s->a);
     sem_post(&s->l);
 }
 
