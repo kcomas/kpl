@@ -5,6 +5,8 @@
 #include "x64.h"
 #include "as.h"
 
+const char *reg_str(size_t rid);
+
 #define ARG_ID(N) ARG_ID_##N
 
 typedef enum {

@@ -34,16 +34,20 @@ typedef enum {
 
 const char *x64_type_str(x64_type xt);
 
+// atm entry te[(cls << 8) + id;te[cls;info;id];reg]
+
+// lat entry te[(cls << 8) + id];te[cls;info;id];code]
+
 typedef struct {
-    size_t vc; // var count for stk alloc
+    uint8_t vc, rac, xac; // var count for stk alloc, arg count
     ssize_t r;
     alfn *sa;
-    frfn *sf;
+    frfn *sf, *atmf, *latf;
     tbl *atm, *lat; // map args, tmp to regs, last code of arg, tmp
     vr *rstk, *xstk; // available regs and xmm
 } gen_st;
 
-gen_st *gen_st_i(alfn *sa, frfn *sf, tbl *atm, tbl *lat, vr *rstk, vr *xstk);
+gen_st *gen_st_i(alfn *sa, frfn *sf, frfn *atmf, frfn *latf, tbl *atm, tbl *lat, vr *rstk, vr *xstk);
 
 void gen_st_p(const gen_st *st);
 
