@@ -21,13 +21,15 @@ typedef enum {
     GEN_CLS(D) // data
 } gen_cls;
 
+const char* gen_cls_str(gen_cls cls);
+
 // var te[cls;info;id]
 
 te *gen_var(alfn *ga, frfn *gf, gen_cls cls, un info, size_t id);
 
 typedef tbl *cls_tbl_i(void);
 
-// oct entry te[op_id;fn;tbl[te[info<<5+cls;cls;info;fn;tbl]]]
+// oci entry te[op_id;fn;tbl[te[info<<5+cls;cls;info;fn;tbl]]]
 
 // code te[op_id;aci;ac2;ac3;fn]
 
@@ -36,20 +38,20 @@ typedef struct {
     alfn *ga;
     frfn *gf, *ocef, *cef;
     cls_tbl_i *cti;
-    tbl *oct; // op cls op tbl given at start
+    tbl *oci; // op cls op tbl given at start
     lst *code;
 } gen;
 
-gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oct, lst *code);
+gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
 
 typedef gen_stat gen_fn(gen *g, as *a, void *st); // state
 
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn);
 
 #define GEN_OP_A3(g, op_id, cls1, info1, cls2, info2, cls3, info3, fn) gen_op_a(g, op_id, cls1, info1, cls2, info2, cls3, info3, fn)
-#define GEN_OP_A2(g, op_id, cls1, info1, cls2, info2, fn) GEN_OP_A3(g, op_id, cls1, info1, cls2, info2, GEN_CLS(N), U6(0), fn)
-#define GEN_OP_A1(g, op_id, cls1, info1, fn) GEN_OP_A2(g, op_id, cls1, info1, GEN_CLS(N), U6(0), fn)
-#define GEN_OP_A0(g, op_id, fn) GEN_OP_A2(g, op_id, GEN_CLS(N), U6(0), fn)
+#define GEN_OP_A2(g, op_id, cls1, info1, cls2, info2, fn) GEN_OP_A3(g, op_id, cls1, info1, cls2, info2, GEN_CLS(N), U3(0), fn)
+#define GEN_OP_A1(g, op_id, cls1, info1, fn) GEN_OP_A2(g, op_id, cls1, info1, GEN_CLS(N), U3(0), fn)
+#define GEN_OP_A0(g, op_id, fn) GEN_OP_A2(g, op_id, GEN_CLS(N), U3(0), fn)
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
