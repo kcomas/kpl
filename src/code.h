@@ -9,6 +9,7 @@
 
 typedef enum {
     CODE_STAT(OK),
+    CODE_STAT(INV_L_ASS), // left side : invalid
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
