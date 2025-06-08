@@ -27,7 +27,7 @@ def$(LTNAME): $(LDEF_OBJS) $(LTEST)/def.o
 > $(CCOBJ)
 
 LMC_OBJS = $(LSRC)/mc.o
-mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o
+mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 LX64_OBJS = $(LSRC)/x64.o
