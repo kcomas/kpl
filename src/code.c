@@ -7,7 +7,17 @@ extern inline code *code_i(size_t size);
 
 extern inline void code_a(code **c, op o);
 
-extern inline void code_f(code *c);
+void code_f(code *c) {
+    for (size_t i = 0; i < c->len; i++) {
+        if (c->ops[i].ot == TYPE(FN)) code_f(c->ops[i].od.c);
+        if (c->ops[i].ot == TYPE(COND)) op_if_f(c->ops[i].od.of);
+    }
+    free(c);
+}
+
+extern inline op_if *op_if_i(size_t size);
+
+extern inline void op_if_f(op_if *of);
 
 static const char *op_c_str[] = {
     "EFN",
@@ -22,25 +32,32 @@ static const char *op_c_str[] = {
     "SA",
     "LA",
     "PV",
-    "JMPF",
+    "COND",
+    "ZOO",
     "CST",
-    "ADD"
+    "ADD",
+    "NOT"
 };
 
 const char *op_c_get_str(op_c oc) {
     const char *s = "INVALID";
-    if (oc >= OP_C(EFN) && oc <= OP_C(ADD)) s = op_c_str[oc];
+    if (oc >= OP_C(EFN) && oc <= OP_C(NOT)) s = op_c_str[oc];
     return s;
 };
 
 void code_p(const code_st *const cs, const code *const c, size_t idnt) {
     for (size_t i = 0; i < c->len; i++) {
         PCX(' ', idnt);
-        printf("C:%s,T:%s", op_c_get_str(c->ops[i].oc), type_get_str(c->ops[i].ot));
+        printf("%lu: C:%s,T:%s", i, op_c_get_str(c->ops[i].oc), type_get_str(c->ops[i].ot));
         switch (c->ops[i].ot) {
             // TODO
-            case TYPE(STMT):
+            case TYPE(OP):
                 printf(",%s", type_get_str(c->ops[i].od.t));
+                break;
+            case TYPE(COND):
+                putchar('\n');
+                code_p(cs, c->ops[i].od.of->cond, idnt + 1);
+                code_p(cs, c->ops[i].od.of->body, idnt + 2);
                 break;
             case TYPE(U3):
                 printf(",%d", c->ops[i].od.u3);
@@ -81,10 +98,13 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
 static code_stat code_gen_if(code_st *const cs, const if_node *const in, code *c) {
     code_stat cstat;
     if_itm *h = in->h;
+    op_if *of = op_if_i(CODE_I_SIZE);
     while (h) {
-        size_t jfi = c->len; // TODO update jmp pos
+        if (h->cond) IFCGEN(code_gen, cs, h->cond, of->cond);
+        IFCGEN(code_gen_lst, cs, h->body, of->body);
         h = h->next;
     }
+    OP_A(c, COND, COND, { .of = of }, NULL);
     return CODE_STAT(OK);
 }
 
@@ -121,6 +141,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     op_node *opn = a->n.op;
     var_node *var;
+    type_node *tl, *tr;
     if (opn->ot != OP_TYPE(ASS)) if (opn->l) IFCGEN(code_gen, cs, opn->l, c);
     if (opn->ot != OP_TYPE(CST)) if (opn->r) IFCGEN(code_gen, cs, opn->r, c);
     switch (opn->ot) {
@@ -148,9 +169,12 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
         case OP_TYPE(ADD):
             OP_P_INT(opn, cs, l, c);
             OP_P_INT(opn, cs, r, c);
-            OP_A(c, ADD, STMT, { .t = opn->ret->t }, a);
+            OP_A(c, ADD, OP, { .t = opn->ret->t }, a);
             break;
         case OP_TYPE(NOT):
+            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
+            OP_A(c, ZOO, OP, { .t = tr->t }, a);
+            OP_A(c, NOT, OP, { .t = TYPE(BL) }, a);
             break;
     }
     return CODE_STAT(OK);

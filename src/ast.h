@@ -81,8 +81,11 @@ void ast_f(ast *a);
 #define TYPE(N) TYPE_##N
 
 typedef enum {
+    // internal
+    TYPE(STMT),
+    TYPE(OP),
+    TYPE(COND),
     // ast types
-    TYPE(STMT), // internal
     TYPE(MOD), // file
     TYPE(INT),
     TYPE(FLT),
