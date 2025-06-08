@@ -1,0 +1,5 @@
+
+// allocate globals and set values test
+
+a:I6$1234
+b:a
