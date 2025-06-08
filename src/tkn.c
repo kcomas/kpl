@@ -174,6 +174,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                     T_ONE_C('d', DEL);
                     T_ONE_C('l', LD);
                     T_ONE_C('h', VH);
+                    T_ONE_C('s', MS);
                     default:
                         return TKN_ER(ts, CMD);
                 }
@@ -268,6 +269,7 @@ static const char *const tkn_type_str[] = {
     "DEL", // \d
     "LD", // \l
     "VH", // \h
+    "MS", // \s
     // arith
     "ADD",
     "SUB",

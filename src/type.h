@@ -77,6 +77,9 @@ typedef enum {
     // vh
     TYPE_STAT(INV_VH_L_NN),
     TYPE_STAT(INV_VH_R_NG),
+    // ms
+    TYPE_STAT(INV_MS_L_NN),
+    TYPE_STAT(INV_MS_T),
     // add
     TYPE_STAT(INV_ADD_L_T_N),
     TYPE_STAT(INV_ADD_R_T_N),

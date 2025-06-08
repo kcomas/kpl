@@ -131,6 +131,7 @@ static const char *op_c_str[] = {
     "CFN", // call fn
     "CS", // call self
     "DEB", // debugger
+    "MS", // micro sleep
     // data
     "AG", // allocate globals
     "SG", // store global
@@ -906,6 +907,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
             OP_A(cs, c, DEL, OP, { .t = tr->t }, a);
+            break;
+        case OP_TYPE(MS):
+            IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
+            OP_A(cs, c, MS, OP, { .t = tr->t }, a);
             break;
         case OP_TYPE(LD):
             if (opn->r->at != AST_TYPE(MOD) || !opn->r->n.m) return CODE_ER(cs, LD_MOD_F, a);

@@ -68,6 +68,7 @@ typedef enum {
     TKN_TYPE(DEL), // \d
     TKN_TYPE(LD), // \l
     TKN_TYPE(VH), // \h
+    TKN_TYPE(MS), // \s
     // arith
     TKN_TYPE(ADD),
     TKN_TYPE(SUB),

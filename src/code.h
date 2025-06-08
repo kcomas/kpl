@@ -106,6 +106,7 @@ typedef enum {
     OP_C(CFN), // call fn
     OP_C(CS), // call self
     OP_C(DEB), // debugger
+    OP_C(MS),
     // data
     OP_C(AG), // allocate globals
     OP_C(SG), // store global

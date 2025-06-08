@@ -506,6 +506,13 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
+            case OP_C(MS):
+                op_set_jidx(j, o);
+                j_pop(j, o->od.t, 7, 0);
+                SET_FP(usleep);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
             case OP_C(AG):
                 op_set_jidx(j, o);
                 SET_REG(m, mod*, false, 7);
