@@ -14,10 +14,12 @@
 INST_XX(movq);
 INST_XX(addsd);
 INST_XX(subsd);
+INST_XX(comisd);
 
 as *as_x_b(as *a) {
     as_op_a(a, AS_X64(MOVQ), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_movq_xx, NULL);
     as_op_a(a, AS_X64(ADDSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_addsd_xx, NULL);
     as_op_a(a, AS_X64(SUBSD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_subsd_xx, NULL);
+    as_op_a(a, AS_X64(COMISD), ARG_ID(X), ARG_ID(X), ARG_ID(N), ARG_ID(N), as_comisd_xx, NULL);
     return a;
 }

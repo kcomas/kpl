@@ -45,6 +45,7 @@ typedef enum {
     AS_X64(AND),
     AS_X64(XOR),
     AS_X64(CMP),
+    AS_X64(COMISD),
     AS_X64(JMP),
     AS_X64(JB),
     AS_X64(JNAE),

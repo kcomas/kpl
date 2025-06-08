@@ -12,6 +12,20 @@ static void reg_gen_stk(const reg *ir, size_t *iri, te *ci, as *a, te *kv, const
     AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[*iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
 }
 
+static gen_stat swap_args(te *restrict ci, as *a, te *restrict r, const vr *args, vr **stk, arg_id ai) {
+    un nr;
+    for (size_t i = 0; i < args->l; i++) {
+        if (r->d[0].u6 == gen_var_hsh(args->d[i].p).u6) { // check if this is an arg being passed in
+            if (vr_sf(*stk, &nr) != VR_STAT(OK)) return GEN_STAT(INV);
+            AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), nr), as_arg_i(a, ai, r->d[2]), ci);
+            vr_ab(stk, r->d[2]);
+            r->d[2] = nr;
+            break;
+        }
+    }
+    return GEN_STAT(OK);
+}
+
 static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t *rsaves, size_t rsl) {
     gen_stat stat;
     static const reg ir[] = {R(DI), R(SI), R(DX), R(CX), R(8), R(9)};
@@ -21,22 +35,11 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, size_t arg_i, const uint8_t 
     vr *args = ((te*) ci->d[arg_i].p)->d[1].p;
     if (!rsaves) { // swap regs that are passed for args
         te *h = st->atm->i->h;
-        un nr;
         while (h) {
             te *r = h->d[0].p;
             for (size_t i = 0; i < 6; i++) {
-                if (r->d[2].u3 == ir[i]) {
-                    for (size_t i = 0; i < args->l; i++) {
-                        if (r->d[0].u6 == gen_var_hsh(args->d[i].p).u6) { // check if this is an arg being passed in
-                            if (vr_sf(st->rstk, &nr) != VR_STAT(OK)) return GEN_STAT(INV);
-                            AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), nr), as_arg_i(a, ARG_ID(R), r->d[2]), ci);
-                            vr_ab(&st->rstk, r->d[2]);
-                            r->d[2] = nr;
-                            break;
-                        }
-                    }
-                    break;
-                }
+                if (r->d[2].u3 == ir[i]) swap_args(ci, a, r, args, &st->rstk, ARG_ID(R));
+                else if (r->d[2].u3 == xr[i]) swap_args(ci, a, r, args, &st->xstk, ARG_ID(X));
             }
             h = h->d[2].p;
         }
