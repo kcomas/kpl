@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
         }
     }
     fn_node_p(&as, m->fns, 0);
+    putchar('\n');
     fn_node_f(m->fns);
     mod_f(m);
     return 0;

@@ -127,8 +127,13 @@ inline type_node *type_node_i(type t, ast *const a) {
 inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
     if (tn) {
         printf("%s-", type_get_str(tn->t));
+        putchar('\n');
+        PCX(' ', idnt);
         ast_p(st, tn->a, idnt);
-    } else putchar('?');
+    } else {
+        PCX(' ', idnt);
+        putchar('?');
+    }
 }
 
 inline void type_node_f(type_node *tn) {
@@ -256,6 +261,7 @@ inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, s
     printf("C-");
     ast_p(as, ii->cond, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     printf("B-");
     lst_node_p(as, ii->body, idnt);
 }
@@ -333,10 +339,13 @@ inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
     putchar('\n');
+    PCX(' ', idnt);
     ast_p(as, cn->tgt, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     lst_node_p(as, cn->args, idnt);
 }
 
@@ -344,6 +353,7 @@ inline void call_node_f(call_node *cn) {
     ast_f(cn->tgt);
     FNNF(cn->ret, type_node_f);
     lst_node_f(cn->args);
+    free(cn);
 }
 
 typedef struct {
@@ -356,6 +366,7 @@ inline ret_node *ret_node_i(void) {
 
 inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt) {
     putchar('\n');
+    PCX(' ', idnt);
     ast_p(as, r->a, idnt);
 }
 

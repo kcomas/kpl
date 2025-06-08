@@ -123,9 +123,11 @@ void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     printf("%s\n", type);
     type_node_p(as, op->ret, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     printf("L-");
     ast_p(as, op->l, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     printf("R-");
     ast_p(as, op->r, idnt);
 }
@@ -166,13 +168,17 @@ void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     printf("%p,%d,", fn, fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
     putchar('\n');
+    PCX(' ', idnt);
     printf("%p", fn->par);
     putchar('\n');
+    PCX(' ', idnt);
     type_node_p(as, fn->ret, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     printf("A-");
     lst_node_p(as, fn->args, idnt);
     putchar('\n');
+    PCX(' ', idnt);
     printf("B-");
     lst_node_p(as, fn->body, idnt);
 }
@@ -228,10 +234,6 @@ extern inline void var_node_p(const ast_st *const as, const var_node *const var,
 
 extern inline void var_node_f(var_node *vn);
 
-#define AST_F_CASE(T, N, F) case AST_TYPE(T): \
-    FNNF(a->n.N, F); \
-    break
-
 extern inline ast *ast_i(ast_type as, node const n, const tkn *const t);
 
 static const char *const ast_type_str[] = {
@@ -246,6 +248,9 @@ static const char *const ast_type_str[] = {
     "VAR"
 };
 
+#define AST_P_CASE(T, N, F) case AST_TYPE(T): \
+    return F(as, a->n.N, idnt);
+
 void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     if (!a) {
         printf("NULL");
@@ -259,17 +264,21 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     putchar('|');
     idnt += IDNT_ADD;
     switch (a->at) {
-        case AST_TYPE(TYPE): return type_node_p(as, a->n.tn, idnt);
+        AST_P_CASE(TYPE, tn, type_node_p);
         case AST_TYPE(VAL): return val_node_p(a->n.val);
-        case AST_TYPE(OP): return op_node_p(as, a->n.op, idnt);
-        case AST_TYPE(LST): return lst_node_p(as, a->n.lst, idnt);
-        case AST_TYPE(IF): return if_node_p(as, a->n.in, idnt);
-        case AST_TYPE(FN): return fn_node_p(as, a->n.fn, idnt);
-        case AST_TYPE(CALL): return call_node_p(as, a->n.cn, idnt);
-        case AST_TYPE(RET): return ret_node_p(as, a->n.ret, idnt);
-        case AST_TYPE(VAR): return var_node_p(as, a->n.var, idnt);
+        AST_P_CASE(OP, op, op_node_p);
+        AST_P_CASE(LST, lst, lst_node_p);
+        AST_P_CASE(IF, in, if_node_p);
+        AST_P_CASE(FN, fn, fn_node_p);
+        AST_P_CASE(CALL, cn, call_node_p);
+        AST_P_CASE(RET, ret, ret_node_p);
+        AST_P_CASE(VAR, var, var_node_p);
     }
 }
+
+#define AST_F_CASE(T, N, F) case AST_TYPE(T): \
+    FNNF(a->n.N, F); \
+    break
 
 void ast_f(ast *a) {
     switch (a->at) {
