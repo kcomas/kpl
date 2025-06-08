@@ -1075,7 +1075,7 @@ code_stat code_gen_fn(code_st *const cs, const fn_node *const fn, code **c) {
     OP_A(cs, c, EFN, CODE, { .t = TYPE(VD) }, NULL);
     uint8_t ngl = fn->idc - fn->args->len;
     if (ngl) {
-        if (!fn->par) OP_A(cs, c, AG, U3, { .u3 = ngl }, NULL);
+        if (!fn->par && fn->sig->t == TYPE(MOD)) OP_A(cs, c, AG, U3, { .u3 = ngl }, NULL);
         else OP_A(cs, c, AL, U3, { .u3 = ngl }, NULL);
     }
     IFCGEN(code_gen_lst, cs, fn->body, c);
