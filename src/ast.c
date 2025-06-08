@@ -48,9 +48,9 @@ static ast_stat op(ast *a, te *pn, void **vn, te **e) {
     size_t oid;
     if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &oid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, *an, pn, AST_CLS(O), P(NULL), U6(oid), NULL, NULL);
-    if (pn->d[3].p && (stat = ast_n(a, pn->d[3].p, &(*an)->d[4].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
+    if (pn->d[3].p && (stat = ast_n(a, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
     if (!pn->d[4].p) return AST_STAT(OK);
-    return ast_n(a, pn->d[4].p, &(*an)->d[5].p, e);
+    return ast_n(a, pn->d[4].p, &(*an)->d[6].p, e);
 }
 
 static ast_stat aply(ast *a, te *pn, void **vn, te **e) {
@@ -74,7 +74,13 @@ static ast_stat aply(ast *a, te *pn, void **vn, te **e) {
 }
 
 static ast_stat z(ast *a, te *pn, void **vn, te **e) {
-
+    ast_stat stat;
+    te **an = (te**) vn;
+    mc *v;
+    if (tkn_g_mc(pn->d[2].p, node_root_mc(pn), 1, a->ma, &v) != TKN_STAT(OK)) return err(AST_STAT(INV), pn, e);
+    *an = ast_an_i(a, *an, pn, AST_CLS(Z), P(type_i(a->ta, TYPE(SL))), v, NULL);
+    if (pn->d[3].p && (stat = ast_n(a, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
+    return AST_STAT(OK);
 }
 
 static ast *ast_tkn(ast *a) {
@@ -137,6 +143,14 @@ void ast_p(const te *an, size_t idnt) {
             putchar(')');
             break;
         case AST_CLS(Z):
+            printf("(Z ");
+            printf("`%s ", (char*) ((mc*) an->d[4].p)->d);
+            type_p(an->d[3].p);
+            if (an->d[5].p) {
+                putchar('\n');
+                ast_p(an->d[5].p, idnt + 1);
+            }
+            putchar(')');
             break;
         case AST_CLS(A):
             printf("(A ");
@@ -192,6 +206,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(O):
             return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u6 == b->d[4].u6 && ast_eq(a->d[5].p, b->d[5].p) && ast_eq(a->d[6].p, b->d[6].p);
         case AST_CLS(Z):
+            // TODO
             break;
         case AST_CLS(A):
             return type_eq(a->d[3].p, b->d[3].p) && ast_eq(a->d[4].p, b->d[4].p) && lst_eq(a->d[5].p, b->d[5].p, ast_un_eq);

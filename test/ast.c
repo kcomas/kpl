@@ -64,7 +64,7 @@ static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
     te_f(cn);
 }
 
-#define V(PGM, AST) ast *a = ast_b(ast_i(&am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
+#define V(PGM, AST) ast *a = ast_b(ast_i(&am, &am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     ast_verify(_t, a, PGM, AST)
 
 T(aplyopadd, {
