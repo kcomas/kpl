@@ -594,9 +594,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
         case OP_TYPE(ASS):
             IFCGEN(code_gen, cs, opn->r, c);
             if (opn->l->at == AST_TYPE(VAR)) {
-                if ((opn->flgs & NODE_FLG(GCV)) && (cstat = load_var(cs, opn->l, c, LD_V_M(GC))) != CODE_STAT(OK)) {
-                    return cstat;
-                }  else if ((cstat = load_var(cs, opn->l, c, LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
+                if ((cstat = load_var(cs, opn->l, c, (opn->flgs & NODE_FLG(GCV)) ? LD_V_M(GC) : LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                 if ((cstat = store_var(cs, a, c, opn->l->n.var, true)) != CODE_STAT(OK)) return cstat;
                 break;
             } else if (opn->l->at == AST_TYPE(SYM)) {
