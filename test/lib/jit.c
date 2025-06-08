@@ -152,7 +152,8 @@ static void daddsub(uint8_t *m) {
     jit_ret(&p, m);
     printj(p, m);
     double a = 1.2, b = 3.4, c = 0.15;
-    printf("dasf(%f + %f - %f): %f\n", a, b, c, ((double(*)(double, double, double)) m)(a, b, c));
+    double d = ((double(*)(double, double, double)) m)(a, b, c);
+    printf("dasf(%f + %f - %f): %f\n", a, b, c, d);
 }
 
 int main(void) {

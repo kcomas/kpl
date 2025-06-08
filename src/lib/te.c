@@ -7,6 +7,7 @@ te *te_i(size_t l, alfn *ta, frfn *tf) {
     t->l = l;
     t->ta = ta;
     t->tf = tf;
+    for (size_t i = 0; i < l; i++) t->d[i] = P(NULL);
     return t;
 }
 

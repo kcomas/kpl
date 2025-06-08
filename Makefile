@@ -30,7 +30,7 @@ LVR_OBS = $(LSRC)/vr.o
 vr$(LTNAME): $(LVR_OBS) $(LTEST)/vr.o
 > $(CCOBJ)
 
-LLST_OBJS = $(LSRC)/lst.o
+LLST_OBJS = $(LSRC)/lst.o $(LTE_OBJS)
 lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o
 > $(CCOBJ)
 

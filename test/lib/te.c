@@ -11,8 +11,6 @@ void node_free(te *t) {
 te *node(const char *v) {
     te *t = te_i(3, malloc, (void*) &node_free);
     t->d[0] = P(v);
-    t->d[1] = P(NULL);
-    t->d[2] = P(NULL);
     return t;
 }
 

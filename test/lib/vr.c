@@ -9,6 +9,7 @@ void itest(void) {
     vr_a(&v, I5(2));
     vr_a(&v, I5(3));
     vr_a(&v, I5(4));
+    vr_s_i(v, 1, I5(8));
     for (size_t i = 0; i < v->l; i++) printf("%d ", v->d[i].i5);
     putchar('\n');
     vr_f(v);

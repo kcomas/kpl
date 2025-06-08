@@ -9,6 +9,7 @@ vr *vr_i(size_t s, alfn *va, frfn *df, frfn *vf) {
     v->va = va;
     v->df = df;
     v->vf = vf;
+    for (size_t i = 0; i < s; i++) v->d[i] = P(NULL);
     return v;
 }
 
@@ -28,6 +29,13 @@ size_t vr_g_l(const vr *const v) {
 vr_stat vr_g_i(vr *const v, size_t i, un *d) {
     if (i >= v->l) return VR_STAT(IDX);
     *d = v->d[i];
+    return VR_STAT(OK);
+}
+
+vr_stat vr_s_i(vr *const v, size_t i, un d) {
+    if (i >= v->l) return VR_STAT(IDX);
+    if (v->df) v->df(v->d[i].p);
+    v->d[i] = d;
     return VR_STAT(OK);
 }
 
