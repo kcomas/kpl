@@ -316,14 +316,18 @@ var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const 
     memcpy(vstr, str + t->pos, t->len);
     tbl_itm *ti;
     fn_node *scope = fns->vim == FN_VIM(S) ? fns : NULL;
+    var_node *vn;
     while (scope) {
-        if (tbl_op(a, &scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
+        if (tbl_op(a, &scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) {
+            vn = (var_node*) ti->data;
+            if (vn->vt == VAR_TYPE(G)) fns->flgs |= NODE_FLG(NT); // cannot access globals in thread
+            return vn;
+        }
         // loop until top scope if not found
         scope = scope->par;
         while (scope && scope->par) scope = scope->par;
     }
-    if (!fns->par) fns->flgs |=  NODE_FLG(NT); // cannot thread mod
-    var_node *vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
+    vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
     vn->id = fns->idc++;
     if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
     else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);

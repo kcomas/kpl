@@ -7,10 +7,10 @@ static const char *const css[] = {
     "INV_ER_GCR",
     "ER_N_ER_T",
     "INV_TC",
-    "INV_L_ASS",
-    "INV_R_ASS",
-    "INV_STR_ESC",
-    "NO_OP_FOR_VAL_T",
+    "INV_L_ASS", // left side : invalid
+    "INV_R_ASS", // right side : invalid
+    "INV_STR_ESC", /* invalid \ */
+    "NO_OP_FOR_VAL_T", // no type for val, should not happen
     "TBL_FOUND",
     "MOD_FOUND",
     "NO_T_FOR_TE_IDX",
@@ -19,12 +19,12 @@ static const char *const css[] = {
     "SYM_NO_T_FOR_A",
     "SYM_INV_TBL_R",
     "SYM_INV",
-    "NO_T_FOR_IF_COND",
+    "NO_T_FOR_IF_COND", // cannot not get if conds type
     "NO_T_FOR_LOP_COND",
-    "ARG_LEN_GT_LOCAL_LEN",
-    "FN_RET_T_INV",
-    "FN_RET_ER_T_INV",
-    "TC_R_N",
+    "ARG_LEN_GT_LOCAL_LEN", // should not happen
+    "FN_RET_T_INV", // cannot get ret type of fn
+    "FN_RET_ER_T_INV", // cannot get ret type of fn
+    "TC_R_N", // right side for try catch null
     "ASS_R_N",
     "ASS_TE_INV",
     "INV_TYPE_STORE_VD",
@@ -37,12 +37,14 @@ static const char *const css[] = {
     "INV_CST",
     "NO_TYPE_COR_INT",
     "GC_INV",
-    "OP_NO_T_L",
-    "OP_NO_T_R",
+    "OP_NO_T_L", // op no left type
+    "OP_NO_T_R", // op no right type
     "LD_MOD_F",
     "INV_ADD_T_L",
     "INV_SUB_T_R",
     "INV_SUB_VR_T_R",
+    "INV_MUL_T",
+    "TD_NOT_FN_NODE",
     "INV_SG_CNCT",
     "INV_CNCT_OP",
     "INV_FD_OP",
@@ -693,6 +695,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             IFCGEN(code_gen, cs, opn->r, c);
             ASTGLRTN(opn->l, opn->r, INV_MUL_T, a);
             if (tl->t == TYPE(TE) && tr->t == TYPE(FN)) {
+                if ((*c)->ops[(*c)->len - 1].oc != OP_C(PV) && (*c)->ops[(*c)->len - 1].ot != TYPE(FN)) return CODE_ER(cs, TD_NOT_FN_NODE, opn->r);
                 OP_A(cs, c, TDI, TD, {}, a);
                 break;
             }

@@ -62,6 +62,7 @@ static const char *const tss[] = {
     "INV_MUL_L_T_N",
     "INV_MUL_R_T_N",
     "TD_TE_FN_T_NEQ",
+    "FN_NO_TD",
     "INV_MUL",
     "INV_EQ_L_T_N",
     "INV_EQ_R_T_N",
@@ -476,8 +477,11 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             ASTGTNBOP(MUL);
             if (lt->t == TYPE(TE) && rt->t == TYPE(FN)) {
                 if (!lst_node_eq(lt->a->n.lst, rt->a->n.lst)) return TYPE_ER(ts, TD_TE_FN_T_NEQ);
-                op->ret = type_lst_i(ts->a, TYPE(TD), 2, lt, rt);
-                break;
+                if (op->r->at == AST_TYPE(OP) && op->r->n.op->ot == OP_TYPE(CST) && op->r->n.op->r->at == AST_TYPE(FN) && !(op->r->n.op->r->n.fn->flgs & NODE_FLG(NT))) {
+                    op->ret = type_lst_i(ts->a, TYPE(TD), 2, lt, rt);
+                    break;
+                }
+                return TYPE_ER(ts, FN_NO_TD);
             }
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             return TYPE_ER(ts, INV_MUL);

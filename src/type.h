@@ -80,6 +80,7 @@ typedef enum {
     TYPE_STAT(INV_MUL_L_T_N),
     TYPE_STAT(INV_MUL_R_T_N),
     TYPE_STAT(TD_TE_FN_T_NEQ),
+    TYPE_STAT(FN_NO_TD),
     TYPE_STAT(INV_MUL),
     // eq
     TYPE_STAT(INV_EQ_L_T_N),
