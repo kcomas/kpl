@@ -5,14 +5,14 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, te **e) {
     (void) g;
     gen_st *st = s;
     AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), ci);
+    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), ci);
     if (st->vc > 0) {
-        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), ci);
         size_t stks = st->vc * sizeof(void*);
         if (stks > UINT8_MAX) return gen_err(GEN_STAT(INV), ci, e);
         AS2(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(stks)), ci);
     }
     if (st->rac >= 3) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), ci);
-    if (st->xac >= 4) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(11))), as_arg_i(a, ARG_ID(R), U3(R(CX))), ci);
+    if (st->rac >= 4) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(11))), as_arg_i(a, ARG_ID(R), U3(R(CX))), ci);
     // TODO swap xmm
     set_code_e(ci, a);
     return GEN_STAT(OK);
