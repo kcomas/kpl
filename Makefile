@@ -13,12 +13,12 @@ TNAME = _test
 
 $(NAME):
 
-TKN_OBJS = $(SRC)/tkn.o
-tkn$(TNAME): $(TKN_OBJS) $(TEST)/tkn.o
-> $(CCOBJ)
-
 MOD_OBJS = $(SRC)/mod.o
 mod$(TNAME): $(MOD_OBJS) $(TEST)/mod.o
+> $(CCOBJ)
+
+TKN_OBJS = $(SRC)/tkn.o $(MOD_OBJS)
+tkn$(TNAME): $(TKN_OBJS) $(TEST)/tkn.o
 > $(CCOBJ)
 
 %.o: %.c
