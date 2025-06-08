@@ -105,9 +105,35 @@ static atg_stat root_lst_s(atg *t, gen *g, te *an, err **e) {
     return cst_type_lst_s(t, g, an, e);
 }
 
+static x64_type type_g_x64_type(te *tn) {
+    switch (tn->d[1].u4) {
+        case TYPE(I6): return X64_TYPE(I6);
+        default:
+            break;
+    }
+    return X64_TYPE(N);
+}
+
+#define ATG_EXP_ARG_ID 0
+
 static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
-    HERE("TODO EXPORT");
-    if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    te *rn = an->d[0].p;
+    if (rn->d[3].p) {
+        te *h = ((tbl*) rn->d[3].p)->i->h, *d, *es;
+        while (h) {
+            d = h->d[0].p;
+            uint32_t id = opt_exp_id(d);
+            uint16_t eid = opt_exp_eid(d), flgs = opt_exp_flgs(d);
+            x64_type xt = type_g_x64_type(d->d[1].p);
+            if (flgs & LTE_FLG(A)) es = gen_arg(g, xt, id);
+            else if (flgs & LTE_FLG(L)) es = gen_stkv(g, xt, id);
+            else return atg_err(t, an, e, "atg inv exp type");
+            uint32_t idx = sizeof(void*) * 4 + sizeof(void*) * eid;
+            if (gen_a(g, GEN_OP(SET), gen_idx_m(g, xt, 2, gen_arg(g, X64_TYPE(M), ATG_EXP_ARG_ID), gen_data(g, idx <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(idx))), es, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            h = h->d[2].p;
+        }
+    }
+    if (gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(M), P(NULL)), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
@@ -163,6 +189,7 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
         if (gen_a(g, atg_gen_g_cond_rv(ci), te_c(ci->d[1].p), te_c(ci->d[2].p), gen_lbl(g, sl)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         ends = ends->d[2].p;
     }
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
@@ -206,6 +233,7 @@ static atg_stat call_npr(gen_op *go, const te *an) {
     te *p = an->d[0].p;
     // TODO if parent op is ret
     if (p->d[2].u4 == AST_CLS(L)) { // if last stmt
+        if (p->d[0].p && ((te*) p->d[0].p)->d[2].u4 == AST_CLS(R) && ((te*) p->d[0].p)->d[3].p) return ATG_STAT(OK); // if root and has exports
         lst *l = p->d[4].p;
         if (!l) return ATG_STAT(INV);
         if (an == l->t->d[0].p) npr = true;
@@ -319,4 +347,25 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(I6), dump_vd_s_u5_e_i6);
     atg_arith(t);
     return t;
+}
+
+static err *__attribute__((noinline)) jit_run(const uint8_t *m, size_t ep, te *x) {
+    return ((atg_jit*) &m[ep])(x);
+}
+
+err *atg_z(const alfr *ta, tbl *volatile et, const uint8_t *m, size_t ep) {
+    err *e = NULL;
+    te *x = NULL, *h, *d;
+    if (et) x = te_i(et->i->l > 1 ? et->i->l : 2, ta, NULL);
+    e = jit_run(m, ep, x);
+    if (et) {
+        h = et->i->h;
+        while (h) {
+            d = h->d[0].p;
+            d->d[2] = x->d[opt_exp_eid(d)];
+            h = h->d[2].p;
+        }
+        te_f(x);
+    }
+    return e;
 }

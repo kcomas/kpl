@@ -47,9 +47,9 @@ ADL(gt, s, JG);
 #define VDL(N, U, J) static gen_stat N##_v##U##d##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     int32_t v0; \
     if (st_stkv_idx(s, gen_var_g_t(ci->d[1].p), ((te*) ci->d[1].p)->d[1].u3, &v0) != GEN_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
-    uint64_t qw = ((te*) ci->d[1].p)->d[1].u6; \
+    uint64_t qw = ((te*) ci->d[2].p)->d[1].u6; \
     if (qw <= UINT32_MAX) { \
-        return gen_err(g, ci, e, "nyi"); \
+        if (gen_as(a, AS_X64(CMP), as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v0), bd_arg(a, qw), NULL, ci)) return gen_err(g, ci, e, __FUNCTION__); \
     } else return gen_err(g, ci, e, "nyi"); \
     if (gen_as(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     set_code_e(ci, a); \
