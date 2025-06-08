@@ -66,3 +66,8 @@ T(facrec) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("fac", U6(0), NULL), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(5)))))))),
     NULL)));
 }
+/*
+T(fibrec) {
+    V(TPGM(fibrec), NULL);
+}
+*/

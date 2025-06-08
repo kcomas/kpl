@@ -1,14 +1,14 @@
 
 #include "chk.h"
 
-chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p ep, chk_tbl_i cti, ast *a) {
+chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, chk_err_fn efn, chk_tbl_i cti, ast *a) {
     chk *c = af->a(sizeof(chk));
     c->fnlc = -1;
     c->r = 1;
     c->af = af;
     c->ta = ta;
     c->ea = ea;
-    c->ep = ep;
+    c->efn = efn;
     c->cti = cti;
     c->a = a ? ast_c(a) : a;
     c->bt = cti();
@@ -23,7 +23,7 @@ chk *chk_i_chk(const chk *c, ast *a) {
     cc->af = c->af;
     cc->ta= c->ta;
     cc->ea = c->ea;
-    cc->ep = c->ep;
+    cc->efn = c->efn;
     cc->cti = c->cti;
     cc->a = a ? ast_c(a) : a;
     cc->bt = tbl_c(c->bt);
@@ -86,8 +86,8 @@ chk_stat chk_a(chk *c, tbl *t, chk_fn cf, uint16_t cls, uint16_t type, ...) {
 }
 
 static chk_stat chk_foe(chk *c, bool foe, te *an, err **e, const char *m) {
-    if (foe) *e = err_i(c->ea, c->ep, (void*) te_f, te_c(an), m);
-    return foe ? CHK_STAT(INV) : CHK_STAT(OK);
+    if (foe) return c->efn(c, an, e, m);
+    return CHK_STAT(OK);
 }
 
 static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit

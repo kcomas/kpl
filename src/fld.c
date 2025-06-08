@@ -2,7 +2,8 @@
 #include "fld.h"
 
 fld_stat fld_err(fld *f, te *an, err **e, const char *m) {
-    *e = err_i(f->ea, ast_err_p, (void*) te_f, te_c(an), m);
+    te_c(ast_g_root(an));
+    *e = err_i(f->ea, ast_err_p, ast_err_f, an, m);
     return FLD_STAT(INV);
 }
 
@@ -29,7 +30,11 @@ static bool idnt_lst_t(const te *an) {
 
 static fld_stat enlst(fld *f, te **an, err **e) {
     (void) e;
-    if ((*an)->d[2].u4 == AST_CLS(L)) return FLD_STAT(OK);
+    if (*an && (*an)->d[2].u4 == AST_CLS(L)) return FLD_STAT(OK);
+    if (!*an) {
+        *an = ast_an_i(f->a, NULL, NULL, AST_CLS(L), P(NULL), NULL);
+        return FLD_STAT(OK);
+    }
     lst *ll = f->a->ali();
     te *ln = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(L), P(NULL), ll);
     lst_ab(ll, P(*an));
@@ -47,11 +52,12 @@ static fld_stat op_lr_lst_r(fld *f, te **an, err **e) {
 static bool op_lr_lst_t(const te *an) {
     te *l = an->d[5].p, *r = an->d[6].p;
     if (an->d[4].u4 != OC(LOOP) && an->d[4].u4 != OC(IF)) return false;
-    return l->d[2].u4 != AST_CLS(L) || r->d[2].u4 != AST_CLS(L);
+    return (!l || l->d[2].u4 != AST_CLS(L)) || (!r || r->d[2].u4 != AST_CLS(L));
 }
 
 static fld_stat scope(fld *f, te *an, err **e) {
     te *pl, *h, *kv;
+    if (!an->d[4].p) return FLD_STAT(OK);
     if (ast_g_pn(AST_CLS(L), an->d[0].p, &pl) != AST_STAT(OK)) return fld_err(f, an, e, "fld ast_g_pn");
     if (!pl->d[3].p) {
         pl->d[3] = an->d[3];

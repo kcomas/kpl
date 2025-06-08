@@ -463,6 +463,10 @@ ZRE(mul, 0xF7, 4);
 
 ZRE(imul, 0xF7, 5);
 
+ZRME(imul, 0xF7, 5);
+
+ZRMBE(imul, 0xF7, 5);
+
 ZRE(div, 0xF7, 6);
 
 ZRE(idiv, 0xF7, 7);

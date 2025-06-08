@@ -9,6 +9,7 @@ const char *ast_oc_str(oc o) {
         "LOOP",
         "IF",
         "ADD",
+        "ADDA",
         "SUB",
         "SUBA",
         "MUL",
@@ -82,6 +83,16 @@ void node_err_p(void *d) {
     for (uint32_t i = s; i < e; i++) putchar(str->d[i]);
 }
 
+void node_err_f(void *d) {
+    te_f(node_g_root(d));
+}
+
+te *ast_g_root(te *an) {
+    te *rn = NULL;
+    ast_g_pn(AST_CLS(R), an, &rn);
+    return rn;
+}
+
 void ast_err_p(void *d) {
     te *t = d;
     node_err_p(t->d[1].p);
@@ -89,8 +100,13 @@ void ast_err_p(void *d) {
     ast_p(t, 0);
 }
 
+void ast_err_f(void *d) {
+    te_f(ast_g_root(d));
+}
+
 static ast_stat ast_err(ast *a, te *pn, err **e, const char *m) {
-    *e = err_i(a->ea, node_err_p, (void*) te_f, te_c(pn), m);
+    te_c(node_g_root(pn));
+    *e = err_i(a->ea, node_err_p, node_err_f, pn, m);
     return AST_STAT(INV);
 }
 
@@ -140,7 +156,10 @@ static ast_stat ast_op(ast *a, te *restrict pan, te *restrict pn, void **vn, err
     uint16_t oid;
     if ((stat = ast_t_n(a, pn->d[2].p, &oid)) != AST_STAT(OK)) return ast_err(a, pn, e, "ast op");
     *an = ast_an_i(a, pan, pn, AST_CLS(O), P(NULL), U4(oid), NULL, NULL);
-    if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return stat;
+    if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) {
+        te_f(*an);
+        return stat;
+    }
     if (!pn->d[4].p) return AST_STAT(OK);
     return ast_n(a, *an, pn->d[4].p, &(*an)->d[6].p, e);
 }
@@ -215,6 +234,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(LOOP), OC(LOOP));
     ast_t_a(a, TCUST(IF), OC(IF));
     ast_t_a(a, TCUST(ADD), OC(ADD));
+    ast_t_a(a, TCUST(ADDA), OC(ADDA));
     ast_t_a(a, TCUST(SUB), OC(SUB));
     ast_t_a(a, TCUST(SUBA), OC(SUBA));
     ast_t_a(a, TCUST(MUL), OC(MUL));

@@ -261,6 +261,12 @@ x64_stat x64_mul_r(size_t *p, uint8_t *m, reg r);
 // imul rsi
 x64_stat x64_imul_r(size_t *p, uint8_t *m, reg r);
 
+// imul qword ptr [rsp]
+x64_stat x64_imul_rm(size_t *p, uint8_t *m, reg r);
+
+// imul qword ptr [rsp+dsp8]
+x64_stat x64_imul_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
+
 // div rsi
 x64_stat x64_div_r(size_t *p, uint8_t *m, reg r);
 

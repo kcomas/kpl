@@ -82,7 +82,8 @@ x64_type atg_x64_g_t(const te *type) {
 }
 
 atg_stat atg_err(const atg *t, te *an, err **e, const char *m) {
-    *e = err_i(t->ea, ast_err_p, (void*) te_f, te_c(an), m);
+    te_c(ast_g_root(an));
+    *e = err_i(t->ea, ast_err_p, ast_err_f, an, m);
     return ATG_STAT(INV);
 }
 
