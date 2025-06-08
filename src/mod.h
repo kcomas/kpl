@@ -16,7 +16,6 @@ typedef struct {
         char *path, *str;
     } src;
     fn_node *fns; // ast root
-    ast *afns; // ast for code gen
     code *c;
     uint8_t *jit; // size is getpagesize
 } mod;
