@@ -18,7 +18,7 @@ typedef struct _vr {
     size_t s, l;
     alfn *af;
     frfn *df, *ff;
-    var d[];
+    un d[];
 } vr;
 
 vr *vr_i(size_t s, alfn *af, frfn *df, frfn *ff);
@@ -27,8 +27,8 @@ vr *vr_i(size_t s, alfn *af, frfn *df, frfn *ff);
     #define VR_RES 2
 #endif
 
-vr_stat vr_a(vr **v, var d);
+vr_stat vr_a(vr **v, un d);
 
-vr_stat vr_s(vr *const v, var *d);
+vr_stat vr_s(vr *const v, un *d);
 
 void vr_f(vr *v);

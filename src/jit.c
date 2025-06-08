@@ -43,10 +43,10 @@ jit_stat jit_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]) {
     return JIT_STAT(OK);
 }
 
-jit_stat jit_d(size_t *p, uint8_t *m, void *v) {
-    memset(m + *p, 0, sizeof(void*));
-    memcpy(m + *p, &v, sizeof(void*));
-    *p += sizeof(void*);
+jit_stat jit_d(size_t *p, uint8_t *m, un v) {
+    memset(m + *p, 0, sizeof(un));
+    memcpy(m + *p, &v, sizeof(un));
+    *p += sizeof(un);
     return JIT_STAT(OK);
 }
 
@@ -86,10 +86,10 @@ jit_stat jit_callr(size_t *p, uint8_t *m, reg r) {
     return jit_b(p, m, 3, rex, 0xFF, 0xD0 + rid(r));
 }
 
-jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, void *v) {
+jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, un u) {
     SET_REX(r);
     jit_b(p, m, 2, rex, 0xB8 + rid(r));
-    return jit_d(p, m, v);
+    return jit_d(p, m, u);
 }
 
 jit_stat jit_movrr(size_t *p, uint8_t *m, reg d, reg s) {
