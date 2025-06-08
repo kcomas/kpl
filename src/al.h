@@ -2,6 +2,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -10,6 +11,9 @@
 typedef struct _alc alc;
 
 typedef struct {
+#ifdef ALD
+    size_t u, f; // used freed
+#endif
     size_t len;
     alc *h, *t;
 } al;
@@ -46,6 +50,9 @@ inline alc *alc_i(al *const a, size_t size) {
 void alc_f(alc *ac, void *fn);
 
 inline void al_f(al *a) {
+#ifdef ALD
+    printf("==Used: %lu, Freed: %lu==\n", a->u, a->f);
+#endif
     LST_F(a, alc, alc_f, NULL);
     free(a);
 }
