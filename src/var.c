@@ -31,11 +31,12 @@ var *var_c(var *v) {
     return v;
 }
 
-void var_p(var *const v, size_t idnt) {
-    for (size_t i = 0; i < idnt; i++) putchar(' ');
+void var_p(const var *const v, const var *const s, const var *const e, const var *const sep) {
+    if (!v) return;
+    if (s) var_p(s, NULL, NULL, NULL);
     switch (v->t) {
         case VAR_TYPE(UN):
-            var_p(v->d.v, idnt);
+            var_p(v->d.v, s, e, sep);
             break;
         case VAR_TYPE(VD):
             printf("%p", v->d.vd);
@@ -82,7 +83,11 @@ void var_p(var *const v, size_t idnt) {
          case VAR_TYPE(SG):
             printf("%s", v->d.sg);
             break;
+         case VAR_TYPE(LST):
+            var_lst_p(v->d.lst, sep);
+            break;
     }
+    if (e) var_p(e, NULL, NULL, NULL);
 }
 
 void var_f(var *v) {
@@ -114,6 +119,25 @@ void var_f(var *v) {
 
 var_lst *var_lst_i(void) {
     return calloc(1, sizeof(var_lst));
+}
+
+void var_lst_a(var_lst *const lst, var *v) {
+    var_lst_itm *itm = calloc(1, sizeof(var_lst_itm));
+    itm->v = var_c(v);
+    if (!lst->h) lst->h = lst->t = itm;
+    else {
+        itm->p = lst->t;
+        lst->t = lst->t->n = itm;
+    }
+}
+
+void var_lst_p(const var_lst *const lst, const var *const sep) {
+    var_lst_itm *h = lst->h;
+    while (h) {
+        var_p(h->v, NULL, NULL, NULL);
+        if (h->n) var_p(sep, NULL, NULL, NULL);
+        h = h->n;
+    }
 }
 
 void var_lst_f(var_lst *lst) {
