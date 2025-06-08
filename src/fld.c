@@ -31,13 +31,14 @@ static bool aply_op_t(const te *an) {
 static fld_stat z_type_i(fld *f, lst *l, tbl **t) {
     *t = f->fti();
     un ln;
+    size_t i = 0;
     while (l->l) {
         if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
         te *zn = ln.p;
         if (zn->d[2].u6 != AST_CLS(Z)) return FLD_STAT(INV);
         te *tn = zn->d[5].p;
         if (tn->d[2].u6 != AST_CLS(T)) return FLD_STAT(INV);
-        type_tbl_a(*t, f->ta, mc_c(zn->d[4].p), te_c(tn->d[3].p));
+        type_tbl_a(*t, f->ta, mc_c(zn->d[4].p), i++, te_c(tn->d[3].p));
         te_f(zn);
     }
     lst_f(l);

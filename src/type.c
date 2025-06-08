@@ -49,14 +49,15 @@ type_cls type_g_c(type t) {
 static void type_tbl_e_f(void *p) {
     te *t = p;
     mc_f(t->d[0].p);
-    te_f(t->d[1].p);
+    te_f(t->d[2].p);
     t->af->f(t);
 }
 
-void type_tbl_a(tbl *t, const alfr *af, mc *s, te *type) {
-    te *kv = te_i(2, af, type_tbl_e_f);
+void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type) {
+    te *kv = te_i(3, af, type_tbl_e_f);
     kv->d[0] = P(s);
-    kv->d[1] = P(type);
+    kv->d[1] = U6(id);
+    kv->d[2] = P(type);
     tbl_a(t, kv);
 }
 
@@ -132,8 +133,8 @@ static void type_tbl_p(const tbl *t) {
     te *h = t->i->h;
     while (h) {
         te *li = h->d[0].p;
-        type_p(li->d[1].p);
-        printf("`%s ", (char*) ((mc*) li->d[0].p)->d);
+        type_p(li->d[2].p);
+        printf("`%s[%lu] ", (char*) ((mc*) li->d[0].p)->d, li->d[1].u6);
         h = h->d[2].p;
     }
 }
@@ -177,7 +178,7 @@ static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b) {
     te *ah = a->i->h, *bh = b->i->h;
     while (ah && bh) {
         te *ae = ah->d[0].p, *be = bh->d[0].p;
-        if (!mc_eq(ae->d[0].p, be->d[0].p) || !type_eq(ae->d[1].p, be->d[1].p)) return false;
+        if (!mc_eq(ae->d[0].p, be->d[0].p) || ae->d[1].u6 != be->d[1].u6 || !type_eq(ae->d[2].p, be->d[2].p)) return false;
         ah = ah->d[2].p;
         bh = bh->d[2].p;
     }
