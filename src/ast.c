@@ -15,10 +15,12 @@ const char *ast_oc_str(oc o) {
         "MUL",
         "MULA",
         "DIV",
+        "EQ",
         "GT",
         "GTE",
         "LT",
         "LTE",
+        "AND",
         "DUMP",
         "_END"
     };
@@ -240,10 +242,12 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(MUL), OC(MUL));
     ast_t_a(a, TCUST(MULA), OC(MULA));
     ast_t_a(a, TCUST(DIV), OC(DIV));
+    ast_t_a(a, TCUST(EQ), OC(EQ));
     ast_t_a(a, TCUST(GT), OC(GT));
     ast_t_a(a, TCUST(GTE), OC(GTE));
     ast_t_a(a, TCUST(LT), OC(LT));
     ast_t_a(a, TCUST(LTE), OC(LTE));
+    ast_t_a(a, TCUST(AND), OC(AND));
     // cmds
     ast_t_a(a, TCUST(E), CC(E));
     ast_t_a(a, TCUST(P1), CC(P1));

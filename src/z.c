@@ -27,13 +27,13 @@ static uint8_t *m = NULL;
 
 static tbl *tkn_mktbl(void) {
     lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
-    te *b = te_i(10, &al_te, NULL);
+    te *b = te_i(5, &al_te, NULL);
     return tbl_i(&al_tbl, tkn_sh, c4_eq, tl, b);
 }
 
 static tbl *mktbl(void) {
     lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
-    te *b = te_i(10, &al_te, NULL);
+    te *b = te_i(30, &al_te, NULL);
     return tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
@@ -53,12 +53,6 @@ static lst *ali(void) {
     return lst_i(&al_lst, &al_te, (void*) te_f);
 }
 
-static tbl *cti(void) {
-    lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
-    te *b = te_i(10, &al_te, NULL);
-    return tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
-}
-
 static tbl *mktbls(size_t size) {
     lst *tl = lst_i(&al_lst, &al_te, (void*) te_f);
     te *b = te_i(size, &al_te, NULL);
@@ -66,7 +60,7 @@ static tbl *mktbls(size_t size) {
 }
 
 static tbl *as_arg_tbl(void) {
-    return mktbls(6);
+    return mktbls(5);
 }
 
 static tbl *gen_cls_info_tbl(void) {
@@ -83,12 +77,12 @@ static __attribute__((constructor)) void z_con(void) {
     bp = psr_b(psr_i(&z_al, &al_te, &al_lst, &z_al, psr_entry_f, mktbl, t, v));
     ba = ast_b(ast_i(&z_al, &al_te, &z_al, &z_al, node_err_p, pig, ali, mktbls(NODE_TYPE(_END)), mktbls(TCUST(_END))));
     bf = fld_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
-    bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, cti, NULL));
+    bc = chk_b(chk_i(&z_al, &al_te, &z_al, chk_err, mktbl, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &z_al, ati, ali, NULL, mktbls(AST_CLS(_))));
     bs = as_b(as_i(&z_al, &al_te, &al_lst, &z_al, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bst = gen_st_i(&z_al, &al_te, mktbls(20), mktbls(20), vr_i(16, &z_al, NULL), vr_i(16, &z_al, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &z_al, &z_al, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
-    bt = atg_b(atg_i(&z_al, &al_te, &z_al, atg_err, cti, lst_i(&al_lst, &al_te, NULL), ali(), gen_i_gen(bg), as_i_as(bs)));
+    bt = atg_b(atg_i(&z_al, &al_te, &z_al, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), gen_i_gen(bg), as_i_as(bs)));
     m = x64_mmap(JIT_M);
 }
 
