@@ -34,7 +34,7 @@ T(fnadd3) {
     printf("------\n");
     te *ft = TF(FN, TS(I6), 3, "a", TS(I6), "b", TS(I6), "c", TS(I6));
     te *cn = RN(AN(TS(VD), LN(LT(1, "f", te_c(ft)), L(2,
-        ON(te_c(ft), AGN, EN("f", te_c(ft)),
+        ON(te_c(ft), DFN, EN("f", te_c(ft)),
             ON(te_c(ft), CST, NN(T, te_c(ft)),
                 LN(LT(3, "a", TS(I6), "b", TS(I6), "c", TS(I6)), L(1,
                     ON(TS(I6), SUB, NULL, ON(TS(I6), ADD, EN("a", TS(I6)),

@@ -9,6 +9,7 @@
 
 typedef enum {
     OC(_START),
+    OC(DFN),
     OC(AGN),
     OC(CST),
     OC(ADD),
@@ -29,7 +30,15 @@ typedef enum {
 
 const char *ast_cc_str(cc c);
 
-// lst tbl entry te[mc;flags;type;ast_node]
+#define LTE_FLAG(N) LTE_FLAG_##N
+
+typedef enum {
+    LTE_FLAG(A) = 1 << 0,
+    LTE_FLAG(L) = 1 << 1,
+    LTE_FLAG(T) = 1 << 2
+} lte_flag; // list tbl entry
+
+// lst tbl entry te[mc;u5(id)|u5(flags);type;ast_node]
 te *ast_lst_tbl_e_i(const ast *a, mc *s, te *t);
 
 // get first parent node of cls
