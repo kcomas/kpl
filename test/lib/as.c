@@ -78,6 +78,7 @@ static void looptest(void) {
     if (as_n(a, m) != AS_STAT(OK)) exit(55);
     as_code_p(a, m);
     ((void(*)(int32_t)) m)(5);
+    x64_munmap(1, m);
     as_f(a);
     printf("<<<< LOOPTEST\n");
 }
@@ -99,6 +100,7 @@ static void calltest(void) {
     as_code_p(a, m);
     int32_t v = 5;
     printf("call %d, inc: %d\n", v, ((int32_t(*)(int32_t)) m)(v));
+    x64_munmap(1, m);
     as_f(a);
     printf("<<<< CALLTEST\n");
 }

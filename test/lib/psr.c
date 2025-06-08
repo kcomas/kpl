@@ -58,6 +58,6 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("{a:1;b:2;{a+b+c}(3`c)}"))));
     te_f(ppnode(rpsr(psr_b("{f:FN(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}"))));
     te_f(ppnode(rpsr(psr_b("{f:{a:2:x+y()};y:{a};f(1`x)}"))));
-    te_f(ppnode(rpsr(psr_b("{fib:FN(U6`n)${#?{(n=0)#?0;(n<3)#?2;S(n-1)+S(n-2)}}}"))));
+    te_f(ppnode(rpsr(psr_b("{fib:FN(U6`n)${#?{(n=0)#?0;(n<3)#?2;S(n-1)+S(n-2)}};fib(35)}"))));
     return 0;
 }

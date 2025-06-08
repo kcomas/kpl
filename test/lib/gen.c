@@ -17,9 +17,14 @@ int main(void) {
     if (gen_n(&malloc, &free, g, st, a) != GEN_STAT(OK)) exit(44);
     printf("STATE AFTER\n");
     gen_st_p(st);
-    gen_p(g, NULL);
+    uint8_t *m = x64_mmap(1);
+    if (as_n(a, m) != AS_STAT(OK)) exit(55);
+    gen_p(g, m);
+    uint64_t arg1 = 3, arg2 = 4;
+    printf("Add(%lu, %lu): %lu\n", arg1, arg2, ((uint64_t(*)(uint64_t, uint64_t)) m)(arg1, arg2));
     gen_st_f(st);
     gen_f(g);
     as_f(a);
+    x64_munmap(1, m);
     return 0;
 }
