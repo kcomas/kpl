@@ -66,6 +66,9 @@ void gen_var_s_t(te *v, uint16_t t);
 // var te[u4(cls)|u4(type);id]
 te *gen_var_i(gen *g, frfn fr, gen_cls cls, uint16_t type, un id);
 
+// u5(id)|u4(cls)|u4(type)
+un gen_var_hsh(const te *var);
+
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
 gen_stat gen_n(gen *g, void *st, as *a, te **e);

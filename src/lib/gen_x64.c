@@ -185,13 +185,6 @@ void gen_st_p(const gen_st *st) {
     putchar('\n');
 }
 
-static un ovt_hsh(const te *ovt) {
-    un hsh = U6(0);
-    hsh = u5_s_o(hsh, 0, ovt->d[0].u5);
-    hsh = u5_s_o(hsh, 1, ovt->d[1].u5);
-    return hsh;
-}
-
 static void gen_st_latf(void *p) {
     te *t = p;
     te_f(t->d[1].p);
@@ -200,7 +193,7 @@ static void gen_st_latf(void *p) {
 }
 
 static void update_lat(gen_st *st, te *ovt, te *o) {
-    un hsh = ovt_hsh(ovt);
+    un hsh = gen_var_hsh(ovt);
     te *kv;
     if (tbl_g_i(st->lat, hsh, &kv) == TBL_STAT(OK)) {
         te_f(kv->d[1].p);
@@ -243,7 +236,7 @@ static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
 
 // check that the types do not change
 static gen_stat reg_map(gen_st *st, te *ovt) {
-    un hsh = ovt_hsh(ovt);
+    un hsh = gen_var_hsh(ovt);
     te *kv;
     if (tbl_g_i(st->atm, hsh, &kv) == TBL_STAT(OK)) {
         if (gen_var_g_t(ovt) != gen_var_g_t(kv->d[1].p)) return GEN_STAT(INV);
@@ -324,7 +317,7 @@ gen_stat rstk_b(const gen_st *st, uint8_t *r) {
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
     if (!ovt) return GEN_STAT(INV);
-    un hsh = ovt_hsh(ovt);
+    un hsh = gen_var_hsh(ovt);
     if (tbl_g_i(st->atm, hsh, kv) == TBL_STAT(NF)) {
         if (gen_var_g_c(ovt) != GEN_CLS(T)) return GEN_STAT(INV);
         return set_reg(st, hsh, ovt, kv, true);

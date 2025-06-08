@@ -156,6 +156,13 @@ te *gen_var_i(gen *g, frfn fr, gen_cls cls, uint16_t type, un id) {
     return v;
 }
 
+un gen_var_hsh(const te *var) {
+    un hsh = U6(0);
+    hsh = u5_s_o(hsh, 0, var->d[0].u5); // u4(cls)|u4(type)
+    hsh = u5_s_o(hsh, 1, var->d[1].u5); // u5(id)
+    return hsh;
+}
+
 gen_stat gen_n(gen *g, void *st, as *a, te **e) {
     gen_stat stat;
     te *h = g->code->h;
