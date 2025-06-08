@@ -32,7 +32,7 @@ static atg_stat atg_lst_q(atg *t, lst *l, atg_enq enq) {
 atg_stat atg_q(atg *t, te *an, atg_enq enq) {
     atg_stat stat = ATG_STAT(OK);
     if (!an) return stat;
-    if (enq(an)) lst_ab(t->q, P(te_c(an)));
+    if (enq(an)) lst_ab(t->q, P(&an));
     switch (an->d[2].u4) {
         case AST_CLS(R):
             return atg_q(t, an->d[4].p, enq);
