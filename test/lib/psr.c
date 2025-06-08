@@ -14,9 +14,8 @@ static te *rpsr(psr *p) {
         printf("%s|", p->tt->s->d);
         printf("PSTAT: %u|", pstat);
         printf("lno:%lu,cno:%lu\n", p->tt->lno, p->tt->cno);
-        psr_f(p);
-        nh->d[1] = P(NULL);
-        te_f(nh);
+        node_f(nh->d[2].p);
+        free(nh);
         return NULL;
     }
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
@@ -42,5 +41,6 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("+(1;2)"))));
     te_f(ppnode(rpsr(psr_b("+(1;2"))));
     te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)${a;b;c}#{a+b+c}"))));
+    te_f(ppnode(rpsr(psr_b("x:-(y) + z"))));
     return 0;
 }

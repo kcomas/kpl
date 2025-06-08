@@ -155,16 +155,21 @@ psr_stat psr_aply_i(psr *const p, te **n) {
 psr_stat psr_aply_m(psr *const p, te *const nh, te *const n) {
     (void) p;
     if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
-    if (nh->d[1].p && ((te*) nh->d[1].p)->d[3].p) {
+    if (nh->d[1].p && ((te*) nh->d[1].p)->d[3].p && ((te*) nh->d[1].p)->d[4].p) {
         n->d[3] = ((te*) nh->d[1].p)->d[4];
         ((te*) nh->d[1].p)->d[4] = P(n);
         n->d[0] = nh->d[1];
+    } else if (nh->d[1].p) {
+        if (((te*) nh->d[1].p)->d[3].p || ((te*) nh->d[1].p)->d[4].p) return PSR_STAT(INV);
+        n->d[3] = nh->d[1];
+        n->d[0] = ((te*) nh->d[1].p)->d[0];
+        ((te*) ((te*) nh->d[1].p)->d[0].p)->d[4] = P(n);
+        nh->d[1] = ((te*) nh->d[1].p)->d[0];
     } else {
-        te *prev = nh->d[1].p ? nh->d[1].p : nh->d[2].p;
-        n->d[0] = prev->d[0];
-        prev->d[0] = P(n);
-        n->d[3] = P(prev);
-        if (nh->d[1].p) nh->d[1] = P(NULL);
+        n->d[0] = ((te*) nh->d[2].p)->d[0];
+        ((te*) nh->d[2].p)->d[0] = P(n);
+        n->d[3] = nh->d[2];
+        nh->d[1] = P(NULL);
         nh->d[2] = P(n);
     }
     return PSR_STAT(OK);
@@ -209,9 +214,11 @@ void node_p(const te *const n, size_t idnt) {
             putchar('|');
             tkn_m_p(n->d[2].p, node_root_mc(n->d[0].p));
             putchar('|');
-            if (n->d[3].p || n->d[4].p) putchar('\n');
-            if (n->d[3].p) node_p(n->d[3].p, idnt + 1);
-            if (n->d[3].p && n->d[4].p) putchar('\n');
+            if (n->d[4].p) putchar('\n');
+            if (n->d[3].p) {
+                node_p(n->d[3].p, idnt + 1);
+                putchar('\n');
+            }
             if (n->d[4].p) node_p(n->d[4].p, idnt + 1);
             putchar(')');
             break;
