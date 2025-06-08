@@ -4,7 +4,7 @@
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
     tds *s = tds_i();
-    tdr *r = tds_g(s);
+    tdr *r = tds_g(s, false);
     mod *m = mod_i(s, r);
     if (mod_lfile(m, argv[1]) != MOD_STAT(OK)) {
         er_p(r->e);

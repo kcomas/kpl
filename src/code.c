@@ -103,6 +103,7 @@ void code_f(code *c) {
             CODE_F_T(VR, ctsvm_f, tsvm);
             CODE_F_T(TE, ctsvm_f, tsvm);
             CODE_F_T(ST, ctsvm_f, tsvm);
+            CODE_F_T(HH, ctsvm_f, tsvm);
             default:
                 break;
         }
@@ -244,6 +245,7 @@ void code_p(const code *const c, size_t idnt) {
             case TYPE(VR):
             case TYPE(TE):
             case TYPE(ST):
+            case TYPE(HH):
                 if (c->ops[i].od.tsvm->len > 0) printf(",%lu", c->ops[i].od.tsvm->len);
                 if (c->ops[i].od.tsvm->m) printf(",%p", c->ops[i].od.tsvm->m);
                 putchar('\n');
@@ -393,6 +395,10 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
         OP_A(cs, &gc, RCF, OP, { .t = TYPE(ST) }, NULL);
     }
     while (h) {
+        if (hsh->tn->t == TYPE(HH)) {
+            // TODO push key
+            exit(45);
+        }
         IFCGEN(code_gen, cs, h->a, c);
         if (hsh->tn->t == TYPE(ST)) {
             if (!(th = ast_gtn(h->a))) return CODE_ER(cs, NO_T_FOR_ST_IDX, h->a);
@@ -812,12 +818,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     (*c)->ops[(*c)->len - 1].od.tsvm->gc = gc;
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(HH):
-                    // TODO convert st to hh
-                    // TODO push key then value on to stack
+                    IFCGEN(code_gen, cs, opn->r, c);
                     if (!(tl = ast_gtn(opn->l->n.tn->a))) return CODE_ER(cs, NO_T_HH_GC, opn->l);
                     gc = code_i(cs->r->a, CODE_I_SIZE);
                     if ((cstat = gen_vr_hh_gc(cs, &gc, TYPE(HH), tl)) != CODE_STAT(OK)) return cstat;
-                    OP_A(cs, c, CHH, FN, { .c = gc }, opn->l);
+                    OP_A(cs, c, CHH, HH, { .tsvm = ctsvm_i(cs->r->a, opn->r->n.hsh->len, NULL, gc) }, opn->l);
                     return CODE_ER(cs, OK, NULL);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
