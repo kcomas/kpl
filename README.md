@@ -28,7 +28,7 @@ make DFLAGS="" OO=-O1
 
 ##### Build Flags
 
-OO=-g -Og - Set optimization level (-O2 currently will segfault)
+OO=-g -Og - Set optimization level
 
 ##### Debug Flags (DFLAGS=)
 
