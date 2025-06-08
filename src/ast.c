@@ -140,7 +140,9 @@ static const char *const op_type_str[] = {
 void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     const char *type = "INVALID";
     if (op->ot >= OP_TYPE(TC) && op->ot <= OP_TYPE(RW)) type = op_type_str[op->ot];
-    printf("%s,GCR:%d", type, AB(op->flgs & NODE_FLG(GCR)));
+    printf("%s", type);
+    if (op->flgs & NODE_FLG(GCR)) printf(",GCR");
+    if (op->flgs & NODE_FLG(GCV)) printf(",GCV");
     type_node_p(as, op->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);

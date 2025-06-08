@@ -18,6 +18,7 @@ static const char *const jss[] = {
     "CNCTSG_T_INV",
     "WFD_T_INV",
     "RCI_T_INV",
+    "RCD_T_INV",
     "RCF_T_INV",
     "GC_T_INV",
     "GCTEI_T_INV",
@@ -508,6 +509,25 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                         break;
                     default:
                         return JIT_ER(m, RCI_T_INV, o);
+                }
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(RCD):
+                op_set_jidx(j, o);
+                jit_b(j, 4, 0x48, 0x8B, 0x3C, 0x24); // mov rdi qword ptr [rsp]
+                switch (o->od.t) {
+                    case TYPE(STR):
+                    case TYPE(SG):
+                        SET_FP(var_sg_rcd);
+                        break;
+                    case TYPE(VR):
+                    case TYPE(TE):
+                    case TYPE(ST):
+                        SET_FP(var_tsv_rcd);
+                        break;
+                    default:
+                        return JIT_ER(m, RCD_T_INV, o);
                 }
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);

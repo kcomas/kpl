@@ -121,6 +121,7 @@ typedef enum {
     OP_C(WFD), // OP_T is type to be written
     // GC
     OP_C(RCI),
+    OP_C(RCD),
     OP_C(RCF), // dec ref count of type ret if gt 0
     OP_C(GC), // type is base type
     OP_C(GCTEI), //

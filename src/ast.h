@@ -105,6 +105,7 @@ void ast_f(ast *a);
 typedef enum {
     NODE_FLG(EC) = (1 << 0), // error caught
     NODE_FLG(GCR) = (1 << 1), // gc ret value
+    NODE_FLG(GCV) = (1 << 2) // gc var for storing new var
 } node_flg;
 
 #define NFEC(FLGS) (FLGS & NODE_FLG(EC))
