@@ -14,8 +14,8 @@ static te *rpsr(psr *p) {
         printf("%s|", p->tt->s->d);
         printf("PSTAT: %u|", pstat);
         printf("lno:%lu,cno:%lu\n", p->tt->lno, p->tt->cno);
-        node_f(nh->d[2].p);
-        free(nh);
+        te_f(nh);
+        psr_f(p);
         return NULL;
     }
     te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
@@ -42,11 +42,11 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("-1+2"))));
     te_f(ppnode(rpsr(psr_b("{-+4;-(+4)}"))));
     //te_f(ppnode(rpsr(psr_b("+(1;2"))));
-    te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)$[a;b;c]##{-a+b+c}"))));
+    te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)${a;b;c}##{-a+b+c}"))));
     te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
     te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
-    te_f(ppnode(rpsr(psr_b("{a`b`c\nd:#![1`x;{1+5-4}`y;3`z]}"))));
-    te_f(ppnode(rpsr(psr_b("#?[{c:2;a#?c:1;c}(a);{2}(b)]"))));
-    te_f(ppnode(rpsr(psr_b("d#=[{x}(x`v);{0}`e]"))));
+    te_f(ppnode(rpsr(psr_b("{a`b`c\nd:#!{1`x;{1+5-4}`y;3`z}}"))));
+    te_f(ppnode(rpsr(psr_b("#?{{c:2;a#?c:1;c}(a);{2}(b)}"))));
+    te_f(ppnode(rpsr(psr_b("d#={{x}(x`v);0`e}"))));
     return 0;
 }
