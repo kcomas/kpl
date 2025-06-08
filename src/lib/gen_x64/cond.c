@@ -1,9 +1,7 @@
 
 #include "../gen_x64.h"
 
-// TODO signed integers need to use less and greater
-
-#define AUAUL(N, J) static gen_stat N##_auaul_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
+#define AAL(N, U, J) static gen_stat N##_a##U##a##U##l_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
     te *kv[2]; \
     if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
@@ -14,14 +12,16 @@
     return GEN_STAT(OK); \
 }
 
-AUAUL(eq, JE);
-AUAUL(ne, JNE);
-AUAUL(gt, JA);
+AAL(eq, u, JE);
+AAL(ne, u, JNE);
+AAL(gt, u, JA);
+AAL(lt, s, JL);
+AAL(gt, s, JG);
 
 // using data segment for cmp is slower
 //AS2(a, AS_X64(CMP), as_arg_i(a, ARG_ID(R), U3(kv->d[2].u3)), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[2].p)->d[1]), ci);
 
-#define AUDUL(N, J) static gen_stat N##_audul_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
+#define ADL(N, U, J) static gen_stat N##_a##U##d##U##l_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
     te *ovt = ci->d[1].p, *kv; \
     if ((stat = get_reg(s, ovt, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
@@ -38,9 +38,11 @@ AUAUL(gt, JA);
     return GEN_STAT(OK); \
 }
 
-AUDUL(eq, JE);
-AUDUL(ne, JNE);
-AUDUL(gt, JA);
+ADL(eq, u, JE);
+ADL(ne, u, JNE);
+ADL(gt, u, JA);
+ADL(lt, s, JL);
+ADL(gt, s, JG);
 
 #define AXDXL(N, C, J) static gen_stat N##_axdxl_fn(gen *g, void *s, te *ci, as *a, err **e)  { \
     gen_stat stat; \
@@ -65,6 +67,10 @@ void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), ne_audul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), ne_axdxl_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), gt_auaul_fn);
+    GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_asasl_fn);
+    GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_asdsl_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), gt_audul_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), gt_axdxl_fn);
+    GEN_OP_A3(g, GEN_OP(LT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lt_asasl_fn);
+    GEN_OP_A3(g, GEN_OP(LT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lt_asdsl_fn);
 }
