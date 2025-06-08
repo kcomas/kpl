@@ -1,6 +1,8 @@
 
 // recursive Fibonacci
 
+n::40
+
 fib::FN(I6`n;I6)${
     ?{
         <=(n;0)?0
@@ -9,4 +11,5 @@ fib::FN(I6`n;I6)${
     }
 }
 
-fib(40)/p1
+n/p1
+fib(n)/p1

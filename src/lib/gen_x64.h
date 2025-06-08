@@ -92,7 +92,7 @@ te *gen_stkv(gen *g, x64_type t, size_t id);
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
 
 typedef struct {
-    uint8_t rvc, xvc, rac, xac; // var count, arg count
+    uint8_t rvc, xvc, rac, xac, rsc, xsc; // var count, arg count, stack count
     ssize_t r;
     const alfr *af, *ta;
     tbl *atm, *lat; // map args, tmp to regs, last code of arg, tmp

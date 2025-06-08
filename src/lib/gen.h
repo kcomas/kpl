@@ -15,7 +15,8 @@ typedef enum {
 
 typedef enum {
     GEN_CLS(N), // none
-    GEN_CLS(M), // multiple, array of vars
+    GEN_CLS(M), // multiple, vec of vars
+    GEN_CLS(MM), // (vec, vec)
     GEN_CLS(I), // index tgt, accessors
     GEN_CLS(A), // arg
     GEN_CLS(V), // var local
