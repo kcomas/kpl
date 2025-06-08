@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
@@ -72,6 +73,8 @@ jit_stat jit_b(size_t *p, uint8_t *m, size_t len, ...);
 
 jit_stat jit_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
+jit_stat jit_d(size_t *p, uint8_t *m, void *v);
+
 // ret
 jit_stat jit_ret(size_t *p, uint8_t *m);
 
@@ -83,6 +86,11 @@ jit_stat jit_push(size_t *p, uint8_t *m, reg r);
 
 // pop rax
 jit_stat jit_pop(size_t *p, uint8_t *m, reg r);
+
+jit_stat jit_movrq(size_t *p, uint8_t *m, reg r, void *v);
+
+// call rax
+jit_stat jit_callr(size_t *p, uint8_t *m, reg r);
 
 // mov rax, rdi
 jit_stat jit_movrr(size_t *p, uint8_t *m, reg d, reg s);
@@ -99,14 +107,34 @@ jit_stat jit_movrra(size_t *p, uint8_t *m, reg d, reg s);
 // mov rax, qword ptr[rdi+dsp8]
 jit_stat jit_movrrab(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
+// inc rax
+jit_stat jit_incr(size_t *p, uint8_t *m, reg r);
+
 // add rax, byte
 jit_stat jit_addrb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // add rax, rdi
 jit_stat jit_addrr(size_t *p, uint8_t *m, reg d, reg s);
 
+// dec rax
+jit_stat jit_decr(size_t *p, uint8_t *m, reg r);
+
 // sub rax, byte
 jit_stat jit_subrb(size_t *p, uint8_t *m, reg r, int8_t b);
 
 // sub rax, rdi
 jit_stat jit_subrr(size_t *p, uint8_t *m, reg d, reg s);
+
+// xor rax, rdi
+jit_stat jit_xorrr(size_t *p, uint8_t *m, reg d, reg s);
+
+// cmp rax, rdi
+jit_stat jit_cmprr(size_t *p, uint8_t *m, reg d, reg s);
+
+// test rax, rdi
+jit_stat jit_testrr(size_t *p, uint8_t *m, reg d, reg s);
+
+uint8_t jit_jmp_lblb(size_t from, size_t to);
+
+// jne byte
+jit_stat jit_jneb(size_t *p, uint8_t *m, uint8_t b);
