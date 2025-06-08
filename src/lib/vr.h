@@ -16,12 +16,12 @@ typedef enum {
 typedef struct {
     ssize_t r; // ref count
     size_t s, l; // size, len
-    alfn *va; // allocate
-    frfn *df, *vf; // data free, free
+    const alfr *af;
+    frfn *df;
     un d[]; // data
 } vr;
 
-vr *vr_i(size_t s, alfn *al, frfn *df, frfn *vf);
+vr *vr_i(size_t s, const alfr *af, frfn *df);
 
 vr *vr_c(vr *v);
 

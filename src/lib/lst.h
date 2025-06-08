@@ -15,12 +15,12 @@ typedef enum {
 typedef struct {
     ssize_t r; // ref count
     size_t l; // len
-    alfn *la, *ta; // list allocator, itm allocator
-    frfn *tf, *df, *lf; // itm free, data free, lst free
+    const alfr *af, *ta;
+    frfn *df; // data free
     te *h, *t; // head, tail
 } lst;
 
-lst *lst_i(alfn *la, alfn *ta, frfn *tf, frfn *df, frfn *lf);
+lst *lst_i(const alfr *af, const alfr *ta, frfn *df);
 
 lst *lst_c(lst *l);
 

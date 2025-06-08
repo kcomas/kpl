@@ -1,15 +1,13 @@
 
 #include "lst.h"
 
-lst *lst_i(alfn *la, alfn *ta, frfn *tf, frfn *df, frfn *lf) {
-    lst *l = la(sizeof(lst));
+lst *lst_i(const alfr *af, const alfr *ta, frfn *df) {
+    lst *l = af->al(sizeof(lst));
     l->r = 1;
     l->l = 0;
-    l->la = la;
+    l->af = af;
     l->ta = ta;
-    l->tf = tf;
     l->df = df;
-    l->lf = lf;
     l->h = l->t = NULL;
     return l;
 }
@@ -23,8 +21,13 @@ size_t lst_g_l(const lst *l) {
     return l->l;
 }
 
+static void td(void *p) {
+    te *t = (te*) p;
+    t->af->fr(t);
+}
+
 lst_stat lst_ab(lst *l, un d) {
-    te *li = te_i(3, l->ta, l->tf);
+    te *li = te_i(3, l->ta, &td);
     li->d[0] = d;
     if (!l->h) l->h = l->t = li;
     else {
@@ -36,7 +39,7 @@ lst_stat lst_ab(lst *l, un d) {
 }
 
 lst_stat lst_af(lst *l, un d) {
-    te *li = te_i(3, l->ta, l->tf);
+    te *li = te_i(3, l->ta, &td);
     li->d[0] = d;
     if (!l->t) l->t = l->h = li;
     else {
@@ -90,5 +93,5 @@ void lst_f(lst *l) {
         if (l->df) l->df(tmp->d[0].p);
         te_f(tmp);
     }
-    l->lf(l);
+    l->af->fr(l);
 }

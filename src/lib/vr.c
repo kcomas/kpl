@@ -1,14 +1,13 @@
 
 #include "vr.h"
 
-vr *vr_i(size_t s, alfn *va, frfn *df, frfn *vf) {
-    vr *v = va(sizeof(vr) + sizeof(un) * s);
+vr *vr_i(size_t s, const alfr *af, frfn *df) {
+    vr *v = af->al(sizeof(vr) + sizeof(un) * s);
     v->r = 1;
     v->s = s;
     v->l = 0;
-    v->va = va;
+    v->af = af;
     v->df = df;
-    v->vf = vf;
     for (size_t i = 0; i < s; i++) v->d[i] = P(NULL);
     return v;
 }
@@ -44,10 +43,10 @@ vr_stat vr_s_i(vr *v, size_t i, un d) {
 #endif
 
 static vr *resize(vr *v) {
-    vr *nv = vr_i(v->s * VR_RES, v->va, v->df, v->vf);
+    vr *nv = vr_i(v->s * VR_RES, v->af, v->df);
     nv->l = v->l;
     for (size_t i = 0; i < v->l; i++) nv->d[i] = v->d[i];
-    nv->vf(v);
+    nv->af->fr(v);
     return nv;
 }
 
@@ -104,5 +103,5 @@ void vr_d(vr *v) {
 void vr_f(vr *v) {
     if (!v || --v->r > 0) return;
     vr_d(v);
-    v->vf(v);
+    v->af->fr(v);
 }
