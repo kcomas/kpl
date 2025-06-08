@@ -91,6 +91,7 @@ psr_stat psr_n(psr *const p, te *const nh) {
                 if ((pstat = psr_n(p, lnh)) != PSR_STAT(END)) return pstat;
                 if ((pstat = ef(p, pn, lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p)) != PSR_STAT(OK)) return pstat;
                 for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
+                vr_d(p->ts);
             }
             el:
             if ((pstat = mf(p, nh, pn)) != PSR_STAT(OK)) return pstat;
