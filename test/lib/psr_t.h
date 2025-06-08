@@ -27,7 +27,8 @@ typedef enum {
     NODE_TYPE(FLT),
     NODE_TYPE(OP),
     NODE_TYPE(LST),
-    NODE_TYPE(APLY)
+    NODE_TYPE(APLY),
+    NODE_TYPE(SYM)
 } node_type;
 
 psr *psr_b(const char *const pgm);
@@ -68,6 +69,11 @@ psr_stat psr_aply_i(psr *const p, te **n);
 psr_stat psr_aply_m(psr *const p, te *const nh, te *const n);
 
 psr_stat psr_aply_e(psr *const p, te *const e, te *const n);
+
+// node te[par;type;tkn_s;tgt]
+psr_stat psr_sym_i(psr *const p, te **n);
+
+psr_stat psr_sym_m(psr *const p, te *const nh, te *const n);
 
 void node_p(const te *const n, size_t idnt);
 
