@@ -13,7 +13,10 @@ typedef enum {
     TOKEN(SIG),
     TOKEN(NL),
     TOKEN(VAR),
-    TOKEN(NUM)
+    TOKEN(NUM),
+    TOKEN(SEMI),
+    TOKEN(LS),
+    TOKEN(RS)
 } token;
 
 static size_t sh(un v) {
@@ -38,6 +41,7 @@ static tkn_stat df(tkn *const t, te *const m) {
     t->pos = m->d[3].u6;
     size_t e = 0;
     un c = c4_g((char*) t->s->d, t->pos, &e);
+    if (!isalnum(c.c.a)) return TKN_STAT(INV);
     while (isalnum(c.c.a)) {
         t->cno++;
         t->pos = e + 1;
@@ -92,11 +96,9 @@ static void tkn_p(tbl *tl, size_t idnt) {
     }
 }
 
-static void btest(void) {
-    const char *pgm = "sigma 123 Σ  si \n   sig ΣΩ";
-    printf("%s\n", pgm);
-    tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
+static void standard(tkn *const t) {
     tkn_a(t, " ", TOKEN(WS), &ws);
+    tkn_a(t, "\n", TOKEN(NL), &nl);
     tkn_a(t, "0", TOKEN(NUM), &num);
     tkn_a(t, "1", TOKEN(NUM), &num);
     tkn_a(t, "2", TOKEN(NUM), &num);
@@ -107,14 +109,11 @@ static void btest(void) {
     tkn_a(t, "7", TOKEN(NUM), &num);
     tkn_a(t, "8", TOKEN(NUM), &num);
     tkn_a(t, "9", TOKEN(NUM), &num);
-    tkn_a(t, "sigma", TOKEN(SWORD), &ft);
-    tkn_a(t, "sig", TOKEN(SIG), &ft);
-    tkn_a(t, "Σ", TOKEN(SC), &ft);
-    tkn_a(t, "ΣΩ", TOKEN(SCOC), &ft);
-    tkn_a(t, "\n", TOKEN(NL), &nl);
-    tkn_p(t->t, 0);
-    te *m = te_i(5, &malloc, &free);
+}
+
+static void tknize(tkn *const t) {
     tkn_stat tstat;
+    te *m = te_i(5, &malloc, &free);
     while ((tstat = tkn_n(t, m)) == TKN_STAT(OK)) {
         printf("id:%ld,lno:%lu,cno:%lu,start:%lu,end:%lu,", m->d[0].i6, m->d[1].u6, m->d[2].u6, m->d[3].u6, m->d[4].u6);
         for (size_t i = m->d[3].u6; i < m->d[4].u6; i++) putchar(t->s->d[i]);
@@ -122,10 +121,38 @@ static void btest(void) {
     }
     if (tstat != TKN_STAT(END)) exit(55);
     te_f(m);
+}
+
+static void btest(void) {
+    const char *pgm = "sigma 123 Σ  si \n   sig ΣΩ";
+    printf("%s\n", pgm);
+    tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
+    standard(t);
+    tkn_a(t, "sigma", TOKEN(SWORD), &ft);
+    tkn_a(t, "sig", TOKEN(SIG), &ft);
+    tkn_a(t, "Σ", TOKEN(SC), &ft);
+    tkn_a(t, "ΣΩ", TOKEN(SCOC), &ft);
+    tkn_p(t->t, 0);
+    tknize(t);
+    tkn_f(t);
+}
+
+static void stest(void) {
+    const char *pgm = "0 Σ [12;44;67]\n";
+    printf("%s\n", pgm);
+    tkn *t = tkn_i(&malloc, &free, &entry_free, &mktbl, &df, mc_i_cstr(pgm, &malloc, &free));
+    standard(t);
+    tkn_a(t, "Σ", TOKEN(SC), &ft);
+    tkn_a(t, ";", TOKEN(SEMI), &ft);
+    tkn_a(t, "[", TOKEN(LS), &ft);
+    tkn_a(t, "]", TOKEN(RS), &ft);
+    tkn_p(t->t, 0);
+    tknize(t);
     tkn_f(t);
 }
 
 int main(void) {
     btest();
+    stest();
     return 0;
 }
