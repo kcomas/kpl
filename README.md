@@ -10,7 +10,13 @@ GCC
 
 GNU Make
 
-## Build TODO
+## Build
+
+Builds are done in the current working directory
+
+```
+make
+```
 
 ## Usage TODO
 
@@ -29,4 +35,12 @@ Individual tests:
 make show_tests # List of test names
 make $(TEST_NAME)
 ./$(TEST_NAME)
+```
+
+## Clean
+
+To remove the current build or tests
+
+```
+make clean
 ```

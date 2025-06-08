@@ -4,12 +4,13 @@
 const char *type_str(type t) {
     static const char *ts[] = {
         "_START",
-        "_N", // none
-        "_A", // used for type checking only
-        // scalar
         "_S",
+        "_N",
+        "_A",
         "DL",
-        "VD", // void
+        "FP",
+        "FL",
+        "VD",
         "BL",
         "I3",
         "I4",
@@ -24,21 +25,17 @@ const char *type_str(type t) {
         "SL",
         "C4",
         "SG",
-        // vector
         "_V",
         "VR",
         "LT",
         "MC",
-        // hash
         "_H",
         "HH",
         "ST",
-        // function
         "_F",
         "FN",
         "SF",
         "CF",
-        // collection
         "_C",
         "TE",
         "BA",
