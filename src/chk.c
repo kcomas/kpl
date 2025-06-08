@@ -29,9 +29,18 @@ void chk_p(const tbl *ct, size_t idnt) {
     }
 }
 
-static chk_stat chk_cst_b(chk *c, te *an, te **e) {
-    printf("cst b\n");
-    return CHK_STAT(INV);
+static chk_stat chk_cst_fn_lst_b(chk *c, te *an, te **e) {
+    (void) c;
+    (void) e;
+    tbl *fat = ((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
+    tbl *lt = ((te*) an->d[6].p)->d[3].p;
+    te *h = lt->i->h, *lei, *kv;
+    while (h) {
+        lei = h->d[0].p;
+        if (tbl_g_i(fat, lei->d[0], &kv) == TBL_STAT(OK)) lei->d[2] = P(te_c(kv->d[2].p));
+        h = h->d[2].p;
+    }
+    return CHK_STAT(OK);
 }
 
 static chk_stat chk_nop(chk *c, te *an, te **e) {
@@ -43,7 +52,7 @@ static chk_stat chk_nop(chk *c, te *an, te **e) {
 
 chk *chk_b(chk *c) {
     // before
-    CHK_AB(c, chk_cst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
+    CHK_AB(c, chk_cst_fn_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     // after
     CHK_AA(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(_N));
     return c;
