@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <sys/mman.h>
 
 /*
    Higher Level Coding in C
@@ -72,7 +74,7 @@ typedef struct {
     float f5;
     double f6;
     c4 cr;
-    char *sg;
+    char *sg; // heap allocated
     var_lst *lst;
     var_vr *vr;
     var_hh *hh;
@@ -130,6 +132,10 @@ typedef struct _var_hh {
 
 typedef struct _var_fn {
     uint8_t na; // num args needed for calling
-    size_t len, size; // num args, len for jit, mapped size
-    void *mm; // mmap ptr to jited code
+    size_t size; // num args, len for jit, mapped size
+    uint8_t *m; // mmap ptr to jited code
 } var_fn;
+
+var_fn *var_fn_i(uint8_t na, size_t size);
+
+void var_fn_f(var_fn *fn);
