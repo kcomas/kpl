@@ -51,7 +51,7 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
 #define GEN_OP_A0(g, op_id, fn) GEN_OP_A1(g, op_id, GEN_CLS(N), U3(0), fn)
 
 // var te[cls;info;id]
-te *gen_var_i(gen *g, frfn *fr, gen_cls cls, un info, un id);
+te *gen_var_i(gen *g, frfn fr, gen_cls cls, un info, un id);
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
