@@ -29,13 +29,13 @@ const char *type_str(type t) {
         "LT",
         "MC",
         "_H",
-        "UN",
         "ST",
         "_F",
         "FN",
         "NF",
         "_C",
         "TE",
+        "UN",
         "KV",
         "BA",
         "TD",
@@ -330,6 +330,19 @@ bool type_ic(const te *restrict a, const te *restrict b) {
     return false;
 }
 
+static size_t type_tbl_hsh(const tbl *tt, bool id) {
+    size_t hsh = 0;
+    if (!tt) return hsh;
+    te *h = tt->i->h, *n;
+    while (h) {
+        n = h->d[0].p;
+        if (id) hsh += n->d[1].u6;
+        hsh += tbl_mc_sdbm(n->d[0]) + type_hsh(n->d[2].p);
+        h = h->d[2].p;
+    }
+    return hsh;
+}
+
 size_t type_hsh(const te *t) {
     size_t hsh = 0;
     if (!t) return hsh;
@@ -339,7 +352,7 @@ size_t type_hsh(const te *t) {
             hsh += type_hsh(t->d[2].p);
             break;
         case TYPE_CLS(H):
-            STOP("TODO TYPE CLS H HASH");
+            hsh += type_tbl_hsh(t->d[2].p, false);
             break;
         case TYPE_CLS(F):
             STOP("TODO TYPE CLS F HASH");
@@ -363,6 +376,17 @@ size_t type_un_hsh(un v) {
     return type_hsh(v.p);
 }
 
+bool type_tbl_has_refs(const tbl *tt) {
+    if (!tt) return false;
+    te *h = tt->i->h, *st;
+    while (h) {
+        st = ((te*) h->d[0].p)->d[2].p;
+        if (st && type_is_ref(st->d[1].u4)) return true;
+        h = h->d[2].p;
+    }
+    return false;
+}
+
 bool type_has_refs(const te *t) {
     te *st = NULL;
     if (!t) return false;
@@ -372,7 +396,7 @@ bool type_has_refs(const te *t) {
             if (st && type_is_ref(st->d[1].u4)) return true;
             break;
         case TYPE_CLS(H):
-            STOP("TODO TYPE CLS H HAS REFS");
+            if (type_tbl_has_refs(t->d[2].p)) return true;
             break;
         case TYPE_CLS(C):
             switch (t->d[1].u4){

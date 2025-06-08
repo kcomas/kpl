@@ -33,7 +33,7 @@ atg *atg_i_atg(const atg *t) {
     tt->bg = gen_i_gen(t->bg);
     tt->a = as_i_as(t->a);
     tt->q = lst_i_lst(t->q);
-    tt->dt = tbl_i_tbl(t->dt);
+    tt->dt = tbl_c(t->dt);
     tt->se = lst_c(t->se);
     tt->vt = tbl_c(t->vt);
     tt->at = tbl_c(t->at);
@@ -274,14 +274,10 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
     return cc(t, g, an, e);
 }
 
-atg_stat atg_d_n(atg *t, te *h, gen **g, err **e) {
+atg_stat atg_d_n(atg *t, te *h, gen **g, void **fn, atg_d_n_fn adnfn, err **e) {
     if (!h) return ATG_STAT(INV);
-    (void) t;
-    (void) g;
-    (void) e;
     if (!type_has_refs(h->d[0].p)) return ATG_STAT(OK);
-    STOP("TODO BUILD");
-    return ATG_STAT(INV);
+    return adnfn(t->bg, h->d[0].p, g, fn, e) == GEN_STAT(OK) ? ATG_STAT(OK) : ATG_STAT(INV);
 }
 
 atg_stat atg_n(atg *t, gen **g, ast *a, err **e) {

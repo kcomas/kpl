@@ -455,6 +455,8 @@ ZRRM(mov, 0x8B, d, s);
 
 ZRRMB(mov, 0x8B, d, s);
 
+ZRRMD(mov, 0x8B, d, s);
+
 ZRRMO(mov, 0x8B, d, o, s);
 
 ZRRMOB(mov, 0x8B, d, o, s);

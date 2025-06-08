@@ -42,6 +42,49 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         if ((stat = get_reg(st, cret, &rkv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
         ret = rkv->d[2].u3;
     }
+    uint8_t ri = 0, xi = 0, vi = 0;
+    reg rs[12], xs[12];
+    if (!(flgs & CFLG(NPR))) {
+        h = st->atm->i->h;
+        while (h) {
+            if (tbl_g_i(st->lat, ((te*) h->d[0].p)->d[0], &kvs) == TBL_STAT(OK) && kvs->d[2].p == ci) {
+                h = h->d[2].p;
+                continue; // do not save reg if this is the last time used
+            }
+            save = ((te*) h->d[0].p)->d[2].u3;
+            if (flgs & CFLG(NR)) {
+                if (save < XMM(0)) rs[ri++] = save;
+                else xs[xi++] = save;
+            } else if (save != ret) {
+                if (save < XMM(0)) rs[ri++] = save;
+                else xs[xi++] = save;
+            }
+            h = h->d[2].p;
+        }
+    }
+    /*
+       for (size_t i = 0; i < 12; i++) {
+       if (args[i].i < 0) continue;
+       printf("r: %s, i: %d, ", reg_str(args[i].r), args[i].i);
+       if (args[i].a > -1) printf("a: %s, ", reg_str(args[i].a));
+       printf("d: 0x%lX\n", args[i].d.u6);
+       }
+       for (size_t i = 0; i < ri; i++) printf("%s ", reg_str(rs[i]));
+       if (ri > 0) putchar('\n');
+       for (size_t i = 0; i < xi; i++) printf("%s ", reg_str(xs[i]));
+       if (xi > 0) putchar('\n');
+     */
+    if (ri > 0) {
+        for (size_t i = 0; i < ri; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    }
+    if (xi > 0) {
+        if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xi)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        for (size_t i = 0; i < xi; i++) {
+            if (i) {
+                if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * i)), as_arg_i(a, ARG_ID(X), U3(xs[i])), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(X), U3(xs[i])), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        }
+    }
     if (va) {
         for (size_t i = 0; i < va->l; i++) {
             if (ra > 5 || xa > 11) return gen_err(g, ci, e, "gen call too many args");
@@ -178,45 +221,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     }
     drop_atm_kv_n(st, kv, ci, kvi);
     drop_atm_kv(st, ci, rkv);
-    uint8_t ri = 0, xi = 0, vi = 0;
-    reg rs[12], xs[12];
-    if (!(flgs & CFLG(NPR))) {
-        h = st->atm->i->h;
-        while (h) {
-            save = ((te*) h->d[0].p)->d[2].u3;
-            if (flgs & CFLG(NR)) {
-                if (save < XMM(0)) rs[ri++] = save;
-                else xs[xi++] = save;
-            } else if (save != ret) {
-                if (save < XMM(0)) rs[ri++] = save;
-                else xs[xi++] = save;
-            }
-            h = h->d[2].p;
-        }
-    }
-    /*
-    for (size_t i = 0; i < 12; i++) {
-        if (args[i].i < 0) continue;
-        printf("r: %s, i: %d, ", reg_str(args[i].r), args[i].i);
-        if (args[i].a > -1) printf("a: %s, ", reg_str(args[i].a));
-        printf("d: 0x%lX\n", args[i].d.u6);
-    }
-    for (size_t i = 0; i < ri; i++) printf("%s ", reg_str(rs[i]));
-    if (ri > 0) putchar('\n');
-    for (size_t i = 0; i < xi; i++) printf("%s ", reg_str(xs[i]));
-    if (xi > 0) putchar('\n');
-    */
-    if (ri > 0) {
-        for (size_t i = 0; i < ri; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    }
-    if (xi > 0) {
-        if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xi)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-        for (size_t i = 0; i < xi; i++) {
-            if (i) {
-                if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * i)), as_arg_i(a, ARG_ID(X), U3(xs[i])), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-            } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(X), U3(xs[i])), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-        }
-    }
     for (size_t i = 0; i < ra; i++) {
         if (args[i].i < 0) continue;
         if (args[i].a > -1) {
@@ -271,6 +275,12 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         } else if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     switch (gen_var_g_c(cfn)) {
+        case GEN_CLS(A):
+        case GEN_CLS(T):
+            if (get_reg(st, cfn, &kvs) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen fn inv reg");
+            if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), kvs->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            drop_atm_kv(st, kvs, ci);
+            break;
         case GEN_CLS(L):
             if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), cfn->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             break;
@@ -339,6 +349,10 @@ static gen_stat callnprnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
    return call(g, s, ci, a, e, NULL, NULL, ((te*) ci->d[1].p)->d[1].p, ci->d[2].p, CFLG(NR) | CFLG(NPR));
 }
 
+static gen_stat callnprnrna_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    return call(g, s, ci, a, e, NULL, NULL, NULL, ci->d[1].p, CFLG(NPR) | CFLG(NR));
+}
+
 void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
@@ -352,4 +366,5 @@ void gen_call(gen *g) {
     GEN_OP_A2(g, GEN_OP(CALLV), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLVNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnprnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnprnr_fn);
+    GEN_OP_A1(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(M), callnprnrna_fn);
 }

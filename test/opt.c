@@ -220,3 +220,23 @@ T(vrmul) {
     te_f(ve);
     te_f(ie);
 }
+
+T(st) {
+    IC(TPGM(st));
+    te *st = TST(4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG));
+    V(RN(LN(LT(3, "a", FLG(0, LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(L)), TS(F6), "s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)), L(5,
+        ON(TS(I6), DFN, EN("a", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1))),
+        ON(TS(F6), DFN, EN("b", FLG(0, LTE_FLG(L)), TS(F6)), SN(F6, F6(2.2))),
+        ON(te_c(st), DFN, EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)),
+            ON(te_c(st), MTCH, LN(NULL, NULL), LN(LT(2, "a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(F6)), L(4,
+                ZTN("a", TS(VD), EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6))),
+                ZTN("b", TS(VD), EN("b", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(F6))),
+                ZTN("c", TS(VD), ON(TS(U6), CST, TN(U6), ON(TS(I6), ADD, EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(2))))),
+                ZTN("d", TS(VD), SG("Hi"))
+            )))),
+        ON(TS(I6), AGN, ZTN("a", TS(I6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st))),
+            ON(TS(I6), MUL, SN(I6, I6(2)), ON(TS(I6), CST, TN(I6), ZTN("c", TS(U6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)))
+    ))));
+    te_f(st);
+}

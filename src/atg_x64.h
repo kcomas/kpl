@@ -4,6 +4,7 @@
 #include "./lib/atg.h"
 #include "opt.h"
 #include "./lib/gen_x64.h"
+#include "./lib/gen_type.h"
 
 void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt);
 

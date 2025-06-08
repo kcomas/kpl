@@ -62,8 +62,10 @@ atg_stat atg_lst_r(atg *t, gen *g, lst *l, err **e);
 
 atg_stat atg_r(atg *t, gen *g, te *an, err **e);
 
+typedef gen_stat atg_d_n_fn(gen *bg, te *t, gen **g, void **fn, err **e); // t for type
+
 // generate code for the destructors
-atg_stat atg_d_n(atg *t, te *h, gen **g, err **e); // dh->d[0] entry in dt
+atg_stat atg_d_n(atg *t, te *h, gen **g, void **fn, atg_d_n_fn adnfn, err **e); // dh->d[0] entry in dt
 
 atg_stat atg_n(atg *t, gen **g, ast *a, err **e);
 

@@ -156,6 +156,7 @@ INST_RRMB(cmp);
     return x64_##N##_rrmd(p, m, arg1->d[1].u3, arg2->d[1].u3, arg3->d[1].u3) == X64_STAT(OK); \
 }
 
+INST_RRMD(mov);
 INST_RRMD(cmp);
 
 #define INST_RI(N) static bool as_##N##_ri(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -201,6 +202,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(B), ARG_ID(DW), ARG_ID(N), as_mov_rmbd, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_mov_rrm, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_mov_rrmb, NULL);
+    as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(DW), ARG_ID(N), as_mov_rrmd, NULL);
     as_op_a(a, AS_X64(LEA), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_lea_rrmb, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rmr, NULL);

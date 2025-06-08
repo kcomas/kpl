@@ -34,6 +34,10 @@ int main(int argc, char *argv[]) {
                     }
                     dflgs |= dopts[o];
                 }
+                if (!dflgs) {
+                    printf("\e[1;91minv -d\n\e[0m");
+                    return usage(argv[0]);
+                }
                 x = 1;
                 break;
             case '-':
