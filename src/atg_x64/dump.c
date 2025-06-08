@@ -8,6 +8,7 @@ const char *atg_dump_strs[TYPE(_END)] = {
     [TYPE(SG)] = "%*s(SG \"%s\")\n",
     [TYPE(TE)] = "%*s(TE \n",
     [TYPE(ST)] = "%*s(ST \n",
+    [TYPE(ET)] = "%*s(ET \n",
     [TYPE(VR)] = "%*s(VR \n"
 };
 
@@ -143,6 +144,30 @@ static atg_stat dump_vd_s_u5_e_st(atg *t, gen *g, te *an, err **e) {
     return stat;
 }
 
+static atg_stat dump_vd_s_u5_e_et(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat = ATG_STAT(OK);
+    te *lte = ((te*) an->d[6].p)->d[3].p, *h;
+    uint32_t idnt = 0;
+    FILE *f;
+    if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
+    vr *v = vr_i(6, g->va, (void*) te_f);
+    vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
+    vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(ET)]))));
+    dump_idnt(g, &v, idnt);
+    gen_op go = GEN_OP(CALLV);
+    if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
+    if (gen_a(g, go, gen_call_v(g, v), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    h = ((tbl*) ((te*) lte->d[2].p)->d[2].p)->i->h;
+    while (h) {
+        if ((stat = dump_v(t, g, an, e, go, f, idnt + 1, ((te*) h->d[0].p)->d[2].p, gen_data(g, type_g_x64_type(((te*) h->d[0].p)->d[2].p), ((te*) h->d[0].p)->d[1]), ((te*) h->d[0].p)->d[0].p)) != ATG_STAT(OK)) return stat;
+        h = h->d[2].p;
+    }
+    go = GEN_OP(CALLV);
+    if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
+    atg_dump_e(t, g, an, e, f, idnt, go);
+    return stat;
+}
+
 static atg_stat dump_vd_s_u5_e_vr(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *type, *lte = ((te*) an->d[6].p)->d[3].p;
@@ -177,5 +202,6 @@ void atg_dump(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(F6), dump_vd_s_u5_e_f6);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(TE), dump_vd_s_u5_e_te);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ST), dump_vd_s_u5_e_st);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ET), dump_vd_s_u5_e_et);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(VR), dump_vd_s_u5_e_vr);
 }
