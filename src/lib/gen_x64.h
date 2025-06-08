@@ -76,8 +76,6 @@ gen_st *gen_st_i_gen_st(const gen_st *st);
 
 void gen_st_p(const gen_st *st);
 
-un ovt_hsh(const te *ovt);
-
 // pass 1
 gen_stat gen_st_p1(gen *g, gen_st *st);
 

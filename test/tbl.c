@@ -96,3 +96,30 @@ T(eq) {
     tbl_f(b);
     tbl_f(c);
 }
+
+static te *se(uint64_t a, uint64_t b) {
+    te *t = te_i(2, &tm, NULL);
+    t->d[0].u6 = a;
+    t->d[1].u6 = b;
+    return t;
+}
+
+T(sparse) {
+    lst *tl = lst_i(&tm, &tm, (void*) te_f);
+    te *b = te_i(20, &tm, NULL);
+    tbl *t = tbl_i(&tm, tbl_no_hsh, tbl_un_eq, tl, b);
+    uint64_t x = 131081;
+    tbl_a(t, se(x, 1));
+    uint64_t y = 4295229449;
+    tbl_a(t, se(y, 4));
+    uint64_t z = 262153;
+    tbl_a(t, se(z, 8));
+    te *kv;
+    A(tbl_g_i(t, U6(x), &kv) == TBL_STAT(OK), "tbl_g_i");
+    A(kv->d[1].u6 == 1, "inv");
+    A(tbl_g_i(t, U6(y), &kv) == TBL_STAT(OK), "tbl_g_i");
+    A(kv->d[1].u6 == 4, "inv");
+    A(tbl_g_i(t, U6(z), &kv) == TBL_STAT(OK), "tbl_g_i");
+    A(kv->d[1].u6 == 8, "inv");
+    tbl_f(t);
+}

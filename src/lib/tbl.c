@@ -66,8 +66,7 @@ static tbl_stat fdrm(tbl *t, un k, te **kv, bool rm) {
     size_t i = idx;
     do {
         te *li = t->b->d[i].p;
-        if (li == NULL) return TBL_STAT(NF);
-        else if (t->cf(((te*) li->d[0].p)->d[0], k)) {
+        if (li && t->cf(((te*) li->d[0].p)->d[0], k)) {
             *kv = li->d[0].p;
             if (rm) {
                 lst_li_d(t->i, li);
