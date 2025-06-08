@@ -37,8 +37,8 @@ vr_stat vr_g_i(vr *const v, size_t i, un *d);
     #define VR_RES 2
 #endif
 
-vr_stat vr_a(vr **v, un d);
+vr_stat vr_ab(vr **v, un d);
 
-vr_stat vr_s(vr *const v, un *d);
+vr_stat vr_sb(vr *const v, un *d);
 
 void vr_f(vr *v);

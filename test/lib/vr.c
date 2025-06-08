@@ -5,10 +5,10 @@
 
 void itest(void) {
     vr *v = vr_i(2, &malloc, NULL, &free);
-    vr_a(&v, I5(1));
-    vr_a(&v, I5(2));
-    vr_a(&v, I5(3));
-    vr_a(&v, I5(4));
+    vr_ab(&v, I5(1));
+    vr_ab(&v, I5(2));
+    vr_ab(&v, I5(3));
+    vr_ab(&v, I5(4));
     vr_s_i(v, 1, I5(8));
     for (size_t i = 0; i < v->l; i++) printf("%d ", v->d[i].i5);
     putchar('\n');
@@ -17,18 +17,18 @@ void itest(void) {
 
 void dtest(void) {
     vr *v = vr_i(2, &malloc, NULL, &free);
-    vr_a(&v, D(1.1));
-    vr_a(&v, D(2.2));
-    vr_a(&v, D(3.3));
-    vr_a(&v, D(4.4));
+    vr_ab(&v, D(1.1));
+    vr_ab(&v, D(2.2));
+    vr_ab(&v, D(3.3));
+    vr_ab(&v, D(4.4));
     for (size_t i = 0; i < v->l; i++) printf("%f ", v->d[i].d);
     un u;
     for (size_t i = 0; i < 4; i++) {
-        if (vr_s(v, &u) != VR_STAT(OK)) exit(12);
+        if (vr_sb(v, &u) != VR_STAT(OK)) exit(12);
         printf("%f ", u.d);
     }
     putchar('\n');
-    if (vr_s(v, &u) != VR_STAT(SUB)) exit(13);
+    if (vr_sb(v, &u) != VR_STAT(SUB)) exit(13);
     vr_f(v);
 }
 
@@ -40,7 +40,7 @@ void stest(void) {
         char *s = calloc(1, ml + sizeof(char));
         strcpy(s, msg);
         s[ml - 1] = i + '0';
-        vr_a(&v, P(s));
+        vr_ab(&v, P(s));
     }
     for (size_t i = 0; i < 9; i++) printf("%s, ", (char*) v->d[i].p);
     putchar('\n');
