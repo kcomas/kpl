@@ -1,13 +1,12 @@
 
 #include "ast.h"
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *pt, tbl *tt) {
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
     ast *a = af->a(sizeof(ast));
     a->af = af;
     a->ta = ta;
     a->ma = ma;
     a->pig = pig;
-    a->ati = ati;
     a->ali = ali;
     a->pt = pt;
     a->tt = tt;
@@ -172,6 +171,7 @@ ast_stat ast_t_n(ast *a, size_t tid, size_t *id) {
 }
 
 void ast_f(ast *a) {
+    if (!a || --a->r > 0) return;
     tbl_f(a->pt);
     tbl_f(a->tt);
     a->af->f(a);

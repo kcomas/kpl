@@ -23,14 +23,13 @@ typedef enum {
     AST_CLS(O), // op [te[type];op_id;te;te]
     AST_CLS(Z), // left target, no arg apply type [te[type];mc;te]
     AST_CLS(A), // apply type [te[type];te;lst]
-    AST_CLS(L) // list tbl with scope [tbl;lst]
+    AST_CLS(L), // list tbl with scope [tbl;lst]
+    AST_CLS(_)
 } ast_cls;
 
 // ast entry te[id;fn]
 
 typedef ast_stat psr_id_g(te *pn, size_t *pid);
-
-typedef tbl *ast_tbl_i(void);
 
 typedef lst *ast_lst_i(void);
 
@@ -38,12 +37,11 @@ typedef struct {
     ssize_t r;
     const alfr *af, *ta, *ma;
     psr_id_g *pig;
-    ast_tbl_i *ati;
     ast_lst_i *ali;
     tbl *pt, *tt;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *pt, tbl *tt);
+ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt);
 
 // ast t te[par;psr;cls;...]
 

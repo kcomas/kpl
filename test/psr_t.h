@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../src/psr.h"
+#include "t.h"
 
 psr *bpsr(const char *pgm);
 

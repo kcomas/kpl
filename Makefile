@@ -98,7 +98,13 @@ $(TYPE): $(TYPE_OBJS) $(TEST)/type.o $(TEST_OBJS)
 AST = ast$(LTNAME)
 AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(TYPE_OBJS) $(PSR_OBJS)
 OBJS += $(AST_OBJS)
-$(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST_OBJS)
+$(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST)/ast_t.o $(TEST_OBJS)
+> $(CCOBJ)
+
+FLD = fld$(LTNAME)
+FLD_OBJS = $(SRC)/fld.o $(LSRC)/fld.o $(AST_OBJS)
+OBJS += $(FLD_OBJS)
+$(FLD): $(FLD_OBJS) $(TEST)/fld.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
 $(TESTS): OO = -O3
