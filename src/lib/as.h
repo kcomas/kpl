@@ -11,23 +11,9 @@ typedef enum {
     AS_STAT(END)
 } as_stat;
 
-#define ARG_ID(N) ARG_ID_##N
-
-typedef enum {
-    ARG_ID(N), // none passed as NULL
-    ARG_ID(R), // reg
-    ARG_ID(RM), // reg mem
-    ARG_ID(L), // label
-    ARG_ID(M), // mem
-    ARG_ID(B), // byte
-    ARG_ID(W), // word
-    ARG_ID(DW), // double word
-    ARG_ID(QW) // quad word
-} arg_id;
-
 // arg te[id;data]
 
-te *arg_i(arg_id id, un d, alfn *aa, frfn *af);
+te *arg_i(size_t id, un d, alfn *aa, frfn *af);
 
 // label id
 
@@ -35,7 +21,7 @@ te *arg_i(arg_id id, un d, alfn *aa, frfn *af);
 
 // op te[op_id(must be user defined and unique);arg1;arg2;arg3;arg4]
 
-// op entry te[op_id;fn;lbl_fn;tbl_args[te[arg_id;fn;lbl_fn;tbl_args]]]
+// op entry te[op_id;fn;lbl_fn;tbl_args[te[size_t;fn;lbl_fn;tbl_args]]]
 
 #define CODE_ID(N) CODE_ID_##N
 
@@ -84,7 +70,7 @@ te *as_lbl_g_c(as *const a, size_t lbl_id);
 as_stat as_lbl_s_c(as *const a, size_t lbl_id, te *const c);
 
 // register op, not using varardic to avoid extra checks
-as_stat as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
+as_stat as_op_a(as *const a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
 
 // add op
 as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
