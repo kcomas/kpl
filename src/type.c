@@ -31,9 +31,13 @@ static type_stat type_chk_if(fn_node *const fns, if_node *const in) {
     return TYPE_STAT(OK);
 }
 
+static bool type_int_is(const type_node *const tn) {
+    return tn->t >= TYPE(U3) && tn->t <= TYPE(I6);
+}
+
 static bool type_int_cor(type_node **tgt, const type_node *const a, const type_node *const b) {
     if (tgt) if (*tgt) return true;
-    if (a->t == TYPE(INT) && (b->t >= TYPE(U3) && b->t <= TYPE(I6))) {
+    if ((a->t == TYPE(INT) || type_int_is(a)) && type_int_is(b)) {
         if (tgt) *tgt = type_node_c(b);
         return true;
     }
@@ -71,8 +75,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                 fn_node *fn = op->r->n.fn;
                 if (fn->sig) return TYPE_STAT(FN_CST_T_NN);
                 if (fn->args->len != lt->a->n.lst->len - 1) return TYPE_STAT(INV_FN_CST_ARGS_LEN);
-                lst_itm *th = lt->a->n.lst->h;
-                lst_itm *fh = fn->args->h;
+                lst_itm *th = lt->a->n.lst->h, *fh = fn->args->h;
                 type_node *tmpt = NULL;
                 while (fh) {
                     if (fh->a->at != AST_TYPE(VAR)) return TYPE_STAT(INV_FN_ARG_T);
@@ -82,6 +85,7 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                     th = th->next;
                 }
                 fn->sig = type_node_c(lt);
+                op->ret = type_node_c(lt);
                 return type_chk_fn(fn);
             }
             if (op->r) IFTCHK(type_chk, fns, op->r);
@@ -140,7 +144,27 @@ type_stat type_chk_call(fn_node *const fns, call_node *const cn) {
         return TYPE_STAT(OK);
     }
     IFTCHK(type_chk, fns, cn->tgt);
-    // TODO type check tgt and args
+    type_node *tt, *ta;
+    ASTGTN(tt, cn->tgt, INV_CALL_TGT);
+    lst_itm *th, *ah;
+    switch (tt->t) {
+        // TODO vr and hh
+        case TYPE(FN):
+            if (tt->a->n.lst->len - 1 != cn->args->len) return TYPE_STAT(INV_CALL_ARGS_LEN);
+            cn->ret = type_node_c(tt->a->n.lst->t->a->n.tn);
+            th = tt->a->n.lst->h;
+            ah = cn->args->h;
+            while (ah) {
+                ASTGTN(tt, th->a, INV_CALL_TGT_ARG_T);
+                ASTGTN(ta, ah->a, INV_CALL_ARG_T);
+                if (!type_eq(tt, ta)) return TYPE_STAT(CALL_ARG_T_NEQ);
+                th = th->next;
+                ah = ah->next;
+            }
+            break;
+        default:
+            return TYPE_STAT(INV_CALL_TGT_T);
+    }
     return TYPE_STAT(OK);
 }
 
