@@ -96,3 +96,23 @@ T(facrec) {
     te_f(ne);
     te_f(face);
 }
+
+T(fibrec) {
+    IC(TPGM(fibrec));
+    te *ft = TFN(FN, TS(I6), 1, "n", TS(I6), 0);
+    te *en = EN("n", FLG(0, LTE_FLG(A)), TS(I6));
+    te *efib = EN("fib", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
+    V(RN(LN(LT(1, "fib", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("fib", FLG(-1, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, TFN(FN, TS(I6), 1, "n", TS(I6), 0)),
+            LN(LT(2, "n", FLG(0, LTE_FLG(A)), TS(I6), "fib", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft)), L(1,
+                ON(TS(I6), IF, LN(NULL, NULL), LN(NULL, L(3,
+                    ON(TS(I6), IF, LN(NULL, L(1, ON(TS(BL), LTE, te_c(en), SN(I6, I6(0))))), LN(NULL, L(1, SN(I6, I6(0))))),
+                    ON(TS(I6), IF, LN(NULL, L(1, ON(TS(BL), LT, te_c(en), SN(I6, I6(3))))), LN(NULL, L(1, SN(I6, I6(1))))),
+                    ON(TS(I6), ADD, AN(TS(I6), te_c(efib), L(1, ON(TS(I6), SUB, te_c(en), SN(I6, I6(1))))), AN(TS(I6), te_c(efib), L(1, ON(TS(I6), SUB, te_c(en), SN(I6, I6(2)))))))))
+        )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(I6), EN("fib", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, SN(I6, I6(8)))))
+    ))));
+    te_f(ft);
+    te_f(en);
+    te_f(efib);
+}

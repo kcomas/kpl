@@ -29,8 +29,10 @@ static void export_tbl_f(void *p) {
 }
 
 static bool lst_inv_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(L)) return false;
+    if (!an->d[0].p && !an->d[1].p && !an->d[3].p && !an->d[4].p) return false;
     te *p = an->d[0].p;
-    return an->d[2].u4 == AST_CLS(L) && (!p || (p->d[2].u4 != AST_CLS(A) && p->d[2].u4 != AST_CLS(O)));
+    return !p || (p->d[2].u4 != AST_CLS(A) && p->d[2].u4 != AST_CLS(O));
 }
 
 static fld_stat lst_le_o(fld *f, te **an, err **e) {
