@@ -200,6 +200,28 @@ static code_stat cor_int(const code_st *const cs, const ast *const a, const ast 
 
 #define OP_P_INT_COR(CS, A, B, C) if ((cstat = cor_int(CS, A, B, C)) != CODE_STAT(OK)) return cstat;
 
+static code_stat code_gc(const type_node *const tn, const ast *const a, code **c) {
+    switch (tn->t) {
+        case TYPE(STR):
+        case TYPE(U3):
+        case TYPE(U4):
+        case TYPE(U5):
+        case TYPE(U6):
+        case TYPE(I3):
+        case TYPE(I4):
+        case TYPE(I5):
+        case TYPE(I6):
+        case TYPE(SG):
+            OP_A(c, GC, OP, { .t = tn->t }, a);
+            break;
+        default:
+            return CODE_STAT(GC_INV);
+    }
+    return CODE_STAT(OK);
+}
+
+#define OP_GC(C, TN, A) if ((cstat = code_gc(TN, A, C)) != CODE_STAT(OK)) return cstat;
+
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     op_node *opn = a->n.op;
@@ -312,8 +334,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         OP_A(c, CNCTSG, OP, { .t = tr->t }, a);
                         if (tr->t == TYPE(TE)) {
                             // TODO
-                        } else OP_A(c, GC, OP, { .t = tr->t }, opn->r);
-                        OP_A(c, GC, OP, { .t = tl->t }, opn->l);
+                        } else OP_GC(c, tr, opn->r);
+                        OP_GC(c, tl, opn->l);
                     } else return CODE_STAT(INV_SG_CNCT);
                     break;
                 default: return CODE_STAT(INV_CNCT_OP);
@@ -326,7 +348,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
             if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
                 OP_A(c, WFD, OP, { .t = tr->t }, a);
-                OP_A(c, GC, OP, { .t = tr->t }, opn->r);
+                OP_GC(c, tr, opn->r);
             }
             else return CODE_STAT(INV_FD_OP);
             break;
