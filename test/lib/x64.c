@@ -1,6 +1,18 @@
 
-#include <stdio.h>
 #include "../../src/lib/x64.h"
+#include "t.h"
+
+I;
+
+static uint8_t *m = NULL;
+
+__attribute__((constructor (101))) void c(void) {
+    m = x64_mmap(1);
+}
+
+__attribute__((destructor (101))) void d(void) {
+    x64_munmap(1, m);
+}
 
 static void printj(size_t len, uint8_t *m) {
     printf("- %lu - ", len);
@@ -13,7 +25,7 @@ static void printj(size_t len, uint8_t *m) {
 
 typedef int64_t add3(int64_t a);
 
-static void rmdd3(uint8_t *m) {
+T(radd3, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -25,12 +37,14 @@ static void rmdd3(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     uint64_t a = 3;
-    printf("add3: %ld, %ld\n", a, ((add3*) m)(a));
-}
+    uint64_t r = ((add3*) m)(a);
+    printf("add3: %ld, %ld\n", a, r);
+    A(r == a + 3, "add3");
+});
 
 typedef int64_t add(int64_t a, int64_t b);
 
-static void rmdd(uint8_t *m) {
+T(radd, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -40,12 +54,13 @@ static void rmdd(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     uint64_t a = 1, b = 3;
-    printf("add: %ld + %ld = %ld\n", a, b, ((add*) m)(a, b));
-}
-
+    uint64_t r = ((add*) m)(a, b);
+    printf("add: %ld + %ld = %ld\n", a, b, r);
+    A(r == a + b, "add");
+});
 typedef int64_t sub(int64_t a, int64_t b);
 
-static void rsub(uint8_t *m) {
+T(rsub, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -57,8 +72,10 @@ static void rsub(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     uint64_t a = 20, b = 9;
-    printf("sub: %ld - %ld = %ld\n", a, b, ((sub*) m)(a, b));
-}
+    uint64_t r = ((sub*) m)(a, b);
+    printf("sub: %ld - %ld = %ld\n", a, b, r);
+    A(r = a - b, "sub");
+});
 
 typedef int64_t loop(int64_t a);
 
@@ -70,7 +87,7 @@ static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
     x64_call_r(p, m, R(15));
 }
 
-static void rloop(uint8_t *m) {
+T(rloop, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -91,8 +108,10 @@ static void rloop(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     uint64_t a = 12;
-    printf("%ld\n", ((loop*) m)(a));
-}
+    uint64_t b = ((loop*) m)(a);
+    printf("%ld\n", b);
+    A(b = a + 1, "loop");
+});
 
 typedef uint64_t fib(uint64_t n);
 
@@ -139,15 +158,17 @@ static void bfib(size_t *p, uint8_t *m) {
     x64_ret(p, m);
 }
 
-static void rfib(uint8_t *m) {
+T(rfib, {
     size_t p = 0;
     bfib(&p, m);
     uint64_t n = 35;
     printj(p, m);
-    printf("fib(%lu): %lu\n", n, ((fib*) m)(n));
-}
+    uint64_t r = ((fib*) m)(n);
+    printf("fib(%lu): %lu\n", n, r);
+    A(r == 9227465, "fib");
+});
 
-static void daddsub(uint8_t *m) {
+T(daddsub, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -159,9 +180,10 @@ static void daddsub(uint8_t *m) {
     double a = 1.2, b = 3.4, c = 0.15;
     double d = ((double(*)(double, double, double)) m)(a, b, c);
     printf("dasf(%f + %f - %f): %f\n", a, b, c, d);
-}
+    A(d = a + b - c, "double");
+});
 
-static void cmp(uint8_t *m) {
+T(cmp, {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
@@ -171,15 +193,19 @@ static void cmp(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     int64_t a = 1, b = 2;
-    printf("cmp(%ld < %ld): %d\n", a, b, ((uint8_t(*)(int64_t, int64_t)) m)(a, b));
-    printf("cmp(%ld < %ld): %d\n", b, a, ((uint8_t(*)(int64_t, int64_t)) m)(b, a));
-}
+    uint8_t r = ((uint8_t(*)(int64_t, int64_t)) m)(a, b);
+    printf("cmp(%ld < %ld): %d\n", a, b, r);
+    A(r == 1, "less");
+    r = ((uint8_t(*)(int64_t, int64_t)) m)(b, a);
+    printf("cmp(%ld < %ld): %d\n", b, a, r);
+    A(r == 0, "greater");
+});
 
 static void printp(int64_t **a) {
     printf("%p, %ld\n", a, **a);
 }
 
-static void p2p(uint8_t *m) {
+T(p2p, {
     size_t p = 0;
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
@@ -200,11 +226,12 @@ static void p2p(uint8_t *m) {
     x64_ret(&p, m);
     printj(p, m);
     ((void(*)(int64_t**)) m)(&a);
+    A(p == 58, "bytes");
     printp(&a);
     free(a);
-}
+});
 
-static void rskiploop(uint8_t *m) {
+T(rskiploop, {
     size_t p = 0;
     x64_mov_rq(&p, m, R(AX), U6(1));
     x64_push_r(&p, m, R(AX));
@@ -224,20 +251,5 @@ static void rskiploop(uint8_t *m) {
     x64_pop_r(&p, m, R(AX));
     x64_ret(&p, m);
     printj(p, m);
-    ((void(*)(int32_t)) m)(5);
-}
-
-int main(void) {
-    uint8_t *m = x64_mmap(1);
-    rmdd3(m);
-    rmdd(m);
-    rsub(m);
-    rloop(m);
-    rfib(m);
-    daddsub(m);
-    cmp(m);
-    p2p(m);
-    rskiploop(m);
-    x64_munmap(1, m);
-    return 0;
-}
+    A(((int32_t(*)(int32_t)) m)(5) == 1, "loop");
+});

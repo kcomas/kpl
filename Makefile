@@ -31,7 +31,7 @@ mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 LX64_OBJS = $(LSRC)/x64.o
-x64$(LTNAME): $(LX64_OBJS) $(LTEST)/x64.o
+x64$(LTNAME): $(LX64_OBJS) $(LTEST)/x64.o $(LTEST_OBJS)
 > $(CCOBJ)
 
 LTE_OBJS = $(LSRC)/te.o
