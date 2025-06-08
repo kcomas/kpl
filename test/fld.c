@@ -15,5 +15,5 @@ static void fast(_tests *_t, te **an) {
     ast_verify(_t, a, an, AST)
 
 T(ast_aplyopadd) {
-    V(aplyopadd, NULL);
+    V(aplyopadd, RN(ON(P(NULL), ADD, SN(I6, I6(1)), SN(I6, I6(2)))));
 }

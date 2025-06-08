@@ -3,7 +3,6 @@
 
 static fld_stat aply_op_r(fld *f, te **an) {
     // TODO convert aply op to op
-    printf("here\n");
     return FLD_STAT(OK);
 }
 
