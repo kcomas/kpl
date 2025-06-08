@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     m->fns->sig = type_node_i(TYPE(MOD), NULL);
     ast_stat astat;
     ast_st as;
-    ast_st_i(&as, m->src.str);
+    ast_st_i(&as, m->a, m->src.str);
     if ((astat = ast_parse_stmts(&as, m->fns, m->fns->body, TFLS, TKN_FLG(NB))) != AST_STAT(OK)) {
         if (astat != AST_STAT(END)) {
             return astat;

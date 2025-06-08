@@ -1,13 +1,13 @@
 
 #include "tbl.h"
 
-extern inline tbl_itm *tbl_itm_i(const char *const str, void *const data);
+extern inline tbl_itm *tbl_itm_i(al *const a, const char *const str, void *const data);
 
 extern inline void tbl_itm_p(const tbl_itm *const ti, tbl_itm_data_p *fn);
 
 extern inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn);
 
-extern inline tbl* tbl_i(size_t size);
+extern inline tbl* tbl_i(al *const a, size_t size);
 
 #ifndef BUCKS_RSIZE
     #define BUCKS_RSIZE 0.75 // bucks resize %
@@ -33,9 +33,9 @@ static size_t hashfn(const char *str) {
     return h;
 }
 
-tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs) {
+tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs) {
     if ((double) (*tl)->len / (double) (*tl)->size > BUCKS_RSIZE) {
-        tbl *nt = tbl_i((*tl)->size * BUCKS_RSIZE_MUL);
+        tbl *nt = tbl_i(a, (*tl)->size * BUCKS_RSIZE_MUL);
         tbl_itm *h = nt->h = (*tl)->h;
         nt->t = (*tl)->t;
         while (h) {
@@ -51,7 +51,7 @@ tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti,
             if (i == nt->size) return TBL_STAT(OAE);
             h = h->next;
         }
-        free(*tl);
+        alf(*tl);
         *tl = nt;
     }
     const size_t hash = hashfn(str);
@@ -60,7 +60,7 @@ tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti,
         tbl_itm *cur = (*tl)->bucks[(hash + i) % (*tl)->size];
         if (!cur) {
             if ((op_flgs & TBL_OP_FLG(FD)) || op_flgs & TBL_OP_FLG(RM)) return TBL_STAT(NF);
-            (*tl)->bucks[(hash + i) % (*tl)->size] = *ti = tbl_itm_i(str, data);
+            (*tl)->bucks[(hash + i) % (*tl)->size] = *ti = tbl_itm_i(a, str, data);
             LST_A((*tl), *ti);
             break;
         } else if (strcmp(cur->str, str) == 0) {

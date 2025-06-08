@@ -47,6 +47,7 @@ void alc_f(alc *ac, void *fn);
 
 inline void al_f(al *a) {
     LST_F(a, alc, alc_f, NULL);
+    free(a);
 }
 
 typedef struct {

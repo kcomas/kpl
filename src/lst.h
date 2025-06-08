@@ -46,10 +46,11 @@ typedef struct _lst_ex {
         h = h->next; \
     }
 
-#define LST_F(L, ITT, ITMF, DATAF) ITT *h = L->h; \
-    while (h) { \
-        ITT *tmp = h; \
-        h = h->next; \
-        ITMF(tmp, DATAF); \
-    } \
-    free(L)
+#define LST_F(L, ITT, ITMF, DATAF) do { \
+    ITT *h = L->h; \
+        while (h) { \
+            ITT *tmp = h; \
+            h = h->next; \
+            ITMF(tmp, DATAF); \
+        } \
+    } while (0)
