@@ -253,7 +253,7 @@ const char *var_type_str(var_type vt) {
 #endif
 
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
-    static char vstr[MAX_VAR_LEN];
+    char vstr[MAX_VAR_LEN];
     memset(vstr, '\0', MAX_VAR_LEN);
     memcpy(vstr, str + t->pos, t->len);
     tbl_itm *ti;
