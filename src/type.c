@@ -324,7 +324,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
         case OP_TYPE(TC):
             if (!op->l) {
                 ASTGTN(rt, op->r, INV_TC_R);
-                if (rt->t == TYPE(STR) || rt->t == TYPE(SG)) { // throw
+                if ((rt->t == TYPE(STR) || rt->t == TYPE(SG)) || (op->r->at == AST_TYPE(VAR) && rt->t == TYPE(ER))) { // throw and rethrow
                     if (!fn_node_tc(fns)) return TYPE_ER(ts, TC_FN_N_TC);
                     op->ret = type_node_i(ts->r->a, TYPE(ER), NULL);
                     break;

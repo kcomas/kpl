@@ -29,6 +29,8 @@ void var_sg_d(var_sg *sg);
 
 void var_sg_er(mod *const m, ast *const a, var_sg *const sg);
 
+void er_rt(mod *const m, ast *const a, er_itm *const ei);
+
 typedef union _var {
     int64_t i6;
     uint64_t u6;

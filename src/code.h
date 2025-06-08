@@ -117,6 +117,7 @@ typedef enum {
     OP_C(ZOO), // convert to zero or one
     // error
     OP_C(TE), // throw error
+    OP_C(RTE), // re throw error
     OP_C(CE), // catch error
     OP_C(PE), // panic error
     // ops

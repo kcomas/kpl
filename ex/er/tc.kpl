@@ -5,16 +5,20 @@ i:U6 // TODO check if var has data
 
 //y: i + 1
 
-f:FN(i;ER(i))${(x)
+ft:FN(i;ER(i))
+
+f:ft${(x)
     '"This is an error value passed: ", $(SG;x)
     x}
 
+fb:FN(i;ft;ER(i))${(x;y) [z;a]'y(x); 'a; z}
+
 // catching
-[v;e]'f(123)
+[v;e]'fb(123;f)
 
 $(FD;1) << ,(SG$v;"\n")
 
-\d e
+//\d e
 
 // throwing
-v:f(123)
+v:'fb(123;f)

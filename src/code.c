@@ -141,6 +141,7 @@ static const char *op_c_str[] = {
     "ZOO", // convert to zero or one
     // error
     "TE", // throw error
+    "RTE", // re throw error
     "CE", // catch error
     "PE", // panic error
     // ops
@@ -580,7 +581,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 IFCGEN(code_gen, cs, opn->r, c);
                 if (opn->flgs & NODE_FLG(DE)) return CODE_ER(cs, OK, NULL); // discard
                 if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, TC_R_N, opn->r);
-                OP_A(cs, c, TE, ER, { RER(tr->t, false) }, opn->r); // throw
+                if (tr->t == TYPE(ER)) {
+                    OP_A(cs, c, RTE, ER, { RER(tr->t, false) }, opn->r); // re throw
+                } else {
+                    OP_A(cs, c, TE, ER, { RER(tr->t, false) }, opn->r); // throw
+                }
                 return CODE_ER(cs, OK, NULL); // stop panic
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
