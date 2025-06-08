@@ -41,8 +41,6 @@ void tkn_m_p(const te *m, const mc *s);
 
 size_t tkn_sh(un v);
 
-void tkn_entry_f(void *v);
-
 tkn_stat tkn_df(tkn *t, te *m);
 
 tkn_stat tkn_num(tkn *t, te *m);

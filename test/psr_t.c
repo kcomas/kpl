@@ -18,7 +18,7 @@ static tbl *mktbl(void) {
 }
 
 psr *bpsr(const char *pgm) {
-    tkn *t = tkn_i(&pm, &pm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &pm));
+    tkn *t = tkn_i(&pm, &pm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &pm));
     tkn_b(t);
     vr *v = vr_i(10, &pm, (void*) te_f);
     psr *p = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);

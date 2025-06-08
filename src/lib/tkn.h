@@ -60,14 +60,13 @@ typedef struct _tkn {
     uint32_t cno, pos; // id counter
     ssize_t r;
     const alfr *af, *ta;
-    frfn *ef; // entry free
     tkn_tbl_i *ttif;
     tkn_pf *df; // called when nothing matches
     tbl *t; // trie
     mc *s;
 } tkn;
 
-tkn *tkn_i(const alfr *af, const alfr *ta, frfn ef, tkn_tbl_i ttif, tkn_pf df, mc *s);
+tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s);
 
 // give zero for an assigned id
 uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf);

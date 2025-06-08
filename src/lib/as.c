@@ -1,15 +1,12 @@
 
 #include "as.h"
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn lef, frfn oef, frfn cf, op_tbl_i oti, tbl *lbls, lst *code) {
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, op_tbl_i oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;
     a->ta = ta;
     a->la = la;
-    a->lef = lef;
-    a->oef = oef;
-    a->cf = cf;
     a->oti = oti;
     a->lbls = lbls;
     a->ops = oti();
@@ -17,8 +14,17 @@ as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn lef, frfn oef, frf
     return a;
 }
 
+static void as_code_entry_f(void *p) {
+    te *o = p;
+    te_f(o->d[2].p);
+    te_f(o->d[3].p);
+    te_f(o->d[4].p);
+    te_f(o->d[5].p);
+    o->af->f(o);
+}
+
 static te *add_code(as *a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te *arg3, te *arg4, as_code_fn *fn, as_code_fn *lbl_fn) {
-    te *c = te_i(10, a->ta, a->cf);
+    te *c = te_i(10, a->ta, as_code_entry_f);
     c->d[0] = U6(cid);
     c->d[1] = U6(op_lbl_id);
     c->d[2] = P(arg1);
@@ -33,9 +39,16 @@ static te *add_code(as *a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te
     return c;
 }
 
+static void as_label_entry_f(void *p) {
+    te *l = p;
+    te_f(l->d[1].p);
+    lst_f(l->d[2].p);
+    l->af->f(l);
+}
+
 static size_t add_lbl(as *a, size_t lbl_id) {
     te *c = te_c(add_code(a, CODE_ID(L), lbl_id, NULL, NULL, NULL, NULL, NULL, NULL));
-    te *lbl = te_i(3, a->ta, a->lef);
+    te *lbl = te_i(3, a->ta, as_label_entry_f);
     lbl->d[0] = c->d[1];
     lbl->d[1] = P(c);
     lbl->d[2] = P(lst_i(a->la, a->ta, (void*) te_f));
@@ -68,8 +81,14 @@ as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c) {
     return AS_STAT(OK);
 }
 
+static void as_op_entry_f(void *p) {
+    te *oe = p;
+    tbl_f(oe->d[3].p);
+    oe->af->f(oe);
+}
+
 static tbl *add_op_entry(as *a, tbl *co, te **kv, size_t id) {
-    *kv = te_i(4, a->ta, a->oef);
+    *kv = te_i(4, a->ta, as_op_entry_f);
     (*kv)->d[0] = U6(id);
     (*kv)->d[3] = P(a->oti());
     tbl_a(co, *kv);

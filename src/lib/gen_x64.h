@@ -53,12 +53,11 @@ typedef struct {
     uint8_t vc, rac, xac; // var count for stk alloc, arg count
     ssize_t r;
     const alfr *af, *ta;
-    frfn *atmf, *latf;
     tbl *atm, *lat; // map args, tmp to regs, last code of arg, tmp
     vr *rstk, *xstk; // available regs and xmm
 } gen_st;
 
-gen_st *gen_st_i(const alfr *af, const alfr *ta, frfn *atmf, frfn *latf, tbl *atm, tbl *lat, vr *rstk, vr *xstk);
+gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk);
 
 void gen_st_p(const gen_st *st);
 

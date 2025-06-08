@@ -16,13 +16,11 @@ const char* gen_cls_str(gen_cls cls) {
     return "INV";
 }
 
-gen *gen_i(const alfr *af, const alfr *ta, frfn ocef, frfn cef, cls_tbl_i cti, tbl *oci, lst *code) {
+gen *gen_i(const alfr *af, const alfr *ta, cls_tbl_i cti, tbl *oci, lst *code) {
     gen *g = af->a(sizeof(gen));
     g->r = 1;
     g->af = af;
     g->ta = ta;
-    g->ocef = ocef;
-    g->cef = cef;
     g->cti = cti; g->oci = oci;
     g->code = code;
     return g;
@@ -32,11 +30,19 @@ static un gen_op_hsh(gen_cls cls, un info) {
     return U6((info.u3 << 8) + cls);
 }
 
+
+static void gen_entry_f(void *p) {
+    te *t = p;
+    if (t->l == 3) tbl_f(t->d[2].p);
+    else tbl_f(t->d[4].p);
+    t->af->f(t);
+}
+
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn) {
     tbl *oci = g->oci;
     te *kv;
     if (tbl_g_i(oci, U6(op_id), &kv) == TBL_STAT(NF)) {
-        kv = te_i(3, g->ta, g->ocef);
+        kv = te_i(3, g->ta, gen_entry_f);
         kv->d[0] = U6(op_id);
         kv->d[2] = P(g->cti());
         tbl_a(oci, kv);
@@ -48,7 +54,7 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
         if (cls[i] == GEN_CLS(N)) break;
         un hsh = gen_op_hsh(cls[i], info[i]);
         if (tbl_g_i(oci, hsh, &kv) == TBL_STAT(NF)) {
-            kv = te_i(6, g->ta, g->ocef);
+            kv = te_i(6, g->ta, gen_entry_f);
             kv->d[0] = hsh;
             kv->d[1] = U6(cls[i]);
             kv->d[2] = info[i];
@@ -60,6 +66,16 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
     if (kv->l == 3) kv->d[1] = P(fn);
     else kv->d[3] = P(fn);
     return GEN_STAT(OK);
+}
+
+static void gen_code_entry_f(void *p) {
+    te *t = p;
+    te_f(t->d[1].p);
+    te_f(t->d[2].p);
+    te_f(t->d[3].p);
+    te_f(t->d[5].p);
+    te_f(t->d[6].p);
+    t->af->f(t);
 }
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3) {
@@ -77,7 +93,7 @@ gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *res
         oci = kv->d[4].p;
         fn = kv->d[3].p;
     }
-    te *e = te_i(7, g->ta, g->cef);
+    te *e = te_i(7, g->ta, gen_code_entry_f);
     e->d[0] = U6(op_id);
     e->d[1] = P(ac1);
     e->d[2] = P(ac2);

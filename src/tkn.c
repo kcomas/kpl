@@ -24,12 +24,6 @@ size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
 
-void tkn_entry_f(void *v) {
-    te *t = v;
-    tbl_f(t->d[3].p);
-    t->af->f(t);
-}
-
 tkn_stat tkn_df(tkn *t, te *m) {
     t->cno = tkn_m_g_c(m);
     t->pos = tkn_m_g_s(m);

@@ -10,18 +10,23 @@ GCC
 
 GNU Make
 
-## Build
+## Build TODO
 
-### Tests
+## Usage TODO
+
+## Tests
+
+All Tests:
 
 ```
-make tests # For all tests
+make tests
+./tests
 ```
 
 Individual tests:
 
 ```
-make $(TEST_NAME) # Individual tests, see Makefile
+make show_tests # List of test names
+make $(TEST_NAME)
+./$(TEST_NAME)
 ```
-
-## Usage TODO
