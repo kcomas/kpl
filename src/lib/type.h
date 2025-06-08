@@ -71,7 +71,7 @@ typedef enum {
 type_cls type_g_c(type t);
 
 // type tbl entry te[mc;id;type]
-void type_tbl_a(tbl *t, const alfr *af, mc *s, size_t id, te *type);
+void type_tbl_a(tbl *t, const alfr *af, mc *s, uint32_t id, te *type);
 
 te *type_s_i(const alfr *af, te *p, type t);
 
