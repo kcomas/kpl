@@ -2,7 +2,6 @@
 #include "../src/lib/te.h"
 #include "t.h"
 
-
 void node_free(te *t) {
     if (t->d[1].p) te_f(t->d[1].p);
     if (t->d[2].p) te_f(t->d[2].p);
@@ -11,13 +10,13 @@ void node_free(te *t) {
 
 static const alfr tm = { .a = malloc, .f = free };
 
-te *node(const char *v) {
+static te *node(const char *v) {
     te *t = te_i(3, &tm, (void*) node_free);
     t->d[0] = P(v);
     return t;
 }
 
-void node_p(const te *t, size_t idnt) {
+static void node_p(const te *t, size_t idnt) {
     if (!t || !t->d[0].p) return;
     for (size_t i = 0; i < idnt; i++) putchar('-');
     printf(" %s |\n", (char*) t->d[0].p);
@@ -26,7 +25,7 @@ void node_p(const te *t, size_t idnt) {
     node_p(t->d[2].p, idnt);
 }
 
-T(tree) {
+T(te_tree) {
     te *n = node("5");
     n->d[1].p = node("3");
     ((te*)n->d[1].p)->d[1].p = node("2");

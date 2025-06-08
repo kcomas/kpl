@@ -2,7 +2,6 @@
 #include "../src/lib/tbl.h"
 #include "t.h"
 
-
 static void kv_f(te *t) {
     t->af->f(t->d[0].p);
     t->af->f(t);

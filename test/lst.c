@@ -2,7 +2,6 @@
 #include "../src/lib/lst.h"
 #include "t.h"
 
-
 static void lst_i6_p(const lst * const l) {
     te *h = l->h;
     while (h) {

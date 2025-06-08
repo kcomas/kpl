@@ -3,8 +3,7 @@
 #include "psr_t.h"
 #include "t.h"
 
-
-const alfr am = { .a = malloc, .f = free };
+static const alfr am = { .a = malloc, .f = free };
 
 static ast_stat pig(te *pn, size_t *pid) {
     if (!pn || pn->l < 2) return AST_STAT(INV);
@@ -66,10 +65,10 @@ static void ast_verify(_tests *_t, ast *a, const char *pgm, te *cn) {
 #define V(PGM, AST) ast *a = ast_b(ast_i(&am, &am, &am, pig, ati, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     ast_verify(_t, a, PGM, AST)
 
-T(aplyopadd) {
+T(ast_aplyopadd) {
     V(aplyopadd, ROOT(APLY(P(NULL), OP(P(NULL), ADD, NULL, NULL), 2, SCALAR(I6, I6(1)), SCALAR(I6, I6(2)))));
 }
 
-T(typetype) {
+T(ast_typetype) {
     V(typetype, NULL);
 }

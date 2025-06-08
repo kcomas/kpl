@@ -1,14 +1,13 @@
 
 #include "gen_t.h"
 
-
 static uint8_t *m = NULL;
 
-__attribute__((constructor)) void c(void) {
+__attribute__((constructor)) void gen_c(void) {
     m = x64_mmap(1);
 }
 
-__attribute__((destructor)) void d(void) {
+__attribute__((destructor)) void gen_d(void) {
     x64_munmap(1, m);
 }
 
@@ -16,7 +15,7 @@ extern const alfr gm;
 
 #define S(stmt) A((stmt) == GEN_STAT(OK), "stmt")
 
-T(b) {
+T(gen_b) {
     gen *g = gen_i(&gm, &gm, gen_entry_f, gen_code_entry_f, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
@@ -62,7 +61,7 @@ static void build(gen *g, uint8_t *m) {
     as_f(a);
 }
 
-T(fib) {
+T(gen_fib) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -86,7 +85,7 @@ T(fib) {
     A(r == y, "fib");
 }
 
-T(ack) {
+T(gen_ack) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
