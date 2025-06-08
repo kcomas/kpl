@@ -11,4 +11,6 @@ uint32_t opt_exp_flgs(te *x);
 
 // export entry te[mc;u5(id)|u4(exportid)|u4(local_arg_flags)>data;type]
 
+void opt_exp_tbl_f(tbl *et);
+
 fld *opt_b(fld *o);

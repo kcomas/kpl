@@ -7,10 +7,13 @@ static gen_stat gen_type_err(gen *g, te *t, err **e, const char *m) {
     return GEN_STAT(INV);
 }
 
-static void* type_ref_g_des(type t) {
+void* type_ref_g_des(type t) {
     switch (t) {
         case TYPE(SG):
             return mc_f;
+        case TYPE(TE):
+        case TYPE(ST):
+            return te_f;
         default:
             break;
     }

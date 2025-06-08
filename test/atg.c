@@ -633,6 +633,5 @@ T(st) {
     A(arr->d[1].f6 == 2.2, "s`b");
     A(arr->d[2].u6 == 3, "s`c");
     A(strcmp("Hi", (char*) ((mc*) arr->d[3].p)->d) == 0, "s`d");
-    te_f(arr);
-    tbl_f(et);
+    opt_exp_tbl_f(et);
 }
