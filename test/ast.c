@@ -33,3 +33,10 @@ T(fnf6muli6cstdiv) {
             CN(P1, AN(NULL, IN("f"), L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), ON(NULL, CST, TN(U6), SN(I6, I6(2))))
         )))), NULL)));
 }
+
+T(apltypefn) {
+    V(apltypefn, RN(AN(NULL, LN(NULL, L(2,
+        ON(NULL, DFN, IN("f"),
+        ON(NULL, CST, TN(FN), LN(NULL, L(1, ON(NULL, ADD, AN(NULL, TN(I6), L(1, IN("a"))), ON(NULL, MUL, AN(NULL, TN(I6), L(1, IN("b"))), IN("a"))))))),
+        CN(P1, AN(NULL, IN("f"), L(2, SN(I6, I6(3)), SN(I6, I6(4))))))), NULL)));
+}

@@ -98,7 +98,7 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
     return FLD_STAT(OK);
 }
 
-static fld_stat aply_type_r(fld *f, te **an, err **e) {
+static fld_stat aply_type_b_r(fld *f, te **an, err **e) {
     fld_stat stat;
     lst *l = lst_c((*an)->d[5].p);
     if (!l->l) return fld_err(f, *an, e, "fld aply lst len inv");
@@ -125,7 +125,7 @@ static fld_stat aply_type_r(fld *f, te **an, err **e) {
     return FLD_STAT(OK);
 }
 
-static bool aply_type_t(const te *an) {
+static bool aply_type_b_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(T);
 }
 
@@ -152,7 +152,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), e_lst_type_o_def_t, e_lst_type_o_def_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
-    fld_a(f, AST_CLS(A), aply_type_t, aply_type_r);
+    fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);
     fld_a(f, AST_CLS(C), cmd_t, cmd_r);
     return f;
 }
