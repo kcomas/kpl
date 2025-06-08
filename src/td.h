@@ -30,10 +30,6 @@ inline void tdr_f(tdr *r, void *fn) {
     al_f(a);
 }
 
-#ifndef MAX_TD
-    #define MAX_TD 10
-#endif
-
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     s->size = algn(sizeof(tds), DEFALGN);
