@@ -140,7 +140,15 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
     }
 }
 
-static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code **c) {
+static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code **c, int16_t id) {
+    op_c oc = OP_C(GC);
+    type t = TYPE(OP);
+    op_d od = (op_d) { .t = tn->t };
+    if (id >= 0) {
+        oc = OP_C(GCTEI);
+        t = TYPE(VAR);
+        od = (op_d) { SLV((uint8_t) id, tn->t) };
+    }
     switch (tn->t) {
         case TYPE(STR):
         case TYPE(U3):
@@ -154,7 +162,7 @@ static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code
         case TYPE(SG):
         case TYPE(TE):
             // TODO idx in TE
-            OP_A(c, GC, OP, { .t = tn->t }, a);
+            code_a(c, (op) {oc, t, 0, 0, od,  a});
             break;
         default:
             return CODE_STAT(GC_INV);
@@ -162,7 +170,9 @@ static code_stat code_gen_gc(const type_node *const tn, const ast *const a, code
     return CODE_STAT(OK);
 }
 
-#define OP_GC(C, TN, A) if ((cstat = code_gen_gc(TN, A, C)) != CODE_STAT(OK)) return cstat;
+#define OP_GC(C, TN, A) if ((cstat = code_gen_gc(TN, A, C, -1)) != CODE_STAT(OK)) return cstat;
+
+#define OP_GCTEI(C, TN, A, I) if ((cstat = code_gen_gc(TN, A, C, I)) != CODE_STAT(OK)) return cstat;
 
 #define IFCGEN(FN, CS, A, C) if ((cstat = FN(CS, A, C)) != CODE_STAT(OK)) return cstat
 
@@ -171,6 +181,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
     lst_itm *h = lst->h;
     code *gc;
     type_node *th;
+    int16_t id = -1;
     if (lst->tn->t == TYPE(TE)) {
         gc = code_i(CODE_I_SIZE);
         OP_A(&gc, EFN, CODE, { .t = TYPE(VD) }, NULL);
@@ -180,7 +191,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         IFCGEN(code_gen, cs, h->a, c);
         if (lst->tn->t == TYPE(TE)) {
             if (!(th = ast_gtn(h->a))) return CODE_STAT(NO_T_FOR_TE_IDX);
-            OP_GC(&gc, th, h->a);
+            OP_GCTEI(&gc, th, h->a, ++id);
         }
         h = h->next;
     }
