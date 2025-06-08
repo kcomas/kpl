@@ -47,6 +47,16 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt);
 
 void gen_p(const gen *g, const uint8_t *m);
 
+te *gen_call_m(gen *g, size_t n, ...);
+
+te *gen_lbl(gen *g, size_t id);
+
+te *gen_arg(gen *g, x64_type t, size_t id);
+
+te *gen_tmp(gen *g, x64_type t, size_t id);
+
+te *gen_data(gen *g, x64_type t, un d);
+
 // atm entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];reg]
 
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]

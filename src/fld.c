@@ -48,6 +48,7 @@ static bool e_lst_type_o_def_t(const te *an) {
 
 static fld_stat aply_op_r(fld *f, te **restrict an, te **restrict e) {
     (void) f;
+    // TODO ops that are not folded
     lst *l = lst_c((*an)->d[5].p);
     if (l->l < 1 || l-l > 2) return fld_err(FLD_STAT(INV), *an, e);
     te *on = te_c((*an)->d[4].p);
