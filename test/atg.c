@@ -470,7 +470,7 @@ T(efn) {
 T(teadd) {
     AI(TPGM(teadd), 1, 1);
     te *arr[] = {type_s_i(&al_te, NULL, TYPE(I6)), type_s_i(&al_te, NULL, TYPE(I6)), type_s_i(&al_te, NULL, TYPE(I6))};
-    te *tte = type_te_i_v(&al_te, NULL, 3, arr[0], arr[1], arr[2]);
+    te *tte = type_te_i_v(&al_te, NULL, 3, te_c(arr[0]), te_c(arr[1]), te_c(arr[2]));
     D(tte, NULL);
     te_f(tte);
     for (size_t i = 0; i < 3; i++) te_f(arr[i]);

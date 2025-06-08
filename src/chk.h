@@ -14,6 +14,8 @@ chk_stat chk_op_lr_teq(chk *c, te *an, err **e);
 
 chk_stat chk_op_lers_us_u(chk *c, te *an, err **e);
 
+chk_stat chk_op_lers_fs_f(chk *c, te *an, err **e);
+
 chk_stat chk_op_mon(chk *c, te *an, err **e);
 
 chk *chk_b(chk *c);
