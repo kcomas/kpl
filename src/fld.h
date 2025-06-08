@@ -3,6 +3,7 @@
 
 #include "./lib/fld.h"
 #include "ast.h"
+#include "z.h"
 
 fld_stat fld_err(const fld *f, te *an, err **e, const char *m);
 
