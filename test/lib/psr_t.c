@@ -42,8 +42,7 @@ psr *psr_b(const char *pgm) {
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LB), "{", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, &psr_aply_e, &psr_aply_m, &psr_aply_i, 1, tkn_a(t, TCUST(LP), "(", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, &psr_aply_m, &psr_sym_i, 1, TCUST(SYM));
-    psr_a(p, PCUST(IF), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#?", &tkn_ft));
-    psr_a(p, PCUST(MTCH), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#=", &tkn_ft));
+    psr_a(p, PCUST(IF), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "?", &tkn_ft));
     return p;
 }
 

@@ -22,7 +22,6 @@ typedef enum {
     PCUST(AGN),
     PCUST(CST),
     PCUST(IF),
-    PCUST(MTCH)
 } pust;
 
 #define NODE_TYPE(N) NODE_TYPE_##N
