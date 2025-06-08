@@ -34,8 +34,10 @@ mod_stat mod_lfile(mod *const m, const char *const path);
 void mod_ag(mod *const m, uint8_t ng);
 
 void mod_sg_i6(mod *const m, uint8_t i, int64_t i6);
+int64_t mod_lg_i6(mod *const m, uint8_t i);
 
-int64_t mod_lg_i6(mod *const m, size_t i);
+void mod_sg_var_sg(mod *const m, uint8_t i, var_sg *const sg);
+var_sg *mod_lg_var_sg(mod *const m, uint8_t i);
 
 // print src
 inline void mod_psrc(const mod *const m) {
