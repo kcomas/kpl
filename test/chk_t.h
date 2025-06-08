@@ -4,6 +4,8 @@
 
 tbl *cti(void);
 
+void rchk(_tests *_t, chk *c, te *an);
+
 #define IC(PGM) ast *a = ast_b(ast_i(&ast_am, &ast_am, &ast_am, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END)))); \
     te *an = NULL; \
     bast(_t, a, PGM, &an); \
@@ -11,11 +13,5 @@ tbl *cti(void);
     chk *c = chk_i(&ast_am, &ast_am, cti, a); \
     chk_b(c);
 
-#define RC() te *e = NULL; \
-    chk_stat stat = chk_n(c, an, &e); \
-    chk_f(c); \
-    if (e) { \
-        ast_p(e, 0); \
-        putchar('\n'); \
-    } \
-    A(stat == CHK_STAT(OK), "chk_n");
+#define RC() rchk(_t, c, an); \
+    E()

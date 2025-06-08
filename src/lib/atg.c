@@ -1,7 +1,7 @@
 
 #include "atg.h"
 
-atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *aoti, atg_lst_i ali, gen *g, as *a) {
+atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg_tbl_i *ati, atg_lst_i ali, gen *g, as *a) {
    atg *t = af->a(sizeof(atg));
    t->lc = 0;
    t->r = 1;
@@ -9,14 +9,14 @@ atg *atg_i(const alfr *af, const alfr *ta, const alfr *saf, const alfr *sta, atg
    t->ta = ta;
    t->saf = saf;
    t->sta = sta;
-   t->aoti = aoti;
+   t->ati = ati;
    t->ali = ali;
    t->bg = g;
    t->a = a;
    t->q = ali();
    t->se = ali();
-   t->at = aoti();
-   t->ot = aoti();
+   t->at = ati();
+   t->ot = ati();
    return t;
 }
 
@@ -63,25 +63,57 @@ void atg_a_se(atg *t, atg_test_fn tse, atg_cc_fn s, atg_cc_fn e) {
     lst_ab(t->se, P(se));
 }
 
-atg_stat atg_qn(atg *t) {
+static void a_o(atg *t, tbl *ot, uint16_t c, uint16_t ct, te **kv, bool at) {
+    un hsh = U6(0);
+    hsh = u4_s_o(hsh, 1, c);
+    hsh = u4_s_o(hsh, 0, ct);
+    if (tbl_g_i(ot, hsh, kv) == TBL_STAT(NF)) {
+        *kv = te_i(2, t->ta, NULL);
+        (*kv)->d[0] = hsh;
+        if (at) (*kv)->d[1] = P(t->ati());
+    }
+}
+
+atg_stat atg_a_o(atg *t, uint16_t oc, type ct, ast_cls lc, type lt, ast_cls rc, type rt, atg_cc_fn cc) {
+    atg_stat stat = ATG_STAT(OK);
+    tbl *ot = t->ot;
+    te *kv;
+    a_o(t, ot, oc, ct, &kv, true);
+    ot = kv->d[1].p;
+    a_o(t, ot, lc, lt, &kv, true);
+    ot = kv->d[1].p;
+    a_o(t, ot, rc, rt, &kv, false);
+    if (kv->d[1].p) return ATG_STAT(INV);
+    kv->d[1] = P(cc);
+    return stat;
+}
+
+static atg_stat run_cc(atg *t, gen *g, te *rn, te **e) {
+    HERE("TODO");
+}
+
+atg_stat atg_qn(atg *t, te **e) {
+    atg_stat stat = ATG_STAT(OK);
     un v;
     if (lst_sb(t->q, &v) != LST_STAT(OK)) return ATG_STAT(INV);
     te **rn = v.p;
-    atg_cc_fn *s = NULL, *e = NULL;
+    atg_cc_fn *sf = NULL, *ef = NULL;
     te *h = t->se->h;
     while (h) {
         te *fns = h->d[0].p;
         if (((atg_test_fn*) fns->d[0].p)(*rn)) {
-            s = fns->d[1].p;
-            e = fns->d[2].p;
+            sf = fns->d[1].p;
+            ef = fns->d[2].p;
             break;
         }
         h = h->d[2].p;
     }
-    if (!s || !e) return ATG_STAT(INV);
-    // impl next gen
+    if (!sf || !ef) return ATG_STAT(INV);
+    gen *g = gen_cpy(t->bg);
+    if ((stat = sf(t, g, *rn, NULL, e)) != ATG_STAT(OK) || (stat = run_cc(t, g, *rn, e)) != ATG_STAT(OK) || (stat = ef(t, g, *rn, NULL, e)) != ATG_STAT(OK)) return stat;
+    gen_p(g, NULL);
     HERE("TODO");
-    return ATG_STAT(OK);
+    return stat;
 }
 
 void atg_f(atg *t) {

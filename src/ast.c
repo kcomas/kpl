@@ -230,7 +230,7 @@ static void lst_tbl_e_p(te *lte) {
         "L",
         "T",
         "F",
-        "S"
+        "O"
     };
     type_p(lte->d[2].p);
     printf("`%s", (char*) ((mc*) lte->d[0].p)->d);

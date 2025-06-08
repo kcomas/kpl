@@ -38,7 +38,7 @@ typedef enum {
     LTE_FLG(L) = 1 << 2, // local
     LTE_FLG(T) = 1 << 3, // type
     LTE_FLG(F) = 1 << 4, // func, id becomes the code label
-    LTE_FLG(S) = 1 << 5 // used in another scope
+    LTE_FLG(O) = 1 << 5 // outside, used in another scope
 } lte_flg; // list tbl entry
 
 #define LTE_FLGS 6

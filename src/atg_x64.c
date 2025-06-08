@@ -17,12 +17,26 @@ bool atg_x64_enq(const te *an) {
     return false;
 }
 
-static atg_stat lst_cst_s(atg *t, gen *g, const te *restrict rn, const te *restrict an, te **e) {
-
+atg_stat atg_err(atg_stat stat, te *an, te **e) {
+    *e = te_c(an);
+    return stat;
 }
 
-static atg_stat lst_cst_e(atg *t, gen *g, const te *restrict rn, const te *restrict an, te **e) {
+static atg_stat lst_cst_s(atg *t, gen *g, te *restrict rn, te *restrict an, te **e) {
+    (void) t;
+    (void) an;
+    if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(ATG_STAT(INV), rn, e);
+    return ATG_STAT(OK);
+}
 
+static atg_stat lst_cst_e(atg *t, gen *g, te *restrict rn, te *restrict an, te **e) {
+    (void) t;
+    (void) an;
+    (void) rn;
+    (void) g;
+    (void) e;
+    HERE("TODO");
+    return ATG_STAT(OK);
 }
 
 atg *atg_b(atg *t) {
