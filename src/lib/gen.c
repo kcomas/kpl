@@ -38,6 +38,24 @@ gen *gen_cpy(const gen *g) {
     return gc;
 }
 
+static bool gen_lst_eq(un x, un y) {
+    te *a = x.p;
+    te *b = y.p;
+    if (!a || !b) return false;
+    if (a->d[0].u6 != b->d[0].u6) return false;
+    for (size_t i = 1; i < 4; i++) {
+        te *l = a->d[i].p;
+        te *r = b->d[i].p;
+        if (!l && !r) continue;
+        if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6 || l->d[1].u6 != r->d[1].u6) return false;
+    }
+    return true;
+}
+
+bool gen_code_eq(const gen *restrict a, const gen *restrict b) {
+    return lst_eq(a->code, b->code, gen_lst_eq);
+}
+
 static void gen_entry_f(void *p) {
     te *t = p;
     tbl_f(t->d[2].p);

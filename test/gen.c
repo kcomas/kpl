@@ -79,6 +79,26 @@ T(call) {
     as_f(a);
 }
 
+T(eq) {
+    gen *a = gen_b(gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst()));
+    S(gen_a(a, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(a, GEN_OP(ADD), gen_tmp(a, X64_TYPE(U6), 0),  gen_arg(a, X64_TYPE(U6), 0), gen_arg(a, X64_TYPE(U6), 1)));
+    S(gen_a(a, GEN_OP(LEAVE), gen_tmp(a, X64_TYPE(U6), 0), NULL, NULL));
+    gen *b = gen_cpy(a);
+    S(gen_a(b, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(b, GEN_OP(ADD), gen_tmp(b, X64_TYPE(U6), 0),  gen_arg(b, X64_TYPE(U6), 0), gen_arg(b, X64_TYPE(U6), 1)));
+    S(gen_a(b, GEN_OP(LEAVE), gen_tmp(b, X64_TYPE(U6), 0), NULL, NULL));
+    gen *c = gen_cpy(b);
+    S(gen_a(c, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(c, GEN_OP(ADD), gen_tmp(c, X64_TYPE(I6), 0),  gen_arg(c, X64_TYPE(I6), 0), gen_arg(c, X64_TYPE(I6), 1)));
+    S(gen_a(c, GEN_OP(LEAVE), gen_tmp(c, X64_TYPE(I6), 0), NULL, NULL));
+    A(gen_code_eq(a, b), "gen_code_eq");
+    A(!gen_code_eq(b, c), "!gen_code_eq");
+    gen_f(a);
+    gen_f(b);
+    gen_f(c);
+}
+
 static gen *init(void) {
     gen *g = gen_i(&am, &am, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
