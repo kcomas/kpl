@@ -3,12 +3,19 @@
 
 #include "kpl.h"
 #include "ast.h"
+#include "type.h"
 
 #define CODE_STAT(N) CODE_STAT_##N
 
 typedef enum {
-    CODE_STAT(OK)
+    CODE_STAT(OK),
+    CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
+    CODE_STAT(ARG_LEN_GT_LOCAL_LEN) // should not happen
 } code_stat;
+
+typedef struct {
+    const char *str;
+} code_st;
 
 #define OP_C(N) OP_C_##N
 
@@ -16,6 +23,8 @@ typedef enum {
     // data
     OP_C(SG), // store global
     OP_C(LG), // load global
+    OP_C(AL), // allocate locals
+    OP_C(FL), // free loacls
     OP_C(SL), // store local
     OP_C(LL), // load local
     OP_C(SA), // store arg
@@ -29,7 +38,10 @@ typedef enum {
     OP_C(CST)
 } op_c;
 
+typedef struct _code code;
+
 typedef union {
+    type t;
     uint8_t u3;
     uint16_t u4;
     uint32_t u5;
@@ -40,6 +52,7 @@ typedef union {
     int64_t i6;
     float f;
     double d;
+    code *c;
 } op_d;
 
 #define OP_D(T, V) (op_d) { .T = V }
@@ -52,15 +65,14 @@ typedef struct {
     const ast *a; // freed in mod
 } op;
 
-#define OP(OC, OT, OD, A) (op) {OC, OT, OD, A}
-
-typedef struct {
+typedef struct _code {
     size_t len, size;
+    jit_fn *jf; // addr of jit code
     op ops[];
 } code;
 
 #ifndef REC_CODE_I_SIZE
-    #define REC_CODE_I_SIZE 50
+    #define REC_CODE_I_SIZE 30
 #endif
 
 inline code *code_i(size_t size) {
@@ -70,8 +82,14 @@ inline code *code_i(size_t size) {
 }
 
 inline void code_a(code **c, op o) {
-    // TODO resize
+    if ((*c)->len + 1 == (*c)->size) {
+        // TODO resize
+    }
     (*c)->ops[(*c)->len++] = o;
 }
 
-code_stat code_gen(const ast *const a, code *const c);
+#define OP_A(C, OC, OT, OD, A) code_a(&C, (op) {OP_C(OC), TYPE(OT), 0, 0, (op_d) OD, A})
+
+code_stat code_gen(code_st *const cs, const ast *const a, code *c);
+
+code_stat code_gen_fn(code_st *const cs, const ast *const afn, code *c);
