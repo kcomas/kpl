@@ -2,7 +2,6 @@
 #include "../src/lib/te.h"
 #include "t.h"
 
-I;
 
 void node_free(te *t) {
     if (t->d[1].p) te_f(t->d[1].p);

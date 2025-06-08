@@ -2,7 +2,6 @@
 #include "psr_t.h"
 #include "t.h"
 
-I;
 
 static psr *ppsr(psr *p) {
     tkn_p(p->tt->t, 0);

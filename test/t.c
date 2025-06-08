@@ -1,13 +1,12 @@
 
 #include "t.h"
 
-extern _tests *__t;
+_tests *__t = NULL;
 
-extern const char *__f;
-
-void _a(const char *n, _test_fn *tf) {
+void _a(const char *n, const char *sf, _test_fn *tf) {
     _tests *t = calloc(1, sizeof(_tests) + strlen(n) + sizeof(char));
     strcpy(t->n, n);
+    t->sf = sf;
     t->tf = tf;
     if (__t) {
         _tests *h = __t;
@@ -24,9 +23,9 @@ int main(void) {
         _tests *ct = __t;
         __t = __t->nt;
         ct->tf(ct);
-        printf("\e[%dm%s %s\e[0m ", RG(ct->m), __f, ct->n);
+        printf("\e[%dm%s %s\e[0m ", RG(ct->m), ct->sf, ct->n);
         if (ct->m) {
-            printf("\e[1m%s:%d \e[95m%s\n\e[0m", ct->f, ct->ln, ct->m);
+            printf("\e[1m%s:%d \e[95m%s\n\e[0m", ct->ef, ct->ln, ct->m);
             f++;
         } else {
             putchar('\n');
@@ -34,6 +33,6 @@ int main(void) {
         }
         free(ct);
     }
-    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", RG(f), __f, p, f);
+    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", RG(f), f ? "FAIL" : "PASS", p, f);
     return f ? f : 0;
 }

@@ -2,7 +2,6 @@
 #include "../src/lib/x64.h"
 #include "t.h"
 
-I;
 
 static uint8_t *m = NULL;
 
