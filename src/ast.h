@@ -241,6 +241,7 @@ inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t
 }
 
 inline void lst_node_f(lst_node *lst) {
+    type_node_f(lst->tn);
     LST_F(lst, lst_itm, lst_itm_f, NULL);
 }
 
