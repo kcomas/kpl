@@ -1,7 +1,7 @@
 
 #include "al.h"
 
-extern inline al *al_i(void);
+extern inline al *al_i(void *nal);
 
 extern inline alc *alc_i(al *const a, size_t size);
 
@@ -10,8 +10,7 @@ void alc_f(alc *ac, void *fn) {
 #ifdef ALD
     if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
 #endif
-    munmap(ac->h, ac->size);
-    munmap(ac, getpagesize());
+    munmap(ac, ac->size);
 }
 
 extern inline void al_f(al *a);

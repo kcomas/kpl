@@ -4,8 +4,9 @@
 
 #define THREAD_STACK_PAGE_MUL 100
 
-inline tdr *tdr_i(void) {
-    al *a = al_i();
+inline tdr *tdr_i(tds *const s) {
+    al *a = al_i(s->nal);
+    s->nal += sizeof(al);
     er *e = er_i(a);
     tdr *r = ala(a, sizeof(tdr));
     r->a = a;
@@ -28,10 +29,14 @@ inline void tdr_f(tdr *r, void *fn) {
 }
 
 inline tds *tds_i(void) {
-    return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+    s->nal = s + sizeof(tds);
+    posix_memalign(&s->nal, sizeof(al), getpagesize());
+    return s;
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
+    while (s->lock) {}
     s->lock = true;
     er_c(r->e);
     LST_A(s, r);
@@ -39,11 +44,12 @@ inline void tds_a(tds *volatile s, tdr *const r) {
 }
 
 inline tdr *tds_g(tds *volatile s) {
+    while (s->lock) {}
     s->lock = true;
     tdr *r = NULL;
     if (!s->h) {
         s->total++;
-        r = tdr_i();
+        r = tdr_i(s);
     } else {
         LST_S(s, r);
     }

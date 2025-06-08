@@ -108,6 +108,7 @@ typedef struct _tds {
     size_t len, total; // len is number in lst, total is number used
     bool lock;
     tdr *h, *t;
+    void *nal; // pointer for next al
 } tds; // threads
 
 typedef struct {
