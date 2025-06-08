@@ -29,6 +29,10 @@ AST_OBJS = $(SRC)/ast.o $(TKN_OBJS) $(TBL_OBJS)
 ast$(TNAME): $(AST_OBJS) $(TEST)/ast.o
 > $(CCOBJ)
 
+TYPE_OBJS = $(SRC)/type.o $(AST_OBJS)
+type$(TNAME): $(TYPE_OBJS) $(TEST)/type.o
+> $(CCOBJ)
+
 $(NAME):
 
 %.o: %.c
