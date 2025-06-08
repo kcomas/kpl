@@ -31,7 +31,7 @@ static tbl *type_tbl_i(size_t n, ...) {
     return t;
 }
 
-#define TF(FT, RT, N, ...) type_f_i(&ast_am, TYPE(FT), type_tbl_i(N, __VA_ARGS__), RT)
+#define TF(FT, RT, N, ...) type_f_i(&ast_am, TYPE(FT), RT, type_tbl_i(N, __VA_ARGS__))
 
 #define TS(T) type_s_i(&ast_am, TYPE(T))
 

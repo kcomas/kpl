@@ -99,7 +99,7 @@ static void type_f_f(void *p) {
     t->af->f(t);
 }
 
-te *type_f_i(const alfr *af, type f, tbl *a, te *r) {
+te *type_f_i(const alfr *af, type f, te *r, tbl *a) {
     te *ff = te_i(3, af, type_f_f);
     ff->d[0] = U6(f);
     ff->d[1] = P(a);

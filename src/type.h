@@ -65,7 +65,7 @@ te *type_v_i(const alfr *af, type v, te *t);
 
 te *type_h_i(const alfr *af, type h, tbl *t);
 
-te *type_f_i(const alfr *af, type f, tbl *a, te *r);
+te *type_f_i(const alfr *af, type f, te *r, tbl *a);
 
 te *type_i(const alfr *af, type t);
 
