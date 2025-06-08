@@ -443,8 +443,12 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(AL):
                 op_set_jidx(j, o);
-                // TODO push zeros
                 jit_b(j, 4, 0x48, 0x83, 0xEC, o->od.u3 * sizeof(void*)); // sub rsp nl * ptrsize
+                jit_b(j, 3, 0x4D, 0x31, 0xC9); // xor r9 r9
+                for (uint8_t i = 0; i < o->od.u3; i++) {
+                    vsp = -(o->od.u3 + 1) * sizeof(void*);
+                    jit_b(j, 4, 0x4C, 0x89, 0x4D, vsp); // mov qword ptr rbp-vsp r9
+                }
                 op_set_jlen(j, o);
                 break;
             case OP_C(SL):
