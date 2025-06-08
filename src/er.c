@@ -59,8 +59,12 @@ er_itm *er_g(al *const a, er *const e) {
 
 extern inline void er_p(er *const e);
 
-void er_e(er *const e) {
+void er_e(al *const am, er *const e, size_t lno, size_t cno) {
     if (!e->h) return;
+    er_itm *ei = er_itm_i(am, ER(RUN), __func__, "THROW");
+    ei->lno = lno;
+    ei->cno = cno;
+    er_a(e, ei);
     er_p(e);
     exit(KPLE);
 }

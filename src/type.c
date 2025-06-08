@@ -286,7 +286,6 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     // TODO gc existing data
                     if (!type_eq(lt, rt)) return TYPE_ER(ts, VAR_ASS_N_T_M);
                 } else op->l->n.var->tn = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
-                //op->ret = rt->t == TYPE(STR) ? type_node_i(ts->a, TYPE(SG), NULL) : type_node_c(ts->a, rt);
                 op->ret = type_node_i(ts->a, TYPE(VD), NULL);
                 break;
             }

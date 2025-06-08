@@ -404,7 +404,10 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(PE):
                 op_set_jidx(j, o);
-                SET_REG(m->e, er*, false, 7);
+                SET_REG(m->a, al*, false, 7);
+                SET_REG(m->e, er*, false, 6);
+                SET_REG(o->a->t.lno, size_t, false, 2);
+                SET_REG(o->a->t.cno, size_t, false, 1);
                 SET_FP(er_e);
                 SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
