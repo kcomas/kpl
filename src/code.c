@@ -7,10 +7,13 @@ extern inline code *code_i(size_t size);
 
 extern inline void code_a(code **c, op o);
 
+#define CODE_F_T(T, FN, P) if (c->ops[i].ot == TYPE(T)) FN(c->ops[i].od.P)
+
 void code_f(code *c) {
     for (size_t i = 0; i < c->len; i++) {
-        if (c->ops[i].ot == TYPE(FN)) code_f(c->ops[i].od.c);
-        if (c->ops[i].ot == TYPE(COND)) op_if_f(c->ops[i].od.of);
+        CODE_F_T(FN, code_f, c);
+        CODE_F_T(COND, op_if_f, of);
+        CODE_F_T(SG, free, sg);
     }
     free(c);
 }
@@ -71,6 +74,10 @@ void code_p(const code_st *const cs, const code *const c, size_t idnt) {
                 break;
             case TYPE(U6):
                 printf(",%lu", c->ops[i].od.u6);
+                break;
+            // TODO
+            case TYPE(SG):
+                printf(",%s", c->ops[i].od.sg);
                 break;
             case TYPE(FD):
                 printf(",%d", c->ops[i].od.fd);
@@ -298,6 +305,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code *c) {
 code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
     code_stat cstat;
     code *cfn;
+    char *sg;
     switch (a->at) {
         case AST_TYPE(TYPE): break;
         case AST_TYPE(RES):
@@ -312,8 +320,12 @@ code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
             switch (a->n.val->tn->t) {
                 case TYPE(INT):
                 case TYPE(FLT):
-                case TYPE(STR):
                     break; // TODO
+                case TYPE(STR):
+                    sg = calloc(1, a->t.len + 1);
+                    memcpy(sg, cs->str + a->t.pos, a->t.len);
+                    OP_A(c, PV, SG, { .sg = sg }, a);
+                    break;
                 default:
                     return CODE_STAT(NO_OP_FOR_VAL_T);
             }
