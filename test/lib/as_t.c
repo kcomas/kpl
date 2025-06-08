@@ -1,8 +1,10 @@
 
 #include "as_t.h"
 
+const alfr am = { .al = &malloc, .fr = &free };
+
 static te *as_arg_v(arg_id id, un v) {
-    return as_arg(&malloc, &free, id, v);
+    return as_arg_i(&am, id, v);
 }
 
 te *as_arg_r(size_t rid) {
@@ -26,7 +28,7 @@ te *as_arg_b(uint8_t b) {
 }
 
 lst *as_mklst(void) {
-    return lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
+    return lst_i(&am, &am, (void*) &te_f);
 }
 
 tbl *as_arg_tbl(void) {
@@ -35,8 +37,8 @@ tbl *as_arg_tbl(void) {
 
 tbl *as_op_tbl(size_t bcks) {
     lst *tl = as_mklst();
-    te *b = te_i(bcks, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &tbl_no_hsh, &tbl_un_eq, tl, b);
+    te *b = te_i(bcks, &am, NULL);
+    tbl *t = tbl_i(&am, &tbl_no_hsh, &tbl_un_eq, tl, b);
     return t;
 }
 
@@ -44,13 +46,13 @@ void as_label_entry_f(void *p) {
     te *l = p;
     te_f(l->d[1].p);
     lst_f(l->d[2].p);
-    free(l);
+    l->af->fr(l);
 }
 
 void as_op_entry_f(void *p) {
     te *oe = p;
     tbl_f(oe->d[3].p);
-    free(oe);
+    oe->af->fr(oe);
 }
 
 void as_code_entry_f(void *p) {
@@ -59,5 +61,5 @@ void as_code_entry_f(void *p) {
     te_f(o->d[3].p);
     te_f(o->d[4].p);
     te_f(o->d[5].p);
-    free(o);
+    o->af->fr(o);
 }

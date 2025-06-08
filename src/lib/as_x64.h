@@ -21,8 +21,6 @@ typedef enum {
     ARG_ID(QW) // quad word
 } arg_id;
 
-te *as_arg(alfn *aa, frfn *af, arg_id id, un v);
-
 #define AS_X64(N) AS_X64_##N
 
 typedef enum {

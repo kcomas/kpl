@@ -1,18 +1,19 @@
 
 #include "as.h"
 
-te *arg_i(size_t id, un d, alfn *aa, frfn *af) {
-    te *a = te_i(2, aa, af);
+te *as_arg_i(const alfr *af, size_t id, un d) {
+    te *a = te_i(2, af, NULL);
     a->d[0] = U6(id);
     a->d[1] = d;
     return a;
 }
 
-as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
-    as *a = aa(sizeof(as));
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
+    as *a = af->al(sizeof(as));
     a->r = 1;
-    a->aa = aa;
     a->af = af;
+    a->ta = ta;
+    a->la = la;
     a->lef = lef;
     a->oef = oef;
     a->cf = cf;
@@ -24,7 +25,7 @@ as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl 
 }
 
 static te *add_code(as *a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te *arg3, te *arg4, as_code_fn *fn, as_code_fn *lbl_fn) {
-    te *c = te_i(10, a->aa, a->cf);
+    te *c = te_i(10, a->ta, a->cf);
     c->d[0] = U6(cid);
     c->d[1] = U6(op_lbl_id);
     c->d[2] = P(arg1);
@@ -41,10 +42,10 @@ static te *add_code(as *a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te
 
 static size_t add_lbl(as *a, size_t lbl_id) {
     te *c = te_c(add_code(a, CODE_ID(L), lbl_id, NULL, NULL, NULL, NULL, NULL, NULL));
-    te *lbl = te_i(3, a->aa, a->lef);
+    te *lbl = te_i(3, a->ta, a->lef);
     lbl->d[0] = c->d[1];
     lbl->d[1] = P(c);
-    lbl->d[2] = P(lst_i(a->aa, a->aa, a->af, (void*) &te_f, a->af));
+    lbl->d[2] = P(lst_i(a->la, a->ta, (void*) &te_f));
     tbl_a(a->lbls, lbl);
     return lbl->d[0].u6;
 }
@@ -75,7 +76,7 @@ as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c) {
 }
 
 static tbl *add_op_entry(as *a, tbl *co, te **kv, size_t id) {
-    *kv = te_i(4, a->aa, a->oef);
+    *kv = te_i(4, a->ta, a->oef);
     (*kv)->d[0] = U6(id);
     (*kv)->d[3] = P(a->oti());
     tbl_a(co, *kv);
@@ -148,5 +149,5 @@ void as_f(as *a) {
     tbl_f(a->lbls);
     tbl_f(a->ops);
     lst_f(a->code);
-    a->af(a);
+    a->af->fr(a);
 }
