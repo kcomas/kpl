@@ -15,8 +15,11 @@ typedef struct {
     alc *h, *t;
 } al;
 
-inline al *al_i(void *nal) {
-    return (al*) nal;
+inline al *al_i(void *nal) { // zero for tests
+    al *a = (al*) nal;
+    a->len = a->size = a->u = a->f = 0;
+    a->h = a->t = NULL;
+    return a;
 }
 
 #ifndef ALC_USED_FREE_PCT

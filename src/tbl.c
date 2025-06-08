@@ -66,6 +66,7 @@ tbl_stat tbl_op(al *const a, tbl **tl, const char *const str, void *const data, 
         } else if (strcmp(cur->str, str) == 0) {
             if (op_flgs & TBL_OP_FLG(AD)) return TBL_STAT(AE);
             if (op_flgs & TBL_OP_FLG(RM)) {
+                if (!fn) return TBL_STAT(NOFN);
                 LST_R((*tl), tbl_itm, cur, tbl_itm_f, fn);
                 (*tl)->bucks[(hash + i) % (*tl)->size] = NULL;
             } else {
