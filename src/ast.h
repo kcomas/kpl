@@ -21,7 +21,9 @@ typedef enum {
     AST_STAT(IF_INV_FMT), // missing ( after if start
     AST_STAT(IF_INV_BODY), // invalid if body
     AST_STAT(INV_TYPE_LST_INIT), // type list must start with ( [ {
+    AST_STAT(OP_CALL_A_NN), // prev node for op call not null
     AST_STAT(CALL_A_N), // prev node null for call
+    AST_STAT(RET_A_N), // prev node null for ret
     AST_STAT(END)
 } ast_stat;
 
@@ -65,6 +67,10 @@ inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs) {
 }
 
 typedef struct _ast ast;
+
+#ifndef IDNT_ADD
+    #define IDNT_ADD 4
+#endif
 
 void ast_p(const ast_st *const as, const ast *const a, size_t idnt);
 
@@ -152,6 +158,8 @@ inline void val_node_f(val_node *v) {
 typedef enum {
     OP_TYPE(ASS), // :
     OP_TYPE(CST), // $
+    OP_TYPE(ADD),
+    OP_TYPE(SUB),
     // TODO OP
     OP_TYPE(EQ),
     OP_TYPE(NOT),
@@ -242,10 +250,9 @@ inline if_itm *if_itm_i(ast *const cond, lst_node *const body) {
 
 inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt) {
     (void) fn;
-    PCX(' ', idnt);
     printf("C-");
     ast_p(as, ii->cond, idnt);
-    PCX(' ', idnt);
+    putchar('\n');
     printf("B-");
     lst_node_p(as, ii->body, idnt);
 }
@@ -271,7 +278,7 @@ inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body) 
 }
 
 inline void if_node_p(const ast_st *const as, const if_node *const in, size_t idnt) {
-    printf("%lu,", in->len);
+    printf("%lu,IF", in->len);
     LST_P(in, if_itm, if_itm_p, as, NULL, idnt, '\n');
 }
 
@@ -322,12 +329,11 @@ inline call_node *call_node_i(ast *const tgt, lst_node *const args) {
 }
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
+    putchar('\n');
     ast_p(as, cn->tgt, idnt);
     putchar('\n');
-    PCX(' ', idnt);
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
-    PCX(' ', idnt);
     lst_node_p(as, cn->args, idnt);
 }
 
@@ -341,10 +347,13 @@ typedef struct {
     ast *a;
 } ret_node; // takes next stmt
 
-inline ret_node *ret_node_i(ast *const a) {
-    ret_node *r = calloc(1, sizeof(ret_node));
-    r->a = a;
-    return r;
+inline ret_node *ret_node_i(void) {
+    return calloc(1, sizeof(ret_node));
+}
+
+inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt) {
+    putchar('\n');
+    ast_p(as, r->a, idnt);
 }
 
 inline void ret_node_f(ret_node *r) {
@@ -363,7 +372,6 @@ var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const s
 
 inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
     printf("%p,%d,%s\n", var->fns, var->id, var->str);
-    PCX(' ', idnt);
     type_node_p(as, var->tn, idnt);
 }
 
