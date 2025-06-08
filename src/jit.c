@@ -480,6 +480,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(FN):
                         jit_a(j, 0x5F); // pop rdi
                         break;
                     case TYPE(STR):
@@ -511,6 +512,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(FN):
                         break;
                     case TYPE(STR):
                     case TYPE(SG):
@@ -533,6 +535,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     case TYPE(I4):
                     case TYPE(I5):
                     case TYPE(I6):
+                    case TYPE(FN):
                         break;
                     case TYPE(STR):
                     case TYPE(SG):
