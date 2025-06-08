@@ -29,6 +29,8 @@ var_sg *var_sg_cnct_sg_te_vr(al *const a, const var_sg *const l, const var_te_vr
 
 void var_sg_f(var_sg *sg);
 
+void var_sg_d(var_sg *sg);
+
 typedef union _var {
     int64_t i6;
     uint64_t u6;
@@ -102,4 +104,4 @@ var var_te_vr_gidx(var_te_vr *const vtv, size_t idx);
 
 void var_te_vr_sidx(var_te_vr *const vtv, size_t idx, var v);
 
-void var_te_vr_f(var_te_vr *vtv);
+void var_te_vr_d(var_te_vr *vtv);

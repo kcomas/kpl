@@ -56,6 +56,10 @@ void var_sg_f(var_sg *sg) {
     alf(sg);
 }
 
+void var_sg_d(var_sg *sg) {
+    alf(sg);
+}
+
 ssize_t var_rcd(var v, type t) {
     switch (t) {
         case TYPE(STR):
@@ -150,6 +154,6 @@ var var_te_vr_gidx(var_te_vr *const vtv, size_t idx) {
     return vtv->v[idx];
 }
 
-void var_te_vr_f( var_te_vr *vtv) {
+void var_te_vr_d( var_te_vr *vtv) {
     alf(vtv);
 }
