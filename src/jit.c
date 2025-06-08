@@ -116,7 +116,7 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
     jit_stat jstat;
     op *o;
     void *fp;
-    uint32_t asp; // arg stack pos
+    uint32_t vsp; // var stack pos
     static uint8_t buf[sizeof(void*)];
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
@@ -187,8 +187,8 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             // TODO
             case OP_C(LA):
                 op_set_jidx(*j, o);
-                asp = (o->od.v.id + 2) * sizeof(void*);
-                jit_b(j, 7, 0x4C, 0x8B, 0x8D, asp, 0x00, 0x00, 0x00); // mov r9 rbp+asp
+                vsp = (o->od.v.id + 2) * sizeof(void*);
+                jit_b(j, 7, 0x4C, 0x8B, 0x8D, vsp, 0x00, 0x00, 0x00); // mov r9 rbp+asp
                 jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(*j, o);
                 break;
@@ -318,8 +318,6 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 op_set_jidx(*j, o);
                 jit_a(j, 0x5F); // pop rdi
                 switch (o->od.t) {
-                    case TYPE(INT):
-                    case TYPE(FLT):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
