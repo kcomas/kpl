@@ -24,16 +24,6 @@ size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
 
-static void tkn_err_p(void *d) {
-    tkn *t = d;
-    printf("lno: %d, cno: %d", t->lno, t->cno);
-}
-
-static tkn_stat tkn_err(tkn *t, err **e, const char *m) {
-    *e = err_i(t->ea, tkn_err_p, (void*) tkn_f, tkn_c(t), m);
-    return TKN_STAT(INV);
-}
-
 tkn_stat tkn_df(tkn *t, te *m, err **e) {
     t->cno = tkn_m_g_c(m);
     t->pos = tkn_m_g_s(m);

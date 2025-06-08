@@ -61,10 +61,10 @@ static void p_r_f(void *p) {
 te *psr_r(psr *p) {
     psr_stat pstat;
     te *nh = te_i(3, p->ta, p_r_f);
-    if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) {
-        printf("%s|", p->tt->s->d);
-        printf("PSTAT: %u|", pstat);
-        printf("lno:%u,cno:%u\n", p->tt->lno, p->tt->cno);
+    err *e = NULL;
+    if ((pstat = psr_n(p, nh, &e)) != PSR_STAT(END)) {
+        err_p(e);
+        err_f(e);
         te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
         te_f(nh);
         te_f(n);
@@ -113,22 +113,26 @@ static void p_vtki_f(te *n) {
     n->af->f(n);
 }
 
-psr_stat psr_var_i(psr *p, te **n) {
+psr_stat psr_var_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(VAR), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_type_i(psr *p, te **n) {
+psr_stat psr_type_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(TYPE), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_key_i(psr *p, te **n) {
+psr_stat psr_key_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(KEY), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_int_i(psr *p, te **n) {
+psr_stat psr_int_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(INT), 3, p_vtki_f);
     return PSR_STAT(OK);
 }
@@ -141,7 +145,8 @@ static void p_flt_f(void *p) {
     n->af->f(n);
 }
 
-psr_stat psr_flt_i(psr *p, te **n) {
+psr_stat psr_flt_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = te_i(5, p->ta, p_flt_f);
     (*n)->d[1] = U6(NODE_TYPE(FLT));
     un m;
@@ -152,11 +157,11 @@ psr_stat psr_flt_i(psr *p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_val_m(psr *p, te *restrict nh, te *restrict n) {
+psr_stat psr_val_m(psr *p, te *restrict nh, te *restrict n, err **e) {
     (void) p;
-    if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
+    if (nh->d[1].p && nh->d[2].p) return psr_err(p, e, "value op");
     if (nh->d[1].p) {
-        if (((te*) nh->d[1].p)->d[4].p) return PSR_STAT(INV);
+        if (((te*) nh->d[1].p)->d[4].p) return psr_err(p, e, "psr value value");
         ((te*) nh->d[1].p)->d[4] = P(n);
         n->d[0] = nh->d[1];
     } else nh->d[2] = P(n);
@@ -170,14 +175,15 @@ static void p_op_f(te *n) {
     n->af->f(n);
 }
 
-psr_stat psr_op_i(psr *p, te **n) {
+psr_stat psr_op_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(OP), 5, p_op_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n) {
+psr_stat psr_op_m(psr *p, te *restrict nh, te *restrict n, err **e) {
     (void) p;
-    if (nh->d[1].p && nh->d[2].p) return PSR_STAT(INV);
+    if (nh->d[1].p && nh->d[2].p) return psr_err(p, e, "psr op op");
     if (!nh->d[1].p && !nh->d[2].p) {
         nh->d[0] = nh->d[1] = P(n);
         return PSR_STAT(OK);
@@ -202,22 +208,25 @@ static void p_vl_f(te *n) {
     n->af->f(n);
 }
 
-psr_stat psr_vec_i(psr *p, te **n) {
+psr_stat psr_vec_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(VEC), 4, p_vl_f);
     (*n)->d[3].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_lst_i(psr *p, te **n) {
+psr_stat psr_lst_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(LST), 4, p_vl_f);
     (*n)->d[3].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_lst_e(psr *p, te *restrict e, te *restrict n) {
+psr_stat psr_lst_e(psr *p, te *restrict en, te *restrict n, err **e) {
     (void) p;
-    n->d[0] = P(e);
-    lst_ab(e->d[3].p, P(n));
+    (void) e;
+    n->d[0] = P(en);
+    lst_ab(en->d[3].p, P(n));
     return PSR_STAT(OK);
 }
 
@@ -228,14 +237,16 @@ static void p_a_f(te *n) {
     n->af->f(n);
 }
 
-psr_stat psr_aply_i(psr *p, te **n) {
+psr_stat psr_aply_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(APLY), 5, p_a_f);
     (*n)->d[4].p = lst_i(p->la, p->ta, (void*) te_f);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_m(psr *p, te *restrict nh, te *restrict n) {
+psr_stat psr_aply_m(psr *p, te *restrict nh, te *restrict n, err **e) {
     (void) p;
+    (void) e;
     if (!nh->d[1].p && !nh->d[2].p) {
         nh->d[2] = P(n);
     } else if (nh->d[1].p && ((te*) nh->d[1].p)->d[4].p) {
@@ -264,10 +275,11 @@ psr_stat psr_aply_m(psr *p, te *restrict nh, te *restrict n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_aply_e(psr *p, te *restrict e, te *restrict n) {
+psr_stat psr_aply_e(psr *p, te *restrict en, te *restrict n, err **e) {
     (void) p;
-    n->d[0] = P(e);
-    lst_ab(e->d[4].p, P(n));
+    (void) e;
+    n->d[0] = P(en);
+    lst_ab(en->d[4].p, P(n));
     return PSR_STAT(OK);
 }
 
@@ -277,12 +289,14 @@ static void p_sc_i(te *n) {
     n->af->f(n);
 }
 
-psr_stat psr_sym_i(psr *p, te **n) {
+psr_stat psr_sym_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(SYM), 4, p_sc_i);
     return PSR_STAT(OK);
 }
 
-psr_stat psr_cmd_i(psr *p, te **n) {
+psr_stat psr_cmd_i(psr *p, te **n, err **e) {
+    (void) e;
     *n = node_i(p, NODE_TYPE(CMD), 4, p_sc_i);
     return PSR_STAT(OK);
 }
