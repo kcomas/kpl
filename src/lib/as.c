@@ -1,7 +1,7 @@
 
 #include "as.h"
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code) {
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, frfn lef, frfn oef, frfn cf, op_tbl_i oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;

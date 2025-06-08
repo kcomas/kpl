@@ -41,6 +41,27 @@ psr *psr_b(psr *p) {
     return p;
 }
 
+te *psr_r(psr *p) {
+    psr_stat pstat;
+    te *nh = te_i(3, p->ta, node_f);
+    if ((pstat = psr_n(p, nh)) != PSR_STAT(END)) {
+        printf("%s|", p->tt->s->d);
+        printf("PSTAT: %u|", pstat);
+        printf("lno:%lu,cno:%lu\n", p->tt->lno, p->tt->cno);
+        te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
+        te_f(nh);
+        te_f(n);
+        psr_f(p);
+        return NULL;
+    }
+    te *n = nh->d[0].p ? nh->d[0].p : nh->d[2].p;
+    nh->d[0] = P(p);
+    nh->d[1] = U6(NODE_TYPE(ROOT));
+    nh->d[2] = P(n);
+    n->d[0] = P(nh);
+    return nh;
+}
+
 void psr_p(tbl *t, size_t idnt) {
     te *h = t->i->h;
     while (h) {

@@ -1,7 +1,7 @@
 
 #include "psr.h"
 
-psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn *pef, psr_tbl_i *pti, tkn *tt, vr *ts) {
+psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn pef, psr_tbl_i pti, tkn *tt, vr *ts) {
     psr *p = af->a(sizeof(psr));
     p->r = 1;
     p->idc = PARSER(_);

@@ -41,7 +41,7 @@ typedef struct _tkn {
     mc *s;
 } tkn;
 
-tkn *tkn_i(const alfr *af, const alfr *ta, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
+tkn *tkn_i(const alfr *af, const alfr *ta, frfn ef, tkn_tbl_i ttif, tkn_pf df, mc *s);
 
 // give zero for an assigned id
 size_t tkn_a(tkn *t, size_t tid, const char *s, tkn_pf *pf);
