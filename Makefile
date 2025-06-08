@@ -1,14 +1,15 @@
 
 CC = gcc
 OO = -g -Og
-FFLAGS = -fstack-protector-all -fno-omit-frame-pointer -fcf-protection=full -fPIE
+FHARDEND := -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -ftrivial-auto-var-init=pattern -fPIE -pie -fstack-protector-strong -fstack-clash-protection -Wl,-z,relro,-z,now -fcf-protection=full
+FFLAGS = -fno-omit-frame-pointer $(FHARDEND)
 MFLAGS = -mincoming-stack-boundary=3
 WFLAGS = -Wall -Wextra -Wstack-protector
 CFLAGS = -std=gnu99 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 SRC = ./src
 LSRC = $(SRC)/lib
 TEST = ./test
-CCOBJ = $(CC) -o $@ $^
+CCOBJ = $(CC) -o $@ $^ -pie
 NAME = kpl
 TNAME = _test
 TESTS = tests
