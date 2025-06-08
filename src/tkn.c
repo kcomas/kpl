@@ -3,6 +3,8 @@
 
 extern inline void tkn_st_i(tkn_st *const ts);
 
+extern inline void tkn_st_u(tkn_st *const ts, const tkn *const t);
+
 typedef struct {
     tkn_type type;
     char c2[2];
@@ -145,13 +147,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                 return TKN_STAT(CHR);
         }
     }
-    if (inc) {
-        if (t->type == TKN_TYPE(NL)) {
-            ts->lno++;
-            ts->cno = 1;
-        } else ts->cno = t->cno + t->len;
-        ts->pos = t->pos + t->len;
-    }
+    if (inc) tkn_st_u(ts, t);
     return TKN_STAT(OK);
 }
 
