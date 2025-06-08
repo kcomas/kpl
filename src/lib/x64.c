@@ -113,8 +113,10 @@ static uint8_t set_rex2(reg b, reg r) {
 
 // only add rex if REX.R or REX.B is set
 static void rex_rb(size_t *p, uint8_t *m, reg b, reg r) {
-    uint8_t rex = set_rex2(b, r);
-    if (rex != REX(W)) x64_a(p, m, rex);
+    uint8_t rex = 0;
+    if (reg_is_upper(b)) rex |= REX(B);
+    if (reg_is_upper(r)) rex |= REX(R);
+    if (rex) x64_a(p, m, rex);
 }
 
 x64_stat x64_push_r(size_t *p, uint8_t *m, reg r) {
