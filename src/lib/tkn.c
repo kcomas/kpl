@@ -55,6 +55,20 @@ tkn *tkn_i(const alfr *af, const alfr *ta, tkn_tbl_i ttif, tkn_pf df, mc *s) {
     return t;
 }
 
+tkn *tkn_i_tkn(const tkn *t, mc *s) {
+    tkn *tt = t->af->a(sizeof(tkn));
+    tt->idc = TOKEN(_);
+    tt->r = tt->lno = tt->cno = 1;
+    tt->pos = 0;
+    tt->af = t->af;
+    tt->ta = t->ta;
+    tt->ttif = t->ttif;
+    tt->df = t->df;
+    tt->t = tbl_c(t->t);
+    tt->s = s;
+    return tt;
+}
+
 static void tkn_entry_f(void *v) {
     te *t = v;
     tbl_f(t->d[3].p);

@@ -17,12 +17,23 @@ static tbl *mktbl(void) {
     return t;
 }
 
-psr *bpsr(const char *pgm) {
-    tkn *t = tkn_i(&pm, &pm, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &pm));
+static psr *bp = NULL;
+
+static __attribute__((constructor)) void psr_con(void) {
+    tkn *t = tkn_i(&pm, &pm, tkn_mktbl, tkn_df, mc_i(0, &pm));
     tkn_b(t);
     vr *v = vr_i(10, &pm, (void*) te_f);
-    psr *p = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);
-    return psr_b(p);
+    bp = psr_i(&pm, &pm, &pm, psr_entry_f, mktbl, t, v);
+    psr_a(bp, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(bp->tt, TOKEN(UN), "Σ", tkn_ft));
+    psr_b(bp);
+}
+
+static __attribute__((destructor)) void psr_des(void) {
+    psr_f(bp);
+}
+
+psr *bpsr(const char *pgm) {
+    return psr_i_psr(bp, mc_i_cstr(pgm, &pm));
 }
 
 const char *aplyopadd = "+(1;2)";

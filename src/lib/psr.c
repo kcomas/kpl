@@ -16,6 +16,21 @@ psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, frfn pef, psr_tbl_i p
     return p;
 }
 
+psr *psr_i_psr(const psr *p, mc *s) {
+    psr *pp = p->af->a(sizeof(psr));
+    pp->r = 1;
+    pp->idc = PARSER(_);
+    pp->af = p->af;
+    pp->ta = p->ta;
+    pp->la = p->la;
+    pp->pef = p->pef;
+    pp->pti = p->pti;
+    pp->tt = tkn_i_tkn(p->tt, s);
+    pp->ts = vr_i_vr(p->ts);
+    pp->pt = tbl_c(p->pt);
+    return pp;
+}
+
 size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre_fn *mf, psr_node_fn *nf, size_t nt, ...) {
     tbl *pt = p->pt;
     te *kv;

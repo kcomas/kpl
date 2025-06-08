@@ -25,6 +25,12 @@ OBJS += $(LDEF_OBJS)
 $(DEF): $(LDEF_OBJS) $(TEST)/def.o $(TEST_OBJS)
 > $(CCOBJ)
 
+ERR = err$(TNAME)
+LERR_OBJS = $(LSRC)/err.o
+OBJS += $(LERR_OBJS)
+$(ERR): $(LERR_OBJS) $(TEST)/err.o $(TEST_OBJS)
+> $(CCOBJ)
+
 MC = mc$(TNAME)
 LMC_OBJS = $(LSRC)/mc.o
 OBJS += $(LMC_OBJS)
