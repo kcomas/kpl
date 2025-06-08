@@ -9,9 +9,9 @@ static uint8_t rid(reg r) {
     return r % 8;
 }
 
-// if the source can be memory address they need to be swapped
+// if the source can be memory address regs need to be swapped
 static uint8_t modrm(mod m, reg d, reg s) {
-    return m + 8 * rid(s) + rid(d);
+    return m | rid(s) << 3 | rid(d);
 }
 
 static size_t pg_algn(size_t size) {
