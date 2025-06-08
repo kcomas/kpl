@@ -127,14 +127,14 @@ const char *type_stat_str(type_stat tstat);
 typedef struct {
     al *a;
     er *e;
-    const char *pp; // parent path
+    const char *mp; // mod path
     const char *str;
 } type_st;
 
-inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *pp, const char *str) {
+inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp, const char *str) {
     ts->a = a;
     ts->e = e;
-    ts->pp = pp;
+    ts->mp = mp;
     ts->str = str;
 }
 

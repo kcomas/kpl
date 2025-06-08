@@ -116,6 +116,7 @@ typedef struct _var_tsv var_tsv;
 
 // return length of str to last /
 inline size_t str_dir_len(const char *const s) {
+    if (!s) return 0;
     size_t len = strlen(s);
     while (len > 1) {
         if (s[len - 1] == '/') return len;
