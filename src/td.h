@@ -36,21 +36,17 @@ inline void tdr_f(tdr *r, void *fn) {
 
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-    sem_init(&s->l, -1, 1);
     s->size = algn(sizeof(tds), DEFALGN);
     return s;
 }
 
 inline void tds_a(tds *volatile s, tdr *const r) {
-    sem_wait(&s->l);
     er_c(r->e);
     LST_A(s, r);
-    sem_post(&s->l);
 }
 
 inline tdr *tds_g(tds *volatile s, bool stk) {
     tdr *r = NULL;
-    sem_wait(&s->l);
     if (!s->h) {
         s->total++;
         r = tdr_i(s);
@@ -59,7 +55,6 @@ inline tdr *tds_g(tds *volatile s, bool stk) {
         LST_S(s, r);
         if ((stk) && (!r->stk)) tdr_stk_i(r);
     }
-    sem_post(&s->l);
     return r;
 }
 
@@ -68,6 +63,5 @@ inline void tds_f(tds *s) {
     printf("**RT: %lu, RR: %lu**\n", s->total, s->len);
 #endif
     LST_F(s, tdr, tdr_f, NULL);
-    sem_destroy(&s->l);
     munmap(s, getpagesize());
 }
