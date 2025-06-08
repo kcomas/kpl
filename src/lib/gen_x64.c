@@ -473,7 +473,7 @@ static void jmp_2_leave(gen *g, te *restrict hlve, te *restrict lbl) {
 }
 
 void gen_x64_opt(gen *g, gen_st *st) {
-    (void) st;
+    (void) st; // TODO stack vars to available regs
     te *h = g->code->h, *c;
     while (h) {
         c = h->d[0].p;
