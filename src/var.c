@@ -1,9 +1,6 @@
 
 #include "var.h"
 
-#pragma GCC push_options
-#pragma GCC optimize ("O0")
-
 var_sg *var_sg_i(al *const a, size_t size) {
     var_sg *sg = ala(a, sizeof(var_sg) + size * sizeof(char));
     sg->size = size;
@@ -69,12 +66,12 @@ ssize_t var_rcd(var v, type t) {
         default:
             break;
     }
-    exit(KPLE); // runtime error should be could during jit
+    exit(KPLE); // runtime error should be caught during jit
     return 0;
 }
 
-bool var_zoo_u6(uint64_t v) { return v != 0; }
-bool var_zoo_i6(int64_t v) { return v != 0; }
+bool OO0 var_zoo_u6(uint64_t v) { return v != 0; }
+bool OO0 var_zoo_i6(int64_t v) { return v != 0; }
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
 
@@ -126,7 +123,7 @@ var_sg *var_u6_sg(al *const a, uint64_t u6) { INT_TO_SG("%lu", u6); }
 
 var_sg *var_i6_sg(al *const a, uint64_t i6) { INT_TO_SG("%ld", i6); }
 
-bool var_not(bool v) { return !v; }
+bool OO0 var_not(bool v) { return !v; }
 
 var_te_vr *var_te_vr_i(al *const a, size_t size, jit_fn *gc) {
     var_te_vr *vtv = ala(a, sizeof(var_te_vr) + size * sizeof(var));
@@ -156,5 +153,3 @@ var var_te_vr_gidx(var_te_vr *const vtv, size_t idx) {
 void var_te_vr_f( var_te_vr *vtv) {
     alf(vtv);
 }
-
-#pragma GCC pop_options
