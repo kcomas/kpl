@@ -1,6 +1,8 @@
 
 #include "ast.h"
 
+extern inline void ast_st_i(ast_st *const at, char *const str);
+
 static tkn *inc_tkn(ast_st *const at, bool inc) {
     return inc ? &at->next : &at->peek;
 }
@@ -25,21 +27,25 @@ static const tkn_flg_type tft[] = {
 
 static const size_t tft_len = AL(tft);
 
-ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs) {
+static bool flg_mtch(tkn_type type, uint8_t flgs) {
+    for (size_t i = 0; i < tft_len; i++) {
+        if ((tft[i].flg & flgs) && type == tft[i].type) {
+            return true;
+        }
+    }
+    return false;
+}
+
+ast_stat _ast_tkn_get(ast_st *const as, bool inc, uint8_t ign_flgs) {
     bool l = true;
     while (l) {
         l = false;
-        at->tstat = _tkn_get(&at->ts, inc_tkn(at, inc), at->str, inc);
-        if (at->tstat != TKN_STAT(OK)) break;
-        for (size_t i = 0; i < tft_len; i++) {
-            if ((tft[i].flg & ign_flgs) && inc_tkn(at, inc)->type == tft[i].type) {
-                l = true;
-                break;
-            }
-        }
+        as->tstat = _tkn_get(&as->ts, inc_tkn(as, inc), as->str, inc);
+        if (as->tstat != TKN_STAT(OK)) break;
+        if (flg_mtch(inc_tkn(as, inc)->type, ign_flgs)) l = true;
     }
-    if (at->tstat == TKN_STAT(OK)) return AST_STAT(OK);
-    else if (at->tstat == TKN_STAT(END)) return AST_STAT(END);
+    if (as->tstat == TKN_STAT(OK)) return AST_STAT(OK);
+    else if (as->tstat == TKN_STAT(END)) return AST_STAT(END);
     return AST_STAT(TKN_ERR);
 }
 
@@ -95,7 +101,34 @@ extern inline ret_node *ret_node_i(ast *const a);
 
 extern inline void ret_node_f(ret_node *r);
 
-extern inline var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
+#ifndef MAX_VAR_LEN
+    #define MAX_VAR_LEN 20
+#endif
+
+var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
+    static char vstr[MAX_VAR_LEN];
+    memset(vstr, '\0', MAX_VAR_LEN);
+    memcpy(vstr, str + t->pos, t->len);
+    // check if this var node exists
+    fn_node *scope = fns;
+    tbl_itm *ti;
+    while (scope) {
+        if (tbl_op(&scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
+        scope = scope->par;
+    }
+    if (!scope) {
+        var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
+        vn->id = fns->idc++;
+        vn->fns = fns;
+        memcpy(vn->str, str + t->pos, t->len);
+        if (tbl_op(&fns->tl, vstr, vn, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
+            var_node_f(vn);
+            return NULL;
+        }
+        return vn;
+    }
+    return NULL;
+}
 
 extern inline void var_node_f(var_node *vn);
 
@@ -121,4 +154,29 @@ void ast_f(ast *a) {
     free(a);
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *cl, uint8_t stp_flgs);
+ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
+    ast_stat astat;
+    if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
+    if (flg_mtch(as->next.type, stp_flgs)) return AST_STAT(OK);
+    var_node *var;
+    switch (as->next.type) {
+        case TKN_TYPE(VAR):
+            if (!(var = var_node_i(fns, &as->next, as->str))) return AST_STAT(VAR_I_ERR);
+            break;
+        default:
+            return AST_STAT(TKN_NF);
+    }
+    return AST_STAT(OK);
+}
+
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const cl, uint8_t stp_flgs) {
+    ast *a = NULL;
+    ast_stat astat;
+    while ((astat = ast_parse_stmt(as, fns, &a, stp_flgs)) == AST_STAT(OK)) {
+        if (a) {
+            lst_node_a(cl, a);
+            a = NULL;
+        }
+    }
+    return astat;
+}

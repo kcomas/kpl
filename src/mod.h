@@ -15,7 +15,7 @@ typedef struct {
         struct stat sb;
         char *path, *str;
     } src;
-    fn_node *root;
+    fn_node *fns; // root
 } mod;
 
 inline mod *mod_i(void) {
