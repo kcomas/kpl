@@ -3,6 +3,16 @@
 
 const alfr ast_am = { .a = malloc, .f = free };
 
+ast *bast = NULL;
+
+static __attribute__((constructor)) void ast_con(void) {
+    bast = ast_b(ast_i(&ast_am, &ast_am, &ast_am, &ast_am, ast_err_p, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
+}
+
+static __attribute__((destructor)) void ast_des(void) {
+    ast_f(bast);
+}
+
 ast_stat pig(te *pn, size_t *pid) {
     if (!pn || pn->l < 2) return AST_STAT(INV);
     *pid = pn->d[1].u6;
@@ -25,7 +35,7 @@ tbl *mktbl(size_t size) {
     return tbl_i(&ast_am, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
-void bast(_tests *_t, ast *a, const char *pgm, te **an) {
+void astb(_tests *_t, ast *a, const char *pgm, te **an) {
     E();
     printf("%s\n", pgm);
     err *e = NULL;

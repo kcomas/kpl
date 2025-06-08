@@ -61,7 +61,7 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
     ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
-static void ast_err_p(void *d) {
+void ast_err_p(void *d) {
    node_p(d, 0);
 }
 

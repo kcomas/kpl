@@ -120,14 +120,14 @@ $(CHK): $(CHK_OBJS) $(TEST)/chk.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.
 OPT = opt$(TNAME)
 OPT_OBJS = $(SRC)/opt.o $(CHK_OBJS)
 OBJS += $(OPT_OBJS)
-$(OPT): $(OPT_OBJS) $(TEST)/opt.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+$(OPT): $(OPT_OBJS) $(TEST)/opt.o $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
 ATG = atg$(TNAME)
 ATG_OBJS = $(LSRC)/atg.o $(OPT_OBJS) $(GEN_OBJS)
 ATGX64_OBJS = $(SRC)/atg_x64.o $(GENX64_OBJS)
 OBJS += $(ATG_OBJS) $(ATGX64_OBJS)
-$(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS))
+$(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS))
 > $(CCOBJ)
 
 OBJS := $(sort $(OBJS))

@@ -1,13 +1,24 @@
 
 #include "fld_t.h"
 
-void fast(_tests *_t, ast *a, te **an, fld_build_fn fn, bool rr) {
+fld *bfld = NULL;
+
+static __attribute__((constructor)) void chk_con(void) {
+    bfld = fld_b(fld_i(&ast_am, &ast_am, &ast_am, ati, ali, NULL, mktbl(AST_CLS(_))));
+}
+
+static __attribute__((destructor)) void chk_des(void) {
+    fld_f(bfld);
+}
+
+void fast(_tests *_t, ast *a, te **an, const fld *bf, bool rr) {
     E();
-    fld *f = fn(fld_i(&ast_am, &ast_am, ati, ali, a, mktbl(AST_CLS(_))));
-    te *e = NULL;
+    fld *f = fld_i_fld(bf, a);
+    err *e = NULL;
     fld_stat stat = fld_n(f, an, &e, rr);
     if (e) {
-        ast_p(e, 0);
+        err_p(e);
+        err_f(e);
         printf("\n rr: %d\n", rr);
     }
     A(stat == FLD_STAT(OK), "fld_n");

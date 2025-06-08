@@ -4,6 +4,8 @@
 
 extern const alfr ast_am;
 
+extern ast *bast;
+
 ast_stat pig(te *pn, size_t *pid);
 
 tbl *ati(void);
@@ -12,7 +14,7 @@ lst *ali(void);
 
 tbl *mktbl(size_t size);
 
-void bast(_tests *_t, ast *a, const char *pgm, te **an);
+void astb(_tests *_t, ast *a, const char *pgm, te **an);
 
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 

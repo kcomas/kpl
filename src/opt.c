@@ -1,13 +1,13 @@
 
 #include "opt.h"
 
-static fld_stat entry_o(fld *f, te **restrict an, te **restrict e) {
+static fld_stat entry_o(fld *f, te **an, err **e) {
     (void) f;
     te *lte = (*an)->d[3].p;
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
-    if (!flgs) return fld_err(FLD_STAT(INV), *an, e);
+    if (!flgs) return fld_err(f, *an, e, "opt var flgs inv");
     if (flgs & LTE_FLG(A)) return FLD_STAT(OK);
-    if ((flgs & LTE_FLG(L) || flgs & LTE_FLG(T) || flgs & LTE_FLG(F)) && lte->r < 3) return fld_err(FLD_STAT(INV), *an, e); // unused
+    if ((flgs & LTE_FLG(L) || flgs & LTE_FLG(T) || flgs & LTE_FLG(F)) && lte->r < 3) return fld_err(f, *an, e, "opt unused var");
     return FLD_STAT(OK);
 }
 
@@ -15,9 +15,9 @@ static bool entry_t(const te *an) {
     return an->d[2].u4 == AST_CLS(E);
 }
 
-static fld_stat lst_o(fld *f, te **restrict an, te **restrict e) {
+static fld_stat lst_o(fld *f, te **an, err **e) {
     (void) f;
-    return fld_err(FLD_STAT(INV), *an, e); // unused
+    return fld_err(f, *an, e, "opt inv lst");
 }
 
 static bool lst_t(const te *an) {
@@ -25,7 +25,7 @@ static bool lst_t(const te *an) {
     return an->d[2].u4 == AST_CLS(L) && (!p || (p->d[2].u4 != AST_CLS(A) && p->d[2].u4 != AST_CLS(O)));
 }
 
-static fld_stat aply_lst_o(fld *f, te **restrict an, te **restrict e) {
+static fld_stat aply_lst_o(fld *f, te **an, err **e) {
     (void) f;
     (void) e;
     te *lp, *ln, *h, *lte;

@@ -1,16 +1,32 @@
 
 #include "chk.h"
 
-chk *chk_i(const alfr *af, const alfr *ta, chk_tbl_i cti, ast *a) {
+chk *chk_i(const alfr *af, const alfr *ta, const alfr *ea, err_d_p ep, chk_tbl_i cti, ast *a) {
     chk *c = af->a(sizeof(chk));
     c->r = 1;
     c->af = af;
     c->ta = ta;
+    c->ea = ea;
+    c->ep = ep;
     c->cti = cti;
-    c->a = ast_c(a);
+    c->a = a ? ast_c(a) : a;
     c->bt = cti();
     c->at = cti();
     return c;
+}
+
+chk *chk_i_chk(const chk *c, ast *a) {
+    chk *cc= c->af->a(sizeof(chk));
+    cc->r = 1;
+    cc->af = c->af;
+    cc->ta= c->ta;
+    cc->ea = c->ea;
+    cc->ep = c->ep;
+    cc->cti = c->cti;
+    cc->a = a ? ast_c(a) : a;
+    cc->bt = tbl_c(c->bt);
+    cc->at = tbl_c(c->at);
+    return cc;
 }
 
 static void chk_entry_f(void *p) {
@@ -67,20 +83,20 @@ chk_stat chk_a(chk *c, tbl *t, chk_fn cf, uint16_t cls, uint16_t type, ...) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_foe(bool foe, te *an, te **e) {
-    if (foe) *e = te_c(an);
+static chk_stat chk_foe(chk *c, bool foe, te *an, err **e, const char *m) {
+    if (foe) *e = err_i(c->ea, c->ep, (void*) te_f, te_c(an), m);
     return foe ? CHK_STAT(INV) : CHK_STAT(OK);
 }
 
-static chk_stat run(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
+static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
     un hsh = ast_hsh(an);
     te *kv;
-    if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
+    if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n NF");
     while (n > 0) {
         hsh = U6(0);
         n--;
         t = kv->d[1].p;
-        if (!t) return chk_foe(foe, an, e);
+        if (!t) return chk_foe(c, foe, an, e, "chk_n inv tbl");
         if (n == 2 && an->d[2].u4 == AST_CLS(O)) {
             hsh = u4_s_o(hsh, AST_HSH_C, an->d[ncmp++].u4);
             hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
@@ -88,13 +104,13 @@ static chk_stat run(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, boo
             hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
             hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
         } else hsh = ast_hsh(an->d[ncmp++].p);
-        if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
+        if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n NF");
     }
-    if (!kv->d[1].p) return chk_foe(foe, an, e);
+    if (!kv->d[1].p) return chk_foe(c, foe, an, e, "chk_n inv fn");
     return ((chk_fn*) kv->d[1].p)(c, an, e);
 }
 
-static chk_stat chk_lst_n(chk *c, lst *l, te **e) {
+static chk_stat chk_lst_n(chk *c, lst *l, err **e) {
     chk_stat stat = CHK_STAT(OK);
     if (!l) return stat;
     te *h = l->h;
@@ -105,7 +121,7 @@ static chk_stat chk_lst_n(chk *c, lst *l, te **e) {
     return stat;
 }
 
-chk_stat chk_n(chk *c, te *an, te **e) {
+chk_stat chk_n(chk *c, te *an, err **e) {
     chk_stat stat = CHK_STAT(OK);
     if (!an) return stat;
     const uint8_t n = chk_cls_conts[an->d[2].u4], ncmp = AST_MIN_LEN;

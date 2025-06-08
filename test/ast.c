@@ -1,19 +1,9 @@
 
 #include "ast_t.h"
 
-static ast *ba = NULL;
-
-static __attribute__((constructor)) void ast_con(void) {
-    ba = ast_b(ast_i(&ast_am, &ast_am, &ast_am, &ast_am, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
-}
-
-static __attribute__((destructor)) void ast_des(void) {
-    ast_f(ba);
-}
-
-#define V(PGM, AST) ast *a = ast_i_ast(ba); \
+#define V(PGM, AST) ast *a = ast_i_ast(bast); \
     te *an = NULL; \
-    bast(_t, a, PGM, &an); \
+    astb(_t, a, PGM, &an); \
     ast_verify(_t, a, an, AST)
 
 T(aplyopadd) {

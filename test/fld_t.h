@@ -4,9 +4,11 @@
 #include "../src/fld.h"
 #include "ast_t.h"
 
+extern fld *bfld;
+
 typedef fld *fld_build_fn(fld *f);
 
-void fast(_tests *_t, ast *a, te **an, fld_build_fn fn, bool rr);
+void fast(_tests *_t, ast *a, te **an, const fld *bf, bool rr);
 
 tbl *fld_lst_tbl_i(ast *a, size_t n, ...);
 

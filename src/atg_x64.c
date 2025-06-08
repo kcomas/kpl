@@ -80,7 +80,7 @@ x64_type atg_x64_g_t(const te *type) {
     return X64_TYPE(N);
 }
 
-atg_stat atg_err(atg_stat stat, te *an, te **e) {
+static atg_stat atg_err(atg_stat stat, te *an, te **e) {
     *e = te_c(an);
     return stat;
 }

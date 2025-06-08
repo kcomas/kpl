@@ -55,6 +55,8 @@ uint32_t ast_lst_tbl_e_g_i(te *ent);
 
 void ast_lst_tbl_e_s_i(te *ent, uint32_t id);
 
+void ast_err_p(void *d);
+
 ast *ast_b(ast *a);
 
 void ast_p(const te *an, size_t idnt);
