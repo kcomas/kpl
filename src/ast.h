@@ -214,6 +214,7 @@ typedef enum {
     OP_TYPE(ASS), // :
     OP_TYPE(CST), // $
     OP_TYPE(DEL), // \d
+    OP_TYPE(LD), // \l
     OP_TYPE(ADD),
     OP_TYPE(SUB),
     OP_TYPE(MUL),
