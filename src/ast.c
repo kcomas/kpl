@@ -102,13 +102,13 @@ type_node *type_node_c(const type_node *const tn) {
     return nn;
 }
 
-extern inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt);
+extern inline void type_node_p(const ast_st *const as, const type_node *const tn, size_t idnt);
 
 extern inline void type_node_f(type_node *tn);
 
 extern inline val_node *val_node_i(type t);
 
-extern inline void val_node_p(val_node *v);
+extern inline void val_node_p(const ast_st *const as, const val_node *const v, size_t idnt);
 
 extern inline void val_node_f(val_node *v);
 
@@ -129,7 +129,7 @@ static const char *const op_type_str[] = {
 void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     const char *type = "INVALID";
     if (op->ot >= OP_TYPE(ASS) && op->ot <= OP_TYPE(RW)) type = op_type_str[op->ot];
-    printf("%s\n", type);
+    printf("%s", type);
     type_node_p(as, op->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
@@ -179,7 +179,6 @@ void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     putchar('\n');
     PCX(' ', idnt);
     printf("%p", fn->par);
-    putchar('\n');
     type_node_p(as, fn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
@@ -275,7 +274,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     idnt += IDNT_ADD;
     switch (a->at) {
         AST_P_CASE(TYPE, tn, type_node_p);
-        case AST_TYPE(VAL): return val_node_p(a->n.val);
+        AST_P_CASE(VAL, val, val_node_p);
         AST_P_CASE(OP, op, op_node_p);
         AST_P_CASE(LST, lst, lst_node_p);
         AST_P_CASE(IF, in, if_node_p);
