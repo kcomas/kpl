@@ -28,9 +28,9 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(S)] = 1,
     [AST_CLS(V)] = 1,
     [AST_CLS(O)] = 3,
-    [AST_CLS(Z)] = 1, // but starts at 5
+    [AST_CLS(Z)] = 1,
     [AST_CLS(A)] = 1,
-    [AST_CLS(L)] = 1,
+    [AST_CLS(L)] = 0,
     [AST_CLS(C)] = 0
 };
 
@@ -109,6 +109,10 @@ static chk_stat chk_r(chk *c, tbl *t, te *an, te **e, uint8_t n, uint8_t ncmp, b
             hsh = U6(0);
             hsh = u4_s_o(hsh, CHK_HSH_C, an->d[ncmp++].u4);
             hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
+        } else if (n == 0 && (an->d[2].u4 == AST_CLS(S) || an->d[4].u4 == AST_CLS(V))) {
+            hsh = U6(0);
+            hsh = u4_s_o(hsh, CHK_HSH_C, AST_CLS(_));
+            hsh = u4_s_o(hsh, CHK_HSH_T, TYPE(_A));
         } else hsh = chk_hsh(an->d[ncmp++].p);
         if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(foe, an, e);
     }
@@ -139,7 +143,9 @@ chk_stat chk_n(chk *c, te *an, te **e) {
         case AST_CLS(T):
         case AST_CLS(E):
         case AST_CLS(S):
+            break;
         case AST_CLS(V):
+            // TODO
             break;
         case AST_CLS(O):
             if ((stat = chk_n(c, an->d[5].p, e)) != CHK_STAT(OK) || (stat = chk_n(c, an->d[6].p, e)) != CHK_STAT(OK)) return stat;
