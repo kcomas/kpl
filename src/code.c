@@ -14,6 +14,7 @@ void code_f(code *c) {
         CODE_F_T(FN, code_f, c);
         CODE_F_T(IF, code_f, c);
         CODE_F_T(COND, op_if_f, of);
+        CODE_F_T(LOP, op_if_f, of);
         CODE_F_T(SG, free, sg);
         CODE_F_T(STR, free, sg);
     }
@@ -364,9 +365,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 case TYPE(SG):
                     if (tr->t == TYPE(TE) || tr->t == TYPE(STR) || tr->t == TYPE(SG)) {
                         OP_A(c, CNCTSG, OP, { .t = tr->t }, a);
-                        if (tr->t == TYPE(TE)) {
-                            // TODO
-                        } else OP_GC(c, tr, opn->r);
+                        OP_GC(c, tr, opn->r);
                         OP_GC(c, tl, opn->l);
                     } else return CODE_STAT(INV_SG_CNCT);
                     break;
