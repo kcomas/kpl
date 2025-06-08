@@ -3,11 +3,15 @@
 #include "ast_t.h"
 
 static void fast(_tests *_t, te **an) {
+    E;
     fld_stat stat;
     fld *f = fld_b(fld_i(&ast_am, &ast_am, ati, ali, mktbl(AST_CLS(_))));
     te *e = NULL;
     stat = fld_n(f, an, &e);
-    if (e) ast_p(e, 0);
+    if (e) {
+        ast_p(e, 0);
+        putchar('\n');
+    }
     A(stat == FLD_STAT(OK), "fld_n");
     fld_f(f);
 }
@@ -20,4 +24,8 @@ static void fast(_tests *_t, te **an) {
 
 T(fld_aplyopadd) {
     V(aplyopadd, RN(ON(P(NULL), ADD, SN(I6, I6(1)), SN(I6, I6(2)))));
+}
+
+T(fld_typetype) {
+    V(typetype, NULL);
 }
