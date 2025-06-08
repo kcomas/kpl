@@ -1,6 +1,9 @@
 
 // ackermann
 
+n:U6$3
+m:U6$10
+
 ack:FN(U6;U6;U6)${(m;n)
     #? (m = 0) {
         #; n + 1
@@ -9,4 +12,4 @@ ack:FN(U6;U6;U6)${(m;n)
     }
     S(m - 1;S(m;n - 1))}
 
-$(FD;1) << $(SG;ack(3;10)), "\n"
+$(FD;1) << " ", ["n:";SG$n;"m:";SG$m;"ack:";SG$ack(n;m);"\n"]

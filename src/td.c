@@ -5,7 +5,7 @@ extern inline tdr *tdr_i(void);
 
 extern inline void tdr_f(tdr *r, void *fn);
 
-extern inline tds *tds_i();
+extern inline tds *tds_i(void);
 
 extern inline void tds_a(tds *volatile s, tdr *const r);
 
