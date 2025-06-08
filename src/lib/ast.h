@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include <stdarg.h>
 #include "mc.h"
 #include "tbl.h"
+#include "tkn.h"
 
 #define AST_STAT(N) AST_STAT_##N
 
@@ -56,8 +56,8 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
 ast_stat ast_n(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e);
 
-ast_stat ast_t_a(ast *a, size_t tid, size_t id);
+ast_stat ast_t_a(ast *a, uint16_t tid, size_t id);
 
-ast_stat ast_t_n(ast *a, size_t tid, size_t *id);
+ast_stat ast_t_n(ast *a, te *t, size_t *id);
 
 void ast_f(ast *a);

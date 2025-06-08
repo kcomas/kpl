@@ -80,7 +80,7 @@ static ast_stat ast_type(ast *a, te *restrict pan, te *restrict pn, void **vn, t
     ast_stat stat;
     te **an = (te**) vn;
     size_t tid;
-    if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &tid)) != AST_STAT(OK)) return err(stat, pn, e);
+    if ((stat = ast_t_n(a, pn->d[2].p, &tid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(T), P(type_i(a->ta, NULL, tid)));
     return AST_STAT(OK);
 }
@@ -97,7 +97,7 @@ static ast_stat ast_op(ast *a, te *restrict pan, te *restrict pn, void **vn, te 
     ast_stat stat;
     te **an = (te**) vn;
     size_t oid;
-    if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &oid)) != AST_STAT(OK)) return err(stat, pn, e);
+    if ((stat = ast_t_n(a, pn->d[2].p, &oid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(O), P(NULL), U6(oid), NULL, NULL);
     if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
     if (!pn->d[4].p) return AST_STAT(OK);
@@ -154,7 +154,7 @@ static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, te
     ast_stat stat;
     te **an = (te**) vn;
     size_t cid;
-    if ((stat = ast_t_n(a, ((te*) pn->d[2].p)->d[0].u6, &cid)) != AST_STAT(OK)) return err(stat, pn, e);
+    if ((stat = ast_t_n(a, pn->d[2].p, &cid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(C), U6(cid), NULL);
     if (!pn->d[3].p) return AST_STAT(OK);
     return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
