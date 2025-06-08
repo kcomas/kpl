@@ -6,7 +6,7 @@ static bool reg_is_upper(reg r) {
 }
 
 static uint8_t modrm(uint8_t mod, reg d, reg s) {
-    return mod + 8 * s + d;
+    return mod + 8 * (s % 8) + (d % 8);
 }
 
 jit_stat jit_a(size_t *p, uint8_t *m, uint8_t b) {

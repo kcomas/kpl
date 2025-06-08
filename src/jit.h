@@ -54,10 +54,9 @@ typedef enum {
 #define REX(N) REX_##N
 
 typedef enum {
-    REX(P) = 0x40,
     REX(B) = 0x41,
-    REX(W) = 0x48,
-    REX(R) = 0x49
+    REX(R) = 0x44,
+    REX(W) = 0x48
 } rex;
 
 #define JIT_STAT(N) JIT_STAT_##N
