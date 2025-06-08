@@ -60,8 +60,7 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
         uint32_t ra = 0, xa = 0;
         while (h) {
             lte = h->d[0].p;
-            if (!ast_lst_tbl_e_g_f(lte)) {
-                if (!lte->d[2].p) return chk_err(c, an, e, "chk fn infer arg type not set");
+            if (!ast_lst_tbl_e_g_f(lte) && lte->d[2].p) {
                 ast_lst_tbl_e_s_f(lte, LTE_FLG(A));
                 chk_lte_s_i(lte, &ra, &xa);
                 type_tbl_a(*fat, c->a->ta, mc_c(lte->d[0].p), ast_lst_tbl_e_g_i(lte), te_c(lte->d[2].p));

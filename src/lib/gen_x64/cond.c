@@ -43,6 +43,7 @@ ADL(gt, s, JG);
 ADL(gte, s, JGE);
 ADL(lt, s, JL);
 ADL(lte, u, JBE);
+ADL(lte, s, JLE);
 
 #define VDL(N, U, J) static gen_stat N##_v##U##d##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     int32_t v0; \
@@ -122,4 +123,5 @@ void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(LT), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), lt_vxdxl_fn);
     GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lte_vsdsl_fn);
     GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), lte_audul_fn);
+    GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lte_asdsl_fn);
 }
