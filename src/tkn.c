@@ -218,7 +218,7 @@ static const char *const tkn_type_str[] = {
     "AND",
     "OR",
     "CNCT",
-    "RW",
+    "RW"
 };
 
  // line, char, type, str

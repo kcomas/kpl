@@ -12,7 +12,9 @@ typedef enum {
     AST_STAT(TKN_ERR),
     AST_STAT(TKN_NF), // no case for tkn
     AST_STAT(VAR_I_ERR), // failed to add var node
-    AST_STAT(VAL_A_NN), // previous node not null
+    AST_STAT(VAR_A_NN), // previous node not null for var
+    AST_STAT(VAL_A_NN), // previous node not null for val
+    AST_STAT(TYPE_A_NN), // previous node not null for type
     AST_STAT(END)
 } ast_stat;
 
@@ -23,9 +25,9 @@ typedef struct {
     char *str;
 } ast_st;
 
-inline void ast_st_i(ast_st *const at, char *const str) {
-    tkn_st_i(&at->ts);
-    at->str = str;
+inline void ast_st_i(ast_st *const as, char *const str) {
+    tkn_st_i(&as->ts);
+    as->str = str;
 }
 
 #define TKN_FLG(N) TKN_IGN_##N
@@ -45,19 +47,19 @@ typedef enum {
 
 #define TFWC (TKN_FLG(WS) | TKN_FLG(CMT))
 
-ast_stat _ast_tkn_get(ast_st *const at, bool inc, uint8_t ign_flgs);
+ast_stat _ast_tkn_get(ast_st *const as, bool inc, uint8_t ign_flgs);
 
-inline ast_stat ast_tkn_next(ast_st *const at, uint8_t ign_flgs) {
-    return _ast_tkn_get(at, true, ign_flgs);
+inline ast_stat ast_tkn_next(ast_st *const as, uint8_t ign_flgs) {
+    return _ast_tkn_get(as, true, ign_flgs);
 }
 
-inline ast_stat ast_tkn_peek(ast_st *const at, uint8_t ign_flgs) {
-    return _ast_tkn_get(at, false, ign_flgs);
+inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs) {
+    return _ast_tkn_get(as, false, ign_flgs);
 }
 
 typedef struct _ast ast;
 
-void ast_p(ast *a, size_t idnt);
+void ast_p(const ast_st *const as, const ast *const a, size_t idnt);
 
 void ast_f(ast *a);
 
@@ -93,6 +95,8 @@ typedef enum {
     TYPE(FD)
 } type;
 
+const char *type_get_str(type t);
+
 typedef struct {
     type t;
     ast *a;
@@ -105,9 +109,9 @@ inline type_node *type_node_i(type t, ast *const a) {
     return tn;
 }
 
-inline void type_node_p(const type_node *const tn, size_t idnt) {
-    PCX(' ', idnt);
+inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
     if (tn) {
+        printf("%s", type_get_str(tn->t));
         // TODO
     } else putchar('?');
 }
@@ -125,6 +129,10 @@ inline val_node *val_node_i(type t) {
     val_node *v = calloc(1, sizeof(val_node));
     v->t = t;
     return v;
+}
+
+inline void val_node_p(val_node *v) {
+    printf("%s", type_get_str(v->t));
 }
 
 inline void val_node_f(val_node *v) {
@@ -150,6 +158,8 @@ inline op_node *op_node_i(op_type ot) {
     return on;
 }
 
+void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt);
+
 inline void op_node_f(op_node *on) {
     FNNF(on->ret, type_node_f);
     FNNF(on->l, ast_f);
@@ -168,9 +178,9 @@ inline lst_itm *lst_itm_i(ast *const a) {
     return itm;
 }
 
-inline void lst_itm_p(const lst_itm *const li, void *fn, size_t idnt) {
+inline void lst_itm_p(const ast_st *const as, const lst_itm *const li, void *fn, size_t idnt) {
     (void) fn;
-    ast_p(li->a, idnt);
+    ast_p(as, li->a, idnt);
 }
 
 inline void lst_itm_f(lst_itm *li, void *fn) {
@@ -178,7 +188,6 @@ inline void lst_itm_f(lst_itm *li, void *fn) {
     FNNF(li->a, ast_f);
     free(li);
 }
-
 typedef struct _lst_node {
     size_t len;
     type typ;
@@ -193,6 +202,10 @@ inline lst_node *lst_node_i(type typ) {
 
 inline void lst_node_a(lst_node *const lst, ast *const a) {
     LST_A(lst, lst_itm_i(a));
+}
+
+inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt) {
+    LST_P(lst, lst_itm, lst_itm_p, as, NULL, idnt, '\n');
 }
 
 inline void lst_node_f(lst_node *lst) {
@@ -253,13 +266,22 @@ inline fn_node *fn_node_i(fn_node *const par) {
     return fn;
 }
 
-inline void fn_node_p(const fn_node *const fn, size_t idnt) {
+inline void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     PCX(' ', idnt);
     printf("%d,", fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
-    printf("\n%p", fn->par);
     putchar('\n');
-    type_node_p(fn->ret, idnt);
+    PCX(' ', idnt);
+    printf("%p", fn->par);
+    putchar('\n');
+    PCX(' ', idnt);
+    type_node_p(as, fn->ret, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    lst_node_p(as, fn->args, idnt);
+    putchar('\n');
+    PCX(' ', idnt);
+    lst_node_p(as, fn->body, idnt);
 }
 
 void fn_node_tbl_data_f(void *data);
@@ -314,6 +336,12 @@ typedef struct {
 } var_node; // tbl itm data TODO struct padding
 
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
+
+inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
+    printf("%d,%p,%s\n", var->id, var->fns, var->str);
+    PCX(' ', idnt);
+    type_node_p(as, var->tn, idnt);
+}
 
 inline void var_node_f(var_node *vn) {
     FNNF(vn->tn, type_node_f);
