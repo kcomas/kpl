@@ -249,8 +249,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         OP_A(c, CSTSG, OP, { .t = tr->t }, a);
                         return CODE_STAT(OK);
                     }
-                    // TODO
-                    break;
+                    return CODE_STAT(INV_CST_SG);
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
                             i6 = tkn_to_int64_t(&opn->r->t, cs->str);
