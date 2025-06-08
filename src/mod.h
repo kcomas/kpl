@@ -41,9 +41,6 @@ void mod_sg_i6(mod *const m, uint8_t i, int64_t i6);
 
 int64_t mod_lg_i6(mod *const m, size_t i);
 
-// free globals
-void mod_fg(mod *const m);
-
 // print src
 inline void mod_psrc(const mod *const m) {
     if (m->src.path != NULL) printf("%s\n", m->src.path);
@@ -53,6 +50,7 @@ inline void mod_psrc(const mod *const m) {
 inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
-    mod_fg(m);
+    // TODO use fn scope symtbl to free globals
+    free(m->g);
     free(m);
 }
