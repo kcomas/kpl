@@ -381,8 +381,9 @@ static jit_stat jit_gc_hh(mod *const m, const op *const o, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
-int thread_fn(void *volatile arg) {
-    var_td *volatile td = (var_td*) arg;
+static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
+    sem_wait(m->s->mtdp);
+    var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s, true)), te, c);
     void *fp;
     uint8_t buf[sizeof(void*)];
     size_t i = 0;
@@ -421,24 +422,20 @@ int thread_fn(void *volatile arg) {
     SET_REG(td->m->r, tdr*, false, 6);
     SET_FP(tds_a);
     SET_REG_CALL(false, 0);
-    SET_REG(td->m, mod*, false, 7);
-    SET_FP(mod_done);
+    SET_REG(td->m->s->mtdp, sem_t*, false, 7);
+    SET_FP(sem_post);
     SET_REG_CALL(false, 0);
+    SET_REG(td->m->donep, sem_t*, false, 7);
+    SET_FP(sem_post);
+    SET_REG_CALL(false, 0);
+    jit_b(j, 3, 0x48, 0x31, 0xC0); // xor rax rax
     jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
-    jf(NULL);
-    return 0;
-}
-
-static var_td *jit_thrd(mod *const m, var_tsv *const te, code *const c) {
-    var_td *volatile td = var_td_i(mod_i(m->s, tds_g(m->s, true)), te, c);
-    td->m->id = clone(&thread_fn, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, td);
-    nanosleep((const struct timespec[]){{0, 1e6L}}, NULL); // TODO find better way to start threads
+    td->m->id = clone(jf, td->m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
     return td;
 }
 
 static var join_thrd(var_td *volatile td) {
-    //waitpid(td->m->id, NULL, WEXITED);
-    sem_wait(&td->m->done);
+    sem_wait(td->m->donep);
     return td->te->v[td->te->len - 1];
 }
 
@@ -484,8 +481,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
             case OP_C(DONE):
                 op_set_jidx(j, o);
                 if (done) {
-                    SET_REG(m, mod*, false, 7);
-                    SET_FP(mod_done);
+                    SET_REG(m->donep, sem_t*, false, 7);
+                    SET_FP(sem_post);
                     SET_REG_CALL(false, 0);
                 }
                 op_set_jlen(j, o);

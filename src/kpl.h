@@ -107,15 +107,19 @@ typedef struct _tdr {
 } tdr; // thread resource
 
 typedef struct _tds {
-    sem_t l; // lock
+    sem_t l, mtd; // lock
+    sem_t *mtdp;
     size_t size, len, total; // len is number in lst, total is number used
     tdr *h, *t;
 } tds; // threads
+
+#define KPL_SIGCHLD signal(SIGCHLD, SIG_IGN);
 
 typedef struct {
     uint8_t ng; // number of globals
     pid_t id;
     sem_t done;
+    sem_t *donep;
     struct {
         struct statx sxb;
         char *path, *str;
@@ -127,8 +131,6 @@ typedef struct {
     var *g; // globals
     type_node *tn;
 } mod;
-
-void mod_done(mod *const m);
 
 void mod_f(mod *m);
 

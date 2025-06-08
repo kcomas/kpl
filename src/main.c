@@ -2,12 +2,6 @@
 #include "../src/mod.h"
 #include "../src/jit.h"
 
-int mt(void *volatile args) {
-    mod *volatile m = (mod*) args;
-    m->c->jf(NULL);
-    return 0;
-}
-
 int run(mod *volatile m, bool repl) {
     ast_stat astat;
     ast_st as;
@@ -53,8 +47,7 @@ int run(mod *volatile m, bool repl) {
         return jstat;
     }
     fn_stk_f(stk);
-    m->id = clone(&mt, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, m);
-    //waitpid(m->id, NULL, WEXITED);
+    m->id = clone(m->c->jf, m->r->stkp, CLONE_VM | CLONE_FILES | CLONE_FS | CLONE_IO | CLONE_SIGHAND | SIGCHLD, NULL);
     sem_wait(&m->done);
     return 0;
 }
@@ -101,6 +94,7 @@ int repl(void) {
 }
 
 int main(int argc, char *argv[]) {
+    KPL_SIGCHLD
     if (argc != 2) return repl();
     tds *volatile s = tds_i();
     tdr *volatile r = tds_g(s, true);

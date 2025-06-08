@@ -31,9 +31,15 @@ inline void tdr_f(tdr *r, void *fn) {
     al_f(a);
 }
 
+#ifndef MAX_TD
+    #define MAX_TD 10
+#endif
+
 inline tds *tds_i(void) {
     tds *s = mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     sem_init(&s->l, -1, 1);
+    s->mtdp = &s->mtd;
+    sem_init(&s->mtd, -1, MAX_TD);
     s->size = algn(sizeof(tds), DEFALGN);
     return s;
 }
@@ -46,17 +52,19 @@ inline void tds_a(tds *volatile s, tdr *const r) {
 }
 
 inline tdr *tds_g(tds *volatile s, bool stk) {
-    sem_wait(&s->l);
     tdr *r = NULL;
     if (!s->h) {
+        sem_wait(&s->l);
         s->total++;
         r = tdr_i(s);
         if (stk) tdr_stk_i(r);
+        sem_post(&s->l);
     } else {
+        sem_wait(&s->l);
         LST_S(s, r);
         if ((stk) && (!r->stk)) tdr_stk_i(r);
+        sem_post(&s->l);
     }
-    sem_post(&s->l);
     return r;
 }
 
