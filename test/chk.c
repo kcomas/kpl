@@ -57,9 +57,32 @@ T(facloop) {
         ON(TS(I6), DFN, EN("f", FLG(1, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), SN(I6, I6(1))),
         ON(TS(VD), LOOP,
             LN(NULL, L(1, ON(TS(BL), GT, EN("v", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1))))),
-            LN(LT(2, "f", FLG(0, LTE_FLG(O)), TS(I6), "v", FLG(0, LTE_FLG(O)), TS(I6)), L(2,
-                ON(TS(I6), MULA, EN("f", FLG(0, LTE_FLG(O)), TS(I6)), EN("v", FLG(0, LTE_FLG(O)), TS(I6))),
-                ON(TS(I6), SUBA, EN("v", FLG(0, LTE_FLG(O)), TS(I6)), SN(I6, I6(1)))))),
+            LN(LT(2, "f", FLG(0, LTE_FLG(O) | LTE_FLG(L) | LTE_FLG(E)), TS(I6), "v", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), L(2,
+                ON(TS(I6), MULA, EN("f", FLG(0, LTE_FLG(O) | LTE_FLG(L) | LTE_FLG(E)), TS(I6)), EN("v", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6))),
+                ON(TS(I6), SUBA, EN("v", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("f", FLG(1, LTE_FLG(L) | LTE_FLG(E)), TS(I6)))
     )), NULL)));
+}
+
+T(facrec) {
+    IC(facrec);
+    te *ft = TFN(FN, TS(U6), 1, "n", TS(U6), 0);
+    tbl *lta = LT(2, "n", FLG(0, LTE_FLG(A)), TS(U6), "fac", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
+    tbl *ltb = LT(2, "n", FLG(0, LTE_FLG(A) | LTE_FLG(O)), TS(U6), "fac", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
+    te *ne = EN("n", FLG(0, LTE_FLG(O) | LTE_FLG(A)), TS(U6));
+    te *face = EN("fac", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft));
+    V(RN(AN(TS(VD), LN(LT(1, "fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, te_c(ft)),
+            LN(tbl_c(lta), L(1, ON(TS(U6), IF,
+                LN(NULL, L(1, ON(TS(U6), GT, EN("n", FLG(0, LTE_FLG(A)), TS(U6)), SN(U6, U6(1))))),
+                LN(tbl_c(ltb), L(2,
+                    ON(TS(U6), MUL, te_c(ne), AN(TS(U6), te_c(face), L(1, ON(TS(U6), SUB, te_c(ne), SN(U6, U6(1)))))),
+                    ON(TS(U6), CST, TN(U6), SN(I6, I6(1)))))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(U6), EN("fac", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, ON(TS(U6), CST, TN(U6), SN(I6, I6(5)))))))),
+    NULL)));
+    te_f(ft);
+    tbl_f(lta);
+    tbl_f(ltb);
+    te_f(ne);
+    te_f(face);
 }

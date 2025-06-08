@@ -62,9 +62,9 @@ T(facrec) {
                 LN(NULL, L(1, ON(NULL, GT, IN("n"), SN(I6, I6(1))))),
                 LN(NULL, L(2,
                     ON(NULL, MUL, IN("n"), AN(NULL, IN("fac"), L(1, ON(NULL, SUB, IN("n"), SN(I6, I6(1)))))),
-                    SN(I6, I6(1))
+                    ON(NULL, CST, TN(U6), SN(I6, I6(1)))
                 ))
         ))))),
-        CN(P1, AN(NULL, IN("fac"), L(1, SN(I6, I6(5)))))
+        CN(P1, AN(NULL, IN("fac"), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(5))))))
     )), NULL)));
 }
