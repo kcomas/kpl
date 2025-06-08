@@ -6,7 +6,7 @@ static bool reg_is_upper(reg r) {
 }
 
 static uint8_t rid(reg r) {
-    return r % 8;
+    return r & 7;
 }
 
 // if the source can be memory address regs need to be swapped
