@@ -51,11 +51,10 @@ size_t psr_a(psr *const p, size_t pid, size_t mode, te *const st, psr_each_fn *e
 }
 
 psr_stat psr_n(psr *const p, te *const nh) {
-    tkn_stat tstat;
     psr_stat pstat;
     te *m = te_i(5, p->pa, p->pf);
     for (;;) {
-        if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
+        if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         psr_mode pm = PSR_MODE(NONE);
         te *st = NULL;
         psr_each_fn *ef = NULL;
@@ -72,7 +71,7 @@ psr_stat psr_n(psr *const p, te *const nh) {
             nf = kv->d[6].p;
             pt = kv->d[7].p;
             m = te_i(5, p->pa, p->pf);
-            if ((tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
+            if ((p->tstat = tkn_n(p->tt, m)) != TKN_STAT(OK)) break;
         }
         tkn_s(p->tt, m);
         if (pm == PSR_MODE(NONE)) return PSR_STAT(INV);
@@ -92,6 +91,7 @@ psr_stat psr_n(psr *const p, te *const nh) {
                 te *ln = lnh->d[0].p ? lnh->d[0].p : lnh->d[2].p;
                 if (ln) if ((pstat = ef(p, pn, ln)) != PSR_STAT(OK)) return pstat;
                 for (size_t i = 0; i < st->l; i++) if (((te*) p->ts->d[p->ts->l - 1].p)->d[0].u6 == st->d[i].u6) goto el;
+                if (p->tstat != TKN_STAT(OK)) return PSR_STAT(INV);
                 vr_d(p->ts);
             }
             el:
@@ -107,7 +107,7 @@ psr_stat psr_n(psr *const p, te *const nh) {
         vr_d(p->ts);
     }
     te_f(m);
-    return tstat == TKN_STAT(END) ? PSR_STAT(END) : PSR_STAT(INV);
+    return p->tstat == TKN_STAT(END) ? PSR_STAT(END) : PSR_STAT(INV);
 }
 
 void psr_f(psr *p) {
