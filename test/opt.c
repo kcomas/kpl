@@ -116,3 +116,32 @@ T(fibrec) {
     te_f(en);
     te_f(efib);
 }
+
+T(ackrec) {
+    IC(TPGM(ackrec));
+    te *ft = TFN(FN, TS(U6), 2, "m", TS(U6), 0, "n", TS(U6), 1);
+    te *em = EN("m", FLG(0, LTE_FLG(A)), TS(U6));
+    te *en = EN("n", FLG(1, LTE_FLG(A)), TS(U6));
+    te *eack = EN("ack", FLG(-1, LTE_FLG(O) | LTE_FLG(F)), te_c(ft));
+    V(RN(LN(LT(1, "ack", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
+        ON(te_c(ft), DFN, EN("ack", FLG(-1, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, te_c(ft)), LN(LT(3, "m", FLG(0, LTE_FLG(A)), TS(U6), "n", FLG(1, LTE_FLG(A)), TS(U6), "ack", FLG(-1, LTE_FLG(F) | LTE_FLG(O)), te_c(ft)), L(1,
+            ON(TS(U6), IF, LN(NULL, NULL), LN(NULL, L(4,
+                ON(TS(U6), IF,
+                    LN(NULL, L(1, ON(TS(BL), EQ, te_c(em), SN(U6, U6(0))))),
+                    LN(NULL, L(1, ON(TS(U6), ADD, te_c(en), SN(U6, U6(1)))))),
+                ON(TS(U6), IF,
+                    LN(NULL, L(1, ON(TS(BL), AND, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))), ON(TS(BL), EQ, te_c(en), SN(U6, U6(0)))))),
+                    LN(NULL, L(1, AN(TS(U6), te_c(eack), L(2, ON(TS(U6), SUB, te_c(em), SN(U6, U6(1))), SN(U6, U6(1))))))),
+                ON(TS(U6), IF,
+                    LN(NULL, L(1, ON(TS(BL), AND, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))), ON(TS(BL), GT, te_c(en), SN(U6, U6(0)))))),
+                    LN(NULL, L(1, AN(TS(U6), te_c(eack), L(2, ON(TS(U6), SUB, te_c(em), SN(U6, U6(1))), AN(TS(U6), te_c(eack), L(2, te_c(em), ON(TS(U6), SUB, te_c(en), SN(U6, U6(1)))))))))),
+                ON(TS(U6), ADD, te_c(en), SN(U6, U6(1)))
+            )))
+        )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(U6), EN("ack", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2, SN(U6, U6(2)), SN(U6, U6(1)))))
+    ))));
+    te_f(ft);
+    te_f(em);
+    te_f(en);
+    te_f(eack);
+}
