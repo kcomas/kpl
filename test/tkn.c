@@ -13,6 +13,8 @@ int main(int argc, char *argv[]) {
         tkn_p(&t, m->src.str);
         putchar('\n');
     }
+    tkn_p(&t, m->src.str);
+    putchar('\n');
     mod_free(m);
     return 0;
 }

@@ -9,6 +9,7 @@ typedef enum {
     TKN_STAT(OK),
     TKN_STAT(INV_FLT), // bad float format
     TKN_STAT(INV_CHR), // no tkn for chr
+    TKN_STAT(INV_CTRL), // no # ctrl tkn
     TKN_STAT(END) // no more tkns
 } tkn_stat;
 
@@ -26,11 +27,14 @@ inline void tkn_st_init(tkn_st *const ts) {
 typedef enum {
     TKN_TYPE(NB), // \0
     TKN_TYPE(NL), // \n
+    TKN_TYPE(SEMI), // ;
+    TKN_TYPE(WS), // white space
     TKN_TYPE(CMT), // comment
     TKN_TYPE(VAR),
     TKN_TYPE(INT),
     TKN_TYPE(FLT),
-    // built in types
+    TKN_TYPE(STR), // "asdf"
+    // built in type names
     TKN_TYPE(VD),
     TKN_TYPE(U3),
     TKN_TYPE(U4),
@@ -51,19 +55,40 @@ typedef enum {
     TKN_TYPE(FN),
     TKN_TYPE(ER),
     TKN_TYPE(FD),
-    // controls
+    // wraps
+    TKN_TYPE(LB), // {
+    TKN_TYPE(RB), // }
+    TKN_TYPE(LS), // [
+    TKN_TYPE(RS), // ]
+    TKN_TYPE(LP), // (
+    TKN_TYPE(RP), // )
+    // controls #
     TKN_TYPE(IF),
     TKN_TYPE(LOP), // while and for
     TKN_TYPE(RET),
-    // ops
+    // general ops
     TKN_TYPE(ASS), // :
     TKN_TYPE(CST), // $
+    // arith
     TKN_TYPE(ADD),
     TKN_TYPE(SUB),
     TKN_TYPE(MUL),
     TKN_TYPE(DIV),
     TKN_TYPE(EXP),
-    TKN_TYPE(MOD)
+    TKN_TYPE(MOD),
+    // cmp
+    TKN_TYPE(EQ),
+    TKN_TYPE(NOT),
+    TKN_TYPE(NEQ),
+    TKN_TYPE(GT),
+    TKN_TYPE(LN),
+    TKN_TYPE(GTEQ),
+    TKN_TYPE(LTEQ),
+    TKN_TYPE(AND),
+    TKN_TYPE(OR),
+    // type specific
+    TKN_TYPE(CNCT), //,
+    TKN_TYPE(RW), // <<
 } tkn_type;
 
 typedef struct {
