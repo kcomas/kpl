@@ -35,8 +35,7 @@ void fibtest(void) {
     gen *g = gen_i(&malloc, &free, &gen_entry_f, &gen_code_entry_f, &gen_cls_info_tbl, gen_op_tbl(10/*TODO*/), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
-    size_t lfib = 0;
-    A(gen_a(g, GEN_OP(LBL), gen_lbl_m(&lfib), NULL, NULL));
+    A(gen_a(g, GEN_OP(LBL), gen_lbl(0), NULL, NULL));
     A(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     A(gen_a(g, GEN_OP(NE), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U6), U6(0)), gen_lbl(1)));
     A(gen_a(g, GEN_OP(LEAVE), gen_data(X64_TYPE(U6), U6(0)), NULL, NULL));
@@ -45,9 +44,9 @@ void fibtest(void) {
     A(gen_a(g, GEN_OP(LEAVE), gen_data(X64_TYPE(U6), U6(1)), NULL, NULL));
     A(gen_a(g, GEN_OP(LBL), gen_lbl(2), NULL, NULL));
     A(gen_a(g, GEN_OP(SUB), gen_tmp(X64_TYPE(U6), 0), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U3), U3(1))));
-    A(gen_a(g, GEN_OP(CALL), gen_tmp(X64_TYPE(U6), 0), gen_call_m(1, gen_tmp(X64_TYPE(U6), 0)), gen_lbl_m(&lfib)));
+    A(gen_a(g, GEN_OP(CALL), gen_tmp(X64_TYPE(U6), 0), gen_call_m(1, gen_tmp(X64_TYPE(U6), 0)), gen_lbl(0)));
     A(gen_a(g, GEN_OP(SUB), gen_tmp(X64_TYPE(U6), 1), gen_arg(X64_TYPE(U6), 0), gen_data(X64_TYPE(U3), U3(2))));
-    A(gen_a(g, GEN_OP(CALL), gen_tmp(X64_TYPE(U6), 1), gen_call_m(1, gen_tmp(X64_TYPE(U6), 1)), gen_lbl_m(&lfib)));
+    A(gen_a(g, GEN_OP(CALL), gen_tmp(X64_TYPE(U6), 1), gen_call_m(1, gen_tmp(X64_TYPE(U6), 1)), gen_lbl(0)));
     A(gen_a(g, GEN_OP(ADD), gen_tmp(X64_TYPE(U6), 0), gen_tmp(X64_TYPE(U6), 0), gen_tmp(X64_TYPE(U6), 1)));
     A(gen_a(g, GEN_OP(LEAVE), gen_tmp(X64_TYPE(U6), 0), NULL, NULL));
     gen_st *st = gen_st_i(&malloc, &free, &gen_st_atmf, &gen_st_latf, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &malloc, NULL, &free), vr_i(16, &malloc, NULL, &free));

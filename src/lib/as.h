@@ -31,19 +31,10 @@ typedef enum {
 
 // code te[code_id;op_or_label_id;arg1;arg2;arg3;arg4;fn;lbl_fn;pos(in written bytes);len]
 
-#define LABEL(N) LABEL_##N
-
-typedef enum {
-    LABEL(UN) = 0,
-    LABEL(_),
-    LABEL(USER) = 1000
-} label;
-
 typedef tbl *op_tbl_i(void);
 
 typedef struct _as {
     ssize_t r;
-    size_t lc; // label counter
     alfn *aa;
     frfn *af, *lef, *oef, *cf;
     op_tbl_i *oti;
@@ -57,7 +48,7 @@ typedef bool as_lbl_fn(as *a, uint8_t *m, te *restrict lc, te *restrict fc);
 
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code);
 
-// add and register label, LABEL(UN) for new label id at code
+// add and register label
 size_t as_lbl_a(as *a, size_t lbl_id);
 
 // get lbl entry
