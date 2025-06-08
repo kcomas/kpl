@@ -322,6 +322,7 @@ var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const 
         scope = scope->par;
         while (scope && scope->par) scope = scope->par;
     }
+    if (!fns->par) fns->flgs |=  NODE_FLG(NT); // cannot thread mod
     var_node *vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
     vn->id = fns->idc++;
     if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
@@ -374,7 +375,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
     if (a->at >= AST_TYPE(TYPE) && a->at <= AST_TYPE(VAR)) type = ast_type_str[a->at];
     printf("%s<%d>", type, a->rc);
     putchar('|');
-    tkn_p(&a->t, as->str);
+    tkn_p(&a->t);
     putchar('|');
     idnt += IDNT_ADD;
     switch (a->at) {

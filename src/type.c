@@ -112,7 +112,7 @@ const char *type_stat_str(type_stat tstat) {
     return s;
 }
 
-extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp, const char *str);
+extern inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp);
 
 extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat);
 
@@ -401,12 +401,12 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (op->l) return TYPE_ER(ts, INV_LD_L_NN);
             if (op->r->at == AST_TYPE(VAL) && op->r->n.val->tn->t == TYPE(STR)) {
                 mod *m = mod_i(ts->a, ts->e);
-                if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t, ts->str) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
+                if (mod_lfile_tkn(m, ts->mp, str_dir_len(ts->mp), &op->r->t) != MOD_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 m->fns = fn_node_i(ts->a, NULL);
                 m->fns->sig = type_node_i(ts->a, TYPE(MOD), NULL);
                 ast_st_i(&ldas, ts->a, ts->e, m->src.str);
                 if (ast_parse_stmts(&ldas, m->fns, m->fns->body, TFLS, TKN_FLG(NB)) != AST_STAT(END)) return TYPE_ER(ts, INV_LD_ME);
-                type_st_i(&ldts, ts->a, ts->e, m->src.path, m->src.str);
+                type_st_i(&ldts, ts->a, ts->e, m->src.path);
                 if (type_chk_fn(&ldts, m->fns) != TYPE_STAT(OK)) return TYPE_ER(ts, INV_LD_ME);
                 if ((tstat = mod_tn_i(ts, m)) != TYPE_STAT(OK)) return tstat;
                 atmp = op->r;
@@ -450,6 +450,9 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             return TYPE_ER(ts, INV_SUB);
         case OP_TYPE(MUL):
             ASTGTNBOP(MUL);
+            if (lt->t == TYPE(TE) && rt->t == TYPE(FN)) {
+                // TODO create thread
+            }
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;
             return TYPE_ER(ts, INV_MUL);
         case OP_TYPE(EQ):
@@ -516,7 +519,17 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
 
 type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const cn) {
     type_stat tstat;
-    if (cn->tgt->at == AST_TYPE(OP)) {
+    if (!cn->tgt) {
+        if (cn->args->len > 2) return TYPE_ER(ts, INV_ARGS_OP_CALL);
+        op_node *op = cn->args->h->a->n.op;
+        if (op->ret || op->l || op->r) return TYPE_ER(ts, INV_OP_CALL_LRR_N_N);
+        op->r = cn->args->h->next->a;
+        if ((tstat = type_chk_op(ts, fns, op)) != TYPE_STAT(OK)) return tstat;
+        cn->ret = op->ret;
+        op->ret = NULL;
+        op->l = op->r = NULL;
+        return TYPE_ER(ts, OK);
+    } else if (cn->tgt->at == AST_TYPE(OP)) {
         if (cn->args->len > 2) return TYPE_ER(ts, INV_ARGS_OP_CALL);
         op_node *op = cn->tgt->n.op;
         if (op->ret || op->l || op->r) return TYPE_ER(ts, INV_OP_CALL_LRR_N_N);
@@ -539,7 +552,7 @@ type_stat type_chk_call(type_st *const ts, fn_node *const fns, call_node *const 
     switch (tt->t) {
         case TYPE(TE):
             if (cn->args->len != 1 && cn->args->h->a->at != AST_TYPE(VAL) && cn->args->h->a->n.val->tn->t != TYPE(INT)) return TYPE_ER(ts, INV_TE_CALL);
-            tidx = tkn_to_int64_t(&cn->args->h->a->t, ts->str);
+            tidx = tkn_to_int64_t(&cn->args->h->a->t);
             if (tidx < 0 || tidx > ((int64_t) tt->a->n.lst->len - 1)) return TYPE_ER(ts, INV_TE_CALL_IDX);
             th = tt->a->n.lst->h;
             while (tidx > 0) {

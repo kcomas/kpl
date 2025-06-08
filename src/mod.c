@@ -41,10 +41,10 @@ mod_stat mod_lfile(mod *const m, const char *const path) {
     return _mod_lfile(m);
 }
 
-mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t, const char *const str) {
+mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const tkn *const t) {
     m->src.path = ala(m->a, dirl + (t->len - 1) * sizeof(char)); // null byte
     memcpy(m->src.path, dirs, dirl);
-    memcpy(m->src.path + dirl, str + t->pos + 1, t->len - 2);
+    memcpy(m->src.path + dirl, t->str + t->pos + 1, t->len - 2);
     return _mod_lfile(m);
 }
 

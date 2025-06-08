@@ -140,14 +140,12 @@ typedef struct {
     al *a;
     er *e;
     const char *mp; // mod path
-    const char *str;
 } type_st;
 
-inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp, const char *str) {
+inline void type_st_i(type_st *const ts, al *const a, er *const e, const char *mp) {
     ts->a = a;
     ts->e = e;
     ts->mp = mp;
-    ts->str = str;
 }
 
 inline type_stat type_er(type_st *const ts, const char *const fnn, type_stat tstat) {

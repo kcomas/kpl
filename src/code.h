@@ -64,13 +64,11 @@ const char *code_stat_str(code_stat cstat);
 typedef struct {
     al *a;
     er *e;
-    const char *str;
 } code_st;
 
-inline void code_st_i(code_st *const cs, al *const a, er *const e, const char *str) {
+inline void code_st_i(code_st *const cs, al *const a, er *const e) {
     cs->a = a;
     cs->e = e;
-    cs->str = str;
 }
 
 inline code_stat code_er(code_st *const cs, const char *const fnn, code_stat cstat, const ast *const a) {
