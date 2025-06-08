@@ -134,6 +134,11 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             // TODO cst
             return TYPE_STAT(INV_CST);
         // TODO ops
+        case OP_TYPE(DEL):
+            if (op->l) return TYPE_STAT(INV_DEL_R_NN);
+            if (op->r->at == AST_TYPE(VAR) && op->r->n.var->vt != VAR_TYPE(G)) return TYPE_STAT(INV_DEL_L_NG);
+            op->ret = type_node_i(ts->a, TYPE(VD), NULL);
+            break;
         case OP_TYPE(ADD):
             ASTGTNBOP(ADD);
             if (type_int_cor(ts, &op->ret, lt, rt) || type_int_cor(ts, &op->ret, rt, lt)) break;

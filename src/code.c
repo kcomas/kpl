@@ -344,6 +344,11 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     break;
             }
             return CODE_STAT(INV_CST);
+        case OP_TYPE(DEL):
+            IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
+            OP_A(cs, c, DEL, OP, { .t = tr->t }, a);
+            break;
         case OP_TYPE(ADD):
             IFCGEN(code_gen, cs, opn->l, c);
             OP_P_INT_RET(opn, cs, l, c);
