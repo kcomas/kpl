@@ -159,6 +159,11 @@ static bool aply_type_b_t(const te *an) {
 static fld_stat cmd_r(fld *f, te **an, err **e) {
     te *nn;
     switch ((*an)->d[3].u4) {
+        case CC(E):
+            if (((te*) (*an)->d[4].p)->d[2].u4 != AST_CLS(E)) return fld_err(f, *an, e, "fld not exportable entry");
+            nn = te_c((*an)->d[4].p);
+            ast_lst_tbl_e_s_f(nn->d[3].p, LTE_FLG(E));
+            break;
         case CC(P1):
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U4(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(U5))), U5(1)), te_c((*an)->d[4].p));
             ((te*) (*an)->d[4].p)->d[0] = P(nn); // update tgt parent

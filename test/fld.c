@@ -41,3 +41,16 @@ T(apltypefn) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(2, SN(I6, I6(3)), SN(I6, I6(4)))))
     )), NULL)));
 }
+
+T(facloop) {
+    V(facloop, RN(AN(NULL, LN(LT(2, "v", U6(0), NULL, "f", LTE_FLG(E), NULL), L(4,
+        ON(NULL, DFN, EN("v", U6(0), NULL), SN(I6, I6(5))),
+        ON(NULL, DFN, EN("f", U6(LTE_FLG(E)), NULL), SN(I6, I6(1))),
+        ON(NULL, LOOP,
+            ON(NULL, GT, EN("v", U6(0), NULL), SN(I6, I6(1))),
+            LN(LT(2, "f", U6(0), NULL, "v", U6(0), NULL), L(2,
+                ON(NULL, MULA, EN("f", U6(0), NULL), EN("v", U6(0), NULL)),
+                ON(NULL, SUBA, EN("v", U6(0), NULL), SN(I6, I6(1)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("f", U6(LTE_FLG(E)), NULL))
+    )), NULL)));
+}
