@@ -39,8 +39,8 @@ typedef struct {
     code *fn[];
 } fn_stk;
 
-inline fn_stk *fn_stk_i(size_t size) {
-    fn_stk *stk = calloc(1, sizeof(fn_stk) + sizeof(code*) * size);
+inline fn_stk *fn_stk_i(al *const a, size_t size) {
+    fn_stk *stk = ala(a, sizeof(fn_stk) + sizeof(code*) * size);
     stk->size = size;
     return stk;
 }
@@ -49,20 +49,20 @@ inline fn_stk *fn_stk_i(size_t size) {
     #define FN_STK_RSIZE 2
 #endif
 
-inline void fn_stk_a(fn_stk **stk, code *const c) {
+inline void fn_stk_a(al *const a, fn_stk **stk, code *const c) {
     if ((*stk)->len == (*stk)->size) {
-        fn_stk *ns = fn_stk_i((*stk)->size * FN_STK_RSIZE);
+        fn_stk *ns = fn_stk_i(a, (*stk)->size * FN_STK_RSIZE);
         for (size_t i = 0; i < (*stk)->len; i++) ns->fn[ns->len++] = (*stk)->fn[i];
-        free(*stk);
+        alf(*stk);
         *stk = ns;
     }
     (*stk)->fn[(*stk)->len++] = c;
 }
 
-void fn_stk_b(fn_stk **stk, code *const c); // create stack from code scan
+void fn_stk_b(al *const a, fn_stk **stk, code *const c); // create stack from code scan
 
 inline void fn_stk_f(fn_stk *f) {
-    free(f);
+    alf(f);
 }
 
 typedef struct _jit {
@@ -74,9 +74,9 @@ typedef struct _jit {
     #define BYTES_PER_OP 10
 #endif
 
-inline jit *jit_i(size_t nops) {
+inline jit *jit_i(al *const a, size_t nops) {
     size_t size = nops * BYTES_PER_OP;
-    jit *j = calloc(1, sizeof(jit));
+    jit *j = ala(a, sizeof(jit));
     size_t ps = (size_t) getpagesize();
     j->size = size <= ps ? ps : (size / ps + 1) * ps;
     j->h = mmap(NULL, j->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
@@ -85,7 +85,7 @@ inline jit *jit_i(size_t nops) {
 
 inline void jit_f(jit *j) {
     munmap(j->h, j->size);
-    free(j);
+    alf(j);
 }
 
 inline void jit_a(jit *j, uint8_t b) {

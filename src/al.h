@@ -30,7 +30,7 @@ typedef struct _alc {
 } alc; // allocator chunk no frees filled then freed
 
 #ifndef AL_PS_MUL
-    #define AL_PS_MUL 1
+    #define AL_PS_MUL 2
 #endif
 
 inline alc *alc_i(al *const a, size_t size) {
