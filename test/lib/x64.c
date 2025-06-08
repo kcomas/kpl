@@ -62,6 +62,14 @@ static void rsub(uint8_t *m) {
 
 typedef int64_t loop(int64_t a);
 
+static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
+    x64_xor_rr(p, m, R(AX), R(AX));
+    x64_mov_rq(p, m, R(15), P(&printf));
+    x64_mov_rq(p, m, R(DI), P(fmt));
+    x64_mov_rra(p, m, R(SI), R(SP));
+    x64_call_r(p, m, R(15));
+}
+
 static void rloop(uint8_t *m) {
     size_t p = 0;
     x64_push_r(&p, m, R(BP));
@@ -71,10 +79,7 @@ static void rloop(uint8_t *m) {
     x64_xor_rr(&p, m, R(10), R(10));
     x64_push_r(&p, m, R(10));
     size_t lbl = p;
-    x64_mov_rq(&p, m, R(AX), P(&printf));
-    x64_mov_rq(&p, m, R(DI), P("V: %ld\n"));
-    x64_mov_rra(&p, m, R(SI), R(SP));
-    x64_call_r(&p, m, R(AX));
+    x64_printf(&p, m, "V: %ld\n");
     x64_mov_rra(&p, m, R(10), R(SP));
     x64_inc_r(&p, m, R(10));
     x64_mov_rar(&p, m, R(SP), R(10));
@@ -197,6 +202,15 @@ static void p2p(uint8_t *m) {
     ((void(*)(int64_t**)) m)(&a);
     printp(&a);
     free(a);
+}
+
+static void rskiploop(uint8_t *m) {
+    size_t p = 0;
+    uint32_t start = p;
+    // if zero jmp end
+    // inc and jmp to start
+    uint32_t end = p;
+    x64_ret(&p, m);
 }
 
 int main(void) {

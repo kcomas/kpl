@@ -11,6 +11,7 @@
 
 typedef enum {
     X64_STAT(OK),
+    X64_STAT(INV_SIZE),
     X64_STAT(INV_REG)
 } x64_stat;
 
@@ -86,6 +87,8 @@ x64_stat x64_b(size_t *p, uint8_t *m, size_t len, ...);
 x64_stat x64_c(size_t *p, uint8_t *m, size_t len, uint8_t b[]);
 
 x64_stat x64_d(size_t *p, uint8_t *m, un u);
+
+x64_stat x64_e(size_t *p, uint8_t *m, uint8_t size, un v);
 
 // nop
 x64_stat x64_nop(size_t *p, uint8_t *m);
@@ -173,6 +176,9 @@ void x64_jmpd_lblb(uint8_t *byte, size_t from, size_t to);
 
 // jmp byte
 x64_stat x64_jmp_b(size_t *p, uint8_t *m, uint8_t b);
+
+// jmp dword
+x64_stat x64_jmp_dw(size_t *p, uint8_t *m, uint32_t dw);
 
 // jb jnae jc byte
 x64_stat x64_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b);

@@ -24,7 +24,7 @@ as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl 
     return a;
 }
 
-static te *add_code(as *const a, code_id cid, size_t op_lbl_id, te *arg1, te *arg2, te *arg3, te *arg4, as_code_fn *fn, as_code_fn *lbl_fn) {
+static te *add_code(as *const a, code_id cid, size_t op_lbl_id, te *const arg1, te *const arg2, te *const arg3, te *const arg4, as_code_fn *fn, as_code_fn *lbl_fn) {
     te *c = te_i(10, a->aa, a->cf);
     c->d[0] = U6(cid);
     c->d[1] = U6(op_lbl_id);
@@ -101,7 +101,7 @@ as_stat as_op_a(as *const a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, s
     return AS_STAT(OK);
 }
 
-as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4) {
+as_stat as_a(as *const a, size_t op_id, te *const arg1, te *const arg2, te *const arg3, te *const arg4) {
     tbl *co = a->ops;
     te *kv;
     as_code_fn *fn = NULL, *lbl_fn = NULL;

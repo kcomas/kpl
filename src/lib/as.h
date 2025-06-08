@@ -54,9 +54,9 @@ typedef struct _as {
     lst *code;
 } as;
 
-typedef bool as_code_fn(as *const a, te *ci, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
+typedef bool as_code_fn(as *const a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4);
 
-typedef bool as_lbl_fn(as *const a, uint8_t *m, te *lc, te *fc);
+typedef bool as_lbl_fn(as *const a, uint8_t *m, te *restrict lc, te *restrict fc);
 
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code);
 
@@ -73,7 +73,7 @@ as_stat as_lbl_s_c(as *const a, size_t lbl_id, te *const c);
 as_stat as_op_a(as *const a, size_t op_id, size_t ai1, size_t ai2, size_t ai3, size_t ai4, as_code_fn *fn, as_lbl_fn *lbl_fn);
 
 // add op
-as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
+as_stat as_a(as *const a, size_t op_id, te *const arg1, te *const arg2, te *const arg3, te *const arg4);
 
 as_stat as_n(as *const a, uint8_t *m);
 
