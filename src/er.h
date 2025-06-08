@@ -7,6 +7,7 @@
 #define ER(N) ER_##N
 
 typedef enum {
+    ER(OK),
     ER(MOD),
     ER(TKN),
     ER(AST),

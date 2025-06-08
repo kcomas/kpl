@@ -182,7 +182,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     if (!(rt->t == TYPE(STR) || rt->t == TYPE(SG))) return TYPE_ER(ts, TC_ER_N_STR_SG);
                     op->ret = type_node_i(ts->a, TYPE(ER), NULL);
                     break;
-            } else {
+            } else { // catch
                 if (op->l->at != AST_TYPE(LST) && op->l->n.lst->len != 2) return TYPE_ER(ts, TC_ER_L_LST_INV);
                 lst = op->l->n.lst;
                 ASTGTN(rt, op->r, INV_TC_R);

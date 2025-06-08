@@ -9,6 +9,7 @@
 
 typedef enum {
     CODE_STAT(OK),
+    CODE_STAT(INV_TC),
     CODE_STAT(INV_L_ASS), // left side : invalid
     CODE_STAT(INV_R_ASS), // right side : invalid
     CODE_STAT(INV_STR_ESC), /* invalid \ */
@@ -19,6 +20,7 @@ typedef enum {
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
+    CODE_STAT(TC_R_N), // right side for try catch null
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
     CODE_STAT(INV_CST_INT_TO_FD),
@@ -61,6 +63,7 @@ inline code_stat code_er(code_st *const cs, const char *const fnn, code_stat cst
         ei->lno = a->t.lno;
         ei->cno = a->t.cno;
     }
+    er_a(cs->e, ei);
     return cstat;
 }
 
@@ -91,6 +94,9 @@ typedef enum {
     OP_C(LOP),
     // coalesce
     OP_C(ZOO), // convert to zero or one
+    // error
+    OP_C(TE), // throw error
+    OP_C(CE), // catch error
     // ops
     OP_C(CST),
     OP_C(CSTSG), // cast type to string
