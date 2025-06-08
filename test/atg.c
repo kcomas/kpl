@@ -60,6 +60,10 @@ T(fnadd3) {
         putchar('\n');
     }
     A(astat == ATG_STAT(OK), "atg_qn");
+    ast_p(an, 0);
+    putchar('\n');
+    gen_p(g, NULL);
+    A(ast_eq(an, cn), "ast_eq");
     gen_st_f(st);
     atg_f(t);
     ast_f(a);
