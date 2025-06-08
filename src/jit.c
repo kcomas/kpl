@@ -43,6 +43,7 @@ static void mov_reg(jit **j, bool rexwr, uint8_t reg, uint8_t *buf) {
 jit_stat jit_code(mod *const m, code *const c, jit **j) {
     jit_stat jstat;
     op *o;
+    void *fp;
     uint8_t buf[sizeof(void*)];
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
@@ -69,6 +70,26 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 mov_reg(j, false, 0x07, buf); // mov rdi m
                 SET_BUF(buf, &o->od.u3, sizeof(uint8_t));
                 mov_reg(j, false, 0x06, buf); // mov rsi &o->od.u3
+                fp = (void*) &mod_ag;
+                SET_BUF(buf, fp, sizeof(void*));
+                mov_reg(j, false, 0x00, buf); // mov rag mod_ag
+                jit_b(j, 2, 0xFF, 0xD0); // call rax
+                op_set_jlen(*j, o);
+                break;
+            case OP_C(SG):
+                op_set_jidx(*j, o);
+                // TODO
+                op_set_jlen(*j, o);
+                break;
+            case OP_C(LG):
+                op_set_jidx(*j, o);
+                // TODO
+                op_set_jlen(*j, o);
+                break;
+            // TODO
+            case OP_C(PV):
+                op_set_jidx(*j, o);
+                // TODO
                 op_set_jlen(*j, o);
                 break;
             default:

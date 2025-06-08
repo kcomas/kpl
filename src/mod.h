@@ -36,6 +36,8 @@ mod_stat mod_lfile(mod *const m, const char *const path);
 // allocate globals
 void mod_ag(mod *const m, size_t ng);
 
+void mod_fg(mod *const m);
+
 // print src
 inline void mod_psrc(const mod *const m) {
     if (m->src.path != NULL) printf("%s\n", m->src.path);
@@ -45,5 +47,6 @@ inline void mod_psrc(const mod *const m) {
 inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
+    mod_fg(m);
     free(m);
 }
