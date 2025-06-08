@@ -25,14 +25,6 @@ te *as_arg_b(uint8_t b) {
     return as_arg_v(ARG_ID(B), U3(b));
 }
 
-static size_t no_hsh(un d) {
-    return d.u6;
-}
-
-static bool id_eq(un a, un b) {
-    return a.u6 == b.u6;
-}
-
 lst *as_mklst(void) {
     return lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
 }
@@ -44,7 +36,7 @@ tbl *as_arg_tbl(void) {
 tbl *as_op_tbl(size_t bcks) {
     lst *tl = as_mklst();
     te *b = te_i(bcks, &malloc, &free);
-    tbl *t = tbl_i(&malloc, &free, &no_hsh, &id_eq, tl, b);
+    tbl *t = tbl_i(&malloc, &free, &tbl_no_hsh, &tbl_un_eq, tl, b);
     return t;
 }
 

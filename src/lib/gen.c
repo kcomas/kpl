@@ -22,6 +22,10 @@ gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oct, 
     return g;
 }
 
+static un gen_op_hsh(gen_cls cls, un info) {
+    return U6((info.u6 << 8) + cls);
+}
+
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn) {
     tbl *oct = g->oct;
     te *kv;
@@ -36,7 +40,7 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
     const un info[] = {info1, info2, info3};
     for (size_t i = 0; i < 3; i++) {
         if (cls[i] == GEN_CLS(N)) break;
-        un hsh = U6((info[i].u6 << 5) + cls[i]);
+        un hsh = gen_op_hsh(cls[i], info[i]);
         if (tbl_g_i(oct, hsh, &kv) == TBL_STAT(NF)) {
             kv = te_i(6, g->ga, g->ocef);
             kv->d[0] = hsh;

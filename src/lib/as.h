@@ -39,8 +39,6 @@ typedef enum {
     LABEL(USER) = 1000
 } label;
 
-#define OP(N) OP_##N
-
 typedef tbl *op_tbl_i(void);
 
 typedef struct _as {
