@@ -1,12 +1,18 @@
 
+#include "vr.h"
 #include "gen.h"
 #include "as_x64.h"
 
 #define GEN_OP(N) GEN_OP_##N
 
 typedef enum {
-    GEN_OP(RET)
-} gen_op;
+    GEN_OP(_START),
+    GEN_OP(ADD),
+    GEN_OP(RET),
+    GEN_OP(_END)
+} gen_op; // not x64 opcodes, pseudo codes
+
+const char *gen_op_str(gen_op go);
 
 #define X64_TYPE(N) X64_TYPE_##N
 
@@ -32,11 +38,14 @@ typedef struct {
     alfn *sa;
     frfn *sf;
     tbl *args, *tmp; // map args, tmp to regs
+    vr *rstk, *xstk;
 } gen_st;
 
 // pass 1 - try to give everything a reg and avoid stack
-gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *imm);
+gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *tmp, vr *rstk, vr *xstk);
 
-void gen_op_p(tbl *ot, bool args, size_t idnt);
+void gen_op_p(tbl *ot, bool ci, size_t idnt);
+
+void gen_p(gen *g, uint8_t *m);
 
 gen *gen_b(gen *g);

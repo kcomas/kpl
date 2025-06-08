@@ -72,6 +72,26 @@ gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3) {
     tbl *oci = g->oci;
+    te *kv;
+    gen_fn *fn = NULL;
+    if (tbl_g_i(oci, U6(op_id), &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+    oci = kv->d[2].p;
+    fn = kv->d[1].p;
+    const te *ac[] = {ac1, ac2, ac3};
+    for (size_t i = 0; i < 3; i++) {
+        if (!ac[i]) break;
+        un hsh = gen_op_hsh(ac[i]->d[0].u3, ac[i]->d[1]);
+        if (tbl_g_i(oci, hsh, &kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+        oci = kv->d[4].p;
+        fn = kv->d[3].p;
+    }
+    te *e = te_i(7, g->ga, g->cef);
+    e->d[0] = U6(op_id);
+    e->d[1] = P(ac1);
+    e->d[2] = P(ac2);
+    e->d[3] = P(ac3);
+    e->d[4] = P(fn);
+    lst_ab(g->code, P(e));
     return GEN_STAT(OK);
 }
 

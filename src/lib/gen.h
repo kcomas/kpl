@@ -31,7 +31,7 @@ typedef tbl *cls_tbl_i(void);
 
 // oci entry te[op_id;fn;tbl[te[info<<5+cls;cls;info;fn;tbl]]]
 
-// code te[op_id;aci;ac2;ac3;fn]
+// code te[op_id;aci;ac2;ac3;fn;as_code_p;code_len]
 
 typedef struct {
     ssize_t r;
