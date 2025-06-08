@@ -41,7 +41,8 @@ void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt) {
 }
 
 static bool dfn_cst_type_lst_t(const te *an) {
-    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L) && ((te*) an->d[0].p)->d[2].u4 == AST_CLS(O) && ((te*) an->d[0].p)->d[4].u4 == OC(DFN);
+    te *pn = an->d[0].p;
+    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && an->d[6].p && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L) && pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(DFN) && ((te*) pn->d[5].p)->d[2].u4 == AST_CLS(E);
 }
 
 static bool root_lst_t(const te *an) {

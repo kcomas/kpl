@@ -49,8 +49,8 @@ const char *apltypefn = "{f::FN${I6(a)+I6(b)*a};f(3;4)/p1}()";
 const char *facloop = "{\n\tv::5\n\tf/e::1\n\t>(v;1)@{\n\t\tf*:v\n\t\tv-:1\n\t}\n\tf/p1\n}()";
 
 const char *facrec = "{\n"
-                     " fac::FN${\n"
-                     "  >(U6(n);1)?{\n"
+                     " fac::FN(U6`n;U6)${\n"
+                     "  {n>1}?{\n"
                      "   n*fac(n-1)\n"
                      "   1\n"
                      "  }\n"
