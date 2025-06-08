@@ -14,7 +14,7 @@ static ssize_t pig(te *pn) {
 
 static tbl *sti(void) {
     lst *tl = lst_i(&am, &am, (void*) te_f);
-    te *b = te_i(NODE_TYPE(_END), &am, NULL);
+    te *b = te_i(10, &am, NULL);
     return tbl_i(&am, tbl_sdbm, tbl_str_eq, tl, b);
 }
 

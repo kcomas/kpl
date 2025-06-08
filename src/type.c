@@ -92,6 +92,10 @@ te *type_f_i(const alfr *af, type f, tbl *a, te *r) {
 }
 
 void type_p(const te *t) {
+    if (!t) {
+        printf("??");
+        return;
+    }
     type_cls cls = type_c(t->d[0].u6);
     switch (cls) {
         case TYPE_CLS(I):

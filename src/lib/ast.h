@@ -14,7 +14,7 @@ typedef enum {
 #define AST_CLS(N) AST_CLS_##N
 
 typedef enum {
-    AST_CLS(R), // root tbl
+    AST_CLS(R), // root te[tbl;te]
     AST_CLS(I), // identifier [te[type];te]
     AST_CLS(S), // scalar type [un[type];un]
     AST_CLS(V), // vector type [te[type];lst]
@@ -40,7 +40,7 @@ typedef struct {
     tbl *t;
 } ast;
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sci, tbl *t);
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sti, tbl *t);
 
 // ast t te[par;psr;cls;...]
 
