@@ -24,6 +24,7 @@ typedef enum {
     TYPE_STAT(INV_TC),
     // assign
     TYPE_STAT(INV_VAR_ASS), // cannot assign to var
+    TYPE_STAT(INV_VAR_ASS_ER), // cannot assign to var from error
     TYPE_STAT(VAR_ASS_N_T_M), // var assignment types do not match
     TYPE_STAT(INV_ASS_TO), // cannot assign to node
     TYPE_STAT(INV_CST), // invalid cast

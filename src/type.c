@@ -17,6 +17,7 @@ static const char *const tss[] = {
     "TC_VAR_LT_N_T_ER",
     "INV_TC",
     "INV_VAR_ASS",
+    "INV_VAR_ASS_ER",
     "VAR_ASS_N_T_M",
     "INV_ASS_TO",
     "INV_CST",
@@ -209,6 +210,7 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             if (op->l->at == AST_TYPE(VAR)) {
                 if (!op->r) return TYPE_ER(ts, INV_VAR_ASS);
                 ASTGTN(rt, op->r, INV_VAR_ASS);
+                if (rt->t == TYPE(ER)) ASTGTN(rt, rt->a, INV_VAR_ASS_ER);
                 if (op->l->n.var->tn) {
                     ASTGTN(lt, op->l, INV_VAR_ASS);
                     if (!type_eq(lt, rt)) return TYPE_ER(ts, VAR_ASS_N_T_M);
