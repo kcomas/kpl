@@ -117,6 +117,12 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                     break;
                 case GEN_CLS(D):
                     switch (gen_var_g_t(ovt)) {
+                        case X64_TYPE(S):
+                            args[ra].i = i;
+                            if (gen_as(a, AS_X64(LEA), as_arg_i(a, ARG_ID(R), U3(args[ra].r)), as_arg_i(a, ARG_ID(S), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, "gen data inv S");
+                            args[ra].a = args[ra].r;
+                            ra++;
+                            break;
                         case X64_TYPE(F5):
                         case X64_TYPE(F6):
                             args[xa].i = i;
@@ -162,7 +168,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                         case X64_TYPE(F5):
                         case X64_TYPE(F6):
                             args[xa].i = i;
-                            if (st->xstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp x regs");
                             if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
                             if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOVSD), ovt->d[1].p, as_arg_i(a, ARG_ID(X), U3(args[xa].r)), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
                             args[xa].a = args[xa].r;
@@ -271,7 +276,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     }
     if (flgs & CFLG(V)) {
         if (vi) {
-            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), U6(vi)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(B), U3(vi)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         } else if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     switch (gen_var_g_c(cfn)) {

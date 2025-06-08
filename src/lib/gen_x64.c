@@ -114,6 +114,9 @@ void ovt_p(const te *ovt) {
         case GEN_CLS(D):
             printf("%s ", x64_type_str(gen_var_g_t(ovt)));
             switch (gen_var_g_t(ovt)) {
+                case X64_TYPE(S):
+                    printf("\"%s\")", (char*) ((mc*) ovt->d[1].p)->d);
+                    break;
                 case X64_TYPE(M):
                     printf("%p)", ovt->d[1].p);
                     break;
@@ -247,8 +250,19 @@ te *gen_tmp(gen *g, x64_type t, size_t id) {
     return gen_var_i(g, NULL, GEN_CLS(T), t, U6(id));
 }
 
+static void gen_data_sg_f(void *p) {
+    te *t = p;
+    mc_f(t->d[1].p);
+    t->af->f(t);
+}
+
 te *gen_data(gen *g, x64_type t, un d) {
-    return gen_var_i(g, NULL, GEN_CLS(D), t, d);
+    void *fn = t == X64_TYPE(S) ? gen_data_sg_f : NULL;
+    return gen_var_i(g, fn, GEN_CLS(D), t, d);
+}
+
+te *gen_char(gen *g, const char *s) {
+    return gen_var_i(g, gen_data_sg_f, GEN_CLS(D), X64_TYPE(S), P(mc_i_cstr(s, &al_mc)));
 }
 
 te *gen_stkv(gen *g, x64_type t, size_t id) {
@@ -257,6 +271,42 @@ te *gen_stkv(gen *g, x64_type t, size_t id) {
 
 te *gen_stka(gen *g, x64_type t, size_t id) {
     return gen_var_i(g, NULL, GEN_CLS(S), t, U6(id));
+}
+
+static bool gen_itm_eq(un x, un y);
+
+static bool gen_w_eq(const te *l, const te *r) {
+    return vr_eq(l->d[0].p, r->d[0].p, gen_itm_eq) && vr_eq(l->d[1].p, r->d[1].p, gen_itm_eq);
+}
+
+static bool gen_itm_eq(un x, un y) {
+    te *l = x.p;
+    te *r = y.p;
+    if (!l && !r) return true;
+    if ((l && !r) || (!l && r) || l->d[0].u6 != r->d[0].u6) return false;
+    if (gen_var_g_c(l) == GEN_CLS(M) || gen_var_g_c(l) == GEN_CLS(I)) return vr_eq(l->d[1].p, r->d[1].p, gen_itm_eq);
+    if (gen_var_g_c(l) == GEN_CLS(W)) return gen_w_eq(l->d[1].p, r->d[1].p);
+    if (gen_var_g_t(l) == X64_TYPE(S)) return mc_eq(l->d[1].p, r->d[1].p);
+    return l->d[1].u6 == r->d[1].u6;
+}
+
+static bool gen_lst_eq(un x, un y) {
+    te *a = x.p;
+    te *b = y.p;
+    if (!a || !b) return false;
+    if (a->d[0].u6 != b->d[0].u6) return false;
+    for (size_t i = 1; i < 4; i++) {
+        te *l = a->d[i].p;
+        te *r = b->d[i].p;
+        if (!gen_itm_eq(P(l), P(r))) return false;
+    }
+    return true;
+}
+
+bool gen_code_eq(const gen *a, const gen *b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return lst_eq(a->code, b->code, gen_lst_eq);
 }
 
 gen_st *gen_st_i(const alfr *af, const alfr *ta, tbl *atm, tbl *lat, vr *rstk, vr *xstk) {
@@ -420,30 +470,22 @@ gen_stat gen_st_p1(gen *g, gen_st *st) {
     return stat;
 }
 
-void gen_st_f(gen_st *st) {
-    if (!st || --st->r > 0) return;
-    tbl_f(st->atm);
-    tbl_f(st->lat);
-    vr_f(st->rstk);
-    vr_f(st->xstk);
-    st->af->f(st);
-}
-
 static void set_code_s(te *ci, as *a) {
     if (!ci->d[5].p && a->code->t) ci->d[5] = P(te_c(a->code->t));
 }
 
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx) {
+    *idx = sizeof(void*) * 1;
     switch (t) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
             if (v >= st->xvc) return GEN_STAT(INV);
-            *idx = sizeof(void*) * 2 * (v + 1);
+            *idx += sizeof(void*) * 2 * v;
             break;
         default:
             if (v >= st->rvc) return GEN_STAT(INV);
-            *idx = st->xvc * sizeof(void*) * 2;
-            *idx += sizeof(void*) * (v + 1);
+            *idx += st->xvc * sizeof(void*) * 2;
+            *idx += sizeof(void*) * v;
             break;
     }
     *idx = -*idx;
@@ -522,6 +564,15 @@ gen_stat stk_g_idx2(gen_st *st, te *restrict c0, te *restrict c1, int32_t *restr
 gen_stat stk_g_idx3(gen_st *st, te *restrict c0, te *restrict c1, te *restrict c2, int32_t *restrict v0, int32_t *restrict v1, int32_t *restrict v2) {
     if (stk_va(st, c0, v0) != GEN_STAT(OK)) return GEN_STAT(INV);
     return stk_g_idx2(st, c1, c2, v1, v2);
+}
+
+void gen_st_f(gen_st *st) {
+    if (!st || --st->r > 0) return;
+    tbl_f(st->atm);
+    tbl_f(st->lat);
+    vr_f(st->rstk);
+    vr_f(st->xstk);
+    st->af->f(st);
 }
 
 as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci) {

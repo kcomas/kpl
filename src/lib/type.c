@@ -22,6 +22,7 @@ const char *type_str(type t) {
         "F5",
         "F6",
         "C4",
+        "CS",
         "SG",
         "_V",
         "SL",

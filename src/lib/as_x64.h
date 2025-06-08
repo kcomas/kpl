@@ -24,6 +24,9 @@ typedef enum {
     ARG_ID(S), // mc
 } arg_id;
 
+// arg te[id;data]
+te *as_arg_i(as *a, arg_id id, un d);
+
 #define AS_X64(N) AS_X64_##N
 
 typedef enum {

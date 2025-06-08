@@ -41,6 +41,25 @@ const char *reg_str(size_t rid) {
     return "INV";
 }
 
+static void arg_id_s_f(void *p) {
+    te *t = p;
+    mc_f(t->d[1].p);
+    t->af->f(t);
+}
+
+te *as_arg_i(as *a, arg_id id, un d) {
+    te *arg;
+    if (id == ARG_ID(S)) {
+        arg = te_i(2, a->ta, arg_id_s_f);
+        arg->d[1] = P(mc_c(d.p));
+    } else {
+        arg = te_i(2, a->ta, NULL);
+        arg->d[1] = d;
+    }
+    arg->d[0] = U6(id);
+    return arg;
+}
+
 static const char *arg_id_str(size_t id) {
     switch (id) {
         case ARG_ID(N): return "N";
@@ -238,7 +257,7 @@ bool as_x64_dqs(as *a, size_t *p, uint8_t *m, te *dqe) {
     te *ci = dqe->d[0].p;
     x64_jmpd_lbld(m, ci->d[8].u6 + ci->d[9].u6, *p);
     x64_c(p, m, dqe->d[1].u6, dqe->d[2].p);
-    size_t mod = *p & 0x07;
+    size_t mod = dqe->d[1].u6 >= 8 ? dqe->d[1].u6 & 0x07 : 8 - dqe->d[1].u6;
     dqe->d[1].u6 += mod;
     while (mod) {
         x64_a(p, m, 0x0);

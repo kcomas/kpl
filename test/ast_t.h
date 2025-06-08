@@ -32,7 +32,7 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define SN(T, V) NNV(S, type_i(&al_te, NULL, TYPE(T)), V)
 
-#define SG(CSTR) ast_s_i(a, NULL, NULL, ast_s_sg_f, P(type_i(&al_te, NULL, TYPE(SG))), P(mc_i_cstr(CSTR, &al_mc)))
+#define CS(CSTR) ast_s_i(a, NULL, NULL, ast_s_cs_f, P(type_i(&al_te, NULL, TYPE(CS))), P(mc_i_cstr(CSTR, &al_mc)))
 
 #define ON(T, C, L, R) NNV(O, T, OC(C), L, R)
 

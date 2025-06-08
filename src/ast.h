@@ -27,6 +27,7 @@ typedef enum {
     OC(LT),
     OC(LTE),
     OC(AND),
+    OC(CSG),
     OC(CNCT),
     OC(CNCTA),
     OC(DUMP),

@@ -140,7 +140,7 @@ te *ast_s_i(ast *a, te *restrict pan, te *restrict psr, frfn nf, un ct, un v) {
     return an;
 }
 
-void ast_s_sg_f(void *p) {
+void ast_s_cs_f(void *p) {
     te *n = p;
     te_f(n->d[3].p);
     mc_f(n->d[4].p);

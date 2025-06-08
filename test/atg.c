@@ -13,6 +13,8 @@ static __attribute__((destructor)) void atg_des(void) {
     atg_f(batg);
 }
 
+static size_t p_des = 0; // index for destructor code so it in m
+
 static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st *st) {
     E();
     te *h;
@@ -59,7 +61,14 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
             err_f(e);
         }
         A(gstat == GEN_STAT(OK), "gen_n");
+        as_stat astat = as_n(t->a, &p, m, &e);
+        if (e) {
+            err_p(e);
+            err_f(e);
+        }
+        A(astat == AS_STAT(OK), "as_n");
         h->d[1] = P(&m[pc]);
+        p = p_des;
     }
     gen_st_f(sc);
     gen_f(g);
@@ -109,7 +118,6 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
 
 static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     E();
-    p = 0;
     err *e = NULL;
     A(as_n(t->a, &p, m, &e) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
@@ -130,6 +138,7 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
 #define AI(PGM, DL, QL) IC(PGM); \
     RC(); \
     fast(_t, a, &an, bopt, false); \
+    p = p_des; /* keep destructors */ \
     atg *t = atg_i_atg(batg); \
     gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL)); \
     size_t cdl = t->dt->i->l; \
@@ -560,18 +569,70 @@ T(vrmul) {
     AR(0);
 }
 
-/*
 T(st) {
     AI(TPGM(st), 1, 1);
-    te *std = type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG)));
+    te *std = type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG))), *kv;
     err *e = NULL;
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(56)))), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
     gen_type_aff(gc, std, &e, "");
     D(std, gc);
+    void *des = NULL;
+    A(tbl_g_i(t->dt, P(std), &kv) == TBL_STAT(OK), "std des nf");
+    des = kv->d[1].p;
     te_f(std);
     gen_f(gc);
-    V(NULL, NULL);
+    te *cn = RN(SN(_G, U5(0)));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(1)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(F6), 0), gen_data(gc, X64_TYPE(F6), F6(2.2)), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 0), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(4)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), P(des))), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_stkv(gc, X64_TYPE(I6), 0), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40))), gen_stkv(gc, X64_TYPE(F6), 0), NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 1), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(2))));
+    S(gen_a(gc, GEN_OP(CST), gen_tmp(gc, X64_TYPE(U6), 1), gen_tmp(gc, X64_TYPE(I6), 1), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(48))), gen_tmp(gc, X64_TYPE(U6), 1), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 2), gen_call_m(gc, 2, gen_char(gc, "Hi"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(56))), gen_tmp(gc, X64_TYPE(M), 2), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_tmp(gc, X64_TYPE(M), 0), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(U6), 3), gen_idx_m(gc, X64_TYPE(U6), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(48))), NULL));
+    S(gen_a(gc, GEN_OP(CST), gen_tmp(gc, X64_TYPE(I6), 3), gen_tmp(gc, X64_TYPE(U6), 3), NULL));
+    S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(I6), 3), gen_data(gc, X64_TYPE(I6), I6(2)), gen_tmp(gc, X64_TYPE(I6), 3)));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32))), gen_tmp(gc, X64_TYPE(I6), 3), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(ST)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_char(gc, "a")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_idx_m(gc, X64_TYPE(I6), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32)))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_char(gc, "b")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(F6)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_idx_m(gc, X64_TYPE(F6), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_char(gc, "c")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(U6)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_idx_m(gc, X64_TYPE(U6), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(48)))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_char(gc, "d")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 4), gen_idx_m(gc, X64_TYPE(M), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(56))), gen_data(gc, X64_TYPE(U3), U3(offsetof(mc, d)))));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(SG)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(M), 4)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_end)), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(M), 1), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    tbl *et = tbl_c(an->d[3].p);
+    AR(0);
+    A(et->i->l == 1, "inv et");
+    mc *s = mc_i_cstr("s", &al_mc);
+    A(tbl_g_i(et, P(s), &kv) == TBL_STAT(OK), "inv et");
+    mc_f(s);
+    type_p(kv->d[2].p);
+    putchar('\n');
+    te *arr = kv->d[1].p;
+    A(arr->d[0].i6 == 6, "s`a");
+    A(arr->d[1].f6 == 2.2, "s`b");
+    A(arr->d[2].u6 == 3, "s`c");
+    A(strcmp("Hi", (char*) ((mc*) arr->d[3].p)->d) == 0, "s`d");
+    te_f(arr);
+    tbl_f(et);
 }
-*/

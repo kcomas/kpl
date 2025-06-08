@@ -148,7 +148,7 @@ T(st) {
             ZN("a", IN("a")),
             ZN("b", IN("b")),
             ZN("c", AN(NULL, ON(NULL, CST, NULL, NULL), L(2, TN(U6), ON(NULL, ADD, IN("a"), SN(I6, I6(2)))))),
-            ZN("d", SG("Hi"))
+            ZN("d", CS("Hi"))
         )))),
         ON(NULL, AGN, ZN("a", IN("s")), ON(NULL, MUL, SN(I6, I6(2)), ON(NULL, CST, TN(I6), ZN("c", IN("s"))))),
         CN(P1, IN("s"))

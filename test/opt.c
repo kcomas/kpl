@@ -232,7 +232,7 @@ T(st) {
                 ZTN("a", TS(VD), EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6))),
                 ZTN("b", TS(VD), EN("b", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(F6))),
                 ZTN("c", TS(VD), ON(TS(U6), CST, TN(U6), ON(TS(I6), ADD, EN("a", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(2))))),
-                ZTN("d", TS(VD), SG("Hi"))
+                ZTN("d", TS(VD), ON(TS(SG), CSG, NULL, CS("Hi")))
             )))),
         ON(TS(I6), AGN, ZTN("a", TS(I6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st))),
             ON(TS(I6), MUL, SN(I6, I6(2)), ON(TS(I6), CST, TN(I6), ZTN("c", TS(U6), EN("s", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(st)))))),

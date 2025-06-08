@@ -7,6 +7,18 @@ fld_stat fld_err(const fld *f, te *an, err **e, const char *m) {
     return FLD_STAT(INV);
 }
 
+static fld_stat s_cs_sg_r(fld *f, te **an, err **e) {
+    (void) e;
+    te *nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(SG))), U4(OC(CSG)), NULL, *an);
+    (*an)->d[0] = P(nn); // update tgt parent
+    *an = nn;
+    return FLD_STAT(OK);
+}
+
+static bool s_cs_sg_t(const te *an) {
+    return an->d[3].p && ((te*) an->d[3].p)->d[1].u4 == TYPE(CS);
+}
+
 static fld_stat idnt_lst_r(fld *f, te **an, err **e) {
     te *ln, *kv;
     if (ast_g_pn(AST_CLS(L), *an, &ln) != AST_STAT(OK)) return fld_err(f, *an, e, "fld ast_g_pn");
@@ -107,6 +119,7 @@ static fld_stat e_lst_type_o_def_r(fld *f, te **an, err **e) {
 }
 
 static bool e_lst_type_o_def_t(const te *an) {
+    if (!an->d[5].p || !an->d[6].p) return false;
     return an->d[4].u4 == OC(DFN) && ((te*) an->d[5].p)->d[3].u4 == AST_CLS(E) && (((te*) an->d[6].p)->d[2].u4 == AST_CLS(T) || ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L));
 }
 
@@ -245,6 +258,7 @@ static bool cmd_t(const te *an) {
 }
 
 fld *fld_b(fld *f) {
+    fld_a(f, AST_CLS(S), s_cs_sg_t, s_cs_sg_r);
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);

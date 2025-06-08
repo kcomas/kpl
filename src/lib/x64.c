@@ -204,7 +204,7 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 #define ZRI(N, C) x64_stat x64_##N##_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
     uint8_t rex = REX(W); \
-    if (r >= R(8)) rex |= REX(B); \
+    if (r >= R(8)) rex |= REX(R); \
     x64_b(p, m, 3, rex, C, MOD(00) | rid(r) << 3 | RIP); \
     return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
 }

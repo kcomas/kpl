@@ -30,6 +30,8 @@ extern const char *atg_dump_end;
 
 extern const char *atg_dump_idnt;
 
+extern const char *atg_sym_str;
+
 atg *atg_b(atg *t);
 
 typedef err *atg_jit(te *x);

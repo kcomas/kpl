@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 #define HERE(MSG) printf("\e[1m%s:%d\e[0m \e[1;94m%s\e[0m \e[1;33m%s\e[0m\n", __FILE__, __LINE__, __FUNCTION__, MSG);
 
