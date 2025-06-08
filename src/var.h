@@ -23,9 +23,9 @@ var_sg *var_sg_cnct_sg_sg(al *const a, const var_sg *const l, const var_sg *cons
 
 var_sg *var_sg_cnct_sg_tsv(al *const a, const var_sg *const l, const var_tsv *const r);
 
-// var_sg_f in kpl.h
-
 void var_sg_d(var_sg *sg);
+
+// var_sg_f in kpl.h
 
 void var_sg_er(mod *const m, ast *const a, var_sg *const sg);
 
@@ -90,7 +90,7 @@ typedef struct _var_tsv {
     RC;
     size_t len, size;
     jit_fn *gc;
-    var v[];
+    var *v;
 } var_tsv; // tuple, struct, vec
 
 var_tsv *var_tsv_i(al *const a, size_t size, size_t len, jit_fn *gc);
@@ -108,5 +108,9 @@ jit_fn *var_tsv_gc(var_tsv *const tsv);
 var var_tsv_gidx(var_tsv *const tsv, size_t idx);
 
 void var_tsv_sidx(var_tsv *const tsv, size_t idx, var v);
+
+void var_tsv_add(al *const a, var_tsv *const tsv, var v);
+
+var var_tsv_sub(mod *const m, ast *const a, var_tsv *const tsv);
 
 void var_tsv_d(var_tsv *tsv);

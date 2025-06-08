@@ -9,6 +9,7 @@
 typedef enum {
     CODE_STAT(OK),
     CODE_STAT(INV_ER_T),
+    CODE_STAT(INV_ER_GCR),
     CODE_STAT(ER_N_ER_T),
     CODE_STAT(INV_TC),
     CODE_STAT(INV_L_ASS), // left side : invalid

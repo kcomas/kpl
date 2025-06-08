@@ -82,8 +82,7 @@ typedef enum {
     TKN_TYPE(OR),
     // type specific
     TKN_TYPE(CNCT), //,
-    TKN_TYPE(RW), // <<
-    TKN_TYPE(INV)
+    TKN_TYPE(RW) // <<
 } tkn_type;
 
 typedef struct {

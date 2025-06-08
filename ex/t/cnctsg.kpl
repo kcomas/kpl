@@ -7,3 +7,5 @@ a: "Hello"
 c: "\n"
 
 $(FD;1) << " ", [a;"World";c]
+\d a
+\d c

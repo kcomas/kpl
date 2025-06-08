@@ -122,19 +122,21 @@ extern inline void val_node_f(val_node *v);
 extern inline op_node *op_node_i(al *const a, op_type ot);
 
 static const char *const op_type_str[] = {
-    "TC",
-    "ASS",
-    "CST",
-    "DEL",
-    "LD",
-    "VH",
+    "TC", // '
+    "ASS", // :
+    "CST", // $
+    "DEL", // \d
+    "LD", // \l
+    "VH", // \h
     "ADD",
     "SUB",
     "MUL",
+    // TODO OP
     "EQ",
     "NOT",
     "GT",
     "LT",
+    // TODO OP
     "OR",
     "CNCT",
     "RW"
