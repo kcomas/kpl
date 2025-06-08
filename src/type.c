@@ -35,6 +35,25 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
         case OP_TYPE(CST):
             if (!(op->l->at == AST_TYPE(TYPE) || op->l->at == AST_TYPE(VAR))) return TYPE_STAT(INV_CST_L_A);
             if (!(lt = ast_gtn(op->l))) return TYPE_STAT(INV_CST_L_T_N);
+            if (lt->t == TYPE(FN)) {
+                if (op->r->at != AST_TYPE(FN)) return TYPE_STAT(INV_FN_CST);
+                fn_node *fn = op->r->n.fn;
+                if (fn->ret) return TYPE_STAT(FN_CST_T_NN);
+                if (fn->args->len != lt->a->n.lst->len - 1) return TYPE_STAT(INV_FN_CST_ARGS_LEN);
+                lst_itm *th = lt->a->n.lst->h;
+                lst_itm *fh = fn->args->h;
+                type_node *tmpt = NULL;
+                while (fh) {
+                    if (fh->a->at != AST_TYPE(VAR)) return TYPE_STAT(INV_FN_ARG_T);
+                    if (!(tmpt = ast_gtn(th->a))) return TYPE_STAT(INV_FN_T_ARG);
+                    fh->a->n.var->tn = type_node_c(tmpt);
+                    fh = fh->next;
+                    th = th->next;
+                }
+                if (!(tmpt = ast_gtn(lt->a->n.lst->t->a))) return TYPE_STAT(INV_FN_T_RET);
+                fn->ret = type_node_c(tmpt);
+                break;
+            }
             if (!(rt = ast_gtn(op->r))) return TYPE_STAT(INV_CST_R_T_N);
             if (rt->t == TYPE(INT)) {
                 if (lt->t >= TYPE(U3) && lt->t <= TYPE(I6)) {
@@ -43,7 +62,6 @@ static type_stat type_chk_op(fn_node *const fns, op_node *const op) {
                 }
             }
             // TODO resolve
-            exit(345);
             break;
     }
     return TYPE_STAT(OK);
