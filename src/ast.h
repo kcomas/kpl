@@ -26,6 +26,8 @@ typedef enum {
     OC(LT),
     OC(LTE),
     OC(AND),
+    OC(CNCT),
+    OC(CNCTA),
     OC(DUMP),
     OC(_END)
 } oc; // op code
