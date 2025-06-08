@@ -294,10 +294,8 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
             C_OP_C_BOP(LT, lt);
             case OP_C(CNCTSG):
                 op_set_jidx(*j, o);
-                jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
-                jit_b(j, 2, 0x41, 0x59); // pop r9 cnct sg
-                jit_b(j, 3, 0x4C, 0x89, 0xCF); // mov rdi r9
-                jit_b(j, 3, 0x4C, 0x89, 0xD6); // move rsi r10
+                jit_b(j, 5, 0x48, 0x8B, 0x7C, 0x24, 0x08); // mov rdi qword ptr [rsp+8] sg
+                jit_b(j, 4, 0x48, 0x8B, 0x34, 0x24); // mov rsi qword ptr [rsp] sg/te
                 switch (o->od.t) {
                     case TYPE(STR):
                     case TYPE(SG):
@@ -306,14 +304,12 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                     default:
                         return JIT_STAT(CNCTSG_T_INV);
                 }
-                jit_b(j, 2, 0x41, 0x51); // push r9
-                jit_b(j, 2, 0x41, 0x52); // push r10
                 SET_REG_CALL(false, 0);
                 jit_b(j, 2, 0x41, 0x5A); // pop r10 tgt sg/te
                 jit_b(j, 2, 0x41, 0x59); // pop r9 cnct sg
                 jit_a(j, 0x50); // push rax
-                jit_b(j, 2, 0x41, 0x51); // push r9
                 jit_b(j, 2, 0x41, 0x52); // push r10
+                jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(*j, o);
                 break;
             case OP_C(WFD):
@@ -388,7 +384,9 @@ jit_stat jit_code(mod *const m, code *const c, jit **j) {
                 op_set_jlen(*j, o);
                 break;
             case OP_C(GCTEI):
+                op_set_jidx(*j, o);
                 // TODO
+                op_set_jlen(*j, o);
                 break;
             default:
                 return JIT_STAT(INV_CODE);
