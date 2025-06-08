@@ -42,4 +42,6 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define LN(TBL, LST) NNV(L, TBL, LST)
 
+#define VN(TYPE, LST) NNV(V, TYPE, LST)
+
 #define CN(CMD, TGT) NNV(C, CC(CMD), TGT)

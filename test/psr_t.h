@@ -29,3 +29,5 @@ extern const char *TPGM(ackrec);
 extern const char *TPGM(scope);
 
 extern const char *TPGM(efn);
+
+extern const char *TPGM(teadd);
