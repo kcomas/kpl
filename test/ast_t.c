@@ -28,12 +28,13 @@ tbl *mktbl(size_t size) {
 void bast(_tests *_t, ast *a, const char *pgm, te **an) {
     E();
     printf("%s\n", pgm);
-    te *pn = psr_r(bpsr(pgm)), *e = NULL;
+    err *e = NULL;
+    te *pn = psr_r(bpsr(pgm));
     A(pn != NULL, "psr_r");
     ast_stat stat = ast_n(a, NULL, pn, (void**) an, &e);
     if (e) {
-        node_p(e, 0);
-        putchar('\n');
+        err_p(e);
+        err_f(e);
     }
     A(stat == AST_STAT(OK), "ast_n");
 }
