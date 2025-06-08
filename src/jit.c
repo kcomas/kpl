@@ -25,13 +25,13 @@ static const char *const jss[] = {
     "GCTSV_T_INV",
     "GCVR_T_INV",
     "DEL_T_INV",
-    "INV_CODE",
-    "IF_ELSE_INV"
+    "IF_ELSE_INV",
+    "INV_CODE"
 };
 
 const char *jit_stat_str(jit_stat jstat) {
     const char *s = "INVALID_JIT_STAT";
-    if (jstat >= JIT_STAT(OK) && jstat <= JIT_STAT(IF_ELSE_INV)) s = jss[jstat];
+    if (jstat >= JIT_STAT(OK) && jstat <= JIT_STAT(INV_CODE)) s = jss[jstat];
     return s;
 }
 
@@ -57,15 +57,17 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
 
 extern inline void fn_stk_f(fn_stk *f);
 
-void jit_i(al *const a, size_t nops, jit **j) {
+void jit_i(al *const a, size_t nops, jit **j, uint8_t flgs) {
     size_t size = nops * BYTES_PER_OP;
     if ((*j)->size > 0) {
         if ((*j)->size >= size) {
             (*j)->len = 0;
+            (*j)->flgs = flgs;
             return;
         } else if ((*j)->size < size) {
             jit_f(*j);
             *j = ala(a, sizeof(jit));
+            (*j)->flgs = flgs;
         }
     }
     size_t ps = (size_t) getpagesize() * 5;
@@ -178,6 +180,21 @@ static jit_stat jit_if(mod *const m, code *const c, jit_fn *const jf, jit *j) {
     return JIT_ER(m, OK, NULL);
 }
 
+static jit_stat jit_cond(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
+    jit_stat jstat;
+    int32_t jmpp, jmpl;
+    if ((jstat = jit_code(m, of->cond, jf, j, false)) != JIT_STAT(OK)) return jstat; // 0 or 1 on stack
+    jit_b(j, 2, 0x41, 0x5B); // pop r11
+    jit_b(j, 3, 0x4D, 0x85, 0xDB); // test r11 r11
+    jit_b(j, 2, 0x0F, 0x84); // je 0
+    jmpp = j->len;
+    jit_b(j, 4, 0x00, 0x00, 0x00, 0x00); // filled after body jmp to end
+    if ((jstat = jit_code(m, of->body, jf, j, false)) != JIT_STAT(OK)) return jstat;
+    jmpl = j->len - jmpp - sizeof(int32_t);
+    memcpy(j->h + jmpp, &jmpl, sizeof(int32_t)); // fill cond skip
+    return JIT_ER(m, OK, NULL);
+}
+
 static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j) {
     jit_stat jstat;
     int32_t lops = j->len, lope, bs, jmpl;
@@ -272,7 +289,7 @@ int thread_fn(void *volatile arg) {
     fn_stk *stk = fn_stk_i(td->m->r->a, FN_STK_SIZE);
     fn_stk_b(td->m->r->a, &stk, td->m->c);
     fn_stk_a(td->m->r->a, &stk, td->m->c);
-    jit_i(td->m->r->a, stk->nops + (td->te->len * 10), &td->m->r->j);
+    jit_i(td->m->r->a, stk->nops + (td->te->len * 10), &td->m->r->j, JIT_FLG(TD));
     jit_stat jstat;
     if ((jstat = jit_stk(td->m, stk, td->m->r->j, false)) != JIT_STAT(OK)) {
         code_p(td->m->c, 0);
@@ -320,6 +337,11 @@ static var join_thrd(var_td *volatile td) {
     return td->te->v[td->te->len - 1];
 }
 
+void deb(mod *volatile m) {
+    (void) m;
+    printf("?DEB?\n");
+}
+
 jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool done) {
     jit_stat jstat;
     op *o;
@@ -328,6 +350,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
     size_t tsvs; // size of tsv
     uint8_t buf[sizeof(void*)];
     fn_stk *stk;
+    var vn = (var) { .vd = NULL };
     for (size_t i = 0;  i < c->len; i++) {
         o = &c->ops[i];
         switch (o->oc) {
@@ -354,13 +377,17 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 jit_b(j, 2, 0x41, 0x51); // push r9
                 op_set_jlen(j, o);
                 break;
-            case OP_C(RFN):
+            case OP_C(DONE):
                 op_set_jidx(j, o);
                 if (done) {
                     SET_REG(m, mod*, false, 7);
                     SET_FP(mod_done);
                     SET_REG_CALL(false, 0);
                 }
+                op_set_jlen(j, o);
+                break;
+            case OP_C(RFN):
+                op_set_jidx(j, o);
                 jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
                 op_set_jlen(j, o);
                 break;
@@ -434,7 +461,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 stk = fn_stk_i(m->r->a, FN_STK_SIZE);
                 fn_stk_b(m->r->a, &stk, o->od.tsvm->m->c);
                 fn_stk_a(m->r->a, &stk, o->od.tsvm->m->c);
-                jit_i(m->r->a, stk->nops, &o->od.tsvm->m->r->j);
+                jit_i(m->r->a, stk->nops, &o->od.tsvm->m->r->j, 0);
                 if (jit_stk(o->od.tsvm->m, stk, o->od.tsvm->m->r->j, true) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
                 SET_REG(o->od.tsvm->m->c->jf, jit_fn*, false, 0);
@@ -449,12 +476,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 break;
             case OP_C(AL):
                 op_set_jidx(j, o);
-                jit_b(j, 4, 0x48, 0x83, 0xEC, o->od.u3 * sizeof(void*)); // sub rsp nl * ptrsize
-                jit_b(j, 3, 0x4D, 0x31, 0xC9); // xor r9 r9
-                for (uint8_t i = 0; i < o->od.u3; i++) {
-                    vsp = -(o->od.u3 + 1) * sizeof(void*);
-                    jit_b(j, 4, 0x4C, 0x89, 0x4D, vsp); // mov qword ptr rbp-vsp r9
-                }
+                SET_REG(vn, var, false, 0);
+                for (uint8_t i = 0; i < o->od.u3; i++) jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);
                 break;
             case OP_C(SL):
@@ -577,7 +600,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 if ((jstat = jit_lop(m, o->od.of, jf, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
-            case OP_C(COND): return JIT_ER(m, INV_CODE, o); // INTERNAL IN IF
+            case OP_C(COND):
+                op_set_jidx(j, o);
+                if ((jstat = jit_cond(m, o->od.of, jf, j)) != JIT_STAT(OK)) return jstat;
+                op_set_jlen(j, o);
+                break;
             case OP_C(ZOO):
                 op_set_jidx(j, o);
                 jit_a(j, 0x5F); // pop rdi
@@ -714,6 +741,14 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 op_set_jidx(j, o);
                 jit_a(j, 0x5F); // pop rdi
                 SET_FP(join_thrd);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
+            case OP_C(NK):
+                op_set_jidx(j, o);
+                jit_a(j, 0x5F); // pop rdi
+                SET_FP(var_nvd);
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
                 op_set_jlen(j, o);

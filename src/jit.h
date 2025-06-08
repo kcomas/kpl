@@ -30,8 +30,8 @@ typedef enum {
     JIT_STAT(GCTSV_T_INV),
     JIT_STAT(GCVR_T_INV),
     JIT_STAT(DEL_T_INV),
+    JIT_STAT(IF_ELSE_INV),
     JIT_STAT(INV_CODE),
-    JIT_STAT(IF_ELSE_INV)
 } jit_stat;
 
 const char *jit_stat_str(jit_stat jstat);
@@ -81,7 +81,7 @@ typedef enum {
     #define BYTES_PER_OP 50
 #endif
 
-void jit_i(al *const a, size_t nops, jit **j);
+void jit_i(al *const a, size_t nops, jit **j, uint8_t flgs);
 
 inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o) {
     if (jstat == JIT_STAT(OK)) return jstat;

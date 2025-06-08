@@ -33,6 +33,7 @@ typedef union _var {
     int64_t i6;
     uint64_t u6;
     int fd;
+    void *vd;
     jit_fn *jf;
     var_sg *sg;
     var_tsv *tsv;
@@ -41,6 +42,8 @@ typedef union _var {
 } var;
 
 ssize_t var_rcf(var v, type t);
+
+bool var_nvd(var v);
 
 bool var_zoo_u6(uint64_t v);
 bool var_zoo_i6(int64_t v);

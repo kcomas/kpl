@@ -102,6 +102,8 @@ ssize_t var_rcf(var v, type t) {
     return 0;
 }
 
+bool var_nvd(var v) { return v.vd != NULL; }
+
 bool var_zoo_u6(uint64_t v) { return v != 0; }
 bool var_zoo_i6(int64_t v) { return v != 0; }
 

@@ -89,6 +89,7 @@ typedef enum {
     OP_C(PUSH),
     OP_C(POP),
     OP_C(SWAP),
+    OP_C(DONE),
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
@@ -135,6 +136,7 @@ typedef enum {
     OP_C(TDI), // thread init
     OP_C(TDJ), // thread join
     // GC
+    OP_C(NK), // null check
     OP_C(RCI),
     OP_C(RCD),
     OP_C(RCF), // dec ref count of type ret if gt 0

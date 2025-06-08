@@ -113,6 +113,7 @@ static const char *op_c_str[] = {
     "PUSH",
     "POP",
     "SWAP",
+    "DONE",
     "RFN", // return fn
     "CFN", // call fn
     "CS", // call self
@@ -158,6 +159,7 @@ static const char *op_c_str[] = {
     "TDI",
     "TDJ",
     // GC
+    "NK", // null check
     "RCI",
     "RCD",
     "RCF", // dec ref count of type ret if gt 0
@@ -491,36 +493,56 @@ static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_
 typedef enum {
     LD_V_M(RCI),
     LD_V_M(GC),
-    LD_V_M(NK) // null
+    LD_V_M(NK) // null check
 } ld_v_m;
+
+#define LOAD_VAR(C) switch (a->n.var->vt) { \
+    case VAR_TYPE(U): \
+        return CODE_ER(cs, VAR_TYPE_U, a); \
+    case VAR_TYPE(G): \
+        OP_A(cs, C, LG, VAR, { SLV(a->n.var->id, a->n.var->tn->t) }, a); \
+        break; \
+    case VAR_TYPE(L): \
+        OP_A(cs, C, LL, VAR, { SLV(a->n.var->id - a->n.var->fns->args->len, a->n.var->tn->t) }, a); \
+        break; \
+    case VAR_TYPE(A): \
+        OP_A(cs, C, LA, VAR, { SLV(a->n.var->fns->args->len - 1 - a->n.var->id, a->n.var->tn->t) }, a); \
+        break; \
+}
 
 static code_stat load_var(code_st *const cs, const ast *const a, code **c, ld_v_m lvm) {
     code_stat cstat;
     op_if *of;
-    switch (a->n.var->vt) {
-        case VAR_TYPE(U):
-            return CODE_ER(cs, VAR_TYPE_U, a);
-        case VAR_TYPE(G):
-            OP_A(cs, c, LG, VAR, { SLV(a->n.var->id, a->n.var->tn->t) }, a);
-            break;
-        case VAR_TYPE(L):
-            OP_A(cs, c, LL, VAR, { SLV(a->n.var->id - a->n.var->fns->args->len, a->n.var->tn->t) }, a);
-            break;
-        case VAR_TYPE(A):
-            // reverse count to get stack
-            OP_A(cs, c, LA, VAR, { SLV(a->n.var->fns->args->len - 1 - a->n.var->id, a->n.var->tn->t) }, a);
-            break;
-    }
     switch (lvm) {
         case LD_V_M(RCI):
+            LOAD_VAR(c);
             OP_RCI(cs, c, a->n.var->tn);
             break;
         case LD_V_M(GC):
+            LOAD_VAR(c);
             OP_RCD(cs, c, a->n.var->tn);
             OP_GC(cs, c, a->n.var->tn, a);
             break;
         case LD_V_M(NK):
-            // TODO
+            switch (a->n.var->tn->t) {
+                case TYPE(STR):
+                case TYPE(SG):
+                case TYPE(VR):
+                case TYPE(TE):
+                case TYPE(ST):
+                case TYPE(ER):
+                case TYPE(TD):
+                    of = op_if_i(cs->r->a, 5); // null chck
+                    LOAD_VAR(&of->cond);
+                    OP_A(cs, &of->cond, NK, VD, {}, a);
+                    LOAD_VAR(&of->body);
+                    OP_RCD(cs, &of->body, a->n.var->tn);
+                    OP_GC(cs, &of->body, a->n.var->tn, a);
+                    OP_A(cs, c, COND, COND, { .of = of }, a);
+                    break;
+                default:
+                    break;
+            }
             break;
     }
     return CODE_ER(cs, OK, a);
@@ -574,21 +596,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (opn->l->at == AST_TYPE(VAR)) {
                 if ((opn->flgs & NODE_FLG(GCV)) && (cstat = load_var(cs, opn->l, c, LD_V_M(GC))) != CODE_STAT(OK)) {
                     return cstat;
-                }  else {
-                    switch (opn->l->n.var->tn->t) {
-                        case TYPE(STR):
-                        case TYPE(SG):
-                        case TYPE(VR):
-                        case TYPE(TE):
-                        case TYPE(ST):
-                        case TYPE(ER):
-                        case TYPE(TD):
-                            if ((cstat = load_var(cs, opn->l, c, LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                }  else if ((cstat = load_var(cs, opn->l, c, LD_V_M(NK))) != CODE_STAT(OK)) return cstat;
                 if ((cstat = store_var(cs, a, c, opn->l->n.var, true)) != CODE_STAT(OK)) return cstat;
                 break;
             } else if (opn->l->at == AST_TYPE(SYM)) {
@@ -910,7 +918,7 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
     if (ngl && fn->par) {
         tbl_itm *ti = fn->tl->t;
         while (ngl > 0) {
-            if (t != TYPE(VD)) OP_A(cs, c, SWAP, VD, {}, NULL);
+            if (t != TYPE(VD)) OP_A(cs, c, SWAP, OP, { .t = t }, NULL);
             OP_GC(cs, c, ((var_node*) ti->data)->tn, NULL);
             ti = ti->prev;
             ngl--;
@@ -918,9 +926,11 @@ static code_stat code_gen_ret(code_st *const cs, const fn_node *const fn, code *
     }
     if (t == TYPE(ER)) {
         if (!(tn = ast_gtn(tn->a))) return CODE_ER(cs, FN_RET_ER_T_INV, NULL);
+        OP_A(cs, c, DONE, VD, {}, NULL);
         if (tn->t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
         OP_A(cs, c, RFN, ER, { RER(tn->t, NFEC(tn->flgs)) }, NULL);
     } else {
+        OP_A(cs, c, DONE, VD, {}, NULL);
         if (t != TYPE(VD)) OP_A(cs, c, POP, U3, { .u3 = 0 }, NULL); // TODO xmm
         OP_A(cs, c, RFN, CODE, { .t = t }, NULL);
     }

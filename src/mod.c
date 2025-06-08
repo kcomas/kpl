@@ -50,6 +50,7 @@ mod_stat mod_lfile_tkn(mod *const m, const char *const dirs, size_t dirl, const 
 
 void mod_ag(mod *const m, uint8_t ng) {
     m->g = ala(m->r->a, sizeof(var) * ng);
+    for (uint8_t i = 0; i < ng; i++) m->g[i].u6 = 0;
     m->ng = ng;
 }
 
