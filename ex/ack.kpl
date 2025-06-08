@@ -12,4 +12,7 @@ ack:FN(U6;U6;U6)${(m;n)
     }
     S(m - 1;S(m;n - 1))}
 
-$(FD;1) << " ", ["n:";SG$n;"m:";SG$m;"ack:";SG$ack(n;m);"\n"]
+pack:FN(U6;U6;VD)${(n;m)
+    $(FD;1) << " ", ["n:";SG$n;"m:";SG$m;"ack:";SG$ack(n;m);"\n"] }
+
+pack(n;m)
