@@ -43,9 +43,9 @@ typedef enum {
     TCUST(DIV),
     TCUST(EQ),
     TCUST(GT),
-    TCUST(GTEQ),
+    TCUST(GTE),
     TCUST(LT),
-    TCUST(LTEQ),
+    TCUST(LTE),
     // cmds
     TCUST(E),
     TCUST(P1),

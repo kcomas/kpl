@@ -177,7 +177,10 @@ static atg_stat cst_f6_e_u6(atg *t, gen *g, te *an, err **e) {
 
 static gen_op atg_gen_g_cond_rv(const te *ci) {
     switch (ci->d[0].u6) {
+        case GEN_OP(LT): return GEN_OP(GTE);
         case GEN_OP(LTE): return GEN_OP(GT);
+        case GEN_OP(GT): return GEN_OP(LTE);
+        case GEN_OP(GTE): return GEN_OP(LT);
         default:
             break;
     }
@@ -207,7 +210,7 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
     if ((stat = atg_r(t, g, an->d[6].p, e)) != ATG_STAT(OK)) return stat;
     while (cnds != ende) {
         ci = cnds->d[0].p;
-        if (gen_a(g, atg_gen_g_cond_rv(ci), te_c(ci->d[1].p), te_c(ci->d[2].p), gen_lbl(g, sl)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (gen_a(g, atg_gen_g_cond_rv(ci), te_c(ci->d[1].p), te_c(ci->d[2].p), gen_lbl(g, sl)) != GEN_STAT(OK)) return atg_err(t, an, e, "atg cannot invert loop logic");
         cnds = cnds->d[2].p;
     }
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -334,6 +337,12 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat oc_cond_gen(oc c, gen_op *go) {
     switch (c) {
+        case OC(LT):
+            *go = GEN_OP(GTE);
+            break;
+        case OC(LTE):
+            *go = GEN_OP(GT);
+            break;
         case OC(GT):
             *go = GEN_OP(LTE);
             break;
@@ -351,11 +360,11 @@ static atg_stat cond_e_s(atg *t, gen *g, te *an, err **e, x64_type xt) {
     return ATG_STAT(OK);
 }
 
-static atg_stat gt_bl_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
+static atg_stat cond_bl_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
     return cond_e_s(t, g, an, e, X64_TYPE(I6));
 }
 
-static atg_stat gt_bl_e_u6_s_u6(atg *t, gen *g, te *an, err **e) {
+static atg_stat cond_bl_e_u6_s_u6(atg *t, gen *g, te *an, err **e) {
     return cond_e_s(t, g, an, e, X64_TYPE(U6));
 }
 
@@ -418,8 +427,10 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(CST), TYPE(F6), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6), cst_f6_e_u6);
     atg_a_o(t, OC(LOOP), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), loop_l_l);
     atg_a_o(t, OC(IF), TYPE(U6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
-    atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), gt_bl_e_i6_s_i6);
-    atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), gt_bl_e_u6_s_u6);
+    atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
+    atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), cond_bl_e_u6_s_u6);
+    atg_a_o(t, OC(LT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
+    atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(I6), dump_vd_s_u5_aply);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(U6), dump_vd_s_u5_aply);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(F6), dump_vd_s_u5_aply);

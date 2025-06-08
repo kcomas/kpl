@@ -32,6 +32,7 @@ INST_R(idiv);
     return x64_##N##_rm(p, m, arg1->d[1].u3) == X64_STAT(OK); \
 }
 
+INST_RM(inc);
 INST_RM(dec);
 INST_RM(imul);
 
@@ -71,6 +72,7 @@ INST_RB(cmp);
 }
 
 INST_RMB(cmp);
+INST_RMB(inc);
 INST_RMB(dec);
 INST_RMB(imul);
 
@@ -178,6 +180,8 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(DIV), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_div_r, NULL);
     as_op_a(a, AS_X64(IDIV), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_idiv_r, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_inc_r, NULL);
+    as_op_a(a, AS_X64(INC), ARG_ID(RM), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_inc_rm, NULL);
+    as_op_a(a, AS_X64(INC), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_inc_rmb, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_dec_r, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(RM), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_dec_rm, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_dec_rmb, NULL);

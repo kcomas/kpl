@@ -213,6 +213,12 @@ x64_stat x64_lea_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 // inc rax
 x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r);
 
+// inc qword ptr[rax]
+x64_stat x64_inc_rm(size_t *p, uint8_t *m, reg r);
+
+// inc qword ptr[rax+dsp8]
+x64_stat x64_inc_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
+
 // add rax, byte
 x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, int8_t b);
 
