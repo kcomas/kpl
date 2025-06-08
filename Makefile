@@ -18,55 +18,81 @@ LTNAME = _lib$(TNAME)
 
 all: $(NAME)
 
+TT = test$(LTNAME)
+LTT += $(TT)
 LTEST_OBJS = $(LTEST)/t.o
-test$(LTNAME): $(LTEST_OBJS) $(LTEST)/test.o
+$(TT): $(LTEST_OBJS) $(LTEST)/test.o
 > $(CCOBJ)
 
+DEF = def$(LTNAME)
+LTT += $(DEF)
 LDEF_OBJS = $(LSRC)/def.o
-def$(LTNAME): $(LDEF_OBJS) $(LTEST)/def.o
+$(DEF): $(LDEF_OBJS) $(LTEST)/def.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+MC = mc$(LTNAME)
+LTT += $(MC)
 LMC_OBJS = $(LSRC)/mc.o
-mc$(LTNAME): $(LMC_OBJS) $(LTEST)/mc.o $(LTEST_OBJS)
+$(MC): $(LMC_OBJS) $(LTEST)/mc.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+X64 = x64$(LTNAME)
+LTT += $(X64)
 LX64_OBJS = $(LSRC)/x64.o
-x64$(LTNAME): $(LX64_OBJS) $(LTEST)/x64.o $(LTEST_OBJS)
+$(X64): $(LX64_OBJS) $(LTEST)/x64.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+TE = te$(LTNAME)
+LTT += $(TE)
 LTE_OBJS = $(LSRC)/te.o
-te$(LTNAME): $(LTE_OBJS) $(LTEST)/te.o $(LTEST_OBJS)
+$(TE): $(LTE_OBJS) $(LTEST)/te.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+VR = vr$(LTNAME)
+LTT += $(VR)
 LVR_OBS = $(LSRC)/vr.o
-vr$(LTNAME): $(LVR_OBS) $(LTEST)/vr.o $(LTEST_OBJS)
+$(VR): $(LVR_OBS) $(LTEST)/vr.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+LST = lst$(LTNAME)
+LTT += $(LST)
 LLST_OBJS = $(LSRC)/lst.o $(LTE_OBJS)
-lst$(LTNAME): $(LLST_OBJS) $(LTEST)/lst.o $(LTEST_OBJS)
+$(LST): $(LLST_OBJS) $(LTEST)/lst.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+TBL = tbl$(LTNAME)
+LTT += $(TBL)
 LTBL_OBJS = $(LSRC)/tbl.o $(LLST_OBJS)
-tbl$(LTNAME): $(LTBL_OBJS) $(LTEST)/tbl.o $(LTEST_OBJS)
+$(TBL): $(LTBL_OBJS) $(LTEST)/tbl.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+TKN = tkn$(LTNAME)
+LTT += $(TKN)
 LTKN_OBJS = $(LSRC)/tkn.o $(LTBL_OBJS) $(LMC_OBJS) $(LDEF_OBJS)
-tkn$(LTNAME): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
+$(TKN): $(LTKN_OBJS) $(LTEST)/tkn.o $(LTEST)/tkn_t.o $(LTEST_OBJS)
 > $(CCOBJ)
 
+PSR = psr$(LTNAME)
+LTT += $(PSR)
 LPSR_OBJS = $(LSRC)/psr.o $(LVR_OBS) $(LTKN_OBJS) $(LVR_OBS)
-psr$(LTNAME): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
+$(PSR): $(LPSR_OBJS) $(LTEST)/psr.o $(LTEST)/psr_t.o $(LTEST)/tkn_t.o
 > $(CCOBJ)
 
+AS = as$(LTNAME)
+LTT += $(AS)
 LAS_OBJS = $(LSRC)/as.o $(LTBL_OBJS)
 LASX64_OBJS = $(LSRC)/as_x64.o $(LX64_OBJS)
-as$(LTNAME): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
+$(AS): $(LAS_OBJS) $(LTEST)/as.o $(LTEST)/as_t.o $(LASX64_OBJS)
 > $(CCOBJ)
 
+GEN = gen$(LTNAME)
+LTT += $(GEN)
 GEN_OBJS = $(LSRC)/gen.o $(LAS_OBJS)
 GENX64_OBJS = $(GEN_OBJS) $(LSRC)/gen_x64.o $(LX64_OBJS) $(LASX64_OBJS) $(LVR_OBS) $(patsubst %.c,%.o,$(wildcard $(LSRC)/gen_x64/*.c))
 gen$(LTNAME): $(GENX64_OBJS) $(LTEST)/gen.o $(LTEST)/gen_t.o $(LTEST)/as_t.o
 > $(CCOBJ)
+
+lib_tests: $(LTT)
 
 clean:
 > find -type f -regex "^\($(SRC)\|$(TEST)\).*\.o$$" | xargs rm -fv
