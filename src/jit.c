@@ -177,6 +177,10 @@ static jit_stat jit_lop(mod *const m, op_if *const of, jit_fn *const jf, jit *j)
     return JIT_ER(m, OK, NULL);
 }
 
+static jit_stat jit_gc_vr(mod *const m, const op *const o, jit *j) {
+    // TODO
+}
+
 #ifndef TSVML
     #define TSVML 4 // vr mul
 #endif
@@ -249,6 +253,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(I6, mod_sg_i6);
                     CT_SET_FN(U6, mod_sg_u6);
                     CT_SET_FN(SG, mod_sg_var_sg);
+                    CT_SET_FN(VR, mod_sg_var_tsv);
                     CT_SET_FN(TE, mod_sg_var_tsv);
                     CT_SET_FN(ST, mod_sg_var_tsv);
                     CT_SET_FN(FN, mod_sg_jf);
@@ -269,6 +274,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(I6, mod_lg_i6);
                     CT_SET_FN(U6, mod_lg_u6);
                     CT_SET_FN(SG, mod_lg_var_sg);
+                    CT_SET_FN(VR, mod_lg_var_tsv);
                     CT_SET_FN(TE, mod_lg_var_tsv);
                     CT_SET_FN(ST, mod_lg_var_tsv);
                     CT_SET_FN(FN, mod_lg_jf);
@@ -679,6 +685,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     default:
                         return JIT_ER(m, GCTSV_T_INV, o);
                 }
+                op_set_jlen(j, o);
+                break;
+            case OP_C(GCVR):
+                op_set_jidx(j, o);
+                if ((jstat = jit_gc_vr(m, o, j)) != JIT_STAT(OK)) return jstat;
                 op_set_jlen(j, o);
                 break;
             case OP_C(DEL):
