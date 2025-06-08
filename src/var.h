@@ -157,7 +157,7 @@ typedef struct _var_hh {
     tbl *tl; // data freed in git with gc fn
 } var_hh;
 
-var_hh *var_hh_i(al *const a, jit_fn *gc);
+var_hh *var_hh_i(al *const a, size_t len, jit_fn *gc);
 
 void var_hh_rci(var_hh *const hh);
 
