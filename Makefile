@@ -119,7 +119,7 @@ $(TESTS): $(OBJS) $(patsubst %.c,%.o,$(wildcard $(TEST)/*.c))
 > $(CCOBJ)
 
 show_$(TESTS):
-> echo `find ./test -type f -name "*.c" | grep -v -E "(_t|\/t\.c)" | cut -d "/" -f3 | sed 's/\.c/$(TNAME)/'`
+> find ./test -type f -name "*.c" | grep -v -E "(_t|\/t\.c)" | cut -d "/" -f3 | sed 's/\.c/$(TNAME)/'
 
 clean:
 > find -type f -regex "^\($(SRC)\|$(TEST)\).*\.o$$" | xargs rm -fv
