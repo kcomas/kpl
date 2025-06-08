@@ -230,12 +230,40 @@ jit_stat jit_jbjnaejc_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x72, b);
 }
 
+jit_stat jit_jnbjaejnc_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0x73, b);
+}
+
+jit_stat jit_jzje_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0x74, b);
+}
+
 jit_stat jit_jnzjne_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x75, b);
 }
 
 jit_stat jit_jbejna_b(size_t *p, uint8_t *m, uint8_t b) {
     return jit_b(p, m, 2, 0x76, b);
+}
+
+jit_stat jit_jnbeja_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 2, 0x77, b);
+}
+
+jit_stat jit_jljnge_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 0x7C, b);
+}
+
+jit_stat jit_jnljge_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 0x7D, b);
+}
+
+jit_stat jit_jlejng_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 0x7E, b);
+}
+
+jit_stat jit_jnlejg_b(size_t *p, uint8_t *m, uint8_t b) {
+    return jit_b(p, m, 0x7F, b);
 }
 
 jit_stat jit_setl_r(size_t *p, uint8_t *m, reg r) {
