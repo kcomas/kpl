@@ -1,8 +1,27 @@
 
 #include "fld.h"
 
-static fld_stat aply_op_r(fld *f, te **an) {
-    // TODO convert aply op to op
+static fld_stat err(fld_stat stat, te *an, te **e) {
+    *e = an;
+    return stat;
+}
+
+static fld_stat aply_op_r(fld *f, te **an, te **e) {
+    (void) f;
+    lst *l = (*an)->d[5].p;
+    (*an)->d[5] = P(NULL);
+    if (l->l < 1 || l-l > 2) return err(FLD_STAT(INV), *an, e);
+    te *on = (*an)->d[4].p;
+    on->d[0] = (*an)->d[0];
+    (*an)->d[0] = (*an)->d[1] = (*an)->d[4] = P(NULL);
+    te_f(*an);
+    un a = P(NULL), b = P(NULL);
+    lst_sb(l, &b);
+    if (l->l == 1) lst_sb(l, &a);
+    lst_f(l);
+    on->d[5] = a;
+    on->d[6] = b;
+    *an = on;
     return FLD_STAT(OK);
 }
 

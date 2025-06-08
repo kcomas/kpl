@@ -76,7 +76,8 @@ lst_stat lst_sb(lst *l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
     te *li = l->t;
     l->t = l->t->d[1].p;
-    l->t->d[2] = P(NULL);
+    if (l->t) l->t->d[2] = P(NULL);
+    else l->h = l->t;
     *d = li->d[0];
     te_f(li);
     l->l--;
@@ -87,7 +88,8 @@ lst_stat lst_sf(lst *l, un *d) {
     if (l->l == 0) return LST_STAT(SUB);
     te *li = l->h;
     l->h = l->h->d[2].p;
-    l->h->d[1] = P(NULL);
+    if (l->h) l->h->d[1] = P(NULL);
+    else l->t = l->h;
     *d = li->d[0];
     te_f(li);
     l->l--;

@@ -3,6 +3,7 @@
 
 ast *ast_i(const alfr *af, const alfr *ta, const alfr *ma, psr_id_g pig, ast_lst_i ali, tbl *pt, tbl *tt) {
     ast *a = af->a(sizeof(ast));
+    a->r = 1;
     a->af = af;
     a->ta = ta;
     a->ma = ma;
