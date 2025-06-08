@@ -8,6 +8,7 @@ extern inline alc *alc_i(al *const a, size_t size);
 void alc_f(alc *ac, void *fn) {
     (void) fn;
 #ifdef KPL_ALD
+    ac->aus -= sizeof(alc) + sizeof(alci);
     if (ac->aus > 0) printf("==Lost: %lu bytes==\n", ac->aus);
 #endif
     munmap(ac, ac->size);
@@ -27,7 +28,7 @@ void *ala(al *const a, size_t size) {
     }
     if (!ac) ac = alc_i(a, size);
     void *ptr = ac->h + ac->len;
-    posix_memalign(&ptr, sizeof(alci), size);
+    posix_memalign(&ptr, sizeof(alci), ac->size);
     ac->aus += size;
     ac->len += size;
     alci *ai = (alci*) ptr;
