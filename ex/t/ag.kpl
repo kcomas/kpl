@@ -2,4 +2,6 @@
 // allocate globals and set values test
 
 a:I6$1234
-b:a
+b:SG$a
+c:FD$1
+c << b,"\n"

@@ -208,6 +208,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(U6, mod_sg_u6);
                     CT_SET_FN(SG, mod_sg_var_sg);
                     CT_SET_FN(FN, mod_sg_jf);
+                    CT_SET_FN(FD, mod_sg_fd);
                     default:
                         return JIT_STAT(SG_T_INV);
                 }
@@ -224,6 +225,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(U6, mod_lg_u6);
                     CT_SET_FN(SG, mod_lg_var_sg);
                     CT_SET_FN(FN, mod_lg_jf);
+                    CT_SET_FN(FD, mod_lg_fd);
                     default:
                         return JIT_STAT(LG_T_INV);
                 }

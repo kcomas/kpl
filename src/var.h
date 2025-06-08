@@ -32,6 +32,7 @@ void var_sg_f(var_sg *sg);
 typedef union _var {
     int64_t i6;
     uint64_t u6;
+    int fd;
     jit_fn *jf;
     var_sg *sg;
     var_te_vr *te, *vr;
