@@ -91,6 +91,10 @@ ssize_t var_rcf(var v, type t) {
         case TYPE(TE):
         case TYPE(ST):
             return --v.tsv->rc;
+        case TYPE(ER):
+            return --v.ei->rc;
+        case TYPE(TD):
+            return --v.td->rc;
         default:
             break;
     }
