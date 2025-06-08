@@ -20,7 +20,8 @@ typedef enum {
     GEN_CLS(V), // var local
     GEN_CLS(T), // tmp
     GEN_CLS(L), // label
-    GEN_CLS(D) // data
+    GEN_CLS(D), // data
+    GEN_CLS(I) // index
 } gen_cls;
 
 const char* gen_cls_str(gen_cls cls);

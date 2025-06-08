@@ -27,6 +27,29 @@ static bool idnt_lst_t(const te *an) {
     return an->d[2].u4 == AST_CLS(I);
 }
 
+static fld_stat enlst(fld *f, te **an, err **e) {
+    (void) e;
+    if ((*an)->d[2].u4 == AST_CLS(L)) return FLD_STAT(OK);
+    lst *ll = f->a->ali();
+    te *ln = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(L), P(NULL), ll);
+    lst_ab(ll, P(*an));
+    (*an)->d[0] = P(ln);
+    *an = ln;
+    return FLD_STAT(OK);
+}
+
+static fld_stat op_lr_lst_r(fld *f, te **an, err **e) {
+    fld_stat fstat;
+    if ((fstat = enlst(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK)) return fstat;
+    return enlst(f, (te**) &(*an)->d[6].p, e);
+}
+
+static bool op_lr_lst_t(const te *an) {
+    te *l = an->d[5].p, *r = an->d[6].p;
+    if (an->d[4].u4 != OC(LOOP)) return false;
+    return l->d[2].u4 != AST_CLS(L) || r->d[2].u4 != AST_CLS(L);
+}
+
 static fld_stat e_lst_type_o_def_r(fld *f, te **an, err **e) {
     te *lte = te_c(((te*) (*an)->d[6].p)->d[3].p);
     te *lt = (*an)->d[6].p;
@@ -182,6 +205,7 @@ static bool cmd_t(const te *an) {
 
 fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
+    fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), e_lst_type_o_def_t, e_lst_type_o_def_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);

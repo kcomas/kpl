@@ -47,7 +47,7 @@ T(facloop) {
         ON(NULL, DFN, EN("v", U6(0), NULL), SN(I6, I6(5))),
         ON(NULL, DFN, EN("f", U6(LTE_FLG(E)), NULL), SN(I6, I6(1))),
         ON(NULL, LOOP,
-            ON(NULL, GT, EN("v", U6(0), NULL), SN(I6, I6(1))),
+            LN(NULL, L(1, ON(NULL, GT, EN("v", U6(0), NULL), SN(I6, I6(1))))),
             LN(LT(2, "f", U6(0), NULL, "v", U6(0), NULL), L(2,
                 ON(NULL, MULA, EN("f", U6(0), NULL), EN("v", U6(0), NULL)),
                 ON(NULL, SUBA, EN("v", U6(0), NULL), SN(I6, I6(1)))))),

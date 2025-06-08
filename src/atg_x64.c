@@ -176,6 +176,12 @@ static atg_stat div_f6_o_f6_o_f6(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat dfn_i6_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
+    uint32_t vid = ast_lst_tbl_e_g_i(((te*) an->d[5].p)->d[3].p);
+    if (gen_a(g, GEN_OP(SET), gen_stkv(g, X64_TYPE(I6), vid), gen_data(g, X64_TYPE(I6), ((te*) an->d[6].p)->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 static atg_stat dfn_fn_e_fn_s__g(atg *t, gen *g, te *an, err **e) {
     (void) t;
     (void) g;
@@ -283,6 +289,7 @@ atg *atg_b(atg *t) {
     atg_a_se(t, root_lst_t, root_lst_s, root_lst_e);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
+    atg_a_o(t, OC(DFN), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), dfn_i6_e_i6_s_i6);
     atg_a_o(t, OC(DFN), TYPE(FN), AST_CLS(E), TYPE(FN), AST_CLS(S), TYPE(_G), dfn_fn_e_fn_s__g);
     atg_a_o(t, OC(CST), TYPE(FN), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A), atg_ok);
     atg_a_o(t, OC(CST), TYPE(F6), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6), cst_f6_e_u6);
