@@ -44,7 +44,7 @@ typedef enum {
     CODE_ID(L) // label
 } code_id;
 
-// code te[code_id;op_or_label_id;arg_id1;arg_id2;arg_id3;arg_id4;fn;lbl_fn;pos(in written bytes);len]
+// code te[code_id;op_or_label_id;arg1;arg2;arg3;arg4;fn;lbl_fn;pos(in written bytes);len]
 
 #define LABEL(N) LABEL_##N
 
@@ -72,12 +72,13 @@ typedef bool as_code_fn(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, 
 
 as *as_i(alfn *aa, frfn *af, frfn *lef, frfn *oef, frfn *cf, op_tbl_i *oti, tbl *lbls, lst *code);
 
-// LABEL(UN) for new label id at code
+// add and register label, LABEL(UN) for new label id at code
 size_t as_lbl_a(as *const a, size_t lbl_id);
 
-// not using varardic to avoid extra checks
+// register op, not using varardic to avoid extra checks
 void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_id ai4, as_code_fn *fn, as_code_fn *lbl_fn);
 
-as_stat as_a(size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
+// add op
+as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
 
 void as_f(as *a);

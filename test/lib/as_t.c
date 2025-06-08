@@ -1,6 +1,13 @@
 
 #include "as_t.h"
 
+te *as_arg_r(size_t rid) {
+    te *a = te_i(2, &malloc, &free);
+    a->d[0] = U6(ARG_ID(R));
+    a->d[1] = I6(rid);
+    return a;
+}
+
 static size_t no_hsh(un d) {
     return d.u6;
 }
@@ -20,16 +27,40 @@ tbl *as_mktbl(void) {
     return t;
 }
 
+void as_op_p(tbl *const ot, bool args, size_t idnt) {
+    te *h = ot->i->h;
+    while (h) {
+        for (size_t i = 0; i < idnt; i++) putchar(' ');
+        te *o = h->d[0].p;
+        printf("%c(%lu)\n", args ? 'A' : 'O', o->d[0].u6);
+        if (o->d[3].p) as_op_p(o->d[3].p, true, idnt + 1);
+        h = h->d[2].p;
+    }
+}
+
 void as_code_p(const as *const a) {
     te *h = a->code->h;
     while (h) {
         te *c = (te*) h->d[0].p;
-        if (c->d[0].u6 == CODE_ID(L)) printf("%lu:\n", c->d[1].u6);
+        if (c->d[0].u6 == CODE_ID(L)) printf("L(%lu):\n", c->d[1].u6);
         else {
-
+            printf("O(%lu) ", c->d[1].u6);
+            for (size_t i = 2; i < 6; i++) {
+                te *a = c->d[i].p;
+                if (!a) printf("A(N) ");
+                else printf("A(%lu):%lu ", a->d[0].u6, a->d[1].u6);
+            }
+            putchar('\n');
         }
         h = h->d[2].p;
     }
+}
+
+bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4) {
+    (void) a;
+    (void) arg3;
+    (void) arg4;
+    return jit_mov_rr(p, m, arg1->d[0].u6, arg2->d[1].u6) == JIT_STAT(OK);
 }
 
 void label_entry_f(void *p) {
@@ -41,7 +72,7 @@ void label_entry_f(void *p) {
 
 void op_entry_f(void *p) {
     te *oe = (te*) p;
-    tbl_f(oe->d[2].p);
+    tbl_f(oe->d[3].p);
     free(oe);
 }
 

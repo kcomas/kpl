@@ -5,11 +5,23 @@
 #include "../../src/lib/jit.h"
 #include "../../src/lib/as.h"
 
+#define AS_INST(N) AS_INST_##N
+
+typedef enum {
+    AS_INST(MOV)
+} as_inst;
+
+te *as_arg_r(size_t rid);
+
 lst *as_mklst(void);
 
 tbl *as_mktbl(void);
 
 void as_code_p(const as *const a);
+
+void as_op_p(tbl *const ot, bool args, size_t idnt);
+
+bool as_mov_rr(as *const a, size_t *p, uint8_t *m, te *arg1, te *arg2, te *arg3, te *arg4);
 
 void label_entry_f(void *p);
 

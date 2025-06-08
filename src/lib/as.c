@@ -80,6 +80,24 @@ void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_
     kv->d[2] = P(lbl_fn);
 }
 
+as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4) {
+    tbl *co = a->ops;
+    te *kv;
+    as_code_fn *fn = NULL, *lbl_fn = NULL;
+    if (tbl_g_i(co, U6(op_id), &kv) == TBL_STAT(NF)) return AS_STAT(INV);
+    co = kv->d[3].p;
+    const te *args[] = {arg1, arg2, arg3, arg4};
+    for (size_t i = 0; i < 4; i++) {
+        if (!args[i] || tbl_g_i(co, U6(args[i]->d[0].u6), &kv) == TBL_STAT(NF)) break;
+        co = kv->d[3].p;
+    }
+    fn = kv->d[1].p;
+    if (!fn) return AS_STAT(INV);
+    lbl_fn = kv->d[2].p;
+    add_code(a, CODE_ID(O), op_id, arg1, arg2, arg3, arg4, fn, lbl_fn);
+    return AS_STAT(OK);
+}
+
 void as_f(as *a) {
     if (!a || --a->r > 0) return;
     tbl_f(a->lbls);
