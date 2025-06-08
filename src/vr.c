@@ -33,6 +33,7 @@ vr_stat vr_s(vr *const v, var *d) {
 }
 
 void vr_f(vr *v) {
+    if (--v->r > 0) return;
     if (v->df) for (size_t i = 0; i < v->l; i++) v->df(v->d[i].p);
     v->ff(v);
 }
