@@ -22,12 +22,17 @@ typedef enum {
     X64_TYPE(I5),
     X64_TYPE(I6),
     X64_TYPE(F5),
-    X64_TYPE(F6),
+    X64_TYPE(F6)
 } x64_type;
 
-// TODO register state
 typedef struct {
-    tbl *args, *vars, *imm; // map args, imm to regs, stack
+    ssize_t r;
+    alfn *sa;
+    frfn *sf;
+    tbl *args, *tmp; // map args, tmp to regs
 } gen_st;
+
+// pass 1 - try to give everything a reg and avoid stack
+gen_st *gen_st_i(gen *g, alfn *sa, frfn *sf, tbl *args, tbl *vars, tbl *imm);
 
 gen *gen_b(gen *g);
