@@ -42,7 +42,9 @@ atg *atg_i_atg(const atg *t) {
 }
 
 static void atg_s_g(te *an, gen *g) {
-    te *c = g->code->t->d[0].p;
+    te *c = g->code->t;
+    while (((te*) c->d[0].p)->d[0].u4 == GEN_OP(LBL)) c = c->d[1].p;
+    c = c->d[0].p;
     switch (an->d[2].u4) {
         case AST_CLS(R):
         case AST_CLS(Z):

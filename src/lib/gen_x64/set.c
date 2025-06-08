@@ -23,6 +23,18 @@ static gen_stat set_vx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat set_vs_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    int32_t idxv, idxs;
+    te *tgt = ci->d[1].p;
+    te *from = ci->d[2].p;
+    if (st_stka_idx(gen_var_g_t(from), from->d[1].u3, &idxs) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stka inv idx");
+    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idxs, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(RM), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idxv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+    if (gen_as_rmbdr(a, AS_X64(MOV), R(BP), idxv, R(AX), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    return GEN_STAT(OK);
+}
+
 static gen_stat set_iu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv;
@@ -141,6 +153,7 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), set_vu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(M), GEN_CLS(D), X64_TYPE(M), set_vu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), set_vx_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(S), X64_TYPE(MI6), set_vs_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(A), X64_TYPE(I6), set_iu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(T), X64_TYPE(I6), set_iu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(V), X64_TYPE(I6), set_ivu_fn);

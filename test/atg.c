@@ -50,8 +50,9 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
         if (gc) gen_p(gc, NULL);
     }
     if (g) {
+        size_t pc = p;
         STOP("GENERATE DESTRUCTOR CODE");
-        STOP("ADD DES CODE TO H LIKE FN");
+        h->d[1] = P(&m[pc]);
     }
     gen_st_f(sc);
     gen_f(g);

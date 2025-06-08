@@ -11,6 +11,40 @@ typedef enum {
     GEN_STAT(INV)
 } gen_stat;
 
+#define GEN_OP(N) GEN_OP_##N
+
+typedef enum {
+    GEN_OP(_START),
+    GEN_OP(LBL),
+    GEN_OP(NOP), // used as tmp vars after mutli cmd gen
+    GEN_OP(ENTER),
+    GEN_OP(LEAVE),
+    GEN_OP(SET),
+    GEN_OP(REF),
+    GEN_OP(CALL),
+    GEN_OP(CALLNPR), // no preserve registers
+    GEN_OP(CALLV), // varardic
+    GEN_OP(CALLVNPR),
+    GEN_OP(ADD),
+    GEN_OP(SUB),
+    GEN_OP(NEG),
+    GEN_OP(MUL),
+    GEN_OP(DIV),
+    GEN_OP(CST),
+    GEN_OP(EQ),
+    GEN_OP(NE),
+    GEN_OP(GT),
+    GEN_OP(GTE),
+    GEN_OP(LT),
+    GEN_OP(LTE),
+    GEN_OP(JMP),
+    GEN_OP(_END)
+} gen_op; // not x64 opcodes, pseudo codes
+
+const char *gen_op_str(gen_op go);
+
+
+
 #define GEN_CLS(N) GEN_CLS_##N
 
 typedef enum {

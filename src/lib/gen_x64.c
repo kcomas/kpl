@@ -1,39 +1,6 @@
 
 #include "gen_x64.h"
 
-const char *gen_op_str(gen_op go) {
-    static const char *gos[] = {
-        "_START",
-        "LBL",
-        "NOP",
-        "ENTER",
-        "LEAVE",
-        "SET",
-        "REF",
-        "CALL",
-        "CALLNPR",
-        "CALLV",
-        "CALLVNPR",
-        "ADD",
-        "SUB",
-        "NEG",
-        "MUL",
-        "DIV",
-        "CST",
-        "EQ",
-        "NE",
-        "GT",
-        "GTE",
-        "LT",
-        "LTE",
-        "JMP",
-        "_END"
-    };
-    const char *s = "INV";
-    if (go > GEN_OP(_START) && go < GEN_OP(_END)) s = gos[go];
-    return s;
-}
-
 const char *x64_type_str(x64_type xt) {
     switch (xt) {
         case X64_TYPE(N): return "N";

@@ -328,6 +328,11 @@ static gen_stat callnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
    return call(g, s, ci, a, e, NULL, NULL, ((te*) ci->d[1].p)->d[1].p, ci->d[2].p, CFLG(NR));
 }
 
+static gen_stat callw_fn(gen *g, void *s, te *ci, as *a, err **e) {
+   te *w = ((te*) ci->d[2].p)->d[1].p;
+   return call(g, s, ci, a, e, ci->d[1].p, w->d[0].p, w->d[1].p, ci->d[3].p, 0);
+}
+
 static gen_stat callwnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
    te *w = ((te*) ci->d[1].p)->d[1].p;
    return call(g, s, ci, a, e, NULL, w->d[0].p, w->d[1].p, ci->d[2].p, CFLG(NR));
@@ -358,6 +363,7 @@ void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(M), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), call_fn);
+    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callw_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnr_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnr_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnr_fn);
