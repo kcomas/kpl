@@ -11,7 +11,7 @@ tbl *cti(void);
     chk *c = chk_i(&ast_am, &ast_am, cti, a); \
     chk_b(c);
 
-#define RC(N) te *e = NULL; \
+#define RC() te *e = NULL; \
     chk_stat stat = chk_n(c, an, &e); \
     chk_f(c); \
     if (e) { \

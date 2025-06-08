@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "vr.h"
 #include "gen.h"
 #include "as_x64.h"

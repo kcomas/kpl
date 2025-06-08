@@ -14,8 +14,6 @@ typedef enum {
     TYPE(_N), // none
     TYPE(_A), // used for type checking only
     TYPE(DL), // deferred list {}
-    TYPE(FP), // function pointer
-    TYPE(FL), // function label
     // user
     TYPE(VD), // void
     TYPE(BL),
