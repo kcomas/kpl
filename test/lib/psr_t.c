@@ -36,7 +36,7 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LS), "[", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LB), "{", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, &psr_aply_e, &psr_aply_m, &psr_aply_i, 1, tkn_a(t, TCUST(LP), "(", &tkn_ft));
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, &psr_sym_m, &psr_sym_i, 1, TCUST(SYM));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, &psr_aply_m, &psr_sym_i, 1, TCUST(SYM));
     psr_a(p, PCUST(IF), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#?", &tkn_ft));
     psr_a(p, PCUST(MTCH), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#=", &tkn_ft));
     return p;
@@ -195,25 +195,6 @@ psr_stat psr_aply_e(psr *const p, te *const e, te *const n) {
 
 psr_stat psr_sym_i(psr *const p, te **n) {
     *n = node_i(p, NODE_TYPE(SYM), 4);
-    return PSR_STAT(OK);
-}
-
-psr_stat psr_sym_m(psr *const p, te *const nh, te *const n) {
-    (void) p;
-    if ((nh->d[1].p && nh->d[2].p) || (nh->d[1].p && !((te*) nh->d[1].p)->d[4].p)) return PSR_STAT(INV);
-    if (!nh->d[1].p && !nh->d[2].p) {
-        nh->d[2].p = n;
-        return PSR_STAT(OK);
-    }
-    if (nh->d[1].p) {
-        n->d[3] = ((te*) nh->d[1].p)->d[4];
-        ((te*) nh->d[1].p)->d[4] = P(n);
-        n->d[0] = nh->d[1];
-    } else {
-        n->d[3] = nh->d[2];
-        ((te*) n->d[3].p)->d[0] = P(n);
-        nh->d[2] = P(n);
-    }
     return PSR_STAT(OK);
 }
 
