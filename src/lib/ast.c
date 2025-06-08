@@ -1,6 +1,22 @@
 
 #include "ast.h"
 
+const char *ast_cls_str(ast_cls cls) {
+    switch (cls) {
+        case AST_CLS(R): return "R";
+        case AST_CLS(I): return "I";
+        case AST_CLS(S): return "S";
+        case AST_CLS(V): return "V";
+        case AST_CLS(O): return "O";
+        case AST_CLS(T): return "T";
+        case AST_CLS(A): return "A";
+        case AST_CLS(L): return "L";
+        default:
+            break;
+    }
+    return "INV";
+}
+
 ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, tbl *t) {
     ast *a = af->a(sizeof(ast));
     a->af = af;
@@ -12,6 +28,7 @@ ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, tbl *t) {
 
 static void t_r_f(void *p) {
     te *n = p;
+    te_f(n->d[0].p); // free psr
     tbl_f(n->d[3].p);
     n->af->f(n);
 }
@@ -101,7 +118,7 @@ te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, .
     return t;
 }
 
-ast_stat as_a(ast *a, size_t id, ast_tf atf) {
+ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
     te *kv;
     if (tbl_g_i(a->t, U6(id), &kv) == TBL_STAT(OK)) return AST_STAT(INV);
     kv = te_i(2, a->na, NULL);
@@ -114,7 +131,10 @@ ast_stat as_a(ast *a, size_t id, ast_tf atf) {
 ast_stat ast_n(ast *a, te *pn, te **an) {
     ssize_t pid = a->pig(pn);
     if (pid < 0) return AST_STAT(INV);
-    return AST_STAT(OK);
+    te *kv;
+    if (tbl_g_i(a->t, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
+    ast_tf *atf = kv->d[1].p;
+    return atf(a, pn, an);
 }
 
 void ast_f(ast *a) {

@@ -24,6 +24,8 @@ typedef enum {
     AST_CLS(L) // list tbl with scope [tbl;lst]
 } ast_cls;
 
+const char *ast_cls_str(ast_cls cls);
+
 // ast entry te[id;fn]
 
 typedef ssize_t psr_id_g(te *pn); // -1 for invalid
@@ -41,10 +43,10 @@ ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, tbl *t);
 
 te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...);
 
-typedef te *ast_tf(ast *a, te *n);
+typedef ast_stat ast_tf(ast *a, te *pn, te **an);
 
 // do not allow dupes
-ast_stat as_a(ast *a, size_t id, ast_tf atf);
+ast_stat ast_a(ast *a, size_t id, ast_tf atf);
 
 ast_stat ast_n(ast *a, te *pn, te **an);
 

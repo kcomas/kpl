@@ -17,7 +17,8 @@ typedef enum {
     NODE_TYPE(OP),
     NODE_TYPE(LST),
     NODE_TYPE(APLY),
-    NODE_TYPE(SYM)
+    NODE_TYPE(SYM),
+    NODE_TYPE(_END)
 } node_id;
 
 psr *psr_b(psr *p);

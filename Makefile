@@ -91,6 +91,12 @@ GENX64_OBJS = $(GEN_OBJS) $(LSRC)/gen_x64.o $(LX64_OBJS) $(LASX64_OBJS) $(LVR_OB
 $(GEN): $(GENX64_OBJS) $(TEST)/gen.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
+TYPE = type$(LTNAME)
+LTT += $(TYPE)
+TYPE_OBJS = $(SRC)/type.o $(LTBL_OBJS)
+$(TYPE): $(TYPE_OBJS) $(TEST)/type.o $(TEST_OBJS)
+> $(CCOBJ)
+
 AST = ast$(LTNAME)
 LTT += $(AST)
 AST_OBJS = $(SRC)/ast.o $(LSRC)/ast.o $(PSR_OBJS)
