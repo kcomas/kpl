@@ -22,7 +22,7 @@ lst *as_mklst(void);
 
 tbl *as_mktbl(void);
 
-void as_code_p(const as *const a);
+void as_code_p(const as *const a, const uint8_t *const m);
 
 void as_op_p(tbl *const ot, bool args, size_t idnt);
 

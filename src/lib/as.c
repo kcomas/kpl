@@ -98,6 +98,23 @@ as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4) 
     return AS_STAT(OK);
 }
 
+as_stat as_n(as *const a, uint8_t *m) {
+    size_t p = 0;
+    te *h = a->code->h;
+    while (h) {
+        te *c = h->d[0].p;
+        c->d[8] = U6(p);
+        if (c->d[0].u6 == CODE_ID(O)) {
+            as_code_fn *fn = (as_code_fn*) c->d[6].p;
+            if (!fn(a, &p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) return AS_STAT(INV);
+        }
+        c->d[9] = U6(p - c->d[8].u6);
+        h = h->d[2].p;
+    }
+    // TODO fill labels
+    return AS_STAT(OK);
+}
+
 void as_f(as *a) {
     if (!a || --a->r > 0) return;
     tbl_f(a->lbls);

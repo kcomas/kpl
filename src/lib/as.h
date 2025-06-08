@@ -81,4 +81,6 @@ void as_op_a(as *const a, size_t op_id, arg_id ai1, arg_id ai2, arg_id ai3, arg_
 // add op
 as_stat as_a(as *const a, size_t op_id, te *arg1, te *arg2, te *arg3, te *arg4);
 
+as_stat as_n(as *const a, uint8_t *m);
+
 void as_f(as *a);
