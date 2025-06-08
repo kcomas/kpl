@@ -79,6 +79,7 @@ extern inline type_stat type_er(type_st *const ts, const char *const fnn, type_s
 
 static bool type_eq(const type_node *const ta, const type_node *tb) {
     if (!ta || !tb) return false;
+    if (ta->t == TYPE(SG) && tb->t == TYPE(STR)) return true;
     if (ta->t != tb->t) return false;
     // TODO deep check
     return true;
@@ -103,6 +104,7 @@ static type_stat type_chk_lst(type_st *const ts, fn_node *const fns, lst_node *c
     type_stat tstat;
     lst_itm *h = lst->h;
     while (h) {
+        if (h->a->at == AST_TYPE(CALL)) h->a->n.cn->gcr = true; // top level call gc return type
         IFTCHK(type_chk, ts, fns, h->a);
         h = h->next;
     }

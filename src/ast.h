@@ -389,6 +389,7 @@ inline void fn_node_f(fn_node *fn) {
 }
 
 typedef struct {
+    bool gcr; // gc return value
     ast *tgt;
     type_node *ret;
     lst_node *args;
@@ -402,6 +403,7 @@ inline call_node *call_node_i(al *const a, ast *const tgt, lst_node *const args)
 }
 
 inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt) {
+    printf(",GCR:%d,", cn->gcr);
     type_node_p(as, cn->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);

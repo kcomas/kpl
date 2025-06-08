@@ -197,6 +197,11 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 jit_a(j, 0x50 + o->od.u3);
                 op_set_jlen(j, o);
                 break;
+            case OP_C(POP):
+                op_set_jidx(j, o);
+                jit_a(j, 0x58 + o->od.u3);
+                op_set_jlen(j, o);
+                break;
             case OP_C(SWAP):
                 op_set_jidx(j, o);
                 jit_b(j, 2, 0x41, 0x5A); // pop r10
@@ -207,7 +212,6 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 break;
             case OP_C(RFN):
                 op_set_jidx(j, o);
-                if (o->od.t != TYPE(VD)) jit_a(j, 0x58); // pop rax TODO xmm
                 jit_b(j, 2, 0x5D, 0xC3); // pop rbp, ret
                 op_set_jlen(j, o);
                 break;
