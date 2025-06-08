@@ -109,8 +109,6 @@ typedef struct _tds {
     tdr *h, *t;
 } tds; // threads
 
-#define KPL_SIGCHLD signal(SIGCHLD, SIG_IGN);
-
 typedef struct {
     uint8_t ng; // number of globals
     pid_t id;

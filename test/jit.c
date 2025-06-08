@@ -9,7 +9,6 @@ int mt(void *volatile args) {
 }
 
 int main(int argc, char *argv[]) {
-    KPL_SIGCHLD
     if (argc != 2) return 1;
     tds *volatile s = tds_i();
     tdr *volatile r = tds_g(s, true);

@@ -51,7 +51,7 @@ typedef struct {
 } alci;
 
 #ifndef AL_PS_MUL
-    #define AL_PS_MUL 10
+    #define AL_PS_MUL 1
 #endif
 
 inline alc *alc_i(size_t size) {
