@@ -109,14 +109,15 @@ void tkn_b(tkn *t) {
     tkn_a(t, TCUST(SYM), "`", tkn_sym);
 }
 
-int64_t tkn_g_i6(const te *t, const mc *s) {
-    uint64_t i = 0;
+tkn_stat tkn_g_i6(const te *t, const mc *s, int64_t *i) {
+    uint64_t v = 0;
     for(size_t p = t->d[3].u6; p < t->d[4].u6; p++) {
         char c = s->d[p];
-        if (c < '0' || c > '9') return -1;
-        i *= 10;
-        i += s->d[p] - '0';
-        if (i > INT64_MAX) return -1;
+        if (c < '0' || c > '9') return TKN_STAT(INV);
+        v *= 10;
+        v += s->d[p] - '0';
+        if (v > INT64_MAX) return TKN_STAT(INV);
     }
-    return i;
+    *i = v;
+    return TKN_STAT(OK);
 }

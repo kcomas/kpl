@@ -1,6 +1,18 @@
 
 #include "ast.h"
 
+const char *ast_op_str(op o) {
+    static const char *ops[] = {
+        "_START",
+        "ADD",
+        "SUB",
+        "_END"
+    };
+    const char *s = "INV";
+    if (o > OP(_START) && o < OP(_END)) s = ops[o];
+    return s;
+}
+
 static ast_stat root(ast *a, te *pn, void **vn) {
     te **an = (te**) vn;
     *an = ast_an_i(a, NULL, pn, AST_CLS(R), P(a->ati()));
@@ -10,8 +22,8 @@ static ast_stat root(ast *a, te *pn, void **vn) {
 
 static ast_stat i(ast *a, te *pn, void **vn) {
     te **an = (te**) vn;
-    int64_t i = tkn_g_i6(pn->d[2].p, node_root_mc(pn));
-    if (i < 0) return AST_STAT(INV);
+    int64_t i = 0;
+    if (tkn_g_i6(pn->d[2].p, node_root_mc(pn), &i) != TKN_STAT(OK)) return AST_STAT(INV);
     *an = ast_an_i(a, *an, pn, AST_CLS(S), P(type_s_i(a->ta, TYPE(I6))), I6(i));
     return AST_STAT(OK);
 }
@@ -61,6 +73,41 @@ ast *ast_b(ast *a) {
     return ast_tkn(a);
 }
 
-void ast_p(const te *an) {
-    // TODO
+void ast_p(const te *an, size_t idnt) {
+    for (size_t i = 0; i < idnt; i++) putchar(' ');
+    switch (an->d[2].u6) {
+        case AST_CLS(R):
+            ast_p(an->d[4].p, idnt);
+            break;
+        case AST_CLS(T):
+            break;
+        case AST_CLS(I):
+            break;
+        case AST_CLS(S):
+            break;
+        case AST_CLS(V):
+            break;
+        case AST_CLS(O):
+            printf("(O ");
+            type_p(an->d[3].p);
+            printf(" [%s)]", ast_op_str(an->d[6].u6));
+            putchar(')');
+            break;
+        case AST_CLS(Z):
+            break;
+        case AST_CLS(A):
+            printf("(A ");
+            type_p(an->d[3].p);
+            if (an->d[4].p) {
+                putchar('\n');
+                ast_p(an->d[4].p, idnt + 1);
+            }
+            putchar(')');
+            break;
+        case AST_CLS(L):
+            break;
+        default:
+            printf("INV");
+            break;
+    }
 }
