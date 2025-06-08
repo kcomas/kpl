@@ -8,6 +8,7 @@ const char *gen_op_str(gen_op go) {
         "ENTER",
         "LEAVE",
         "ADD",
+        "SUB",
         "NE",
         "UGT",
         "_END"
@@ -140,20 +141,25 @@ static void update_lat(gen_st *st, te *ovt, te *o) {
     }
 }
 
+static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv) {
+    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);
+    else if (st->xstk->l == 0) return GEN_STAT(INV);
+    *kv = te_i(3, st->sa, st->atmf);
+    (*kv)->d[0] = hsh;
+    (*kv)->d[1] = P(te_c(ovt));
+    if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) (*kv)->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
+    else (*kv)->d[2] = U3(st->xstk->d[st->xstk->l - 1 - ovt->d[2].u3].u3);
+    tbl_a(st->atm, *kv);
+    return GEN_STAT(OK);
+}
+
 // check that the types do not change
 static gen_stat reg_map(gen_st *st, te *ovt) {
     un hsh = ovt_hsh(ovt);
     te *kv;
     if (tbl_g_i(st->atm, hsh, &kv) == TBL_STAT(OK)) {
         if (ovt->d[1].u3 != ((te*) kv->d[1].p)->d[1].u3) return GEN_STAT(INV);
-    } else {
-        kv = te_i(3, st->sa, st->atmf);
-        kv->d[0] = hsh;
-        kv->d[1] = P(te_c(ovt));
-        if (ovt->d[1].u3 >= X64_TYPE(M) && ovt->d[1].u3 <= X64_TYPE(I6)) kv->d[2] = U3(st->rstk->d[st->rstk->l - 1 - ovt->d[2].u3].u3);
-        else kv->d[2] = U3(st->xstk->d[st->xstk->l - 1 - ovt->d[2].u3].u3);
-        tbl_a(st->atm, kv);
-    }
+    } else set_reg(st, hsh, ovt, &kv);
     return GEN_STAT(OK);
 }
 
@@ -214,13 +220,18 @@ void set_code_e(te *ci, as *a) {
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv) {
     if (!ovt) return GEN_STAT(INV);
-    if (tbl_g_i(st->atm, ovt_hsh(ovt), kv) == TBL_STAT(NF)) return GEN_STAT(INV);
+    un hsh = ovt_hsh(ovt);
+    if (tbl_g_i(st->atm, hsh, kv) == TBL_STAT(NF)) {
+        if (ovt->d[0].u3 != GEN_CLS(T)) return GEN_STAT(INV);
+        return set_reg(st, hsh, ovt, kv);
+    }
     return GEN_STAT(OK);
 }
 
 gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n) {
     if (n == 0 || n > 3) return GEN_STAT(INV);
-    for (size_t i = 1; i < n + 1; i++) if (!ci->d[i].p || tbl_g_i(st->atm, ovt_hsh(ci->d[i].p), &kv[i - 1]) == TBL_STAT(NF)) return GEN_STAT(INV);
+    gen_stat stat;
+    for (size_t i = 1; i < n + 1; i++) if ((stat = get_reg(st, ci->d[i].p, &kv[i - 1])) != GEN_STAT(OK)) return stat;
     return GEN_STAT(OK);
 }
 

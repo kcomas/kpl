@@ -27,6 +27,10 @@ te *gen_arg(x64_type t, size_t id) {
     return gen_var(&malloc, &free, GEN_CLS(A), U3(t), U6(id));
 }
 
+te *gen_tmp(x64_type t, size_t id) {
+    return gen_var(&malloc, &free, GEN_CLS(T), U3(t), U6(id));
+}
+
 te *gen_data(x64_type t, un d) {
     return gen_var(&malloc, &free, GEN_CLS(D), U3(t), d);
 }

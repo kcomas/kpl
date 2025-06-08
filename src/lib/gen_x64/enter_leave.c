@@ -51,5 +51,6 @@ static gen_stat leave_du_fn(alfn *al, frfn *fr, gen *g, void *s, te *ci, as *a) 
 void gen_enter_leave(gen *g) {
     GEN_OP_A0(g, GEN_OP(ENTER), &enter_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), U3(X64_TYPE(U6)), &leave_au_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), U3(X64_TYPE(U6)), &leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), U3(X64_TYPE(U6)), &leave_du_fn);
 }
