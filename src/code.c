@@ -170,9 +170,9 @@ static const char *op_c_str[] = {
     "LT",
     "OR",
     "CNCTSG", // sg cnct op type is either sg or te
+    "OFD",
     "WFD", // OP_T is type to be written
     "RFD",
-    "OFD",
     "TDI",
     "TDJ",
     // GC
@@ -425,6 +425,8 @@ static code_stat code_gen_sym(code_st *const cs, const sym_node *const sym, code
     return CODE_ER(cs, OK, NULL);
 }
 
+#define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a)
+
 static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     code *ifc = code_i(cs->r->a, CODE_I_SIZE);
@@ -435,6 +437,9 @@ static code_stat code_gen_if(code_st *const cs, const ast *const a, code **c) {
         if (h->cond) {
             IFCGEN(code_gen, cs, h->cond, &of->cond);
             if (!(tc = ast_gtn(h->cond))) return CODE_ER(cs, NO_T_FOR_IF_COND, h->cond);
+            if (tc->t != TYPE(BL)) {
+                OP_ZOO(cs, tc, &of->cond);
+            }
         }
         IFCGEN(code_gen_lst, cs, h->body, &of->body);
         OP_A(cs, &ifc, COND, COND, { .of = of }, a);
@@ -512,8 +517,6 @@ static code_stat cor_num(code_st *const cs, const ast *const a, const ast *const
 }
 
 #define OP_P_NUM_COR(CS, A, B, C) if ((cstat = cor_num(CS, A, B, C)) != CODE_STAT(OK)) return cstat
-
-#define OP_ZOO(CS, TN, C) if (TN->t != TYPE(BL)) OP_A(CS, C, ZOO, OP, { .t = TN->t }, a)
 
 static code_stat store_var(code_st *const cs, const ast *const a, code **c, var_node *const var, bool rci) {
     if (var->tn->t == TYPE(VD)) return CODE_ER(cs, INV_TYPE_STORE_VD, a);
@@ -613,6 +616,23 @@ static code_stat er_rer(code_st *const cs, type_node *tn, rer *const erer) {
 
 #define ASTGLRTN(L, R, E, A) if (!(tl = ast_gtn(L))) return CODE_ER(cs, E, A); \
     if (!(tr = ast_gtn(R))) return CODE_ER(cs, E, A)
+
+static code_stat op_chk_er(code_st *const cs, const ast *const a, code **c) {
+    code_stat cstat;
+    op_node *opn = a->n.op;
+    type_node *tr;
+    if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) {
+        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
+        if (!(tr = ast_gtn(opn->ret->a))) return CODE_ER(cs, INV_ER_GCR, a);
+        if (opn->flgs & NODE_FLG(GCR)) {
+            OP_GC(cs, c, tr, opn->ret->a);
+        } else {
+            OP_RCD(cs, c, tr);
+        }
+    }
+    else if (opn->ret->t != TYPE(ER) && opn->ret->t != TYPE(VD) && (opn->flgs & NODE_FLG(GCR))) OP_GC(cs, c, opn->ret, a);
+    return CODE_ER(cs, OK, NULL);
+}
 
 static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
@@ -741,7 +761,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                     if (!(tr = ast_gtn(opn->r))) return CODE_ER(cs, OP_NO_T_R, a);
                     if (tr->t >= TYPE(U3) && tr->t <= TYPE(F6)) {
                         OP_A(cs, c, CSTSG, OP, { .t = tr->t }, a);
-                        return CODE_ER(cs, OK, NULL);
+                        return op_chk_er(cs, a, c);
                     }
                     return CODE_ER(cs, INV_CST_SG, a);
                 case TYPE(VR):
@@ -772,7 +792,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                             i6 = tkn_to_int64_t(&opn->r->t);
                             if (i6 >= 0 && i6 <= 2) {
                                 OP_A(cs, c, PV, FD, { .fd = (int) i6 }, opn->r);
-                                return CODE_ER(cs, OK, a);
+                                return op_chk_er(cs, a, c);
                             }
                         return CODE_ER(cs, INV_CST_INT_TO_FD, a);
                     }
@@ -782,7 +802,8 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                         case TYPE(STR):
                         case TYPE(SG):
                             OP_A(cs, c, OFD, OP, { .t = tr->t }, a);
-                           return CODE_ER(cs, OK, a);
+                            OP_GC(cs, c, tr, a);
+                            return op_chk_er(cs, a, c);
                         default:
                             break;
                     }
@@ -932,21 +953,12 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 OP_GC(cs, c, tr, a);
             } else if  (tl->t != TYPE(FD) && tr->t == TYPE(FD)) { // read
                 OP_A(cs, c, RFD, OP, { .t = tl->t }, a);
+                OP_GC(cs, c, tl, a);
             }
             else return CODE_ER(cs, INV_FD_OP, a);
             break;
     }
-    if (opn->ret->t == TYPE(ER) && !NFEC(opn->ret->flgs)) {
-        OP_A(cs, c, PE, ER, { RER(TYPE(ER), false) }, a);
-        if (!(tr = ast_gtn(opn->ret->a))) return CODE_ER(cs, INV_ER_GCR, a);
-        if (opn->flgs & NODE_FLG(GCR)) {
-            OP_GC(cs, c, tr, opn->ret->a);
-        } else {
-            OP_RCD(cs, c, tr);
-        }
-    }
-    else if (opn->ret->t != TYPE(ER) && opn->ret->t != TYPE(VD) && (opn->flgs & NODE_FLG(GCR))) OP_GC(cs, c, opn->ret, a);
-    return CODE_ER(cs, OK, NULL);
+    return op_chk_er(cs, a, c);
 }
 
 static code_stat code_gen_call_ftn(code_st *const cs, const ast *const a, code **c, const type_node *const ftn, bool ires) {

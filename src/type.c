@@ -15,8 +15,6 @@ static const char *const tss[] = {
     "SYM_INV_TBL_R",
     "SYM_HSH_DATA_T_INV",
     "INV_TC_R",
-    "INV_COND_T",
-    "COND_N_BL",
     "TC_ER_L_LST_INV",
     "INV_TC_NE_T",
     "TC_ER_L_H_N_VAR",
@@ -257,12 +255,9 @@ static type_stat type_chk_sym(type_st *const ts, fn_node *const fns, sym_node *c
 static type_stat type_chk_if(type_st *const ts, fn_node *const fns, if_node *const in) {
     type_stat tstat;
     if_itm *h = in->h;
-    type_node *tn;
     while (h) {
         if (h->cond) {
             IFTCHK(type_chk, ts, fns, h->cond);
-            ASTGTN(tn, h->cond, INV_COND_T);
-            if (tn->t != TYPE(BL)) return TYPE_ER(ts, COND_N_BL);
         }
         IFTCHK(type_chk_lst, ts, fns, h->body);
         h = h->next;
@@ -588,13 +583,8 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             return TYPE_ER(ts, INV_DIV);
         case OP_TYPE(EQ):
             ASTGTNBOP(EQ);
-            if (type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, lt, rt, &type_int_is) || type_cor(ts, (type_from_def) {TYPE(INT), TYPE(I6)}, NULL, rt, lt, &type_int_is)) {
-                op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
-                break;
-            } else if (type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, lt, rt, &type_flt_is) || type_cor(ts, (type_from_def) {TYPE(FLT), TYPE(F6)}, NULL, rt, lt, &type_flt_is)) {
-                op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
-                break;
-            }
+            TYPE_COR_LR(INT, I6, type_int_is);
+            TYPE_COR_LR(FLT, F6, type_flt_is);
             // TODO
             return TYPE_ER(ts, INV_EQ);
         case OP_TYPE(NOT):
@@ -608,13 +598,11 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
             ASTGTNBOP(GT);
             TYPE_COR_LR(INT, I6, type_int_is);
             TYPE_COR_LR(FLT, F6, type_flt_is);
-            op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
             return TYPE_ER(ts, INV_GT);
         case OP_TYPE(LT):
             ASTGTNBOP(LT);
             TYPE_COR_LR(INT, I6, type_int_is);
             TYPE_COR_LR(FLT, F6, type_flt_is);
-            op->ret = type_node_i(ts->r->a, TYPE(BL), NULL);
             return TYPE_ER(ts, INV_LT);
         case OP_TYPE(OR):
             ASTGTNBOP(OR);

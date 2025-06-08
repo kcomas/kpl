@@ -23,8 +23,6 @@ typedef enum {
     TYPE_STAT(SYM_INV_TBL_R),
     TYPE_STAT(SYM_HSH_DATA_T_INV),
     // cond
-    TYPE_STAT(INV_COND_T),
-    TYPE_STAT(COND_N_BL),
     // erros
     TYPE_STAT(INV_TC_R),
     TYPE_STAT(TC_ER_L_LST_INV),

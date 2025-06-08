@@ -3,7 +3,7 @@
 
 fd: 'FD$"./ex/t/rfile.kpl"
 
-s:SG
+s:""
 
 // TODO sendfile
 s << fd

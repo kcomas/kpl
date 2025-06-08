@@ -164,3 +164,7 @@ var_tsv *var_td_te(var_td *const td);
 void var_td_d(var_td *td);
 
 void var_td_f(var_td *td);
+
+var var_fd_i(mod *const m, ast *const a, var_sg *const sg);
+
+void var_fd_sg(mod *const m, ast *const a, int fd, var_sg *const sg);
