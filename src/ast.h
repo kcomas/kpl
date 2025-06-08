@@ -15,6 +15,7 @@ typedef enum {
     AST_STAT(VAR_A_NN), // previous node not null for var
     AST_STAT(VAL_A_NN), // previous node not null for val
     AST_STAT(TYPE_A_NN), // previous node not null for type
+    AST_STAT(INV_TYPE_LST_INIT), // type list must start with <
     AST_STAT(END)
 } ast_stat;
 
@@ -33,17 +34,17 @@ inline void ast_st_i(ast_st *const as, char *const str) {
 #define TKN_FLG(N) TKN_IGN_##N
 
 typedef enum {
-    TKN_FLG(NB) = (1 << 0),
-    TKN_FLG(NL) = (1 << 1),
-    TKN_FLG(SEMI) = (1 << 2),
-    TKN_FLG(WS) = (1 << 3),
-    TKN_FLG(CMT) = (1 << 4),
-    TKN_FLG(RB) = (1 << 5), // }
-    TKN_FLG(RS) = (1 << 6), // ]
-    TKN_FLG(RP) = (1 << 7) // )
+    TKN_FLG(NL) = (1 << 0),
+    TKN_FLG(SEMI) = (1 << 1),
+    TKN_FLG(WS) = (1 << 2),
+    TKN_FLG(CMT) = (1 << 3),
+    TKN_FLG(RB) = (1 << 4), // }
+    TKN_FLG(RS) = (1 << 5), // ]
+    TKN_FLG(RP) = (1 << 6), // )
+    TKN_FLG(GT) = (1 << 7) // >
 } tkn_flg;
 
-#define TFBLS (TKN_FLG(NB) | TKN_FLG(NL) | TKN_FLG(SEMI))
+#define TFLS (TKN_FLG(NL) | TKN_FLG(SEMI))
 
 #define TFWC (TKN_FLG(WS) | TKN_FLG(CMT))
 
@@ -111,8 +112,8 @@ inline type_node *type_node_i(type t, ast *const a) {
 
 inline void type_node_p(const ast_st *const st, const type_node *const tn, size_t idnt) {
     if (tn) {
-        printf("%s", type_get_str(tn->t));
-        // TODO
+        printf("%s-", type_get_str(tn->t));
+        ast_p(st, tn->a, idnt);
     } else putchar('?');
 }
 
@@ -268,7 +269,7 @@ inline fn_node *fn_node_i(fn_node *const par) {
 
 inline void fn_node_p(const ast_st *const as, const fn_node *const fn, size_t idnt) {
     PCX(' ', idnt);
-    printf("%d,", fn->idc);
+    printf("%p,%d,", fn, fn->idc);
     tbl_lstp(fn->tl, NULL, ' ');
     putchar('\n');
     PCX(' ', idnt);
@@ -338,7 +339,7 @@ typedef struct {
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str);
 
 inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt) {
-    printf("%d,%p,%s\n", var->id, var->fns, var->str);
+    printf("%p,%d,%s\n", var->fns, var->id, var->str);
     PCX(' ', idnt);
     type_node_p(as, var->tn, idnt);
 }
@@ -391,4 +392,4 @@ inline ast *ast_i(ast_type at, node const n, tkn *t) {
 // a must be init
 ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs);
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const cl, uint8_t stp_flgs);
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const lst, uint8_t stp_flgs, uint8_t end_flgs);

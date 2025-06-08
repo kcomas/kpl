@@ -15,14 +15,14 @@ typedef struct {
 #define TFT(N) {TKN_FLG(N), TKN_TYPE(N)}
 
 static const tkn_flg_type tft[] = {
-    TFT(NB),
     TFT(NL),
     TFT(SEMI),
     TFT(WS),
     TFT(CMT),
     TFT(RB),
     TFT(RS),
-    TFT(RP)
+    TFT(RP),
+    TFT(GT)
 };
 
 static const size_t tft_len = AL(tft);
@@ -114,11 +114,11 @@ void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
     type_node_p(as, op->ret, idnt);
     putchar('\n');
     PCX(' ', idnt);
-    printf("L- ");
+    printf("L-");
     ast_p(as, op->l, idnt);
     putchar('\n');
     PCX(' ', idnt);
-    printf("R- ");
+    printf("R-");
     ast_p(as, op->r, idnt);
 }
 
@@ -288,7 +288,9 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     ast_stat astat;
     if ((astat = ast_tkn_next(as, TFWC)) != AST_STAT(OK)) return astat;
     if (flg_mtch(as->next.type, stp_flgs)) return AST_STAT(OK);
+    ast *atmp;
     var_node *var;
+    tkn type_tkn;
     switch (as->next.type) {
         case TKN_TYPE(VAR):
             if (*a) return AST_STAT(VAR_A_NN);
@@ -313,6 +315,20 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(CR);
         TYPE_NA_CASE(SL);
         TYPE_NA_CASE(SG);
+        // TODO TYPES
+        case TKN_TYPE(FN):
+            if (*a) return AST_STAT(TYPE_A_NN);
+            memcpy(&type_tkn, &as->next, sizeof(tkn));
+            if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
+            if (as->next.type != TKN_TYPE(LN)) return AST_STAT(INV_TYPE_LST_INIT);
+            atmp = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(TE)) }, &as->next);
+            if ((astat = ast_parse_stmts(as, fns, atmp->n.lst, TKN_FLG(SEMI), TKN_FLG(GT))) != AST_STAT(OK)) {
+                ast_f(atmp);
+                return astat;
+            }
+            *a = ast_i(AST_TYPE(TYPE), (node) { .tn = type_node_i(TYPE(FN), atmp) }, &type_tkn);
+            return ast_parse_stmt(as, fns, a, stp_flgs);
+        // TODO TYPES
         OP_CASE(ASS);
         OP_CASE(CST);
         default:
@@ -321,14 +337,15 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
     return AST_STAT(TKN_NF);
 }
 
-ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const cl, uint8_t stp_flgs) {
+ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const lst, uint8_t stp_flgs, uint8_t end_flgs) {
     ast *a = NULL;
     ast_stat astat;
-    while ((astat = ast_parse_stmt(as, fns, &a, stp_flgs)) == AST_STAT(OK)) {
+    while ((astat = ast_parse_stmt(as, fns, &a, stp_flgs | end_flgs)) == AST_STAT(OK)) {
         if (a) {
-            lst_node_a(cl, a);
+            lst_node_a(lst, a);
             a = NULL;
         }
+        if (flg_mtch(as->next.type, end_flgs)) return AST_STAT(OK);
     }
     return astat;
 }
