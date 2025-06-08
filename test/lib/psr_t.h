@@ -13,8 +13,11 @@ typedef enum {
     PCUST(SUB),
     PCUST(ADD),
     PCUST(EFN),
+    PCUST(MH),
     PCUST(AGN),
-    PCUST(CST)
+    PCUST(CST),
+    PCUST(IF),
+    PCUST(MTCH)
 } pust;
 
 #define NODE_TYPE(N) NODE_TYPE_##N

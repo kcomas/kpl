@@ -24,7 +24,8 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PCUST(SUM), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "Σ", &tkn_ft));
     psr_a(p, PCUST(SUB), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "-", &tkn_ft));
     psr_a(p, PCUST(ADD), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "+", &tkn_ft));
-    psr_a(p, PCUST(EFN), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#", &tkn_ft));
+    psr_a(p, PCUST(EFN), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "##", &tkn_ft));
+    psr_a(p, PCUST(MH), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#!", &tkn_ft));
     psr_a(p, PCUST(AGN), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), ":", &tkn_ft));
     psr_a(p, PCUST(CST), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "$", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
@@ -33,6 +34,8 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LB), "{", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(LOOP), aply_stp, &psr_aply_e, &psr_aply_m, &psr_aply_i, 1, tkn_a(t, TCUST(LP), "(", &tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, &psr_sym_m, &psr_sym_i, 1, TCUST(SYM));
+    psr_a(p, PCUST(IF), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#?", &tkn_ft));
+    psr_a(p, PCUST(MTCH), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#=", &tkn_ft));
     return p;
 }
 
