@@ -4,18 +4,6 @@
 
 I;
 
-static size_t sh(un u) {
-    char *s = u.p;
-    size_t h = 11;
-    char c;
-    while ((c = *s++)) h += c;
-    return h;
-}
-
-static bool cmp(un a, un b) {
-    return strcmp(a.p, b.p) == 0;
-}
-
 static void kv_f(te *t) {
     t->af->f(t->d[0].p);
     t->af->f(t);
@@ -47,7 +35,7 @@ static void pt(tbl *t) {
 T(tbl, {
     lst *tl = lst_i(&tm, &tm, (void*) te_f);
     te *b = te_i(1, &tm, NULL);
-    tbl *t = tbl_i(&tm, sh, cmp, tl, b);
+    tbl *t = tbl_i(&tm, tbl_sdbm, tbl_str_eq, tl, b);
     A(tbl_a(t, kv_i("Hello", 123)) == TBL_STAT(RES), "tbl_a");
     pt(t);
     A(tbl_a(t, kv_i("World", 345)) == TBL_STAT(RES), "tbl_a");

@@ -17,7 +17,7 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV";
 }
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, tbl *t) {
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sci, tbl *t) {
     ast *a = af->a(sizeof(ast));
     a->af = af;
     a->na = na;
@@ -104,8 +104,9 @@ te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, .
             len += 1;
             nf = t_l_f;
             break;
+        default:
+            return NULL;
     }
-    if (len == 4) return NULL;
     te *t = te_i(len, a->na, nf);
     t->d[0] = P(parent);
     t->d[1] = P(psr);

@@ -12,11 +12,17 @@ static ssize_t pig(te *pn) {
     return pn->d[1].u6;
 }
 
+static tbl *sti(void) {
+    lst *tl = lst_i(&am, &am, (void*) te_f);
+    te *b = te_i(NODE_TYPE(_END), &am, NULL);
+    return tbl_i(&am, tbl_sdbm, tbl_str_eq, tl, b);
+}
+
 static ast *ai(void) {
     lst *tl = lst_i(&am, &am, (void*) te_f);
     te *b = te_i(NODE_TYPE(_END), &am, NULL);
     tbl *t = tbl_i(&am, tbl_no_hsh, tbl_un_eq, tl, b);
-    return ast_b(ast_i(&am, &am, pig, t));
+    return ast_b(ast_i(&am, &am, pig, sti, t));
 }
 
 T(aplyopadd, {
