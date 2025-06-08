@@ -184,17 +184,20 @@ static type_stat type_chk_op(type_st *const ts, fn_node *const fns, op_node *con
                     op->ret = type_node_i(ts->a, TYPE(ER), NULL);
                     break;
             } else { // catch
-                if (op->l->at != AST_TYPE(LST) && op->l->n.lst->len != 2) return TYPE_ER(ts, TC_ER_L_LST_INV);
+                if (op->l->at != AST_TYPE(LST)) return TYPE_ER(ts, TC_ER_L_LST_INV);
                 lst = op->l->n.lst;
                 ASTGTN(rt, op->r, INV_TC_R);
                 if (rt->t != TYPE(ER)) return TYPE_ER(ts, TC_ER_R_NE);
                 ASTGTN(tn, rt->a, INV_TC_NE_T);
-                if (lst->h->a->at != AST_TYPE(VAR)) return TYPE_ER(ts, TC_ER_L_H_N_VAR);
-                if (!lst->h->a->n.var->tn) {
-                    lst->h->a->n.var->tn = type_node_c(ts->a, tn);
-                } else if (!type_eq(lst->h->a->n.var->tn, tn)) {
-                    return TYPE_ER(ts, TC_VAR_FN_T_NEQ);
-                }
+                if (tn->t != TYPE(VD)) {
+                    if (lst->len != 2) return TYPE_ER(ts, TC_ER_L_LST_INV);
+                    if (lst->h->a->at != AST_TYPE(VAR)) return TYPE_ER(ts, TC_ER_L_H_N_VAR);
+                    if (!lst->h->a->n.var->tn) {
+                        lst->h->a->n.var->tn = type_node_c(ts->a, tn);
+                    } else if (!type_eq(lst->h->a->n.var->tn, tn)) {
+                        return TYPE_ER(ts, TC_VAR_FN_T_NEQ);
+                    }
+                } else if (lst->len != 1) return TYPE_ER(ts, TC_ER_L_LST_INV);
                 if (lst->t->a->at != AST_TYPE(VAR)) return TYPE_ER(ts, TC_ER_L_T_N_VAR);
                 if (!lst->t->a->n.var->tn) {
                     lst->t->a->n.var->tn = type_node_i(ts->a, TYPE(ER), NULL);

@@ -499,7 +499,6 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(GC):
                 op_set_jidx(j, o);
                 switch (o->od.t) {
-                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -537,7 +536,6 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
             case OP_C(GCTEI):
                 op_set_jidx(j, o);
                 switch (o->od.v.t) {
-                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):
@@ -562,7 +560,6 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 jit_b(j, 3, 0x48, 0x89, 0xC7); // mov rdi rax
                 switch (o->od.v.t) {
-                    case TYPE(VD):
                     case TYPE(U3):
                     case TYPE(U4):
                     case TYPE(U5):

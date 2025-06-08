@@ -208,7 +208,6 @@ static code_stat code_gen_gc(code_st *const cs, const type_node *const tn, const
     }
     switch (tn->t) {
         case TYPE(STR):
-        case TYPE(VD):
         case TYPE(U3):
         case TYPE(U4):
         case TYPE(U5):
@@ -368,7 +367,9 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
                 return CODE_ER(cs, OK, NULL); // stop panic
             } else { // catch
                 IFCGEN(code_gen, cs, opn->r, c);
-                if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
+                if (opn->l->n.lst->len == 2) {
+                    if ((cstat = store_var(cs, a, c, opn->l->n.lst->h->a->n.var)) != CODE_STAT(OK)) return cstat;
+                }
                 OP_A(cs, c, CE, ER, { RER(TYPE(ER), true) }, opn->r);
                 if ((cstat = store_var(cs, a, c, opn->l->n.lst->t->a->n.var)) != CODE_STAT(OK)) return cstat;
                 break;
