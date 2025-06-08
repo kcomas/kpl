@@ -16,13 +16,15 @@ void _a(const char *n, _test_fn *tf) {
     } else __t = t;
 }
 
+#define RG(X) (X ? 91 : 92)
+
 int main(void) {
     volatile int p = 0, f = 0; // can't optimize with jit fns
     while (__t) {
         _tests *ct = __t;
         __t = __t->nt;
         ct->tf(ct);
-        printf("\e[%dm%s %s\e[0m ", ct->m ? 91 : 92, __f, ct->n);
+        printf("\e[%dm%s %s\e[0m ", RG(ct->m), __f, ct->n);
         if (ct->m) {
             printf("\e[1m%s:%d \e[95m%s\n\e[0m", ct->f, ct->ln, ct->m);
             f++;
@@ -32,6 +34,6 @@ int main(void) {
         }
         free(ct);
     }
-    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", f ? 91 : 92, __f, p, f);
+    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", RG(f), __f, p, f);
     return f ? f : 0;
 }

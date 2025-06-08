@@ -170,3 +170,41 @@ Functions are curried by default
 f(1) -> FN(I6`b)${1+b} -> f(2) -> 3
 
 ```
+
+### Operator Functions
+
+All operators can be called as a function
+
+```
+1 + 2 -> 3
++(1;2) -> 3
+```
+
+### Bool
+
+#### BL
+
+##### T = 1 F = 0
+
+Bool's are a result of logical operators
+
+### Logical
+
+```
+& And
+| Or
+! Not
+= Eq
+> Greater
+< Less
+>= Greater Eq
+<= Less Eq
+!= Not Eq
+```
+
+#### If ?
+
+```
+a?b -> if a then b
+?{a?b;c?d;e} -> if a then b else if c then d else e
+```
