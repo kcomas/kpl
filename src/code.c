@@ -37,14 +37,17 @@ static const char *op_c_str[] = {
     "SA",
     "LA",
     "PV",
+    "CTE",
     "COND",
     "ZOO",
     "CST",
+    "CSTSG",
     "ADD",
     "SUB",
     "EQ",
     "NOT",
     "OR",
+    "SGCNCT",
     "WFD"
 };
 
@@ -109,7 +112,7 @@ static code_stat code_gen_lst(code_st *const cs, const lst_node *const lst, code
         IFCGEN(code_gen, cs, h->a, c);
         h = h->next;
     }
-    // TODO chk lst type
+    if (lst->tn->t == TYPE(TE)) OP_A(c, CTE, U6, { .t = (uint64_t) lst->len }, NULL);
     return CODE_STAT(OK);
 }
 
@@ -208,6 +211,13 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
                     if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) return p_int(cs, opn->l->n.tn->t, opn->r, c);
                     // TODO dynamic case
                     break;
+                // TODO
+                case TYPE(SG):
+                    IFCGEN(code_gen, cs, opn->r, c);
+                    if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
+                    if (tr->t >= TYPE(U3) && tr->t <= TYPE(F6)) OP_A(c, CSTSG, OP, { .t = tr->t }, a);
+                    // TODO
+                    break;
                 case TYPE(FD):
                         if (opn->r->at == AST_TYPE(VAL) && opn->r->n.val->tn->t == TYPE(INT)) {
                             i6 = tkn_to_int64_t(&opn->r->t, cs->str);
@@ -259,7 +269,19 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code *c) {
             OP_A(c, OR, OP, { .t = TYPE(BL) }, a);
             break;
         case OP_TYPE(CNCT):
-            // TODO
+            IFCGEN(code_gen, cs, opn->l, c);
+            if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
+            IFCGEN(code_gen, cs, opn->r, c);
+            if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
+            switch  (opn->ret->t) {
+                case TYPE(SG):
+                    if (tr->t == TYPE(TE)) {
+                        // TODO cnct te
+                    }
+                    // TODO SG
+                    break;
+                default: return CODE_STAT(INV_CNCT_OP);
+            }
             break;
         case OP_TYPE(RW):
             IFCGEN(code_gen, cs, opn->l, c);
@@ -322,8 +344,8 @@ code_stat code_gen(code_st *const cs, const ast *const a, code *c) {
                 case TYPE(FLT):
                     break; // TODO
                 case TYPE(STR):
-                    sg = calloc(1, a->t.len + 1);
-                    memcpy(sg, cs->str + a->t.pos, a->t.len);
+                    sg = calloc(1, a->t.len - 1);
+                    memcpy(sg, cs->str + a->t.pos + 1, a->t.len - 2);
                     OP_A(c, PV, SG, { .sg = sg }, a);
                     break;
                 default:
