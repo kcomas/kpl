@@ -11,7 +11,7 @@ typedef enum {
     CODE_STAT(OK),
     CODE_STAT(INV_L_ASS), // left side : invalid
     CODE_STAT(INV_R_ASS), // right side : invalid
-    CODE_STAT(VAL_NUM_N_T), // no type determined for int or float
+    CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
@@ -51,11 +51,9 @@ typedef enum {
     OP_C(SG), // store global
     OP_C(LG), // load global
     OP_C(AL), // allocate locals
-    OP_C(GCL), // garbage collect locals
     OP_C(FL), // free loacls
     OP_C(SL), // store local
     OP_C(LL), // load local
-    OP_C(GCA), // garbage collect args
     OP_C(SA), // store arg
     OP_C(LA), // load arg
     OP_C(PV), // push value

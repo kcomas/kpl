@@ -1,0 +1,4 @@
+
+// write a string to stdout
+
+$(FD;1) << "Hello World\n"
