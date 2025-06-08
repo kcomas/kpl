@@ -80,12 +80,12 @@ const char *TPGM(ackrec) = "{\n"
                            "}()";
 
 const char *TPGM(scope) = "{\n"
-                          "     s/e::1\n"
-                          "     x::NF(VD)${\n"
-                          "         s+:1\n"
+                          "     s/e::0\n"
+                          "     x::NF(I6`x;VD)${\n"
+                          "         s+:x\n"
                           "     }\n"
-                          "     x()\n"
-                          "     x()\n"
-                          "     x()\n"
+                          "     x(1)\n"
+                          "     x(2)\n"
+                          "     x(3)\n"
                           "     s/p1\n"
                           "}()";

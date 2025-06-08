@@ -224,10 +224,12 @@ static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, er
 
 static ast *ast_tkn(ast *a) {
     // types
+    ast_t_a(a, TCUST(VD), TYPE(VD));
     ast_t_a(a, TCUST(I6), TYPE(I6));
     ast_t_a(a, TCUST(U6), TYPE(U6));
     ast_t_a(a, TCUST(F6), TYPE(F6));
     ast_t_a(a, TCUST(FN), TYPE(FN));
+    ast_t_a(a, TCUST(NF), TYPE(NF));
     ast_t_a(a, TCUST(UN), TYPE(UN));
     // ops
     ast_t_a(a, TCUST(DFN), OC(DFN));
