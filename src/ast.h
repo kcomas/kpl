@@ -20,6 +20,6 @@ const char *ast_op_str(oc o);
 
 ast *ast_b(ast *a);
 
-void ast_p(const te *an, size_t idnt);
+void ast_p(te *an, size_t idnt);
 
 bool ast_eq(const te *restrict a, const te *restrict b);

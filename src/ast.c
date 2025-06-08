@@ -31,7 +31,7 @@ static ast_stat ast_var(ast *a, te *pn, void **vn, te **e) {
     te **an = (te**) vn;
     mc *v;
     if (tkn_g_mc(pn->d[2].p, node_root_mc(pn), 0, a->ma, &v) != TKN_STAT(OK)) return err(AST_STAT(INV), pn, e);
-    *an = ast_an_i(a, *an, pn, AST_CLS(I), P(NULL), v);
+    *an = ast_an_i(a, *an, pn, AST_CLS(I), P(v));
     return AST_STAT(OK);
 }
 
@@ -137,7 +137,7 @@ ast *ast_b(ast *a) {
     return ast_tkn(a);
 }
 
-void ast_p(const te *an, size_t idnt) {
+void ast_p(te *an, size_t idnt) {
     if (!an) return;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
     switch (an->d[2].u6) {
@@ -150,10 +150,7 @@ void ast_p(const te *an, size_t idnt) {
             putchar(')');
             break;
         case AST_CLS(I):
-            printf("(I ");
-            // TODO
-            printf("%s", (char*) ((mc*) an->d[4].p)->d);
-            putchar(')');
+            printf("(I %s)", (char*) ((mc*) an->d[3].p)->d);
             break;
         case AST_CLS(S):
             printf("(S ");
@@ -251,8 +248,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(T):
             return type_eq(a->d[3].p, b->d[3].p);
         case AST_CLS(I):
-            // TODO compare entries
-            return mc_eq(a->d[4].p, b->d[4].p);
+            return mc_eq(a->d[3].p, b->d[3].p);
         case AST_CLS(S):
             return type_eq(a->d[3].p, b->d[3].p) && ast_v_eq(a->d[3].p, a, b);
         case AST_CLS(V):

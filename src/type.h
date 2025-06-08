@@ -49,8 +49,8 @@ const char *type_str(type t);
 typedef enum {
     TYPE_CLS(S), // te[type]
     TYPE_CLS(V), // te[type;te[...]]
-    TYPE_CLS(H), // te[type;tbl[mc;type]]
-    TYPE_CLS(F), // te[type;tbl[mc;type];te[...]]
+    TYPE_CLS(H), // te[type;tbl[mc;id;type]]
+    TYPE_CLS(F), // te[type;tbl[mc;id;type];te[...]]
     TYPE_CLS(C), // te[type;...]
     TYPE_CLS(_)
 } type_cls; // how type is stored
