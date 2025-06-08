@@ -16,7 +16,6 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <ctype.h>
-#include <pthread.h>
 #include "al.h"
 #include "lst.h"
 
@@ -86,10 +85,7 @@ typedef struct _jit {
     uint8_t *h; // address
 } jit;
 
-inline void jit_f(jit *j) {
-    munmap(j->h, j->size);
-    alf(j);
-}
+void jit_f(jit *j);
 
 typedef union _var var;
 
@@ -100,8 +96,6 @@ typedef struct _var_td var_td;
 typedef struct _tdr {
     struct _tdr *prev, *next;
     size_t stks;
-    pthread_t pt;
-    pthread_attr_t pa;
     al *a;
     er *e;
     jit *j;
@@ -116,13 +110,13 @@ typedef struct _tds {
 } tds; // threads
 
 typedef struct {
-    bool done, lock;
+    bool done;
     uint8_t ng; // number of globals
     struct {
         struct stat sb;
         char *path, *str;
     } src;
-    tds *volatile s;
+    tds *s;
     tdr *r; // thread resource
     fn_node *fns; // ast root
     code *c;

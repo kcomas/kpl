@@ -56,7 +56,21 @@ void fn_stk_b(al *const a, fn_stk **stk, code *const c) {
 
 extern inline void fn_stk_f(fn_stk *f);
 
-extern inline jit *jit_i(al *const a, size_t nops, jit *j);
+void jit_i(al *const a, size_t nops, jit **j) {
+    size_t size = nops * BYTES_PER_OP;
+    if (*j && (*j)->size > 0) {
+        if ((*j)->size >= size) {
+            (*j)->len = 0;
+            return;
+        } else if (*j && (*j)->size < size) {
+            jit_f(*j);
+            *j = ala(a, sizeof(jit));
+        }
+    }
+    size_t ps = (size_t) getpagesize() * 5;
+    (*j)->size = (size / ps + 1) * ps;
+    (*j)->h = mmap(NULL, (*j)->size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+}
 
 extern inline jit_stat jit_er(mod *const m, const char *const fnn, jit_stat jstat, const op *const o);
 
@@ -252,7 +266,7 @@ int thread_fn(void *volatile arg) {
     fn_stk *stk = fn_stk_i(td->m->r->a, FN_STK_SIZE);
     fn_stk_b(td->m->r->a, &stk, td->m->c);
     fn_stk_a(td->m->r->a, &stk, td->m->c);
-    td->m->r->j = jit_i(td->m->r->a, stk->nops + (td->te->len * 3), td->m->r->j);
+    jit_i(td->m->r->a, stk->nops + (td->te->len * 10), &td->m->r->j);
     jit_stat jstat;
     if ((jstat = jit_stk(td->m, stk, td->m->r->j)) != JIT_STAT(OK)) {
         code_p(td->m->c, 0);
@@ -407,7 +421,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 stk = fn_stk_i(m->r->a, FN_STK_SIZE);
                 fn_stk_b(m->r->a, &stk, o->od.tsv->m->c);
                 fn_stk_a(m->r->a, &stk, o->od.tsv->m->c);
-                o->od.tsv->m->r->j = jit_i(m->r->a, stk->nops, o->od.tsv->m->r->j);
+                jit_i(m->r->a, stk->nops, &o->od.tsv->m->r->j);
                 if (jit_stk(o->od.tsv->m, stk, o->od.tsv->m->r->j) != JIT_STAT(OK)) return JIT_ER(m, LM_INV, o);
                 fn_stk_f(stk);
                 SET_REG(o->od.tsv->m->c->jf, jit_fn*, false, 0);

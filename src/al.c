@@ -12,7 +12,6 @@ void alc_f(alc *ac, void *fn) {
 #endif
     munmap(ac->h, ac->size);
     munmap(ac, getpagesize());
-    //free(ac);
 }
 
 extern inline void al_f(al *a);

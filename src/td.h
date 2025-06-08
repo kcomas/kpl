@@ -10,6 +10,7 @@ inline tdr *tdr_i(void) {
     tdr *r = ala(a, sizeof(tdr));
     r->a = a;
     r->e = e;
+    r->j = ala(a, sizeof(jit));
     r->stks = getpagesize() * THREAD_STACK_PAGE_MUL;
     r->stk = mmap(NULL, r->stks, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
     r->stkp = r->stk + r->stks;
@@ -19,7 +20,7 @@ inline tdr *tdr_i(void) {
 inline void tdr_f(tdr *r, void *fn) {
     (void) fn;
     er_f(r->e);
-    FNNF(r->j, jit_f);
+    jit_f(r->j);
     munmap(r->stk, r->stks);
     al *a = r->a;
     alf(r);
@@ -27,11 +28,10 @@ inline void tdr_f(tdr *r, void *fn) {
 }
 
 inline tds *tds_i() {
-    // return calloc(1, sizeof(tds));
     return mmap(NULL, getpagesize(), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
 }
 
-inline void tds_a(tds *const s, tdr *const r) {
+inline void tds_a(tds *volatile s, tdr *const r) {
     while (s->lock) {}
     s->lock = true;
     er_c(r->e);
@@ -39,7 +39,7 @@ inline void tds_a(tds *const s, tdr *const r) {
     s->lock = false;
 }
 
-inline tdr *tds_g(tds *const s) {
+inline tdr *tds_g(tds *volatile s) {
     while (s->lock) {}
     s->lock = true;
     tdr *r = NULL;
@@ -58,6 +58,5 @@ inline void tds_f(tds *s) {
     printf("**RT: %lu, RR: %lu**\n", s->total, s->len);
 #endif
     LST_F(s, tdr, tdr_f, NULL);
-    //free(s);
     munmap(s, getpagesize());
 }
