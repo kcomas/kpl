@@ -47,7 +47,7 @@ static bool lst_tbl_e_eq(const te *restrict ea, const te *restrict eb) {
 
 ast_stat ast_g_pn(ast_cls cls, te *an, te **pn) {
     while (an) {
-        if (an->d[2].u6 == cls) {
+        if (an->d[2].u4 == cls) {
             *pn = an;
             return AST_STAT(OK);
         }
@@ -79,7 +79,7 @@ static ast_stat ast_var(ast *a, te *restrict pan, te *restrict pn, void **vn, te
 static ast_stat ast_type(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
     ast_stat stat;
     te **an = (te**) vn;
-    size_t tid;
+    uint16_t tid;
     if ((stat = ast_t_n(a, pn->d[2].p, &tid)) != AST_STAT(OK)) return err(stat, pn, e);
     *an = ast_an_i(a, pan, pn, AST_CLS(T), P(type_i(a->ta, NULL, tid)));
     return AST_STAT(OK);
@@ -96,9 +96,9 @@ static ast_stat ast_int(ast *a, te *restrict pan, te *restrict pn, void **vn, te
 static ast_stat ast_op(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
     ast_stat stat;
     te **an = (te**) vn;
-    size_t oid;
+    uint16_t oid;
     if ((stat = ast_t_n(a, pn->d[2].p, &oid)) != AST_STAT(OK)) return err(stat, pn, e);
-    *an = ast_an_i(a, pan, pn, AST_CLS(O), P(NULL), U6(oid), NULL, NULL);
+    *an = ast_an_i(a, pan, pn, AST_CLS(O), P(NULL), U4(oid), NULL, NULL);
     if (pn->d[3].p && (stat = ast_n(a, *an, pn->d[3].p, &(*an)->d[5].p, e)) != AST_STAT(OK)) return err(stat, pn, e);
     if (!pn->d[4].p) return AST_STAT(OK);
     return ast_n(a, *an, pn->d[4].p, &(*an)->d[6].p, e);
@@ -153,13 +153,12 @@ static ast_stat ast_z(ast *a, te *restrict pan, te *restrict pn, void **vn, te *
 static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, te **e) {
     ast_stat stat;
     te **an = (te**) vn;
-    size_t cid;
+    uint16_t cid;
     if ((stat = ast_t_n(a, pn->d[2].p, &cid)) != AST_STAT(OK)) return err(stat, pn, e);
-    *an = ast_an_i(a, pan, pn, AST_CLS(C), U6(cid), NULL);
+    *an = ast_an_i(a, pan, pn, AST_CLS(C), U4(cid), NULL);
     if (!pn->d[3].p) return AST_STAT(OK);
     return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
 }
-
 
 static ast *ast_tkn(ast *a) {
     // types
@@ -199,7 +198,7 @@ static void lst_tbl_e_p(te *lte) {
 void ast_p(const te *an, size_t idnt) {
     if (!an) return;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
-    switch (an->d[2].u6) {
+    switch (an->d[2].u4) {
         case AST_CLS(R):
             ast_p(an->d[4].p, idnt);
             break;
@@ -219,7 +218,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(S):
             printf("(S ");
             type_p(an->d[3].p);
-            switch (((te*) an->d[3].p)->d[1].u6) {
+            switch (((te*) an->d[3].p)->d[1].u4) {
                 case TYPE(I5):
                     printf(" %d", an->d[4].i5);
                     break;
@@ -237,7 +236,7 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(O):
             printf("(O ");
             type_p(an->d[3].p);
-            printf(" [%s]", ast_oc_str(an->d[4].u6));
+            printf(" [%s]", ast_oc_str(an->d[4].u4));
             if (an->d[5].p) {
                 putchar('\n');
                 ast_p(an->d[5].p, idnt + 1);
@@ -298,7 +297,7 @@ void ast_p(const te *an, size_t idnt) {
             putchar(')');
             break;
         case AST_CLS(C):
-            printf("(C [%s]", ast_cc_str(an->d[3].u6));
+            printf("(C [%s]", ast_cc_str(an->d[3].u4));
             if (an->d[4].p) {
                 putchar('\n');
                 ast_p(an->d[4].p, idnt + 1);
@@ -312,9 +311,9 @@ void ast_p(const te *an, size_t idnt) {
 }
 
 static bool ast_v_eq(const te *restrict t, const te *restrict a, const te *restrict b) {
-    if (t->d[1].u6 == TYPE(VD)) return true;
-    if (t->d[1].u6 >= TYPE(I3) && t->d[1].u6 <= TYPE(F6)) return a->d[4].u6 == b->d[4].u6;
-    if (t->d[1].u6 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
+    if (t->d[1].u4 == TYPE(VD)) return true;
+    if (t->d[1].u4 >= TYPE(I3) && t->d[1].u4 <= TYPE(F6)) return a->d[4].u4 == b->d[4].u4;
+    if (t->d[1].u4 == TYPE(C4)) return c4_eq(a->d[4], b->d[4]);
     return false;
 }
 
@@ -324,8 +323,8 @@ static bool ast_un_eq(un a, un b) {
 
 bool ast_eq(const te *restrict a, const te *restrict b) {
     if (!a && !b) return true;
-    if (!a || !b || a->d[2].u6 != b->d[2].u6) return false;
-    switch (a->d[2].u6) {
+    if (!a || !b || a->d[2].u4 != b->d[2].u4) return false;
+    switch (a->d[2].u4) {
         case AST_CLS(R):
             // TODO compare tbls
             return ast_eq(a->d[4].p, b->d[4].p);
@@ -340,7 +339,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(V):
             break;
         case AST_CLS(O):
-            return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u6 == b->d[4].u6 && ast_eq(a->d[5].p, b->d[5].p) && ast_eq(a->d[6].p, b->d[6].p);
+            return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u4 == b->d[4].u4 && ast_eq(a->d[5].p, b->d[5].p) && ast_eq(a->d[6].p, b->d[6].p);
         case AST_CLS(Z):
             return type_eq(a->d[3].p, b->d[3].p) && mc_eq(a->d[4].p, b->d[4].p) && ast_eq(a->d[5].p, b->d[5].p);
         case AST_CLS(A):
@@ -348,7 +347,7 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
         case AST_CLS(L):
             return tbl_eq(a->d[3].p, b->d[3].p, lst_tbl_e_eq) && lst_eq(a->d[4].p, b->d[4].p, ast_un_eq);
         case AST_CLS(C):
-            return a->d[3].u6 == b->d[3].u6 && ast_eq(a->d[4].p, b->d[4].p);
+            return a->d[3].u4 == b->d[3].u4 && ast_eq(a->d[4].p, b->d[4].p);
         default:
             break;
     }

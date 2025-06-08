@@ -66,6 +66,29 @@ chk_stat chk_a(chk *c, chk_fn cf, uint16_t cls, uint16_t type, ...) {
     return CHK_STAT(OK);
 }
 
+chk_stat chk_n(chk *c, te *an, te **e) {
+    chk_stat stat = CHK_STAT(OK);
+    if (!an) return stat;
+    switch (an->d[2].u4) {
+        AST_CLS(R):
+            // TODO
+            break;
+        default:
+            return CHK_STAT(INV);
+    }
+    un hsh = U6(0);
+    hsh = u4_s_o(hsh, 1, an->d[2].u4);
+    switch (an->d[2].u4) {
+
+        default:
+            if (!an->d[3].p) hsh = u4_s_o(hsh, 0, TYPE(_N));
+            else hsh = u4_s_o(hsh, 1, ((te*) an->d[3].p)->d[0].u4);
+            break;
+    }
+    te *kv;
+    if (tbl_g_i(c->ct, hsh, &kv) == TBL_STAT(NF)) return CHK_STAT(INV);
+}
+
 void chk_f(chk *c) {
     if (!c || --c->r > 0) return;
     ast_f(c->a);

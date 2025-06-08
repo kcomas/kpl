@@ -48,16 +48,13 @@ static fld_stat fld_lst_n(fld *f, lst *l, te **e) {
 fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
     fld_stat stat = FLD_STAT(OK);
     if (!*an) return stat;
-    switch ((*an)->d[2].u6) {
+    switch ((*an)->d[2].u4) {
         case AST_CLS(R):
             if ((stat = fld_n(f, (te**) &(*an)->d[4].p, e)) != FLD_STAT(OK)) return stat;
             break;
         case AST_CLS(T):
-            break;
         case AST_CLS(I):
-            break;
         case AST_CLS(S):
-            break;
         case AST_CLS(V):
             break;
         case AST_CLS(O):
@@ -81,7 +78,7 @@ fld_stat fld_n(fld *f, te **restrict an, te **restrict e) {
     te *pan, *kv, *h, *fns;
     do {
         pan = *an;
-        if (tbl_g_i(f->ft, U6((*an)->d[2].u6), &kv) == TBL_STAT(OK)) {
+        if (tbl_g_i(f->ft, U6((*an)->d[2].u4), &kv) == TBL_STAT(OK)) {
             h = ((lst*) kv->d[1].p)->h;
             while (h) {
                 fns = h->d[0].p;

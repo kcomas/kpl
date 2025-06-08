@@ -1,5 +1,5 @@
 
-#include "../src/type.h"
+#include "../src/lib/type.h"
 #include "t.h"
 
 static const alfr tm = { .a = malloc, .f = free };

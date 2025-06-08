@@ -32,7 +32,7 @@ void chk_p(const tbl *ct, size_t idnt) {
 static chk_stat chk_root_lst(chk *c, te *an) {
     (void) c;
     (void) an;
-    return CHK_STAT(INV);
+    return CHK_STAT(OK);
 }
 
 chk *chk_b(chk *c) {

@@ -89,7 +89,7 @@ $(GEN): $(GENX64_OBJS) $(TEST)/gen.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
 TYPE = type$(TNAME)
-TYPE_OBJS = $(SRC)/type.o $(LTBL_OBJS)
+TYPE_OBJS = $(LSRC)/type.o $(LTBL_OBJS)
 OBJS += $(TYPE_OBJS)
 $(TYPE): $(TYPE_OBJS) $(TEST)/type.o $(TEST_OBJS)
 > $(CCOBJ)
