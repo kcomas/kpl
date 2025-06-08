@@ -37,7 +37,7 @@ static tbl_stat fdrm(tbl *t, un k, te **kv, bool rm) {
         else if (t->cf(TBIT(t, i)->d[0], k)) {
             *kv = TBIT(t, i);
             if (rm) {
-                lst_li_r(t->i, TBI(t, i));
+                lst_li_d(t->i, TBI(t, i));
                 t->b->d[i] = P(NULL);
             }
             return TBL_STAT(OK);

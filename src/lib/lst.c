@@ -69,7 +69,7 @@ lst_stat lst_sf(lst *const l, un *d) {
     return LST_STAT(OK);
 }
 
-void lst_li_r(lst *const l, te *li) {
+void lst_li_d(lst *const l, te *li) {
     if (li == l->h) l->h = l->h->d[2].p;
     else if (li == l->t) l->t = l->t->d[1].p;
     if (li->d[1].p && li->d[2].p) {
