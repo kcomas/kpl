@@ -16,11 +16,13 @@
 ```bash
 make
 ```
-##### Debug Build Flags (DFLAGS)
-
-ALD=1 - Track allocations and frees
+##### Build Flags
 
 OO=-g -Og -Set optimization level (-O2 currently will segfault)
+
+##### Debug Flags (DFLAGS=)
+
+-DALD=1 - Track allocations and frees
 
 ### Run
 
