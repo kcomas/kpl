@@ -192,12 +192,12 @@ uint32_t opt_exp_flgs(te *x) {
     return u4_g_o(x->d[1], 0);
 }
 
-fld *opt_b(fld *f) {
-    fld_a(f, AST_CLS(E), entry_t, entry_o);
-    fld_a(f, AST_CLS(L), lst_inv_t, lst_inv_o);
-    fld_a(f, AST_CLS(L), lst_le_t, lst_le_o);
-    fld_a(f, AST_CLS(A), aply_lst_t, aply_lst_o);
-    fld_a(f, AST_CLS(O), cst_s_t, cst_s_o);
-    fld_a(f, AST_CLS(O), op_s_s_t, op_s_s_o);
-    return f;
+fld *opt_b(fld *o) {
+    fld_a(o, AST_CLS(E), entry_t, entry_o);
+    fld_a(o, AST_CLS(L), lst_inv_t, lst_inv_o);
+    fld_a(o, AST_CLS(L), lst_le_t, lst_le_o);
+    fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
+    fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
+    fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
+    return o;
 }

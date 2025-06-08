@@ -11,4 +11,4 @@ uint32_t opt_exp_flgs(te *x);
 
 // export entry te[mc;u5(id)|u4(exportid)|u4(local_arg_flags)>data;type]
 
-fld *opt_b(fld *f);
+fld *opt_b(fld *o);

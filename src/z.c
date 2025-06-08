@@ -166,7 +166,7 @@ err *z(mc *fn, tbl **et) {
     }
     chk_f(zc);
     fld *zo = fld_i_fld(bo, za);
-    if (fld_n(zf, &an, &e, false) != FLD_STAT(OK)) {
+    if (fld_n(zo, &an, &e, false) != FLD_STAT(OK)) {
         fld_f(zo);
         ast_f(za);
         te_f(an);
