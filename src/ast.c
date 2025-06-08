@@ -313,23 +313,22 @@ var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const 
     fn_node *scope = fns->vim == FN_VIM(S) ? fns : NULL;
     while (scope) {
         if (tbl_op(a, &scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
+        // loop until top scope if not found
         scope = scope->par;
+        while (scope && scope->par) scope = scope->par;
     }
-    if (!scope) {
-        var_node *vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
-        vn->id = fns->idc++;
-        if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
-        else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);
-        else vn->vt = fns->par ? VAR_TYPE(L) : VAR_TYPE(G);
-        vn->fns = fns;
-        memcpy(vn->str, str + t->pos, t->len);
-        if (tbl_op(a, &fns->tl, vstr, vn, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
-            var_node_f(vn);
-            return NULL;
-        }
-        return vn;
+    var_node *vn = ala(a, sizeof(var_node) + t->len + sizeof(char));
+    vn->id = fns->idc++;
+    if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
+    else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);
+    else vn->vt = fns->par ? VAR_TYPE(L) : VAR_TYPE(G);
+    vn->fns = fns;
+    memcpy(vn->str, str + t->pos, t->len);
+    if (tbl_op(a, &fns->tl, vstr, vn, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
+        var_node_f(vn);
+        return NULL;
     }
-    return NULL;
+    return vn;
 }
 
 extern inline void var_node_p(const ast_st *const as, const var_node *const var, size_t idnt);
@@ -428,6 +427,19 @@ void ast_f(ast *a) {
 #define TYPE_NA_CASE(T) case TKN_TYPE(T): \
     if (*a) return AST_ER(as, TYPE_A_NN); \
     *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), NULL) }, &as->next); \
+    return ast_parse_stmt(as, fns, a, stp_flgs)
+
+#define TYPE_A_LST_CASE(T, TL, TR) case TKN_TYPE(T): \
+    if (*a) return AST_ER(as, TYPE_A_NN); \
+    memcpy(&ttmp, &as->next, sizeof(tkn)); \
+    if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat; \
+    if (as->next.type != TKN_TYPE(TL)) return AST_ER(as, INV_TYPE_LST_INIT); \
+    atmp = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(STMT)) }, &as->next); \
+    if ((astat = ast_parse_stmts(as, fns, atmp->n.lst, TKN_FLG(SEMI), TKN_FLG(TR))) != AST_STAT(OK)) { \
+        ast_f(atmp); \
+        return astat; \
+    } \
+    *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), atmp) }, &ttmp); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define VAL_CASE(T) case TKN_TYPE(T): \
@@ -631,18 +643,8 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
         TYPE_NA_CASE(SG);
         // TODO TYPES
         // TODO TYPES
-        case TKN_TYPE(FN):
-            if (*a) return AST_ER(as, TYPE_A_NN);
-            memcpy(&ttmp, &as->next, sizeof(tkn));
-            if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-            if (as->next.type != TKN_TYPE(LP)) return AST_ER(as, INV_TYPE_LST_INIT);
-            atmp = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(STMT)) }, &as->next);
-            if ((astat = ast_parse_stmts(as, fns, atmp->n.lst, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
-                ast_f(atmp);
-                return astat;
-            }
-            *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(FN), atmp) }, &ttmp);
-            return ast_parse_stmt(as, fns, a, stp_flgs);
+        TYPE_A_LST_CASE(VR, LS, RS);
+        TYPE_A_LST_CASE(FN, LP, RP);
         case TKN_TYPE(ER):
             if (*a) return AST_ER(as, TYPE_A_NN);
             memcpy(&ttmp, &as->next, sizeof(tkn));
