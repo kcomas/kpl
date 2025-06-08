@@ -7,6 +7,13 @@
 #include <sys/mman.h>
 #include "def.h"
 
+#define JIT_STAT(N) JIT_STAT_##N
+
+typedef enum {
+    JIT_STAT(OK),
+    JIT_STAT(INV_REG)
+} jit_stat;
+
 #define R(N) R_##N
 
 #define XMM(N) X_##N
@@ -65,13 +72,6 @@ typedef enum {
     MOD(10) = 0x80,
     MOD(11) = 0xC0
 } mod;
-
-#define JIT_STAT(N) JIT_STAT_##N
-
-typedef enum {
-    JIT_STAT(OK),
-    JIT_STAT(INV_REG)
-} jit_stat;
 
 // map page aligned
 uint8_t *jit_mmap(size_t size);
@@ -176,3 +176,6 @@ jit_stat jit_jne_b(size_t *p, uint8_t *m, uint8_t b);
 
 // jna byte
 jit_stat jit_jna_b(size_t *p, uint8_t *m, uint8_t b);
+
+// setl rax
+jit_stat jit_setl_r(size_t *p, uint8_t *m, reg r);

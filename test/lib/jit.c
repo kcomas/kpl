@@ -156,6 +156,19 @@ static void daddsub(uint8_t *m) {
     printf("dasf(%f + %f - %f): %f\n", a, b, c, d);
 }
 
+static void cmp(uint8_t *m) {
+    size_t p = 0;
+    jit_push(&p, m, R(BP));
+    jit_mov_rr(&p, m, R(BP), R(SP));
+    jit_pop(&p, m, R(BP));
+    jit_cmp_rr(&p, m, R(DI), R(SI));
+    jit_setl_r(&p, m, R(AX));
+    jit_ret(&p, m);
+    printj(p, m);
+    int64_t a = 1, b = 2;
+    printf("cmp(%ld < %ld): %d\n", a, b, ((bool(*)(int64_t, int64_t)) m)(a, b));
+}
+
 int main(void) {
     uint8_t *m = jit_mmap(1);
     radd3(m);
@@ -164,6 +177,7 @@ int main(void) {
     rloop(m);
     rfib(m);
     daddsub(m);
+    cmp(m);
     jit_munmap(1, m);
     return 0;
 }
