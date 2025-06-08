@@ -199,7 +199,7 @@ x64_stat x64_add_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return x64_b(p, m, 3, set_rex2(d, s), 0x01, modrm(MOD(11), d, s));
 }
 
-x64_stat x64_addsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
+x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     return x64_b(p, m, 5, set_rex2(s, d), 0xF2, 0xF, 0x58, modrm(MOD(11), s, d));
@@ -221,7 +221,7 @@ x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return x64_b(p, m, 3, set_rex2(d, s), 0x29, modrm(MOD(11), d, s));
 }
 
-x64_stat x64_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
+x64_stat x64_subsd_xx(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_X(d);
     VALID_X(s);
     return x64_b(p, m, 5, set_rex2(s, d), 0xF2, 0xF, 0x5C, modrm(MOD(11), s, d));
@@ -230,6 +230,12 @@ x64_stat x64_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
 x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r) {
     VALID_R(r);
     return x64_b(p, m, 3, set_rex(r), 0XF7, roe(MOD(11), rid(r), 3));
+}
+
+x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s) {
+    VALID_X(d);
+    VALID_R(s);
+    return x64_b(p, m, 5, 0xF2, set_rex2(s, d), 0x0F, 0x2A, modrm(MOD(11), s, d));
 }
 
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s) {
