@@ -301,7 +301,7 @@ x64_stat x64_movsd_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) {
     return x64_a(p, m, dsp);
 }
 
-x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
+x64_stat x64_lea_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) {
     VALID_R(d);
     VALID_R(s);
     x64_b(p, m, 3, set_rex2(s, d), 0x8D, modrm(MOD(01), s, d));

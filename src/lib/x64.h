@@ -196,7 +196,7 @@ x64_stat x64_movsd_rmx(size_t *p, uint8_t *m, reg d, reg s);
 x64_stat x64_movsd_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
 // lea rax, [rax+dsp8]
-x64_stat x64_lea_rrb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+x64_stat x64_lea_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
 // inc rax
 x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r);

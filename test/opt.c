@@ -48,6 +48,7 @@ T(apltypefn) {
 
 T(facloop) {
     IC(facloop);
+    te *rn = te_c(an);
     V(RN(LN(LT(2, "v", FLG(0, LTE_FLG(L)), TS(I6), "f", FLG(1, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), L(4,
         ON(TS(I6), DFN, EN("v", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(5))),
         ON(TS(I6), DFN, EN("f", FLG(1, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), SN(I6, I6(1))),
@@ -58,4 +59,14 @@ T(facloop) {
                 ON(TS(I6), SUBA, EN("v", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("f", FLG(1, LTE_FLG(L) | LTE_FLG(E)), TS(I6)))
     ))));
+    tbl *ept = rn->d[3].p;
+    A(ept, "exports");
+    A(ept->i->l == 1, "exports len");
+    te *kv;
+    mc *f = mc_i_cstr("f", &ast_am);
+    A(tbl_g_i(ept, P(f), &kv) == TBL_STAT(OK), "exp not found");
+    A(((te*) kv->d[1].p)->d[1].u6 == TYPE(I6), "inv exp type");
+    A(kv->d[2].u6 == 0, "inv exp idx");
+    mc_f(f);
+    te_f(rn);
 }

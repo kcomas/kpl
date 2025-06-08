@@ -49,7 +49,6 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     A(as_n(t->a, &p, m, &e) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t el = ((te*) an->d[4].p)->d[4].u5;
-    te_f(an);
     A(el == elcmp, "el");
     ssize_t ep = as_lbl_g_c_i(t->a, el);
     atg_f(t);
@@ -57,6 +56,7 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     X64_RS();
     ((void (*)(void)) &m[ep])();
     X64_RR();
+    te_f(an);
 }
 
 #define AR(E) gen_st_f(st); \
@@ -167,3 +167,9 @@ T(apltypefn) {
     gen_f(gc);
     AR(1);
 }
+/*
+T(facloop) {
+    AI(facloop, 1);
+    V(NULL, NULL);
+}
+*/

@@ -20,26 +20,42 @@ static fld_stat lst_inv_o(fld *f, te **an, err **e) {
     return fld_err(f, *an, e, "opt inv lst");
 }
 
+static void export_tbl_f(void *p) {
+    te *t = p;
+    mc_f(t->d[0].p);
+    te_f(t->d[1].p);
+    // TODO jit destructor
+    t->af->f(t);
+}
+
 static bool lst_inv_t(const te *an) {
     te *p = an->d[0].p;
     return an->d[2].u4 == AST_CLS(L) && (!p || (p->d[2].u4 != AST_CLS(A) && p->d[2].u4 != AST_CLS(O)));
 }
 
-static fld_stat lst_l_o(fld *f, te **an, err **e) {
-    (void) f;
-    (void) e;
-    te *h = ((tbl*) (*an)->d[3].p)->i->h, *lte, *kv;
+static fld_stat lst_le_o(fld *f, te **an, err **e) {
+    size_t eti = 0;
+    te *h = ((tbl*) (*an)->d[3].p)->i->h, *lte, *kv, *rn = NULL;
     while (h) {
         lte = h->d[0].p;
-        if ((ast_lst_tbl_e_g_f(lte) & LTE_FLG(O)) && (kv = chk_g_pn_lte((*an)->d[0].p, lte->d[0].p))) {
-            lte->d[1] = U6(kv->d[1].u6 | LTE_FLG(O));
+        uint32_t flgs = ast_lst_tbl_e_g_f(lte);
+        if ((flgs & LTE_FLG(O)) && (kv = chk_g_pn_lte((*an)->d[0].p, lte->d[0].p))) lte->d[1] = U6(kv->d[1].u6 | LTE_FLG(O));
+        if (!(flgs & LTE_FLG(O)) && (flgs & LTE_FLG(E))) {
+            if (!rn && ast_g_pn(AST_CLS(R), *an, &rn) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get root node");
+            if (!rn->d[3].p) rn->d[3] = P(f->fti());
+            if (tbl_g_i(rn->d[3].p, lte->d[0], &kv) == TBL_STAT(OK)) return fld_err(f, *an, e, "opt export already set");
+            kv = te_i(3, f->ta, export_tbl_f);
+            kv->d[0] = P(mc_c(lte->d[0].p));
+            kv->d[1] = P(te_c(lte->d[2].p));
+            kv->d[2] = U6(eti++);
+            tbl_a(rn->d[3].p, kv);
         }
         h = h->d[2].p;
     }
     return FLD_STAT(OK);
 }
 
-static bool lst_l_t(const te *an) {
+static bool lst_le_t(const te *an) {
     return an->d[2].u4 == AST_CLS(L);
 }
 
@@ -99,7 +115,7 @@ static bool cst_s_t(const te *an) {
 fld *opt_b(fld *f) {
     fld_a(f, AST_CLS(E), entry_t, entry_o);
     fld_a(f, AST_CLS(L), lst_inv_t, lst_inv_o);
-    fld_a(f, AST_CLS(L), lst_l_t, lst_l_o);
+    fld_a(f, AST_CLS(L), lst_le_t, lst_le_o);
     fld_a(f, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(f, AST_CLS(O), cst_s_t, cst_s_o);
     return f;
