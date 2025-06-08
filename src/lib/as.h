@@ -55,8 +55,11 @@ as *as_i_as(const as *a);
 // add and register label
 size_t as_lbl_a(as *a, size_t lbl_id);
 
-// get lbl entry
+// get lbl entry as weak ref
 te *as_lbl_g_c(as *a, size_t lbl_id);
+
+// get lbl entry index in buffer
+ssize_t as_lbl_g_c_i(as *a, size_t lbl_id);
 
 // set lbl code
 as_stat as_lbl_s_c(as *a, size_t lbl_id, te *c);

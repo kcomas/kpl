@@ -94,9 +94,8 @@ T(fnadd3) {
     uint32_t eidx = ((te*) an->d[4].p)->d[4].u5;
     te_f(an);
     A(eidx == 1, "eidx");
-    te *l1c = as_lbl_g_c(t->a, eidx);
-    A(l1c, "lc");
-    size_t ep = l1c->d[8].u6;
+    ssize_t ep = as_lbl_g_c_i(t->a, eidx);
+    A(ep > 0, "ep");
     atg_f(t);
     X64_RS();
     ((void (*)(void)) &m[ep])();
