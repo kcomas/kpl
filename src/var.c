@@ -60,6 +60,18 @@ void var_sg_d(var_sg *sg) {
     alf(sg);
 }
 
+void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
+    er_itm *ei = er_itm_i(m->a, ER(RUN), __func__, NULL);
+    ei->path = m->src.path;
+    if (a) {
+        ei->lno = a->t.lno;
+        ei->cno = a->t.cno;
+    }
+    var_sg_rci(sg);
+    ei->sg = sg;
+    er_a(m->e, ei);
+}
+
 ssize_t var_rcd(var v, type t) {
     switch (t) {
         case TYPE(STR):
@@ -76,6 +88,18 @@ ssize_t var_rcd(var v, type t) {
 
 bool OO0 var_zoo_u6(uint64_t v) { return v != 0; }
 bool OO0 var_zoo_i6(int64_t v) { return v != 0; }
+
+#ifndef NUM_TO_SG_SIZE
+    #define NUM_TO_SG_SIZE 30
+#endif
+
+// TODO check if output fails
+#define INT_TO_SG(FMT, ARG)  var_sg *sg = var_sg_i(a, NUM_TO_SG_SIZE); \
+    sg->len = (size_t) snprintf(sg->str, sg->size, FMT, ARG); \
+    return sg
+
+var_sg *var_u6_sg(al *const a, uint64_t u6) { INT_TO_SG("%lu", u6); }
+var_sg *var_i6_sg(al *const a, uint64_t i6) { INT_TO_SG("%ld", i6); }
 
 #define VAR_BOP_T(N, OP, T, CT) VAR_FN_BOP_T(N, T, CT) {  return l OP r; }
 
@@ -113,19 +137,6 @@ VAR_BOP_T(lt, <, u6, uint64_t)
 VAR_BOP_T(or, ||, bl, bool)
 VAR_BOP_T(or, ||, i6, int64_t)
 VAR_BOP_T(or, ||, u6, uint64_t)
-
-#ifndef NUM_TO_SG_SIZE
-    #define NUM_TO_SG_SIZE 30
-#endif
-
-// TODO check if output fails
-#define INT_TO_SG(FMT, ARG)  var_sg *sg = var_sg_i(a, NUM_TO_SG_SIZE); \
-    sg->len = (size_t) snprintf(sg->str, sg->size, FMT, ARG); \
-    return sg
-
-var_sg *var_u6_sg(al *const a, uint64_t u6) { INT_TO_SG("%lu", u6); }
-
-var_sg *var_i6_sg(al *const a, uint64_t i6) { INT_TO_SG("%ld", i6); }
 
 bool OO0 var_not(bool v) { return !v; }
 

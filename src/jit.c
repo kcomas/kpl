@@ -246,6 +246,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(SG, mod_sg_var_sg);
                     CT_SET_FN(FN, mod_sg_jf);
                     CT_SET_FN(FD, mod_sg_fd);
+                    CT_SET_FN(ER, mod_sg_er);
                     default:
                         return JIT_ER(m, SG_T_INV, o);
                 }
@@ -263,6 +264,7 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                     CT_SET_FN(SG, mod_lg_var_sg);
                     CT_SET_FN(FN, mod_lg_jf);
                     CT_SET_FN(FD, mod_lg_fd);
+                    CT_SET_FN(ER, mod_lg_er);
                     default:
                         return JIT_ER(m, LG_T_INV, o);
                 }
@@ -366,6 +368,30 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j) {
                 }
                 SET_REG_CALL(false, 0);
                 jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
+            case OP_C(TE):
+                op_set_jidx(j, o);
+                SET_REG(m, mod*, false, 7);
+                SET_REG(o->a, ast*, false, 6);
+                jit_a(j, 0x5A); // pop rdx
+                SET_FP(var_sg_er);
+                SET_REG_CALL(false, 0);
+                op_set_jlen(j, o);
+                break;
+            case OP_C(CE):
+                op_set_jidx(j, o);
+                SET_REG(m->e, er*, false, 7);
+                SET_FP(var_sg_er);
+                SET_REG_CALL(false, 0);
+                jit_a(j, 0x50); // push rax
+                op_set_jlen(j, o);
+                break;
+            case OP_C(PE):
+                op_set_jidx(j, o);
+                SET_REG(m->e, er*, false, 7);
+                SET_FP(er_e);
+                SET_REG_CALL(false, 0);
                 op_set_jlen(j, o);
                 break;
             // TODO

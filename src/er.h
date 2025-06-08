@@ -2,7 +2,6 @@
 #pragma once
 
 #include "kpl.h"
-#include "var.h"
 
 #define ER(N) ER_##N
 
@@ -22,7 +21,7 @@ typedef struct _er_itm {
     struct _er_itm *prev, *next;
     size_t lno, cno;
     const char *stat, *path; // status code, file path
-    var_sg *msg;
+    var_sg *sg;
     char fnn[]; // function name
 } er_itm;
 
@@ -38,7 +37,7 @@ void er_itm_p(er_itm *const ei);
 
 void er_itm_f(er_itm *ei, void *fn);
 
-typedef struct {
+typedef struct _er {
     size_t len;
     er_itm *h, *t;
 } er;
@@ -49,6 +48,8 @@ inline er *er_i(al *const a) {
 
 void er_a(er *const e, er_itm *const ei);
 
+er_itm *er_g(er *const e);
+
 inline void er_p(er *const e) {
     er_itm *h = e->h;
     while (h) {
@@ -56,6 +57,8 @@ inline void er_p(er *const e) {
         h = h->next;
     }
 }
+
+void er_e(er *const e);
 
 void er_c(er *const e);
 
