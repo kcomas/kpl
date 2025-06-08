@@ -2,10 +2,8 @@
 #include "../src/lib/vr.h"
 #include "t.h"
 
-static const alfr vm = { .a = malloc, .f = free };
-
 T(vr_ab_s_i) {
-    vr *v = vr_i(2, &vm, NULL);
+    vr *v = vr_i(2, &al_vr, NULL);
     vr_ab(&v, I5(1));
     vr_ab(&v, I5(2));
     vr_ab(&v, I5(3));
@@ -19,7 +17,7 @@ T(vr_ab_s_i) {
 }
 
 T(reverse) {
-    vr *v = vr_i(10, &vm, NULL);
+    vr *v = vr_i(10, &al_vr, NULL);
     vr_ab(&v, F6(1.1));
     vr_ab(&v, F6(2.2));
     vr_ab(&v, F6(3.3));
@@ -48,7 +46,7 @@ T(reverse) {
 T(strings) {
     char *msg = "Hi: 0";
     size_t ml = strlen(msg);
-    vr *v = vr_i(5, &vm, free);
+    vr *v = vr_i(5, &al_vr, free);
     for (size_t i = 0; i < 10; i++) {
         char *s = calloc(1, ml + sizeof(char));
         strcpy(s, msg);
@@ -81,14 +79,14 @@ static bool i6_eq(un a, un b) {
 }
 
 T(eq) {
-    vr *a = vr_i(2, &vm, NULL);
+    vr *a = vr_i(2, &al_vr, NULL);
     vr_ab(&a, I6(1));
     vr_ab(&a, I6(2));
-    vr *b = vr_i(2, &vm, NULL);
+    vr *b = vr_i(2, &al_vr, NULL);
     vr_ab(&b, I6(1));
     vr_ab(&b, I6(2));
     A(vr_eq(a, b, i6_eq), "vr_eq");
-    vr *c = vr_i(5, &vm, NULL);
+    vr *c = vr_i(5, &al_vr, NULL);
     vr_ab(&c, I6(1));
     vr_ab(&c, I6(4));
     A(!vr_eq(b, c, i6_eq), "!vr_eq");
