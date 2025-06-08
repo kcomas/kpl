@@ -32,3 +32,5 @@ const char *typetype = "FN(I6`x;F6`y;FN(U6`z;I6))";
 const char *fnadd3 = "{f::FN(I6`a;I6`b;I6`c;I6)${-a+b+c};f(1;2;3)/p1}()";
 
 const char *fnf6muli6cstdiv = "{f::FN(F6`x;F6`y;U6`z;F6)${/(x*y;F6$z)};f(4.4;6.6;U6$2)/p1}()";
+
+// TODO const char *apltypefn = "{f::FN${I6(a)+I6(b)};f(3;4)/p1}()";

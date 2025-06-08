@@ -74,6 +74,7 @@ static chk_stat chk_vd(chk *c, te *an, te **e) {
 
 static chk_stat chk_aply_e_fn(chk *c, te *an, te **e) {
     (void) c;
+    // TODO check if FN without def
     te *t = ((te*) ((te*) an->d[4].p)->d[3].p)->d[2].p;
     tbl *fa = t->d[3].p;
     lst *l = an->d[5].p;
