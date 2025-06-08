@@ -106,7 +106,7 @@ static void z_e_p(void *d) {
 
 #define APLYLSTS 4 // {}()
 
-err *z(mc *fn, tbl **et) {
+err *z(mc *fn, tbl **et, uint32_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
     int fd;
@@ -136,6 +136,10 @@ err *z(mc *fn, tbl **et) {
         return e;
     }
     nh = psr_g_rn(zp, nh);
+    if (dflgs & Z_D_FLG(P)) {
+        node_p(nh->d[2].p, 0);
+        putchar('\n');
+    }
     te *an = NULL;
     ast *za = ast_i_ast(ba);
     if (ast_n(za, NULL, nh, (void**) &an, &e) != AST_STAT(OK)) {
@@ -144,6 +148,10 @@ err *z(mc *fn, tbl **et) {
         mc_f(pgm);
         return e;
     }
+    if (dflgs & Z_D_FLG(A)) {
+        ast_p(an, 0);
+        putchar('\n');
+    }
     fld *zf = fld_i_fld(bf, za);
     if (fld_n(zf, &an, &e, true) != FLD_STAT(OK)) {
         fld_f(zf);
@@ -151,6 +159,10 @@ err *z(mc *fn, tbl **et) {
         te_f(an);
         mc_f(pgm);
         return e;
+    }
+    if (dflgs & Z_D_FLG(F)) {
+        ast_p(an, 0);
+        putchar('\n');
     }
     fld_f(zf);
     chk *zc = chk_i_chk(bc, za);
@@ -161,6 +173,10 @@ err *z(mc *fn, tbl **et) {
         mc_f(pgm);
         return e;
     }
+    if (dflgs & Z_D_FLG(C)) {
+        ast_p(an, 0);
+        putchar('\n');
+    }
     chk_f(zc);
     fld *zo = fld_i_fld(bo, za);
     if (fld_n(zo, &an, &e, false) != FLD_STAT(OK)) {
@@ -169,6 +185,10 @@ err *z(mc *fn, tbl **et) {
         te_f(an);
         mc_f(pgm);
         return e;
+    }
+    if (dflgs & Z_D_FLG(O)) {
+        ast_p(an, 0);
+        putchar('\n');
     }
     fld_f(zo);
     atg *zt = atg_i_atg(bt);
@@ -200,6 +220,10 @@ err *z(mc *fn, tbl **et) {
             return e;
         }
         gen_x64_opt(zg, zst);
+        if (dflgs & Z_D_FLG(G)) {
+            gen_p(zg, NULL);
+            putchar('\n');
+        }
         if (gen_n(zg, zst, zt->a, &e) != GEN_STAT(OK)) {
             ast_f(za);
             atg_f(zt);
@@ -218,6 +242,10 @@ err *z(mc *fn, tbl **et) {
         te_f(an);
         mc_f(pgm);
         return e;
+    }
+    if (dflgs & Z_D_FLG(S)) {
+        as_code_p(zt->a, m);
+        putchar('\n');
     }
     ssize_t ep = as_lbl_g_c_i(zt->a, ((te*) an->d[4].p)->d[4].u5);
     if (ep < 0) return err_i(&z_al, NULL, NULL, NULL, __FUNCTION__);

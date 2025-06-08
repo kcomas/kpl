@@ -23,7 +23,12 @@ make
 ## Usage
 
 ```
-./kpl [file] # Examples with an overview can be found in the ex folder
+./kpl [opts] [file] # Examples with an overview can be found in the ex folder
+
+[opts] are
+    -h: show help message
+    -d[steps]: show debugging output from p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)
+        eg ./kpl -dps ./ex/ack.kpl # show the paser and assembler output for the file ./ex/ack.kpl
 ```
 
 #### Example
