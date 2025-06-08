@@ -78,7 +78,6 @@ T(ift, {
 
 T(loop, {
     as *a = as_b(as_i(&am, &am, &am, &as_label_entry_f, &as_op_entry_f, &as_code_entry_f, &as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
-    printf(">>>> LOOPTEST\n");
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_qw(a, U6(2)));
     AS_A1(a, AS_X64(PUSH), as_arg_r(a, R(AX)));
     AS_A2(a, AS_X64(MOV), as_arg_r(a, R(SI)), as_arg_r(a, R(DI)));
