@@ -40,3 +40,17 @@ T(apltypefn) {
         ON(NULL, CST, TN(FN), LN(NULL, L(1, ON(NULL, ADD, AN(NULL, TN(I6), L(1, IN("a"))), ON(NULL, MUL, AN(NULL, TN(I6), L(1, IN("b"))), IN("a"))))))),
         CN(P1, AN(NULL, IN("f"), L(2, SN(I6, I6(3)), SN(I6, I6(4))))))), NULL)));
 }
+
+T(facloop) {
+    V(facloop, RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("v"), SN(I6, I6(5))),
+        ON(NULL, DFN, CN(E, IN("f")), SN(I6, I6(1))),
+        ON(NULL, LOOP,
+            AN(NULL, ON(NULL, GT, NULL, NULL), L(2, IN("v"), SN(I6, I6(1)))),
+            LN(NULL, L(2,
+                ON(NULL, MULA, IN("f"), IN("v")),
+                ON(NULL, SUBA, IN("v"), SN(I6, I6(1)))
+            ))),
+        CN(P1, IN("f"))
+    )), NULL)));
+}
