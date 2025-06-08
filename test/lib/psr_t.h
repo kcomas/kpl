@@ -29,6 +29,7 @@ typedef enum {
     NODE_TYPE(ROOT),
     NODE_TYPE(VAR),
     NODE_TYPE(TYPE),
+    NODE_TYPE(KEY),
     NODE_TYPE(INT),
     NODE_TYPE(FLT),
     NODE_TYPE(OP),
@@ -50,6 +51,9 @@ psr_stat psr_var_i(psr *p, te **n);
 
 // node te[par;id;tkn;....]
 psr_stat psr_id_i(psr *p, te **n);
+
+// node te[par;id;tkn;....]
+psr_stat psr_key_i(psr *p, te **n);
 
 // node te[par;id;tkn;....]
 psr_stat psr_int_i(psr *p, te **n);

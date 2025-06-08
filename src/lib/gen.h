@@ -44,7 +44,7 @@ typedef struct {
 
 gen *gen_i(alfn *ga, frfn *gf, frfn *ocef, frfn *cef, cls_tbl_i *cti, tbl *oci, lst *code);
 
-typedef gen_stat gen_fn(alfn *aa, frfn *af, gen *g, void *s, te *ci, as *a); // state
+typedef gen_stat gen_fn(alfn *aa, frfn *fr, gen *g, void *s, te *ci, as *a); // state
 
 gen_stat gen_op_a(gen *g, size_t op_id, gen_cls cls1, un info1, gen_cls cls2, un info2, gen_cls cls3, un info3, gen_fn *fn);
 
