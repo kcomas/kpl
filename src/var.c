@@ -72,7 +72,7 @@ void var_sg_er(mod *const m, ast *const a, var_sg *const sg) {
     er_a(m->e, ei);
 }
 
-ssize_t var_rcd(var v, type t) {
+ssize_t var_rcf(var v, type t) {
     switch (t) {
         case TYPE(STR):
         case TYPE(SG):
