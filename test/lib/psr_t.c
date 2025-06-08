@@ -1,6 +1,32 @@
 
 #include "psr_t.h"
 
+psr *psr_b(const char *const pgm) {
+    tkn *t = tkn_i(&malloc, &free, &tkn_entry_f, &tkn_mktbl, &tkn_df, mc_i_cstr(pgm, &malloc, &free));
+    tkn_standard(t);
+    vr *v = vr_i(10, &malloc, (void*) &te_f, &free);
+    psr *p = psr_i(&malloc, &free, &psr_entry_f, &psr_mktbl, t, v);
+    te *lst_stp = te_i(1, &malloc, &free);
+    lst_stp->d[0] = U6(tkn_a(t, TCUST(RS), "]", &tkn_ft));
+    te *blk_stp = te_i(1, &malloc, &free);
+    blk_stp->d[0] = U6(tkn_a(t, TCUST(RB), "}", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, tkn_a(t, TCUST(SEMI), ";", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, tkn_a(t, TCUST(NL), "\n", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RS));
+    psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RB));
+    psr_a(p, PCUST(INT), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_int_i, 1, TCUST(NUM));
+    psr_a(p, PCUST(VAR), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_int_i, 1, TCUST(VAR));
+    psr_a(p, PCUST(SUM), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "Σ", &tkn_ft));
+    psr_a(p, PCUST(SUB), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "-", &tkn_ft));
+    psr_a(p, PCUST(ADD), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "+", &tkn_ft));
+    psr_a(p, PCUST(EFN), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "#", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, NULL, NULL, 1, TCUST(WS));
+    psr_a(p, PCUST(FLT), PSR_MODE(ONCE), NULL, NULL,  &psr_val_m, &psr_flt_i, 3, TCUST(NUM), tkn_a(t, TOKEN(UN), ".", &tkn_ft), TCUST(NUM));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), lst_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LS), "[", &tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(LOOP), blk_stp, &psr_lst_e, &psr_val_m, &psr_lst_i, 1, tkn_a(t, TCUST(LB), "{", &tkn_ft));
+    return p;
+}
+
 void psr_p(tbl *t, size_t idnt) {
     te *h = t->i->h;
     while (h) {
@@ -76,8 +102,8 @@ psr_stat psr_op_m(psr *const p, te *const nh, te *const n) {
         ((te*) n->d[3].p)->d[0] = P(n);
         nh->d[2].p = NULL;
     } else {
-        n->d[3] = ((te*) nh->d[1].p)->d[3];
-        ((te*) nh->d[1].p)->d[3] = P(n);
+        n->d[3] = ((te*) nh->d[1].p)->d[4];
+        ((te*) nh->d[1].p)->d[4] = P(n);
         n->d[0] = nh->d[1];
     }
     nh->d[1].p = n;
