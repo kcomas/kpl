@@ -335,6 +335,7 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
     code_stat cstat;
     call_node *cn = a->n.cn;
     op_node *opn;
+    lst_itm *ch, *ah;
     switch (cn->tgt->at) {
         case AST_TYPE(RES):
             if (cn->tgt->n.rn->rt != RES_TYPE(SELF)) return CODE_STAT(CALL_RES_NOT_SELF);
@@ -352,11 +353,17 @@ code_stat code_gen_call(code_st *const cs, const ast *const a, code **c) {
             opn->l = opn->r = NULL;
             break;
         case AST_TYPE(VAR):
-            IFCGEN(code_gen_lst, cs, cn->args, c);
             if (cn->tgt->n.var->tn->t != TYPE(FN)) return CODE_STAT(CALL_VAR_N_FN);
+            ch = cn->tgt->n.var->tn->a->n.lst->h;
+            ah = cn->args->h;
+            while (ah) {
+                IFCGEN(code_gen, cs, ah->a, c);
+                OP_P_INT_COR(cs, ah->a, ch->a, c);
+                ah = ah->next;
+                ch = ch->next;
+            }
             IFCGEN(code_gen, cs, cn->tgt, c);
             OP_A(c, CFN, OP, { .t = cn->ret->t }, a);
-            // TODO remove args off stack
             break;
         default:
             return CODE_STAT(INV_CALL_TGT);
