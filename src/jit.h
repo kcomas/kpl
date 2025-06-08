@@ -18,6 +18,7 @@ typedef enum {
     JIT_STAT(EQ_T_INV),
     JIT_STAT(GT_T_INV),
     JIT_STAT(LT_T_INV),
+    JIT_STAT(OR_T_INV),
     JIT_STAT(CSTSG_T_INV),
     JIT_STAT(CNCTSG_T_INV),
     JIT_STAT(WFD_T_INV),
@@ -33,8 +34,13 @@ typedef enum {
 #endif
 
 typedef struct {
+    size_t idx;
+    code *fn;
+} fn_idx;
+
+typedef struct {
     size_t len, size;
-    code *fn[];
+    fn_idx fx[];
 } fn_stk;
 
 inline fn_stk *fn_stk_i(size_t size) {

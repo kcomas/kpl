@@ -154,7 +154,7 @@ typedef struct {
 
 typedef struct _code {
     size_t len, size;
-    jit_fn *jf; // addr of jit code
+    jit_fn *jf; // jit fn
     op ops[];
 } code;
 

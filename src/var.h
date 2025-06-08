@@ -48,24 +48,34 @@ var_sg *var_i6_sg(uint64_t i6);
 #define VAR_FN_BOP_T(N, T, CT) CT var_##N##_##T(CT l, CT r)
 
 // add
+VAR_FN_BOP_T(add, bl, bool);
 VAR_FN_BOP_T(add, i6, int64_t);
 VAR_FN_BOP_T(add, u6, uint64_t);
 
 // sub
+VAR_FN_BOP_T(sub, bl, bool);
 VAR_FN_BOP_T(sub, i6, int64_t);
 VAR_FN_BOP_T(sub, u6, uint64_t);
 
 // eq
+VAR_FN_BOP_T(eq, bl, bool);
 VAR_FN_BOP_T(eq, i6, int64_t);
 VAR_FN_BOP_T(eq, u6, uint64_t);
 
 // gt
+VAR_FN_BOP_T(gt, bl, bool);
 VAR_FN_BOP_T(gt, i6, int64_t);
 VAR_FN_BOP_T(gt, u6, uint64_t);
 
 // lt
+VAR_FN_BOP_T(lt, bl, bool);
 VAR_FN_BOP_T(lt, i6, int64_t);
 VAR_FN_BOP_T(lt, u6, uint64_t);
+
+// or
+VAR_FN_BOP_T(or, bl, bool);
+VAR_FN_BOP_T(or, i6, int64_t);
+VAR_FN_BOP_T(or, u6, uint64_t);
 
 bool var_not(bool v);
 
