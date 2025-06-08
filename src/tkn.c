@@ -14,6 +14,7 @@ typedef struct {
 
 static const type_var tv[] = {
     TV(VD),
+    TV(BL),
     TV(U3),
     TV(U4),
     TV(U5),
@@ -37,7 +38,7 @@ static const type_var tv[] = {
 
 static const size_t tv_len = AL(tv);
 
-#define TKN_C(C) if (str[t->pos] == 'C') t->type = TKN_TYPE(C);
+#define TKN_C(C, c) if (str[t->pos] == c) t->type = TKN_TYPE(C);
 
 static tkn_stat var(tkn *const t, const char *const str) {
     char c = str[t->pos];
@@ -52,9 +53,9 @@ static tkn_stat var(tkn *const t, const char *const str) {
         }
     }
     if (t->len == 1) {
-        TKN_C(T);
-        TKN_C(F);
-        TKN_C(S);
+        TKN_C(TRUE, 'T');
+        TKN_C(FALSE, 'F');
+        TKN_C(SELF, 'S');
     }
     return TKN_STAT(OK);
 }
@@ -172,10 +173,11 @@ static const char *const tkn_type_str[] = {
     "INT",
     "FLT",
     "STR",
-    "T",
-    "F",
-    "S",
+    "TRUE",
+    "FALSE",
+    "SELF",
     "VD",
+    "BL",
     "U3",
     "U4",
     "U5",

@@ -13,6 +13,7 @@ typedef enum {
     AST_STAT(TKN_INV), // tkn should not have been found
     AST_STAT(TKN_NF), // no case for tkn
     AST_STAT(VAL_A_NN), // prev node for val not null
+    AST_STAT(RES_A_NN), // prev node for res not null
     AST_STAT(VAR_A_NN), // prev node for var not null
     AST_STAT(TYPE_A_NN), // prev node for type not null
     AST_STAT(VAR_I_ERR), // failed to add var node
@@ -150,18 +151,45 @@ inline void type_node_f(type_node *tn) {
     free(tn);
 }
 
-#define CONST_TYPE(N) CONST_TYPE_##N
+#define RES_TYPE(N) RES_TYPE_##N
 
 typedef enum {
-    CONST_TYPE(T),
-    CONST_TYPE(F),
-    CONST_TYPE(S) // self
-} const_type;
+    RES_TYPE(TRUE),
+    RES_TYPE(FALSE),
+    RES_TYPE(SELF)
+} res_type;
 
 typedef struct {
-    const_type ct;
+    res_type rt;
     type_node *tn;
-} const_node;
+} res_node; // reserved keywords
+
+inline res_node *res_node_i(res_type rt, type_node *tn) {
+    res_node *rn = calloc(1, sizeof(res_node));
+    rn->rt = rt;
+    rn->tn = tn;
+    return rn;
+}
+
+inline void res_node_p(const ast_st *const as, const res_node *const rn, size_t idnt) {
+    switch (rn->rt) {
+        case RES_TYPE(TRUE):
+            printf("T 1");
+            break;
+        case RES_TYPE(FALSE):
+            printf("F 0");
+            break;
+        case RES_TYPE(SELF):
+            printf("S SELF");
+            break;
+    }
+    type_node_p(as, rn->tn, idnt);
+}
+
+inline void res_node_f(res_node *rn) {
+    FNNF(rn->tn, type_node_f);
+    free(rn);
+}
 
 typedef struct {
     type_node *tn;
@@ -425,6 +453,7 @@ inline void var_node_f(var_node *vn) {
 
 typedef enum {
     AST_TYPE(TYPE),
+    AST_TYPE(RES),
     AST_TYPE(VAL),
     AST_TYPE(OP),
     AST_TYPE(LST),
@@ -437,6 +466,7 @@ typedef enum {
 
 typedef union {
     type_node *tn;
+    res_node *rn;
     val_node *val;
     op_node *op;
     lst_node *lst;
@@ -466,6 +496,7 @@ inline ast *ast_i(ast_type at, node const n, const tkn *const t) {
 inline type_node *ast_gtn(const ast *const a) {
     switch (a->at) {
         case AST_TYPE(TYPE): return a->n.tn;
+        case AST_TYPE(RES): return a->n.rn->tn;
         case AST_TYPE(VAL): return a->n.val->tn;
         case AST_TYPE(OP): return a->n.op->ret;
         case AST_TYPE(LST): return a->n.lst->tn;
