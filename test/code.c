@@ -4,7 +4,8 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) return 1;
-    mod *m = mod_i();
+    al *a = al_i();
+    mod *m = mod_i(a);
     mod_lfile(m, argv[1]);
     m->fns = fn_node_i(NULL);
     m->fns->sig = type_node_i(TYPE(MOD), NULL);
@@ -31,5 +32,6 @@ int main(int argc, char *argv[]) {
     code_f(m->c);
     fn_node_f(m->fns);
     mod_f(m);
+    al_f(a);
     return 0;
 }

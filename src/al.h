@@ -29,11 +29,15 @@ typedef struct _alc {
     uint8_t *h; // memmap
 } alc; // allocator chunk no frees filled then freed
 
+#ifndef AL_PS_MUL
+    #define AL_PS_MUL 1
+#endif
+
 inline alc *alc_i(al *const a, size_t size) {
     alc *ac = calloc(1, sizeof(alc));
     ac->a = a;
     LST_A(a, ac);
-    size_t ps = (size_t) getpagesize();
+    size_t ps = (size_t) getpagesize() * AL_PS_MUL;
     ac->size = size <= ps ? ps : (size / ps + 1) * ps;
     ac->h = mmap(NULL, ac->size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     return ac;

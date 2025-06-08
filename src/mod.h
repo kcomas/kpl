@@ -17,14 +17,17 @@ typedef struct {
         struct stat sb;
         char *path, *str;
     } src;
+    al *a; // allocator
     fn_node *fns; // ast root
     code *c;
     jit *j;
     var *g; // globals
 } mod;
 
-inline mod *mod_i(void) {
-    return calloc(1, sizeof(mod));
+inline mod *mod_i(al *const a) {
+    mod *m = calloc(1, sizeof(mod));
+    m->a = a;
+    return m;
 }
 
 // load file
@@ -57,6 +60,6 @@ inline void mod_psrc(const mod *const m) {
 inline void mod_f(mod *m) {
     FNN(m->src.path);
     FNN(m->src.str);
-    free(m->g);
+    alf(m->g);
     free(m);
 }
