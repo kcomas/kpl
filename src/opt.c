@@ -89,6 +89,10 @@ static bool aply_lst_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(L);
 }
 
+static bool cst_x_t(const te *an, ast_cls c) {
+    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(T) && ((te*) an->d[6].p)->d[2].u4 == c;
+}
+
 static fld_stat cst_s_o(fld *f, te **an, err **e) {
     te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *rt = r->d[3].p;
     if (lt->d[1].u4 == rt->d[1].u4) return fld_err(f, *an, e, "opt unnecessary cst");
@@ -113,7 +117,23 @@ static fld_stat cst_s_o(fld *f, te **an, err **e) {
 }
 
 static bool cst_s_t(const te *an) {
-    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(T) && ((te*) an->d[6].p)->d[2].u4 == AST_CLS(S);
+    return cst_x_t(an, AST_CLS(S));
+}
+
+static fld_stat cst_v_o(fld *f, te **an, err **e) {
+    te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *rt = r->d[3].p;
+    if (lt->d[1].u4 == rt->d[1].u4) return fld_err(f, *an, e, "opt unnecessary cst");
+    te_f(rt);
+    te_c(r);
+    r->d[0] = (*an)->d[0];
+    r->d[3] = P(te_c(lt));
+    te_f(*an);
+    *an = r;
+    return FLD_STAT(OK);
+}
+
+static bool cst_v_t(const te *an) {
+    return cst_x_t(an, AST_CLS(V));
 }
 
 #define S_OP(O) static un type_##O##_op(type t, un a, un b) { \
@@ -202,6 +222,7 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(L), lst_le_t, lst_le_o);
     fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
+    fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
     fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
     return o;
 }
