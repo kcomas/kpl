@@ -7,4 +7,4 @@
 
 ast *ast_b(ast *a);
 
-void ast_p(const te *t);
+void ast_p(const te *an);

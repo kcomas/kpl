@@ -17,12 +17,13 @@ const char *ast_cls_str(ast_cls cls) {
     return "INV";
 }
 
-ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, scope_tbl_i *sti, tbl *t) {
+ast *ast_i(const alfr *af, const alfr *na, psr_id_g pig, ast_tbl_i ati, ast_lst_i ali, tbl *t) {
     ast *a = af->a(sizeof(ast));
     a->af = af;
     a->na = na;
     a->pig = pig;
-    a->sti = sti;
+    a->ati = ati;
+    a->ali = ali;
     a->t = t;
     return a;
 }
@@ -72,7 +73,7 @@ static void t_l_f(void *p) {
     n->af->f(n);
 }
 
-te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...) {
+te *ast_an_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, ...) {
     size_t len = 5;
     frfn *nf = NULL;
     switch (cls) {
@@ -105,16 +106,16 @@ te *ast_t_i(ast *a, te *restrict parent, te *restrict psr, ast_cls cls, un tt, .
         default:
             return NULL;
     }
-    te *t = te_i(len, a->na, nf);
-    t->d[0] = P(parent);
-    t->d[1] = P(psr);
-    t->d[2] = U6(cls);
-    t->d[3] = tt;
+    te *an = te_i(len, a->na, nf);
+    an->d[0] = P(parent);
+    an->d[1] = P(psr);
+    an->d[2] = U6(cls);
+    an->d[3] = tt;
     va_list args;
     va_start(args, tt);
-    for (size_t i = 4; i < len; i++) t->d[i] = va_arg(args, un);
+    for (size_t i = 4; i < len; i++) an->d[i] = va_arg(args, un);
     va_end(args);
-    return t;
+    return an;
 }
 
 ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
@@ -127,13 +128,13 @@ ast_stat ast_a(ast *a, size_t id, ast_tf atf) {
     return AST_STAT(OK);
 }
 
-ast_stat ast_n(ast *a, te *pn, te **an) {
+ast_stat ast_n(ast *a, te *pn, void **vn) {
     ssize_t pid = a->pig(pn);
     if (pid < 0) return AST_STAT(INV);
     te *kv;
     if (tbl_g_i(a->t, U6(pid), &kv) == TBL_STAT(NF)) return AST_STAT(INV);
     ast_tf *atf = kv->d[1].p;
-    return atf(a, pn, an);
+    return atf(a, pn, vn);
 }
 
 void ast_f(ast *a) {
