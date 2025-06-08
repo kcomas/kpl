@@ -29,9 +29,9 @@ static gen_stat v_des(gen *bg, te *t, void **fn, err **e) {
 }
 
 gen_stat gen_type_aff(gen *g, te *t, err **e, const char *pf) {
-    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 2))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
-    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_tmp(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 1))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
-    if (gen_a(g, GEN_OP(CALLNPR), gen_tmp(g, X64_TYPE(M), 0), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, af)))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_tmp(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(alfr, f)))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(CALLNPR), gen_call_m(g, 1, gen_arg(g, X64_TYPE(M), 0)), gen_tmp(g, X64_TYPE(M), 0), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
     if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
     return GEN_STAT(OK);
 }
