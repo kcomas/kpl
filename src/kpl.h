@@ -18,7 +18,6 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <time.h>
-#include <math.h>
 #include "al.h"
 #include "lst.h"
 

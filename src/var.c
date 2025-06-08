@@ -153,6 +153,8 @@ var_sg *var_u6_sg(al *const a, uint64_t u6) {
     #define FLT_DEC_PREC 6
 #endif
 
+static uint64_t flp10[] = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9};
+
 var_sg *var_f6_sg(al *const a, double f6) {
     size_t len = 0;
     bool neg = false;
@@ -166,8 +168,8 @@ var_sg *var_f6_sg(al *const a, double f6) {
     len += FLT_DEC_PREC + 1; // for .
     var_sg *sg = var_sg_i(a, len);
     sg->len = len;
-    int64_t tmp = (f6 - up) * pow(10, FLT_DEC_PREC);
-    str_w_dig(sg, &len, tmp);
+    int64_t frac = (f6 - up) * flp10[FLT_DEC_PREC];
+    str_w_dig(sg, &len, frac);
     sg->str[--len] = '.';
     str_w_dig(sg, &len, up);
     if (neg) sg->str[0] = '-';
