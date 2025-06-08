@@ -154,3 +154,20 @@ T(vrmul) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", U6(0), NULL))
     )), NULL)));
 }
+
+T(st) {
+    V(TPGM(st), RN(AN(NULL, LN(LT(3, "a", U6(0), NULL, "b", U6(0), NULL, "s", FLG(0, LTE_FLG(E)), NULL), L(5,
+        ON(NULL, DFN, EN("a", U6(0), NULL), SN(I6, I6(1))),
+        ON(NULL, DFN, EN("b", U6(0), NULL), SN(F6, F6(2.2))),
+        ON(NULL, DFN, EN("s", FLG(0, LTE_FLG(E)), NULL),
+            ON(NULL, MTCH, NULL, LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(4,
+                ZN("a", EN("a", U6(0), NULL)),
+                ZN("b", EN("b", U6(0), NULL)),
+                ZN("c", ON(NULL, CST, TN(U6), ON(NULL, ADD, EN("a", U6(0), NULL), SN(I6, I6(2))))),
+                ZN("d", SG("Hi"))
+            )))),
+        ON(NULL, AGN, ZN("a", EN("s", FLG(0, LTE_FLG(E)), NULL)),
+            ON(NULL, MUL, SN(I6, I6(2)), ON(NULL, CST, TN(I6), ZN("c", EN("s", FLG(0, LTE_FLG(E)), NULL))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}
