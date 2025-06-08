@@ -100,8 +100,8 @@ static void rfib(uint8_t *m) {
     jit_movrra(&p, m, R(DI), R(SP));
     jit_cmprr(&p, m, R(9), R(DI));
     jit_jneb(&p, m, 0);
+    uint8_t *byte = jit_lb(p, m);
     size_t lbl = p;
-    uint8_t *byte = &m[lbl - 1];
     jit_movrq(&p, m, R(AX), (void*) 0);
     jit_leave(&p, m);
     jit_ret(&p, m);
@@ -111,8 +111,8 @@ static void rfib(uint8_t *m) {
     jit_movrra(&p, m, R(DI), R(SP));
     jit_cmprr(&p, m, R(9), R(DI));
     jit_jcb(&p, m, 0);
+    byte = jit_lb(p, m);
     lbl = p;
-    byte = &m[lbl - 1];
     jit_movrq(&p, m, R(AX), (void*) 1);
     jit_leave(&p, m);
     jit_ret(&p, m);
