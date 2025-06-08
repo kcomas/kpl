@@ -281,3 +281,20 @@ T(retlbl) {
     A(f(1, 2) == 3, "retlbladd");
     as_f(a);
 }
+
+T(rcxloop) {
+    as *a = as_i_as(ba);
+    AS_A2(a, AS_X64(XOR), as_arg_r(a, R(AX)), as_arg_r(a, R(AX)));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(CX)), as_arg_b(a, 10));
+    as_lbl_a(a, 0);
+    AS_A2(a, AS_X64(ADD), as_arg_r(a, R(AX)), as_arg_r(a, R(CX)));
+    AS_A1(a, AS_X64(LOOP), as_arg_l(a, 0));
+    AS_A0(a, AS_X64(RET));
+    p = 0;
+    err *e = NULL;
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    as_code_p(a, m);
+    // sum 1 to 10
+    A(10 * 11 / 2 == ((uint64_t(*)(void)) m)(), "loop");
+    as_f(a);
+}

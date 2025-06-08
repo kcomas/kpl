@@ -80,6 +80,7 @@ typedef enum {
     AS_X64(JNG),
     AS_X64(JNLE),
     AS_X64(JG),
+    AS_X64(LOOP),
     AS_X64(_END)
 } as_inst;
 
