@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -21,10 +22,14 @@ inline tbl_itm *tbl_itm_i(const char *const str, void *const data) {
 
 typedef void tbl_itm_data_f(void *data);
 
-inline void tbl_itm_f(tbl_itm *ti, const tbl_itm_data_f *const fn) {
+inline void tbl_itm_f(tbl_itm *ti, tbl_itm_data_f *fn) {
     fn(ti->data);
     free(ti);
 }
+
+#ifndef TBL_START_SIZE
+    #define TBL_START_SIZE 10
+#endif
 
 typedef struct {
     size_t size, len;
@@ -37,7 +42,7 @@ inline tbl* tbl_i(size_t size) {
     return tl;
 }
 
-inline void tbl_f(tbl *tl, const tbl_itm_data_f *const fn) {
+inline void tbl_f(tbl *tl, tbl_itm_data_f *fn) {
     tbl_itm *h = tl->h;
     while (h) {
         tbl_itm *tmp = h;
@@ -52,7 +57,8 @@ inline void tbl_f(tbl *tl, const tbl_itm_data_f *const fn) {
 typedef enum {
    TBL_STAT(OK),
    TBL_STAT(NF), // not found
-   TBL_STAT(AE) // already exists
+   TBL_STAT(AE), // already exists
+   TBL_STAT(OAE) // open address error
 } tbl_stat;
 
 #define TBL_OP_FLG(N) TBL_OP_FLG_##N
@@ -63,4 +69,4 @@ typedef enum {
     TBL_OP_FLG(RM) = (1 << 2) // remove
 } tbl_op_flg;
 
-tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, const tbl_itm_data_f *const fn, uint8_t op_flgs);
+tbl_stat tbl_op(tbl **tl, const char *const str, void *const data, tbl_itm **ti, tbl_itm_data_f *fn, uint8_t op_flgs);
