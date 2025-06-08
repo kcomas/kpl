@@ -110,7 +110,7 @@ te *as_arg(alfn *aa, frfn *af, arg_id id, un v) {
     return a;
 }
 
-void as_op_p(tbl *ot, bool args, size_t idnt) {
+void as_op_p(const tbl *ot, bool args, size_t idnt) {
     te *h = ot->i->h;
     while (h) {
         for (size_t i = 0; i < idnt; i++) putchar(' ');
