@@ -59,13 +59,13 @@ A list of statements of which the context it is used determines how it's evaluat
 ### SL - Symbols
 
 ```
-\`key
+`key
 ```
 
 ### TYPE\`SYMBOL Tag
 
 ```
-value\`key
+value`key
 ```
 
 ### UN(...) Unions
@@ -73,8 +73,8 @@ value\`key
 Tagged Union
 
 ```
-a\`a: 1 -> UN(I6\`a;\`a)
-a\`b:2.2 -> UN(I6\`a;F6\`b;\`b)
+a`a: 1 -> UN(I6`a;`a)
+a`b:2.2 -> UN(I6`a;F6`b;`b)
 ```
 
 #### Match ?
@@ -82,7 +82,7 @@ a\`b:2.2 -> UN(I6\`a;F6\`b;\`b)
 Get a floating value from var a because the a\`a tag is an int it must be changed
 
 ```
-c: a?{1.0\`a;a\`b\`b}
+c: a?{1.0`a;a`b`b}
 ```
 
 ### Numbers
@@ -140,12 +140,12 @@ Create a function by casting a deferred list to a function
 #### FN(TYPE\`VAR;...RETURN TYPE)${BODY}
 
 ```
-f: FN(I6\`a;I6\`b;I6)${x+b}
+f: FN(I6`a;I6`b;I6)${x+b}
 f(1;2) -> 3
 ```
 
 Functions are curried by default
 
 ```
-f(1) -> FN(I6\`b)${1+b} -> f(2) -> 3
+f(1) -> FN(I6`b)${1+b} -> f(2) -> 3
 ```
