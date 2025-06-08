@@ -192,6 +192,14 @@ void hsh_data_f(void *data) {
     alf(hd);
 }
 
+extern inline sym_node *sym_node_i(al *const am, ast *const a, const tkn *const t, const char *const str);
+
+extern inline void sym_node_p(const ast_st *const as, const sym_node *const sym, size_t idnt);
+
+extern inline void sym_node_f(sym_node *const sym);
+
+extern inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body);
+
 extern inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body);
 
 extern inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt);
@@ -340,6 +348,7 @@ static const char *const ast_type_str[] = {
     "LST",
     "HSH",
     "TBL",
+    "SYM",
     "IF",
     "LOP",
     "FN",
@@ -371,6 +380,7 @@ void ast_p(const ast_st *const as, const ast *const a, size_t idnt) {
         AST_P_CASE(LST, lst, lst_node_p);
         AST_P_CASE(HSH, hsh, hsh_node_p);
         AST_P_CASE(TBL, tl, hsh_data_p);
+        AST_P_CASE(SYM, sym, sym_node_p);
         AST_P_CASE(IF, in, if_node_p);
         AST_P_CASE(LOP, lop, if_itm_lop_p);
         AST_P_CASE(FN, fn, fn_node_p);
@@ -396,6 +406,7 @@ void ast_f(ast *a) {
         case AST_TYPE(TBL):
             if (a->n.tl) tbl_f(a->n.tl, hsh_data_f);
             break;
+        AST_F_CASE(SYM, sym, sym_node_f);
         AST_F_CASE(IF, in, if_node_f);
         AST_F_CASE(LOP, lop, if_itm_lop_f);
         AST_F_CASE(FN, fn, fn_node_f);
@@ -586,6 +597,9 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
                 return AST_ER(as, VAR_I_ERR);
             }
             *a = ast_i(as->a, AST_TYPE(VAR), (node) { .var = var }, &as->next);
+            return ast_parse_stmt(as, fns, a, stp_flgs);
+        case TKN_TYPE(SYM):
+            *a = ast_i(as->a, AST_TYPE(SYM), (node) { .sym = sym_node_i(as->a, *a, &as->next, as->str) }, &as->next);
             return ast_parse_stmt(as, fns, a, stp_flgs);
         VAL_CASE(INT);
         VAL_CASE(FLT);
