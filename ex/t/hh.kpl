@@ -3,11 +3,15 @@
 
 ph:FN(HH{I6};VD)${(h)
     $(FD;1) << " ",["a =";SG$'h`a;"\n"]
+    $(FD;1) << " ",["c =";SG$'h`c;"\n"]
     $(FD;1) << " ",["b =";SG$'h`b;"\n"]}
 
 f:FN(VD)${()
     h:HH{I6}${`a:1;`b:2}
+    h`c:I6$4
     //D //p *((var*)($rbp + (8 * 2))).hh->tl
     ph(h)}
 
 f()
+
+// TODO hh with gc

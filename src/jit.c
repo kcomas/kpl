@@ -711,9 +711,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 op_set_jidx(j, o);
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->a, ast*, false, 6);
-                jit_a(j, 0x5A); // pop rdx key
-                jit_a(j, 0x59); // pop rcx hh
-                jit_a(j, 0x52); // push rdx key
+                jit_b(j, 5, 0x48, 0x8B, 0x4C, 0x24, 0x08); // mov rcx qword ptr [rsp+8] hh
+                jit_b(j, 4, 0x48, 0x8B, 0x14, 0x24); // mov rdx qword ptr [rsp] key
                 SET_REG(o->od.bl, bool, true, 0);
                 SET_FP(var_hh_gk);
                 SET_REG_CALL(false, 0);
@@ -725,8 +724,8 @@ jit_stat jit_code(mod *const m, code *const c, jit_fn *const jf, jit *j, bool do
                 SET_REG(m, mod*, false, 7);
                 SET_REG(o->a, ast*, false, 6);
                 jit_b(j, 2, 0x41, 0x58); // pop r8 hh
-                jit_a(j, 0x59); // pop rcx value
                 jit_a(j, 0x5A); // pop rdx key
+                jit_a(j, 0x59); // pop rcx value
                 jit_b(j, 2, 0x41, 0x50); // push r8 hh
                 jit_a(j, 0x52); // push rdx key
                 SET_FP(var_hh_sk);
