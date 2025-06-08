@@ -387,6 +387,7 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     kv_itm *h = hsh->h;
     code *gc;
     type_node *th;
+    char *sg;
     int16_t id = -1;
     if (hsh->tn->t == TYPE(ST)) {
         gc = code_i(cs->r->a, CODE_I_SIZE);
@@ -396,8 +397,9 @@ static code_stat code_gen_hsh(code_st *const cs, const hsh_node *const hsh, code
     }
     while (h) {
         if (hsh->tn->t == TYPE(HH)) {
-            // TODO push key
-            exit(45);
+            sg = ala(cs->r->a, strlen(h->k - 1) + sizeof(char)); // null byte
+            strcpy(sg, h->k + 1);
+            OP_A(cs, c, PV, STR, { .sg = sg }, h->a);
         }
         IFCGEN(code_gen, cs, h->a, c);
         if (hsh->tn->t == TYPE(ST)) {
