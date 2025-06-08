@@ -254,7 +254,7 @@ T(fibxmm) {
     BUILD(g, m);
     double n = 8.0, y = 21.0;
     //double n = 35.0, y = 9227465.0;
-    double r = ((double(*)(double)) m)(8);
+    double r = ((double(*)(double)) m)(n);
     printf("Fibxmm(%lf): %lf == %lf\n", n, r, y);
     A(r == y, "fibxmm");
 }
