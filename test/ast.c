@@ -7,8 +7,8 @@ int main(int argc, char *argv[]) {
     al *a = al_i();
     mod *m = mod_i(a);
     mod_lfile(m, argv[1]);
-    m->fns = fn_node_i(NULL);
-    m->fns->sig = type_node_i(TYPE(MOD), NULL);
+    m->fns = fn_node_i(a, NULL);
+    m->fns->sig = type_node_i(a, TYPE(MOD), NULL);
     ast_stat astat;
     ast_st as;
     ast_st_i(&as, m->a, m->src.str);

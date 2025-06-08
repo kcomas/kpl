@@ -56,10 +56,10 @@ extern inline ast_stat ast_tkn_next(ast_st *const as, uint8_t ign_flgs);
 
 extern inline ast_stat ast_tkn_peek(ast_st *const as, uint8_t ign_flgs);
 
-extern inline type_node *type_node_i(type t, ast *const a);
+extern inline type_node *type_node_i(al *const am, type t, ast *const a);
 
-type_node *type_node_c(const type_node *const tn) {
-    type_node *nn = calloc(1, sizeof(type_node));
+type_node *type_node_c(al *const a, const type_node *const tn) {
+    type_node *nn = ala(a, sizeof(type_node));
     nn->t = tn->t;
     if (tn->a) tn->a->rc++;
     nn->a = tn->a;
@@ -70,19 +70,19 @@ extern inline void type_node_p(const ast_st *const as, const type_node *const tn
 
 extern inline void type_node_f(type_node *tn);
 
-extern inline res_node *res_node_i(res_type rt, type_node *tn);
+extern inline res_node *res_node_i(al *const a, res_type rt, type_node *tn);
 
 extern inline void res_node_p(const ast_st *const as, const res_node *const rn, size_t idnt);
 
 extern inline void res_node_f(res_node *rn);
 
-extern inline val_node *val_node_i(type t);
+extern inline val_node *val_node_i(al *const a, type t);
 
 extern inline void val_node_p(const ast_st *const as, const val_node *const v, size_t idnt);
 
 extern inline void val_node_f(val_node *v);
 
-extern inline op_node *op_node_i(op_type ot);
+extern inline op_node *op_node_i(al *const a, op_type ot);
 
 static const char *const op_type_str[] = {
     "ASS",
@@ -116,21 +116,21 @@ void op_node_p(const ast_st *const as, const op_node *const op, size_t idnt) {
 
 extern inline void op_node_f(op_node *on);
 
-extern inline lst_itm *lst_itm_i(ast *const a);
+extern inline lst_itm *lst_itm_i(al *const am, ast *const a);
 
 extern inline void lst_itm_p(const ast_st *const as, const lst_itm *const li, void *fn, size_t idnt);
 
 extern inline void lst_itm_f(lst_itm *li, void *fn);
 
-extern inline lst_node *lst_node_i(type t);
+extern inline lst_node *lst_node_i(al *const a, type t);
 
-extern inline void lst_node_a(lst_node *const lst, ast *const a);
+extern inline void lst_node_a(al *const am, lst_node *const lst, ast *const a);
 
 extern inline void lst_node_p(const ast_st *const as, const lst_node *const lst, size_t idnt);
 
 extern inline void lst_node_f(lst_node *lst);
 
-extern inline if_itm *if_itm_i(ast *const cond, lst_node *const body);
+extern inline if_itm *if_itm_i(al *const a, ast *const cond, lst_node *const body);
 
 extern inline void if_itm_p(const ast_st *const as, const if_itm *const ii, void *fn, size_t idnt);
 
@@ -140,9 +140,9 @@ extern inline void if_itm_f(if_itm *im, void *fn);
 
 extern inline void if_itm_lop_f(if_itm *im);
 
-extern inline if_node *if_node_i(void);
+extern inline if_node *if_node_i(al *const a);
 
-extern inline void if_node_a(if_node *const in, ast* const cond, lst_node *const body);
+extern inline void if_node_a(al *const a, if_node *const in, ast* const cond, lst_node *const body);
 
 extern inline void if_node_p(const ast_st *const as, const if_node *const in, size_t idnt);
 
@@ -191,15 +191,15 @@ void fn_node_tbl_data_f(void *data) {
     var_node_f((var_node*) data);
 }
 
-extern inline void fn_node_f(al *const a, fn_node *fn);
+extern inline void fn_node_f(fn_node *fn);
 
-extern inline call_node *call_node_i(ast *const tgt, lst_node *const args);
+extern inline call_node *call_node_i(al *const a, ast *const tgt, lst_node *const args);
 
 extern inline void call_node_p(const ast_st *const as, const call_node *const cn, size_t idnt);
 
 extern inline void call_node_f(call_node *cn);
 
-extern inline ret_node *ret_node_i(void);
+extern inline ret_node *ret_node_i(al *const a);
 
 extern inline void ret_node_p(const ast_st *const as, const ret_node *const r, size_t idnt);
 
@@ -222,25 +222,25 @@ const char *var_type_str(var_type vt) {
     #define MAX_VAR_LEN 20
 #endif
 
-var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
+var_node *var_node_i(al *const a, fn_node *const fns, const tkn *const t, const char *const str) {
     char vstr[MAX_VAR_LEN];
     memset(vstr, '\0', MAX_VAR_LEN);
     memcpy(vstr, str + t->pos, t->len);
     tbl_itm *ti;
     fn_node *scope = fns->vim == FN_VIM(S) ? fns : NULL;
     while (scope) {
-        if (tbl_op(&scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
+        if (tbl_op(a, &scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
         scope = scope->par;
     }
     if (!scope) {
-        var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
+        var_node *vn = ala(a, sizeof(var_node) + t->len + 1);
         vn->id = fns->idc++;
         if (fns->vim == FN_VIM(A)) vn->vt = VAR_TYPE(A);
         else if (fns->vim == FN_VIM(L)) vn->vt = VAR_TYPE(L);
         else vn->vt = fns->par ? VAR_TYPE(L) : VAR_TYPE(G);
         vn->fns = fns;
         memcpy(vn->str, str + t->pos, t->len);
-        if (tbl_op(&fns->tl, vstr, vn, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
+        if (tbl_op(a, &fns->tl, vstr, vn, &ti, NULL, TBL_OP_FLG(AD)) != TBL_STAT(OK)) {
             var_node_f(vn);
             return NULL;
         }
@@ -253,7 +253,7 @@ extern inline void var_node_p(const ast_st *const as, const var_node *const var,
 
 extern inline void var_node_f(var_node *vn);
 
-extern inline ast *ast_i(ast_type as, node const n, const tkn *const t);
+extern inline ast *ast_i(al *const am, ast_type as, node const n, const tkn *const t);
 
 extern inline type_node *ast_gtn(const ast *const a);
 
@@ -321,41 +321,41 @@ void ast_f(ast *a) {
         case AST_TYPE(VAR):
             break; // var freed in fn sym tbl
     }
-    free(a);
+    alf(a);
 }
 
 #define TYPE_NA_CASE(T) case TKN_TYPE(T): \
     if (*a) return AST_STAT(TYPE_A_NN); \
-    *a = ast_i(AST_TYPE(TYPE), (node) { .tn = type_node_i(TYPE(T), NULL) }, &as->next); \
+    *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(T), NULL) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define VAL_CASE(T) case TKN_TYPE(T): \
     if (*a) return AST_STAT(VAL_A_NN); \
-    *a = ast_i(AST_TYPE(VAL), (node) { .val = val_node_i(TYPE(T)) }, &as->next); \
+    *a = ast_i(as->a, AST_TYPE(VAL), (node) { .val = val_node_i(as->a, TYPE(T)) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 #define RES_CASE(T, TT) case TKN_TYPE(T): \
     if (*a) return AST_STAT(RES_A_NN); \
-    *a = ast_i(AST_TYPE(RES), (node) { .rn = res_node_i(RES_TYPE(T), TT) }, &as->next); \
+    *a = ast_i(as->a, AST_TYPE(RES), (node) { .rn = res_node_i(as->a, RES_TYPE(T), TT) }, &as->next); \
     return ast_parse_stmt(as, fns, a, stp_flgs)
 
 static ast_stat ast_parse_call(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
     ast_stat astat;
-    lst_node *args = lst_node_i(TYPE(STMT));
+    lst_node *args = lst_node_i(as->a, TYPE(STMT));
     if ((astat = ast_parse_stmts(as, fns, args, TFLS, TKN_FLG(RP))) != AST_STAT(OK)) {
         lst_node_f(args);
         return astat;
     }
-    *a = ast_i(AST_TYPE(CALL), (node) { .cn = call_node_i(*a, args) }, tkn_s);
+    *a = ast_i(as->a, AST_TYPE(CALL), (node) { .cn = call_node_i(as->a, *a, args) }, tkn_s);
     return ast_parse_stmt(as, fns, a, stp_flgs);
 }
 
 static ast_stat ast_parse_op(op_type ot, ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs) {
     ast_stat astat;
     if ((astat = ast_tkn_peek(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
-    op_node *op = op_node_i(ot);
+    op_node *op = op_node_i(as->a, ot);
     op->l = *a;
-    *a = ast_i(AST_TYPE(OP), (node) { .op = op }, &as->next);
+    *a = ast_i(as->a, AST_TYPE(OP), (node) { .op = op }, &as->next);
     if (as->peek.type == TKN_TYPE(LP)) {
         tkn_st_u(&as->ts, &as->peek);
         if (op->l) {
@@ -378,7 +378,7 @@ static ast_stat ast_parse_if_itm(ast_st *const as, fn_node *const fns, if_node *
         tkn_st_u(&as->ts, &as->peek);
     }
     ast *cond = NULL;
-    lst_node *body = lst_node_i(TYPE(STMT));
+    lst_node *body = lst_node_i(as->a, TYPE(STMT));
     if (pc) {
         if ((astat = ast_parse_stmt(as, fns, &cond, TKN_FLG(RP))) != AST_STAT(OK)) {
             FNNF(cond, ast_f);
@@ -391,13 +391,13 @@ static ast_stat ast_parse_if_itm(ast_st *const as, fn_node *const fns, if_node *
         lst_node_f(body);
         return astat;
     }
-    if_node_a(in, cond, body);
+    if_node_a(as->a, in, cond, body);
     return AST_STAT(OK);
 }
 
 static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
     bool pc = true;
-    if_node *in = if_node_i();
+    if_node *in = if_node_i(as->a);
     ast_stat astat;
     while (pc) {
         if ((astat = ast_parse_if_itm(as, fns, in, pc)) != AST_STAT(OK)) {
@@ -412,14 +412,14 @@ static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, uint
         if_node_f(in);
         return astat;
     }
-    *a = ast_i(AST_TYPE(IF), (node) { .in = in }, tkn_s);
+    *a = ast_i(as->a, AST_TYPE(IF), (node) { .in = in }, tkn_s);
     return ast_parse_stmt(as, fns, a, stp_flgs);
 }
 
 static ast_stat ast_parse_lop(ast_st *const as, fn_node *const fns, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
     ast_stat astat;
     ast *cond = NULL;
-    lst_node *body = lst_node_i(TYPE(STMT));
+    lst_node *body = lst_node_i(as->a, TYPE(STMT));
     if ((astat = ast_parse_stmt(as, fns, &cond, TKN_FLG(RP))) != AST_STAT(OK)) {
         FNNF(cond, ast_f);
         return astat;
@@ -430,13 +430,13 @@ static ast_stat ast_parse_lop(ast_st *const as, fn_node *const fns, ast **a, uin
         lst_node_f(body);
         return astat;
     }
-    if_itm *lop = if_itm_i(cond, body);
-    *a = ast_i(AST_TYPE(LOP), (node) { .lop = lop }, tkn_s);
+    if_itm *lop = if_itm_i(as->a, cond, body);
+    *a = ast_i(as->a, AST_TYPE(LOP), (node) { .lop = lop }, tkn_s);
     return ast_parse_stmt(as, fns, a, stp_flgs);
 }
 
 static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
-    fn_node *fn = fn_node_i(par);
+    fn_node *fn = fn_node_i(as->a, par);
     fn->vim = FN_VIM(A);
     ast_stat astat;
     if ((astat = ast_parse_stmts(as, fn, fn->args, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
@@ -448,7 +448,7 @@ static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint
         fn_node_f(fn);
         return astat;
     }
-    *a = ast_i(AST_TYPE(FN), (node) { .fn = fn }, tkn_s);
+    *a = ast_i(as->a, AST_TYPE(FN), (node) { .fn = fn }, tkn_s);
     return ast_parse_stmt(as, par, a, stp_flgs);
 }
 
@@ -468,17 +468,17 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             return AST_STAT(TKN_INV);
         case TKN_TYPE(VAR):
             if (*a) return AST_STAT(VAR_A_NN);
-            if (!(var = var_node_i(fns, &as->next, as->str))) {
+            if (!(var = var_node_i(as->a, fns, &as->next, as->str))) {
                 var_node_f(var);
                 return AST_STAT(VAR_I_ERR);
             }
-            *a = ast_i(AST_TYPE(VAR), (node) { .var = var }, &as->next);
+            *a = ast_i(as->a, AST_TYPE(VAR), (node) { .var = var }, &as->next);
             return ast_parse_stmt(as, fns, a, stp_flgs);
         VAL_CASE(INT);
         VAL_CASE(FLT);
         VAL_CASE(STR);
-        RES_CASE(TRUE, type_node_i(TYPE(BL), NULL));
-        RES_CASE(FALSE, type_node_i(TYPE(BL), NULL));
+        RES_CASE(TRUE, type_node_i(as->a, TYPE(BL), NULL));
+        RES_CASE(FALSE, type_node_i(as->a, TYPE(BL), NULL));
         RES_CASE(SELF, NULL);
         TYPE_NA_CASE(VD);
         TYPE_NA_CASE(U3);
@@ -503,12 +503,12 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             memcpy(&ttmp, &as->next, sizeof(tkn));
             if ((astat = ast_tkn_next(as, TKN_FLG(WS))) != AST_STAT(OK)) return astat;
             if (as->next.type != TKN_TYPE(LP)) return AST_STAT(INV_TYPE_LST_INIT);
-            atmp = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(STMT)) }, &as->next);
+            atmp = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(STMT)) }, &as->next);
             if ((astat = ast_parse_stmts(as, fns, atmp->n.lst, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
                 ast_f(atmp);
                 return astat;
             }
-            *a = ast_i(AST_TYPE(TYPE), (node) { .tn = type_node_i(TYPE(FN), atmp) }, &ttmp);
+            *a = ast_i(as->a, AST_TYPE(TYPE), (node) { .tn = type_node_i(as->a, TYPE(FN), atmp) }, &ttmp);
             return ast_parse_stmt(as, fns, a, stp_flgs);
         // TODO TYPES
         OP_CASE(ASS);
@@ -541,7 +541,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             return AST_STAT(TKN_INV);
         case TKN_TYPE(LS):
             if (*a) return AST_STAT(VT_A_NN);
-            *a = ast_i(AST_TYPE(LST), (node) { .lst = lst_node_i(TYPE(TE)) }, &as->next);
+            *a = ast_i(as->a, AST_TYPE(LST), (node) { .lst = lst_node_i(as->a, TYPE(TE)) }, &as->next);
             if ((astat = ast_parse_stmts(as, fns, (*a)->n.lst, TKN_FLG(SEMI), TKN_FLG(RS))) != AST_STAT(OK)) {
                 ast_f(*a);
                 return astat;
@@ -569,7 +569,7 @@ ast_stat ast_parse_stmt(ast_st *const as, fn_node *const fns, ast **a, uint8_t s
             return ast_parse_lop(as, fns, a, stp_flgs, &ttmp);
         case TKN_TYPE(RET):
             if (*a) return AST_STAT(RET_A_NN);
-           *a = ast_i(AST_TYPE(RET), (node) { .ret = ret_node_i() }, &as->next);
+           *a = ast_i(as->a, AST_TYPE(RET), (node) { .ret = ret_node_i(as->a) }, &as->next);
            return ast_parse_stmt(as, fns, &(*a)->n.ret->a, stp_flgs);
         // TODO controls
         default:
@@ -584,7 +584,7 @@ ast_stat ast_parse_stmts(ast_st *const as, fn_node *const fns, lst_node *const l
     ast_stat astat;
     while ((astat = ast_parse_stmt(as, fns, &a, stp_flgs | end_flgs)) == AST_STAT(OK)) {
         if (a) {
-            lst_node_a(lst, a);
+            lst_node_a(as->a, lst, a);
             a = NULL;
         }
         if (flg_mtch(as->next.type, end_flgs)) break;
