@@ -227,6 +227,11 @@ x64_stat x64_subsd_rr(size_t *p, uint8_t *m, reg d, reg s) {
     return x64_b(p, m, 5, set_rex2(s, d), 0xF2, 0xF, 0x5C, modrm(MOD(11), s, d));
 }
 
+x64_stat x64_neg_r(size_t *p, uint8_t *m, reg r) {
+    VALID_R(r);
+    return x64_b(p, m, 3, set_rex(r), 0XF7, roe(MOD(11), rid(r), 3));
+}
+
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s) {
     VALID_R(d);
     VALID_R(s);
