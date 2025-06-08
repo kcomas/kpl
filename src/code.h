@@ -42,6 +42,7 @@ typedef enum {
     CODE_STAT(INV_CST_FD),
     CODE_STAT(INV_CST),
     CODE_STAT(NO_TYPE_COR_INT),
+    CODE_STAT(NO_TYPE_COR_FLT),
     CODE_STAT(GC_INV),
     CODE_STAT(OP_NO_T_L), // op no left type
     CODE_STAT(OP_NO_T_R), // op no right type

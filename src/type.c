@@ -273,10 +273,6 @@ static bool type_flt_is(const type_node *const tn, const type_node *const dnu) {
 
 typedef bool type_x_is_fn(const type_node *const a, const type_node *const b);
 
-typedef struct {
-    type from, def;
-} type_from_def;
-
 static bool type_cor(type_st *const ts, type_from_def ff, type_node **tgt, const type_node *const a, const type_node *const b, type_x_is_fn *cmp) {
     if (tgt && *tgt) return true;
     if ((a->t == ff.from && cmp(b, NULL)) || (cmp(a, NULL) && cmp(b, NULL) && a->t == b->t)) {

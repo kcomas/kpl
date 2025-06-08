@@ -141,6 +141,10 @@ typedef enum {
 const char *type_stat_str(type_stat tstat);
 
 typedef struct {
+    type from, def;
+} type_from_def;
+
+typedef struct {
     tds *s;
     tdr *r;
     const char *mp; // mod path
