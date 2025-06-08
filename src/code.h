@@ -10,6 +10,7 @@
 typedef enum {
     CODE_STAT(OK),
     CODE_STAT(INV_L_ASS), // left side : invalid
+    CODE_STAT(INV_R_ASS), // right side : invalid
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
     CODE_STAT(VAR_TYPE_U),
@@ -44,7 +45,6 @@ typedef enum {
     OP_C(RFN), // return fn
     OP_C(CFN), // call fn
     OP_C(CS), // call self
-    OP_C(CALL),
     // data
     OP_C(AG), // allocate globals
     OP_C(SG), // store global
@@ -79,6 +79,13 @@ typedef struct {
    code *cond, *body;
 } op_if;
 
+typedef struct _slv {
+    uint8_t id;
+    type t;
+} slv; // store load var
+
+#define SLV(ID, T) .v = (slv) {ID, T}
+
 typedef struct _op_d_te op_d_te;
 
 typedef union _op_d {
@@ -94,6 +101,7 @@ typedef union _op_d {
     float f;
     double d;
     int fd;
+    slv v;
     code *c;
     op_if *of;
     char *sg; // null term
