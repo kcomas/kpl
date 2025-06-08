@@ -17,7 +17,7 @@ static const uint8_t dopts[26] = {
     ['c' - 'a'] = Z_D_FLG(C),
     ['o' - 'a'] = Z_D_FLG(O),
     ['g' - 'a'] = Z_D_FLG(G),
-    ['s' - 'a'] = Z_D_FLG(S),
+    ['s' - 'a'] = Z_D_FLG(S)
 };
 
 int main(int argc, char *argv[]) {
