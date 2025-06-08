@@ -1,0 +1,8 @@
+
+// contact sg
+
+a: "Hello"
+b: "World"
+c: "\n"
+
+$(FD;1) << a , " " , b , c

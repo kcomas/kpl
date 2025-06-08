@@ -50,13 +50,16 @@ static const char *op_c_str[] = {
     "EQ",
     "NOT",
     "OR",
-    "SGCNCT",
-    "WFD"
+    "CNCTSG",
+    "WFD",
+    "GCL",
+    "GCR",
+    "GCTEI"
 };
 
 const char *op_c_get_str(op_c oc) {
     const char *s = "INVALID";
-    if (oc >= OP_C(EFN) && oc <= OP_C(WFD)) s = op_c_str[oc];
+    if (oc >= OP_C(EFN) && oc <= OP_C(GCTEI)) s = op_c_str[oc];
     return s;
 };
 
@@ -303,7 +306,7 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
             switch  (opn->ret->t) {
                 case TYPE(SG):
-                    if (tr->t == TYPE(TE) || tr->t == TYPE(STR) || tr->t == TYPE(SG)) OP_A(c, SGCNCT, OP, { .t = tr->t }, a);
+                    if (tr->t == TYPE(TE) || tr->t == TYPE(STR) || tr->t == TYPE(SG)) OP_A(c, CNCTSG, OP, { .t = tr->t }, a);
                     else return CODE_STAT(INV_SG_CNCT);
                     break;
                 default: return CODE_STAT(INV_CNCT_OP);
@@ -314,7 +317,10 @@ static code_stat code_gen_op(code_st *const cs, const ast *const a, code **c) {
             if (!(tl = ast_gtn(opn->l))) return CODE_STAT(OP_NO_T_L);
             IFCGEN(code_gen, cs, opn->r, c);
             if (!(tr = ast_gtn(opn->r))) return CODE_STAT(OP_NO_T_R);
-            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) OP_A(c, WFD, OP, { .t = tr->t }, a);
+            if (tl->t == TYPE(FD) && tr->t != TYPE(FD)) {
+                OP_A(c, WFD, OP, { .t = tr->t }, a);
+                OP_A(c, GCR, OP, { .t = tr->t }, a);
+            }
             else return CODE_STAT(INV_FD_OP);
             break;
     }
