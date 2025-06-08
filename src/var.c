@@ -77,8 +77,10 @@ ssize_t var_rcd(var v, type t) {
         case TYPE(STR):
         case TYPE(SG):
             return --v.sg->rc;
-        case TYPE(TE): return --v.te->rc;
-        case TYPE(VR): return --v.vr->rc;
+        case TYPE(VR):
+        case TYPE(TE):
+        case TYPE(ST):
+            return --v.tsv->rc;
         default:
             break;
     }
@@ -151,6 +153,10 @@ var_tsv *var_ts_i(al *const a, size_t size, jit_fn *gc) {
     var_tsv *ts = var_tsv_i(a, size, gc);
     ts->len = size;
     return ts;
+}
+
+void var_tsv_rci(var_tsv *const tsv) {
+    tsv->rc++;
 }
 
 jit_fn *var_tsv_gc(var_tsv *const tsv) {

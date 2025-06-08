@@ -15,7 +15,12 @@ typedef enum {
     CODE_STAT(INV_R_ASS), // right side : invalid
     CODE_STAT(INV_STR_ESC), /* invalid \ */
     CODE_STAT(NO_OP_FOR_VAL_T), // no type for val, should not happen
+    CODE_STAT(TBL_FOUND),
     CODE_STAT(NO_T_FOR_TE_IDX),
+    CODE_STAT(NO_T_FOR_ST_IDX),
+    CODE_STAT(SYM_NO_T_FOR_A),
+    CODE_STAT(SYM_INV_TBL_R),
+    CODE_STAT(SYM_INV),
     CODE_STAT(NO_T_FOR_IF_COND), // cannot not get if conds type
     CODE_STAT(NO_T_FOR_LOP_COND),
     CODE_STAT(ARG_LEN_GT_LOCAL_LEN), // should not happen
@@ -90,6 +95,7 @@ typedef enum {
     OP_C(LA), // load arg
     OP_C(PV), // push value
     OP_C(CTSV), // create tuple from stack u6 is length
+    OP_C(IDX), // index te, vr, st u6 is i
     // control
     OP_C(IF),
     OP_C(COND), // jmp if false
