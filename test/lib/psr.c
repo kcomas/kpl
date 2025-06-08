@@ -47,7 +47,7 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("x:-1+2"))));
     te_f(ppnode(rpsr(psr_b("{-+4;-(+4)}"))));
     //te_f(ppnode(rpsr(psr_b("+(1;2"))));
-    te_f(ppnode(rpsr(psr_b("f:FN(I6;I6;I6;I6)$[`a;`b;`c]##{-a+b+c}"))));
+    te_f(ppnode(rpsr(psr_b("f:FN(I6`a;I6`b;I6`c;I6)${-a+b+c}"))));
     te_f(ppnode(rpsr(psr_b("a:-(w) + -(x;y) + -z"))));
     te_f(ppnode(rpsr(psr_b("a(1;2)(3)()"))));
     te_f(ppnode(rpsr(psr_b("d:#![1`x;(1+5-4)`y;3`z]"))));
@@ -55,8 +55,7 @@ int main(void) {
     te_f(ppnode(rpsr(psr_b("#?{{c:2;a#?c:1;c}(a);{2}(b)}"))));
     te_f(ppnode(rpsr(psr_b("{d:UN(I6`v;FN(I6)`e)$5`v;d#=[{x}`x`v;0`e]}"))));
     te_f(ppnode(rpsr(psr_b("{a:1;b:2;{a+b+c}(3`c)}"))));
-    te_f(ppnode(rpsr(psr_b("{f:##DL(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}"))));
-    te_f(ppnode(rpsr(psr_b("{f:##DL(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}"))));
-    te_f(ppnode(rpsr(psr_b("{f:DL(I6`x;DL(I6))${a:2:x+y()};y:{a};f(1`x)}"))));
+    te_f(ppnode(rpsr(psr_b("{f:FN(F6`x;F6`y;F6)${x-y};f(1.23;4.56)}"))));
+    te_f(ppnode(rpsr(psr_b("{f:{a:2:x+y()};y:{a};f(1`x)}"))));
     return 0;
 }

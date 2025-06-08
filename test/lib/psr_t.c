@@ -19,11 +19,10 @@ psr *psr_b(const char *const pgm) {
     psr_a(p, PARSER(UN), PSR_MODE(STOP), NULL, NULL, NULL, NULL, 1, TCUST(RP));
     psr_a(p, PCUST(INT), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_int_i, 1, TCUST(NUM));
     psr_a(p, PCUST(VAR), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_var_i, 1, TCUST(VAR));
-    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "I6", &tkn_ft));
-    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "F6", &tkn_ft));
-    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "FN", &tkn_ft));
-    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "DL", &tkn_ft));
-    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_type_i, 1, tkn_a(t, TOKEN(UN), "UN", &tkn_ft));
+    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "I6", &tkn_ft));
+    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "F6", &tkn_ft));
+    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "FN", &tkn_ft));
+    psr_a(p, PCUST(TYPE), PSR_MODE(ONCE), NULL, NULL, &psr_val_m, &psr_id_i, 1, tkn_a(t, TOKEN(UN), "UN", &tkn_ft));
     psr_a(p, PCUST(SUM), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "Σ", &tkn_ft));
     psr_a(p, PCUST(SUB), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "-", &tkn_ft));
     psr_a(p, PCUST(ADD), PSR_MODE(ONCE), NULL, NULL, &psr_op_m, &psr_op_i, 1, tkn_a(t, TOKEN(UN), "+", &tkn_ft));
@@ -67,7 +66,7 @@ void psr_entry_f(void *p) {
     free(t);
 }
 
-static te *node_i(psr *const p, node_type nt, size_t size) {
+static te *node_i(psr *const p, node_id nt, size_t size) {
     te *n = te_i(size, p->pa, &node_f);
     n->d[1] = U6(nt);
     un m;
@@ -81,7 +80,7 @@ psr_stat psr_var_i(psr *const p, te **n) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_type_i(psr *const p, te **n) {
+psr_stat psr_id_i(psr *const p, te **n) {
     *n = node_i(p, NODE_TYPE(TYPE), 3);
     return PSR_STAT(OK);
 }
@@ -207,7 +206,7 @@ static const mc *node_root_mc(const te *const n) {
 void node_p(const te *const n, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');
-    printf("(type:%lu", n->d[1].u6);
+    printf("(id:%lu", n->d[1].u6);
     switch (n->d[1].u6) {
         case NODE_TYPE(ROOT):
             break;
