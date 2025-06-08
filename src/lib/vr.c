@@ -16,6 +16,13 @@ vr *vr_i_vr(const vr *v) {
     return vr_i(v->s, v->af, v->df);
 }
 
+bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn) {
+    if (!a && !b) return true;
+    if (!a || !b || a->l != b->l) return false;
+    for (size_t i = 0; i < a->l; i++) if (!fn(a->d[i], b->d[i])) return false;
+    return true;
+}
+
 vr *vr_c(vr *v) {
     v->r++;
     return v;

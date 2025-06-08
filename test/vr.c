@@ -48,7 +48,7 @@ T(reverse) {
 T(strings) {
     char *msg = "Hi: 0";
     size_t ml = strlen(msg);
-    vr *v = vr_i(5, &vm, &free);
+    vr *v = vr_i(5, &vm, free);
     for (size_t i = 0; i < 10; i++) {
         char *s = calloc(1, ml + sizeof(char));
         strcpy(s, msg);
@@ -74,4 +74,25 @@ T(strings) {
     putchar('\n');
     A(strcmp(v->d[0].p, "Hi: 9") == 0, "vr_r str");
     vr_f(v);
+}
+
+static bool i6_eq(un a, un b) {
+    return a.i6 == b.i6;
+}
+
+T(eq) {
+    vr *a = vr_i(2, &vm, NULL);
+    vr_ab(&a, I6(1));
+    vr_ab(&a, I6(2));
+    vr *b = vr_i(2, &vm, NULL);
+    vr_ab(&b, I6(1));
+    vr_ab(&b, I6(2));
+    A(vr_eq(a, b, i6_eq), "vr_eq");
+    vr *c = vr_i(5, &vm, NULL);
+    vr_ab(&c, I6(1));
+    vr_ab(&c, I6(4));
+    A(!vr_eq(b, c, i6_eq), "!vr_eq");
+    vr_f(a);
+    vr_f(b);
+    vr_f(c);
 }
