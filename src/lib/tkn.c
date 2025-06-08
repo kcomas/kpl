@@ -16,7 +16,7 @@ tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s) {
     return t;
 }
 
-static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, size_t id, tkn_pf *pf) {
+static size_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, size_t id, tkn_pf *pf) {
     size_t e = 0;
     un c = c4_g(s, p, &e);
     for (;;) {
@@ -31,7 +31,7 @@ static ssize_t entry_add(tkn *const t, tbl *tl, size_t p, const char *s, size_t 
         if (c.c.a == '\0') {
             kv->d[1] = id ? U6(id) : U6(t->idc++);
             kv->d[2].p = pf;
-            return kv->d[1].i6;
+            return kv->d[1].u6;
         }
     }
     return TOKEN(UN);

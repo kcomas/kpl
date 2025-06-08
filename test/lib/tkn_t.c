@@ -5,17 +5,17 @@ size_t tkn_sh(un v) {
     return v.c.a + v.c.b + v.c.c + v.c.d;
 }
 
+void tkn_entry_free(void *v) {
+    te *t = (te*) v;
+    tbl_f(t->d[3].p);
+    free(t);
+}
+
 tbl *tkn_mktbl(void) {
     lst *tl = lst_i(&malloc, &malloc, &free, (void*) &te_f, &free);
     te *b = te_i(10, &malloc, &free);
     tbl *t = tbl_i(&malloc, &free, &tkn_sh, &c4_eq, tl, b);
     return t;
-}
-
-void tkn_entry_free(void *v) {
-    te *t = (te*) v;
-    tbl_f(t->d[3].p);
-    free(t);
 }
 
 tkn_stat tkn_df(tkn *const t, te *const m) {
