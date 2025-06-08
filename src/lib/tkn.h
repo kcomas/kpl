@@ -21,7 +21,7 @@ typedef struct _tkn tkn;
 // on match
 typedef tkn_stat tkn_pf(tkn *const t, te *const m);
 
-// match te[id;lno;cno;pos;len]
+// match te[id;lno;cno;start;end]
 
 typedef struct _tkn {
     ssize_t r;
@@ -37,5 +37,7 @@ typedef struct _tkn {
 tkn *tkn_i(alfn *ta, frfn *tf, frfn *ef, tkn_tbl_i *ttif, tkn_pf *df, mc *s);
 
 void tkn_a(tkn *const t, const char *const s, ssize_t id, tkn_pf *pf);
+
+tkn_stat tkn_n(tkn *const t, te *const m);
 
 void tkn_f(tkn *t);
