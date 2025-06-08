@@ -22,7 +22,7 @@ static tbl *tkn_mktbl(void) {
     A(tstat == TKN_STAT(END), "END"); \
     te_f(m);
 
-T(tkn_btest) {
+T(btest) {
     const char *pgm = "sigma 123 Σ  si \n  bar bee sig ΣΩ";
     const size_t tids[] = {1, TCUST(WS), TCUST(NUM), TCUST(WS), 3, TCUST(WS), TCUST(VAR), TCUST(WS), TCUST(NL), TCUST(WS), 5, TCUST(WS), 6, TCUST(WS), 2, TCUST(WS), 4};
     printf("%s\n", pgm);
@@ -39,7 +39,7 @@ T(tkn_btest) {
     tkn_f(t);
 }
 
-T(tkn_stest) {
+T(stest) {
     const char *pgm = "0 Σ [12;44;67]\n";
     const size_t tids[] = {TCUST(NUM), TCUST(WS), 1, TCUST(WS), TCUST(LS), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(SEMI), TCUST(NUM), TCUST(RS), TCUST(NL)};
     tkn *t = tkn_i(&tm, &tm, tkn_entry_f, tkn_mktbl, tkn_df, mc_i_cstr(pgm, &tm));
@@ -53,7 +53,7 @@ T(tkn_stest) {
     tkn_f(t);
 }
 
-T(tkn_symtest) {
+T(symtest) {
     const char *pgm = "a`b asdf`1234";
     const char *syms[] = {"b", "1234"};
     size_t i = 0;
@@ -82,7 +82,7 @@ T(tkn_symtest) {
     tkn_f(t);
 }
 
-T(tkn_inttest) {
+T(inttest) {
     const char *pgm = "a 1 b 21 c 321";
     const int64_t nums[] = {1, 21, 321};
     size_t i = 0;

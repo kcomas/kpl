@@ -15,7 +15,7 @@ extern const alfr gm;
 
 #define S(stmt) A((stmt) == GEN_STAT(OK), "stmt")
 
-T(gen_b) {
+T(b) {
     gen *g = gen_i(&gm, &gm, gen_entry_f, gen_code_entry_f, gen_cls_info_tbl, gen_op_tbl(GEN_OP(_END)), gen_mklst());
     gen_b(g);
     gen_op_p(g->oci, false, 0);
@@ -61,7 +61,7 @@ static void build(gen *g, uint8_t *m) {
     as_f(a);
 }
 
-T(gen_fib) {
+T(fib) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
@@ -85,7 +85,7 @@ T(gen_fib) {
     A(r == y, "fib");
 }
 
-T(gen_ack) {
+T(ack) {
     gen *g = init();
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));

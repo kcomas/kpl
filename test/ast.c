@@ -6,15 +6,15 @@
     bast(_t, a, PGM, &an); \
     ast_verify(_t, a, an, AST)
 
-T(ast_aplyopadd) {
+T(aplyopadd) {
     V(aplyopadd, RN(AN(P(NULL), ON(P(NULL), ADD, NULL, NULL), L(2, SN(I6, I6(1)), SN(I6, I6(2))))));
 }
 
-T(ast_typetype) {
+T(typetype) {
     V(typetype, RN(AN(P(NULL), TN(FN), L(3, ZN("x", TN(I6)), ZN("y", TN(F6)), AN(P(NULL), TN(FN), L(2, ZN("z", TN(U6)), TN(I6)))))));
 }
 
-T(ast_fnadd3) {
+T(fnadd3) {
     V(fnadd3, RN(LN(L(2,
         ON(P(NULL), AGN, IN("f"), ON(P(NULL), CST,
             AN(P(NULL), TN(FN), L(4, ZN("a", TN(I6)), ZN("b", TN(I6)), ZN("c", TN(I6)), TN(I6))),
