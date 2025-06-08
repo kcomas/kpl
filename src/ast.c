@@ -240,7 +240,7 @@ const char *var_type_str(var_type vt) {
     #define MAX_VAR_LEN 20
 #endif
 
-static fn_node *const mfn = (fn_node*) 0x01; /// random addr for cmp
+static fn_node mfn = {0, NULL, NULL, NULL, NULL, NULL}; // cmp for if parsing args
 
 var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const str) {
     static char vstr[MAX_VAR_LEN];
@@ -250,12 +250,12 @@ var_node *var_node_i(fn_node *const fns, const tkn *const t, const char *const s
     fn_node *scope = fns;
     while (scope) {
         if (tbl_op(&scope->tl, vstr, NULL, &ti, NULL, TBL_OP_FLG(FD)) == TBL_STAT(OK)) return (var_node*) ti->data;
-        scope = scope->par != mfn ? scope->par : NULL;
+        scope = scope->par != &mfn ? scope->par : NULL;
     }
     if (!scope) {
         var_node *vn = calloc(1, sizeof(var_node) + t->len + 1);
         vn->id = fns->idc++;
-        if (fns->par == mfn) vn->vt = VAR_TYPE(A);
+        if (fns->par == &mfn) vn->vt = VAR_TYPE(A);
         else vn->vt = fns->par ? VAR_TYPE(L) : VAR_TYPE(G);
         vn->fns = fns;
         memcpy(vn->str, str + t->pos, t->len);
@@ -433,7 +433,7 @@ static ast_stat ast_parse_if(ast_st *const as, fn_node *const fns, ast **a, uint
 }
 
 static ast_stat ast_parse_fn(ast_st *const as, fn_node *const par, ast **a, uint8_t stp_flgs, const tkn *const tkn_s) {
-    fn_node *fn = fn_node_i(mfn);
+    fn_node *fn = fn_node_i(&mfn);
     ast_stat astat;
     if ((astat = ast_parse_stmts(as, fn, fn->args, TKN_FLG(SEMI), TKN_FLG(RP))) != AST_STAT(OK)) {
         fn_node_f(fn);

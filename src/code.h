@@ -37,4 +37,4 @@ typedef struct {
     ast *a; // freed in mod
 } op;
 
-code_stat code_gen(const fn_node *const fn, const ast_node *const a);
+code_stat code_gen(code_st *const cs, const fn_node *const fn, const ast_node *const a);
