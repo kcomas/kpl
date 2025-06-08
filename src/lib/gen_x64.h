@@ -27,6 +27,7 @@ typedef enum {
     GEN_OP(NE),
     GEN_OP(GT),
     GEN_OP(LT),
+    GEN_OP(LTE),
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 
@@ -103,9 +104,11 @@ gen_stat rstk_b(const gen_st *st, uint8_t *r);
 // get idx for stack var
 gen_stat st_stkv_idx(const gen_st *st, x64_type t, uint8_t v, int32_t *idx);
 
-void gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci);
+te *bd_arg(as *a, int32_t dsp);
 
-void gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci);
+as_stat gen_as_rmbdr(as *a, as_inst i, reg d, int32_t dsp, reg s, te *ci);
+
+as_stat gen_as_rrmbd(as *a, as_inst i, reg d, reg s, int32_t dsp, te *ci);
 
 gen_stat get_reg(gen_st *st, te *ovt, te **kv);
 
@@ -119,12 +122,6 @@ void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n);
 void gen_st_f(gen_st *st);
 
 as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4, te *restrict ci);
-
-#define AS(a, op_id, arg1, arg2, arg3, arg4, ci) gen_as(a, op_id, arg1, arg2, arg3, arg4, ci)
-#define AS3(a, op_id, arg1, arg2, arg3, ci) AS(a, op_id, arg1, arg2, arg3, NULL, ci)
-#define AS2(a, op_id, arg1, arg2, ci) AS3(a, op_id, arg1, arg2, NULL, ci)
-#define AS1(a, op_id, arg1, ci) AS2(a, op_id, arg1, NULL, ci)
-#define AS0(a, op_id, ci) AS1(a, op_id, NULL, ci)
 
 gen_stat gen_err(const gen *g, te *ci, err **e, const char *m);
 

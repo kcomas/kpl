@@ -381,6 +381,9 @@ T(updateTE) {
     t->d[0] = I6(1);
     t->d[1] = I6(2);
     t->d[2] = I6(3);
+    printf("Before:");
+    for (size_t i = 0; i < 3; i++) printf(" %ld", t->d[i].i6);
+    putchar('\n');
     gen *g = gen_i_gen(bg);
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(I6), 3, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(sizeof(void*) * 4)), gen_arg(g, X64_TYPE(U6), 1)), gen_arg(g, X64_TYPE(I6), 2), NULL));
@@ -388,6 +391,8 @@ T(updateTE) {
     BUILD(g, m);
     ((void(*)(te*, size_t, int64_t)) m)(t, 1, 5);
     A(t->d[1].i6 == 5, "te");
-    for (size_t i = 0; i < 3; i++) printf("%ld\n", t->d[i].i6);
+    printf("After:");
+    for (size_t i = 0; i < 3; i++) printf(" %ld", t->d[i].i6);
+    putchar('\n');
     te_f(t);
 }

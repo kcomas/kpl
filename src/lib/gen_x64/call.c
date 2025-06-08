@@ -1,30 +1,25 @@
 
 #include "../gen_x64.h"
 
-static void reg_gen_stk(const reg *ir, size_t iri, te *ci, as *a, te *kv, const uint8_t *rsaves, size_t rsl) {
+static bool reg_gen_stk(const reg *ir, size_t iri, te *ci, as *a, te *kv, const uint8_t *rsaves, size_t rsl) {
     for (size_t i = 0; i < rsl; i++) {
         if (rsaves[i] == kv->d[2].u3) {
-            if (i == rsl - 1) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), ci);
-            else AS3(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((rsl - i - 1) * sizeof(void*))), ci);
-            return;
+            if (i == rsl - 1) return gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), NULL, NULL, ci) == AS_STAT(OK);
+            return gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((rsl - i - 1) * sizeof(void*))), NULL, ci) == AS_STAT(OK);
         }
     }
-    AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
+    return gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, ci) == AS_STAT(OK);
 }
 
-static void reg_xmm_stk(const reg *xr, size_t xri, te *ci, as *a, te *kv, const uint8_t *xsaves, size_t xsl, size_t rsl) {
+static bool reg_xmm_stk(const reg *xr, size_t xri, te *ci, as *a, te *kv, const uint8_t *xsaves, size_t xsl, size_t rsl) {
     for (size_t i = 0; i < xsl; i++) {
         if (xsaves[i] == kv->d[2].u3) {
-            if (rsl) {
-                AS3(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((i + rsl) * sizeof(void*))), ci);
-            } else {
-                if (i) AS3(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((i) * sizeof(void*))), ci);
-                else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), ci);
-            }
-            return;
+            if (rsl) return gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((i + rsl) * sizeof(void*))), NULL, ci) == AS_STAT(OK);
+            if (i) return gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3((i) * sizeof(void*))), NULL, ci) == AS_STAT(OK);
+            return gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), NULL, NULL, ci) == AS_STAT(OK);
         }
     }
-    AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(X), kv->d[2]), ci);
+    return gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(X), kv->d[2]), NULL, NULL, ci) == AS_STAT(OK);
 }
 
 static gen_stat swap_args(te *restrict ci, as *a, te *restrict r, const vr *args, vr **stk, arg_id ai) {
@@ -32,8 +27,9 @@ static gen_stat swap_args(te *restrict ci, as *a, te *restrict r, const vr *args
     for (size_t i = 0; i < args->l; i++) {
         if (r->d[0].u6 == gen_var_hsh(args->d[i].p).u6) { // check if this is an arg being passed in
             if (vr_sf(*stk, &nr) != VR_STAT(OK)) return GEN_STAT(INV);
-            if (ai == ARG_ID(R)) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), nr), as_arg_i(a, ai, r->d[2]), ci);
-            else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), nr), as_arg_i(a, ai, r->d[2]), ci);
+            if (ai == ARG_ID(R)) {
+                if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), nr), as_arg_i(a, ai, r->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
+            } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), nr), as_arg_i(a, ai, r->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
             vr_ab(stk, r->d[2]);
             r->d[2] = nr;
             break;
@@ -53,8 +49,9 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsa
         while (h) {
             te *r = h->d[0].p;
             for (size_t i = 0; i < 6; i++) {
-                if (r->d[2].u3 == ir[i]) swap_args(ci, a, r, args, &st->rstk, ARG_ID(R));
-                else if (r->d[2].u3 == xr[i]) swap_args(ci, a, r, args, &st->xstk, ARG_ID(X));
+                if (r->d[2].u3 == ir[i]) {
+                    if ((stat = swap_args(ci, a, r, args, &st->rstk, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                } else if (r->d[2].u3 == xr[i] && (stat = swap_args(ci, a, r, args, &st->xstk, ARG_ID(X))) != GEN_STAT(OK)) return stat;
             }
             h = h->d[2].p;
         }
@@ -68,13 +65,15 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsa
                 switch (gen_var_g_t(ovt)) {
                     case X64_TYPE(F5):
                     case X64_TYPE(F6):
-                        if (xsl > 0) reg_xmm_stk(xr, xri, ci, a, kv, xsaves, xsl, rsl);
-                        else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(X), kv->d[2]), ci);
+                        if (xsl > 0) {
+                            if (!reg_xmm_stk(xr, xri, ci, a, kv, xsaves, xsl, rsl)) return GEN_STAT(INV);
+                        } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri])), as_arg_i(a, ARG_ID(X), kv->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         xri++;
                         break;
                     default:
-                        if (rsl > 0) reg_gen_stk(ir, iri, ci, a, kv, rsaves, rsl);
-                        else AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
+                        if (rsl > 0) {
+                            if (!reg_gen_stk(ir, iri, ci, a, kv, rsaves, rsl)) return GEN_STAT(INV);
+                        } else if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri])), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         iri++;
                         break;
                 }
@@ -85,10 +84,10 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsa
                 switch (gen_var_g_t(ovt)) {
                     case X64_TYPE(F5):
                     case X64_TYPE(F6):
-                        AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(X), kv->d[2]), ci);
+                        if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(X), kv->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         break;
                     default:
-                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(R), kv->d[2]), ci);
+                        if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         break;
                 }
                 drop_atm_kv(st, kv, ci);
@@ -101,12 +100,12 @@ static gen_stat call_arg(gen_st *st, te *ci, as *a, vr *args, const uint8_t *rsa
                 switch (gen_var_g_t(ovt)) {
                     case X64_TYPE(F5):
                     case X64_TYPE(F6):
-                        AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), ci);
+                        if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xr[xri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         break;
                     case X64_TYPE(M):
                     case X64_TYPE(U6):
                     case X64_TYPE(I6):
-                        AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), ci);
+                        if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(ir[iri++])), as_arg_i(a, ARG_ID(QW), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
                         break;
                     default:
                         return GEN_STAT(INV);
@@ -123,10 +122,10 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     switch (gen_var_g_t(ci->d[1].p)) {
         case X64_TYPE(F5):
         case X64_TYPE(F6):
-            AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), kvr->d[2]), as_arg_i(a, ARG_ID(X), U3(XMM(0))), ci);
+            if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), kvr->d[2]), as_arg_i(a, ARG_ID(X), U3(XMM(0))), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
             break;
         default:
-            AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kvr->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
+            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kvr->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return GEN_STAT(INV);
             break;
     }
     return GEN_STAT(OK);
@@ -158,13 +157,14 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
             h = h->d[2].p; \
         } \
         if (xsl > 0) { \
-            AS2(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xsl)), ci); \
+            if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xsl)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
             for (size_t i = 0; i < xsl; i++) { \
-                if (i) AS3(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * i)), as_arg_i(a, ARG_ID(X), U3(xsaves[i])), ci); \
-                else AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(X), U3(xsaves[i])), ci); \
+                if (i) { \
+                    if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * i)), as_arg_i(a, ARG_ID(X), U3(xsaves[i])), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+                } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(X), U3(xsaves[i])), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
             } \
         } \
-        for (size_t i = 0; i < rsl; i++) AS1(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), ci); \
+        for (size_t i = 0; i < rsl; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rsaves[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     } \
     vr *args = ((te*) ci->d[RV ? 2 : 1].p)->d[1].p; \
     if (PR) { \
@@ -176,12 +176,12 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     uint8_t fr; \
     switch (gen_var_g_c(fn)) { \
         case GEN_CLS(L): \
-            AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), fn->d[1]), ci); \
+            if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(L), fn->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
             break; \
         case GEN_CLS(D): \
             if ((stat = rstk_b(st, &fr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen no reg for call"); \
-            AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(fr)), as_arg_i(a, ARG_ID(QW), fn->d[1]), ci); \
-            AS1(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), U3(fr)), ci); \
+            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(fr)), as_arg_i(a, ARG_ID(QW), fn->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+            if (gen_as(a, AS_X64(CALL), as_arg_i(a, ARG_ID(R), U3(fr)), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
             break; \
         default: \
            return gen_err(g, ci, e, "gen inv call cls"); \
@@ -191,17 +191,18 @@ static gen_stat call_ret(te *restrict ci, as *a, te *restrict kvr) {
     } \
     if (PR) { \
         while (rsl > 0) { \
-            AS1(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), ci); \
+            if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rsaves[rsl - 1])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
             rsl--; \
         } \
         if (xsl > 0) { \
             size_t xa = xsl; \
             while (xsl > 0) { \
-                if (xsl == 1) AS2(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xsaves[xsl - 1])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), ci); \
-                else AS3(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xsaves[xsl - 1])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * (xsl - 1))), ci); \
+                if (xsl == 1) { \
+                    if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xsaves[xsl - 1])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+                } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(xsaves[xsl - 1])), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * (xsl - 1))), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
                 xsl--; \
             } \
-            AS2(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xa)), ci); \
+            if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * 2 * xa)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
         } \
     } \
     if (RV) drop_atm_kv(st, kvr, ci); \
@@ -226,7 +227,7 @@ static gen_stat callnpr_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return call_pr_false_rv_true(g, s, ci, a, e);
 }
 
-static void num_vec_args(as *a, te *ci, size_t arg_i) {
+static bool num_vec_args(as *a, te *ci, size_t arg_i) {
     size_t nva = 0;
     vr *args = ((te*) ci->d[arg_i].p)->d[1].p;
     for (size_t i = 0; i < args->l; i++) {
@@ -238,17 +239,17 @@ static void num_vec_args(as *a, te *ci, size_t arg_i) {
                 break;
         }
     }
-    if (nva) AS2(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), U6(nva)), ci);
-    else AS2(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), ci);
+    if (nva) return gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), U6(nva)), NULL, NULL, ci) == AS_STAT(OK);
+    return gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) == AS_STAT(OK);
 }
 
 static gen_stat callvnr_md(gen *g, void *s, te *ci, as *a, err **e) {
-    num_vec_args(a, ci, 1);
+    if (!num_vec_args(a, ci, 1)) return gen_err(g, ci, e, __FUNCTION__);
     return call_pr_true_rv_false(g, s, ci, a, e);
 }
 
 static gen_stat callvnprnr_md(gen *g, void *s, te *ci, as *a, err **e) {
-    num_vec_args(a, ci, 1);
+    if (!num_vec_args(a, ci, 1)) return gen_err(g, ci, e, __FUNCTION__);
     return call_pr_false_rv_false(g, s, ci, a, e);
 }
 void gen_call(gen *g) {

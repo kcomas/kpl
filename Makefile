@@ -126,7 +126,7 @@ $(OPT): $(OPT_OBJS) $(TEST)/opt.o $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.
 
 ATG = atg$(TNAME)
 ATG_OBJS = $(LSRC)/atg.o $(OPT_OBJS) $(GEN_OBJS)
-ATGX64_OBJS = $(SRC)/atg_x64.o $(GENX64_OBJS)
+ATGX64_OBJS = $(SRC)/atg_x64.o $(GENX64_OBJS) $(patsubst %.c,%.o,$(wildcard $(SRC)/atg_x64/*.c))
 OBJS += $(ATG_OBJS) $(ATGX64_OBJS)
 $(ATG): $(sort $(ATG_OBJS) $(ATGX64_OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS))
 > $(CCOBJ)
