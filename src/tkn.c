@@ -165,7 +165,7 @@ tkn_stat _tkn_get(tkn_st *const ts, tkn *const t, const char *const str, bool in
                         return TKN_ER(ts, CTRL);
                 }
                 break;
-            T_ONE_C(':', ASS);
+            T_ONE_C(':', AGN);
             T_ONE_C('$', CST);
             case '\\':
                 t->len++;
@@ -261,7 +261,7 @@ static const char *const tkn_type_str[] = {
     "LOP", // while and for
     "RET",
     // general ops
-    "ASS", // :
+    "AGN", // :
     "CST", // $
     "DEL", // \d
     "LD", // \l

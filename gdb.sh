@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Usage ./gdb.sh *.kpl
-
 # access stack in gdb with
 # p *((var*)($rbp - (8 * 2))).sg
 
@@ -15,8 +13,7 @@ fi
 
 if [[ ! -f ./jit_test ]]
 then
-    make clean
-    make jit_test
+    make clean && make jit_test
 fi
 
 gdb -ex "b src/jit.c:`cat src/jit.c | grep -n "?? DEB" | cut -d":" -f 1`" -ex "r $1" ./jit_test
