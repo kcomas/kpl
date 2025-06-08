@@ -3,8 +3,8 @@
 
 f:FN(ER(VD))${() '"This is an error"; }
 
-fx:FN(VD)${() [e]'f(); $(FD;1) << "Error f called\n" }
+fx:FN(f;VD)${(x) [e]'x(); $(FD;1) << "Error f called\n" }
 
 //f()
 
-fx()
+fx(f)

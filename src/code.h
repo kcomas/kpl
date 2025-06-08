@@ -22,6 +22,7 @@ typedef enum {
     CODE_STAT(FN_RET_T_INV), // cannot get ret type of fn
     CODE_STAT(FN_RET_ER_T_INV), // cannot get ret type of fn
     CODE_STAT(TC_R_N), // right side for try catch null
+    CODE_STAT(INV_TYPE_STORE_VD),
     CODE_STAT(VAR_TYPE_U),
     CODE_STAT(INV_INT_CST_PUSH),
     CODE_STAT(INV_CST_INT_TO_FD),

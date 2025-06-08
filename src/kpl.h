@@ -24,6 +24,7 @@
 typedef enum {
     // internal
     TYPE(STMT),
+    TYPE(ARGS),
     TYPE(OP),
     TYPE(IF),
     TYPE(COND),

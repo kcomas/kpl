@@ -3,6 +3,7 @@
 
 static const char *const tgs[] = {
     "STMT",
+    "ARGS",
     "OP",
     "IF",
     "COND",
