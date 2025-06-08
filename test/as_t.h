@@ -6,8 +6,6 @@
 
 extern const alfr am;
 
-extern uint8_t *m;
-
 extern as *ba;
 
 te *as_arg_r(as *a, size_t rid);
