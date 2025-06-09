@@ -118,3 +118,9 @@ const char *TPGM(import) = "{\n"
                            " v/e::1+i`b*2\n"
                            " v/p1\n"
                            "}()\n";
+
+const char *TPGM(lfac) = "{\n"
+                         " l::\"./ex/fac.kpl\"/l\n"
+                         " e/e::l`fac(6)\n"
+                         " e/p1\n"
+                         "}()\n";

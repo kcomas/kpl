@@ -163,3 +163,11 @@ T(import) {
         CN(P1, IN("v"))
     )), NULL)));
 }
+
+T(lfac) {
+    V(TPGM(lfac), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("l"), CN(L, CS("./ex/fac.kpl"))),
+        ON(NULL, DFN, CN(E, IN("e")), AN(NULL, ZN("fac", IN("l")), L(1, SN(I6, I6(6))))),
+        CN(P1, IN("e"))
+    )), NULL)));
+}

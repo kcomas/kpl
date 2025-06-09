@@ -181,3 +181,11 @@ T(import) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(lfac) {
+    V(TPGM(lfac), RN(AN(NULL, LN(LT(2, "l", U6(0), NULL, "e", FLG(0, LTE_FLG(E)), NULL), L(3,
+        ON(NULL, DFN, EN("l", U6(0), NULL), SET(1, "fac", P(NULL), TFN(FN, TS(I6), 1, "n", TS(I6), 0))),
+        ON(NULL, DFN, EN("e", FLG(0, LTE_FLG(E)), NULL), AN(NULL, ZN("fac", EN("l", U6(0), NULL)), L(1, SN(I6, I6(6))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}

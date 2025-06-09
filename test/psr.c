@@ -465,3 +465,13 @@ T(import) {
     ))});
     te_f(h);
 }
+
+T(lfac) {
+    te *h = ppnode(psr_r(bpsr(TPGM(lfac))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), CMD(N(STR))),
+        OP(CMD(N(VAR)), APLY(SYM(N(VAR)), N(INT))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}
