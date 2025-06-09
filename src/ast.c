@@ -368,6 +368,7 @@ void ast_p(const te *an, size_t idnt) {
                     printf(" \"%s\"", (char*) ((mc*) an->d[4].p)->d);
                     break;
                 case TYPE(ET):
+                case TYPE(FN):
                     break;
                 default:
                     printf("INV S");
@@ -493,6 +494,8 @@ static bool ast_s_eq(const te *restrict t, const te *restrict a, const te *restr
             return mc_eq(a->d[4].p, b->d[4].p);
         case TYPE(ET):
             return a->d[4].p == b->d[4].p;
+        case TYPE(FN):
+            return true;
         default:
             break;
     }
