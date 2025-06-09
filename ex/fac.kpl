@@ -1,10 +1,10 @@
 
 // exported iterative factorial
 
-fac/e::FN${
+fac\e::FN${
     f::I6(n)
     >(n;1)@f*:n-:1
     f
 }
 
-fac(5)/p1
+fac(5)\p1

@@ -5,4 +5,4 @@ a::1
 b::2.2
 s::#{a`a;b`b;$(U6;a+2)`c;"Hello World"`d}
 s`a: 5 * I6$s`c
-s/p1
+s\p1

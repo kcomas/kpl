@@ -1,5 +1,5 @@
 
-f::"./ex/sum.kpl"/l
-f/p1
+f::"./ex/sum.kpl"\l
+f\p1
 n::10+f`b*101
-n/p1
+n\p1

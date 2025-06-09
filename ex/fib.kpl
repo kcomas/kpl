@@ -11,5 +11,5 @@ fib::FN(I6`n;I6)${
     }
 }
 
-n/p1
-fib(n)/p1
+n\p1
+fib(n)\p1
