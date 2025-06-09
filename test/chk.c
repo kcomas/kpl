@@ -247,9 +247,15 @@ T(import) {
     te_f(etn);
 }
 
-/*
 T(lfac) {
     IC(TPGM(lfac));
-    V(NULL);
+    te *fn = TFN(FN, TS(I6), 1, "n", TS(I6), 0);
+    te *et = TH(ET, 1, "fac", te_c(fn));
+    V(RN(AN(TS(VD), LN(LT(2, "l", FLG(0, LTE_FLG(D)), te_c(et), "e", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), L(3,
+        ON(te_c(et), NOP, EN("l", FLG(0, LTE_FLG(D)), te_c(et)), SET(1, "fac", P(NULL), te_c(fn))),
+        ON(TS(I6), DFN, EN("e", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)), AN(TS(I6), ZTN("fac", te_c(fn), EN("l", FLG(0, LTE_FLG(D)), te_c(et))), L(1, SN(I6, I6(6))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", FLG(0, LTE_FLG(E) | LTE_FLG(L)), TS(I6)))
+    )), NULL)));
+    te_f(fn);
+    te_f(et);
 }
-*/

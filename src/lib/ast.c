@@ -59,6 +59,7 @@ un ast_hsh(const te *an) {
             hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
             break;
         case AST_CLS(E):
+        case AST_CLS(Z):
             if (!((te*) an->d[3].p)->d[2].p) hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_N));
             else hsh = u4_s_o(hsh, AST_HSH_T, ((te*) ((te*) an->d[3].p)->d[2].p)->d[1].u4);
             break;

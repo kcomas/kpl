@@ -752,12 +752,12 @@ atg *atg_b(atg *t) {
     atg_a_z(t, TYPE(I6), AST_CLS(E), TYPE(ST), z_e_st);
     atg_a_o(t, OC(NOP), TYPE(ET), AST_CLS(E), TYPE(ET), AST_CLS(S), TYPE(ET), atg_nop);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_a_i6_o_i6);
-    atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(Z), TYPE(SL), AST_CLS(O), TYPE(I6), agn_i6_z_i6_o_i6);
+    atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_z_i6_o_i6);
     atg_a_o(t, OC(CST), TYPE(FN), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A), atg_nop);
     atg_a_o(t, OC(CST), TYPE(NF), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A), atg_nop);
     atg_a_o(t, OC(CST), TYPE(F6), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6), cst_f6_e_u6);
     atg_a_o(t, OC(CST), TYPE(U6), AST_CLS(T), TYPE(U6), AST_CLS(O), TYPE(I6), cst_u6_o_i6);
-    atg_a_o(t, OC(CST), TYPE(I6), AST_CLS(T), TYPE(I6), AST_CLS(Z), TYPE(SL), cst_i6_z_u6);
+    atg_a_o(t, OC(CST), TYPE(I6), AST_CLS(T), TYPE(I6), AST_CLS(Z), TYPE(U6), cst_i6_z_u6);
     atg_a_o(t, OC(LOOP), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), loop_l_l);
     atg_a_o(t, OC(IF), TYPE(U6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
     atg_a_o(t, OC(IF), TYPE(I6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
