@@ -246,3 +246,9 @@ T(import) {
     te_f(et);
     te_f(etn);
 }
+/*
+T(lfac) {
+    IC(TPGM(lfac));
+    V(NULL);
+}
+*/

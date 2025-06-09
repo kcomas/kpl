@@ -96,6 +96,27 @@ static void z_e_p(void *d) {
 
 static size_t cdl = 0; // current number of destructors
 
+static void z_fn_err_f(void *p) {
+    te *t = p;
+    mc_f(t->d[0].p);
+    err_f(t->d[1].p);
+    t->af->f(t);
+}
+
+static void z_fn_e_p(void *p) {
+    te *t = p;
+    z_e_p(t->d[0].p);
+    putchar('\n');
+    err_p(t->d[1].p);
+}
+
+static err *z_err(mc *fn, err *e) {
+    te *t = te_i(2, &al_te, z_fn_err_f);
+    t->d[0] = P(mc_c(fn));
+    t->d[1] = P(e);
+    return err_i(&z_al, z_fn_e_p, (void*) te_f, t, __FUNCTION__);
+}
+
 err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
@@ -123,7 +144,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         te_f(nh);
         psr_f(zp);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     nh = psr_g_rn(zp, nh);
     if (dflgs & Z_D_FLG(P)) {
@@ -135,7 +156,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         ast_f(za);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (dflgs & Z_D_FLG(A)) {
         ast_p(an, 0);
@@ -147,7 +168,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         ast_f(za);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (dflgs & Z_D_FLG(F)) {
         ast_p(an, 0);
@@ -160,7 +181,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         ast_f(za);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (dflgs & Z_D_FLG(C)) {
         ast_p(an, 0);
@@ -173,7 +194,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         ast_f(za);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (dflgs & Z_D_FLG(O)) {
         ast_p(an, 0);
@@ -186,7 +207,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         atg_f(zt);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (zt->dt->i->l > cdl) {
         dh = zt->dt->i->t;
@@ -205,7 +226,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                 te_f(an);
                 mc_f(pgm);
                 gen_f(dg);
-                return e;
+                return z_err(fn, e);
             }
             if (dfn) h->d[1] = P(fn);
             else if (dg) {
@@ -217,7 +238,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                     mc_f(pgm);
                     gen_st_f(dst);
                     gen_f(dg);
-                    return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "des gen st p1");
+                    return z_err(fn, err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "des gen st p1"));
                 }
                 gen_x64_opt(dg, dst);
                 size_t pc = p;
@@ -228,7 +249,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                     mc_f(pgm);
                     gen_st_f(dst);
                     gen_f(dg);
-                    return e;
+                    return z_err(fn, e);
                 }
                 if (as_n(zt->a, &p, m, &e) != AS_STAT(OK)) {
                     ast_f(za);
@@ -237,7 +258,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                     mc_f(pgm);
                     gen_st_f(dst);
                     gen_f(dg);
-                    return e;
+                    return z_err(fn, e);
                 }
                 gen_st_f(dst);
                 gen_f(dg);
@@ -254,7 +275,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
             gen_f(zg);
             te_f(an);
             mc_f(pgm);
-            return e;
+            return z_err(fn, e);
         }
         gen_st *zst = gen_st_i_gen_st(bst);
         if (gen_st_p1(zg, zst) != GEN_STAT(OK)) {
@@ -264,7 +285,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
             gen_st_f(zst);
             te_f(an);
             mc_f(pgm);
-            return e;
+            return z_err(fn, e);
         }
         gen_x64_opt(zg, zst);
         if (dflgs & Z_D_FLG(G)) {
@@ -278,7 +299,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
             gen_st_f(zst);
             te_f(an);
             mc_f(pgm);
-            return e;
+            return z_err(fn, e);
         }
         gen_st_f(zst);
         gen_f(zg);
@@ -288,7 +309,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         atg_f(zt);
         te_f(an);
         mc_f(pgm);
-        return e;
+        return z_err(fn, e);
     }
     if (dflgs & Z_D_FLG(S)) {
         as_code_p(zt->a, m);

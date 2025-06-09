@@ -140,7 +140,7 @@ static fld_stat aply_op_r(fld *f, te **an, err **e) {
     if (l->l) lst_sb(l, &a);
     lst_f(l);
     on->d[5] = a;
-    ((te*) a.p)->d[0] = P(on);
+    if (a.p) ((te*) a.p)->d[0] = P(on);
     on->d[6] = b;
     if (b.p) ((te*) b.p)->d[0] = P(on);
     *an = on;
