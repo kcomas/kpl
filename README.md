@@ -4,7 +4,7 @@
 
 ## Supported Platforms and Dependencies
 
-#### X86-64 Linux
+#### X86-64 Linux/WSL
 
 #### GCC
 
@@ -46,7 +46,7 @@ make
 All Tests:
 
 ```
-make tests
+make tests # slow, use -j<num_jobs>
 ./tests
 ```
 
