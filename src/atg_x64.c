@@ -572,16 +572,20 @@ atg_stat call_npr(gen_op *go, const te *an) {
     return ATG_STAT(OK);
 }
 
-static atg_stat fn_call(atg *t, gen *g, te *restrict an, gen_op go, te *restrict ca) {
-    uint32_t lbl = ast_lst_tbl_e_g_i(((te*) an->d[4].p)->d[3].p);
+static te *fn_call_lbl(gen *g, const te *an) {
+    uint32_t lbl = ast_lst_tbl_e_g_i(an->d[3].p);
+    return gen_lbl(g, lbl);
+}
+
+static atg_stat fn_call(atg *t, gen *g, te *restrict an, gen_op go, te *restrict ca, te *restrict tgt) {
     x64_type xt = atg_x64_g_t(an->d[3].p);
     if (xt == X64_TYPE(N)) {
-        if (gen_a(g, go, ca, gen_lbl(g, lbl), NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
-    } else if (gen_a(g, go, gen_tmp(g, xt, t->tc++), ca, gen_lbl(g, lbl)) != GEN_STAT(OK)) return ATG_STAT(INV);
+        if (gen_a(g, go, ca, tgt, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
+    } else if (gen_a(g, go, gen_tmp(g, xt, t->tc++), ca, tgt) != GEN_STAT(OK)) return ATG_STAT(INV);
     return ATG_STAT(OK);
 }
 
-static atg_stat aply_e_fn(atg *t, gen *g, te *an, err **e) {
+static atg_stat aply_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict call) {
     atg_stat stat = ATG_STAT(OK);
     vr *v = NULL;
     if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) {
@@ -590,11 +594,19 @@ static atg_stat aply_e_fn(atg *t, gen *g, te *an, err **e) {
     }
     gen_op go = GEN_OP(CALL);
     if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
-    if ((stat = fn_call(t, g, an, go, gen_call_v(g, v))) != ATG_STAT(OK)) {
+    if ((stat = fn_call(t, g, an, go, gen_call_v(g, v), call)) != ATG_STAT(OK)) {
         vr_f(v);
         return atg_err(t, an, e, __FUNCTION__);
     }
     return stat;
+}
+
+static atg_stat aply_e_fn(atg *t, gen *g, te *an, err **e) {
+    return aply_fn(t, g, an, e, fn_call_lbl(g, an->d[4].p));
+}
+
+static atg_stat aply_s_fn(atg *t, gen *g, te *an, err **e) {
+    return aply_fn(t, g, an, e, gen_data(g, X64_TYPE(U5), ((te*) an->d[4].p)->d[4]));
 }
 
 static atg_stat aply_e_nf(atg *t, gen *g, te *an, err **e) {
@@ -633,7 +645,7 @@ static atg_stat aply_e_nf(atg *t, gen *g, te *an, err **e) {
     }
     gen_op go = GEN_OP(CALL);
     if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
-    if ((stat = fn_call(t, g, an, go, gen_call_w(g, s, v))) != ATG_STAT(OK)) {
+    if ((stat = fn_call(t, g, an, go, gen_call_w(g, s, v), fn_call_lbl(g, an->d[4].p))) != ATG_STAT(OK)) {
         vr_f(v);
         return atg_err(t, an, e, __FUNCTION__);
     }
@@ -743,6 +755,7 @@ atg *atg_b(atg *t) {
     atg_a_v(t, TYPE(TE), v_te_fn);
     atg_a_v(t, TYPE(VR), v_vr_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
+    atg_a_a(t, TYPE(I6), AST_CLS(S), TYPE(FN), aply_s_fn);
     atg_a_a(t, TYPE(U6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(NF), aply_e_nf);

@@ -663,9 +663,28 @@ T(import) {
     opt_exp_tbl_f(et);
 }
 
-/*
+#define LFACCU5 344
+
 T(lfac) {
     AI(TPGM(lfac), 0, 1);
-    V(NULL, NULL);
+    te *cn = RN(SN(_G, U5(0))), *kv;
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(I6), 0), gen_call_m(gc, 1, gen_data(gc, X64_TYPE(I6), I6(6))), gen_data(gc, X64_TYPE(U5), U5(LFACCU5))));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 0), gen_tmp(gc, X64_TYPE(I6), 0), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_stkv(gc, X64_TYPE(I6), 0)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(32))), gen_stkv(gc, X64_TYPE(I6), 0), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    tbl *et = tbl_c(an->d[3].p);
+    AR(0);
+    A(et->i->l == 1, "inv et");
+    mc *e = mc_i_cstr("e", &al_mc);
+    A(tbl_g_i(et, P(e), &kv) == TBL_STAT(OK), "inv et");
+    mc_f(e);
+    A(kv->d[1].i6 == 720, "inv exp v");
+    opt_exp_tbl_f(et);
 }
-*/
