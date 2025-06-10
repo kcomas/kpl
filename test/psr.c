@@ -475,3 +475,11 @@ T(lfac) {
     ))});
     te_f(h);
 }
+
+/*
+T(str) {
+    te *h = ppnode(psr_r(bpsr(TPGM(str))));
+    V(h, {N(ROOT)});
+    te_f(h);
+}
+*/

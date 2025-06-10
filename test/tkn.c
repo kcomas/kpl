@@ -14,7 +14,7 @@ static tbl *tkn_mktbl(void) {
 static tkn *btkn = NULL;
 
 static __attribute__((constructor)) void tkn_con(void) {
-    btkn = tkn_i(&tm, &al_te, &tm, tkn_mktbl, tkn_df, mc_i(0, &al_mc));
+    btkn = tkn_i(&tm, &al_te, &al_err, tkn_mktbl, tkn_df, mc_i(0, &al_mc));
     tkn_b(btkn);
 }
 

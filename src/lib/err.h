@@ -3,6 +3,8 @@
 
 #include "def.h"
 
+extern const alfr al_err;
+
 typedef void err_d_p(void *d);
 
 typedef void err_d_f(void *d);

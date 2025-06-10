@@ -4,7 +4,7 @@
 fld *bfld = NULL;
 
 static __attribute__((constructor(104))) void chk_con(void) {
-    bfld = fld_b(fld_i(&ast_am, &al_te, &ast_am, ati, ali, NULL, mktbl(AST_CLS(_))));
+    bfld = fld_b(fld_i(&ast_am, &al_te, &al_err, ati, ali, NULL, mktbl(AST_CLS(_))));
 }
 
 static __attribute__((destructor)) void chk_des(void) {

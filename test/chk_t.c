@@ -4,7 +4,7 @@
 chk *bchk = NULL;
 
 static __attribute__((constructor(105))) void chk_con(void) {
-    bchk = chk_b(chk_i(&ast_am, &al_te, &al_lst, &al_tbl, &ast_am, chk_err, cti, NULL));
+    bchk = chk_b(chk_i(&ast_am, &al_te, &al_lst, &al_tbl, &al_err, chk_err, cti, NULL));
 }
 
 static __attribute__((destructor)) void chk_des(void) {

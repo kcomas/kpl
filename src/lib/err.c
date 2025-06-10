@@ -1,8 +1,34 @@
 
 #include "err.h"
 
+#define ERR_POOL 100
+
+static err *errp[ERR_POOL];
+
+static size_t epi = 0;
+
+static void *al(size_t n) {
+    (void) n;
+    if (!epi) return malloc(sizeof(err));
+    return errp[--epi];
+}
+
+static void fr(void *p) {
+    if (epi == ERR_POOL) {
+        free(p);
+        return;
+    }
+    errp[epi++] = p;
+}
+
+const alfr al_err = { .a = al, .f = fr };
+
+static __attribute__((destructor(102))) void al_err_f(void) {
+    for (size_t i = 0; i < epi; i++) free(errp[i]);
+}
+
 err *err_i(const alfr *af, err_d_p dp, err_d_f df, void *d, const char *m) {
-    err *e = af->a(sizeof(err));
+    err *e = af->a(0);
     e->r = 1;
     e->af = af;
     e->dp = dp;
