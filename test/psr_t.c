@@ -139,9 +139,9 @@ const char *TPGM(lfac) = "{\n"
                          " e\\p1\n"
                          "}()\n";
 
-const char *TPGM(str) = "{\n"
-                        "   a:987\n"
-                        "   b:3.14\n"
-                        "   c:\"a: %ld b: %lf\n\"(a;b)\n"
+const char *TPGM(istr) = "{\n"
+                        "   a::987\n"
+                        "   b::3.14\n"
+                        "   c::\"a: {} b: {}\"(a;b)\n"
                         "   c\\p1\n"
                         "}()\n";

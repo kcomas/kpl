@@ -42,4 +42,4 @@ extern const char *TPGM(import);
 
 extern const char *TPGM(lfac);
 
-extern const char *TPGM(str);
+extern const char *TPGM(istr);
