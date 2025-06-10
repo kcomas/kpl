@@ -32,8 +32,6 @@ te *psr_g_rn(psr *p, te *nh);
 
 void psr_n_err_f(void *d);
 
-te *psr_r(psr *p);
-
 void psr_p(tbl *t, size_t idnt);
 
 void psr_entry_f(void *p);

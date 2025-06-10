@@ -6,6 +6,8 @@
 
 psr *bpsr(const char *pgm);
 
+te *psr_r(psr *p);
+
 #define TPGM(N) TPGM_##N
 
 extern const char *TPGM(aplyopadd);

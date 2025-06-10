@@ -12,7 +12,7 @@ err *err_i(const alfr *af, err_d_p dp, err_d_f df, void *d, const char *m) {
     return e;
 }
 
-void err_p(const err *e) {
+void err_p(const err *e, bool nl) {
     if (!e) {
         printf("\e[3;4;1;31mNULL ERR PRINT\e[0m\n");
         return;
@@ -23,7 +23,7 @@ void err_p(const err *e) {
     }
     if (e->m) printf("\e[1;91m%s\e[0m\n", e->m);
     if (e->d && e->dp) e->dp(e->d);
-    putchar('\n');
+    if (nl) putchar('\n');
 }
 
 void err_f(err *e) {

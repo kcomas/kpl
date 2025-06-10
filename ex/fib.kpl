@@ -2,6 +2,7 @@
 // recursive Fibonacci
 
 n::40
+n\p1
 
 fib::FN(I6`n;I6)${
     ?{
@@ -11,5 +12,4 @@ fib::FN(I6`n;I6)${
     }
 }
 
-n\p1
 fib(n)\p1

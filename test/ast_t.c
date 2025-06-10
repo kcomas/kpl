@@ -43,7 +43,7 @@ void astb(_tests *_t, ast *a, const char *pgm, te **an) {
     A(pn != NULL, "psr_r");
     ast_stat stat = ast_n(a, NULL, pn, (void**) an, &e);
     if (e) {
-        err_p(e);
+        err_p(e, true);
         err_f(e);
     }
     A(stat == AST_STAT(OK), "ast_n");

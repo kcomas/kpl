@@ -34,6 +34,20 @@ psr *bpsr(const char *pgm) {
     return psr_i_psr(bp, mc_i_cstr(pgm, &al_mc));
 }
 
+te *psr_r(psr *p) {
+    psr_stat pstat;
+    te *nh = te_i(3, p->ta, psr_n_err_f);
+    err *e = NULL;
+    if ((pstat = psr_n(p, nh, &e)) != PSR_STAT(END)) {
+        err_p(e, true);
+        err_f(e);
+        te_f(nh);
+        psr_f(p);
+        return NULL;
+    }
+    return psr_g_rn(p, nh);
+}
+
 const char *TPGM(aplyopadd) = "+(1;2)";
 
 const char *TPGM(typetype) = "FN(I6`x;F6`y;FN(U6`z;I6))";

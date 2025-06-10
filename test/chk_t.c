@@ -23,7 +23,7 @@ void rchk(_tests *_t, chk *c, te *an) {
     chk_stat stat = chk_n(c, an, &e);
     chk_f(c);
     if (e) {
-        err_p(e);
+        err_p(e, true);
         err_f(e);
     }
     A(stat == CHK_STAT(OK), "chk_n");

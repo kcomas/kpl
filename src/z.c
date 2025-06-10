@@ -107,7 +107,7 @@ static void z_fn_e_p(void *p) {
     te *t = p;
     z_e_p(t->d[0].p);
     putchar('\n');
-    err_p(t->d[1].p);
+    err_p(t->d[1].p, false);
 }
 
 static err *z_err(mc *fn, err *e) {

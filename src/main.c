@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     mc_f(fn);
     opt_exp_tbl_f(et);
     if (e) {
-        err_p(e);
+        err_p(e, true);
         err_f(e);
         return 1;
     }

@@ -204,7 +204,7 @@ T(err) {
     p = 0;
     err *e = NULL;
     A(as_n(a, &p, m, &e) != AS_STAT(OK), "as");
-    err_p(e);
+    err_p(e, true);
     err_f(e);
     as_f(a);
 }

@@ -141,7 +141,7 @@ T(err) {
         putchar('\n');
     }
     A(e, "err");
-    err_p(e);
+    err_p(e, true);
     A(tstat == TKN_STAT(INV), "END");
     te_f(m);
     tkn_f(t);

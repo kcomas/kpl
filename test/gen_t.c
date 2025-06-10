@@ -39,7 +39,7 @@ void gen_build(_tests *_t, gen *g, uint8_t *m) {
     err *e = NULL;
     gen_stat stat = gen_n(g, st, a, &e);
     if (e) {
-        err_p(e);
+        err_p(e, true);
         err_f(e);
     }
     A(stat == GEN_STAT(OK), "gen_n");
@@ -49,7 +49,7 @@ void gen_build(_tests *_t, gen *g, uint8_t *m) {
     e = NULL;
     as_stat astat = as_n(a, &p, m, &e);
     if (e) {
-        err_p(e);
+        err_p(e, true);
         err_f(e);
     }
     A(astat == AS_STAT(OK), "as_n");
