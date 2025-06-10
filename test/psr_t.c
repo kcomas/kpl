@@ -142,6 +142,6 @@ const char *TPGM(lfac) = "{\n"
 const char *TPGM(istr) = "{\n"
                         "   a::987\n"
                         "   b::3.14\n"
-                        "   c::\"a: {} b: {}\"(a;b)\n"
+                        "   c::\"a: {}, b: {}\"(a;b)\n"
                         "   c\\p1\n"
                         "}()\n";

@@ -171,3 +171,12 @@ T(lfac) {
         CN(P1, IN("e"))
     )), NULL)));
 }
+
+T(istr) {
+    V(TPGM(istr), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("a"), SN(I6, I6(987))),
+        ON(NULL, DFN, IN("b"), SN(F6, F6(3.14))),
+        ON(NULL, DFN, IN("c"), AN(NULL, CS("a: {}, b: {}"), L(2, IN("a"), IN("b")))),
+        CN(P1, IN("c"))
+    )), NULL)));
+}
