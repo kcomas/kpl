@@ -189,3 +189,12 @@ T(lfac) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(istr) {
+    V(TPGM(istr), RN(AN(NULL, LN(LT(3, "a", U6(0), NULL, "b", U6(0), NULL, "c", U6(0), NULL), L(4,
+        ON(NULL, DFN, EN("a", U6(0), NULL), SN(I6, I6(987))),
+        ON(NULL, DFN, EN("b", U6(0), NULL), SN(F6, F6(3.14))),
+        ON(NULL, DFN, EN("c", U6(0), NULL), AN(NULL, CS("a: {}, b: {}"), L(2, EN("a", U6(0), NULL), EN("b", U6(0), NULL)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", U6(0), NULL))
+    )), NULL)));
+}
