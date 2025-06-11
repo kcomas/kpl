@@ -25,4 +25,8 @@ void mc_wa(mc **m, uint8_t b);
 
 void mc_wb(mc **m, size_t l, uint8_t *b);
 
+void mc_wc4(mc **m, un c);
+
+void mc_wcstr(mc **m, const char *s);
+
 void mc_f(mc *m);

@@ -182,7 +182,7 @@ static chk_stat chk_z_vd(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_nop(chk *c, te *an, err **e) {
+chk_stat chk_nop(chk *c, te *an, err **e) {
     (void) c;
     (void) an;
     (void) e;
@@ -335,6 +335,65 @@ static chk_stat chk_aply_z_fn(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static const char *aply_cs_str[TYPE(_END)] = {
+    [TYPE(I6)] = "%ld",
+    [TYPE(F6)] = "%lf"
+};
+
+static chk_stat chk_aply_cs(chk *c, te *an, err **e) {
+    mc *s = ((te*) an->d[4].p)->d[4].p;
+    lst *l = an->d[5].p;
+    size_t sb = l->l, ss = 0, se = 0;
+    un sc;
+    if (!sb) return chk_err(c, an, e, "chk inv cs aply");
+    for (;;) {
+        sc = c4_g((char*) s->d, ss, &se);
+        if (sc.c.a == '\0') break;
+        if (sc.c.a == '{') {
+            ss = se + 1;
+            sc = c4_g((char*) s->d, ss, &se);
+            if (sc.c.a == '}') {
+                ss = se + 1;
+                sb--;
+            }
+        }
+        ss = se + 1;
+    }
+    if (sb) return chk_err(c, an, e, "check inv cs fmt");
+    mc *ns = mc_i(s->l + l->l * 5, s->af); // x bytes per {}
+    te *h = l->h, *tn = NULL;
+    ss = 0, se = 0;
+    const char *rs;
+    while (h) {
+        for (;;) {
+            sc = c4_g((char*) s->d, ss, &se);
+            if (sc.c.a == '{') {
+                while (sc.c.a != '}') {
+                    ss = se + 1;
+                    sc = c4_g((char*) s->d, ss, &se);
+                    if (ast_g_t(h->d[0].p, &tn) != AST_STAT(OK) || !tn) return chk_err(c, an, e, "chk cs replace type nf");
+                    if (!(rs = aply_cs_str[tn->d[1].u4])) return chk_err(c, an, e, "chk cs inv replace str");
+                    mc_wcstr(&ns, rs);
+                }
+                ss = se + 1;
+                break;
+            } else mc_wc4(&ns, sc);
+            ss = se + 1;
+        }
+        h = h->d[2].p;
+    }
+    for (;;) {
+        sc = c4_g((char*) s->d, ss, &se);
+        mc_wc4(&ns, sc); // \0 part of len
+        if (sc.c.a == '\0') break;
+        ss = se + 1;
+    }
+    mc_f(s);
+    ((te*) an->d[4].p)->d[4] = P(ns);
+    an->d[3] = P(type_s_i(c->a->ta, NULL, TYPE(SG)));
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h = lt->i->h;
@@ -381,26 +440,6 @@ static chk_stat chk_cst_z(chk *c, te *an, err **e) {
         return CHK_STAT(OK);
     }
     return chk_err(c, an, e, "chk inv z cst");
-}
-
-static chk_stat chk_op_e_n_svoe_dfn_flg(chk *c, te *an, err **e, lte_flg lf) {
-    te *lte = ((te*) an->d[5].p)->d[3].p, *rt;
-    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an->d[6].p, e, "chk cannot get op r type");
-    lte->d[2] = P(te_c(rt));
-    ast_lst_tbl_e_s_f(lte, lf);
-    an->d[3] = P(te_c(rt));
-    return CHK_STAT(OK);
-}
-
-static chk_stat chk_op_e_n_svoea_dfn(chk *c, te *an, err **e) {
-    return chk_op_e_n_svoe_dfn_flg(c, an, e, LTE_FLG(L));
-}
-
-static chk_stat chk_op_dfn_d(chk *c, te *an, err **e) {
-    chk_stat stat;
-    if ((stat = chk_op_e_n_svoe_dfn_flg(c, an, e, LTE_FLG(D))) != CHK_STAT(OK)) return stat;
-    an->d[4].u4 = OC(NOP);
-    return CHK_STAT(OK);
 }
 
 static chk_stat chk_agn_a_o(chk *c, te *an, err **e) {
@@ -498,6 +537,7 @@ static chk_stat chk_op_levrro_vr(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+void chk_dfn(chk *c);
 void chk_arith(chk *c);
 
 chk *chk_b(chk *c) {
@@ -526,21 +566,10 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(NF));
     CHK_AA(c, chk_aply_e_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
     CHK_AA(c, chk_aply_z_fn, AST_CLS(A), TYPE(_N), AST_CLS(Z), TYPE(FN));
+    CHK_AA(c, chk_aply_cs, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(CS));
     // ops
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(E), TYPE(I6));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(F6));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(I6));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(U6));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(VR));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(V), TYPE(TE));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(ST));
-    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(A), TYPE(I6));
-    CHK_AA(c, chk_op_dfn_d, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(ET));
     CHK_AA(c, chk_agn_a_o, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_l_z_r, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6));
-    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));
-    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(NF), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(NF), AST_CLS(O), TYPE(NF));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_set_ret_op_l, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(F6), AST_CLS(E), TYPE(U6));
@@ -569,6 +598,8 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ST));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ET));
+    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(SG));
+    chk_dfn(c);
     chk_arith(c);
     return c;
 }

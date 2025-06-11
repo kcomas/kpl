@@ -90,6 +90,23 @@ void mc_wb(mc **m, size_t l, uint8_t *b) {
     for (size_t i = 0; i < l; i++) mc_wa(m, b[i]);
 }
 
+void mc_wc4(mc **m, un c) {
+    mc_wa(m, c.c.a);
+    if (c.c.b) {
+        mc_wa(m, c.c.b);
+        if (c.c.c) {
+            mc_wa(m, c.c.c);
+            if (c.c.d) {
+                mc_wa(m, c.c.d);
+            }
+        }
+    }
+}
+
+void mc_wcstr(mc **m, const char *s) {
+    while (*s) mc_wa(m, *s++);
+}
+
 void mc_f(mc *m) {
     if (!m || --m->r > 0) return;
     m->af->f(m);

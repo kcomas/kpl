@@ -259,9 +259,13 @@ T(lfac) {
     te_f(fn);
     te_f(et);
 }
-/*
+
 T(istr) {
     IC(TPGM(istr));
-    V(NULL);
+    V(RN(AN(TS(VD), LN(LT(3, "a", FLG(0, LTE_FLG(L)), TS(I6), "b", FLG(0, LTE_FLG(L)), TS(F6), "c", FLG(1, LTE_FLG(L)), TS(SG)), L(4,
+        ON(TS(I6), DFN, EN("a", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(987))),
+        ON(TS(F6), DFN, EN("b", FLG(0, LTE_FLG(L)), TS(F6)), SN(F6, F6(3.14))),
+        ON(TS(SG), DFN, EN("c", FLG(1, LTE_FLG(L)), TS(SG)), AN(TS(SG), CS("a: %ld, b: %lf"), L(2, EN("a", FLG(0, LTE_FLG(L)), TS(I6)), EN("b", FLG(0, LTE_FLG(L)), TS(F6))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", FLG(1, LTE_FLG(L)), TS(SG)))
+    )), NULL)));
 }
-*/
