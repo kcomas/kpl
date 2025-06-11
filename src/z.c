@@ -69,7 +69,7 @@ static __attribute__((constructor)) void z_con(void) {
     bf = fld_b(fld_i(&z_al, &al_te, &al_err, ati, ali, NULL, mktbls(AST_CLS(_))));
     bc = chk_b(chk_i(&z_al, &al_te, &al_lst, &al_tbl, &al_err, chk_err, mktbl, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &al_err, ati, ali, NULL, mktbls(AST_CLS(_))));
-    bs = as_b(as_i(&z_al, &al_te, &al_lst, &z_al, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
+    bs = as_b(as_i(&z_al, &al_te, &al_lst, &al_err, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bst = gen_st_i(&z_al, &al_te, mktbls(10), mktbls(10), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &al_vr, &al_err, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bt = atg_b(atg_i(&z_al, &al_te, &al_err, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)),gen_i_gen(bg), as_i_as(bs)));
@@ -114,25 +114,26 @@ static err *z_err(mc *fn, err *e) {
     te *t = te_i(2, &al_te, z_fn_err_f);
     t->d[0] = P(mc_c(fn));
     t->d[1] = P(e);
-    return err_i(&z_al, z_fn_e_p, (void*) te_f, t, __FUNCTION__);
+    return err_i(&al_err, z_fn_e_p, (void*) te_f, t, __FUNCTION__);
 }
 
 err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
     int fd;
-    if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "inv file, all paths relative to exec");
+    if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "inv file, all paths relative to exec");
     struct statx sx;
-    if (statx(fd, "", AT_EMPTY_PATH, STATX_SIZE, &sx) == -1) {
+    if (statx(fd, "", AT_EMPTY_PATH, STATX_MODE | STATX_SIZE, &sx) == -1) {
         close(fd);
-        return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
+        return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
     }
+    if (S_ISDIR(sx.stx_mode)) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "path is dir");
     pgm = mc_i(sx.stx_size + APLYLSTS + sizeof(char), &al_mc);
     pgm->d[0] = '{';
     if (read(fd, pgm->d + 1, sx.stx_size) == -1) {
         close(fd);
         mc_f(pgm);
-        return err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
+        return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
     }
     close(fd);
     pgm->d[sx.stx_size + 1] = '}';
@@ -238,7 +239,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                     mc_f(pgm);
                     gen_st_f(dst);
                     gen_f(dg);
-                    return z_err(fn, err_i(&z_al, z_e_p, (void*) mc_f, mc_c(fn), "des gen st p1"));
+                    return z_err(fn, err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "des gen st p1"));
                 }
                 gen_x64_opt(dg, dst);
                 size_t pc = p;
@@ -316,7 +317,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         putchar('\n');
     }
     ssize_t ep = as_lbl_g_c_i(zt->a, ((te*) an->d[4].p)->d[4].u5);
-    if (ep < 0) return err_i(&z_al, NULL, NULL, NULL, __FUNCTION__);
+    if (ep < 0) return err_i(&al_err, NULL, NULL, NULL, __FUNCTION__);
     if (an->d[3].p) *et = tbl_c(an->d[3].p);
     te_f(an);
     e = atg_z(zt, *et, m, ep);

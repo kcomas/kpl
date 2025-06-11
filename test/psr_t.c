@@ -20,7 +20,7 @@ static tbl *mktbl(void) {
 static psr *bp = NULL;
 
 static __attribute__((constructor)) void psr_con(void) {
-    tkn *t = tkn_b(tkn_i(&pm, &al_te, &pm, tkn_mktbl, tkn_df, mc_i(0, &al_mc)));
+    tkn *t = tkn_b(tkn_i(&pm, &al_te, &al_err, tkn_mktbl, tkn_df, mc_i(0, &al_mc)));
     vr *v = vr_i(10, &al_vr, (void*) te_f);
     bp = psr_b(psr_i(&pm, &al_te, &al_lst, &al_err, psr_entry_f, mktbl, t, v));
     psr_a(bp, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(bp->tt, TOKEN(UN), "Σ", tkn_ft));

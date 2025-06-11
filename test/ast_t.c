@@ -6,7 +6,7 @@ const alfr ast_am = { .a = malloc, .f = free };
 ast *bast = NULL;
 
 static __attribute__((constructor(103))) void ast_con(void) {
-    bast = ast_b(ast_i(&ast_am, &al_te, &al_mc, &ast_am, node_err_p, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
+    bast = ast_b(ast_i(&ast_am, &al_te, &al_mc, &al_err, node_err_p, pig, ali, mktbl(NODE_TYPE(_END)), mktbl(TCUST(_END))));
 }
 
 static __attribute__((destructor)) void ast_des(void) {

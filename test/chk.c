@@ -259,3 +259,9 @@ T(lfac) {
     te_f(fn);
     te_f(et);
 }
+/*
+T(istr) {
+    IC(TPGM(istr));
+    V(NULL);
+}
+*/
