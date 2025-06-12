@@ -1,4 +1,6 @@
 
+// string interpolation
+
 a::1
 p::3.14
 b::98765432
