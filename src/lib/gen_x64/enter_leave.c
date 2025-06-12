@@ -8,6 +8,7 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     uint32_t sub = st->xvc * sizeof(void*) * 2;
     sub += st->rvc * sizeof(void*);
     if (sub) {
+        if (st->rvc % 2 != 0) sub += sizeof(void*);
         if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, sub), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     if (st->rac >= 3 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
@@ -22,6 +23,7 @@ static gen_stat leave_e(gen *g, gen_st *st, te *ci, as *a, err **e)  {
     uint32_t add = st->xvc * sizeof(void*) * 2;
     add += st->rvc * sizeof(void*);
     if (add) {
+        if (st->rvc % 2 != 0) add += sizeof(void*);
         if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, add), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);

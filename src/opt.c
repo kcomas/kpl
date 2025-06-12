@@ -261,11 +261,7 @@ void opt_exp_tbl_f(tbl *et) {
         kv = h->d[0].p;
         if (kv->d[2].p && type_is_ref(((te*) kv->d[2].p)->d[1].u4)) {
             frfn *fn = type_ref_g_des(((te*) kv->d[2].p)->d[1].u4);
-            if (fn) {
-                X64_RS();
-                fn(kv->d[1].p);
-                X64_RR();
-            }
+            if (fn) fn(kv->d[1].p);
         }
         h = h->d[2].p;
     }

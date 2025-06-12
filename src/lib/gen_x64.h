@@ -31,7 +31,7 @@ typedef enum {
     X64_TYPE(I5),
     X64_TYPE(I6),
     X64_TYPE(F5),
-    X64_TYPE(F6),
+    X64_TYPE(F6)
 } x64_type;
 
 const char *x64_type_str(x64_type xt);

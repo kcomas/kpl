@@ -509,6 +509,8 @@ ZRMBE(inc, 0xFF, 0);
 
 ZREB(add, 0x83, 0);
 
+ZRED(add, 0x81, 0);
+
 ZRMEB(add, 0x83, 0);
 
 ZRMBEB(add, 0x83, 0);
@@ -560,6 +562,8 @@ ZZZXX(divsd, 0xF2, 0x0F, 0x5E, d, s);
 ZZZXR(cvtsi2sd, 0xF2, 0x0F, 0x2A, d, s);
 
 ZRR(and, 0x21, s, d);
+
+ZREB(and, 0x83, 4);
 
 ZRR(xor, 0x31, s, d);
 

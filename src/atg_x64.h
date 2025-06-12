@@ -22,6 +22,10 @@ te *atg_vr_idx_d(gen *g, uint32_t id);
 
 te *var_arg(gen *g, te *lte, x64_type xt);
 
+atg_stat aply_te_g_idx(atg *t, te *an, err **e, size_t *n, te **lte);
+
+atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);
+
 atg_stat call_npr(gen_op *go, const te *an);
 
 extern const char *atg_dump_strs[TYPE(_END)];
@@ -34,8 +38,6 @@ extern const char *atg_sym_str;
 
 atg *atg_b(atg *t);
 
-typedef err *atg_jit(void);
-
-typedef err *atg_jit_exp(te *x);
+typedef err *atg_jit(te *x);
 
 err *atg_z(const atg *t, tbl *volatile et, const uint8_t *m, size_t ep);

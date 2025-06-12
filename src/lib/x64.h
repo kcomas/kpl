@@ -240,6 +240,9 @@ x64_stat x64_inc_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
 // add rax, byte
 x64_stat x64_add_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
+// add rax, word
+x64_stat x64_add_rd(size_t *p, uint8_t *m, reg r, uint32_t d);
+
 // add qword prt[rax], byte
 x64_stat x64_add_rmb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
@@ -317,6 +320,9 @@ x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s);
 
 // and rax, rdi
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s);
+
+// and rax, byte
+x64_stat x64_and_rb(size_t *p, uint8_t *m, reg d, uint8_t b);
 
 // pxor xmm0, xmm1
 x64_stat x64_pxor_xx(size_t *p, uint8_t *m, reg d, reg s);

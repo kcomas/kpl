@@ -26,6 +26,7 @@ const char *gen_op_str(gen_op go) {
         "GTE",
         "LT",
         "LTE",
+        "AND",
         "JMP",
         "_END"
     };

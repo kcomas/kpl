@@ -61,6 +61,7 @@ INST_RR(cmp);
 
 INST_RB(add);
 INST_RB(sub);
+INST_RB(and);
 INST_RB(cmp);
 
 #define INST_RMB(N) static bool as_##N##_rmb(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -104,6 +105,7 @@ INST_RMBD(mov);
     return x64_##N##_rd(p, m, arg1->d[1].u3, arg2->d[1].u5) == X64_STAT(OK); \
 }
 
+INST_RD(add);
 INST_RD(cmp);
 
 #define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -219,6 +221,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rmr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_add_rmbr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_add_rb, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(DW), ARG_ID(N), ARG_ID(N), as_add_rd, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_add_rmb, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(B), ARG_ID(N), as_add_rmbb, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_sub_rr, NULL);
@@ -237,6 +240,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(DEC), ARG_ID(RM), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_dec_rm, NULL);
     as_op_a(a, AS_X64(DEC), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_dec_rmb, NULL);
     as_op_a(a, AS_X64(AND), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_and_rr, NULL);
+    as_op_a(a, AS_X64(AND), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_and_rb, NULL);
     as_op_a(a, AS_X64(XOR), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_xor_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_cmp_rr, NULL);
     as_op_a(a, AS_X64(CMP), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_cmp_rrm, NULL);

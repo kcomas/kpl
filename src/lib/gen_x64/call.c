@@ -15,9 +15,14 @@ typedef struct {
     un d;
 } rac; // reg to, arg idx, reg from, data
 
+#ifndef MAX_R_STK
+    #define MAX_R_STK 6
+#endif
+
 static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *restrict cret, vr *restrict vs, vr *restrict va, te *restrict cfn, uint8_t flgs) {
     gen_stat stat;
     bool swaps = false;
+    int8_t ras = 0;
     uint8_t ra = 0, xa = 6, cr = 0, cx = 0;
     int32_t idx;
     rac tmp;
@@ -33,17 +38,19 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         { XMM(2), -1, -1, U6(0) },
         { XMM(3), -1, -1, U6(0) },
         { XMM(4), -1, -1, U6(0) },
-        { XMM(5), -1, -1, U6(0) }
+        { XMM(5), -1, -1, U6(0) },
+        { XMM(6), -1, -1, U6(0) },
+        { XMM(7), -1, -1, U6(0) }
     };
     size_t kvi = 0;
-    te *ovt, *kvs, *kv[12], *rkv, *h;
+    te *ovt, *kvs, *kv[14], *rkv, *h, *sa[MAX_R_STK];
     reg ret = R(AX), save;
     if (!(flgs & CFLG(NR))) {
         if ((stat = get_reg(st, cret, &rkv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
         ret = rkv->d[2].u3;
     }
     uint8_t ri = 0, xi = 0, vi = 0;
-    reg rs[12], xs[12];
+    reg rs[12], xs[14];
     if (!(flgs & CFLG(NPR))) {
         h = st->atm->i->h;
         while (h) {
@@ -75,6 +82,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
        if (xi > 0) putchar('\n');
      */
     if (ri > 0) {
+        if (flgs & CFLG(V) && ri % 2 != 0 && gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         for (size_t i = 0; i < ri; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     if (xi > 0) {
@@ -87,8 +95,13 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     }
     if (va) {
         for (size_t i = 0; i < va->l; i++) {
-            if (ra > 5 || xa > 11) return gen_err(g, ci, e, "gen call too many args");
+            if (xa > 13) return gen_err(g, ci, e, "gen call too many args");
             ovt = va->d[i].p;
+            if (ra > 5 && gen_var_g_t(ovt) < X64_TYPE(F5)) {
+                if (ras == MAX_R_STK) return gen_err(g, ci, e, "gen err too many args");
+                sa[ras++] = ovt;
+                continue;
+            }
             switch (gen_var_g_c(ovt)) {
                 case GEN_CLS(A):
                 case GEN_CLS(T):
@@ -144,7 +157,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                             break;
                         default:
                             return gen_err(g, ci, e, "gen call cls D inv type");
-
                     }
                     break;
                 case GEN_CLS(V):
@@ -186,7 +198,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                             break;
                         default:
                             return gen_err(g, ci, e, "gen call cls I inv type");
-
                     }
                     break;
                 default:
@@ -194,7 +205,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             }
         }
     }
-    for (ssize_t i = 11; i > 0; i--) {
+    for (ssize_t i = 13; i > 0; i--) {
         if (args[i].a < 0) continue;
         for (ssize_t n = i - 1; n >= 0; n--) {
             if (args[i].a == args[n].r) {
@@ -206,7 +217,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         }
     }
     if (swaps) {
-        for (ssize_t i = 11; i > 0; i--) {
+        for (ssize_t i = 13; i > 0; i--) {
             if (args[i].a < 0) continue;
             for (ssize_t n = i - 1; n >= 0; n--) {
                 if (args[n].a < 0) continue;
@@ -251,6 +262,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             }
         }
     }
+    if (ras && vs) return gen_err(g, ci, e, "gen err reg overflow cannot pass NF stack args");
     if (vs) {
         for (size_t i = 0; i < vs->l; i++) {
             ovt = vs->d[i].p;
@@ -272,6 +284,40 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                 default:
                     return gen_err(g, ci, e, "gen stk args cls inv");
             }
+        }
+    }
+    if (ras) {
+        for (int8_t i = ras - 1; i >= 0; i--) {
+            ovt = sa[i];
+            switch (gen_var_g_c(ovt)) {
+                case GEN_CLS(A):
+                case GEN_CLS(T):
+                    if ((stat = get_reg(st, ovt, &kvs)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), kvs->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, "gen data inv S");
+                    drop_atm_kv(st, kvs, ci);
+                    continue;
+                case GEN_CLS(D):
+                    switch (gen_var_g_t(ovt)) {
+                        case X64_TYPE(S):
+                            if (gen_as(a, AS_X64(LEA), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(S), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, "gen data inv S");
+                            break;
+                        default:
+                            if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, "gen data inv S");
+                            break;
+                    }
+                    break;
+                case GEN_CLS(V):
+                    if ((stat = st_stkv_idx(st, gen_var_g_t(ovt), ovt->d[1].u3, &idx)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv call stk idx");
+                    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    break;
+                case GEN_CLS(I):
+                    if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOV), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                    break;
+                default:
+                    return gen_err(g, ci, e, "gen call inv ovt cls stk call");
+            }
+            if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         }
     }
     if (flgs & CFLG(V)) {
@@ -317,9 +363,8 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                 break;
         }
     }
-    if (vs) {
-        if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * vs->l)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    }
+    if (vs && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * vs->l)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (ras && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*) * ras)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (xi > 0) {
         for (ssize_t i = xi - 1; i >= 0; i--) {
             if (i) {
@@ -330,6 +375,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     }
     if (ri > 0) {
         for (ssize_t i = ri - 1; i >= 0; i--) if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        if (flgs & CFLG(V) && ri % 2 != 0 && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     drop_atm_kv_n(st, kv, ci, kvi);
     drop_atm_kv(st, ci, rkv);
@@ -338,6 +384,10 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
 
 static gen_stat call_fn(gen *g, void *s, te *ci, as *a, err **e) {
    return call(g, s, ci, a, e, ci->d[1].p, NULL, ((te*) ci->d[2].p)->d[1].p, ci->d[3].p, 0);
+}
+
+static gen_stat callv_fn(gen *g, void *s, te *ci, as *a, err **e) {
+   return call(g, s, ci, a, e, ci->d[1].p, NULL, ((te*) ci->d[2].p)->d[1].p, ci->d[3].p, CFLG(V));
 }
 
 static gen_stat callnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
@@ -387,6 +437,7 @@ void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U5), callnpr_fn);
+    GEN_OP_A3(g, GEN_OP(CALLV), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callv_fn);
     GEN_OP_A2(g, GEN_OP(CALLV), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLVNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnprnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnprnr_fn);
