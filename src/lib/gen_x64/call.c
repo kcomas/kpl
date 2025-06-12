@@ -82,10 +82,10 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
        for (size_t i = 0; i < xi; i++) printf("%s ", reg_str(xs[i]));
        if (xi > 0) putchar('\n');
      */
-    if (ras % 2 != 0) align++;
-    if (vs && vs->l % 2 != 0) align++;
-    if (ri % 2 != 0) align++;
-    if (flgs & CFLG(V) && align % 2 != 0 && gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (ras & 1) align++;
+    if (vs && vs->l & 1) align++;
+    if (ri & 1) align++;
+    if (flgs & CFLG(V) && align & 1 && gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (ri > 0) {
         for (size_t i = 0; i < ri; i++) if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
@@ -379,7 +379,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     if (ri > 0) {
         for (ssize_t i = ri - 1; i >= 0; i--) if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(rs[i])), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
-    if (flgs & CFLG(V) && align % 2 != 0 && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (flgs & CFLG(V) && align & 1 && gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), as_arg_i(a, ARG_ID(B), U3(sizeof(void*))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     drop_atm_kv_n(st, kv, ci, kvi);
     drop_atm_kv(st, ci, rkv);
     return GEN_STAT(OK);
