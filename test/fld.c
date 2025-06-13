@@ -198,3 +198,22 @@ T(istr) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", U6(0), NULL))
     )), NULL)));
 }
+
+T(fnscope) {
+    V(TPGM(fnscope), RN(AN(NULL, LN(LT(3, "a", U6(0), NULL, "b", U6(0), NULL, "c", U6(0), NULL), L(4,
+        ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST, TN(FN),
+            LN(LT(2, "b", U6(0), NULL, "n", U6(0), TS(F6)),
+                L(1, AN(NULL, EN("b", U6(0), NULL), L(1, EN("n", U6(0), TS(F6)))))))),
+        ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, TN(FN),
+            LN(LT(3, "v", U6(0), NULL, "f", U6(0), NULL, "n", U6(0), TS(F6)), L(3,
+                ON(NULL, DFN, EN("v", U6(0), NULL), SN(F6, F6(4.3))),
+                ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, TN(NF),
+                    LN(LT(2, "n", U6(0), TS(F6), "v", U6(0), NULL),
+                        L(1, ON(NULL, SUB, EN("n", U6(0), TS(F6)), EN("v", U6(0), NULL)))))),
+                AN(NULL, EN("f", U6(0), NULL), L(1, EN("n", U6(0), TS(F6)))))))),
+        ON(NULL, DFN, EN("c", U6(0), NULL), ON(NULL, CST, TN(FN),
+            LN(LT(2, "a", U6(0), NULL, "n", U6(0), TS(F6)), L(1,
+                AN(NULL, EN("a", U6(0), NULL), L(1, EN("n", U6(0), TS(F6)))))))),
+        AN(NULL, EN("c", U6(0), NULL), L(1, SN(F6, F6(9.6))))
+    )), NULL)));
+}
