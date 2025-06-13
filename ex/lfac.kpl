@@ -1,5 +1,7 @@
 
 // import fac.kpl and run
 
+n::10
 l::"./ex/fac.kpl"\l
-l`fac(10)\p1
+c::"{}! = {}"(n;l`fac(n))
+c\p1
