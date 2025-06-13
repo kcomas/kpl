@@ -15,7 +15,8 @@ typedef enum {
     Z_D_FLG(C) = 1 << 3, // chk
     Z_D_FLG(O) = 1 << 4, // opt
     Z_D_FLG(G) = 1 << 5, // gen
-    Z_D_FLG(S) = 1 << 6 // as
+    Z_D_FLG(S) = 1 << 6, // as
+    Z_D_FLG(E) = 1 << 7 // exec
 } z_d_flgs;
 
 err *z(mc *fn, tbl **et, uint8_t dflgs); // file name, exports tbl, dump flgs

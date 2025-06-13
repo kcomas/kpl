@@ -1,6 +1,8 @@
 
 #include "z.h"
 
+#define S_IN 10000
+
 static int usage(const char *name) {
     printf("\e[1musage: %s [opts] file.kpl\n", name);
     printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)\n");
@@ -50,11 +52,20 @@ int main(int argc, char *argv[]) {
         i++;
     }
     run:
+    mc *fn;
     if (i == argc) {
-        HERE("TODO REPL");
-        return usage(argv[0]);
-    }
-    mc *fn = mc_i_cstr(argv[i], &al_mc);
+        if (isatty(STDIN_FILENO)) {
+            HERE("TODO REPL");
+            return usage(argv[0]);
+        }
+        char buf[S_IN];
+        ssize_t rl;
+        fn = mc_i(S_IN, &al_mc);
+        mc_wa(&fn, '{');
+        while ((rl = read(STDIN_FILENO, buf, S_IN)) > 0) mc_wb(&fn, rl, (uint8_t*) buf);
+        mc_wa_v(&fn, 4, '}', '(', ')', '\0');
+        dflgs |= Z_D_FLG(E);
+    } else fn = mc_i_cstr(argv[i], &al_mc);
     tbl *et = NULL;
     err *e = z(fn, &et, dflgs);
     mc_f(fn);

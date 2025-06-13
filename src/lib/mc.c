@@ -86,6 +86,16 @@ void mc_wa(mc **m, uint8_t b) {
     (*m)->d[(*m)->l++] = b;
 }
 
+void mc_wa_v(mc **m, size_t n, ...) {
+    va_list args;
+    va_start(args, n);
+    while (n > 0) {
+        mc_wa(m, (uint8_t) va_arg(args, int));
+        n--;
+    }
+    va_end(args);
+}
+
 void mc_wb(mc **m, size_t l, uint8_t *b) {
     for (size_t i = 0; i < l; i++) mc_wa(m, b[i]);
 }

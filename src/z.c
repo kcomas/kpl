@@ -120,25 +120,27 @@ static err *z_err(mc *fn, err *e) {
 err *z(mc *fn, tbl **et, uint8_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
-    int fd;
-    if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "inv file, all paths relative to exec");
-    struct statx sx;
-    if (statx(fd, "", AT_EMPTY_PATH, STATX_MODE | STATX_SIZE, &sx) == -1) {
+    if (!(dflgs & Z_D_FLG(E))) {
+        int fd;
+        if ((fd = open((char*) fn->d, O_RDONLY)) == -1) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "inv file, all paths relative to exec");
+        struct statx sx;
+        if (statx(fd, "", AT_EMPTY_PATH, STATX_MODE | STATX_SIZE, &sx) == -1) {
+            close(fd);
+            return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
+        }
+        if (S_ISDIR(sx.stx_mode)) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "path is dir");
+        pgm = mc_i(sx.stx_size + APLYLSTS + sizeof(char), &al_mc);
+        pgm->d[0] = '{';
+        if (read(fd, pgm->d + 1, sx.stx_size) == -1) {
+            close(fd);
+            mc_f(pgm);
+            return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
+        }
         close(fd);
-        return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
-    }
-    if (S_ISDIR(sx.stx_mode)) return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), "path is dir");
-    pgm = mc_i(sx.stx_size + APLYLSTS + sizeof(char), &al_mc);
-    pgm->d[0] = '{';
-    if (read(fd, pgm->d + 1, sx.stx_size) == -1) {
-        close(fd);
-        mc_f(pgm);
-        return err_i(&al_err, z_e_p, (void*) mc_f, mc_c(fn), __FUNCTION__);
-    }
-    close(fd);
-    pgm->d[sx.stx_size + 1] = '}';
-    pgm->d[sx.stx_size + 2] = '(';
-    pgm->d[sx.stx_size + 3] = ')';
+        pgm->d[sx.stx_size + 1] = '}';
+        pgm->d[sx.stx_size + 2] = '(';
+        pgm->d[sx.stx_size + 3] = ')';
+    } else pgm = mc_c(fn);
     psr *zp = psr_i_psr(bp, mc_c(pgm));
     te *nh = te_i(3, zp->ta, psr_n_err_f), *an = NULL, *dh;
     if (psr_n(zp, nh, &e) != PSR_STAT(END)) {
