@@ -5,11 +5,10 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_st *st = s;
     if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    uint32_t sub = st->xvc * sizeof(void*) * 2;
-    sub += st->rvc * sizeof(void*);
+    uint32_t sub = st->xvc + st->rvc;
     if (sub) {
-        if (st->rvc & 1) sub += sizeof(void*);
-        if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, sub), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        if (sub & 1) sub++;
+        if (gen_as(a, AS_X64(SUB), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, sub * sizeof(void*)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     if (st->rac >= 3 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (st->rac >= 4 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(11))), as_arg_i(a, ARG_ID(R), U3(R(CX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
@@ -20,11 +19,10 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
 static gen_stat leave_e(gen *g, gen_st *st, te *ci, as *a, err **e)  {
     (void) g;
     (void) e;
-    uint32_t add = st->xvc * sizeof(void*) * 2;
-    add += st->rvc * sizeof(void*);
+    uint32_t add = st->xvc + st->rvc;
     if (add) {
-        if (st->rvc & 1) add += sizeof(void*);
-        if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, add), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+        if (add & 1) add++;
+        if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), U3(R(SP))), bd_arg(a, add * sizeof(void*)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     }
     if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (gen_as(a, AS_X64(RET), NULL, NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
