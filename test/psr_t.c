@@ -145,3 +145,12 @@ const char *TPGM(istr) = "{\n"
                         "   c::\"a: {}, b: {}\"(a;b)\n"
                         "   c\\p1\n"
                         "}()\n";
+
+const char *TPGM(fnscope) = "{\n"
+                            "   a::FN${b(F6(n))}\n"
+                            "   b::FN${v::4.3\n"
+                            "       f::NF${F6(n)-v}\n"
+                            "       f(F6(n))}\n"
+                            "   c::FN${a(F6(n))}\n"
+                            "   c(9.6)\n"
+                            "}()\n";

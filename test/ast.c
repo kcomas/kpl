@@ -180,3 +180,19 @@ T(istr) {
         CN(P1, IN("c"))
     )), NULL)));
 }
+
+T(fnscope) {
+    V(TPGM(fnscope), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("a"), ON(NULL, CST, TN(FN), LN(NULL,
+            L(1, AN(NULL, IN("b"), L(1, AN(NULL, TN(F6), L(1, IN("n"))))))))),
+        ON(NULL, DFN, IN("b"), ON(NULL, CST, TN(FN), LN(NULL, L(3,
+            ON(NULL, DFN, IN("v"), SN(F6, F6(4.3))),
+            ON(NULL, DFN, IN("f"), ON(NULL, CST, TN(NF), LN(NULL, L(1,
+                ON(NULL, SUB, AN(NULL, TN(F6), L(1, IN("n"))), IN("v")))))),
+            AN(NULL, IN("f"), L(1, AN(NULL, TN(F6), L(1, IN("n")))))
+        )))),
+        ON(NULL, DFN, IN("c"), ON(NULL, CST, TN(FN), LN(NULL,
+            L(1, AN(NULL, IN("a"), L(1, AN(NULL, TN(F6), L(1, IN("n"))))))))),
+        AN(NULL, IN("c"), L(1, SN(F6, F6(9.6))))
+    )), NULL)));
+}

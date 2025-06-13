@@ -486,3 +486,18 @@ T(istr) {
     ))});
     te_f(h);
 }
+
+T(fnscope) {
+    te *h = ppnode(psr_r(bpsr(TPGM(fnscope))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), LST(APLY(N(VAR), APLY(N(TYPE), N(VAR)))))),
+        OP(N(VAR), OP(N(TYPE), LST(
+            OP(N(VAR), N(FLT)),
+            OP(N(VAR), OP(N(TYPE), LST(OP(APLY(N(TYPE), N(VAR)), N(VAR))))),
+            APLY(N(VAR), APLY(N(TYPE), N(VAR)))
+        ))),
+        OP(N(VAR), OP(N(TYPE), LST(APLY(N(VAR), APLY(N(TYPE), N(VAR)))))),
+        APLY(N(VAR), N(FLT))
+    ))});
+    te_f(h);
+}
