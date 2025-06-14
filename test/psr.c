@@ -490,6 +490,7 @@ T(istr) {
 T(fnscope) {
     te *h = ppnode(psr_r(bpsr(TPGM(fnscope))));
     V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), APLY(N(TYPE), SYM(N(TYPE)), N(TYPE))),
         OP(N(VAR), OP(N(TYPE), LST(APLY(N(VAR), APLY(N(TYPE), N(VAR)))))),
         OP(N(VAR), OP(N(TYPE), LST(
             OP(N(VAR), N(FLT)),

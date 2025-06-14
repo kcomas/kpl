@@ -31,6 +31,8 @@ make
 
 -d[steps]: show debugging output from p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)
 ./kpl -dps ./ex/ack.kpl # show the paser and assembler output for the file ./ex/ack.kpl
+
+echo "a::1+2;a\p1" | ./kpl # Programs can be read from stdin
 ```
 
 #### Example

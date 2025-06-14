@@ -269,3 +269,10 @@ T(istr) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", FLG(1, LTE_FLG(L)), TS(SG)))
     )), NULL)));
 }
+
+/*
+T(fnscope) {
+    IC(TPGM(fnscope));
+    V(NULL);
+}
+*/

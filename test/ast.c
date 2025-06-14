@@ -182,7 +182,8 @@ T(istr) {
 }
 
 T(fnscope) {
-    V(TPGM(fnscope), RN(AN(NULL, LN(NULL, L(4,
+    V(TPGM(fnscope), RN(AN(NULL, LN(NULL, L(5,
+        ON(NULL, DFN, IN("b"), AN(NULL, TN(FN), L(2, ZN("n", TN(F6)), TN(F6)))),
         ON(NULL, DFN, IN("a"), ON(NULL, CST, TN(FN), LN(NULL,
             L(1, AN(NULL, IN("b"), L(1, AN(NULL, TN(F6), L(1, IN("n"))))))))),
         ON(NULL, DFN, IN("b"), ON(NULL, CST, TN(FN), LN(NULL, L(3,
