@@ -357,6 +357,9 @@ x64_stat x64_cmp_rmbb(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint8_t b);
 // cmp rax, imm32
 x64_stat x64_cmp_rd(size_t *p, uint8_t *m, reg r, uint32_t d);
 
+// cmp qword ptr[rax+dsp8] imm32
+x64_stat x64_cmp_rmbd(size_t *p, uint8_t *m, reg r, uint8_t dsp, uint32_t d);
+
 // ucomisd xmm0, xmm1
 x64_stat x64_ucomisd_xx(size_t *p, uint8_t *m, reg r, reg s);
 

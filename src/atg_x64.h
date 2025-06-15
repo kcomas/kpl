@@ -22,6 +22,8 @@ te *atg_vr_idx_d(gen *g, uint32_t id);
 
 te *var_arg(gen *g, te *lte, x64_type xt);
 
+atg_stat atg_nop(atg *t, gen *g, te *an, err **e);
+
 atg_stat aply_te_g_idx(atg *t, te *an, err **e, size_t *n, te **lte);
 
 atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);

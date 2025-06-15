@@ -277,3 +277,35 @@ T(istr) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", FLG(1, LTE_FLG(L)), TS(SG)))
     ))));
 }
+
+T(fnscope) {
+    IC(TPGM(fnscope));
+    te *fn = TFN(FN, TS(F6), 1, "n", TS(F6), 0);
+    tbl *args = fld_type_tbl_i(true, 1, "n", TS(F6), 0);
+    tbl *scope = fld_type_tbl_i(true, 1, "v", TS(F6), 0);
+    te *ft = TFS(NF, TS(F6), args, scope);
+    V(RN(LN(LT(3, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "a", FLG(-1, LTE_FLG(F)), te_c(fn), "c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(5,
+        ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), NN(T, te_c(fn))),
+        ON(te_c(fn), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
+            LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
+                AN(TS(F6), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
+            )))),
+        ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
+            LN(LT(3, "v", FLG(0, LTE_FLG(L)), TS(F6), "f", FLG(-3, LTE_FLG(F)), te_c(ft), "n", FLG(0, LTE_FLG(A)), TS(F6)), L(3,
+                ON(TS(F6), DFN, EN("v", FLG(0, LTE_FLG(L)), TS(F6)), SN(F6, F6(4.3))),
+                ON(te_c(ft), DFN, EN("f", FLG(-3, LTE_FLG(F)), te_c(ft)), ON(te_c(ft), CST, NN(T, te_c(ft)),
+                    LN(LT(2, "n", FLG(0, LTE_FLG(A)), TS(F6), "v", FLG(0, LTE_FLG(S)), TS(F6)), L(1,
+                        ON(TS(F6), SUB, EN("n", FLG(0, LTE_FLG(A)), TS(F6)), EN("v", FLG(0, LTE_FLG(S)), TS(F6)))))
+                )),
+                AN(TS(F6), EN("f", FLG(-3, LTE_FLG(F)), te_c(ft)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
+            )))),
+            ON(te_c(fn), DFN, EN("c", FLG(-4, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
+                LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)),
+                    L(1, AN(TS(F6), EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), L(1,
+                        EN("n", FLG(0, LTE_FLG(A)), TS(F6)))))))),
+            ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(1,
+                SN(F6, F6(9.6)))))
+    ))));
+    te_f(fn);
+    te_f(ft);
+}

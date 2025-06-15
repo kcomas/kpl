@@ -115,8 +115,11 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
             h = h->d[2].p;
             continue;
         }
-        ast_lst_tbl_e_s_i(lte, si++);
-        ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
+        if (ast_lst_tbl_e_g_f(kv) & LTE_FLG(F)) lte->d[1] = kv->d[1];
+        else {
+            ast_lst_tbl_e_s_i(lte, si++);
+            ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
+        }
         lte->d[2] = P(te_c(kv->d[2].p));
         h = h->d[2].p;
         tc = te_i_te(lte);
@@ -283,6 +286,7 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
 
 static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
     tbl *fa = t->d[3].p;
+    if (!l && fa->i->l == 0) return CHK_STAT(OK);
     if (fa->i->l != l->l) return chk_err(c, an, e, "chk args len");
     te *fh = fa->i->h, *lh = l->h, *ft, *lt;
     while (fh && lh) {

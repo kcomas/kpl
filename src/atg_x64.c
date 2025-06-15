@@ -71,6 +71,7 @@ bool atg_x64_enq(const te *an) {
 x64_type atg_x64_g_t(const te *type) {
     if (!type) return X64_TYPE(N);
     switch (type->d[1].u4) {
+        case TYPE(VD): return X64_TYPE(N);
         case TYPE(U3): return X64_TYPE(U3);
         case TYPE(U4): return X64_TYPE(U4);
         case TYPE(U5): return X64_TYPE(U5);
@@ -155,7 +156,7 @@ static atg_stat ref_vars(atg *t, gen *g, te *an, err **e, tbl *tt, gen_op go, bo
 static atg_stat cst_type_lst_s(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     te *lte = ((te*) ((te*) an->d[0].p)->d[5].p)->d[3].p;
-    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, ast_lst_tbl_e_g_i(lte)), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, g->lbl = ast_lst_tbl_e_g_i(lte)), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if ((stat = ref_vars(t, g, an, e, ((te*) an->d[6].p)->d[3].p, GEN_OP(_END), false)) != ATG_STAT(OK)) return stat;
     return ATG_STAT(OK);
@@ -249,7 +250,7 @@ te *var_arg(gen *g, te *lte, x64_type xt) {
     return NULL;
 }
 
-static atg_stat atg_nop(atg *t, gen *g, te *an, err **e) {
+atg_stat atg_nop(atg *t, gen *g, te *an, err **e) {
     (void) t;
     (void) g;
     (void) an;
@@ -497,6 +498,7 @@ static void vr_ab_nc(gen *g, size_t l, vr **v, un d) {
 
 static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
     atg_stat stat = ATG_STAT(OK);
+    if (!l) return stat;
     uint32_t flgs;
     te *h = l->h, *an, *lte;
     while (h) {
@@ -508,6 +510,7 @@ static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
                 flgs = ast_lst_tbl_e_g_f(lte);
                 if (flgs & LTE_FLG(A)) vr_ab_nc(g, l->l, v, P(gen_arg(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
                 else if (flgs & LTE_FLG(L)) vr_ab_nc(g, l->l, v, P(gen_stkv(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
+                else if (flgs & LTE_FLG(S)) vr_ab_nc(g, l->l, v, P(gen_stka(g, x64_type_to_ref(atg_x64_g_t(lte->d[2].p)), ast_lst_tbl_e_g_i(lte))));
                 else return atg_err(t, an, e, "atg inv lst args FLG");
                 break;
             case AST_CLS(S):
@@ -604,9 +607,10 @@ static atg_stat aply_e_nf(atg *t, gen *g, te *an, err **e) {
         while (ps) {
             if (ast_g_pn(AST_CLS(L), ps, &pn) != AST_STAT(OK)) return atg_err(t, an, e, "atg cant get pn for scope var");
             lt = pn->d[3].p;
-            if (tbl_g_i(lt, lte->d[0], &kv) == TBL_STAT(OK)) {
+            if (lt && tbl_g_i(lt, lte->d[0], &kv) == TBL_STAT(OK)) {
                 flgs = ast_lst_tbl_e_g_f(kv);
                 id = ast_lst_tbl_e_g_i(kv);
+                if (flgs & LTE_FLG(F)) break;
                 if (flgs & LTE_FLG(L)) {
                     vr_ab_nc(g, lt->i->l, &s, P(gen_stkv(g, type_g_x64_type(kv->d[2].p), id)));
                 } else return atg_err(t, an, e, "atg load scope var nyi");
@@ -780,6 +784,7 @@ atg *atg_b(atg *t) {
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(NF), aply_e_nf);
+    atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(TE), aply_e_te);
     atg_a_a(t, TYPE(SG), AST_CLS(S), TYPE(CS), aply_e_cs);
     atg_a_z(t, TYPE(U6), AST_CLS(E), TYPE(ST), z_e_st);

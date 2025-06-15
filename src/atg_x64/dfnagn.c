@@ -79,6 +79,7 @@ void atg_dfn(atg *t) {
     atg_a_o(t, OC(DFN), TYPE(TE), AST_CLS(E), TYPE(TE), AST_CLS(V), TYPE(TE), dfn_tevrst_e_tevrst_vo_tevrst);
     atg_a_o(t, OC(DFN), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(V), TYPE(VR), dfn_tevrst_e_tevrst_vo_tevrst);
     atg_a_o(t, OC(DFN), TYPE(ST), AST_CLS(E), TYPE(ST), AST_CLS(O), TYPE(ST), dfn_tevrst_e_tevrst_vo_tevrst);
+    atg_a_o(t, OC(DFN), TYPE(FN), AST_CLS(E), TYPE(FN), AST_CLS(T), TYPE(FN), atg_nop);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_a_i6_o_i6);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_z_i6_o_i6);
 }
