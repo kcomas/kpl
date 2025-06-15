@@ -115,18 +115,21 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
             h = h->d[2].p;
             continue;
         }
-        if (ast_lst_tbl_e_g_f(kv) & LTE_FLG(F)) lte->d[1] = kv->d[1];
-        else {
-            ast_lst_tbl_e_s_i(lte, si++);
-            ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
+        if (kv->d[2].p && type_g_c(((te*) kv->d[2].p)->d[1].u4) == TYPE_CLS(F)) {
+            te_f(lte);
+            h->d[0] = P(te_c(kv));
+            h = h->d[2].p;
+            continue;
         }
+        ast_lst_tbl_e_s_i(lte, si++);
+        ast_lst_tbl_e_s_f(lte, LTE_FLG(S));
         lte->d[2] = P(te_c(kv->d[2].p));
-        h = h->d[2].p;
         tc = te_i_te(lte);
         tc->d[0] = P(mc_c(lte->d[0].p));
         tc->d[1] = U6(ast_lst_tbl_e_g_i(lte));
         tc->d[2] = P(te_c(lte->d[2].p));
         tbl_a(fst, tc);
+        h = h->d[2].p;
     }
     ((te*) ((te*) an->d[5].p)->d[3].p)->d[4] = P(fst);
     return CHK_STAT(OK);
