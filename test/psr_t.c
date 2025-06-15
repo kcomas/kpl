@@ -153,5 +153,5 @@ const char *TPGM(fnscope) = "{\n"
                             "       f::NF${F6(n)-v}\n"
                             "       f(F6(n))}\n"
                             "   c::FN${a(F6(n))}\n"
-                            "   c(9.6)\n"
+                            "   c(9.6)\\p1\n"
                             "}()\n";

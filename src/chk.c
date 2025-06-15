@@ -83,12 +83,24 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     te *p = an->d[0].p;
     if (p->d[2].u4 == AST_CLS(O) && p->d[4].u4 == OC(DFN) && p->d[5].p && ((te*) p->d[5].p)->d[2].u4 == AST_CLS(E)) { // set var so functions can be used before define
         lte = ((te*) p->d[5].p)->d[3].p;
-        lte->d[2] = P(te_c(((te*) an->d[5].p)->d[3].p));
+        if (!lte->d[2].p) lte->d[2] = P(te_c(((te*) an->d[5].p)->d[3].p));
         p->d[3] = P(te_c(lte->d[2].p));
         ast_lst_tbl_e_s_f(lte, LTE_FLG(F));
         ast_lst_tbl_e_s_i(lte, c->fnlc--);
     }
     return CHK_STAT(OK);
+}
+
+te *chk_g_pn_lte(te *an, const mc *s) {
+    te *plns = an, *pln, *kv;
+    do {
+        pln = NULL;
+        if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
+        plns = pln->d[0].p;
+        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) return kv;
+        // TODO don't continue past FN
+    } while (pln);
+    return NULL;
 }
 
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
@@ -115,18 +127,6 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     }
     ((te*) ((te*) an->d[5].p)->d[3].p)->d[4] = P(fst);
     return CHK_STAT(OK);
-}
-
-te *chk_g_pn_lte(te *an, const mc *s) {
-    te *plns = an, *pln, *kv;
-    do {
-        pln = NULL;
-        if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
-        plns = pln->d[0].p;
-        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) return kv;
-        // TODO don't continue past FN
-    } while (pln);
-    return NULL;
 }
 
 static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
@@ -394,9 +394,15 @@ static chk_stat chk_aply_cs(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_aply_(chk *c, te *an, err **e) {
-    // TODO find tgt from parents
-    return chk_err(c, an, e, "TODO");
+static chk_stat chk_aply_e_(chk *c, te *an, err **e) {
+    te *tgt = ((te*) an->d[4].p)->d[3].p, *pn;
+    if (!(tgt = chk_g_pn_lte(an, tgt->d[0].p))) return chk_err(c, an, e, "chk cannot get aply tgt type");
+    te_f(((te*) an->d[4].p)->d[3].p);
+    ((te*) an->d[4].p)->d[3] = P(te_c(tgt));
+    if (ast_g_pn(AST_CLS(L), an, &pn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot gent aply pn");
+    if (tbl_s(pn->d[3].p, tgt->d[0], &tgt) != TBL_STAT(OK)) return chk_err(c, an, e, "chk inv aply pn lst update");
+    te_f(tgt);
+    return chk_aply_e_fn(c, an, e);
 }
 
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
@@ -555,7 +561,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_aply_e_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
     CHK_AA(c, chk_aply_z_fn, AST_CLS(A), TYPE(_N), AST_CLS(Z), TYPE(FN));
     CHK_AA(c, chk_aply_cs, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(CS));
-    CHK_AA(c, chk_aply_, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(_N));
+    CHK_AA(c, chk_aply_e_, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(_N));
     // ops
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));

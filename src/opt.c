@@ -256,16 +256,12 @@ uint32_t opt_exp_flgs(te *x) {
 
 void opt_exp_tbl_f(tbl *et) {
     if (!et) return;
-    te *h = et->i->h, *kv;
+    te *volatile h = et->i->h, *kv;
     while (h) {
         kv = h->d[0].p;
         if (kv->d[2].p && type_is_ref(((te*) kv->d[2].p)->d[1].u4)) {
             frfn *fn = type_ref_g_des(((te*) kv->d[2].p)->d[1].u4);
-            if (fn) {
-                X64_RS();
-                fn(kv->d[1].p);
-                X64_RR();
-            }
+            if (fn) fn(kv->d[1].p); // need volatile for jit
         }
         h = h->d[2].p;
     }

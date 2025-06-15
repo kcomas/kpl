@@ -498,7 +498,7 @@ T(fnscope) {
             APLY(N(VAR), APLY(N(TYPE), N(VAR)))
         ))),
         OP(N(VAR), OP(N(TYPE), LST(APLY(N(VAR), APLY(N(TYPE), N(VAR)))))),
-        APLY(N(VAR), N(FLT))
+        CMD(APLY(N(VAR), N(FLT)))
     ))});
     te_f(h);
 }

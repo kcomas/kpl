@@ -137,6 +137,7 @@ chk_stat chk_n(chk *c, te *an, err **e) {
             if ((stat = chk_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
             break;
         case AST_CLS(T):
+            break;
         case AST_CLS(E):
         case AST_CLS(S):
             break;

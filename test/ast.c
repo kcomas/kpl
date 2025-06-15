@@ -194,6 +194,6 @@ T(fnscope) {
         )))),
         ON(NULL, DFN, IN("c"), ON(NULL, CST, TN(FN), LN(NULL,
             L(1, AN(NULL, IN("a"), L(1, AN(NULL, TN(F6), L(1, IN("n"))))))))),
-        AN(NULL, IN("c"), L(1, SN(F6, F6(9.6))))
+        CN(P1, AN(NULL, IN("c"), L(1, SN(F6, F6(9.6)))))
     )), NULL)));
 }

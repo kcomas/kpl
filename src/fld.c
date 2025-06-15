@@ -107,26 +107,6 @@ static bool op_lr_lst_scope_t(const te *an) {
     return l->d[2].u4 == AST_CLS(L) && r->d[2].u4 == AST_CLS(L);
 }
 
-static fld_stat e_lst_type_o_def_r(fld *f, te **an, err **e) {
-    te *lte = te_c(((te*) (*an)->d[6].p)->d[3].p);
-    te *lt = (*an)->d[6].p;
-    if (lt->d[2].u4 == AST_CLS(L)) {
-        lte->d[2] = P(type_s_i(f->a->ta, NULL, TYPE(_L)));
-        lte->d[3] = P(te_c(lt));
-    } else if (lt->d[2].u4 == AST_CLS(T)) {
-        lte->d[2] = P(te_c(lt->d[3].p));
-        ast_lst_tbl_e_s_f(lte, LTE_FLG(T));
-    } else fld_err(f, *an, e, "fld inv not L or T");
-    te_f(*an);
-    *an = NULL;
-    return FLD_STAT(OK);
-}
-
-static bool e_lst_type_o_def_t(const te *an) {
-    if (!an->d[5].p || !an->d[6].p) return false;
-    return an->d[4].u4 == OC(DFN) && ((te*) an->d[5].p)->d[3].u4 == AST_CLS(E) && (((te*) an->d[6].p)->d[2].u4 == AST_CLS(T) || ((te*) an->d[6].p)->d[2].u4 == AST_CLS(L));
-}
-
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
     (void) f;
     // TODO ops that are not folded
@@ -284,7 +264,6 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
-    fld_a(f, AST_CLS(O), e_lst_type_o_def_t, e_lst_type_o_def_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);
