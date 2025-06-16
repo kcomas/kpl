@@ -92,13 +92,20 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
 }
 
 te *chk_g_pn_lte(te *an, const mc *s) {
+    bool pf = false; // past function
     te *plns = an, *pln, *kv;
     do {
         pln = NULL;
         if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
         plns = pln->d[0].p;
-        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) return kv;
-        // TODO don't continue past FN
+        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) {
+            if (pf && ((te*) kv->d[2].p)->d[1].u4 != TYPE(FN)) return NULL;
+            return kv;
+        }
+        if (plns->d[2].u4 == AST_CLS(O) && plns->d[4].u4 == OC(CST)) {
+            if (ast_g_t(plns->d[5].p, &kv) != AST_STAT(OK)) return NULL;
+            if (kv->d[1].u4 == TYPE(FN)) pf = true;
+        }
     } while (pln);
     return NULL;
 }
