@@ -824,3 +824,24 @@ T(fnscope) {
     gen_f(gc);
     AR(0);
 }
+
+TO(or) {
+    AI(TPGM(or), 0, 1);
+    te *cn = RN(SN(_G, U5(0)));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(0)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(1)), NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(0)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(EQ), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(0)), gen_lbl(gc, 2)));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(I6), 0), gen_stkv(gc, X64_TYPE(I6), 0), gen_stkv(gc, X64_TYPE(I6), 1)));
+    S(gen_a(gc, GEN_OP(CALLVNPR), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(I6), 0)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 2), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    AR(0);
+}

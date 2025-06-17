@@ -502,3 +502,13 @@ T(fnscope) {
     ))});
     te_f(h);
 }
+
+T(or) {
+    te *h = ppnode(psr_r(bpsr(TPGM(or))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), N(INT)),
+        OP(N(VAR), N(INT)),
+        OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR)), CMD(APLY(OP(N(NONE), N(NONE)), N(VAR), N(VAR))))
+    ))});
+    te_f(h);
+}

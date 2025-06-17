@@ -18,11 +18,13 @@ const char *ast_oc_str(oc o) {
         "MULA",
         "DIV",
         "EQ",
+        "NE",
         "GT",
         "GTE",
         "LT",
         "LTE",
         "AND",
+        "OR",
         "CSG",
         "CNCT",
         "CNCTA",
@@ -270,6 +272,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(LT), OC(LT));
     ast_t_a(a, TCUST(LTE), OC(LTE));
     ast_t_a(a, TCUST(AND), OC(AND));
+    ast_t_a(a, TCUST(OR), OC(OR));
     ast_t_a(a, TCUST(CNCT), OC(CNCT));
     ast_t_a(a, TCUST(CNCTA), OC(CNCTA));
     // cmds

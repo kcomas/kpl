@@ -197,3 +197,13 @@ T(fnscope) {
         CN(P1, AN(NULL, IN("c"), L(1, SN(F6, F6(9.6)))))
     )), NULL)));
 }
+
+T(or) {
+    V(TPGM(or), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("a"), SN(I6, I6(0))),
+        ON(NULL, DFN, IN("b"), SN(I6, I6(1))),
+        ON(NULL, IF,
+            AN(NULL, ON(NULL, OR, NULL, NULL), L(2, IN("a"), IN("b"))),
+            CN(P1, AN(NULL, ON(NULL, ADD, NULL, NULL), L(2, IN("a"), IN("b")))))
+    )), NULL)));
+}

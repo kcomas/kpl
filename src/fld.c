@@ -65,16 +65,22 @@ static fld_stat op_lr_lst_r(fld *f, te **an, err **e) {
     return enlst(f, (te**) &(*an)->d[6].p, e);
 }
 
-static bool op_lr_lst_t(const te *an) {
-    te *l = an->d[5].p, *r = an->d[6].p;
+static bool lr_lst_t(const te *an) {
     switch (an->d[4].u4) {
         case OC(LOOP):
         case OC(IF):
         case OC(MTCH):
+        case OC(OR):
             break;
         default:
             return false;
     }
+    return true;
+}
+
+static bool op_lr_lst_t(const te *an) {
+    te *l = an->d[5].p, *r = an->d[6].p;
+    if ((!l && !r) || !lr_lst_t(an)) return false;
     return (!l || l->d[2].u4 != AST_CLS(L)) || (!r || r->d[2].u4 != AST_CLS(L));
 }
 
@@ -103,7 +109,7 @@ static fld_stat op_lr_lst_scope_r(fld *f, te **an, err **e) {
 
 static bool op_lr_lst_scope_t(const te *an) {
     te *l = an->d[5].p, *r = an->d[6].p;
-    if (an->d[4].u4 != OC(LOOP) && an->d[4].u4 != OC(IF)) return false;
+    if ((!l && !r) || !lr_lst_t(an)) return false;
     return l->d[2].u4 == AST_CLS(L) && r->d[2].u4 == AST_CLS(L);
 }
 

@@ -155,3 +155,9 @@ const char *TPGM(fnscope) = "{\n"
                             "   c::FN${a(F6(n))}\n"
                             "   c(9.6)\\p1\n"
                             "}()\n";
+
+const char *TPGM(or) = "{\n"
+                       " a::0\n"
+                       " b::1\n"
+                       " |(a;b)?+(a;b)\\p1\n"
+                       "}()\n";

@@ -1,0 +1,5 @@
+
+// or example
+a::1
+b::0
+|(a;b)?+(a;b)\p1

@@ -301,3 +301,17 @@ T(fnscope) {
     te_f(fn);
     te_f(ft);
 }
+
+T(or) {
+    IC(TPGM(or));
+    te *ea = EN("a", FLG(0, LTE_FLG(L)), TS(I6)), *eb = EN("b", FLG(1, LTE_FLG(L)), TS(I6));
+    V(RN(AN(TS(VD), LN(LT(2, "a", FLG(0, LTE_FLG(L)), TS(I6), "b", FLG(1, LTE_FLG(L)), TS(I6)), L(3,
+        ON(TS(I6), DFN, te_c(ea), SN(I6, I6(0))),
+        ON(TS(I6), DFN, te_c(eb), SN(I6, I6(1))),
+        ON(TS(VD), IF,
+            LN(NULL, L(1, ON(TS(BL), OR, LN(NULL, L(1, ON(TS(BL), NE, te_c(ea), SN(I6, I6(0))))), LN(NULL, L(1, ON(TS(BL), NE, te_c(eb), SN(I6, I6(0)))))))),
+            LN(NULL, L(1, ON(TS(VD), DUMP, SN(U5, U5(1)), ON(TS(I6), ADD, te_c(ea), te_c(eb))))))
+    )), NULL)));
+    te_f(ea);
+    te_f(eb);
+}

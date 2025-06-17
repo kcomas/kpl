@@ -105,6 +105,8 @@ un gen_var_hsh(const te *var);
 
 gen_stat gen_a(gen *g, size_t op_id, te *restrict ac1, te *restrict ac2, te *restrict ac3);
 
+gen_stat gen_u_fn(gen *g, te *ci);
+
 gen_stat gen_n(gen *g, void *st, as *a, err **e);
 
 void gen_f(gen *g);

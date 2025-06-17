@@ -94,6 +94,10 @@ static atg_stat dump_vd_s_u5_e_i6(atg *t, gen *g, te *an, err **e) {
     return dump_vd(t, g, an, e, var_arg(g, ((te*) an->d[6].p)->d[3].p, X64_TYPE(I6)));
 }
 
+static atg_stat dump_vd_s_u5_o_i6(atg *t, gen *g, te *an, err **e) {
+    return dump_vd(t, g, an, e, te_c(atg_g_g(an->d[6].p)->d[1].p));
+}
+
 static atg_stat dump_vd_s_u5_e_f6(atg *t, gen *g, te *an, err **e) {
     return dump_vd(t, g, an, e, var_arg(g, ((te*) an->d[6].p)->d[3].p, X64_TYPE(F6)));
 }
@@ -203,6 +207,7 @@ void atg_dump(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(U6), dump_vd_s_u5_aply);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(F6), dump_vd_s_u5_aply);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(I6), dump_vd_s_u5_e_i6);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(O), TYPE(I6), dump_vd_s_u5_o_i6);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(F6), dump_vd_s_u5_e_f6);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(SG), dump_vd_s_u5_e_sg);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(TE), dump_vd_s_u5_e_te);

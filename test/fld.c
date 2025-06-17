@@ -218,3 +218,15 @@ T(fnscope) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("c", U6(0), NULL), L(1, SN(F6, F6(9.6)))))
     )), NULL)));
 }
+
+TO(or) {
+    V(TPGM(or), RN(AN(NULL, LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("a", U6(0), NULL), SN(I6, I6(0))),
+        ON(NULL, DFN, EN("b", U6(0), NULL), SN(I6, I6(1))),
+        ON(NULL, IF,
+            LN(NULL, L(1, ON(NULL, OR,
+                LN(NULL, L(1, EN("a", U6(0), NULL))),
+                LN(NULL, L(1, EN("b", U6(0), NULL)))))),
+            LN(NULL, L(1, ON(TS(VD), DUMP, SN(U5, U5(1)), ON(NULL, ADD, EN("a", U6(0), NULL), EN("b", U6(0), NULL))))))
+    )), NULL)));
+}
