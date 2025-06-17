@@ -825,7 +825,7 @@ T(fnscope) {
     AR(0);
 }
 
-TO(or) {
+T(or) {
     AI(TPGM(or), 0, 1);
     te *cn = RN(SN(_G, U5(0)));
     gen *gc = gen_i_gen(bg);

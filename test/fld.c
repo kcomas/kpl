@@ -219,7 +219,7 @@ T(fnscope) {
     )), NULL)));
 }
 
-TO(or) {
+T(or) {
     V(TPGM(or), RN(AN(NULL, LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(3,
         ON(NULL, DFN, EN("a", U6(0), NULL), SN(I6, I6(0))),
         ON(NULL, DFN, EN("b", U6(0), NULL), SN(I6, I6(1))),
