@@ -207,3 +207,13 @@ T(or) {
             CN(P1, AN(NULL, ON(NULL, ADD, NULL, NULL), L(2, IN("a"), IN("b")))))
     )), NULL)));
 }
+
+T(un) {
+    V(TPGM(un), RN(AN(NULL, LN(NULL, L(5,
+        ON(NULL, DFN, IN("u"), ZN("a", SN(I6, I6(1)))),
+        ON(NULL, AGN, IN("u"), ZN("b", SN(F6, F6(2.2)))),
+        CN(P1, IN("u")),
+        CN(P1, ZN("b", IN("u"))),
+        CN(P1, ZN("a", IN("u")))
+    )), NULL)));
+}

@@ -60,8 +60,8 @@ static uint8_t props[TYPE(_END)] = {
     [TYPE(VR)] = REF | DES,
     [TYPE(LT)] = REF | DES,
     [TYPE(MC)] = REF,
-    [TYPE(UN)] = REF | DES,
     [TYPE(ST)] = REF | DES,
+    [TYPE(UN)] = REF | DES,
     [TYPE(TE)] = REF | DES,
     [TYPE(KV)] = REF | DES
 };
@@ -133,6 +133,12 @@ te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t) {
     hh->d[1] = U4(h);
     hh->d[2] = P(t);
     return hh;
+}
+
+ssize_t type_h_cmp(un a, un b) {
+    mc *ma = ((te*) a.p)->d[0].p;
+    mc *mb = ((te*) b.p)->d[0].p;
+    return strcmp((char*) ma->d, (char*) mb->d);
 }
 
 static void type_f_f(void *p) {

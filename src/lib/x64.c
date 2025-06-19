@@ -8,7 +8,15 @@ static size_t pg_algn(size_t size) {
 }
 
 uint8_t *x64_mmap(size_t size) {
-    return mmap(NULL, pg_algn(size), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    return mmap(NULL, pg_algn(size), PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+}
+
+void x64_mem_lock(size_t size, uint8_t *m) {
+    mprotect(m, pg_algn(size), PROT_READ | PROT_EXEC);
+}
+
+void x64_mem_unlock(size_t size, uint8_t *m) {
+    mprotect(m, pg_algn(size), PROT_WRITE);
 }
 
 void x64_munmap(size_t size, uint8_t *m) {
@@ -18,10 +26,6 @@ void x64_munmap(size_t size, uint8_t *m) {
 size_t p = 0;
 
 uint8_t *m = NULL;
-
-#ifndef JIT_M
-    #define JIT_M 1e6
-#endif
 
 static __attribute__((constructor)) void x64_con(void) {
     m = x64_mmap(JIT_M);

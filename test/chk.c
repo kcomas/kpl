@@ -315,3 +315,18 @@ T(or) {
     te_f(ea);
     te_f(eb);
 }
+
+T(un) {
+    IC(TPGM(un));
+    te *u = TH(UN, 2, "a", TS(I6), "b", TS(F6));
+    te *eu = EN("u", FLG(0, LTE_FLG(L)), te_c(u));
+    V(RN(AN(TS(VD), LN(LT(1, "u", FLG(0, LTE_FLG(L)), te_c(u)), L(5,
+        ON(te_c(u), DFN, te_c(eu), ZTN("a", TS(VD), SN(I6, I6(1)))),
+        ON(te_c(u), AGN, te_c(eu), ZTN("b", TS(VD), SN(F6, F6(2.2)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), te_c(eu)),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("b", TS(F6), te_c(eu))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("a", TS(I6), te_c(eu)))
+    )), NULL)));
+    te_f(u);
+    te_f(eu);
+}

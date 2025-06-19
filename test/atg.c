@@ -61,7 +61,7 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
             err_f(e);
         }
         A(gstat == GEN_STAT(OK), "gen_n");
-        as_stat astat = as_n(t->a, &p, m, &e);
+        as_stat astat = as_n(t->a, &p, JIT_M, m, &e);
         if (e) {
             err_p(e, true);
             err_f(e);
@@ -119,7 +119,7 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
 static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
     E();
     err *e = NULL;
-    A(as_n(t->a, &p, m, &e) == AS_STAT(OK), "as_n");
+    A(as_n(t->a, &p, JIT_M, m, &e) == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t el = ((te*) an->d[4].p)->d[4].u5;
     A(el == elcmp, "el");
@@ -845,3 +845,12 @@ T(or) {
     gen_f(gc);
     AR(0);
 }
+
+/*
+T(un) {
+    AI(TPGM(un), 1, 1);
+    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "a", TS(I6), "b", TS(F6)));
+    D(utd, NULL);
+    V(NULL, NULL);
+}
+*/

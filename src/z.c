@@ -69,7 +69,7 @@ static __attribute__((constructor)) void z_con(void) {
     bf = fld_b(fld_i(&z_al, &al_te, &al_err, ati, ali, NULL, mktbls(AST_CLS(_))));
     bc = chk_b(chk_i(&z_al, &al_te, &al_lst, &al_tbl, &al_err, chk_err, mktbl, NULL));
     bo = opt_b(fld_i(&z_al, &al_te, &al_err, ati, ali, NULL, mktbls(AST_CLS(_))));
-    bs = as_b(as_i(&z_al, &al_te, &al_lst, &al_err, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
+    bs = as_b(as_i(&z_al, &al_te, &al_lst, &al_err, x64_mem_unlock, x64_mem_lock, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bst = gen_st_i(&z_al, &al_te, mktbls(10), mktbls(10), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &al_vr, &al_err, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bt = atg_b(atg_i(&z_al, &al_te, &al_err, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)),gen_i_gen(bg), as_i_as(bs)));
@@ -254,7 +254,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                     gen_f(dg);
                     return z_err(fn, e);
                 }
-                if (as_n(zt->a, &p, m, &e) != AS_STAT(OK)) {
+                if (as_n(zt->a, &p, JIT_M, m, &e) != AS_STAT(OK)) {
                     ast_f(za);
                     atg_f(zt);
                     te_f(an);
@@ -308,7 +308,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         gen_f(zg);
     }
     ast_f(za);
-    if (as_n(zt->a, &p, m, &e) != AS_STAT(OK)) {
+    if (as_n(zt->a, &p, JIT_M, m, &e) != AS_STAT(OK)) {
         atg_f(zt);
         te_f(an);
         mc_f(pgm);

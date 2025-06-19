@@ -161,3 +161,11 @@ const char *TPGM(or) = "{\n"
                        " b::1\n"
                        " |(a;b)?+(a;b)\\p1\n"
                        "}()\n";
+
+const char *TPGM(un) = "{\n"
+                       "    u::1`a\n"
+                       "    u:2.2`b\n"
+                       "    u\\p1\n"
+                       "    u`b\\p1\n"
+                       "    u`a\\p1\n"
+                       "}()\n";

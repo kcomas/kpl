@@ -35,9 +35,12 @@ typedef tbl *op_tbl_i(void);
 
 typedef err_d_p *as_err_g_p(as_stat stat);
 
+typedef void as_mem_fn(size_t ms, uint8_t *m);
+
 typedef struct _as {
     ssize_t r;
     const alfr *af, *ta, *la, *ea;
+    as_mem_fn *msf, *mef; // mem start fn, mem end fn
     as_err_g_p *gep;
     op_tbl_i *oti;
     tbl *lbls, *ops;
@@ -48,7 +51,7 @@ typedef bool as_code_fn(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restr
 
 typedef bool as_lbl_fn(as *a, uint8_t *m, te *restrict lc, te *restrict fc);
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code);
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_mem_fn msf, as_mem_fn mef, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code);
 
 as *as_i_as(const as *a);
 
@@ -81,6 +84,6 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
 #define AS_A1(A, OP_ID, ARG1) AS_A2(A, OP_ID, ARG1, NULL)
 #define AS_A0(A, OP_ID) AS_A1(A, OP_ID, NULL)
 
-as_stat as_n(as *a, size_t *p, uint8_t *m, err **e);
+as_stat as_n(as *a, size_t *p, size_t ms, uint8_t *m, err **e);
 
 void as_f(as *a);

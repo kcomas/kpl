@@ -87,6 +87,8 @@ te *type_v_i(const alfr *af, te *restrict p, type v, te *restrict t);
 
 te *type_h_i(const alfr *af, te *restrict p, type h, tbl *restrict t);
 
+ssize_t type_h_cmp(un a, un b);
+
 te *type_f_i(const alfr *af, te *restrict p, type f, te *restrict r, tbl *restrict a, tbl *restrict s);
 
 te *type_i(const alfr *af, te *restrict p, type t);

@@ -36,7 +36,7 @@ gen_stat gen_type_aff(gen *g, te *t, err **e, const char *pf) {
     return GEN_STAT(OK);
 }
 
-static gen_stat h_des(gen *bg, te *t, gen **g, err **e) {
+static gen_stat st_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
     if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
@@ -76,7 +76,15 @@ gen_stat gen_type_des(gen *bg, te *t, gen **g, void **fn, err **e) {
         case TYPE_CLS(V):
             return v_des(bg, t, fn, e);
         case TYPE_CLS(H):
-            return h_des(bg, t, g, e);
+            switch(t->d[1].u4) {
+                case TYPE(ST):
+                    return st_des(bg, t, g, e);
+                case TYPE(UN):
+                    STOP("TODO HH DES");
+                default:
+                    break;
+            }
+            break;
         case TYPE_CLS(C):
             switch (t->d[1].u4) {
                 case TYPE(TE):

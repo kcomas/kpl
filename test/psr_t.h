@@ -47,3 +47,5 @@ extern const char *TPGM(istr);
 extern const char *TPGM(fnscope);
 
 extern const char *TPGM(or);
+
+extern const char *TPGM(un);

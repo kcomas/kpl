@@ -512,3 +512,15 @@ T(or) {
     ))});
     te_f(h);
 }
+
+T(un) {
+    te *h = ppnode(psr_r(bpsr(TPGM(un))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), SYM(N(INT))),
+        OP(N(VAR), SYM(N(FLT))),
+        CMD(N(VAR)),
+        CMD(SYM(N(VAR))),
+        CMD(SYM(N(VAR)))
+    ))});
+    te_f(h);
+}

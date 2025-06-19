@@ -230,3 +230,13 @@ T(or) {
             LN(NULL, L(1, ON(TS(VD), DUMP, SN(U5, U5(1)), ON(NULL, ADD, EN("a", U6(0), NULL), EN("b", U6(0), NULL))))))
     )), NULL)));
 }
+
+T(un) {
+    V(TPGM(un), RN(AN(NULL, LN(LT(1, "u", U6(0), NULL), L(5,
+        ON(NULL, DFN, EN("u", U6(0), NULL), ZN("a", SN(I6, I6(1)))),
+        ON(NULL, AGN, EN("u", U6(0), NULL), ZN("b", SN(F6, F6(2.2)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("u", U6(0), NULL)),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("b", EN("u", U6(0), NULL))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("a", EN("u", U6(0), NULL)))
+    )), NULL)));
+}

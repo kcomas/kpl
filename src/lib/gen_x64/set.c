@@ -83,6 +83,12 @@ static gen_stat set_id_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat set_ix_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO set_ix");
+}
+
 static gen_stat set_ui_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv;
@@ -180,6 +186,8 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(V), X64_TYPE(M), set_ivu_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(V), X64_TYPE(F6), set_ivx_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U5), set_id_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U6), set_id_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(F6), set_ix_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(I), X64_TYPE(I6), set_ui_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(I), X64_TYPE(U6), set_ui_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(M), set_ui_fn);

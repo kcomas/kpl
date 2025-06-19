@@ -25,6 +25,22 @@ static chk_stat chk_op_dfn_e_t(chk *c, te *an, err **e) {
     return chk_op_e_n_svoe_dfn_flg(c, an, e, 0);
 }
 
+#define UN_TBL_S 5
+
+static chk_stat chk_dfn_agn_un_e_z(chk *c, te *an, err **e) {
+    te *lte = ((te*) an->d[5].p)->d[3].p, *z = an->d[6].p, *rt;
+    if (!lte->d[2].p) {
+        lte->d[2] = P(type_h_i(c->ta, NULL, TYPE(UN), tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(UN_TBL_S, c->ta, NULL))));
+        ast_lst_tbl_e_s_f(lte, LTE_FLG(L));
+    }
+    if (ast_g_t(z->d[4].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk un type g inv");
+    tbl *tt = ((te*) lte->d[2].p)->d[2].p;
+    type_tbl_a(tt, c->ta, mc_c(z->d[5].p), 0, te_c(rt));
+    lst_s(tt->i, type_h_cmp);
+    an->d[3] = P(te_c(lte->d[2].p));
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_agn_a_o(chk *c, te *an, err **e) {
     chk_stat stat;
     te *lt, *rt;
@@ -57,6 +73,8 @@ void chk_dfnagn(chk *c) {
     CHK_AA(c, chk_op_dfn_e_t, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(T), TYPE(FN));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(NF), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(NF), AST_CLS(O), TYPE(NF));
+    CHK_AA(c, chk_dfn_agn_un_e_z, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(Z), TYPE(VD));
+    CHK_AA(c, chk_dfn_agn_un_e_z, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(E), TYPE(UN), AST_CLS(Z), TYPE(VD));
     CHK_AA(c, chk_agn_a_o, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_l_z_r, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6));
 }

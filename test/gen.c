@@ -17,7 +17,7 @@ T(b) {
     gen_st_p(st);
     p = 0;
     e = NULL;
-    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    A(as_n(a, &p, JIT_M, m, &e) == AS_STAT(OK), "as");
     gen_p(g, m);
     uint64_t arg1 = 3, arg2 = 4;
     uint64_t r = ((uint64_t(*)(uint64_t, uint64_t)) m)(arg1, arg2);
@@ -59,7 +59,7 @@ T(call) {
     gen_st_f(st);
     gen_f(gc);
     p = 0;
-    as_stat astat = as_n(a, &p, m, &e);
+    as_stat astat = as_n(a, &p, JIT_M, m, &e);
     if (e) err_p(e, true);
     A(astat == AS_STAT(OK), "as");
     as_code_p(a, m);

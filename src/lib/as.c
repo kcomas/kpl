@@ -1,13 +1,15 @@
 
 #include "as.h"
 
-as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code) {
+as *as_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, as_mem_fn msf, as_mem_fn mef, as_err_g_p gep, op_tbl_i oti, tbl *lbls, lst *code) {
     as *a = af->a(sizeof(as));
     a->r = 1;
     a->af = af;
     a->ta = ta;
     a->la = la;
     a->ea = ea;
+    a->msf = msf;
+    a->mef = mef;
     a->gep = gep;
     a->oti = oti;
     a->lbls = lbls;
@@ -24,6 +26,8 @@ as *as_i_as(const as *a) {
     aa->ta = a->ta;
     aa->la = a->la;
     aa->ea = a->ea;
+    aa->msf = a->msf;
+    aa->mef = a->mef;
     aa->gep = a->gep;
     aa->oti = a->oti;
     aa->lbls = tbl_i_tbl(a->lbls);
@@ -171,7 +175,8 @@ as_stat as_a(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *rest
     return AS_STAT(OK);
 }
 
-as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
+as_stat as_n(as *a, size_t *p, size_t ms, uint8_t *m, err **e) {
+    a->msf(ms, m);
     te *h = a->code->h;
     while (h) {
         te *c = h->d[0].p;
@@ -180,6 +185,7 @@ as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
             as_code_fn *fn = c->d[6].p;
             if (!fn || !fn(a, c, p, m, c->d[2].p, c->d[3].p, c->d[4].p, c->d[5].p)) {
                 *e = err_i(a->ea, a->gep(AS_STAT(CODE)), (void*) te_f, te_c(c), "as code");
+                a->mef(ms, m);
                 return AS_STAT(INV);
             }
             c->d[9] = U6(*p - c->d[8].u6);
@@ -194,6 +200,7 @@ as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
             as_lbl_fn *lfn = ((te*) lh->d[0].p)->d[7].p;
             if (!lfn || !lfn(a, m, lbl->d[1].p, lh->d[0].p)) {
                 *e = err_i(a->ea, a->gep(AS_STAT(LBL)), (void*) te_f, te_c(lbl), "as lbl");
+                a->mef(ms, m);
                 return AS_STAT(INV);
             }
             lh = lh->d[2].p;
@@ -208,10 +215,12 @@ as_stat as_n(as *a, size_t *p, uint8_t *m, err **e) {
         as_dq_fn *dfn = dqe->d[3].p;
         if (!dfn || !dfn(a, p, m, dqe)) {
             *e = err_i(a->ea, a->gep(AS_STAT(DATA)), (void*) te_f, te_c(dqe), "as data");
+            a->mef(ms, m);
             return AS_STAT(INV);
         }
         h = h->d[2].p;
     }
+    a->mef(ms, m);
     return AS_STAT(OK);
 }
 
