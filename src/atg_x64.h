@@ -36,6 +36,10 @@ atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);
 
 atg_stat call_npr(gen_op *go, const te *an);
 
+extern const char *atg_un_inv_str;
+
+void atg_un_inv_p(void *p);
+
 extern const char *atg_dump_strs[TYPE(_END)];
 
 extern const char *atg_dump_end;

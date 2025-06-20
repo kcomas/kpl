@@ -90,6 +90,18 @@ AXDXL(lt, COMISD, JB);
 VXDXL(gte, COMISD, JAE);
 VXDXL(lt, COMISD, JB);
 
+static gen_stat eq_iudul_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO ne_iudul");
+}
+
+static gen_stat ne_iudul_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO ne_iudul");
+}
+
 static gen_stat gt_auiul_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv;
@@ -106,10 +118,12 @@ void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_audul_fn);
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), eq_axdxl_fn);
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), eq_vsdsl_fn);
+    GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(I), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_iudul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), ne_auaul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), ne_audul_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), ne_axdxl_fn);
     GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), ne_vsdsl_fn);
+    GEN_OP_A3(g, GEN_OP(NE), GEN_CLS(I), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), ne_iudul_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), gt_auaul_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_asasl_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_asdsl_fn);

@@ -89,10 +89,6 @@ typedef enum {
 // map page aligned
 uint8_t *x64_mmap(size_t size);
 
-void x64_mem_lock(size_t size, uint8_t *m);
-
-void x64_mem_unlock(size_t size, uint8_t *m);
-
 // unmap page aligned
 void x64_munmap(size_t size, uint8_t *m);
 

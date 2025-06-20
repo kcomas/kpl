@@ -6,7 +6,7 @@ const alfr am = { .a = malloc, .f = free };
 as *ba = NULL;
 
 static __attribute__((constructor(101))) void as_c(void) {
-    ba = as_b(as_i(&am, &al_te, &al_lst, &al_err, x64_mem_unlock, x64_mem_lock, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
+    ba = as_b(as_i(&am, &al_te, &al_lst, &al_err, as_x64_err_g_p, as_arg_tbl, as_op_tbl(AS_X64(_END)), as_mklst()));
 }
 
 static __attribute__((destructor)) void as_d(void) {

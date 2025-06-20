@@ -8,15 +8,7 @@ static size_t pg_algn(size_t size) {
 }
 
 uint8_t *x64_mmap(size_t size) {
-    return mmap(NULL, pg_algn(size), PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-}
-
-void x64_mem_lock(size_t size, uint8_t *m) {
-    mprotect(m, pg_algn(size), PROT_READ | PROT_EXEC);
-}
-
-void x64_mem_unlock(size_t size, uint8_t *m) {
-    mprotect(m, pg_algn(size), PROT_WRITE);
+    return mmap(NULL, pg_algn(size), PROT_WRITE | PROT_READ | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 }
 
 void x64_munmap(size_t size, uint8_t *m) {

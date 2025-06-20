@@ -184,6 +184,7 @@ static chk_stat chk_vec(chk *c, te *an, err **e) {
 static chk_stat chk_z_type_h(chk *c, te *an, err **e) {
     te *st, *kv;
     if (ast_g_t(an->d[4].p, &st) != AST_STAT(OK)) return chk_err(c, an, e, "chk st cannot get access type");
+    // TODO determine if this is inside a function and if it returns error
     if (tbl_g_i(st->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return chk_err(c, an, e, "chk st inv access type");
     ((te*) an->d[3].p)->d[2] = P(te_c(kv->d[2].p));
     return CHK_STAT(OK);

@@ -77,6 +77,10 @@ void gen_op_p(const tbl *ot, bool ci, size_t idnt) {
 }
 
 void ovt_p(const te *ovt) {
+    if (!ovt) {
+        printf("(N)");
+        return;
+    }
     vr *m;
     printf("(%s ", gen_cls_str(gen_var_g_c(ovt)));
     switch (gen_var_g_c(ovt)) {
