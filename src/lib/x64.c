@@ -184,9 +184,10 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 
 #define ZZR(N, C1, C2) x64_stat x64_##N##_r(size_t *p, uint8_t *m, reg r) { \
     if (r > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (r >= R(8)) rex |= REX(B); \
-    return x64_b(p, m, 3, rex, C1, MOD(00) | C2 | rid(r)); \
+    if (rex) x64_a(p, m, rex); \
+    return x64_b(p, m, 2, C1, MOD(00) | C2 | rid(r)); \
 }
 
 #define ZRQ(N, C) x64_stat x64_##N##_rq(size_t *p, uint8_t *m, reg r, un u) { \
@@ -357,10 +358,12 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 #define ZZZRMX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmx(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RM >= R(8)) rex |= REX(B); \
-    x64_b(p, m, 5, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 3, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
     if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
     return X64_STAT(OK); \
 }
@@ -368,10 +371,12 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 #define ZZZRMBX(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_rmbx(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RM >= R(8)) rex |= REX(B); \
-    x64_b(p, m, 5, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 3, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
     if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
     return x64_a(p, m, dsp); \
 }
@@ -379,10 +384,12 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 #define ZZZXRM(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrm(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RM >= R(8)) rex |= REX(B); \
-    x64_b(p, m, 5, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 3, C2, C3, MOD(00) | rid(RR) << 3 | rid(RM)); \
     if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
     return X64_STAT(OK); \
 }
@@ -390,10 +397,12 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
 #define ZZZXRMB(N, C1, C2, C3, RR, RM) x64_stat x64_##N##_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RM >= R(8)) rex |= REX(B); \
-    x64_b(p, m, 5, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 3, C2, C3, MOD(01) | rid(RR) << 3 | rid(RM)); \
     if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | rid(RM) << 3 | rid(RM)); \
     return x64_a(p, m, dsp); \
 }
@@ -402,22 +411,26 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RS > R(15)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RS >= R(8)) rex |= REX(X); \
     if (RM >= R(8)) rex |= REX(B); \
-    return x64_b(p, m, 6, C1, rex, C2, C3, MOD(00) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    return x64_b(p, m, 4, C2, C3, MOD(00) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
 }
 
 #define ZZZXRMOB(N, C1, C2, C3, RR, RS, RM) x64_stat x64_##N##_xrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp) { \
     if (RR < XMM(0)) return X64_STAT(INV_REG); \
     if (RS > R(15)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
-    uint8_t rex = REX(W); \
+    uint8_t rex = 0; \
     if (RR >= XMM(8)) rex |= REX(R); \
     if (RS >= R(8)) rex |= REX(X); \
     if (RM >= R(8)) rex |= REX(B); \
-    x64_b(p, m, 6, C1, rex, C2, C3, MOD(01) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
+    x64_a(p, m, C1); \
+    if (rex) x64_a(p, m, rex); \
+    x64_b(p, m, 4, C2, C3, MOD(01) | rid(RR) << 3 | SIB, x | rid(RS) << 3 | rid(RM)); \
     return x64_a(p, m, dsp); \
 }
 

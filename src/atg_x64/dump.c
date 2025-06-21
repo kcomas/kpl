@@ -59,7 +59,7 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, gen_op go, FILE
             break;
         case TYPE(F6):
             vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(F6)]))));
-            dump_idnt(g, &v, sym ? 0 :idnt);
+            dump_idnt(g, &v, sym ? 0 : idnt);
             vr_ab(&v, P(cd));
             break;
         case TYPE(SG):

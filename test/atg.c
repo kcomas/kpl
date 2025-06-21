@@ -116,27 +116,33 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
 
 #define V(CN, GC) atg_verify(_t, t, a, an, CN, GC, st)
 
-static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp) {
+static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
     E();
-    err *e = NULL;
-    A(as_n(t->a, &p, m, &e) == AS_STAT(OK), "as_n");
+    as_stat stat = as_n(t->a, &p, m, e);
+    if (*e) err_p(*e, true);
+    A(stat == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t el = ((te*) an->d[4].p)->d[4].u5;
     A(el == elcmp, "el");
     ssize_t ep = as_lbl_g_c_i(t->a, el);
     A(ep > -1, "ep");
-    A(atg_z(t, an->d[3].p, m, ep) == NULL, "inv ret");
-    atg_f(t);
-    te_f(an);
+    *e = atg_z(t, an->d[3].p, m, ep);
 }
 
-#define AR(ELC) gen_st_f(st); \
+#define AE(ELC) gen_st_f(st); \
     ast_f(a); \
-    atg_run(_t, t, an, ELC); \
-    E()
+    atg_run(_t, t, an, ELC, &e); \
+    E(); \
+    atg_f(t); \
+    te_f(an); \
+
+
+#define AR(ELC) AE(ELC); \
+    A(e == NULL, "inv ret")
 
 #define AI(PGM, DL, QL) IC(PGM); \
     RC(); \
+    err *e = NULL; \
     fast(_t, a, &an, bopt, false); \
     p = p_des; /* keep destructors */ \
     atg *t = atg_i_atg(batg); \
@@ -572,7 +578,6 @@ T(vrmul) {
 T(st) {
     AI(TPGM(st), 1, 1);
     te *std = type_h_i(&al_te, NULL, TYPE(ST), fld_type_tbl_i(false, 4, "a", TS(I6), "b", TS(F6), "c", TS(U6), "d", TS(SG))), *kv;
-    err *e = NULL;
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U5(56)))), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
@@ -682,9 +687,9 @@ T(lfac) {
     tbl *et = tbl_c(an->d[3].p);
     AR(0);
     A(et->i->l == 1, "inv et");
-    mc *e = mc_i_cstr("e", &al_mc);
-    A(tbl_g_i(et, P(e), &kv) == TBL_STAT(OK), "inv et");
-    mc_f(e);
+    mc *me = mc_i_cstr("e", &al_mc);
+    A(tbl_g_i(et, P(me), &kv) == TBL_STAT(OK), "inv et");
+    mc_f(me);
     A(kv->d[1].i6 == 720, "inv exp v");
     opt_exp_tbl_f(et);
 }
@@ -845,11 +850,12 @@ T(or) {
     gen_f(gc);
     AR(0);
 }
-/*
+
 T(un) {
     AI(TPGM(un), 1, 1);
     te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "a", TS(I6), "b", TS(F6)));
     D(utd, NULL);
+    te_f(utd);
     te *cn = RN(SN(_G, U5(0)));
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
@@ -895,5 +901,9 @@ T(un) {
     V(cn, gc);
     te_f(cn);
     gen_f(gc);
+    AE(0);
+    err_p(e, true);
+    A(e->m == atg_un_inv_str, "inv err str");
+    A(((mc*) e->d)->d[0] == 'a', "inv err mc char");
+    err_f(e);
 }
-*/

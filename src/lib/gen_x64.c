@@ -454,7 +454,7 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
 gen_stat gen_st_p1(gen *g, gen_st *st) {
     gen_stat stat = GEN_STAT(OK);
     // swap R(DX) with R(10), R(CX) with R(11), XMM(0) with XMM(7)
-    static reg r[] = {R(BX), R(12), R(13), R(14), R(15), R(9), R(8), R(11), R(10), R(SI), R(DI)};
+    static reg r[] = {R(BX), R(13), R(12), R(14), R(15), R(9), R(8), R(11), R(10), R(SI), R(DI)};
     for (size_t i = 0; i < 11; i++) vr_ab(&st->rstk, U3(r[i]));
     static reg x[] = {XMM(15), XMM(14), XMM(13), XMM(12), XMM(11), XMM(10), XMM(9), XMM(8), XMM(6), XMM(5), XMM(4), XMM(3), XMM(2), XMM(1), XMM(7)};
     for (size_t i = 0; i < 15; i++) vr_ab(&st->xstk, U3(x[i]));
@@ -545,9 +545,9 @@ gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n) {
 }
 
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
-    te *kv;
+    te *kv = NULL;
     if (tbl_g_i(st->lat, atm_kv->d[0], &kv) == TBL_STAT(NF)) return;
-    if (kv->d[2].p != ci) return;
+    if (kv->d[2].p != ci || kv->d[1].p != atm_kv->d[1].p) return;
     reg r = atm_kv->d[2].u3;
     if (r < XMM(0)) vr_ab(&st->rstk, U3(r));
     else vr_ab(&st->xstk, U3(r));

@@ -732,11 +732,11 @@ static te *fn_root_lst(te *an) {
     return NULL;
 }
 
-const char *atg_un_inv_str = "inv un `";
+const char *atg_un_inv_str = "inv un";
 
 void atg_un_inv_p(void *p) {
     mc *s = p;
-    printf("%s", (char*) s->d);
+    printf("\e[91m`%s\e[0m", (char*) s->d);
 }
 
 static atg_stat z_e_un(atg *t, gen *g, te *an, err **e) {

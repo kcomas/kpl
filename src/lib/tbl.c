@@ -9,16 +9,21 @@ static size_t tpi = 0;
 
 static void *al(size_t n) {
     (void) n;
+#ifdef NPOOL
+    return malloc(sizeof(tbl));
+#else
     if (!tpi) return malloc(sizeof(tbl));
     return tblp[--tpi];
+#endif
 }
 
 static void fr(void *p) {
-    if (tpi == TBL_POOL) {
-        free(p);
-        return;
-    }
+#ifdef NPOOL
+    return free(p);
+#else
+    if (tpi == TBL_POOL) return free(p);
     tblp[tpi++] = p;
+#endif
 }
 
 const alfr al_tbl = { .a = al, .f = fr };

@@ -90,17 +90,19 @@ AXDXL(lt, COMISD, JB);
 VXDXL(gte, COMISD, JAE);
 VXDXL(lt, COMISD, JB);
 
-static gen_stat eq_iudul_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO ne_iudul");
+#define IDL(N, U, J) static gen_stat N##_i##U##d##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
+    gen_stat stat; \
+    vr *i = ((te*) ci->d[1].p)->d[1].p; \
+    uint64_t qw = ((te*) ci->d[2].p)->d[1].u6; \
+    if (qw <= UINT32_MAX) { \
+        if ((stat = idx_to(g, s, ci, a, e, AS_X64(CMP), i, bd_arg(a, qw), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat; \
+    } else return gen_err(g, ci, e, "nyi"); \
+    if (gen_as(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    return GEN_STAT(OK); \
 }
 
-static gen_stat ne_iudul_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO ne_iudul");
-}
+IDL(eq, u, JE);
+IDL(ne, u, JNE);
 
 static gen_stat gt_auiul_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;

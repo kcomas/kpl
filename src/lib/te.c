@@ -7,6 +7,9 @@ static te *tah = NULL;
 
 static void *al(size_t n) {
     if (n < 2) STOP("TE MUST HAVE LENGTH OF AT LEAST 2");
+#ifdef NPOOL
+    return malloc(sizeof(te) + sizeof(un) * n);
+#else
     if (n > MPIS) return malloc(sizeof(te) + sizeof(un) * n);
     te *h = tah;
     while (h) {
@@ -19,9 +22,13 @@ static void *al(size_t n) {
         if (h->d[1].p) ((te*) h->d[1].p)->d[0] = h->d[0];
     } else h = malloc(sizeof(te) + sizeof(un) * n);
     return h;
+#endif
 }
 
 static void fr(void *p) {
+#ifdef NPOOL
+    return free(p);
+#else
     te *t = p;
     if (t->l > MPIS) return free(t);
     t->d[0] = P(NULL);
@@ -31,6 +38,7 @@ static void fr(void *p) {
         t->d[1] = P(tah);
     }
     tah = t;
+#endif
 }
 
 const alfr al_te = { .a = al, .f = fr };

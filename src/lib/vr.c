@@ -7,6 +7,9 @@ static vr *vah = NULL;
 
 static void *al(size_t s) {
     if (s < VR_S_MIN) s = VR_S_MIN;
+#ifdef NPOOL
+    return malloc(sizeof(vr) + sizeof(un) * s);
+#else
     vr *h = vah;
     while (h) {
         if (h->s >= s) break;
@@ -18,9 +21,13 @@ static void *al(size_t s) {
         if (h->d[1].p) ((vr*) h->d[1].p)->d[0] = h->d[0];
     } else h = malloc(sizeof(vr) + sizeof(un) * s);
     return h;
+#endif
 }
 
 static void fr(void *p) {
+#ifdef NPOOL
+    return free(p);
+#else
     vr *v = p;
     v->d[0] = P(NULL);
     v->d[1] = P(NULL);
@@ -29,6 +36,7 @@ static void fr(void *p) {
         v->d[1] = P(vah);
     }
     vah = v;
+#endif
 }
 
 const alfr al_vr = { .a = al, .f = fr };

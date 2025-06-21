@@ -9,16 +9,21 @@ static size_t lpi = 0;
 
 static void *al(size_t n) {
     (void) n;
+#ifdef NPOOL
+    return malloc(sizeof(lst));
+#else
     if (!lpi) return malloc(sizeof(lst));
     return lstp[--lpi];
+#endif
 }
 
 static void fr(void *p) {
-    if (lpi == LST_POOL) {
-        free(p);
-        return;
-    }
+#ifdef NPOOL
+    return free(p);
+#else
+    if (lpi == LST_POOL) return free(p);
     lstp[lpi++] = p;
+#endif
 }
 
 const alfr al_lst = { .a = al, .f = fr };

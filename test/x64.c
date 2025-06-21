@@ -218,8 +218,8 @@ T(p2p) {
     x64_ret(&p, m);
     printj(p, m);
     ((void(*)(int64_t**)) m)(&a);
-    A(p == 58, "bytes");
     printp(&a);
+    A(*a == 23, "inv ref value");
     free(a);
 }
 

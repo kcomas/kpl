@@ -30,7 +30,7 @@ gen_stat idx_to(const gen *g, void *s, te *restrict ci, as *a, err **e, as_inst 
         if ((x == GEN_CLS(A) || x == GEN_CLS(T)) && gen_var_g_t(i->d[0].p) == X64_TYPE(M) && y == GEN_CLS(D)) {
             if ((stat = get_reg(s, i->d[0].p, &kvib) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
-            if (gen_var_g_c(from) == ARG_ID(QW)) {
+            if (from->d[0].u6 == ARG_ID(QW)) {
                 if (gen_as(a, ai, as_arg_i(a, atmp, U3(rtmp)), from, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                 if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), as_arg_i(a, atmp, U3(rtmp)), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             } else if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), from, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);

@@ -4,6 +4,31 @@
 // jmps
 
 #define JBS (sizeof(uint8_t) * 2)
+#define JMPS (sizeof(uint8_t) + sizeof(uint32_t))
+
+static bool as_jmp_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
+    (void) a;
+    (void) arg2;
+    (void) arg3;
+    (void) arg4;
+    te *lblc = as_lbl_g_c(a, arg1->d[1].u6);
+    if (!lblc) return false;
+    if (lblc->d[9].u6) {
+        ssize_t diff = lblc->d[8].u6 - *p - JBS;
+        if (diff >= INT8_MIN && diff <= INT8_MAX) return x64_jmp_b(p, m, diff) == X64_STAT(OK);
+        return x64_jmp_d(p, m, lblc->d[8].u6 - *p - JMPS) == X64_STAT(OK);
+    } else if (as_lbl_s_c(a, arg1->d[1].u6, ci) != AS_STAT(OK)) return false;
+    for (size_t i = 0; i < 5; i++) x64_nop(p, m);
+    return true;
+}
+
+static bool as_jmp_e(as *a, uint8_t *m, te *restrict lc, te *restrict fc) {
+    (void) a;
+    size_t p = fc->d[8].u6;
+    ssize_t diff = lc->d[8].u6 - fc->d[8].u6 - JBS;
+    if (diff >= INT8_MIN && diff <= INT8_MAX) return x64_jmp_b(&p, m, diff) == X64_STAT(OK);
+    return x64_jmp_d(&p, m, lc->d[8].u6 - fc->d[8].u6 - JMPS) == X64_STAT(OK);
+}
 
 #define JDS (JBS + sizeof(uint32_t))
 
@@ -35,7 +60,6 @@
 #define INST_J_LE(N) INST_J_L(N) \
     INST_J_E(N)
 
-INST_J_LE(jmp);
 INST_J_LE(jbjnaejc);
 INST_J_LE(jnbjaejnc);
 INST_J_LE(jzje);

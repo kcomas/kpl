@@ -9,16 +9,21 @@ static size_t epi = 0;
 
 static void *al(size_t n) {
     (void) n;
+#ifdef NPOOL
+    return malloc(sizeof(err));
+#else
     if (!epi) return malloc(sizeof(err));
     return errp[--epi];
+#endif
 }
 
 static void fr(void *p) {
-    if (epi == ERR_POOL) {
-        free(p);
-        return;
-    }
+#ifdef NPOOL
+    return free(p);
+#else
+    if (epi == ERR_POOL) return free(p);
     errp[epi++] = p;
+#endif
 }
 
 const alfr al_err = { .a = al, .f = fr };

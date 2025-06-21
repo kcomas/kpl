@@ -7,6 +7,9 @@ static mc *mah = NULL;
 
 static void *al(size_t s) {
     if (s < MC_S_MIN) s = MC_S_MIN;
+#ifdef NPOOL
+    return malloc(sizeof(mc) + sizeof(uint8_t) * s);
+#else
     mc *h = mah;
     while (h) {
         if (h->s >= s) break;
@@ -18,9 +21,13 @@ static void *al(size_t s) {
         if (((mc**) h->d)[1]) ((mc**) ((mc**) h->d)[1]->d)[0] = ((mc**) h->d)[0];
     } else h = malloc(sizeof(mc) + sizeof(uint8_t) * s);
     return h;
+ #endif
 }
 
 static void fr(void *p) {
+#ifdef NPOOL
+    return free(p);
+#else
     mc *m = p;
     ((mc**) m->d)[0] = NULL;
     ((mc**) m->d)[1] = NULL;
@@ -29,6 +36,7 @@ static void fr(void *p) {
         ((mc**) m->d)[1] = mah;
     }
     mah = m;
+#endif
 }
 
 const alfr al_mc = { .a = al, .f = fr };
