@@ -169,3 +169,14 @@ const char *TPGM(un) = "{\n"
                        "    u`b\\p1\n"
                        "    u`a\\p1\n"
                        "}()\n";
+
+const char *TPGM(unmatch) = "{\n"
+                          " u::1`a\n"
+                          " u:2`b\n"
+                          " c::u#{\n"
+                          "  \"a {}\"(a)`a\n"
+                          "  \"b {}\"(b)`b\n"
+                          "  \"inv\"\n"
+                          "  }\n"
+                          " c\\p1\n"
+                          "}()\n";

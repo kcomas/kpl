@@ -217,3 +217,16 @@ T(un) {
         CN(P1, ZN("a", IN("u")))
     )), NULL)));
 }
+
+T(unmatch) {
+    V(TPGM(unmatch), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("u"), ZN("a", SN(I6, I6(1)))),
+        ON(NULL, AGN, IN("u"), ZN("b", SN(I6, I6(2)))),
+        ON(NULL, DFN, IN("c"), ON(NULL, MTCH, IN("u"), LN(NULL, L(3,
+            ZN("a", AN(NULL, CS("a {}"), L(1, IN("a")))),
+            ZN("b", AN(NULL, CS("b {}"), L(1, IN("b")))),
+            CS("inv")
+        )))),
+        CN(P1, IN("c"))
+    )), NULL)));
+}

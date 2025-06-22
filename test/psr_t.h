@@ -49,3 +49,5 @@ extern const char *TPGM(fnscope);
 extern const char *TPGM(or);
 
 extern const char *TPGM(un);
+
+extern const char *TPGM(unmatch);

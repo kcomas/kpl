@@ -524,3 +524,18 @@ T(un) {
     ))});
     te_f(h);
 }
+
+T(unmatch) {
+    te *h = ppnode(psr_r(bpsr(TPGM(unmatch))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), SYM(N(INT))),
+        OP(N(VAR), SYM(N(INT))),
+        OP(N(VAR), OP(N(VAR), LST(
+            SYM(APLY(N(STR), N(VAR))),
+            SYM(APLY(N(STR), N(VAR))),
+            N(STR)
+        ))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}
