@@ -110,6 +110,7 @@ static fld_stat op_lr_lst_scope_r(fld *f, te **an, err **e) {
 static bool op_lr_lst_scope_t(const te *an) {
     te *l = an->d[5].p, *r = an->d[6].p;
     if ((!l && !r) || !lr_lst_t(an)) return false;
+    if (an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(MTCH)) return !l->d[4].p;
     return l->d[2].u4 == AST_CLS(L) && r->d[2].u4 == AST_CLS(L);
 }
 

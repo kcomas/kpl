@@ -240,3 +240,17 @@ T(un) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("a", EN("u", U6(0), NULL)))
     )), NULL)));
 }
+
+T(unmatch) {
+    V(TPGM(unmatch), RN(AN(NULL, LN(LT(2, "u", U6(0), NULL, "c", U6(0), NULL), L(4,
+        ON(NULL, DFN, EN("u", U6(0), NULL), ZN("a", SN(I6, I6(1)))),
+        ON(NULL, AGN, EN("u", U6(0), NULL), ZN("b", SN(I6, I6(2)))),
+        ON(NULL, DFN, EN("c", U6(0), NULL), ON(NULL, MTCH, LN(NULL, L(1, EN("u", U6(0), NULL))),
+            LN(LT(2, "a", U6(0), NULL, "b", U6(0), NULL), L(3,
+                ZN("a", AN(NULL, CS("a {}"), L(1, EN("a", U6(0), NULL)))),
+                ZN("b", AN(NULL, CS("b {}"), L(1, EN("b", U6(0), NULL)))),
+                ON(TS(SG), CSG, NULL, CS("inv"))
+            )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", U6(0), NULL))
+    )), NULL)));
+}
