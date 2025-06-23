@@ -212,6 +212,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         mc_f(pgm);
         return z_err(fn, e);
     }
+    x64_mp_w(JIT_P, &p, m);
     if (zt->dt->i->l > cdl) {
         dh = zt->dt->i->t;
         cdl++;
@@ -314,6 +315,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         mc_f(pgm);
         return z_err(fn, e);
     }
+    x64_mp_rx(JIT_P, &p, m);
     if (dflgs & Z_D_FLG(S)) {
         as_code_p(zt->a, m);
         putchar('\n');

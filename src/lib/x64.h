@@ -89,11 +89,16 @@ typedef enum {
 // map page aligned
 uint8_t *x64_mmap(size_t size);
 
+void x64_mp_w(size_t size, size_t *p, uint8_t *m);
+
+void x64_mp_rx(size_t size, size_t *p, uint8_t *m);
+
 // unmap page aligned
 void x64_munmap(size_t size, uint8_t *m);
 
-#ifndef JIT_M
-    #define JIT_M 1e6
+// number of pages, assume 1 page per file
+#ifndef JIT_P
+    #define JIT_P (1e6 / getpagesize())
 #endif
 
 x64_stat x64_a(size_t *p, uint8_t *m, uint8_t b);

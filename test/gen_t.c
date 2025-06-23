@@ -47,7 +47,9 @@ void gen_build(_tests *_t, gen *g, uint8_t *m) {
     gen_st_p(st);
     p = 0;
     e = NULL;
+    UNLOCK();
     as_stat astat = as_n(a, &p, m, &e);
+    LOCK();
     if (e) {
         err_p(e, true);
         err_f(e);

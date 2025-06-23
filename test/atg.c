@@ -61,7 +61,9 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
             err_f(e);
         }
         A(gstat == GEN_STAT(OK), "gen_n");
+        UNLOCK();
         as_stat astat = as_n(t->a, &p, m, &e);
+        LOCK();
         if (e) {
             err_p(e, true);
             err_f(e);
@@ -118,7 +120,9 @@ static void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict
 
 static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
     E();
+    UNLOCK();
     as_stat stat = as_n(t->a, &p, m, e);
+    LOCK();
     if (*e) err_p(*e, true);
     A(stat == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
@@ -140,11 +144,11 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
 #define AR(ELC) AE(ELC); \
     A(e == NULL, "inv ret")
 
-#define AI(PGM, DL, QL) IC(PGM); \
+#define AI(PGM, DL, QL) p = p_des; /* keep destructors */ \
+    IC(PGM); \
     RC(); \
     err *e = NULL; \
     fast(_t, a, &an, bopt, false); \
-    p = p_des; /* keep destructors */ \
     atg *t = atg_i_atg(batg); \
     gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL)); \
     size_t cdl = t->dt->i->l; \
@@ -668,7 +672,7 @@ T(import) {
     opt_exp_tbl_f(et);
 }
 
-#define LFACCU5 392
+#define LFACCU5 0
 
 T(lfac) {
     AI(TPGM(lfac), 0, 1);
@@ -907,3 +911,13 @@ T(un) {
     A(((mc*) e->d)->d[0] == 'a', "inv err mc char");
     err_f(e);
 }
+
+/*
+T(unmatch) {
+    AI(TPGM(unmatch), 1, 1);
+    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "a", TS(I6), "b", TS(I6)));
+    D(utd, NULL);
+    te_f(utd);
+    V(NULL, NULL);
+}
+*/

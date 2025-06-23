@@ -1,18 +1,33 @@
 
 #include "x64.h"
 
-static size_t pg_algn(size_t size) {
-    size_t mod = size % getpagesize();
-    if (mod) size = size - mod + getpagesize();
-    return size;
+static size_t pg_algn(size_t pages) {
+    return pages * getpagesize();
 }
 
-uint8_t *x64_mmap(size_t size) {
-    return mmap(NULL, pg_algn(size), PROT_WRITE | PROT_READ | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+uint8_t *x64_mmap(size_t pages) {
+    return mmap(NULL, pg_algn(pages), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 }
 
-void x64_munmap(size_t size, uint8_t *m) {
-    munmap(m, pg_algn(size));
+static size_t mp_align(size_t p) {
+    size_t mod = p % getpagesize();
+    if (mod) p = p - mod + getpagesize();
+    return p;
+}
+
+void x64_mp_w(size_t pages, size_t *p, uint8_t *m) {
+    *p = mp_align(*p);
+    mprotect(m + *p, pg_algn(pages) - *p, PROT_WRITE);
+}
+
+void x64_mp_rx(size_t pages, size_t *p, uint8_t *m) {
+    *p = mp_align(*p);
+    mprotect(m, *p, PROT_READ | PROT_EXEC);
+    mprotect(m + *p, pg_algn(pages) - *p, PROT_NONE);
+}
+
+void x64_munmap(size_t pages, uint8_t *m) {
+    munmap(m, pg_algn(pages));
 }
 
 size_t p = 0;
@@ -20,11 +35,11 @@ size_t p = 0;
 uint8_t *m = NULL;
 
 static __attribute__((constructor)) void x64_con(void) {
-    m = x64_mmap(JIT_M);
+    m = x64_mmap(getpagesize() * JIT_P);
 }
 
 static __attribute__((destructor)) void x64_des(void) {
-    x64_munmap(JIT_M, m);
+    x64_munmap(getpagesize() * JIT_P, m);
 }
 
 #define RIP 5

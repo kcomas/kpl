@@ -338,3 +338,21 @@ T(un) {
     te_f(u);
     te_f(eu);
 }
+
+T(unmatch) {
+    IC(TPGM(unmatch));
+    te *u = TH(UN, 2, "a", TS(I6), "b", TS(I6));
+    V(RN(LN(LT(2, "u", FLG(0, LTE_FLG(L)), te_c(u), "c", FLG(1, LTE_FLG(L)), TS(SG)), L(4,
+        ON(te_c(u), DFN, EN("u", FLG(0, LTE_FLG(L)), te_c(u)), ZTN("a", TS(VD), SN(I6, I6(1)))),
+        ON(te_c(u), AGN, EN("u", FLG(0, LTE_FLG(L)), te_c(u)), ZTN("b", TS(VD), SN(I6, I6(2)))),
+        ON(TS(SG), DFN, EN("c", FLG(1, LTE_FLG(L)), TS(SG)), ON(TS(SG), MTCH,
+            LN(NULL, L(1, EN("u", FLG(0, LTE_FLG(L)), te_c(u)))),
+            LN(LT(2, "a", FLG(-1, LTE_FLG(Y)), TS(I6), "b", FLG(-2, LTE_FLG(Y)), TS(I6)), L(3,
+                ZTN("a", TS(VD), AN(TS(SG), CS("a %ld"), L(1, EN("a", FLG(-1, LTE_FLG(Y)), TS(I6))))),
+                ZTN("b", TS(VD), AN(TS(SG), CS("b %ld"), L(1, EN("b", FLG(-2, LTE_FLG(Y)), TS(I6))))),
+                ON(TS(SG), CSG, NULL, CS("inv"))
+            )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", FLG(1, LTE_FLG(L)), TS(SG)))
+    ))));
+    te_f(u);
+}

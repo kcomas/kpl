@@ -4,6 +4,10 @@
 #include "../src/lib/as_x64.h"
 #include "t.h"
 
+#define UNLOCK() x64_mp_w(JIT_P, &p, m)
+
+#define LOCK() x64_mp_rx(JIT_P, &p, m)
+
 extern const alfr am;
 
 extern as *ba;
