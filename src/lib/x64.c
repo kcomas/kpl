@@ -6,18 +6,18 @@ static size_t pg_algn(size_t pages) {
 }
 
 uint8_t *x64_mmap(size_t pages) {
-    return mmap(NULL, pg_algn(pages), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    return mmap(NULL, pg_algn(pages), PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+}
+
+void x64_mp_w(size_t pages, size_t p, uint8_t *m) {
+    if (p % getpagesize() != 0) STOP("jit mem w unaligned");
+    mprotect(m + p, pg_algn(pages) - p, PROT_WRITE);
 }
 
 static size_t mp_align(size_t p) {
     size_t mod = p % getpagesize();
     if (mod) p = p - mod + getpagesize();
     return p;
-}
-
-void x64_mp_w(size_t pages, size_t *p, uint8_t *m) {
-    *p = mp_align(*p);
-    mprotect(m + *p, pg_algn(pages) - *p, PROT_WRITE);
 }
 
 void x64_mp_rx(size_t pages, size_t *p, uint8_t *m) {

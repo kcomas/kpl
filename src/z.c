@@ -212,7 +212,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         mc_f(pgm);
         return z_err(fn, e);
     }
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     if (zt->dt->i->l > cdl) {
         dh = zt->dt->i->t;
         cdl++;

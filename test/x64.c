@@ -17,7 +17,7 @@ typedef int64_t add3(int64_t a);
 
 T(radd3) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_mov_rr(&p, m, R(9), R(DI));
@@ -38,7 +38,7 @@ typedef int64_t add(int64_t a, int64_t b);
 
 T(radd) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_mov_rr(&p, m, R(AX), R(DI));
@@ -56,7 +56,7 @@ typedef int64_t sub(int64_t a, int64_t b);
 
 T(rsub) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_mov_rr(&p, m, R(12), R(DI));
@@ -87,7 +87,7 @@ static void x64_printf(size_t *p, uint8_t *m, const char *fmt) {
 
 T(rloop) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_mov_rr(&p, m, R(8), R(DI));
@@ -162,7 +162,7 @@ static void bfib(size_t *p, uint8_t *m) {
 
 T(rfib) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     bfib(&p, m);
     uint64_t n = 10;
     x64_mp_rx(JIT_P, &p, m);
@@ -174,7 +174,7 @@ T(rfib) {
 
 T(daddsub) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_addsd_xx(&p, m, XMM(0), XMM(1));
@@ -191,7 +191,7 @@ T(daddsub) {
 
 T(cmp) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_push_r(&p, m, R(BP));
     x64_mov_rr(&p, m, R(BP), R(SP));
     x64_cmp_rr(&p, m, R(DI), R(SI));
@@ -215,7 +215,7 @@ static void printp(int64_t **a) {
 
 T(p2p) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     int64_t *a = malloc(sizeof(int64_t));
     *a = 1;
     printp(&a);
@@ -243,7 +243,7 @@ T(p2p) {
 
 T(rskiploop) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_mov_rq(&p, m, R(AX), U6(1));
     x64_push_r(&p, m, R(AX));
     x64_mov_rr(&p, m, R(SI), R(DI));
@@ -267,7 +267,7 @@ T(rskiploop) {
 
 T(cvtsi2sd) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_movq_xr(&p, m, XMM(2), R(DI));
     x64_movq_rx(&p, m, R(8), XMM(2));
     x64_cvtsi2sd_xr(&p, m, XMM(11), R(8));
@@ -285,7 +285,7 @@ static const char *comisdl = "Less";
 
 T(comisd) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_movq_xx(&p, m, XMM(15), XMM(0));
     x64_comisd_xx(&p, m, XMM(15), XMM(1));
     x64_jbjnaejc_b(&p, m, 0);
@@ -307,7 +307,7 @@ T(comisd) {
 T(cmprip) {
     int64_t c = INT64_MAX;
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_cmp_ri(&p, m, R(DI), 0); // ripe - rips
     uint32_t rips = p;
     x64_jzje_b(&p, m, 0);
@@ -330,7 +330,7 @@ T(cmprip) {
 
 T(imulidiv) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_mov_rr(&p, m, R(AX), R(DI));
     x64_mov_rr(&p, m, R(BX), R(DX));
     x64_imul_r(&p, m, R(SI));
@@ -348,7 +348,7 @@ T(imulidiv) {
 
 T(pxor) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_pxor_xx(&p, m, XMM(0), XMM(0));
     x64_ret(&p, m);
     x64_mp_rx(JIT_P, &p, m);
@@ -360,7 +360,7 @@ T(pxor) {
 
 T(sib) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     int64_t a[] = {1, 2, 3};
     int64_t v = 5;
     x64_mov_rrmo(&p, m, R(AX), R(DI), R(SI), S8);
@@ -370,7 +370,7 @@ T(sib) {
     int64_t r = ((int64_t(*)(int64_t*, size_t)) m)(a, 2);
     A(r == a[2], "inv sib");
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_mov_rmor(&p, m, R(DI), R(SI), S8, R(DX));
     x64_ret(&p, m);
     x64_mp_rx(JIT_P, &p, m);
@@ -382,7 +382,7 @@ T(sib) {
 
 T(sibupper) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     int64_t a[] = {5, 6, 7};
     x64_mov_rr(&p, m, R(14), R(DI));
     x64_mov_rr(&p, m, R(15), R(SI));
@@ -399,7 +399,7 @@ T(sibupper) {
 
 T(addp) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     int64_t a = 5;
     x64_add_rmr(&p, m, R(DI), R(SI));
     x64_ret(&p, m);
@@ -410,7 +410,7 @@ T(addp) {
 
 T(movsd_xrmo) {
     p = 0;
-    x64_mp_w(JIT_P, &p, m);
+    x64_mp_w(JIT_P, p, m);
     x64_movsd_xrmo(&p, m, XMM(0), R(DI), R(SI), S8);
     x64_ret(&p, m);
     x64_mp_rx(JIT_P, &p, m);
