@@ -10,7 +10,7 @@ uint8_t *x64_mmap(size_t pages) {
 }
 
 void x64_mp_w(size_t pages, size_t p, uint8_t *m) {
-    if (p % getpagesize() != 0) STOP("jit mem w unaligned");
+    if (p % getpagesize()) STOP("jit mem w unaligned");
     mprotect(m + p, pg_algn(pages) - p, PROT_WRITE);
 }
 
