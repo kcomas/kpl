@@ -167,6 +167,32 @@ static chk_stat chk_op_lst_lr_b(chk *c, te *an, err **e) {
     return chk_op_lst_side(c, an, e, 6, true);
 }
 
+static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
+    ssize_t mi = 0; // if does not equal un tbl len need an else case (-1) for else case
+    lst *l = ((te*) an->d[5].p)->d[4].p;
+    te *ut, *h, *n, *kve, *kvt;
+    if (!l) return chk_op_lst_lr_b(c, an, e);
+    if (ast_g_t(l->h->d[0].p, &ut) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get mtch tgt type");
+    h = ((lst*) ((te*) an->d[6].p)->d[4].p)->h;
+    while (h) {
+        n = h->d[0].p;
+        if (n->d[2].u4 == AST_CLS(Z)) {
+            if (tbl_g_i(((te*) an->d[6].p)->d[3].p, n->d[5], &kve) != TBL_STAT(OK)) return chk_err(c, an, e, "chk mtch inv sym var");
+            if (kve->d[2].p) return chk_err(c, an, e, "chk mtch sym dup");
+            if (tbl_g_i(ut->d[2].p, n->d[5], &kvt) != TBL_STAT(OK)) return chk_err(c, an, e, "chk inv un sym type entry");
+            kve->d[2] = P(te_c(kvt->d[2].p));
+            ast_lst_tbl_e_s_i(kve, c->yc--);
+            ast_lst_tbl_e_s_f(kve, LTE_FLG(Y));
+            if (mi != -1) mi++;
+            ((te*) n->d[3].p)->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
+        } else if (n->d[2].u4 == AST_CLS(A)) return chk_err(c, an, e, "nyi");
+        else if (h->d[2].p) return chk_err(c, an, e, "chk inv mtch default case");
+        h = h->d[2].p;
+    }
+    if (mi != -1 && mi != (ssize_t) ((tbl*) ut->d[2].p)->i->l) return chk_err(c, an, e, "chk need default case");
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_vec(chk *c, te *an, err **e) {
     lst *l = an->d[4].p;
     an->d[3] = P(type_te_i(c->ta, NULL, l->l));
@@ -325,7 +351,19 @@ static chk_stat st_init(chk *c, te *an, err **e) {
 
 static chk_stat chk_mtch(chk *c, te *an, err **e) {
     if (!((te*) an->d[5].p)->d[4].p) return st_init(c, an, e);
-    return chk_err(c, an, e, "nyi");
+    te *pn = an->d[0].p, *t, *rt = NULL, *h, *n;
+    if (pn->d[2].u4 == AST_CLS(L) && (((te*) pn->d[0].p)->d[2].u4 == AST_CLS(R) || ((lst*) pn->d[4].p)->t->d[0].p != an)) return CHK_STAT(OK);
+    h = ((lst*) ((te*) an->d[6].p)->d[4].p)->h;
+    while (h) {
+        n = h->d[0].p;
+        if (n->d[2].u4 == AST_CLS(Z) || n->d[2].u4 == AST_CLS(A)) n = n->d[4].p;
+        if (ast_g_t(n, &t) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv mtch type");
+        if (rt && !type_eq(rt, t)) return chk_err(c, an, e, "chk inv mtch type neq");
+        else rt = t;
+        h = h->d[2].p;
+    }
+    an->d[3] = P(te_c(rt));
+    return CHK_STAT(OK);
 }
 
 static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
@@ -588,7 +626,7 @@ chk *chk_b(chk *c) {
     CHK_AB(c, chk_cst_nf_lst_b, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
-    CHK_AB(c, chk_op_lst_lr_b, AST_CLS(O), TYPE(_N), OC(MTCH), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
+    CHK_AB(c, chk_op_mtch_lst_lr_b, AST_CLS(O), TYPE(_N), OC(MTCH), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     // after
     CHK_AA(c, chk_nop, AST_CLS(R), TYPE(_A), AST_CLS(A), TYPE(VD));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(U5), AST_CLS(_), TYPE(_A));
@@ -605,6 +643,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ST));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ET));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(UN));
+    CHK_AA(c, chk_nop, AST_CLS(Z), TYPE(VD), AST_CLS(A), TYPE(SG));
     CHK_AA(c, chk_vec, AST_CLS(V), TYPE(_N), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_lst_l, AST_CLS(A), TYPE(_N), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
