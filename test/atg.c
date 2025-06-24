@@ -13,8 +13,6 @@ static __attribute__((destructor)) void atg_des(void) {
     atg_f(batg);
 }
 
-static size_t p_des = 0; // index for destructor code so it in m
-
 static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st *st) {
     E();
     te *h;
@@ -70,7 +68,6 @@ static void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, 
         }
         A(astat == AS_STAT(OK), "as_n");
         h->d[1] = P(&m[pc]);
-        p = p_des;
     }
     gen_st_f(sc);
     gen_f(g);
@@ -144,8 +141,7 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
 #define AR(ELC) AE(ELC); \
     A(e == NULL, "inv ret")
 
-#define AI(PGM, DL, QL) p = p_des; /* keep destructors */ \
-    IC(PGM); \
+#define AI(PGM, DL, QL) IC(PGM); \
     RC(); \
     err *e = NULL; \
     fast(_t, a, &an, bopt, false); \
@@ -158,6 +154,7 @@ T(tbl) {
     atg_tbl_p(batg->ot, AST_CLS(O), 0);
     atg_tbl_p(batg->at, AST_CLS(A), 0);
     atg_tbl_p(batg->vt, AST_CLS(V), 0);
+    p = 0; // do not reset per test, need reset here
 }
 
 T(fnadd3) {
@@ -672,7 +669,7 @@ T(import) {
     opt_exp_tbl_f(et);
 }
 
-#define LFACCU5 0
+#define LFACCU5 61440
 
 T(lfac) {
     AI(TPGM(lfac), 0, 1);
