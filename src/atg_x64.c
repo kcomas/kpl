@@ -494,7 +494,7 @@ static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     x64_type xt;
     size_t eid;
-    uint32_t el = t->lc++, nl, tl = t->tc++;
+    uint32_t el = t->lc++, nl = 0, tl = t->tc++;
     te *l = an->d[6].p, *r = ((lst*) ((te*) an->d[5].p)->d[4].p)->h->d[0].p, *h, *n, *ut, *kv;
     if (ast_g_t(r, &ut) != AST_STAT(OK)) return atg_err(t, an, e, "atg inv type for mtch");
     h = ((lst*) l->d[4].p)->h;
@@ -502,17 +502,21 @@ static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
         n = h->d[0].p;
         switch (n->d[2].u4) {
             case AST_CLS(Z):
-                if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
-                if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
-                if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(r->d[3].p)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, nl = t->lc++)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                if (h->d[2].p) {
+                    if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
+                    if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
+                    if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(r->d[3].p)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, nl = t->lc++)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                }
                 if (tbl_g_i(l->d[3].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv tmp var in mtch");
                 xt = type_g_x64_type(kv->d[2].p);
                 if (gen_a(g, GEN_OP(SET), var_arg(g, kv, xt), gen_idx_m(g, xt, 2, var_arg(g, r->d[3].p, xt), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
                 n = n->d[4].p;
                 if ((stat = if_cond(t, g, n, e, tl)) != ATG_STAT(OK)) return stat;
-                if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                if (h->d[2].p) {
+                    if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
 
-                if (gen_a(g, GEN_OP(LBL), gen_lbl(g, nl), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, nl), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                }
                 break;
             case AST_CLS(A):
                 return atg_err(t, an, e, "nyi");
