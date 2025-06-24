@@ -187,6 +187,7 @@ static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
             ((te*) n->d[3].p)->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
         } else if (n->d[2].u4 == AST_CLS(A)) return chk_err(c, an, e, "nyi");
         else if (h->d[2].p) return chk_err(c, an, e, "chk inv mtch default case");
+        else if (!h->d[2].p) mi = -1;
         h = h->d[2].p;
     }
     if (mi != -1 && mi != (ssize_t) ((tbl*) ut->d[2].p)->i->l) return chk_err(c, an, e, "chk need default case");

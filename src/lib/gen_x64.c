@@ -343,6 +343,16 @@ void gen_st_p(const gen_st *st) {
     putchar('\n');
 }
 
+void gen_atm_p(const gen_st *st) {
+    te *h = st->atm->i->h, *n;
+    while (h) {
+        n = h->d[0].p;
+        ovt_p(n->d[1].p);
+        printf(", %s\n", reg_str(n->d[2].u3));
+        h = h->d[2].p;
+    }
+}
+
 static void gen_st_latf(void *p) {
     te *t = p;
     te_f(t->d[1].p);
@@ -547,7 +557,7 @@ gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n) {
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     te *kv = NULL;
     if (tbl_g_i(st->lat, atm_kv->d[0], &kv) == TBL_STAT(NF)) return;
-    if (kv->d[2].p != ci || kv->d[1].p != atm_kv->d[1].p) return;
+    if (kv->d[2].p != ci) return;
     reg r = atm_kv->d[2].u3;
     if (r < XMM(0)) vr_ab(&st->rstk, U3(r));
     else vr_ab(&st->xstk, U3(r));
@@ -613,6 +623,41 @@ static void jmp_2_leave(gen *g, te *restrict hlve, te *restrict lbl) {
     }
 }
 
+static void update_tmp_ci(te *ovt, uint32_t to, uint32_t from) {
+    vr *v;
+    switch (gen_var_g_c(ovt)) {
+        case GEN_CLS(T):
+            if (ovt->d[1].u5 == from) ovt->d[1] = U5(to);
+            break;
+        case GEN_CLS(M):
+        case GEN_CLS(I):
+            v = ovt->d[1].p;
+            for (size_t i = 0; i < v->l; i++) update_tmp_ci(v->d[i].p, to, from);
+            break;
+        case GEN_CLS(W):
+            STOP("TODO set_2_nop CLS W");
+            break;
+        default:
+            break;
+    }
+}
+
+static void set_2_nop(gen *g, te *h) {
+    te *ci = h->d[0].p, *tmp = h;
+    uint32_t to = ((te*) ci->d[1].p)->d[1].u5, from = ((te*) ci->d[2].p)->d[1].u5;
+    h = h->d[1].p;
+    te_f(tmp->d[0].p);
+    lst_li_d(g->code, tmp);
+    while (h) {
+        ci = h->d[0].p;
+        for (size_t i = 1; i <= 3; i++) {
+            if (!ci->d[i].p) break;
+            update_tmp_ci(ci->d[i].p, to, from);
+        }
+        h = h->d[1].p;
+    }
+}
+
 void gen_x64_opt(gen *g, gen_st *st) {
     (void) st; // TODO stack vars to available regs
     te *h = g->code->h, *c;
@@ -621,6 +666,15 @@ void gen_x64_opt(gen *g, gen_st *st) {
         if (c->d[0].u6 == GEN_OP(LEAVE) && h->d[1].p) {
             c = ((te*) h->d[1].p)->d[0].p;
             if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, c);
+        }
+        if (c->d[0].u6 == GEN_OP(SET) && gen_var_g_c(c->d[1].p) == GEN_CLS(T) && gen_var_g_c(c->d[2].p) == GEN_CLS(T) && h->d[1].p) {
+            c = ((te*) h->d[1].p)->d[0].p;
+            if (c && c->d[0].u6 == GEN_OP(NOP)) {
+                c = h->d[2].p;
+                set_2_nop(g, h);
+                h = c;
+                continue;
+            }
         }
         h = h->d[2].p;
     }

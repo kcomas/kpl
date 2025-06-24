@@ -242,6 +242,7 @@ te *var_arg(gen *g, te *lte, x64_type xt) {
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (flgs & LTE_FLG(A)) return gen_arg(g, xt, id);
     if (flgs & LTE_FLG(L)) return gen_stkv(g, xt, id);
+    if (flgs & LTE_FLG(Y)) return gen_tmp(g, xt, id);
     if ((xt = x64_type_to_ref(xt)) == X64_TYPE(N)) return NULL;
     if (flgs & LTE_FLG(S)) return gen_stka(g, xt, id);
     return NULL;
@@ -388,7 +389,10 @@ static atg_stat if_cond(atg *t, gen *g, te *an, err **e, uint32_t tl) {
             }
         } else if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
         te *c = g->code->t->d[0].p;
-        if (gen_var_g_c(c->d[1].p) == GEN_CLS(T)) ((te*) c->d[1].p)->d[1] = U5(tl);
+        if (gen_var_g_c(c->d[1].p) == GEN_CLS(T)) {
+            if (c->d[0].u6 != GEN_OP(NOP)) ((te*) c->d[1].p)->d[1] = U5(tl);
+            else if (gen_a(g, GEN_OP(SET), gen_tmp(g, gen_var_g_t(c->d[1].p), tl), te_c(c->d[1].p), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        }
     }
     return ATG_STAT(OK);
 }
@@ -487,7 +491,40 @@ static atg_stat mtch_st(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
     if (!((te*) an->d[5].p)->d[4].p) return mtch_st(t, g, an, e);
-    return atg_err(t, an, e, "nyi");
+    atg_stat stat;
+    x64_type xt;
+    size_t eid;
+    uint32_t el = t->lc++, nl, tl = t->tc++;
+    te *l = an->d[6].p, *r = ((lst*) ((te*) an->d[5].p)->d[4].p)->h->d[0].p, *h, *n, *ut, *kv;
+    if (ast_g_t(r, &ut) != AST_STAT(OK)) return atg_err(t, an, e, "atg inv type for mtch");
+    h = ((lst*) l->d[4].p)->h;
+    while (h) {
+        n = h->d[0].p;
+        switch (n->d[2].u4) {
+            case AST_CLS(Z):
+                if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
+                if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
+                if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(r->d[3].p)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, nl = t->lc++)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                if (tbl_g_i(l->d[3].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv tmp var in mtch");
+                xt = type_g_x64_type(kv->d[2].p);
+                if (gen_a(g, GEN_OP(SET), var_arg(g, kv, xt), gen_idx_m(g, xt, 2, var_arg(g, r->d[3].p, xt), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                n = n->d[4].p;
+                if ((stat = if_cond(t, g, n, e, tl)) != ATG_STAT(OK)) return stat;
+                if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+
+                if (gen_a(g, GEN_OP(LBL), gen_lbl(g, nl), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                break;
+            case AST_CLS(A):
+                return atg_err(t, an, e, "nyi");
+                break;
+            default:
+                if ((stat = if_cond(t, g, n, e, tl)) != ATG_STAT(OK)) return stat;
+                break;
+        }
+        h = h->d[2].p;
+    }
+    if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
 }
 
 atg_stat aply_te_g_idx(atg *t, te *an, err **e, size_t *n, te **lte) {
@@ -530,6 +567,7 @@ static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
                 flgs = ast_lst_tbl_e_g_f(lte);
                 if (flgs & LTE_FLG(A)) vr_ab_nc(g, l->l, v, P(gen_arg(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
                 else if (flgs & LTE_FLG(L)) vr_ab_nc(g, l->l, v, P(gen_stkv(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
+                else if (flgs & LTE_FLG(Y)) vr_ab_nc(g, l->l, v, P(gen_tmp(g, atg_x64_g_t(lte->d[2].p), ast_lst_tbl_e_g_i(lte))));
                 else if (flgs & LTE_FLG(S)) vr_ab_nc(g, l->l, v, P(gen_stka(g, x64_type_to_ref(atg_x64_g_t(lte->d[2].p)), ast_lst_tbl_e_g_i(lte))));
                 else return atg_err(t, an, e, "atg inv lst args FLG");
                 break;
@@ -886,6 +924,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(IF), TYPE(U6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
     atg_a_o(t, OC(IF), TYPE(I6), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
     atg_a_o(t, OC(IF), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
+    atg_a_o(t, OC(MTCH), TYPE(SG), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(MTCH), TYPE(ST), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(EQ), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), cond_bl_e_u6_s_u6);
     atg_a_o(t, OC(NE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);

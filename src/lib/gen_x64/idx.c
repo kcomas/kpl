@@ -37,7 +37,7 @@ gen_stat idx_to(const gen *g, void *s, te *restrict ci, as *a, err **e, as_inst 
             drop_atm_kv(s, kvib, ci);
         } else if (x == GEN_CLS(V) && y == GEN_CLS(D)) {
             tgt = i->d[0].p;
-            if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+            if (st_stkv_idx(s, X64_TYPE(M), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
             if (gen_as_rrmbd(a, tm, rtmp, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
             if (gen_as(a, ai, as_arg_i(a, ARG_ID(RM), U3(rtmp)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), from, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
@@ -70,7 +70,7 @@ gen_stat idx_from(const gen *g, void *s, te *restrict ci, as *a, err **e, as_ins
     if (i->l == 2) {
         if (x == GEN_CLS(V) && y == GEN_CLS(D)) {
             tgt = i->d[0].p;
-            if (st_stkv_idx(s, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+            if (st_stkv_idx(s, X64_TYPE(M), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
             if (gen_as_rrmbd(a, tm, rtmp, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
             if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), U3(rtmp)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);

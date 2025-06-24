@@ -530,7 +530,7 @@ T(unmatch) {
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), SYM(N(INT))),
         OP(N(VAR), SYM(N(INT))),
-        OP(N(VAR), OP(N(VAR), LST(
+        OP(CMD(N(VAR)), OP(N(VAR), LST(
             SYM(APLY(N(STR), N(VAR))),
             SYM(APLY(N(STR), N(VAR))),
             N(STR)
