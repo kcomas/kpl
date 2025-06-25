@@ -180,3 +180,9 @@ const char *TPGM(unmatch) = "{\n"
                           "  }\n"
                           " c\\p1\n"
                           "}()\n";
+
+const char *TPGM(ns) = "{\n"
+                       " s::\"./ex/sum.kpl\"\n"
+                       " f::.fs.r(s)\n"
+                       " f`v\\p1\n"
+                       "}()\n";

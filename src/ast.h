@@ -9,6 +9,7 @@
 typedef enum {
     OC(_START),
     OC(NOP),
+    OC(NS),
     OC(DFN),
     OC(AGN),
     OC(CST),

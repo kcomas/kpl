@@ -539,3 +539,13 @@ T(unmatch) {
     ))});
     te_f(h);
 }
+
+T(ns) {
+    te *h = ppnode(psr_r(bpsr(TPGM(ns))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), N(STR)),
+        OP(N(VAR), OP(N(NONE), OP(N(VAR), APLY(N(VAR), N(VAR))))),
+        CMD(SYM(N(VAR)))
+    ))});
+    te_f(h);
+}

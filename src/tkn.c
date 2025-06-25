@@ -132,6 +132,7 @@ tkn *tkn_b(tkn *t) {
     tkn_a(t, TCUST(NUM), "9", tkn_num);
     tkn_a(t, TCUST(SYM), "`", tkn_sym);
     tkn_a(t, TCUST(STR), "\"", tkn_str);
+    tkn_a(t, TCUST(DOT), ".", tkn_ft);
     return t;
 }
 

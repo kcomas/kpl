@@ -22,6 +22,7 @@ typedef enum {
     TCUST(STR),
     TCUST(NUM),
     TCUST(VAR),
+    TCUST(DOT),
     // types
     TCUST(VD),
     TCUST(I6),

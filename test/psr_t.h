@@ -51,3 +51,5 @@ extern const char *TPGM(or);
 extern const char *TPGM(un);
 
 extern const char *TPGM(unmatch);
+
+extern const char *TPGM(ns);
