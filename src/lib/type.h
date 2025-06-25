@@ -31,6 +31,7 @@ typedef enum {
     TYPE(C4),
     TYPE(CS),
     TYPE(SG),
+    TYPE(ER),
     // vector
     TYPE(_V),
     TYPE(SL),
@@ -46,6 +47,7 @@ typedef enum {
     TYPE(_F),
     TYPE(FN),
     TYPE(NF),
+    TYPE(FP),
     // collection
     TYPE(_C),
     TYPE(TE),

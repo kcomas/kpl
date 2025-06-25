@@ -254,3 +254,14 @@ T(unmatch) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("c", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(ns) {
+    V(TPGM(ns), RN(AN(NULL, LN(LT(2, "s", U6(0), NULL, "f", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("s", U6(0), NULL), ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))),
+        ON(NULL, DFN, EN("f", U6(0), NULL),
+            AN(NULL,
+                NNV(S, TFN(FP, TH(UN, 2, "e", TS(ER), "v", TS(SG)), 1, "n", TS(SG), 0),
+                P(NULL)), L(1, EN("s", U6(0), NULL)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("v", EN("f", U6(0), NULL)))
+    )), NULL)));
+}

@@ -110,6 +110,12 @@ OBJS += $(AST_OBJS)
 $(AST): $(AST_OBJS) $(TEST)/ast.o $(TEST)/psr_t.o $(TEST)/ast_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
+NS = ns$(TNAME)
+NS_OBJS = $(SRC)/ns.o $(TYPE_OBJS) $(LERR_OBJS) $(patsubst %.c,%.o,$(wildcard $(SRC)/ns/*.c))
+OBJS += $(NS_OBJS)
+$(NS): $(NS_OBJS) $(TEST)/ns.o $(TEST_OBJS)
+> $(CCOBJ)
+
 FLD_OBJS = $(SRC)/fld.o $(LSRC)/fld.o $(AST_OBJS)
 OBJS += $(FLD_OBJS)
 

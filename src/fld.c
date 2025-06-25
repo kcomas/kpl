@@ -40,7 +40,12 @@ static fld_stat idnt_lst_r(fld *f, te **an, err **e) {
 }
 
 static bool idnt_lst_t(const te *an) {
-    // TODO check if parent is a namespace op
+    te *pn = an->d[0].p;
+    if (pn->d[2].u4 == AST_CLS(A)) {
+        if (an != pn->d[4].p) return true;
+        pn = pn->d[0].p;
+    }
+    if (pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(NS)) return false;
     return an->d[2].u4 == AST_CLS(I);
 }
 
@@ -112,6 +117,42 @@ static bool op_lr_lst_scope_t(const te *an) {
     if ((!l && !r) || !lr_lst_t(an)) return false;
     if (an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(MTCH)) return !l->d[4].p;
     return l->d[2].u4 == AST_CLS(L) && r->d[2].u4 == AST_CLS(L);
+}
+
+static size_t fld_ns_add(te *an, size_t n, mc *m[NS_MAX_L]) {
+    if (!an || an->d[2].u4 != AST_CLS(I)) return n;
+    m[n++] = mc_c(an->d[3].p);
+    return n;
+}
+
+static fld_stat op_ns_r(fld *f, te **an, err **e) {
+    mc *m[NS_MAX_L];
+    size_t n = 0;
+    te *cn = *an, *nn;
+    while (cn->d[2].u4 == AST_CLS(O) && cn->d[4].u4 == OC(NS)) {
+        if (n >= NS_MAX_L) return fld_err(f, *an, e, "fld ns name too long");
+        n = fld_ns_add(cn->d[5].p, n, m);
+        n = fld_ns_add(cn->d[6].p, n, m);
+        cn = cn->d[6].p;
+    }
+    if (!cn || cn->d[2].u4 != AST_CLS(A)) return fld_err(f, *an, e, "fld ns inv tgt");
+    nn = cn->d[4].p;
+    if (nn->d[2].u4 != AST_CLS(I)) return fld_err(f, *an, e, "fld ns inv tgt");
+    m[n++] = mc_c(nn->d[3].p);
+    if (n >= NS_MAX_L) return fld_err(f, *an, e, "fld ns name too long");
+    if (!(nn = ns_n(n, m))) return fld_err(f, *an, e, "fld inv ns");
+    for (size_t i = 0; i < n; i++) mc_f(m[i]);
+    nn = ast_an_i(f->a, ((te*) cn->d[4].p)->d[0].p, ((te*) cn->d[4].p)->d[1].p, AST_CLS(S), P(te_c(nn->d[1].p)), nn->d[2].p);
+    te_f(cn->d[4].p);
+    cn->d[4] = P(nn);
+    te_c(cn);
+    te_f(*an);
+    *an = cn;
+    return FLD_STAT(OK);
+}
+
+static bool op_ns_t(const te *an) {
+    return an->d[4].u4 == OC(NS) && !an->d[5].p;
 }
 
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
@@ -271,6 +312,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
+    fld_a(f, AST_CLS(O), op_ns_t, op_ns_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);

@@ -235,7 +235,7 @@ T(ns) {
     V(TPGM(ns), RN(AN(NULL, LN(NULL, L(3,
         ON(NULL, DFN, IN("s"), CS("./ex/sum.kpl")),
         ON(NULL, DFN, IN("f"), ON(NULL, NS, NULL,
-            ON(NULL, NS, IN("fs"), AN(NULL, IN("r"), L(1, IN("s")))))),
+            ON(NULL, NS, IN("f"), AN(NULL, IN("rs"), L(1, IN("s")))))),
         CN(P1, ZN("v", IN("f")))
     )), NULL)));
 }
