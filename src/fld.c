@@ -19,7 +19,7 @@ static bool s_cs_sg_t(const te *an) {
     te *pn;
     if (!an->d[3].p || ((te*) an->d[3].p)->d[1].u4 != TYPE(CS)) return false;
     pn = an->d[0].p;
-    if (!pn || pn->d[2].u4 == AST_CLS(A)) return false;
+    if (!pn || (pn->d[2].u4 == AST_CLS(A) && pn->d[4].p == an)) return false;
     return pn->d[2].u4 != AST_CLS(C) || pn->d[3].u4 != CC(L);
 }
 
