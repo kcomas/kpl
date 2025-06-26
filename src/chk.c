@@ -382,14 +382,21 @@ static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, ls
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_aply_e_fn(chk *c, te *an, err **e) {
-    // TODO check if FN without def
+static chk_stat chk_aply_fn(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
     chk_stat stat;
-    te *t = ((te*) ((te*) an->d[4].p)->d[3].p)->d[2].p;
-    lst *l = an->d[5].p;
     if ((stat = chk_fn_args(c, an, e, t, l)) != CHK_STAT(OK)) return stat;
     an->d[3] = P(te_c(t->d[2].p));
     return CHK_STAT(OK);
+}
+
+static chk_stat chk_aply_e_fn(chk *c, te *an, err **e) {
+    te *t = ((te*) ((te*) an->d[4].p)->d[3].p)->d[2].p;
+    return chk_aply_fn(c, an, e, t, an->d[5].p);
+}
+
+static chk_stat chk_aply_s_fn(chk *c, te *an, err **e) {
+    te *t = ((te*) an->d[4].p)->d[3].p;
+    return chk_aply_fn(c, an, e, t, an->d[5].p);
 }
 
 chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt) {
@@ -635,6 +642,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(F6), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(CS), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(ET), AST_CLS(_), TYPE(_A));
+    CHK_AA(c, chk_nop, AST_CLS(S), TYPE(FP), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(F6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(I6));
@@ -649,6 +657,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_lst_l, AST_CLS(A), TYPE(_N), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(NF));
+    CHK_AA(c, chk_aply_s_fn, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(FP));
     CHK_AA(c, chk_aply_e_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
     CHK_AA(c, chk_aply_z_fn, AST_CLS(A), TYPE(_N), AST_CLS(Z), TYPE(FN));
     CHK_AA(c, chk_aply_cs, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(CS));
@@ -688,6 +697,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(I6));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(F6));
+    CHK_AA(c, chk_nop, AST_CLS(O), TYPE(VD), OC(DUMP), TYPE(_A), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(SG));
     chk_dfnagn(c);
     chk_arith(c);
     return c;

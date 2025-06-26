@@ -48,7 +48,7 @@ echo "a::1+2;a\p1" | ./kpl # Programs can be read from stdin
 All Tests:
 
 ```
-make tests # slow, use -j<num_jobs>
+make -j$(nproc) tests
 ./tests
 ```
 

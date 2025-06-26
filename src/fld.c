@@ -129,25 +129,30 @@ static fld_stat op_ns_r(fld *f, te **an, err **e) {
     mc *m[NS_MAX_L];
     size_t n = 0;
     te *cn = *an, *nn;
-    while (cn->d[2].u4 == AST_CLS(O) && cn->d[4].u4 == OC(NS)) {
+    while (cn && cn->d[2].u4 == AST_CLS(O) && cn->d[4].u4 == OC(NS)) {
         if (n >= NS_MAX_L) return fld_err(f, *an, e, "fld ns name too long");
         n = fld_ns_add(cn->d[5].p, n, m);
         n = fld_ns_add(cn->d[6].p, n, m);
         cn = cn->d[6].p;
     }
-    if (!cn || cn->d[2].u4 != AST_CLS(A)) return fld_err(f, *an, e, "fld ns inv tgt");
-    nn = cn->d[4].p;
-    if (nn->d[2].u4 != AST_CLS(I)) return fld_err(f, *an, e, "fld ns inv tgt");
-    m[n++] = mc_c(nn->d[3].p);
-    if (n >= NS_MAX_L) return fld_err(f, *an, e, "fld ns name too long");
-    if (!(nn = ns_n(n, m))) return fld_err(f, *an, e, "fld inv ns");
-    for (size_t i = 0; i < n; i++) mc_f(m[i]);
-    nn = ast_an_i(f->a, ((te*) cn->d[4].p)->d[0].p, ((te*) cn->d[4].p)->d[1].p, AST_CLS(S), P(te_c(nn->d[1].p)), nn->d[2].p);
-    te_f(cn->d[4].p);
-    cn->d[4] = P(nn);
+    if (cn->d[2].u4 == AST_CLS(A)) {
+        nn = cn->d[4].p;
+        if (nn->d[2].u4 != AST_CLS(I)) return fld_err(f, *an, e, "fld ns inv tgt");
+        m[n++] = mc_c(nn->d[3].p);
+        if (n >= NS_MAX_L) return fld_err(f, *an, e, "fld ns name too long");
+        if (!(nn = ns_n(n, m))) return fld_err(f, *an, e, "fld inv ns");
+        nn = ast_an_i(f->a, cn, (*an)->d[1].p, AST_CLS(S), P(te_c(nn->d[1].p)), nn->d[2].p);
+        te_f(cn->d[4].p);
+        cn->d[4] = P(nn);
+        cn->d[0] = (*an)->d[0];
+    } else if (!cn) {
+        if (!(nn = ns_n(n, m))) return fld_err(f, *an, e, "fld inv ns");
+        cn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(te_c(nn->d[1].p)), nn->d[2].p);
+    } else return fld_err(f, *an, e, "fld ns inv");
     te_c(cn);
     te_f(*an);
     *an = cn;
+    for (size_t i = 0; i < n; i++) mc_f(m[i]);
     return FLD_STAT(OK);
 }
 

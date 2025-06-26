@@ -59,6 +59,7 @@ typedef enum {
 static uint8_t props[TYPE(_END)] = {
     [TYPE(SL)] = REF,
     [TYPE(SG)] = REF,
+    [TYPE(ER)] = REF,
     [TYPE(VR)] = REF | DES,
     [TYPE(LT)] = REF | DES,
     [TYPE(MC)] = REF,
