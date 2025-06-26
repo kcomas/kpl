@@ -5,9 +5,10 @@
 T(vr_mc) {
     te *type = type_v_i(&al_te, NULL, TYPE(VR), type_s_i(&al_te, NULL, TYPE(SG)));
     gen *g = NULL;
+    uint32_t lc = 0;
     void *fn = NULL;
     err *e = NULL;
-    gen_stat stat = gen_type_des(bg, type, &g, &fn,  &e);
+    gen_stat stat = gen_type_des(bg, type, &lc, &g, &fn,  &e);
     if (e) err_p(e, true);
     A(stat == GEN_STAT(OK), "vr_mv_des");
     A(!g, "gen should be null");
@@ -35,9 +36,10 @@ T(gen_te_mc) {
 T(te_mc) {
     te *type = type_te_i_v(&al_te, NULL, 3, type_s_i(&al_te, NULL, TYPE(SG)), type_s_i(&al_te, NULL, TYPE(I6)), type_s_i(&al_te, NULL, TYPE(SG)));
     gen *g = NULL;
+    uint32_t lc = 0;
     void *fn = NULL;
     err *e = NULL;
-    gen_stat stat = gen_type_des(bg, type, &g, &fn, &e);
+    gen_stat stat = gen_type_des(bg, type, &lc, &g, &fn, &e);
     if (e) err_p(e, true);
     A(stat == GEN_STAT(OK), "te_mc_des");
     A(!fn, "fn should be null");

@@ -1,0 +1,6 @@
+
+// read a file into a string
+
+s::"./ex/rfile.kpl"
+f::.f.rs(s)
+f`v\p1

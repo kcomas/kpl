@@ -10,9 +10,7 @@ void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt);
 
 bool atg_x64_enq(const te *an);
 
-x64_type atg_x64_g_t(const te *type);
-
-x64_type type_g_x64_type(te *tn);
+x64_type type_g_x64_type(const te *type);
 
 atg_stat atg_err(const atg *t, te *an, err **e, const char *m);
 

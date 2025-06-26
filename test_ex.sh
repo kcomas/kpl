@@ -7,7 +7,7 @@ KPL=./kpl
 if [ ! -f $KPL ]
 then
     make clean
-    make
+    make -j $(nproc)
 fi
 
 PGMS=$(find ./ex -type f -name "*.kpl")

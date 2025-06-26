@@ -3,8 +3,8 @@
 
 static atg_stat op_tel_ter_t(atg *t, gen *g, te *an, err **e, gen_op oc, te *c0, const char *pf) {
     te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) an->d[6].p)->d[3].p;
-    if (!(l = var_arg(g, l, atg_x64_g_t(l->d[2].p)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
-    if (!(r = var_arg(g, r, atg_x64_g_t(r->d[2].p)))) return atg_err(t, an->d[6].p, e, "atg op r inv");
+    if (!(l = var_arg(g, l, type_g_x64_type(l->d[2].p)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
+    if (!(r = var_arg(g, r, type_g_x64_type(r->d[2].p)))) return atg_err(t, an->d[6].p, e, "atg op r inv");
     if (gen_a(g, oc, c0, l, r) != GEN_STAT(OK)) return atg_err(t, an, e, pf);
     return ATG_STAT(OK);
 }
@@ -106,7 +106,7 @@ static atg_stat mul_i6_s_i6_o_i6(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat mul_i6_e_i6_s_i6(atg *t, gen *g, te *an, err **e) {
     te *l = ((te*) an->d[5].p)->d[3].p;
-    if (!(l = var_arg(g, l, atg_x64_g_t(l->d[2].p)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
+    if (!(l = var_arg(g, l, type_g_x64_type(l->d[2].p)))) return atg_err(t, an->d[5].p, e, "atg op l inv");
     if (gen_a(g, GEN_OP(MUL), gen_tmp(g, X64_TYPE(I6), t->tc++), l, gen_data(g, X64_TYPE(I6), ((te*) an->d[6].p)->d[4])) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }

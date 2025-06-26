@@ -262,4 +262,5 @@ void atg_dump(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(UN), dump_vd_s_u5_e_un);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(F6), dump_vd_s_u5_z);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(I6), dump_vd_s_u5_z);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(SG), dump_vd_s_u5_z);
 }

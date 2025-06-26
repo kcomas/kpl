@@ -66,6 +66,13 @@ te *ns_type_fp(te *rt, size_t n, ...) {
     return type_f_i(&al_te, NULL, TYPE(FP), rt, tt, NULL);
 }
 
+te *ns_un(size_t k, un v, frfn des) {
+    te *u = te_i(2, &al_te, des);
+    u->d[0] = U6(k);
+    u->d[1] = v;
+    return u;
+}
+
 static void ns_entry_f(void *p) {
     te *t = p;
     mc_f(t->d[0].p);
