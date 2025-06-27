@@ -6,7 +6,7 @@
 static int usage(const char *name) {
     printf("\e[1musage: %s [opts] file.kpl\n", name);
     printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)\n");
-    printf(" -h show this msg\n\e[0m");
+    printf(" -h show this msg\e[0m\n");
     return 1;
 }
 
@@ -31,13 +31,13 @@ int main(int argc, char *argv[]) {
                 while (argv[i][++x] != '\0') {
                     o = argv[i][x] - 'a';
                     if (o < 0 || o > 25 || !dopts[o]) {
-                        printf("\e[1;91minv -d opt: %c\n\e[0m", argv[i][x]);
+                        printf("\e[1;91minv -d opt: %c\e[0m\n", argv[i][x]);
                         return usage(argv[0]);
                     }
                     dflgs |= dopts[o];
                 }
                 if (!dflgs) {
-                    printf("\e[1;91minv -d\n\e[0m");
+                    printf("\e[1;91minv -d\e[0m\n");
                     return usage(argv[0]);
                 }
                 x = 1;
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
                 i++;
                 goto run;
             default:
-                printf("\e[1;91minv opt -%c\n\e[0m", argv[i][x]);
+                printf("\e[1;91minv opt -%c\e[0m\n", argv[i][x]);
                 return usage(argv[0]);
         }
         i++;

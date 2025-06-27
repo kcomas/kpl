@@ -5,3 +5,7 @@ s::"./ex/rfile.kpl"
 f::.f.rs(s)
 s\p1
 f`v\p1
+
+// inline version
+
+.(f;.rs("./ex/rfile.kpl"))`v\p1

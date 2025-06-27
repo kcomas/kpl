@@ -367,3 +367,17 @@ T(ns) {
     ))));
     te_f(u);
 }
+
+T(iline) {
+    IC(TPGM(iline));
+    te *u = TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG));
+    V(RN(LN(LT(2, "0", FLG(0, LTE_FLG(L)), TS(SG), "1", FLG(1, LTE_FLG(L)), te_c(u)), L(1,
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("v", TS(SG),
+            ON(te_c(u), DFN, EN("1", FLG(1, LTE_FLG(L)), te_c(u)),
+                AN(te_c(u),
+                    NNV(S, TFN(FP, te_c(u), 1, "s", TS(SG), 0), P(NULL)),
+                    L(1, ON(TS(SG), DFN, EN("0", FLG(0, LTE_FLG(L)), TS(SG)),
+                        ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))))))))
+    ))));
+    te_f(u);
+}

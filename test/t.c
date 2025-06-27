@@ -25,7 +25,7 @@ void _a(const char *n, const char *sf, _test_fn *tf) {
 
 #define H(CT) printf("\e[%dm%s %s\e[0m ", RG(CT->m), CT->sf, CT->n);
 
-#define F(CT) printf("\e[1m%s:%d \e[95m%s\n\e[0m", CT->ef, CT->ln, CT->m);
+#define F(CT) printf("\e[1m%s:%d \e[95m%s\e[0m\n", CT->ef, CT->ln, CT->m);
 
 int main(void) {
 #ifdef NTO
@@ -49,7 +49,7 @@ int main(void) {
             free(ct);
         }
     }
-    printf("\e[1;%dm%s \e[92m%d \e[91m%d\n\e[0m", RG(f), f ? "FAIL" : "PASS", p, f);
+    printf("\e[1;%dm%s \e[92m%d \e[91m%d\e[0m\n", RG(f), f ? "FAIL" : "PASS", p, f);
     while (tf) {
         _tests *ct = tf;
         tf = tf->nt;

@@ -251,7 +251,9 @@ static chk_stat chk_l_lst_bl(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_lst_l(chk *c, te *an, err **e) {
-    te *h = ((tbl*) ((te*) an->d[4].p)->d[3].p)->i->h, *lte;
+    tbl *lt = ((te*) an->d[4].p)->d[3].p;
+    if (!lt) return chk_vd(c, an, e);
+    te *h = lt->i->h, *lte;
     uint32_t r = 0, x = 0, flgs;
     while (h) {
         lte = h->d[0].p;
@@ -652,6 +654,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ST));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ET));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(UN));
+    CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(A), TYPE(UN));
     CHK_AA(c, chk_nop, AST_CLS(Z), TYPE(VD), AST_CLS(A), TYPE(SG));
     CHK_AA(c, chk_vec, AST_CLS(V), TYPE(_N), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_lst_l, AST_CLS(A), TYPE(_N), AST_CLS(L), TYPE(_A));

@@ -359,3 +359,15 @@ T(ns) {
     )), NULL)));
     te_f(u);
 }
+
+T(iline) {
+    IC(TPGM(iline));
+    te *u = TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG));
+    V(RN(AN(TS(VD), LN(NULL, L(1,
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("v", TS(SG),
+            AN(te_c(u),
+                NNV(S, TFN(FP, te_c(u), 1, "s", TS(SG), 0), P(NULL)),
+                L(1, ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))))))
+    )), NULL)));
+    te_f(u);
+}

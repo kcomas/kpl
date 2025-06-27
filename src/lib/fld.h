@@ -17,6 +17,7 @@ typedef lst *fld_lst_i(void);
 // fld entry te[ast_cls;lst[te[test_fn;fld_fn]]]
 
 typedef struct {
+    uint32_t tvc; // tmp var counter
     ssize_t r;
     const alfr *af, *ta, *ea;
     fld_tbl_i *fti;

@@ -3,6 +3,7 @@
 
 fld *fld_i(const alfr *af, const alfr *ta, const alfr *ea, fld_tbl_i *fti, fld_lst_i *fli, ast *a, tbl *ft) {
     fld *f = af->a(sizeof(fld));
+    f->tvc = 0;
     f->r = 1;
     f->af = af;
     f->ta = ta;

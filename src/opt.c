@@ -71,6 +71,47 @@ static bool lst_led_t(const te *an) {
     return an->d[2].u4 == AST_CLS(L);
 }
 
+static fld_stat tmp_var_o(fld *f, te **an, err **e) {
+    te *ln, *kv, *en;
+    if (ast_g_pn(AST_CLS(R), *an, &ln) != AST_STAT(OK)) return fld_err(f, *an, e, "opt tmp var inv root");
+    ln = ((te*) ln->d[4].p)->d[4].p;
+    if (!ln->d[3].p) ln->d[3] = P(f->fti());
+    mc *tv = mc_i(f->tvc % 10 + 2, &al_mc);
+    ssize_t r;
+    if ((r = snprintf((char*) tv->d, tv->s, "%u", f->tvc++)) < 1) return fld_err(f, *an, e, "opt inv tmp var str");
+    tv->l = (size_t) r + 1;
+    kv = ast_lst_tbl_e_i(f->a, tv, U6(LTE_FLG(L)), te_c((*an)->d[3].p));
+    tbl_a(ln->d[3].p, kv);
+    en = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(E), P(te_c(kv)));
+    *an = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(te_c((*an)->d[3].p)), U4(OC(DFN)), en, *an);
+    return FLD_STAT(OK);
+}
+
+static bool tmp_var_t(const te *an) {
+    te *pn;
+    if (an->d[2].u4 != AST_CLS(O) && an->d[2].u4 != AST_CLS(A)) return false;
+    if (!type_is_ref(((te*) an->d[3].p)->d[1].u4)) return false;
+    static bool nc[OC(_END)] = {
+        [OC(DFN)] = true,
+        [OC(AGN)] = true,
+        [OC(IF)] = true,
+        [OC(MTCH)] = true,
+        [OC(CNCTA)] = true
+    };
+    if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
+    pn = an->d[0].p;
+    switch (pn->d[2].u4) {
+        case AST_CLS(O): return !nc[pn->d[4].u4];
+        case AST_CLS(A): return an != pn->d[4].p;
+        case AST_CLS(Z): return ((te*) pn->d[0].p)->d[2].u4 != AST_CLS(L);
+        default:
+            break;
+    }
+    if (ast_g_pn(AST_CLS(L), an->d[0].p, &pn) != AST_STAT(OK)) return false;
+    pn = pn->d[0].p;
+    return pn->d[2].u4 != AST_CLS(O) && !nc[an->d[4].u4];
+}
+
 static fld_stat aply_lst_o(fld *f, te **an, err **e) {
     (void) f;
     (void) e;
@@ -83,6 +124,7 @@ static fld_stat aply_lst_o(fld *f, te **an, err **e) {
         te_f(*an);
         *an = ln;
         uint32_t lrc = 0, lxc = 0;
+        if (!ln->d[3].p) return FLD_STAT(OK);
         h = ((tbl*) ln->d[3].p)->i->h;
         while (h) {
             lte = h->d[0].p;
@@ -272,10 +314,12 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(E), entry_t, entry_o);
     fld_a(o, AST_CLS(L), lst_inv_t, lst_inv_o);
     fld_a(o, AST_CLS(L), lst_led_t, lst_led_o);
+    fld_a(o, AST_CLS(A), tmp_var_t, tmp_var_o);
     fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
     fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
     fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
+    fld_a(o, AST_CLS(O), tmp_var_t, tmp_var_o);
     fld_a(o, AST_CLS(Z), z_et_t, z_et_o);
     return o;
 }

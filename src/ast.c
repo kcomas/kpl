@@ -520,7 +520,6 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
     if (!a || !b || a->d[2].u4 != b->d[2].u4) return false;
     switch (a->d[2].u4) {
         case AST_CLS(R):
-            // TODO compare tbls
             return ast_eq(a->d[4].p, b->d[4].p);
         case AST_CLS(T):
             return type_eq(a->d[3].p, b->d[3].p);

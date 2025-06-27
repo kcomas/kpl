@@ -589,11 +589,11 @@ void atg_un_inv_p(void *p) {
     printf("\e[91m`%s\e[0m", (char*) s->d);
 }
 
-static atg_stat z_e_un(atg *t, gen *g, te *an, err **e) {
+static atg_stat z_e_un_lte(atg *t, gen *g, te *restrict an, err **e, te *restrict lte) {
     atg_stat stat;
     uint32_t el = t->lc++, ri = t->tc++;
     size_t eid = 0;
-    te *lte = ((te*) an->d[4].p)->d[3].p, *ut, *kv, *ln;
+    te *ut, *kv, *ln;
     if (ast_g_t(an->d[4].p, &ut) != AST_STAT(OK)) return atg_err(t, an, e, "atg inv type for Z");
     if (tbl_g_i(ut->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
     if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
@@ -610,6 +610,16 @@ static atg_stat z_e_un(atg *t, gen *g, te *an, err **e) {
     x64_type xt = type_g_x64_type(((te*) an->d[3].p)->d[2].p);
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, t->tc++), gen_idx_m(g, xt, 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(lte)), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
+}
+
+static atg_stat z_e_un(atg *t, gen *g, te *an, err **e) {
+    return z_e_un_lte(t, g, an, e, ((te*) an->d[4].p)->d[3].p);
+}
+
+static atg_stat z_e_un_o(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat;
+    if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+    return z_e_un_lte(t, g, an, e, ((te*) ((te*) an->d[4].p)->d[5].p)->d[3].p);
 }
 
 static atg_stat oc_cond_gen(oc c, gen_op *go) {
@@ -717,6 +727,7 @@ atg *atg_b(atg *t) {
     atg_a_z(t, TYPE(I6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(F6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(SG), AST_CLS(E), TYPE(UN), z_e_un);
+    atg_a_z(t, TYPE(SG), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(I6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(F6), atg_nop);
     atg_a_o(t, OC(NOP), TYPE(ET), AST_CLS(E), TYPE(ET), AST_CLS(S), TYPE(ET), atg_nop);
