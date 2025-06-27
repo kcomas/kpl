@@ -549,3 +549,11 @@ T(ns) {
     ))});
     te_f(h);
 }
+
+T(iline) {
+    te *h = ppnode(psr_r(bpsr(TPGM(iline))));
+    V(h, {N(ROOT), APLY(LST(
+        CMD(SYM(APLY(OP(N(NONE), N(NONE)), N(VAR), OP(N(NONE), APLY(N(VAR), N(STR))))))
+    ))});
+    te_f(h);
+}

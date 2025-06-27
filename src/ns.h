@@ -7,6 +7,8 @@
 
 te *ns_type_s(type t);
 
+te *ns_type_v(type t, te *vt);
+
 // char*, type
 te *ns_type_h(type t, size_t n, ...);
 

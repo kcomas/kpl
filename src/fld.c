@@ -42,11 +42,10 @@ static fld_stat idnt_lst_r(fld *f, te **an, err **e) {
 static bool idnt_lst_t(const te *an) {
     te *pn = an->d[0].p;
     if (pn->d[2].u4 == AST_CLS(A)) {
-        if (an != pn->d[4].p) return true;
+        if (an != pn->d[4].p) return ((te*) pn->d[4].p)->d[2].u4 != AST_CLS(O) || ((te*) pn->d[4].p)->d[4].u4 != OC(NS);
         pn = pn->d[0].p;
     }
-    if (pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(NS)) return false;
-    return an->d[2].u4 == AST_CLS(I);
+    return pn->d[2].u4 != AST_CLS(O) || pn->d[4].u4 != OC(NS);
 }
 
 static fld_stat enlst(fld *f, te **an, err **e) {
@@ -135,7 +134,7 @@ static fld_stat op_ns_r(fld *f, te **an, err **e) {
         n = fld_ns_add(cn->d[6].p, n, m);
         cn = cn->d[6].p;
     }
-    if (cn->d[2].u4 == AST_CLS(A)) {
+    if (cn && cn->d[2].u4 == AST_CLS(A)) {
         nn = cn->d[4].p;
         if (nn->d[2].u4 != AST_CLS(I)) return fld_err(f, *an, e, "fld ns inv tgt");
         m[n++] = mc_c(nn->d[3].p);
@@ -157,7 +156,11 @@ static fld_stat op_ns_r(fld *f, te **an, err **e) {
 }
 
 static bool op_ns_t(const te *an) {
-    return an->d[4].u4 == OC(NS) && !an->d[5].p;
+    if (an->d[4].u4 != OC(NS)) return false;
+    te *pn = an->d[0].p;
+    if (pn->d[2].u4 == AST_CLS(A)) pn = pn->d[4].p;
+    if (pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(NS)) return false;
+    return true;
 }
 
 static fld_stat aply_op_r(fld *f, te **an, err **e) {

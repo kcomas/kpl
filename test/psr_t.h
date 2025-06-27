@@ -53,3 +53,5 @@ extern const char *TPGM(un);
 extern const char *TPGM(unmatch);
 
 extern const char *TPGM(ns);
+
+extern const char *TPGM(iline);

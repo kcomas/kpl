@@ -260,8 +260,17 @@ T(ns) {
         ON(NULL, DFN, EN("s", U6(0), NULL), ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))),
         ON(NULL, DFN, EN("f", U6(0), NULL),
             AN(NULL,
-                NNV(S, TFN(FP, TH(UN, 2, "e", TS(ER), "v", TS(SG)), 1, "s", TS(SG), 0),
-                P(NULL)), L(1, EN("s", U6(0), NULL)))),
+                NNV(S, TFN(FP, TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG)), 1, "s", TS(SG), 0), P(NULL)),
+                L(1, EN("s", U6(0), NULL)))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("v", EN("f", U6(0), NULL)))
+    )), NULL)));
+}
+
+T(iline) {
+    V(TPGM(iline), RN(AN(NULL, LN(NULL, L(1,
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("v",
+            AN(NULL,
+                NNV(S, TFN(FP, TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG)), 1, "s", TS(SG), 0), P(NULL)),
+                L(1, ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))))))
     )), NULL)));
 }

@@ -41,5 +41,5 @@ te *ns_f_rs(mc *s) {
 }
 
 void ns_f_b() {
-    ns_a(ns_type_fp(ns_type_h(TYPE(UN), 2, "v", ns_type_s(TYPE(SG)), "e", ns_type_s(TYPE(ER))), 1, "s", ns_type_s(TYPE(SG))), ns_f_rs, 2, "f", "rs");
+    ns_a(ns_type_fp(ns_type_h(TYPE(UN), 2, "v", ns_type_s(TYPE(SG)), "e", ns_type_v(TYPE(ER), ns_type_s(TYPE(SG)))), 1, "s", ns_type_s(TYPE(SG))), ns_f_rs, 2, "f", "rs");
 }

@@ -27,6 +27,11 @@ te *ns_type_s(type t) {
    return type_s_i(&al_te, NULL, t);
 }
 
+te *ns_type_v(type t, te *vt) {
+   if (type_g_c(t) != TYPE_CLS(V)) STOP("inv ns type cls v");
+   return type_v_i(&al_te, NULL, t, vt);
+}
+
 te *ns_type_h(type t, size_t n, ...) {
    if (type_g_c(t) != TYPE_CLS(H)) STOP("inv ns type cls h");
    va_list args;

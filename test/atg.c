@@ -978,7 +978,7 @@ T(unmatch) {
 
 T(ns) {
     AI(TPGM(ns), 1, 1);
-    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "e", TS(ER), "v", TS(SG)));
+    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "e", TV(ER, TS(SG)), "v", TS(SG)));
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 1)));

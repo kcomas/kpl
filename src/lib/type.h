@@ -31,13 +31,13 @@ typedef enum {
     TYPE(C4),
     TYPE(CS),
     TYPE(SG),
-    TYPE(ER),
     // vector
     TYPE(_V),
     TYPE(SL),
     TYPE(VR),
     TYPE(LT),
     TYPE(MC),
+    TYPE(ER),
     // hash
     TYPE(_H),
     TYPE(ST),

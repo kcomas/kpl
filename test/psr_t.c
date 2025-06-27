@@ -186,3 +186,5 @@ const char *TPGM(ns) = "{\n"
                        " f::.f.rs(s)\n"
                        " f`v\\p1\n"
                        "}()\n";
+
+const char *TPGM(iline) = "{.(f;.rs(\"./ex/sum.kpl\"))`v\\p1}()";

@@ -351,7 +351,7 @@ T(unmatch) {
 
 T(ns) {
     IC(TPGM(ns));
-    te *u = TH(UN, 2, "e", TS(ER), "v", TS(SG));
+    te *u = TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG));
     V(RN(AN(TS(VD), LN(LT(2, "s", FLG(0, LTE_FLG(L)), TS(SG), "f", FLG(1, LTE_FLG(L)), te_c(u)), L(3,
         ON(TS(SG), DFN, EN("s", FLG(0, LTE_FLG(L)), TS(SG)), ON(TS(SG), CSG, NULL, CS("./ex/sum.kpl"))),
         ON(te_c(u), DFN, EN("f", FLG(1, LTE_FLG(L)), te_c(u)), AN(te_c(u), NNV(S, TFN(FP, te_c(u), 1, "s", TS(SG), 0), P(NULL)), L(1, EN("s", FLG(0, LTE_FLG(L)), TS(SG))))),

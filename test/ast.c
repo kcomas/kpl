@@ -239,3 +239,12 @@ T(ns) {
         CN(P1, ZN("v", IN("f")))
     )), NULL)));
 }
+
+T(iline) {
+    V(TPGM(iline), RN(AN(NULL, LN(NULL, L(1,
+        CN(P1, ZN("v",
+            AN(NULL, ON(NULL, NS, NULL, NULL),
+                L(2, IN("f"), ON(NULL, NS, NULL,
+                    AN(NULL, IN("rs"), L(1, CS("./ex/sum.kpl"))))))))
+    )), NULL)));
+}
