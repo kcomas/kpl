@@ -64,7 +64,7 @@ T(stest) {
 
 T(cmt) {
     const char *pgm = "// a b c\nd";
-    const uint16_t tids[] = {TCUST(CMT), TCUST(VAR)};
+    const uint16_t tids[] = {TCUST(CMT), TCUST(NL), TCUST(VAR)};
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     printf("%s\n", pgm);
     tkn_a(t, TCUST(CMT), "//", tkn_cmt);

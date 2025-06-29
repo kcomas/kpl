@@ -101,6 +101,7 @@ static bool tmp_var_t(const te *an) {
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
     pn = an->d[0].p;
     switch (pn->d[2].u4) {
+        case AST_CLS(V): return false;
         case AST_CLS(O): return !nc[pn->d[4].u4];
         case AST_CLS(A): return an != pn->d[4].p;
         case AST_CLS(Z): return ((te*) pn->d[0].p)->d[2].u4 != AST_CLS(L);

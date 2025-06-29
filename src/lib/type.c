@@ -444,7 +444,14 @@ te *type_cpy(const te *t) {
             STOP("TODO TYPE CPY F");
             break;
         case TYPE_CLS(C):
-            STOP("TODO TYPE CPY C");
+            switch (t->d[1].u4) {
+                case TYPE(TE):
+                    c = type_te_i(t->af, t->d[0].p, t->l - 2);
+                    for (size_t i = 2; i < t->l; i++) c->d[i] = P(type_cpy(t->d[i].p));
+                    break;
+                default:
+                    break;
+            }
             break;
         default:
             break;

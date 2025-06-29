@@ -168,7 +168,7 @@ static chk_stat chk_op_lst_lr_b(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
-    ssize_t mi = 0; // if does not equal un tbl len need an else case (-1) for else case
+    if (chk_n(c, an->d[5].p, e) != CHK_STAT(OK)) return chk_err(c, an, e, "chk inv match right");
     lst *l = ((te*) an->d[5].p)->d[4].p;
     te *ut, *h, *n, *kve, *kvt;
     if (!l) return chk_op_lst_lr_b(c, an, e);
@@ -183,14 +183,11 @@ static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
             kve->d[2] = P(te_c(kvt->d[2].p));
             ast_lst_tbl_e_s_i(kve, c->yc--);
             ast_lst_tbl_e_s_f(kve, LTE_FLG(Y));
-            if (mi != -1) mi++;
             ((te*) n->d[3].p)->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
         } else if (n->d[2].u4 == AST_CLS(A)) return chk_err(c, an, e, "nyi");
         else if (h->d[2].p) return chk_err(c, an, e, "chk inv mtch default case");
-        else if (!h->d[2].p) mi = -1;
         h = h->d[2].p;
     }
-    if (mi != -1 && mi != (ssize_t) ((tbl*) ut->d[2].p)->i->l) return chk_err(c, an, e, "chk need default case");
     return CHK_STAT(OK);
 }
 
@@ -356,15 +353,21 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
     if (!((te*) an->d[5].p)->d[4].p) return st_init(c, an, e);
     te *pn = an->d[0].p, *t, *rt = NULL, *h, *n;
     if (pn->d[2].u4 == AST_CLS(L) && (((te*) pn->d[0].p)->d[2].u4 == AST_CLS(R) || ((lst*) pn->d[4].p)->t->d[0].p != an)) return CHK_STAT(OK);
+    // TODO chk for parent op or return else set return type to void
+    ssize_t mi = 0;
     h = ((lst*) ((te*) an->d[6].p)->d[4].p)->h;
     while (h) {
         n = h->d[0].p;
-        if (n->d[2].u4 == AST_CLS(Z) || n->d[2].u4 == AST_CLS(A)) n = n->d[4].p;
+        if (n->d[2].u4 == AST_CLS(Z) || n->d[2].u4 == AST_CLS(A)) {
+            n = n->d[4].p;
+            mi++;
+        } else mi = -1;
         if (ast_g_t(n, &t) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv mtch type");
         if (rt && !type_eq(rt, t)) return chk_err(c, an, e, "chk inv mtch type neq");
         else rt = t;
         h = h->d[2].p;
     }
+    if (rt->d[1].u4 != TYPE(VD) && mi > -1 && mi < (ssize_t) ((lst*) ((te*) an->d[6].p)->d[4].p)->l) return chk_err(c, an, e, "chk mtch need def case");
     an->d[3] = P(te_c(rt));
     return CHK_STAT(OK);
 }
@@ -404,16 +407,17 @@ static chk_stat chk_aply_s_fn(chk *c, te *an, err **e) {
 chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt) {
     lst *l = an->d[5].p;
     if (l->l != 1) return chk_err(c, an, e, "chk aply len inv");
-    te *s = l->h->d[0].p, *lte;
+    te *s = l->h->d[0].p, *tn;
     if (s->d[2].u4 != AST_CLS(S)) return chk_err(c, an, e, "chk aply not scalar");
     if (((te*) s->d[3].p)->d[1].u4 != TYPE(I6)) return chk_err(c, an, e, "chk aply inv scalar type");
-    if (ast_g_t(an->d[4].p, &lte) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv e type");
-    *rt = type_te_g_t(lte, s->d[4].i6);
+    if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv e type");
+    if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
+    *rt = type_te_g_t(tn, s->d[4].i6);
     if (!*rt) return chk_err(c, an, e, "chk aply te out of bounds");
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_aply_e_te(chk *c, te *an, err **e) {
+static chk_stat chk_aply_ez_te(chk *c, te *an, err **e) {
     chk_stat stat;
     te *rt;
     if ((stat = a_te_g_rt(c, an, e, &rt)) != CHK_STAT(OK)) return stat;
@@ -499,6 +503,20 @@ static chk_stat chk_aply_e_(chk *c, te *an, err **e) {
     if (tbl_s(pn->d[3].p, tgt->d[0], &tgt) != TBL_STAT(OK)) return chk_err(c, an, e, "chk inv aply pn lst update");
     te_f(tgt);
     return chk_aply_e_fn(c, an, e);
+}
+
+static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
+    te *tn;
+    lst *l = an->d[5].p;
+    if (!l || l->l != 1) return chk_err(c, an, e, "chk inv vr access");
+    if (ast_g_t(l->h->d[0].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get vr access type");
+    if (tn->d[1].u4 != TYPE(I6) && tn->d[1].u4 != TYPE(U6)) return chk_err(c, an, e, "chk inv vr access type");
+    tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
+    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, type_v_i(c->ta, NULL, TYPE(ER), type_s_i(c->ta, NULL, TYPE(U6))));
+    if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type of vr");
+    type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 0, te_c(tn->d[2].p));
+    an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
+    return CHK_STAT(OK);
 }
 
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
@@ -646,6 +664,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(CS), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(ET), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(S), TYPE(FP), AST_CLS(_), TYPE(_A));
+    CHK_AA(c, chk_nop, AST_CLS(Z), TYPE(VD), AST_CLS(O), TYPE(VD));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(F6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(I6));
@@ -662,10 +681,13 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(FN));
     CHK_AA(c, chk_aply_e_fn, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(NF));
     CHK_AA(c, chk_aply_s_fn, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(FP));
-    CHK_AA(c, chk_aply_e_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
+    CHK_AA(c, chk_aply_ez_te, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(TE));
     CHK_AA(c, chk_aply_z_fn, AST_CLS(A), TYPE(_N), AST_CLS(Z), TYPE(FN));
+    CHK_AA(c, chk_aply_ez_te, AST_CLS(A), TYPE(_N), AST_CLS(Z), TYPE(TE));
     CHK_AA(c, chk_aply_cs, AST_CLS(A), TYPE(_N), AST_CLS(S), TYPE(CS));
     CHK_AA(c, chk_aply_e_, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(_N));
+    CHK_AA(c, chk_aply_vr, AST_CLS(A), TYPE(_N), AST_CLS(E), TYPE(VR));
+    CHK_AA(c, chk_nop, AST_CLS(A), TYPE(UN), AST_CLS(E), TYPE(VR));
     // ops
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(FN), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_cst_fn_lst, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(NF), AST_CLS(L), TYPE(_A));

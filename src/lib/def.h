@@ -11,7 +11,7 @@
 #define HERE(MSG) printf("\e[1m%s:%d\e[0m \e[1;94m%s\e[0m \e[1;33m%s\e[0m\n", __FILE__, __LINE__, __FUNCTION__, MSG);
 
 #define STOP(MSG) do { \
-        printf("\e[1;91m%s\e[0m\n", MSG); \
+        printf("\e[1m%s:%d\e[0m \e[1;94m%s\e[0m \e[1;91m%s\e[0m\n", __FILE__, __LINE__, __FUNCTION__, MSG); \
         exit(1); \
 } while (0)
 

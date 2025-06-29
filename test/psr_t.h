@@ -55,3 +55,5 @@ extern const char *TPGM(unmatch);
 extern const char *TPGM(ns);
 
 extern const char *TPGM(iline);
+
+extern const char *TPGM(vridx);

@@ -676,6 +676,7 @@ void gen_x64_opt(gen *g, gen_st *st) {
                 continue;
             }
         }
+        // TODO opt setting stk cls m vars to 0
         h = h->d[2].p;
     }
 }

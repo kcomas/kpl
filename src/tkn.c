@@ -82,8 +82,6 @@ tkn_stat tkn_cmt(tkn *t, te *m, err **e) {
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
     if (t->s->d[t->pos] == '\0') return tkn_err(t, e, "tkn cmt no nl");
-    t->pos++;
-    t->lno++;
     tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     return TKN_STAT(OK);
 }
