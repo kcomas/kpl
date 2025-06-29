@@ -270,6 +270,39 @@ static bool op_s_s_t(const te *an) {
     return false;
 }
 
+static fld_stat op_s_s_mon_o(fld *f, te **an, err **e) {
+    te *r = (*an)->d[6].p, *type = (*an)->d[3].p;
+    un v;
+    switch ((*an)->d[4].u4) {
+        case OC(SUB):
+            if (type->d[1].u4 != TYPE(I6)) return fld_err(f, *an, e, "opt inv neg type");
+            v = I6(-r->d[4].i6);
+            break;
+        default:
+            return fld_err(f, *an, e, "opt inv s mon inline op");
+    }
+    te_c(r);
+    r->d[0] = (*an)->d[0];
+    r->d[1] = (*an)->d[1];
+    r->d[4] = v;
+    te_f(*an);
+    *an = r;
+    return FLD_STAT(OK);
+}
+
+static bool op_s_s_mon_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(O)) return false;
+    if (an->d[5].p) return false;
+    if (((te*) an->d[6].p)->d[2].u4 != AST_CLS(S)) return false;
+    switch (an->d[4].u4) {
+        case OC(SUB):
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
 static fld_stat z_et_o(fld *f, te **an, err **e) {
     te *kv, *n;
     if (ast_g_t((*an)->d[4].p, &kv) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get ET type for Z");
@@ -325,6 +358,7 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
     fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
     fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
+    fld_a(o, AST_CLS(O), op_s_s_mon_t, op_s_s_mon_o);
     fld_a(o, AST_CLS(O), tmp_var_t, tmp_var_o);
     fld_a(o, AST_CLS(Z), z_et_t, z_et_o);
     return o;

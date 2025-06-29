@@ -1,6 +1,16 @@
 
 #include "atg_x64.h"
 
+void atg_d_p(const atg *t) {
+    te *h = t->dt->i->h, *d;
+    while (h) {
+        d = h->d[0].p;
+        type_p(d->d[0].p);
+        printf(" %p\n", d->d[1].p);
+        h = h->d[2].p;
+    }
+}
+
 static void atg_add_e_p(const tbl *t, size_t n, size_t idnt) {
     n--;
     te *h = t->i->h;
@@ -246,6 +256,7 @@ atg_stat v_set_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict n, uint
         case AST_CLS(E):
             if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ti), idxfn(g, eid++)), var_arg(g, n->d[3].p, type_g_x64_type(((te*) n->d[3].p)->d[2].p)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, "v_set_fn CLS E");
             break;
+        case AST_CLS(V):
         case AST_CLS(O):
             if ((stat = atg_r(t, g, n, e)) != ATG_STAT(OK)) return stat;
             n = atg_g_g(n);
@@ -728,6 +739,7 @@ atg *atg_b(atg *t) {
     atg_a_z(t, TYPE(F6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(SG), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(SG), AST_CLS(O), TYPE(UN), z_e_un_o);
+    atg_a_z(t, TYPE(TE), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(I6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(F6), atg_nop);
     atg_a_o(t, OC(NOP), TYPE(ET), AST_CLS(E), TYPE(ET), AST_CLS(S), TYPE(ET), atg_nop);

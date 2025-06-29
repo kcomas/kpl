@@ -23,7 +23,7 @@ make
 ## Usage
 
 ```
-./kpl [opts] [file] # Examples with an overview can be found in the ex folder
+./kpl [opts] [file]
 
 [opts] are
 -h: show help message

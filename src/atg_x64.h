@@ -6,6 +6,8 @@
 #include "./lib/gen_x64.h"
 #include "./lib/gen_type.h"
 
+void atg_d_p(const atg *t);
+
 void atg_tbl_p(const tbl *t, ast_cls cls, size_t idnt);
 
 bool atg_x64_enq(const te *an);

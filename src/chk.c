@@ -142,7 +142,7 @@ static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
+static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side) {
     tbl *t = ((te*) an->d[side].p)->d[3].p;
     if (!t) return CHK_STAT(OK);
     te *h = t->i->h, *lte, *kv;
@@ -154,7 +154,6 @@ static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
             ast_lst_tbl_e_s_f(lte, LTE_FLG(O));
             lte->d[2] = P(te_c(kv->d[2].p));
         }
-        if (fc && !lte->d[2].p) return chk_err(c, an, e, "chk lst var type not resolved");
         h = h->d[2].p;
     }
     return CHK_STAT(OK);
@@ -162,9 +161,9 @@ static chk_stat chk_op_lst_side(chk *c, te *an, err **e, size_t side, bool fc) {
 
 static chk_stat chk_op_lst_lr_b(chk *c, te *an, err **e) {
     chk_stat cstat;
-    if (an->d[0].p && ((te*) an->d[0].p)->d[2].u4 == AST_CLS(L) && (cstat = chk_op_lst_side(c, an, e, 0, false)) != CHK_STAT(OK)) return cstat; // ignore unresolved
-    if ((cstat = chk_op_lst_side(c, an, e, 5, true)) != CHK_STAT(OK)) return cstat;
-    return chk_op_lst_side(c, an, e, 6, true);
+    if (an->d[0].p && ((te*) an->d[0].p)->d[2].u4 == AST_CLS(L) && (cstat = chk_op_lst_side(c, an, e, 0)) != CHK_STAT(OK)) return cstat; // ignore unresolved
+    if ((cstat = chk_op_lst_side(c, an, e, 5)) != CHK_STAT(OK)) return cstat;
+    return chk_op_lst_side(c, an, e, 6);
 }
 
 static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {

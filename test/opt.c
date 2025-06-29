@@ -396,7 +396,7 @@ T(vridx) {
                     L(2, ON(TS(SG), CSG, NULL, CS("c")), ON(TS(SG), CSG, NULL, CS("d"))))))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(SG), ZTN("v", te_c(tsg),
             ON(te_c(u), DFN, EN("0", FLG(1, LTE_FLG(L)), te_c(u)),
-                AN(te_c(u), EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)), L(1, ON(TS(I6), SUB, NULL, SN(I6, I6(1))))))),
+                AN(te_c(u), EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)), L(1, SN(I6, I6(-1)))))),
                     L(1, SN(I6, I6(0))))),
         ON(TS(VD), MTCH,
             LN(NULL, L(1, AN(te_c(u), EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)), L(1, SN(I6, I6(3)))))),
