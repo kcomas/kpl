@@ -99,6 +99,11 @@ static bool tmp_var_t(const te *an) {
         [OC(CNCTA)] = true
     };
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
+    if (an->d[2].u4 == AST_CLS(A)) {
+        if (ast_g_t(an->d[4].p, &pn) != AST_STAT(OK)) return false;
+        if (pn->d[1].u4 == TYPE(SL)) pn = pn->d[2].p;
+        if (pn->d[1].u4 == TYPE(TE)) return false;
+    }
     pn = an->d[0].p;
     switch (pn->d[2].u4) {
         case AST_CLS(V): return false;
