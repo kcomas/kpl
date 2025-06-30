@@ -71,6 +71,7 @@ void chk_dfnagn(chk *c) {
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(F6));
+    CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(F6));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(U6));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(VR));
@@ -89,4 +90,5 @@ void chk_dfnagn(chk *c) {
     CHK_AA(c, chk_agn_a_o, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_l_z_r, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_agn, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
+    CHK_AA(c, chk_op_agn, AST_CLS(O), TYPE(_N), OC(AGN), TYPE(_A), AST_CLS(E), TYPE(F6), AST_CLS(E), TYPE(F6));
 }

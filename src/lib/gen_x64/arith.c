@@ -290,6 +290,17 @@ static gen_stat subsd_axaxsx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
+static gen_stat addsd_axvxvx_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    int32_t v1, v2;
+    te *kv;
+    if (get_reg(s, ci->d[1].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (stk_g_idx2(s, ci->d[2].p, ci->d[3].p, &v1, &v2) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+    if (gen_as_rrmbd(a, AS_X64(MOVSD), kv->d[2].u3, R(BP), v1, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as_rrmbd(a, AS_X64(ADDSD), kv->d[2].u3, R(BP), v2, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
+}
+
 static gen_stat cvtsi2sd_axau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv[2];
@@ -334,6 +345,7 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), addsd_axaxdx_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), addsd_axaxax_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(F6), addsd_axaxax_fn);
+    GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(V), X64_TYPE(F6), addsd_axvxvx_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(A), X64_TYPE(MU6), GEN_CLS(A), X64_TYPE(MU6), GEN_CLS(D), X64_TYPE(U6), add_amuamudu_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(S), X64_TYPE(MI6), GEN_CLS(S), X64_TYPE(MI6), GEN_CLS(D), X64_TYPE(I6), add_susudu_fn);
     GEN_OP_A3(g, GEN_OP(ADD), GEN_CLS(S), X64_TYPE(MI6), GEN_CLS(S), X64_TYPE(MI6), GEN_CLS(A), X64_TYPE(I6), add_susuau_fn);

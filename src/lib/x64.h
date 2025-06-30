@@ -273,6 +273,12 @@ x64_stat x64_add_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 // addsd xmm0, xmm1
 x64_stat x64_addsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 
+// addsd xmm0, qword ptr[rsp]
+x64_stat x64_addsd_xrm(size_t *p, uint8_t *m, reg d, reg s);
+
+// addsd xmm0, qword ptr[rsp+dsp8]
+x64_stat x64_addsd_xrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
+
 // addsd xmm0, qword ptr[rip+dsp32]
 x64_stat x64_addsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 
