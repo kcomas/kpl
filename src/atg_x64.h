@@ -20,6 +20,8 @@ te *atg_te_idx_d(gen *g, uint32_t id);
 
 te *atg_vr_idx_d(gen *g, uint32_t id);
 
+bool inloop(te *an);
+
 te *var_arg(gen *g, te *lte, x64_type xt);
 
 atg_stat atg_nop(atg *t, gen *g, te *an, err **e);

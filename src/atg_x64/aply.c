@@ -138,8 +138,11 @@ static atg_stat aply_e_te(atg *t, gen *g, te *an, err **e) {
 static atg_stat aply_z_te(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
-    // TODO atg_r on args
-    return atg_err(t, an, e, "TODO Z_TE");
+    te *sn = ((lst*) an->d[5].p)->h->d[0].p, *tn = atg_g_g(an->d[4].p)->d[1].p;
+    x64_type xt = gen_var_g_t(tn);
+    if (sn->d[2].u4 != AST_CLS(S)) return atg_err(t, an, e, "atg aply_z_te inv access");
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, t->tc++), gen_idx_m(g, xt, 2, te_c(tn), atg_te_idx_d(g, tn->d[4].i6)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
 }
 
 #define CS_BYTES_NUM 50

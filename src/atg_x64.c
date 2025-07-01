@@ -93,6 +93,7 @@ x64_type type_g_x64_type(const te *type) {
         case TYPE(F6): return X64_TYPE(F6);
         case TYPE(CS): return X64_TYPE(S);
         case TYPE(SG):
+        case TYPE(ER):
         case TYPE(TE):
         case TYPE(VR):
         case TYPE(ST):
@@ -226,6 +227,14 @@ static atg_stat root_lst_e(atg *t, gen *g, te *an, err **e) {
     if ((stat = ref_vars(t, g, an, e, an->d[3].p, go, true)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(LEAVE), gen_data(g, X64_TYPE(M), P(NULL)), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
+}
+
+bool inloop(te *an) {
+    while (an->d[2].u4 != AST_CLS(R)) {
+        if (an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(LOOP)) return true;
+        an = an->d[0].p;
+    }
+    return false;
 }
 
 te *var_arg(gen *g, te *lte, x64_type xt) {
@@ -494,11 +503,9 @@ static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
         n = h->d[0].p;
         switch (n->d[2].u4) {
             case AST_CLS(Z):
-                if (h->d[2].p) {
-                    if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
-                    if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
-                    if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(r->d[3].p)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, nl = t->lc++)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-                }
+                if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
+                if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
+                if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(r->d[3].p)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, h->d[2].p ? nl = t->lc++ : el)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
                 if (tbl_g_i(l->d[3].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv tmp var in mtch");
                 xt = type_g_x64_type(kv->d[2].p);
                 if (gen_a(g, GEN_OP(SET), var_arg(g, kv, xt), gen_idx_m(g, xt, 2, var_arg(g, r->d[3].p, xt), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -754,6 +761,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(IF), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), if_l_l);
     atg_a_o(t, OC(MTCH), TYPE(SG), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(MTCH), TYPE(ST), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
+    atg_a_o(t, OC(MTCH), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(EQ), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), cond_bl_e_u6_s_u6);
     atg_a_o(t, OC(NE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
     atg_a_o(t, OC(GT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);

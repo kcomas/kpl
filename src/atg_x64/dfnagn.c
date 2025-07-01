@@ -19,7 +19,13 @@ static atg_stat dfnagn_e_e_(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat dfn_t_e_t_oa_t(atg *t, gen *g, te *an, err **e) {
     te *l = an->d[5].p, *r = atg_g_g(an->d[6].p)->d[1].p;
-    if (gen_a(g, GEN_OP(SET), var_arg(g, l->d[3].p, type_g_x64_type(((te*) l->d[3].p)->d[2].p)), te_c(r), NULL)) return atg_err(t, an, e, __FUNCTION__);
+    te *lt = ((te*) l->d[3].p)->d[2].p;
+    if (type_is_ref(lt->d[1].u4) && inloop(an)) {
+        void *fn = type_ref_g_des(lt->d[1].u4);
+        if (!fn) return atg_err(t, an, e, "atg inv des for define in loop");
+        if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, var_arg(g, l->d[3].p, type_g_x64_type(lt))), gen_data(g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    }
+    if (gen_a(g, GEN_OP(SET), var_arg(g, l->d[3].p, type_g_x64_type(lt)), te_c(r), NULL)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
