@@ -1,6 +1,6 @@
 
-x::5
-y::5
+x::2
+y::6
 
 // TODO log time version
 
@@ -13,4 +13,4 @@ pow::FN${I6(x);I6(y)
     c
 }
 
-pow(x;y)\p1
+"{} ** {} = {}"(x;y;pow(x;y))\p1
