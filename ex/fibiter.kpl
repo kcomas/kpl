@@ -1,7 +1,7 @@
 
 // iterative Fibonacci
 
-f::n::80
+c::n::80
 a::0
 b::1
 
@@ -12,4 +12,4 @@ b::1
     n-:1
 }
 
-"Fib({}) = {}"(f;a)\p1
+"Fib({}) = {}"(c;a)\p1

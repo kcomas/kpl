@@ -23,6 +23,8 @@ bool mc_eq(const mc *restrict a, const mc *restrict b);
 
 void mc_wa(mc **m, uint8_t b);
 
+void mc_wf(mc **m, uint8_t b);
+
 void mc_wa_v(mc **m, size_t n, ...);
 
 void mc_wb(mc **m, size_t l, uint8_t *b);

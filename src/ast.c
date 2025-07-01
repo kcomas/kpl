@@ -74,6 +74,10 @@ void ast_lst_tbl_e_s_f(te *ent, uint32_t flg) {
     ent->d[1] = u5_s_o(ent->d[1], 0, flg | ast_lst_tbl_e_g_f(ent));
 }
 
+void ast_lst_tbl_e_r_f(te *ent, uint32_t flg) {
+    ent->d[1] = u5_s_o(ent->d[1], 0, ast_lst_tbl_e_g_f(ent) & ~flg);
+}
+
 uint32_t ast_lst_tbl_e_g_i(te *ent) {
     return u5_g_o(ent->d[1], 1);
 }

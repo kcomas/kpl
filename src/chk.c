@@ -91,7 +91,7 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-te *chk_g_pn_lte(te *an, const mc *s) {
+static void *chk_g_pn_lte_(te *an, const mc *s, bool tbl) {
     bool pf = false; // past function
     te *plns = an, *pln, *kv;
     do {
@@ -100,7 +100,7 @@ te *chk_g_pn_lte(te *an, const mc *s) {
         plns = pln->d[0].p;
         if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) {
             if (pf && ((te*) kv->d[2].p)->d[1].u4 != TYPE(FN)) return NULL;
-            return kv;
+            return tbl ? pln->d[3].p : kv;
         }
         if (plns->d[2].u4 == AST_CLS(O) && plns->d[4].u4 == OC(CST)) {
             if (ast_g_t(plns->d[5].p, &kv) != AST_STAT(OK)) return NULL;
@@ -108,6 +108,14 @@ te *chk_g_pn_lte(te *an, const mc *s) {
         }
     } while (pln);
     return NULL;
+}
+
+te *chk_g_pn_lte(te *an, const mc *s) {
+   return (te*) chk_g_pn_lte_(an, s, false);
+}
+
+tbl *chk_g_pn_lte_tbl(te *an, const mc *s) {
+   return (tbl*) chk_g_pn_lte_(an, s, true);
 }
 
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
@@ -511,7 +519,7 @@ static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
     if (ast_g_t(l->h->d[0].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get vr access type");
     if (tn->d[1].u4 != TYPE(I6) && tn->d[1].u4 != TYPE(U6)) return chk_err(c, an, e, "chk inv vr access type");
     tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
-    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, type_v_i(c->ta, NULL, TYPE(ER), type_s_i(c->ta, NULL, TYPE(U6))));
+    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, type_v_i(c->ta, NULL, TYPE(ER), type_s_i(c->ta, NULL, TYPE(SG))));
     if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type of vr");
     type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 0, te_c(tn->d[2].p));
     an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));

@@ -38,7 +38,9 @@ atg_stat call_npr(gen_op *go, const te *an);
 
 extern const char *atg_un_inv_str;
 
-void atg_un_inv_p(void *p);
+extern const char *atg_vr_inv_str;
+
+void atg_sg_err_p(void *p);
 
 extern const char *atg_dump_strs[TYPE(_END)];
 

@@ -10,6 +10,8 @@ chk_stat chk_err(const chk *c, te *an, err **e, const char *m);
 
 te *chk_g_pn_lte(te *an, const mc *s);
 
+tbl *chk_g_pn_lte_tbl(te *an, const mc *s);
+
 chk_stat chk_nop(chk *c, te *an, err **e);
 
 ssize_t type_h_cmp(un a, un b);

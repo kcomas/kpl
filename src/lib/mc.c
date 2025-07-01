@@ -83,15 +83,25 @@ bool mc_eq(const mc *restrict a, const mc *restrict b) {
     #define MC_RESIZE 2
 #endif
 
+static void rs(mc **m) {
+    if ((*m)->l + 1 < (*m)->s) return;
+    mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->af);
+    nm->l = (*m)->l;
+    memcpy(nm->d, (*m)->d, nm->l);
+    nm->af->f(*m);
+    *m = nm;
+}
+
 void mc_wa(mc **m, uint8_t b) {
-    if ((*m)->l == (*m)->s) {
-        mc *nm = mc_i((*m)->s * MC_RESIZE, (*m)->af);
-        nm->l = (*m)->l;
-        memcpy(nm->d, (*m)->d, nm->l);
-        nm->af->f(*m);
-        *m = nm;
-    }
+    rs(m);
     (*m)->d[(*m)->l++] = b;
+}
+
+void mc_wf(mc **m, uint8_t b) {
+    rs(m);
+    for (ssize_t i = (*m)->l; i > 0; i--) (*m)->d[i] = (*m)->d[i - 1];
+    (*m)->d[0] = b;
+    (*m)->l++;
 }
 
 void mc_wa_v(mc **m, size_t n, ...) {

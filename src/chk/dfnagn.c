@@ -41,6 +41,22 @@ static chk_stat chk_dfn_agn_un_e_z(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_op_dfn_sh(chk *c, te *an, err **e) {
+    te *lte = ((te*) an->d[5].p)->d[3].p, *rt, *pn;
+    if (!(ast_lst_tbl_e_g_f(lte) & LTE_FLG(O))) return chk_err(c, an, e, "chk redef of var");
+    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk shadow type inv");
+    if (!type_eq(lte->d[2].p, rt)) return chk_err(c, an, e, "chk shadow type neq");
+    an->d[3] = P(te_c(rt));
+    mc **s = (mc**) &lte->d[0].p;
+    if (ast_g_pn(AST_CLS(L), an, &pn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get shadow parent lst");
+    tbl *pt = chk_g_pn_lte_tbl(pn->d[0].p, *s);
+    if (!pt) return chk_err(c, an, e, "chk shadow parent tbl inv");
+    mc_wf(s, '0');
+    ast_lst_tbl_e_r_f(lte, LTE_FLG(O));
+    tbl_a(pt, te_c(lte));
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_agn_a_o(chk *c, te *an, err **e) {
     chk_stat stat;
     te *lt, *rt;
@@ -81,6 +97,7 @@ void chk_dfnagn(chk *c) {
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(A), TYPE(SG));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(O), TYPE(SG));
     CHK_AA(c, chk_op_e_n_svoea_dfn, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(A), TYPE(UN));
+    CHK_AA(c, chk_op_dfn_sh, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_dfn_e_d, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(S), TYPE(ET));
     CHK_AA(c, chk_op_dfn_e_t, AST_CLS(O), TYPE(_N), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(_N), AST_CLS(T), TYPE(FN));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(FN), OC(DFN), TYPE(_A), AST_CLS(E), TYPE(FN), AST_CLS(O), TYPE(FN));

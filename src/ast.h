@@ -75,6 +75,8 @@ uint32_t ast_lst_tbl_e_g_f(te *ent);
 
 void ast_lst_tbl_e_s_f(te *ent, uint32_t flg);
 
+void ast_lst_tbl_e_r_f(te *ent, uint32_t flg);
+
 uint32_t ast_lst_tbl_e_g_i(te *ent);
 
 void ast_lst_tbl_e_s_i(te *ent, uint32_t id);

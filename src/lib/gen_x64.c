@@ -124,6 +124,9 @@ void ovt_p(const te *ovt) {
                 case X64_TYPE(M):
                     printf("%p)", ovt->d[1].p);
                     break;
+                case X64_TYPE(I6):
+                    printf("%ld)", ovt->d[1].u6);
+                    break;
                 case X64_TYPE(F5):
                 case X64_TYPE(F6):
                     printf("%lf)", ovt->d[1].f6);

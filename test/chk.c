@@ -377,7 +377,7 @@ T(vridx) {
     te *tsg = type_te_i_v(&al_te, NULL, 2, TS(SG), TS(SG));
     te *ttsg = type_te_i_v(&al_te, NULL, 2, te_c(tsg), te_c(tsg));
     te *vr = TV(VR, te_c(tsg));
-    te *u = TH(UN, 2, "e", TV(ER, TS(U6)), "v", te_c(tsg));
+    te *u = TH(UN, 2, "e", TV(ER, TS(SG)), "v", te_c(tsg));
     V(RN(AN(TS(VD), LN(LT(1, "v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)), L(3,
         ON(te_c(vr), DFN, EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)),
             ON(te_c(vr), CST, NN(T, te_c(vr)),
@@ -391,8 +391,8 @@ T(vridx) {
             L(1, ON(TS(I6), SUB, NULL, SN(I6, I6(1)))))), L(1, SN(I6, I6(0))))),
         ON(TS(VD), MTCH,
             LN(NULL, L(1, AN(te_c(u), EN("v", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(vr)), L(1, SN(I6, I6(3)))))),
-            LN(LT(1, "e", FLG(-1, LTE_FLG(Y)), TV(ER, TS(U6))), L(1,
-                ZTN("e", TS(VD), ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", FLG(-1, LTE_FLG(Y)), TV(ER, TS(U6))))))))
+            LN(LT(1, "e", FLG(-1, LTE_FLG(Y)), TV(ER, TS(SG))), L(1,
+                ZTN("e", TS(VD), ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", FLG(-1, LTE_FLG(Y)), TV(ER, TS(SG))))))))
     )), NULL)));
     te_f(tsg);
     te_f(ttsg);
