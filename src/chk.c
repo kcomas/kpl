@@ -529,9 +529,21 @@ static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h = lt->i->h;
+    uint32_t ar = 0, ax = 0;
     while (h) {
         uint32_t flgs = ast_lst_tbl_e_g_f(h->d[0].p);
         if ((flgs & LTE_FLG(O)) && (!(flgs & LTE_FLG(F)))) return chk_err(c, an, e, "chk out of scope");
+        if (flgs & LTE_FLG(L)) {
+            switch (((te*) ((te*) h->d[0].p)->d[2].p)->d[1].u4) {
+                case TYPE(F5):
+                case TYPE(F6):
+                    ast_lst_tbl_e_s_i(h->d[0].p, ax++);
+                    break;
+                default:
+                    ast_lst_tbl_e_s_i(h->d[0].p, ar++);
+                    break;
+            }
+        }
         h = h->d[2].p;
     }
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));

@@ -17,7 +17,7 @@ Builds are done in the current working directory
 ```
 git clone https://github.com/kcomas/kpl.git
 cd kpl
-make
+make -j$(nproc)
 ```
 
 ## Usage
@@ -56,7 +56,7 @@ Individual tests:
 
 ```
 make show_tests # List of test names
-make $(TEST_NAME)
+make -j$(nproc) $(TEST_NAME)
 ./$(TEST_NAME)
 ```
 

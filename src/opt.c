@@ -6,7 +6,6 @@ static fld_stat entry_o(fld *f, te **an, err **e) {
     te *lte = (*an)->d[3].p;
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (!flgs) return fld_err(f, *an, e, "opt var flgs inv");
-    if (flgs & LTE_FLG(A)) return FLD_STAT(OK);
     // TODO chk if unused
     return FLD_STAT(OK);
 }

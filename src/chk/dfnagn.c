@@ -51,8 +51,9 @@ static chk_stat chk_op_dfn_sh(chk *c, te *an, err **e) {
     if (ast_g_pn(AST_CLS(L), an, &pn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get shadow parent lst");
     tbl *pt = chk_g_pn_lte_tbl(pn->d[0].p, *s);
     if (!pt) return chk_err(c, an, e, "chk shadow parent tbl inv");
-    mc_wf(s, '0');
     ast_lst_tbl_e_r_f(lte, LTE_FLG(O));
+    mc_wf(s, '0');
+    while (tbl_g_i(pt, P(*s), &pn) == TBL_STAT(OK)) mc_wf(s, '0');
     tbl_a(pt, te_c(lte));
     return CHK_STAT(OK);
 }

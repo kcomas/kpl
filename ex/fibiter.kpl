@@ -1,15 +1,18 @@
 
 // iterative Fibonacci
 
-c::n::80
-a::0
-b::1
-
-{n>0}@{
-    c::a+b
-    a:b
-    b:c
-    n-:1
+fib::FN${
+    c::I6(n)
+    a::0
+    b::1
+    {n>0}@{
+        c::a+b
+        a:b
+        b:c
+        n-:1
+    }
+    a
 }
 
-"Fib({}) = {}"(c;a)\p1
+n::80
+"Fib({}) = {}"(n;fib(n))\p1
