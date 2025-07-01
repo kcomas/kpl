@@ -1,0 +1,16 @@
+
+x::5
+y::5
+
+// TODO log time version
+
+pow::FN${I6(x);I6(y)
+    c::1
+    >(y;0)@{
+        c*:x
+        y-:1
+    }
+    c
+}
+
+pow(x;y)\p1
