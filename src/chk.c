@@ -724,6 +724,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(LT), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lers_fs_bl, AST_CLS(O), TYPE(_N), OC(LT), TYPE(_A), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(LTE), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
+    CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(LTE), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(AND), TYPE(_A), AST_CLS(O), TYPE(BL), AST_CLS(O), TYPE(BL));
     CHK_AA(c, chk_or, AST_CLS(O), TYPE(_N), OC(OR), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(SG), OC(CSG), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(S), TYPE(CS));

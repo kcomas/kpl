@@ -693,6 +693,15 @@ static atg_stat atg_or(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat cond_bl_e_e_(atg *t, gen *g, te *an, err **e) {
+    if (!cond_valid_pn(an)) return atg_err(t, an, e, "atg inv parent node for cond");
+    gen_op go;
+    if (oc_cond_gen(an->d[4].u6, &go) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv cond oc");
+    te *l = ((te*) an->d[5].p)->d[3].p, *r = ((te*) an->d[6].p)->d[3].p;
+    if (gen_a(g, go, var_arg(g, l, type_g_x64_type(l->d[2].p)), var_arg(g, r, type_g_x64_type(r->d[2].p)), gen_lbl(g, UINT32_MAX)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 static atg_stat cond_e_s(atg *t, gen *g, te *an, err **e, x64_type xt) {
     if (!cond_valid_pn(an)) return atg_err(t, an, e, "atg inv parent node for cond");
     gen_op go;
@@ -769,6 +778,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(LT), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
     atg_a_o(t, OC(LT), TYPE(BL), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(F6), cond_bl_e_f6_s_f6);
     atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
+    atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), cond_bl_e_e_);
     atg_a_o(t, OC(AND), TYPE(BL), AST_CLS(O), TYPE(BL), AST_CLS(O), TYPE(BL), atg_nop);
     atg_a_o(t, OC(OR), TYPE(BL), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), atg_or);
     atg_a_o(t, OC(CSG), TYPE(SG), AST_CLS(_), TYPE(_N), AST_CLS(S), TYPE(CS), atg_cs_sg);

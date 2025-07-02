@@ -118,6 +118,18 @@ IDL(ne, u, JNE);
 UIL(lt, u, JB);
 UIL(gte, u, JAE);
 
+#define VVL(N, U, J) static gen_stat N##_v##U##v##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
+    int32_t v0, v1; \
+    if (stk_g_idx2(s, ci->d[1].p, ci->d[2].p, &v0, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx"); \
+    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v0, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (gen_as_rrmbd(a, AS_X64(CMP), R(AX), R(BP), v1, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (gen_as(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    return GEN_STAT(OK);  \
+}
+
+VVL(gt, s, JG);
+VVL(lte, s, JLE);
+
 void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_auaul_fn);
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_audul_fn);
@@ -135,6 +147,7 @@ void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), gt_audul_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(A), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), gt_axdxl_fn);
     GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_vsdsl_fn);
+    GEN_OP_A3(g, GEN_OP(GT), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gt_vsvsl_fn);
     GEN_OP_A3(g, GEN_OP(GTE), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gte_asdsl_fn);
     GEN_OP_A3(g, GEN_OP(GTE), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), gte_vsdsl_fn);
     GEN_OP_A3(g, GEN_OP(GTE), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(D), X64_TYPE(F6), GEN_CLS(L), X64_TYPE(N), gte_vxdxl_fn);
@@ -149,4 +162,5 @@ void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lte_vsdsl_fn);
     GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), lte_audul_fn);
     GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lte_asdsl_fn);
+    GEN_OP_A3(g, GEN_OP(LTE), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(L), X64_TYPE(N), lte_vsvsl_fn);
 }
