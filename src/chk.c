@@ -512,6 +512,10 @@ static chk_stat chk_aply_e_(chk *c, te *an, err **e) {
     return chk_aply_e_fn(c, an, e);
 }
 
+te *chk_rt_err_t(const alfr *ta) {
+    return type_v_i(ta, NULL, TYPE(ER), type_te_i_v(ta, NULL, 3, type_s_i(ta, NULL, TYPE(SG)), type_s_i(ta, NULL, TYPE(U6)), type_s_i(ta, NULL, TYPE(SG))));
+}
+
 static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
     te *tn;
     lst *l = an->d[5].p;
@@ -519,7 +523,7 @@ static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
     if (ast_g_t(l->h->d[0].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get vr access type");
     if (tn->d[1].u4 != TYPE(I6) && tn->d[1].u4 != TYPE(U6)) return chk_err(c, an, e, "chk inv vr access type");
     tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
-    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, type_v_i(c->ta, NULL, TYPE(ER), type_s_i(c->ta, NULL, TYPE(SG))));
+    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
     if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type of vr");
     type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 0, te_c(tn->d[2].p));
     an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));

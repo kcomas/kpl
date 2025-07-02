@@ -18,6 +18,8 @@ ssize_t type_h_cmp(un a, un b);
 
 chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt);
 
+te *chk_rt_err_t(const alfr *ta);
+
 chk_stat chk_op_l_z_r(chk *c, te *an, err **e);
 
 chk_stat chk_op_lr_teq(chk *c, te *an, err **e);
