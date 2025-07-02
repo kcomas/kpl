@@ -38,11 +38,13 @@ atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);
 
 atg_stat call_npr(gen_op *go, const te *an);
 
+gen_stat atg_rt_err_init(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno);
+
 extern const char *atg_un_inv_str;
 
 extern const char *atg_vr_inv_str;
 
-void atg_sg_err_p(void *p);
+void atg_rt_err_p(void *p);
 
 extern const char *atg_dump_strs[TYPE(_END)];
 

@@ -266,6 +266,11 @@ const mc *node_root_mc(te *n) {
     return ((psr*) n->d[0].p)->tt->s;
 }
 
+mc *node_root_fname(te *n) {
+    n = node_g_root(n);
+    return ((psr*) n->d[0].p)->fname;
+}
+
 void node_p(const te *n, size_t idnt) {
     te *h;
     for (size_t i = 0; i < idnt; i++) putchar(' ');

@@ -55,6 +55,7 @@ typedef struct _psr {
     tkn *tt;
     vr *ts; // tkn stk
     tbl *pt;
+    mc *fname; // get filename at rt
 } psr;
 
 psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, frfn pef, psr_tbl_i pti, tkn *tt, vr *ts);

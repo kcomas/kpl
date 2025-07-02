@@ -86,6 +86,8 @@ te *node_g_root(te *n);
 
 const mc *node_root_mc(te *n);
 
+mc *node_root_fname(te *n);
+
 void node_p(const te *n, size_t idnt);
 
 psr_stat node_tkn_s_e(const te *n, uint32_t *s, uint32_t *e);

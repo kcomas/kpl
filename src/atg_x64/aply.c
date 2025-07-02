@@ -191,6 +191,7 @@ static atg_stat aply_e_cs(atg *t, gen *g, te *an, err **e) {
 
 const char *atg_vr_inv_str = "inv vr idx";
 
+/*
 static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
     uint32_t erlb = t->lc++, glb = t->lc++, el = t->lc++, ui = t->tc++, ei = t->tc++, si = t->tc++, vi = t->tc++;
     atg_stat stat;
@@ -243,6 +244,7 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
     if (gen_a(g, GEN_OP(NOP), gen_tmp(g, X64_TYPE(M), ui), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
+*/
 
 void atg_aply(atg *t) {
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
@@ -256,5 +258,5 @@ void atg_aply(atg *t) {
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(TE), aply_e_te);
     atg_a_a(t, TYPE(SG), AST_CLS(Z), TYPE(TE), aply_z_te);
     atg_a_a(t, TYPE(SG), AST_CLS(S), TYPE(CS), aply_e_cs);
-    atg_a_a(t, TYPE(UN), AST_CLS(E), TYPE(VR), aply_e_vr);
+    //atg_a_a(t, TYPE(UN), AST_CLS(E), TYPE(VR), aply_e_vr);
 }

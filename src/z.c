@@ -142,6 +142,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
         pgm->d[sx.stx_size + 3] = ')';
     } else pgm = mc_c(fn);
     psr *zp = psr_i_psr(bp, mc_c(pgm));
+    if (!(dflgs & Z_D_FLG(E))) zp->fname = mc_c(fn);
     te *nh = te_i(3, zp->ta, psr_n_err_f), *an = NULL, *dh;
     if (psr_n(zp, nh, &e) != PSR_STAT(END)) {
         te_f(nh);

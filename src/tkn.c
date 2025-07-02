@@ -43,6 +43,7 @@ tkn_stat tkn_df(tkn *t, te *m, err **e) {
 tkn_stat tkn_num(tkn *t, te *m, err **e) {
     (void) e;
     while (isdigit(t->s->d[t->pos])) {
+        t->cno++;
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
@@ -67,6 +68,7 @@ tkn_stat tkn_ft(tkn *t, te *m, err **e) {
 #define TKN_SKIP(N, C) tkn_stat tkn_##N(tkn *t, te *m, err **e) { \
     (void) e; \
     while (t->s->d[t->pos] == C) { \
+        t->cno++; \
         t->pos++; \
         tkn_m_s_e(m, tkn_m_g_e(m) + 1); \
     } \
@@ -78,6 +80,7 @@ TKN_SKIP(tab, '\t');
 
 tkn_stat tkn_cmt(tkn *t, te *m, err **e) {
     while (t->s->d[t->pos] != '\n' && t->s->d[t->pos] != '\0') {
+        t->cno++;
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
@@ -103,6 +106,7 @@ tkn_stat tkn_sym(tkn *t, te *m, err **e) {
 
 tkn_stat tkn_str(tkn *t, te *m, err **e) {
     while (t->s->d[t->pos] != '"' && t->s->d[t->pos] != '\0') {
+        t->cno++;
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }

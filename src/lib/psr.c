@@ -14,6 +14,7 @@ psr *psr_i(const alfr *af, const alfr *ta, const alfr *la, const alfr *ea, frfn 
     p->tt = tt;
     p->ts = ts;
     p->pt = pti();
+    p->fname = NULL;
     return p;
 }
 
@@ -30,6 +31,7 @@ psr *psr_i_psr(const psr *p, mc *s) {
     pp->tt = tkn_i_tkn(p->tt, s);
     pp->ts = vr_i_vr(p->ts);
     pp->pt = tbl_c(p->pt);
+    pp->fname = NULL;
     return pp;
 }
 
@@ -185,5 +187,6 @@ void psr_f(psr *p) {
     tkn_f(p->tt);
     vr_f(p->ts);
     tbl_f(p->pt);
+    mc_f(p->fname);
     p->af->f(p);
 }
