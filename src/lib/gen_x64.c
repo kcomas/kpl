@@ -284,13 +284,11 @@ te *gen_stka(gen *g, x64_type t, size_t id) {
     return gen_var_i(g, NULL, GEN_CLS(S), t, U6(id));
 }
 
-static bool gen_itm_eq(un x, un y);
-
 static bool gen_w_eq(const te *l, const te *r) {
     return vr_eq(l->d[0].p, r->d[0].p, gen_itm_eq) && vr_eq(l->d[1].p, r->d[1].p, gen_itm_eq);
 }
 
-static bool gen_itm_eq(un x, un y) {
+bool gen_itm_eq(un x, un y) {
     te *l = x.p;
     te *r = y.p;
     if (!l && !r) return true;

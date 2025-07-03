@@ -38,13 +38,17 @@ atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);
 
 atg_stat call_npr(gen_op *go, const te *an);
 
-gen_stat atg_rt_err_init(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno);
+gen_stat atg_rt_err_c(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno);
+
+gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref);
 
 extern const char *atg_un_inv_str;
 
 extern const char *atg_vr_inv_str;
 
 void atg_rt_err_p(void *p);
+
+void atg_rt_err_f(void *p);
 
 extern const char *atg_dump_strs[TYPE(_END)];
 

@@ -101,6 +101,7 @@ static bool tmp_var_t(const te *an) {
     if (an->d[2].u4 == AST_CLS(A)) {
         if (ast_g_t(an->d[4].p, &pn) != AST_STAT(OK)) return false;
         if (pn->d[1].u4 == TYPE(SL)) pn = pn->d[2].p;
+        if (pn->d[1].u4 == TYPE(VR)) return true;
         if (pn->d[1].u4 == TYPE(TE)) return false;
     }
     pn = an->d[0].p;

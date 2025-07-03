@@ -76,6 +76,8 @@ te *gen_stka(gen *g, x64_type t, size_t id);
 
 // lat entry te[u5(id)|u4(cls)|u4(type);te[u4(cls)|u4(type);id];code]
 
+bool gen_itm_eq(un x, un y);
+
 bool gen_code_eq(const gen *a, const gen *b);
 
 typedef struct {
