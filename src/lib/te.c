@@ -81,7 +81,7 @@ size_t te_g_l(const te *t) {
 
 void te_f(te *t) {
     if (!t || --t->r > 0) return;
-    asm ("push %rbx");
-    t->tf(t); // need to store rbx for jit code
-    asm ("pop %rbx");
+    X64_RS();
+    t->tf(t); // can be jit code
+    X64_RR();
 }

@@ -101,3 +101,15 @@ typedef struct {
     alfn *a;
     frfn *f;
 } alfr;
+
+#define X64_RS() asm("push %rbx\n\t" \
+        "push %r12\n\t" \
+        "push %r13\n\t" \
+        "push %r14\n\t" \
+        "push %r15\n\t")
+
+#define X64_RR() asm("pop %r15\n\t" \
+        "pop %r14\n\t" \
+        "pop %r13\n\t" \
+        "pop %r12\n\t" \
+        "pop %rbx\n\t")
