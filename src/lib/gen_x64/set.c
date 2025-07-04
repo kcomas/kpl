@@ -142,8 +142,14 @@ static gen_stat set_xd_fn(gen *g, void *s, te *ci, as *a, err **e) {
 
 static gen_stat set_au_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
-    if (gen_var_g_c(ci->d[1].p) == gen_var_g_c(ci->d[2].p)) STOP("UPDATE REG TBL");
-    te *kv[2];
+    te *kvr, *kv[2];
+    if (gen_var_g_c(ci->d[1].p) == gen_var_g_c(ci->d[2].p) && gen_var_g_c(ci->d[1].p) == GEN_CLS(T)) {
+        if ((stat = get_reg(s, ci->d[2].p, &kvr)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+        reg r = kvr->d[2].u3;
+        drop_atm_kv(s, kvr, ci);
+        if (gen_add_reg(s, ci->d[1].p, r) != TBL_STAT(OK)) return gen_err(g, ci, e, "gen inv reg update");
+        return GEN_STAT(OK);
+    }
     if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(kv[1]->d[2].u3)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     drop_atm_kv_n(s, kv, ci, 2);
@@ -222,6 +228,7 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(I), X64_TYPE(U6), set_ui_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(M), set_ui_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(I6), set_id_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(I), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U6), set_id_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), set_ad_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(U6), set_ad_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(D), X64_TYPE(I6), set_ad_fn);

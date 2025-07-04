@@ -1,5 +1,5 @@
 
-#include "../gen_x64.h"
+#include "idx.h"
 
 static gen_stat neg_auau_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
@@ -57,8 +57,8 @@ static gen_stat add_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     if (get_reg(s, ci->d[1].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
     if (stk_va(s, ci->d[2].p, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
     if (gen_as_rrmbd(a, AS_X64(MOV), kv->d[2].u3, R(BP), v1, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    uint64_t d = ((te*) ci->d[3].p)->d[1].u6;
-    if (d <= INT32_MAX) {
+    int64_t d = ((te*) ci->d[3].p)->d[1].i6;
+    if (d >= INT32_MIN && d <= INT32_MAX) {
         if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), kv->d[2]), bd_arg(a, d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     } else return gen_err(g, ci, e, "nyi");
     drop_atm_kv(s, kv, ci);
@@ -66,15 +66,28 @@ static gen_stat add_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat add_auiudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO add_auiudu");
+    gen_stat stat;
+    te *kv;
+    if (get_reg(s, ci->d[1].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if ((stat = idx_from(g, s, ci, a, e, AS_X64(MOV), ((te*) ci->d[2].p)->d[1].p, as_arg_i(a, ARG_ID(R), kv->d[2]), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
+    int64_t d = ((te*) ci->d[3].p)->d[1].i6;
+    if (d == -1) {
+        if (gen_as(a, AS_X64(DEC), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    } else return gen_err(g, ci, e, "nyi");
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
 }
 
 static gen_stat add_iuiudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO add_iuiudu");
+    gen_stat stat;
+    if (gen_itm_eq(ci->d[1], ci->d[2])) {
+        int64_t d = ((te*) ci->d[3].p)->d[1].i6;
+        if (d == 1) {
+            if ((stat = idx_to(g, s, ci, a, e, AS_X64(INC), ((te*) ci->d[1].p)->d[1].p, NULL, R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
+        } else return gen_err(g, ci, e, "nyi");
+        return GEN_STAT(OK);
+    }
+    return gen_err(g, ci, e, "nyi");
 }
 
 static gen_stat add_susuau_fn(gen *g, void *s, te *ci, as *a, err **e) {
@@ -118,7 +131,8 @@ static gen_stat add_vuvuvu_fn(gen *g, void *s, te *ci, as *a, err **e) {
 static gen_stat vuvudu_fn(gen *g, void *s, te *ci, as *a, err **e, as_inst o, as_inst b) {
     int32_t v0, v1;
     if (stk_g_idx2(s, ci->d[1].p, ci->d[2].p, &v0, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
-    uint64_t d = ((te*) ci->d[3].p)->d[1].u6;
+    int64_t d = ((te*) ci->d[3].p)->d[1].i6;
+    if (d == -1) return gen_err(g, ci, e, "nyi");
     if (d == 1) {
         if (v0 == v1) {
             if (x64_type_is_ref(gen_var_g_t(ci->d[1].p))) {
@@ -126,7 +140,7 @@ static gen_stat vuvudu_fn(gen *g, void *s, te *ci, as *a, err **e, as_inst o, as
                 if (gen_as(a, o, as_arg_i(a, ARG_ID(RM), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             } else if (gen_as(a, o, as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v0), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         } else return gen_err(g, ci, e, "nyi");
-    } else if (d <= INT32_MAX) {
+    } else if (d >= INT32_MIN && d <= INT32_MAX) {
         if (v0 == v1) {
             if (x64_type_is_ref(gen_var_g_t(ci->d[1].p))) {
                 if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v0, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
@@ -219,10 +233,11 @@ MULDIVVUVUVU(imul, IMUL);
     te *kv[2]; \
     if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
     if (kv[0]->d[2].u3 != kv[1]->d[2].u3 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), as_arg_i(a, ARG_ID(R), kv[1]->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
-    uint64_t v = ((te*) ci->d[3].p)->d[1].u6; \
+    int64_t v = ((te*) ci->d[3].p)->d[1].i6; \
+    if (v == -1) return gen_err(g, ci, e, "nyi"); \
     if (v == 1) { \
         if (gen_as(a, AS_X64(M), as_arg_i(a, ARG_ID(AI), kv[0]->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
-    } else if (v <= INT32_MAX) { \
+    } else if (v >= INT32_MIN && v <= INT32_MAX) { \
         if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(AI), kv[0]->d[2]), bd_arg(a, v), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     } else return gen_err(g, ci, e, "nyi"); \
     drop_atm_kv_n(s, kv, ci, 2); \

@@ -384,6 +384,14 @@ static void gen_st_atmf(void *p) {
     t->af->f(t);
 }
 
+tbl_stat gen_add_reg(gen_st *st, te *ovt, reg r) {
+    te *kv = te_i(3, st->ta, gen_st_atmf);
+    kv->d[0] = gen_var_hsh(ovt);
+    kv->d[1] = P(te_c(ovt));
+    kv->d[2] = U3(r);
+    return tbl_a(st->atm, kv);
+}
+
 static gen_stat set_reg(gen_st *st, un hsh, te *ovt, te **kv, bool decs) {
     x64_type xt = gen_var_g_t(ovt);
     if (xt >= X64_TYPE(M) && xt <= X64_TYPE(I6) && st->rstk->l == 0) return GEN_STAT(INV);

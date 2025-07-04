@@ -276,7 +276,7 @@ T(iline) {
 }
 
 T(vridx) {
-    V(TPGM(vridx), RN(AN(NULL, LN(LT(1, "v", FLG(0, LTE_FLG(E)), NULL), L(3,
+    V(TPGM(vridx), RN(AN(NULL, LN(LT(1, "v", FLG(0, LTE_FLG(E)), NULL), L(2,
         ON(NULL, DFN, EN("v", FLG(0, LTE_FLG(E)), NULL),
             ON(NULL, CST, TN(VR),
                 VN(NULL, L(2,
@@ -284,6 +284,7 @@ T(vridx) {
                         L(2, ON(TS(SG), CSG, NULL, CS("a")), ON(TS(SG), CSG, NULL, CS("b")))),
                     VN(NULL,
                         L(2, ON(TS(SG), CSG, NULL, CS("c")), ON(TS(SG), CSG, NULL, CS("d")))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL)) /*,
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, ZN("v", AN(NULL,
             EN("v", FLG(0, LTE_FLG(E)), NULL),
             L(1, ON(NULL, SUB, NULL, SN(I6, I6(1)))))), L(1, SN(I6, I6(0))))),
@@ -291,5 +292,6 @@ T(vridx) {
             LN(NULL, L(1, AN(NULL, EN("v", FLG(0, LTE_FLG(E)), NULL), L(1, SN(I6, I6(3)))))),
             LN(LT(1, "e", U6(0), NULL), L(1, ZN("e",
                 ON(TS(VD), DUMP, SN(U5, U5(1)), EN("e", U6(0), NULL))))))
+        */
     )), NULL)));
 }

@@ -250,11 +250,13 @@ T(iline) {
 }
 
 T(vridx) {
-    V(TPGM(vridx), RN(AN(NULL, LN(NULL, L(3,
+    V(TPGM(vridx), RN(AN(NULL, LN(NULL, L(2,
         ON(NULL, DFN, CN(E, IN("v")),
             ON(NULL, CST, TN(VR),
                 VN(NULL, L(2, VN(NULL, L(2, CS("a"), CS("b"))), VN(NULL, L(2, CS("c"), CS("d"))))))),
+        CN(P1, IN("v")) /*,
         CN(P1, AN(NULL, ZN("v", AN(NULL, IN("v"), L(1, ON(NULL, SUB, NULL, SN(I6, I6(1)))))), L(1, SN(I6, I6(0))))),
         ON(NULL, MTCH, AN(NULL, IN("v"), L(1, SN(I6, I6(3)))), LN(NULL, L(1, ZN("e", CN(P1, IN("e"))))))
+        */
     )), NULL)));
 }

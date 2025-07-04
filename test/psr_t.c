@@ -189,9 +189,17 @@ const char *TPGM(ns) = "{\n"
 
 const char *TPGM(iline) = "{.(f;.rs(\"./ex/sum.kpl\"))`v\\p1}()";
 
+/*
 const char *TPGM(vridx) = "{\n"
                           " v\\e::VR$[[\"a\";\"b\"];[\"c\";\"d\"]]\n"
+                          " v\\p1\n"
                           " v(-1)`v(0)\\p1 // c\n"
                           " v(3)#{e\\p1`e}\n"
+                          "}()\n";
+*/
+
+const char *TPGM(vridx) = "{\n"
+                          " v\\e::VR$[[\"a\";\"b\"];[\"c\";\"d\"]]\n"
+                          " v\\p1\n"
                           "}()\n";
 

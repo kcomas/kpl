@@ -96,6 +96,8 @@ void gen_st_p(const gen_st *st);
 
 void gen_atm_p(const gen_st *st);
 
+tbl_stat gen_add_reg(gen_st *st, te *ovt, reg r);
+
 // pass 1
 gen_stat gen_st_p1(gen *g, gen_st *st);
 
