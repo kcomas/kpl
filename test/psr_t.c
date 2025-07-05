@@ -203,5 +203,5 @@ const char *TPGM(vridx) = "{\n"
 const char *TPGM(vridx) = "{\n"
                           " v\\e::VR$[[\"a\";\"b\"];[\"c\";\"d\"]]\n"
                           " v\\p1\n"
-                          " v(-1)`v(0)\\p1 // c\n"
+                          " v(-1)\\p1 // c\n"
                           "}()\n";

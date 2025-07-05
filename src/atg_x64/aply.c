@@ -240,7 +240,7 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
         if (gen_var_g_c(i) != GEN_CLS(D) && gen_a(g, GEN_OP(LT), te_c(i), gen_data(g, X64_TYPE(I6), I6(0)), gen_lbl(g, erlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     }
     if (gen_var_g_c(i) == GEN_CLS(D) || gen_var_g_t(i) == X64_TYPE(I6)) {
-        if(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(U6), t->tc++), te_c(i), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(U6), t->tc++), gen_var_g_c(i) == GEN_CLS(D) ? i : te_c(i), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         i = ((te*) g->code->t->d[0].p)->d[1].p;
     }
     if (aply_e_vr_c(g, te_c(i), var_arg(g, vlte, X64_TYPE(M)), erlb, glb, el, ui, ei, si, ii, vi, node_root_fname(an->d[1].p), tkn_m_g_l(tkn), tkn_m_g_c(tkn), type_g_x64_type(vt), type_is_ref(vt->d[1].u4)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);

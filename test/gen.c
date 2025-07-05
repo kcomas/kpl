@@ -473,3 +473,17 @@ T(callstk) {
     BUILD(g, m);
     ((void(*)(void)) m)();
 }
+
+T(incref) {
+    te *t = te_i(2, &al_te, NULL);
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(ADD), gen_idx_m(g, X64_TYPE(I6), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, r)))), gen_idx_m(g, X64_TYPE(I6), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, r)))), gen_data(g, X64_TYPE(I6), I6(1))));
+    S(gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL));
+    BUILD(g, m);
+    ((void(*)(te*)) m)(t);
+    printf("Ref %ld\n", t->r);
+    A(t->r == 2, "inv ref");
+    te_f(t);
+    te_f(t);
+}
