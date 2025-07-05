@@ -1,6 +1,20 @@
 
 #include "../gen_x64.h"
 
+static gen_stat e_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(BP))), as_arg_i(a, ARG_ID(R), U3(R(SP))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    return GEN_STAT(OK);
+}
+
+static gen_stat l_fn(gen *g, void *s, te *ci, as *a, err **e)  {
+    (void) s;
+    if (gen_as(a, AS_X64(POP), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(RET), NULL, NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    return GEN_STAT(OK);
+}
+
 static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_st *st = s;
     if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(BP))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
@@ -80,6 +94,8 @@ static gen_stat leave_fn(gen *g, void *s, te *ci, as *a, err **e)  {
 }
 
 void gen_enter_leave(gen *g) {
+    GEN_OP_A0(g, GEN_OP(E), e_fn);
+    GEN_OP_A0(g, GEN_OP(L), l_fn);
     GEN_OP_A0(g, GEN_OP(ENTER), enter_fn);
     GEN_OP_A0(g, GEN_OP(LEAVE), leave_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(U6), leave_au_fn);

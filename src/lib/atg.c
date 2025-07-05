@@ -110,15 +110,19 @@ static void atg_dt_f(void *p) {
     t->af->f(t);
 }
 
-atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {
+static void atg_dt_a(atg *t, te *an) {
     te *nt, *kv;
-    atg_stat stat = ATG_STAT(OK);
-    if (!*an) return stat;
-    if (ast_g_t(*an, &nt) == AST_STAT(OK) && type_is_des(nt->d[1].u4) && tbl_g_i(t->dt, P(nt), &kv) != TBL_STAT(OK)) {
+    if (ast_g_t(an, &nt) == AST_STAT(OK) && type_is_des(nt->d[1].u4) && tbl_g_i(t->dt, P(nt), &kv) != TBL_STAT(OK)) {
         kv = te_i(2, t->ta, atg_dt_f);
         kv->d[0] = P(te_c(nt));
         tbl_a(t->dt, kv);
     }
+}
+
+atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {
+    atg_stat stat = ATG_STAT(OK);
+    if (!*an) return stat;
+    atg_dt_a(t, *an);
     if (enq(*an)) lst_ab(t->q, P(an));
     switch ((*an)->d[2].u4) {
         case AST_CLS(R):
@@ -133,6 +137,9 @@ atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {
             return atg_lst_q(t, (*an)->d[5].p, enq);
         case AST_CLS(L):
             return atg_lst_q(t, (*an)->d[4].p, enq);
+        case AST_CLS(Z):
+            atg_dt_a(t, (*an)->d[4].p);
+            break;
         default:
             break;
     }

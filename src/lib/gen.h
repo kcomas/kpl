@@ -17,6 +17,8 @@ typedef enum {
     GEN_OP(_START),
     GEN_OP(LBL),
     GEN_OP(NOP), // used as tmp vars after mutli cmd gen
+    GEN_OP(E),
+    GEN_OP(L),
     GEN_OP(ENTER),
     GEN_OP(LEAVE),
     GEN_OP(SET),

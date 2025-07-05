@@ -36,14 +36,14 @@ gen_stat gen_type_aff(gen *g, te *t, err **e, const char *pf) {
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_arg(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, af)))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), 0), gen_idx_m(g, X64_TYPE(M), 2, gen_tmp(g, X64_TYPE(M), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(alfr, f)))), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
     if (gen_a(g, GEN_OP(CALLNPR), gen_call_m(g, 1, gen_arg(g, X64_TYPE(M), 0)), gen_tmp(g, X64_TYPE(M), 0), NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
-    if (gen_a(g, GEN_OP(LEAVE), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
+    if (gen_a(g, GEN_OP(L), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(g, t, e, pf);
     return GEN_STAT(OK);
 }
 
 static gen_stat st_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
-    if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+    if (gen_a(*g, GEN_OP(E), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
     size_t i = 0;
     te *h = ((tbl*) t->d[2].p)->i->h, *n;
     while (h) {
@@ -65,7 +65,7 @@ static gen_stat un_des(gen *bg, te *t, uint32_t *lc, gen **g, err **e) {
     size_t ui = 0;
     void *fn = NULL;
     *g = gen_i_gen(bg);
-    if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+    if (gen_a(*g, GEN_OP(E), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
     te *h = ((tbl*) t->d[2].p)->i->h, *n;
     while (h) {
         n = h->d[0].p;
@@ -90,7 +90,7 @@ static gen_stat un_des(gen *bg, te *t, uint32_t *lc, gen **g, err **e) {
 static gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
-    if (gen_a(*g, GEN_OP(ENTER), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+    if (gen_a(*g, GEN_OP(E), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
     for (size_t i = 2; i < t->l; i++) {
         if (!t->d[i].p || !type_is_ref(((te*) t->d[i].p)->d[1].u4)) continue;
         fn = type_ref_g_des(((te*) t->d[i].p)->d[1].u4);

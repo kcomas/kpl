@@ -6,6 +6,8 @@ const char *gen_op_str(gen_op go) {
         "_START",
         "LBL",
         "NOP",
+        "E",
+        "L",
         "ENTER",
         "LEAVE",
         "SET",

@@ -233,7 +233,7 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                 gen_f(dg);
                 return z_err(fn, e);
             }
-            if (dfn) h->d[1] = P(fn);
+            if (dfn) h->d[1] = P(dfn);
             else if (dg) {
                 gen_st *dst = gen_st_i_gen_st(bst);
                 if (gen_st_p1(dg, dst) != GEN_STAT(OK)) {

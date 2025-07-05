@@ -159,7 +159,7 @@ void vr_d(vr *v) {
     v->l = 0;
 }
 
-void vr_f(vr *volatile v) {
+void vr_f(vr *v) {
     if (!v || --v->r > 0) return;
     vr_d(v);
     v->af->f(v);

@@ -84,6 +84,8 @@ static gen_stat add_iuiudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
         int64_t d = ((te*) ci->d[3].p)->d[1].i6;
         if (d == 1) {
             if ((stat = idx_to(g, s, ci, a, e, AS_X64(INC), ((te*) ci->d[1].p)->d[1].p, NULL, R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
+        } else if (d >= INT8_MIN && d <= INT8_MAX) {
+            if ((stat = idx_to(g, s, ci, a, e, AS_X64(ADD), ((te*) ci->d[1].p)->d[1].p, as_arg_i(a, ARG_ID(B), ((te*) ci->d[3].p)->d[1]), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
         } else return gen_err(g, ci, e, "nyi");
         return GEN_STAT(OK);
     }
