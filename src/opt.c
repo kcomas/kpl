@@ -87,7 +87,7 @@ static fld_stat tmp_var_o(fld *f, te **an, err **e) {
 }
 
 static bool tmp_var_t(const te *an) {
-    te *pn;
+    te *pn, *tn;
     if (an->d[2].u4 != AST_CLS(O) && an->d[2].u4 != AST_CLS(A)) return false;
     if (!type_is_ref(((te*) an->d[3].p)->d[1].u4)) return false;
     static bool nc[OC(_END)] = {
@@ -99,17 +99,22 @@ static bool tmp_var_t(const te *an) {
     };
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
     if (an->d[2].u4 == AST_CLS(A)) {
-        if (ast_g_t(an->d[4].p, &pn) != AST_STAT(OK)) return false;
-        if (pn->d[1].u4 == TYPE(SL)) pn = pn->d[2].p;
-        if (pn->d[1].u4 == TYPE(VR)) return true;
-        if (pn->d[1].u4 == TYPE(TE)) return false;
+        if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return false;
+        if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
+        if (tn->d[1].u4 == TYPE(VR) || tn->d[1].u4 == TYPE(FP)) {
+            pn = an->d[0].p;
+            if (pn->d[2].u4 != AST_CLS(O) || !nc[an->d[4].u4]) return true;
+        }
+        if (tn->d[1].u4 == TYPE(TE)) return false;
     }
     pn = an->d[0].p;
     switch (pn->d[2].u4) {
         case AST_CLS(V): return false;
         case AST_CLS(O): return !nc[pn->d[4].u4];
         case AST_CLS(A): return an != pn->d[4].p;
-        case AST_CLS(Z): return ((te*) pn->d[0].p)->d[2].u4 != AST_CLS(L);
+        case AST_CLS(Z):
+            if (ast_g_t(pn->d[0].p, &tn) != AST_STAT(OK)) return false;
+            if (tn->d[1].u4 == TYPE(UN)) return false;
         default:
             break;
     }

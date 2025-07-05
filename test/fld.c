@@ -275,6 +275,14 @@ T(iline) {
     )), NULL)));
 }
 
+T(unsg) {
+    V(TPGM(unsg), RN(AN(NULL, LN(LT(1, "a", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("a", U6(0), NULL), ZN("v", SN(I6, I6(1)))),
+        ON(NULL, AGN, EN("a", U6(0), NULL), ZN("s", ON(TS(SG), CSG, NULL, CS("a")))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), NULL))
+    )), NULL)));
+}
+
 T(vridx) {
     V(TPGM(vridx), RN(AN(NULL, LN(LT(1, "v", FLG(0, LTE_FLG(E)), NULL), L(3,
         ON(NULL, DFN, EN("v", FLG(0, LTE_FLG(E)), NULL),

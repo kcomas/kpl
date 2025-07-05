@@ -558,6 +558,16 @@ T(iline) {
     te_f(h);
 }
 
+T(unsg) {
+    te *h = ppnode(psr_r(bpsr(TPGM(unsg))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), SYM(N(INT))),
+        OP(N(VAR), SYM(N(STR))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}
+
 T(vridx) {
     te *h = ppnode(psr_r(bpsr(TPGM(vridx))));
     V(h, {N(ROOT), APLY(LST(

@@ -372,6 +372,18 @@ T(iline) {
     te_f(u);
 }
 
+T(unsg) {
+    IC(TPGM(unsg));
+    te *u = TH(UN, 2, "s", TS(SG), "v", TS(I6));
+    un f = FLG(0, LTE_FLG(L));
+    V(RN(AN(TS(VD), LN(LT(1, "a", f, te_c(u)), L(3,
+        ON(te_c(u), DFN, EN("a", f, te_c(u)), ZTN("v", TS(VD), SN(I6, I6(1)))),
+        ON(te_c(u), AGN, EN("a", f, te_c(u)), ZTN("s", TS(VD), ON(TS(SG), CSG, NULL, CS("a")))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", f, te_c(u)))
+    )), NULL)));
+    te_f(u);
+}
+
 T(vridx) {
     IC(TPGM(vridx));
     te *tsg = type_te_i_v(&al_te, NULL, 2, TS(SG), TS(SG));
