@@ -17,6 +17,7 @@ void* type_ref_g_des(type t) {
             return vr_f;
         case TYPE(TE):
         case TYPE(ST):
+        case TYPE(UN):
             return te_f;
         default:
             break;

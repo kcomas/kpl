@@ -222,7 +222,8 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
             i = gen_data(g, type_g_x64_type(i->d[3].p), i->d[4]);
             break;
         case AST_CLS(E):
-            return atg_err(t, an, e, "nyi");
+            i = i->d[3].p;
+            i = var_arg(g, i, type_g_x64_type(i->d[2].p));
             break;
         default:
             if ((stat = atg_r(t, g, i, e)) != ATG_STAT(OK)) return stat;
@@ -236,8 +237,8 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
                 if (gen_a(g, GEN_OP(ADD), gen_tmp(g, X64_TYPE(I6), t->tc++), gen_idx_m(g, X64_TYPE(U6), 2, var_arg(g, vlte, X64_TYPE(M)), gen_data(g, X64_TYPE(U3), U3(offsetof(vr, l)))), i) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
                 i = ((te*) g->code->t->d[0].p)->d[1].p;
             }
-        } else return atg_err(t, an, e, "nyi");
-        if (gen_var_g_c(i) != GEN_CLS(D) && gen_a(g, GEN_OP(LT), te_c(i), gen_data(g, X64_TYPE(I6), I6(0)), gen_lbl(g, erlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        }
+        if (gen_a(g, GEN_OP(LT), gen_var_g_c(i) == GEN_CLS(D) ? te_c(i) : i, gen_data(g, X64_TYPE(I6), I6(0)), gen_lbl(g, erlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     }
     if (gen_var_g_c(i) == GEN_CLS(D) || gen_var_g_t(i) == X64_TYPE(I6)) {
         if(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(U6), t->tc++), gen_var_g_c(i) == GEN_CLS(D) ? i : te_c(i), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
