@@ -103,7 +103,7 @@ static bool tmp_var_t(const te *an) {
         if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
         if (tn->d[1].u4 == TYPE(VR) || tn->d[1].u4 == TYPE(FP)) {
             pn = an->d[0].p;
-            if (pn->d[2].u4 != AST_CLS(O) || !nc[an->d[4].u4]) return true;
+            if (pn->d[2].u4 == AST_CLS(O) && nc[pn->d[4].u4]) return false;
         }
         if (tn->d[1].u4 == TYPE(TE)) return false;
     }
@@ -120,7 +120,7 @@ static bool tmp_var_t(const te *an) {
     }
     if (ast_g_pn(AST_CLS(L), an->d[0].p, &pn) != AST_STAT(OK)) return false;
     pn = pn->d[0].p;
-    return pn->d[2].u4 != AST_CLS(O) && !nc[an->d[4].u4];
+    return pn->d[2].u4 != AST_CLS(O) || !nc[pn->d[4].u4];
 }
 
 static fld_stat aply_lst_o(fld *f, te **an, err **e) {
