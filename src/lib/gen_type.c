@@ -61,8 +61,8 @@ static gen_stat st_des(gen *bg, te *t, gen **g, err **e) {
     return gen_type_aff(*g, t, e, __FUNCTION__);
 }
 
-static gen_stat un_des(gen *bg, te *t, uint32_t *lc, gen **g, err **e) {
-    int32_t el = (*lc)++, tl = 0;
+static gen_stat un_des(gen *bg, te *t, gen **g, err **e) {
+    int32_t el = 0, tl = 1;
     size_t ui = 0;
     void *fn = NULL;
     *g = gen_i_gen(bg);
@@ -71,7 +71,7 @@ static gen_stat un_des(gen *bg, te *t, uint32_t *lc, gen **g, err **e) {
     while (h) {
         n = h->d[0].p;
         if (h->d[2].p) {
-            if (gen_a(*g, GEN_OP(NE), gen_idx_m(*g, X64_TYPE(U6), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_data(*g, X64_TYPE(U6), U6(ui++)), gen_lbl(*g, tl = (*lc)++)) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+            if (gen_a(*g, GEN_OP(NE), gen_idx_m(*g, X64_TYPE(U6), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_data(*g, X64_TYPE(U6), U6(ui++)), gen_lbl(*g, tl)) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
         }
         if (n->d[2].p && type_is_ref(((te*) n->d[2].p)->d[1].u4)) {
             fn = type_ref_g_des(((te*) n->d[2].p)->d[1].u4);
@@ -80,7 +80,7 @@ static gen_stat un_des(gen *bg, te *t, uint32_t *lc, gen **g, err **e) {
         }
         if (h->d[2].p) {
             if (gen_a(*g, GEN_OP(JMP), gen_lbl(*g, el), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
-            if (gen_a(*g, GEN_OP(LBL), gen_lbl(*g, tl), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+            if (gen_a(*g, GEN_OP(LBL), gen_lbl(*g, tl++), NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
         }
         h = h->d[2].p;
     }
@@ -102,7 +102,7 @@ static gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     return gen_type_aff(*g, t, e, __FUNCTION__);
 }
 
-gen_stat gen_type_des(gen *bg, te *t, uint32_t *lc, gen **g, void **fn, err **e) {
+gen_stat gen_type_des(gen *bg, te *t, gen **g, void **fn, err **e) {
     if (!t) return gen_type_err(bg, t, e, "gen type inv for des");
     switch (type_g_c(t->d[1].u4)) {
         case TYPE_CLS(V):
@@ -112,7 +112,7 @@ gen_stat gen_type_des(gen *bg, te *t, uint32_t *lc, gen **g, void **fn, err **e)
                 case TYPE(ST):
                     return st_des(bg, t, g, e);
                 case TYPE(UN):
-                    return un_des(bg, t, lc, g, e);
+                    return un_des(bg, t, g, e);
                 default:
                     break;
             }

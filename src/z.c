@@ -268,6 +268,8 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
                 gen_st_f(dst);
                 gen_f(dg);
                 h->d[1] = P(&m[pc]);
+                as_f(zt->a);
+                zt->a = as_i_as(bs);
             }
             dh = dh->d[2].p;
         }

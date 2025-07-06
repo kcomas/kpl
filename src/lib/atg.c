@@ -307,7 +307,7 @@ atg_stat atg_r(atg *t, gen *g, te *an, err **e) {
 atg_stat atg_d_n(atg *t, te *h, gen **g, void **fn, atg_d_n_fn adnfn, err **e) {
     if (!h) return ATG_STAT(INV);
     if (!type_has_refs(h->d[0].p)) return ATG_STAT(OK);
-    return adnfn(t->bg, h->d[0].p, &t->lc, g, fn, e) == GEN_STAT(OK) ? ATG_STAT(OK) : ATG_STAT(INV);
+    return adnfn(t->bg, h->d[0].p, g, fn, e) == GEN_STAT(OK) ? ATG_STAT(OK) : ATG_STAT(INV);
 }
 
 atg_stat atg_n(atg *t, gen **g, ast *a, err **e) {
