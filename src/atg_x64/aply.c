@@ -196,8 +196,8 @@ gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, erlb), NULL, NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), ii), gen_call_m(g, 2, gen_data(g, X64_TYPE(U6), U6(VR_ERR_STR_LEN)), gen_data(g, X64_TYPE(M), P(&al_mc))), gen_data(g, X64_TYPE(M), P(mc_i))) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(REF), gen_tmp(g, X64_TYPE(M), si), gen_tmp(g, X64_TYPE(M), ii), gen_data(g, X64_TYPE(U3), U3(offsetof(mc, d)))) != GEN_STAT(OK)) return GEN_STAT(INV);
-    if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 3, gen_tmp(g, X64_TYPE(M), si), gen_data(g, X64_TYPE(U6), U6(VR_ERR_STR_LEN - 1)), gen_char(g, "%lu")), gen_data(g, X64_TYPE(M), P(snprintf)), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
-    if (atg_rt_err_c(g, ei, si, ii, fname, lno, cno) != GEN_STAT(OK)) return GEN_STAT(INV);
+    if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 4, gen_tmp(g, X64_TYPE(M), si), gen_data(g, X64_TYPE(U6), U6(VR_ERR_STR_LEN - 1)), gen_char(g, "%lu"), te_c(i)), gen_data(g, X64_TYPE(M), P(snprintf)), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
+    if (atg_rt_err_c(g, ei, si, ii, fname, lno, cno, atg_vr_inv_str) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ui), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_data(g, X64_TYPE(U6), U6(0)), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ui), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*)))), gen_tmp(g, X64_TYPE(M), ei), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
