@@ -586,9 +586,9 @@ T(nscope) {
         OP(N(VAR), N(FLT)),
         OP(N(VAR), OP(N(TYPE), LST(
             OP(N(VAR), OP(N(TYPE), LST(OP(N(VAR), N(FLT))))),
-            APLY(N(VAR), N(VAR))
+            APLY(N(VAR))
         ))),
-        APLY(N(VAR), N(VAR)),
+        APLY(N(VAR)),
         CMD(N(VAR))
     ))});
     te_f(h);

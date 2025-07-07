@@ -276,9 +276,9 @@ T(nscope) {
             ON(NULL, DFN, IN("fb"), ON(NULL, CST, TN(NF), LN(NULL, L(1,
                 ON(NULL, DIVA, IN("x"), SN(F6, F6(2.0)))
             )))),
-            AN(NULL, IN("fb"), L(1, IN("x")))
+            AN(NULL, IN("fb"), NULL)
         )))),
-        AN(NULL, IN("fa"), L(1, IN("x"))),
+        AN(NULL, IN("fa"), NULL),
         CN(P1, IN("x"))
     )), NULL)));
 }

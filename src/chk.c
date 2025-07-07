@@ -121,8 +121,8 @@ tbl *chk_g_pn_lte_tbl(te *an, const mc *s) {
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     chk_stat stat;
     if ((stat = chk_cst_fn_lst_b(c, an, e)) != CHK_STAT(OK)) return stat;
-    te *h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h, *lte, *kv, *tc;
-    tbl *fst = tbl_i_tbl(((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p);
+    tbl *nft = ((te*) an->d[6].p)->d[3].p, *fst = tbl_i_tbl(((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p);
+    te *h = nft->i->h, *lte, *kv, *tc;
     uint32_t si = 0;
     while (h) {
         lte = h->d[0].p;

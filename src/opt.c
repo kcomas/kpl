@@ -2,7 +2,6 @@
 #include "opt.h"
 
 static fld_stat entry_o(fld *f, te **an, err **e) {
-    (void) f;
     te *lte = (*an)->d[3].p;
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (!flgs) return fld_err(f, *an, e, "opt var flgs inv");
@@ -12,6 +11,52 @@ static fld_stat entry_o(fld *f, te **an, err **e) {
 
 static bool entry_t(const te *an) {
     return an->d[2].u4 == AST_CLS(E);
+}
+
+static fld_stat nf_scope_o(fld *f, te **an, err **e) {
+    (void) f;
+    (void) e;
+    te *pn = (*an)->d[0].p, *kv, *h, *n;
+    while (ast_g_pn(AST_CLS(O), pn->d[0].p, &pn) == AST_STAT(OK)) {
+        if (pn->d[4].u4 != OC(CST)) continue;
+        kv = pn->d[5].p;
+        if (kv->d[2].u4 != AST_CLS(T)) continue;
+        kv = kv->d[3].p;
+        if (kv->d[1].u4 == TYPE(FN)) break;
+        if (kv->d[1].u4 != TYPE(NF)) continue;
+        tbl *at = ((te*) (*an)->d[3].p)->d[4].p, *pt = kv->d[4].p;
+        h = at->i->h;
+        while (h) {
+            n = h->d[0].p;
+            if (tbl_g_i(pt, n->d[0], &kv) != TBL_STAT(OK)) {
+                kv = te_i_te(n);
+                kv->d[0] = P(mc_c(n->d[0].p));
+                kv->d[2] = P(te_c(n->d[2].p));
+                tbl_a(pt, kv);
+            }
+            h = h->d[2].p;
+        }
+        size_t ri = 0, xi = 0;
+        h = pt->i->h;
+        while (h) {
+            n = h->d[0].p;
+            switch (((te*) n->d[2].p)->d[1].u4) {
+                case TYPE(F5):
+                case TYPE(F6):
+                    n->d[1] = U6(xi++);
+                    break;
+                default:
+                    n->d[1] = U6(ri++);
+                    break;
+            }
+            h = h->d[2].p;
+        }
+    }
+    return FLD_STAT(OK);
+}
+
+static bool nf_scope_t(const te *an) {
+    return an->d[3].p && ((te*) an->d[3].p)->d[1].u4 == TYPE(NF);
 }
 
 static fld_stat lst_inv_o(fld *f, te **an, err **e) {
@@ -343,12 +388,12 @@ uint32_t opt_exp_flgs(te *x) {
 
 void opt_exp_tbl_f(tbl *et) {
     if (!et) return;
-    te *volatile h = et->i->h, *kv;
+    te *h = et->i->h, *kv;
     while (h) {
         kv = h->d[0].p;
         if (kv->d[2].p && type_is_ref(((te*) kv->d[2].p)->d[1].u4)) {
             frfn *fn = type_ref_g_des(((te*) kv->d[2].p)->d[1].u4);
-            if (fn) fn(kv->d[1].p); // need volatile for jit
+            if (fn) fn(kv->d[1].p);
         }
         h = h->d[2].p;
     }
@@ -357,6 +402,7 @@ void opt_exp_tbl_f(tbl *et) {
 
 fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(E), entry_t, entry_o);
+    fld_a(o, AST_CLS(T), nf_scope_t, nf_scope_o);
     fld_a(o, AST_CLS(L), lst_inv_t, lst_inv_o);
     fld_a(o, AST_CLS(L), lst_led_t, lst_led_o);
     fld_a(o, AST_CLS(A), tmp_var_t, tmp_var_o);
