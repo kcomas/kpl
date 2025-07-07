@@ -195,7 +195,7 @@ static atg_stat dump_vd_s_u5_e_te(atg *t, gen *g, te *an, err **e) {
     FILE *f;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
-    te* cd = gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(lte));
+    te* cd = var_arg(g, lte, X64_TYPE(M));
     if ((stat = dump_te(t, g, an, e, f, idnt, type, cd)) != ATG_STAT(OK)) return stat;
     te_f(cd);
     if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P(stdout)), gen_data(g, X64_TYPE(M), P(atg_dump_nl))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -215,7 +215,7 @@ static atg_stat dump_vd_s_u5_e_st(atg *t, gen *g, te *an, err **e) {
     if (gen_a(g, GEN_OP(CALLV), gen_call_v(g, v), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     h = ((tbl*) ((te*) lte->d[2].p)->d[2].p)->i->h;
     while (h) {
-        if ((stat = dump_v(t, g, an, e, f, idnt + 1, ((te*) h->d[0].p)->d[2].p, gen_idx_m(g, type_g_x64_type(((te*) h->d[0].p)->d[2].p), 2, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(lte)), atg_te_idx_d(g, eid)), false)) != ATG_STAT(OK)) return stat;
+        if ((stat = dump_v(t, g, an, e, f, idnt + 1, ((te*) h->d[0].p)->d[2].p, gen_idx_m(g, type_g_x64_type(((te*) h->d[0].p)->d[2].p), 2, var_arg(g, lte, X64_TYPE(M)), atg_te_idx_d(g, eid)), false)) != ATG_STAT(OK)) return stat;
         mc *sym = ((te*) h->d[0].p)->d[0].p;
         if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 3, gen_data(g, X64_TYPE(M), P(f)), gen_data(g, X64_TYPE(M), P(atg_sym_str)), gen_data(g, X64_TYPE(S), P(sym))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         h = h->d[2].p;
@@ -280,7 +280,7 @@ static atg_stat dump_vd_s_u5_e_un(atg *t, gen *g, te *an, err **e) {
     FILE *f;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
-    te *cd = gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(lte));
+    te *cd = var_arg(g, lte, X64_TYPE(M));
     if ((stat = dump_un(t, g, an, e, f, 0, type, cd)) != ATG_STAT(OK)) return stat;
     te_f(cd);
     if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P(stdout)), gen_data(g, X64_TYPE(M), P(atg_dump_nl))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);

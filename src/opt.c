@@ -104,6 +104,7 @@ static bool tmp_var_t(const te *an) {
         if (tn->d[1].u4 == TYPE(VR) || tn->d[1].u4 == TYPE(FP)) {
             pn = an->d[0].p;
             if (pn->d[2].u4 == AST_CLS(O) && nc[pn->d[4].u4]) return false;
+            return true;
         }
         if (tn->d[1].u4 == TYPE(TE)) return false;
     }

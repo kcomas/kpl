@@ -40,7 +40,7 @@ atg_stat call_npr(gen_op *go, const te *an);
 
 gen_stat atg_rt_err_c(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno, const char *msg);
 
-gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref);
+gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref);
 
 extern const char *atg_un_inv_str;
 

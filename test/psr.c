@@ -573,11 +573,9 @@ T(vridx) {
     V(h, {N(ROOT), APLY(LST(
         OP(CMD(N(VAR)), OP(N(TYPE), VEC(VEC(N(STR), N(STR)), VEC(N(STR), N(STR))))),
         CMD(N(VAR)),
-        CMD(APLY(N(VAR), OP(N(NONE), N(INT))))
-        /*
+        CMD(APLY(N(VAR), OP(N(NONE), N(INT)))),
         CMD(APLY(SYM(APLY(N(VAR), OP(N(NONE), N(INT)))), N(INT))),
         OP(APLY(N(VAR), N(INT)), LST(SYM(CMD(N(VAR)))))
-        */
     ))});
     te_f(h);
 }

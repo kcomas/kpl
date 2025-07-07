@@ -571,6 +571,18 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     if (r < XMM(0)) vr_ab(&st->rstk, U3(r));
     else vr_ab(&st->xstk, U3(r));
     tbl_s(st->atm, atm_kv->d[0], &kv);
+    /*
+    for (uint8_t x = 0; x < st->rstk->l - 1; x++) {
+        for (uint8_t y = x + 1; y < st->rstk->l; y++) {
+            if (st->rstk->d[x].u3 == st->rstk->d[y].u3) {
+                ovt_p(kv->d[1].p);
+                HERE("DUP IN RSTK");
+                gen_st_p(st);
+                exit(1);
+            }
+        }
+    }
+    */
     te_f(kv);
 }
 

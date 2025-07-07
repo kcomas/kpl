@@ -649,9 +649,7 @@ gen_stat atg_rt_err_c(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, 
         if ((stat = gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), si), gen_call_m(g, 2, gen_data(g, X64_TYPE(S), P(fname)), gen_data(g, X64_TYPE(M), P(&al_mc))), gen_data(g, X64_TYPE(M), P(mc_i_cstr)))) != GEN_STAT(OK)) return stat;
         if ((stat = gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ri), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_tmp(g, X64_TYPE(M), si), NULL)) != GEN_STAT(OK)) return stat;
     }
-    uint64_t lc = lno;
-    lc <<= 32;
-    lc += cno;
+    uint64_t lc = (uint64_t) lno << 32 | cno;
     if ((stat = gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ri), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*)))), gen_data(g, X64_TYPE(U6), U6(lc)), NULL) != GEN_STAT(OK))) return stat;
     if ((stat = gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ri), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*) * 2))), gen_tmp(g, X64_TYPE(M), ti), NULL) != GEN_STAT(OK))) return stat;
     return gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), ri), gen_call_m(g, 5, gen_data(g, X64_TYPE(M), P(&al_err)), gen_data(g, X64_TYPE(M), P(atg_rt_err_p)), gen_data(g, X64_TYPE(M), P(te_f)), gen_tmp(g, X64_TYPE(M), ri), gen_data(g, X64_TYPE(M), P(msg))), gen_data(g, X64_TYPE(M), P(err_i)));

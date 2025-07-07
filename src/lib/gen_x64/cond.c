@@ -93,8 +93,8 @@ VXDXL(lt, COMISD, JB);
 #define IDL(N, U, J) static gen_stat N##_i##U##d##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     gen_stat stat; \
     vr *i = ((te*) ci->d[1].p)->d[1].p; \
-    uint64_t qw = ((te*) ci->d[2].p)->d[1].u6; \
-    if (qw <= UINT32_MAX) { \
+    int64_t qw = ((te*) ci->d[2].p)->d[1].u6; \
+    if (qw >= INT32_MIN && qw <= INT32_MAX) { \
         if ((stat = idx_to(g, s, ci, a, e, AS_X64(CMP), i, bd_arg(a, qw), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat; \
     } else return gen_err(g, ci, e, "nyi"); \
     if (gen_as(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
