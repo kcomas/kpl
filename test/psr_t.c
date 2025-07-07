@@ -198,3 +198,13 @@ const char *TPGM(vridx) = "{\n"
                           " v(-1)`v(0)\\p1 // c\n"
                           " v(3)#{e\\p1`e}\n"
                           "}()\n";
+
+const char *TPGM(nscope) = "{\n"
+                           " x::6.6\n"
+                           " fa::NF${\n"
+                           "    fb::NF${x/:2.0}\n"
+                           "    fb(x)\n"
+                           " }\n"
+                           " fa(x)\n"
+                           " x\\p1\n"
+                           "}()\n";

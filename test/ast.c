@@ -268,3 +268,17 @@ T(vridx) {
         ON(NULL, MTCH, AN(NULL, IN("v"), L(1, SN(I6, I6(3)))), LN(NULL, L(1, ZN("e", CN(P1, IN("e"))))))
     )), NULL)));
 }
+
+T(nscope) {
+    V(TPGM(nscope), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("x"), SN(F6, F6(6.6))),
+        ON(NULL, DFN, IN("fa"), ON(NULL, CST, TN(NF), LN(NULL, L(2,
+            ON(NULL, DFN, IN("fb"), ON(NULL, CST, TN(NF), LN(NULL, L(1,
+                ON(NULL, DIVA, IN("x"), SN(F6, F6(2.0)))
+            )))),
+            AN(NULL, IN("fb"), L(1, IN("x")))
+        )))),
+        AN(NULL, IN("fa"), L(1, IN("x"))),
+        CN(P1, IN("x"))
+    )), NULL)));
+}

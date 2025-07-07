@@ -23,6 +23,7 @@ typedef enum {
     OC(MUL),
     OC(MULA),
     OC(DIV),
+    OC(DIVA),
     OC(EQ),
     OC(NE),
     OC(GT),

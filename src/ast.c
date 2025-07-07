@@ -18,6 +18,7 @@ const char *ast_oc_str(oc o) {
         "MUL",
         "MULA",
         "DIV",
+        "DIVA",
         "EQ",
         "NE",
         "GT",
@@ -272,6 +273,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(MUL), OC(MUL));
     ast_t_a(a, TCUST(MULA), OC(MULA));
     ast_t_a(a, TCUST(DIV), OC(DIV));
+    ast_t_a(a, TCUST(DIVA), OC(DIVA));
     ast_t_a(a, TCUST(EQ), OC(EQ));
     ast_t_a(a, TCUST(GT), OC(GT));
     ast_t_a(a, TCUST(GTE), OC(GTE));
