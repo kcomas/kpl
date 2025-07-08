@@ -110,7 +110,15 @@ static atg_stat aply_e_nf(atg *t, gen *g, te *an, err **e) {
             ps = pn->d[0].p;
             if (ps->d[2].u4 == AST_CLS(O) && ps->d[4].u4 == OC(CST)) {
                 pn = ps->d[5].p;
-                if (pn->d[2].u4 == AST_CLS(T) && ((te*) pn->d[3].p)->d[1].u4 == TYPE(FN)) return atg_err(t, an, e, "atg cannot search for scope past fn");
+                if (pn->d[2].u4 == AST_CLS(T)) {
+                    kv = pn->d[3].p;
+                    if (kv->d[1].u4 == TYPE(FN)) return atg_err(t, an, e, "atg cannot search for scope past fn");
+                    if (kv->d[1].u4 == TYPE(NF) && tbl_g_i(kv->d[4].p, lte->d[0], &kv) == TBL_STAT(OK)) {
+                        id = ast_lst_tbl_e_g_i(kv);
+                        vr_ab_nc(g, 1, &s, P(gen_stka(g, x64_type_to_ref(type_g_x64_type(kv->d[2].p)), id)));
+                        break;
+                    }
+                }
             }
         }
         h = h->d[2].p;
@@ -119,6 +127,7 @@ static atg_stat aply_e_nf(atg *t, gen *g, te *an, err **e) {
     if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
     if ((stat = fn_call(t, g, an, go, gen_call_w(g, s, v), fn_call_lbl(g, an->d[4].p))) != ATG_STAT(OK)) {
         vr_f(v);
+        vr_f(s);
         return atg_err(t, an, e, __FUNCTION__);
     }
     return stat;

@@ -122,7 +122,7 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci);
 
 void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n);
 
-gen_stat stk_va(gen_st *st, te *restrict c, int32_t *restrict v);
+gen_stat stk_va(gen_st *st, te *c, int32_t *v);
 
 gen_stat stk_g_idx2(gen_st *st, te *restrict c0, te *restrict c1, int32_t *restrict v0, int32_t *restrict v1);
 

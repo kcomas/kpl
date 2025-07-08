@@ -321,6 +321,9 @@ x64_stat x64_mulsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 // divsd xmm0, xmm1
 x64_stat x64_divsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 
+// divsd xmm0, qword ptr[rip+dsp32]
+x64_stat x64_divsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
+
 // cvtsi2sd xmm0, rax
 x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s);
 
