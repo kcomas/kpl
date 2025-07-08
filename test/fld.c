@@ -319,3 +319,23 @@ T(nscope) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("x", U6(0), NULL))
     )), NULL)));
 }
+
+T(cj) {
+    V(TPGM(cj), RN(AN(NULL, LN(
+            LT(3, "mc", U6(0), NULL, "cc", U6(0), NULL, "e", FLG(0, LTE_FLG(E)), NULL), L(5,
+                ON(NULL, DFN, EN("mc", U6(0), NULL),
+                    ON(NULL, CST, TN(FN), LN(LT(1, "c", U6(0), NULL), L(2,
+                        ON(NULL, DFN, EN("c", U6(0), NULL), SN(I6, I6(0))),
+                        ON(NULL, CST, TN(NF), LN(LT(1, "c", U6(0), NULL), L(1,
+                            ON(NULL, ADDA, EN("c", U6(0), NULL), SN(I6, I6(1))))))
+                    )))),
+        ON(NULL, DFN, EN("cc", U6(0), NULL),
+            AN(NULL, EN("mc", U6(0), NULL), NULL)),
+        ON(TS(VD), DUMP, SN(U5, U5(1)),
+            AN(NULL, EN("cc", U6(0), NULL), NULL)),
+        ON(TS(VD), DUMP, SN(U5, U5(1)),
+            AN(NULL, EN("cc", U6(0), NULL), NULL)),
+        ON(NULL, DFN, EN("e", FLG(0, LTE_FLG(E)), NULL),
+            AN(NULL, EN("cc", U6(0), NULL), NULL))
+    )), NULL)));
+}
