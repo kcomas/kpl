@@ -282,3 +282,16 @@ T(nscope) {
         CN(P1, IN("x"))
     )), NULL)));
 }
+
+T(cj) {
+    V(TPGM(cj), RN(AN(NULL, LN(NULL, L(5,
+        ON(NULL, DFN, IN("mc"), ON(NULL, CST, TN(FN), LN(NULL, L(2,
+            ON(NULL, DFN, IN("c"), SN(I6, I6(0))),
+            ON(NULL, CST, TN(NF), LN(NULL, L(1, ON(NULL, ADDA, IN("c"), SN(I6, I6(1))))))
+        )))),
+        ON(NULL, DFN, IN("cc"), AN(NULL, IN("mc"), NULL)),
+        CN(P1, AN(NULL, IN("cc"), NULL)),
+        CN(P1, AN(NULL, IN("cc"), NULL)),
+        ON(NULL, DFN, CN(E, IN("e")), AN(NULL, IN("cc"), NULL))
+    )), NULL)));
+}

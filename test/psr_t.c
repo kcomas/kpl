@@ -208,3 +208,14 @@ const char *TPGM(nscope) = "{\n"
                            " fa()\n"
                            " x\\p1\n"
                            "}()\n";
+
+const char *TPGM(cj) = "{\n"
+                       "    mc::FN${\n"
+                       "        c::0\n"
+                       "        NF${c+:1}\n"
+                       "    }\n"
+                       "    cc::mc()\n"
+                       "    cc()\\p1\n"
+                       "    cc()\\p1\n"
+                       "    e\\e::cc()\n"
+                       "}()\n";
