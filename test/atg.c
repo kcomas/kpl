@@ -1330,3 +1330,10 @@ T(nscope) {
     gen_f(gc);
     AR(0);
 }
+
+/*
+T(cj) {
+    AI(TPGM(cj), 1, 3);
+    V(NULL, NULL);
+}
+*/

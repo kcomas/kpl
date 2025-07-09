@@ -103,6 +103,15 @@ static gen_stat leave_vx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return leave_e(g, s, ci, a, e);
 }
 
+static gen_stat leave_su_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    int32_t idx;
+    te *tgt = ci->d[1].p;
+    if (stk_va(s, tgt, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");
+    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(RM), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    return leave_e(g, s, ci, a, e);
+}
+
 static gen_stat leave_sx_fn(gen *g, void *s, te *ci, as *a, err **e) {
     int32_t idx;
     te *tgt = ci->d[1].p;
@@ -134,5 +143,6 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(I6), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(M), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(F6), leave_vx_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(S), X64_TYPE(MI6), leave_su_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(S), X64_TYPE(MF6), leave_sx_fn);
 }

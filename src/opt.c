@@ -134,10 +134,15 @@ static bool tmp_var_t(const te *an) {
     if (an->d[2].u4 == AST_CLS(A)) {
         if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return false;
         if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
-        if (tn->d[1].u4 == TYPE(VR) || tn->d[1].u4 == TYPE(FP)) {
-            pn = an->d[0].p;
-            if (pn->d[2].u4 == AST_CLS(O) && nc[pn->d[4].u4]) return false;
-            return true;
+        switch (tn->d[1].u4) {
+            case TYPE(VR):
+            case TYPE(CJ):
+            case TYPE(FP):
+                pn = an->d[0].p;
+                if (pn->d[2].u4 == AST_CLS(O) && nc[pn->d[4].u4]) return false;
+                return true;
+            default:
+                break;
         }
         if (tn->d[1].u4 == TYPE(TE)) return false;
     }
@@ -149,6 +154,14 @@ static bool tmp_var_t(const te *an) {
         case AST_CLS(Z):
             if (ast_g_t(pn->d[0].p, &tn) != AST_STAT(OK)) return false;
             if (tn->d[1].u4 == TYPE(UN)) return false;
+            break;
+        case AST_CLS(L):
+            pn = pn->d[0].p;
+            if (pn && pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(CST)) {
+                pn = pn->d[5].p;
+                if (pn && pn->d[2].u4 == AST_CLS(T) && type_g_c(((te*) pn->d[3].p)->d[1].u4) == TYPE_CLS(F)) return false;
+            }
+            break;
         default:
             break;
     }

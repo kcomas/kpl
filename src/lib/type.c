@@ -59,9 +59,10 @@ typedef enum {
 static uint8_t props[TYPE(_END)] = {
     [TYPE(SL)] = REF,
     [TYPE(SG)] = REF,
-    [TYPE(ER)] = REF | DES,
     [TYPE(VR)] = REF | DES,
+    [TYPE(ER)] = REF | DES,
     [TYPE(LT)] = REF | DES,
+    [TYPE(CJ)] = REF | DES,
     [TYPE(MC)] = REF,
     [TYPE(ST)] = REF | DES,
     [TYPE(UN)] = REF | DES,
@@ -366,7 +367,7 @@ size_t type_hsh(const te *t) {
             hsh += type_tbl_hsh(t->d[2].p, false);
             break;
         case TYPE_CLS(F):
-            STOP("TODO TYPE CLS F HASH");
+            hsh += type_tbl_hsh(t->d[4].p, false);
             break;
         case TYPE_CLS(C):
             switch (t->d[1].u4){
@@ -399,22 +400,24 @@ bool type_tbl_has_refs(const tbl *tt) {
 }
 
 bool type_has_refs(const te *t) {
-    te *st = NULL;
     if (!t) return false;
     switch (type_g_c(t->d[1].u4)) {
+        case TYPE_CLS(S):
+            return type_is_ref(t->d[1].u4);
         case TYPE_CLS(V):
-            st = t->d[2].p;
-            if (st && type_is_ref(st->d[1].u4)) return true;
+            if (type_has_refs(t->d[2].p)) return true;
             break;
         case TYPE_CLS(H):
             if (type_tbl_has_refs(t->d[2].p)) return true;
+            break;
+        case TYPE_CLS(F):
+            if (type_tbl_has_refs(t->d[4].p)) return true;
             break;
         case TYPE_CLS(C):
             switch (t->d[1].u4){
                 case TYPE(TE):
                     for (size_t i = 2; i < t->l; i++) {
-                        st = t->d[i].p;
-                        if (st && type_is_ref(st->d[1].u4)) return true;
+                        if (type_has_refs(t->d[i].p)) return true;
                     }
                     break;
                 default:

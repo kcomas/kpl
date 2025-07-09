@@ -106,6 +106,7 @@ gen_stat gen_type_des(gen *bg, te *t, gen **g, void **fn, err **e) {
     if (!t) return gen_type_err(bg, t, e, "gen type inv for des");
     switch (type_g_c(t->d[1].u4)) {
         case TYPE_CLS(V):
+            if (t->d[1].u4 == TYPE(CJ)) STOP("CJ DES");
             return v_des(bg, t, fn, e);
         case TYPE_CLS(H):
             switch(t->d[1].u4) {

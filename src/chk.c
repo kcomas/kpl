@@ -535,6 +535,8 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
     if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get type from cj");
     tn = tn->d[2].p;
     if (type_g_c(tn->d[1].u4) != TYPE_CLS(F)) return chk_err(c, an, e, "chk inv cj inner type");
+    tbl *s = tn->d[4].p;
+    if (!s || s->i->l == 0) return chk_err(c, an, e, "chk inv cj no scope");
     an->d[3] = P(te_c(tn->d[2].p));
     return CHK_STAT(OK);
 }
