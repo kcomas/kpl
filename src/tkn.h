@@ -30,6 +30,7 @@ typedef enum {
     TCUST(F6),
     TCUST(FN),
     TCUST(NF),
+    TCUST(CJ),
     TCUST(UN),
     TCUST(VR),
     // keys

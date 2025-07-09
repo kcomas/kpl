@@ -116,19 +116,7 @@ static bool lst_led_t(const te *an) {
 }
 
 static fld_stat tmp_var_o(fld *f, te **an, err **e) {
-    te *ln, *kv, *en;
-    if (ast_g_pn(AST_CLS(R), *an, &ln) != AST_STAT(OK)) return fld_err(f, *an, e, "opt tmp var inv root");
-    ln = ((te*) ln->d[4].p)->d[4].p;
-    if (!ln->d[3].p) ln->d[3] = P(f->fti());
-    mc *tv = mc_i(f->tvc % 10 + 2, &al_mc);
-    ssize_t r;
-    if ((r = snprintf((char*) tv->d, tv->s, "%u", f->tvc++)) < 1) return fld_err(f, *an, e, "opt inv tmp var str");
-    tv->l = (size_t) r + 1;
-    kv = ast_lst_tbl_e_i(f->a, tv, U6(LTE_FLG(L)), te_c((*an)->d[3].p));
-    tbl_a(ln->d[3].p, kv);
-    en = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(E), P(te_c(kv)));
-    *an = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(te_c((*an)->d[3].p)), U4(OC(DFN)), en, *an);
-    return FLD_STAT(OK);
+    return fld_tmp_var_a(f, an, e, f->tvc++, LTE_FLG(L));
 }
 
 static bool tmp_var_t(const te *an) {

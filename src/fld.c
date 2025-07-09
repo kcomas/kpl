@@ -163,6 +163,69 @@ static bool op_ns_t(const te *an) {
     return true;
 }
 
+static fld_stat cst_cj_lst_r(fld *f, te **an, err **e) {
+    (void) e;
+    te *r = (*an)->d[6].p, *nn;
+    nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(NULL), OC(CST), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(T), P(type_f_i(f->a->ta, NULL, TYPE(NF), NULL, NULL, NULL))), P(r));
+    r->d[0] = P(nn);
+    if (fld_tmp_var_a(f, &nn, e, --f->tvc, LTE_FLG(F)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv cj cst nf fn def");
+    (*an)->d[6] = P(nn);
+    return FLD_STAT(OK);
+}
+
+static bool cst_cj_lst_t(const te *an) {
+    if (an->d[4].u4 != OC(CST)) return false;
+    te *tn = an->d[5].p;
+    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
+    tn = tn->d[3].p;
+    if (!tn || tn->d[1].u4 != TYPE(CJ)) return false;
+    tn = an->d[6].p;
+    return tn && tn->d[2].u4 == AST_CLS(L);
+}
+
+fld_stat fld_tmp_var_a(fld *f, te **an, err **e, int32_t vi, lte_flg vf) {
+    te *pn = *an, *ln = NULL, *kv, *en;
+    while (ast_g_pn(AST_CLS(O), pn->d[0].p, &pn) == AST_STAT(OK)) {
+        if (pn->d[4].u4 != OC(CST)) continue;
+        kv = pn->d[5].p;
+        if (kv->d[2].u4 != AST_CLS(T)) continue;
+        kv = kv->d[3].p;
+        if (type_g_c(kv->d[1].u4) != TYPE_CLS(F)) continue;
+        ln = pn->d[6].p;
+        break;
+    }
+    if (!ln) {
+        if (ast_g_pn(AST_CLS(R), *an, &ln) != AST_STAT(OK)) return fld_err(f, *an, e, "opt tmp var inv root");
+        ln = ((te*) ln->d[4].p)->d[4].p;
+    }
+    if (!ln->d[3].p) ln->d[3] = P(f->fti());
+    mc *tv = mc_i(f->tvc % 10 + 5, &al_mc);
+    ssize_t r;
+    if ((r = snprintf((char*) tv->d, tv->s, "%d", vi)) < 1) return fld_err(f, *an, e, "opt inv tmp var str");
+    tv->l = (size_t) r + 1;
+    if ((*an)->d[3].p) kv = ast_lst_tbl_e_i(f->a, tv, U6(vf), te_c((*an)->d[3].p));
+    else kv = ast_lst_tbl_e_i(f->a, tv, U6(0), NULL);
+    tbl_a(ln->d[3].p, kv);
+    en = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(E), P(te_c(kv)));
+    *an = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P((*an)->d[3].p ? te_c((*an)->d[3].p) : NULL), U4(OC(DFN)), en, *an);
+    ((te*) (*an)->d[6].p)->d[0] = P(*an);
+    return FLD_STAT(OK);
+}
+
+static fld_stat cst_fn_r(fld *f, te **an, err **e) {
+    return fld_tmp_var_a(f, an, e, --f->tvc, LTE_FLG(F));
+}
+
+static bool cst_fn_t(const te *an) {
+    if (an->d[4].u4 != OC(CST)) return false;
+    te *tn = an->d[5].p, *pn;
+    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
+    tn = tn->d[3].p;
+    if (!tn || type_g_c(tn->d[1].u4) != TYPE_CLS(F)) return false;
+    pn = an->d[0].p;
+    return !pn || pn->d[2].u4 != AST_CLS(O) || pn->d[4].u4 != OC(DFN);
+}
+
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
     (void) f;
     // TODO ops that are not folded
@@ -321,6 +384,8 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
     fld_a(f, AST_CLS(O), op_ns_t, op_ns_r);
+    fld_a(f, AST_CLS(O), cst_cj_lst_t, cst_cj_lst_r);
+    fld_a(f, AST_CLS(O), cst_fn_t, cst_fn_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);

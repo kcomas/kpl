@@ -30,6 +30,7 @@ const char *type_str(type t) {
         "LT",
         "MC",
         "ER",
+        "CJ",
         "_H",
         "ST",
         "ET",
@@ -43,7 +44,6 @@ const char *type_str(type t) {
         "KV",
         "BA",
         "TD",
-        "CJ",
         "_END"
     };
     const char *s = "INV TYPE";
