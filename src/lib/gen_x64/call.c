@@ -304,6 +304,11 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                     if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                     if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                     break;
+                case GEN_CLS(I):
+                    if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(LEA), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    break;
                 default:
                     return gen_err(g, ci, e, "gen stk args cls inv");
             }
@@ -328,19 +333,21 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                             if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(QW), ovt->d[1]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, "gen data inv S");
                             break;
                     }
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                     break;
                 case GEN_CLS(V):
                     if ((stat = st_stkv_idx(st, gen_var_g_t(ovt), ovt->d[1].u3, &idx)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv call stk idx");
                     if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                     break;
                 case GEN_CLS(I):
                     if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
-                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOV), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(LEA), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
                     break;
                 default:
                     return gen_err(g, ci, e, "gen call inv ovt cls stk call");
             }
-            if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         }
     }
     if (flgs & CFLG(V)) {
@@ -461,6 +468,7 @@ void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
+    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(M), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(M), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U5), call_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callw_fn);
@@ -468,6 +476,7 @@ void gen_call(gen *g) {
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnr_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnr_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnr_fn);
+    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(T), X64_TYPE(M), callw_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);

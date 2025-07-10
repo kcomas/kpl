@@ -214,10 +214,7 @@ gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint
     if (gen_a(g, GEN_OP(JMP), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, glb), NULL, NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, vi), gen_idx_m(g, xt, 3, te_c(v), gen_data(g, X64_TYPE(U3), U3(offsetof(vr, d))), te_c(i)), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
-    if (ref) {
-        te *tgt = gen_idx_m(g, X64_TYPE(I6), 2, gen_tmp(g, X64_TYPE(M), vi), gen_data(g, X64_TYPE(U3), U3(0)));
-        if (gen_a(g, GEN_OP(ADD), tgt, te_c(tgt), gen_data(g, X64_TYPE(I6), I6(1))) != GEN_STAT(OK)) return GEN_STAT(INV);
-    }
+    if (ref && inc_ref_c(g, vi) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ui), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_data(g, X64_TYPE(U6), U6(1)), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ui), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*)))), gen_tmp(g, X64_TYPE(M), vi), NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return GEN_STAT(INV);
@@ -255,12 +252,40 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat aply_e_cj(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat;
+    uint32_t ci = t->tc++, idx = 0, fi = t->tc++;
+    te *lte = ((te*) an->d[4].p)->d[3].p, *h, *n;
+    vr *v = NULL, *s = NULL;
+    if ((stat = lst_args_var(t, g, e, an->d[5].p, &v)) != ATG_STAT(OK)) {
+        vr_f(v);
+        return stat;
+    }
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), ci), var_arg(g, lte, X64_TYPE(M)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    h = ((tbl*) ((te*) ((te*) lte->d[2].p)->d[2].p)->d[4].p)->i->h;
+    while (h) {
+        n = h->d[0].p;
+        vr_ab_nc(g, 1, &s, P(gen_idx_m(g, type_g_x64_type(n->d[2].p), 2, gen_tmp(g, X64_TYPE(M), ci), atg_te_idx_d(g, idx++))));
+        h = h->d[2].p;
+    }
+    gen_op go = GEN_OP(CALL);
+    if ((stat = call_npr(&go, an)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv reg prev");
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), fi), gen_idx_m(g, X64_TYPE(M), 2, gen_tmp(g, X64_TYPE(M), ci), atg_te_idx_d(g, idx)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if ((stat = fn_call(t, g, an, go, gen_call_w(g, s, v), gen_tmp(g, X64_TYPE(M), fi))) != ATG_STAT(OK)) {
+        vr_f(v);
+        vr_f(s);
+        return atg_err(t, an, e, __FUNCTION__);
+    }
+    return ATG_STAT(OK);
+}
+
 void atg_aply(atg *t) {
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(S), TYPE(FN), aply_s_fn);
     atg_a_a(t, TYPE(UN), AST_CLS(S), TYPE(FP), aply_s_fp);
     atg_a_a(t, TYPE(U6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
+    atg_a_a(t, TYPE(CJ), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(NF), aply_e_nf);
@@ -268,4 +293,5 @@ void atg_aply(atg *t) {
     atg_a_a(t, TYPE(SG), AST_CLS(Z), TYPE(TE), aply_z_te);
     atg_a_a(t, TYPE(SG), AST_CLS(S), TYPE(CS), aply_e_cs);
     atg_a_a(t, TYPE(UN), AST_CLS(E), TYPE(VR), aply_e_vr);
+    atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(CJ), aply_e_cj);
 }

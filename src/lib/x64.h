@@ -255,6 +255,9 @@ x64_stat x64_add_rmr(size_t *p, uint8_t *m, reg d, reg s);
 // add qword ptr[rsp+dsp8], rax
 x64_stat x64_add_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
 
+// add rax, qword ptr[rsp]
+x64_stat x64_add_rrm(size_t *p, uint8_t *m, reg d, reg s);
+
 // add rax, qword ptr[rsp+dsp8]
 x64_stat x64_add_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 

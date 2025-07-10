@@ -30,6 +30,8 @@ typedef te *atg_idx_d(gen *g, uint32_t id);
 
 atg_stat v_set_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict n, uint32_t ti, uint32_t eid, atg_idx_d idxfn);
 
+gen_stat inc_ref_c(gen *g, uint32_t ti);
+
 atg_stat atg_te_init(atg *t, gen *g, te *restrict an, err **e, te *restrict type, size_t l, uint32_t ti);
 
 atg_stat aply_te_g_idx(atg *t, te *an, err **e, size_t *n, te **lte);

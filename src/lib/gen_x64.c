@@ -87,7 +87,7 @@ void ovt_p(const te *ovt) {
         case GEN_CLS(M):
             putchar('[');
             m = ovt->d[1].p;
-            for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
+            if (m) for (size_t i = 0; i < m->l; i++) ovt_p(m->d[i].p);
             printf("])");
             break;
         case GEN_CLS(W):
@@ -185,6 +185,7 @@ static void gen_mi_f(void *p) {
 }
 
 static vr *mi(gen *g, size_t n, va_list args) {
+    if (!n) return NULL;
     vr *v = vr_i(n, g->va, (void*) te_f);
     while (n > 0) {
         vr_ab(&v, P(va_arg(args, te*)));
@@ -428,7 +429,7 @@ static gen_stat gen_st_p1_ovt(gen_st *st, te *ovt, te* o) {
         case GEN_CLS(M):
         case GEN_CLS(I):
             m = ovt->d[1].p;
-            for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
+            if (m) for (size_t i = 0; i < m->l; i++) if ((stat = gen_st_p1_ovt(st, m->d[i].p, o)) != GEN_STAT(OK)) return stat;
             break;
         case GEN_CLS(W):
             m = ((te*) ovt->d[1].p)->d[0].p;

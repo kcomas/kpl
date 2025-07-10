@@ -1,0 +1,24 @@
+
+// closure example
+
+mfib::FN${
+    a::0
+    b::1
+    CJ${
+        c::a+b
+        a:b
+        b:c
+        a
+    }
+}
+
+fibc::mfib()
+
+
+s::0
+e::50
+
+<=(s;e)@{
+    "fib({}) = {}"(s;fibc())\p1
+    s+:1
+}

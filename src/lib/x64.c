@@ -545,6 +545,8 @@ ZRMR(add, 0x01, s, d);
 
 ZRMBR(add, 0x01, s, d);
 
+ZRRM(add, 0x03, d, s);
+
 ZRRMB(add, 0x03, d, s);
 
 ZZZXX(addsd, 0xF2, 0x0F, 0x58, d, s);

@@ -139,6 +139,7 @@ INST_RMBR(add);
 }
 
 INST_RRM(mov);
+INST_RRM(add);
 INST_RRM(cmp);
 
 #define INST_RRMB(N) static bool as_##N##_rrmb(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -222,6 +223,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_add_rmr, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(R), ARG_ID(N), as_add_rmbr, NULL);
+    as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(RM), ARG_ID(N), ARG_ID(N), as_add_rrm, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(RM), ARG_ID(B), ARG_ID(N), as_add_rrmb, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_add_rb, NULL);
     as_op_a(a, AS_X64(ADD), ARG_ID(R), ARG_ID(DW), ARG_ID(N), ARG_ID(N), as_add_rd, NULL);
