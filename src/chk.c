@@ -381,7 +381,7 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
 
 static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
     tbl *fa = t->d[3].p;
-    if (!l && fa->i->l == 0) return CHK_STAT(OK);
+    if (!l || fa->i->l == 0) return CHK_STAT(OK);
     if (fa->i->l != l->l) return chk_err(c, an, e, "chk args len");
     te *fh = fa->i->h, *lh = l->h, *ft, *lt;
     while (fh && lh) {
