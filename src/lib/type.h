@@ -52,6 +52,7 @@ typedef enum {
     // collection
     TYPE(_C),
     TYPE(TE),
+    TYPE(RF), // ref to another type
     TYPE(KV),
     TYPE(BA),
     TYPE(TD),
@@ -102,6 +103,10 @@ te *type_te_i_v(const alfr *af, te *restrict p, size_t l, ...);
 te *type_te_g_t(const te *t, size_t n); // zero indexed
 
 bool type_te_eq(const te *t); // if all types in te are the same
+
+te *type_rf_i(const alfr *af, te **p);
+
+void type_rrf(te **t); // remove refs
 
 void type_p(const te *t);
 

@@ -32,3 +32,5 @@ tbl *fld_type_tbl_i(bool gid, size_t n, ...);
 #define TS(T) type_s_i(&al_te, NULL, TYPE(T))
 
 #define TV(T, V) type_v_i(&al_te, NULL, TYPE(T), V)
+
+#define TRF(V) type_rf_i(&al_te, V)

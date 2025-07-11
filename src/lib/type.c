@@ -41,6 +41,7 @@ const char *type_str(type t) {
         "FP",
         "_C",
         "TE",
+        "RF",
         "KV",
         "BA",
         "TD",
@@ -220,6 +221,40 @@ bool type_te_eq(const te *t) {
     return true;
 }
 
+te *type_rf_i(const alfr *af, te **p) {
+    te *t = te_i(3, af, NULL);
+    t->d[1] = U4(TYPE(RF));
+    t->d[2] = P(p);
+    return t;
+}
+
+void type_rrf(te **t) {
+    te *tn = *t;
+    switch (type_g_c(tn->d[1].u4)) {
+        case TYPE_CLS(V):
+            type_rrf((te**) &tn->d[2].p);
+            break;
+        case TYPE_CLS(H):
+            STOP("TODO type_rrf H");
+            break;
+        case TYPE_CLS(F):
+            STOP("TODO type_rrf F");
+            break;
+        case TYPE_CLS(C):
+            switch (tn->d[1].u4) {
+                case TYPE(TE):
+                    for (size_t i = 2; i < tn->l; i++) type_rrf((te**) &tn->d[2].p);
+                    break;
+                case TYPE(RF):
+                    *t = te_c(*(te**) tn->d[2].p); // TODO cpy?
+                    te_f(tn);
+                    break;
+            }
+        default:
+            break;
+    }
+}
+
 static void type_tbl_p(const tbl *t, bool id) {
     if (!t) {
         printf("``");
@@ -267,13 +302,16 @@ void type_p(const te *t) {
             putchar(')');
             break;
         case TYPE_CLS(C):
+            printf("%s(", type_str(t->d[1].u4));
             switch (t->d[1].u4) {
                 case TYPE(TE):
-                    printf("%s(", type_str(t->d[1].u4));
                     for (size_t i = 2; i < t->l; i++) {
                         type_p(t->d[i].p);
                         if (i < t->l - 1) putchar(';');
                     }
+                    putchar(')');
+                    break;
+                case TYPE(RF):
                     putchar(')');
                     break;
                 default:
@@ -317,6 +355,8 @@ bool type_eq(const te *restrict a, const te *restrict b) {
             switch (a->d[1].u4) {
                 case TYPE(TE):
                     for (size_t i = 2; i < a->l; i++) if (!type_eq(a->d[i].p, b->d[i].p)) return false;
+                    return true;
+                case TYPE(RF):
                     return true;
                 default:
                     return false;

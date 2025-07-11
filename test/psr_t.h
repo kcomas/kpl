@@ -63,3 +63,7 @@ extern const char *TPGM(vridx);
 extern const char *TPGM(nscope);
 
 extern const char *TPGM(cj);
+
+extern const char *TPGM(leap);
+
+//extern const char *TPGM(rtcmd);

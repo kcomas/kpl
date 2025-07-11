@@ -309,11 +309,16 @@ static fld_stat aply_type_b_r(fld *f, te **an, err **e) {
     fld_stat stat;
     lst *l = lst_c((*an)->d[5].p);
     if (!l->l) return fld_err(f, *an, e, "fld aply lst len inv");
-    te *tn = te_c((*an)->d[4].p);
-    te *t = tn->d[3].p;
-    type_cls tc = type_g_c(t->d[1].u4);
+    te *tn = te_c((*an)->d[4].p), *t = tn->d[3].p, *n;
     un ln;
-    switch (tc) {
+    switch (type_g_c(t->d[1].u4)) {
+        case TYPE_CLS(V):
+            if (l->l != 1) return fld_err(f, *an, e, "fld inv vr type");
+            n = l->h->d[0].p;
+            if (n->d[2].u4 != AST_CLS(T)) return fld_err(f, *an, e, "fld inv vr aply type");
+            t->d[2] = P(te_c(n->d[3].p));
+            lst_f(l);
+            break;
         case TYPE_CLS(F):
             if (lst_sb(l, &ln) != LST_STAT(OK)) return fld_err(f, *an, e, "fld inv fn type len");
             te *rn = ln.p;
@@ -346,7 +351,7 @@ void fld_s_st_et_f(void *p) {
 }
 
 static fld_stat cmd_r(fld *f, te **an, err **e) {
-    te *nn;
+    te *nn, *en;
     tbl *et = NULL;
     switch ((*an)->d[3].u4) {
         case CC(E):
@@ -357,10 +362,14 @@ static fld_stat cmd_r(fld *f, te **an, err **e) {
         case CC(L):
             nn = (*an)->d[4].p;
             if (nn->d[2].u4 != AST_CLS(S) || ((te*) nn->d[3].p)->d[1].u4 != TYPE(CS)) return fld_err(f, *an, e, "fld CMD L inv import");
-            *e = z(nn->d[4].p, &et, 0);
-            if (*e) return FLD_STAT(INV);
+            if ((*e = z(nn->d[4].p, &et, 0))) return FLD_STAT(INV);
             if (!et) return fld_err(f, *an, e, "fld file has no exports");
             nn = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, fld_s_st_et_f, P(type_h_i(f->a->ta, NULL, TYPE(ET), et)), P(NULL));
+            break;
+        case CC(T):
+            en = (*an)->d[4].p;
+            if (!en || en->d[2].u4 != AST_CLS(E)) return fld_err(f, *an, e, "fld inv type cmd");
+            nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(T), P(type_rf_i(f->a->ta, (te**) &((te*) en->d[3].p)->d[2].p)));
             break;
         case CC(P1):
             nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(VD))), U4(OC(DUMP)), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(S), P(type_s_i(f->a->ta, NULL, TYPE(U5))), U5(1)), te_c((*an)->d[4].p));

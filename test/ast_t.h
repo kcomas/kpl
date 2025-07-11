@@ -38,6 +38,8 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define L(n, ...) lst_i_v(&al_lst, &al_te, (void*) te_f, n, __VA_ARGS__)
 
+#define LE() lst_i(&al_lst, &al_te, (void*) te_f)
+
 #define AN(T, TGT, LST) NNV(A, T, TGT, LST)
 
 #define ZTN(S, T, TGT) NNV(Z, type_v_i(&al_te, NULL, TYPE(SL), T), TGT, mc_i_cstr(S, &al_mc))

@@ -24,6 +24,7 @@ typedef enum {
     OC(MULA),
     OC(DIV),
     OC(DIVA),
+    OC(MOD),
     OC(EQ),
     OC(NE),
     OC(GT),
@@ -47,6 +48,8 @@ typedef enum {
     CC(_START),
     CC(E),
     CC(L),
+    CC(T),
+    CC(RT),
     CC(P1),
     CC(_END)
 } cc; // cmd code

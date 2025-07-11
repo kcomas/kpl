@@ -219,3 +219,19 @@ const char *TPGM(cj) = "{\n"
                        "    cc()\\p1\n"
                        "    e\\e::cc()\n"
                        "}()\n";
+
+const char *TPGM(leap) = "{\n"
+                        " y::1999\n"
+                        " v\\e::VR(y\\t)$[]\n"
+                        " <=(y;2030)@?(|(&(0=y%4;0!=y%100);0=y%400);,:(v;y+:1)\\p1)\n"
+                        "}()\n";
+
+/*
+const char *TPGM(rtcmd) = "{\n"
+                       " ms::FN${#{U6(a)`u;$(SG;a)`s}}\n"
+                       " v\\e::VR(ms\\rt)$[]\n"
+                       " i::U6$0\n"
+                       " <=(i;5)@v,:ms(i+:1)\n"
+                       " v\\p1\n"
+                       "}()\n";
+*/

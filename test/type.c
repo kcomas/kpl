@@ -124,3 +124,13 @@ T(type_cpy_s) {
     te_f(a);
     te_f(b);
 }
+
+T(reftype) {
+    te *a = type_v_i(&al_te, NULL, TYPE(VR), type_s_i(&al_te, NULL, TYPE(U6)));
+    te *b = type_rf_i(&al_te, &a);
+    type_p(b);
+    type_rrf(&b);
+    A(type_eq(a, b), "inv deref");
+    te_f(a);
+    te_f(b);
+}

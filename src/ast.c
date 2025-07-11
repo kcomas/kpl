@@ -19,6 +19,7 @@ const char *ast_oc_str(oc o) {
         "MULA",
         "DIV",
         "DIVA",
+        "MOD",
         "EQ",
         "NE",
         "GT",
@@ -43,6 +44,8 @@ const char *ast_cc_str(cc c) {
         "_START",
         "E",
         "L",
+        "T",
+        "RT",
         "P1",
         "_END"
     };
@@ -275,7 +278,9 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(MULA), OC(MULA));
     ast_t_a(a, TCUST(DIV), OC(DIV));
     ast_t_a(a, TCUST(DIVA), OC(DIVA));
+    ast_t_a(a, TCUST(MOD), OC(MOD));
     ast_t_a(a, TCUST(EQ), OC(EQ));
+    ast_t_a(a, TCUST(NE), OC(NE));
     ast_t_a(a, TCUST(GT), OC(GT));
     ast_t_a(a, TCUST(GTE), OC(GTE));
     ast_t_a(a, TCUST(LT), OC(LT));
@@ -287,6 +292,8 @@ static ast *ast_tkn(ast *a) {
     // cmds
     ast_t_a(a, TCUST(E), CC(E));
     ast_t_a(a, TCUST(L), CC(L));
+    ast_t_a(a, TCUST(T), CC(T));
+    ast_t_a(a, TCUST(RT), CC(RT));
     ast_t_a(a, TCUST(P1), CC(P1));
     return a;
 }
