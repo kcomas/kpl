@@ -228,17 +228,29 @@ te *type_rf_i(const alfr *af, te **p) {
     return t;
 }
 
+static void type_tbl_rrf(tbl *t) {
+    if (!t) return;
+    te *h = t->i->h;
+    while (h) {
+        type_rrf((te**) &((te*) h->d[0].p)->d[2].p);
+        h = h->d[2].p;
+    }
+}
+
 void type_rrf(te **t) {
     te *tn = *t;
+    if (!tn) return;
     switch (type_g_c(tn->d[1].u4)) {
         case TYPE_CLS(V):
             type_rrf((te**) &tn->d[2].p);
             break;
         case TYPE_CLS(H):
-            STOP("TODO type_rrf H");
+            type_tbl_rrf(tn->d[2].p);
             break;
         case TYPE_CLS(F):
-            STOP("TODO type_rrf F");
+            type_rrf((te**) &tn->d[2].p);
+            type_tbl_rrf(tn->d[3].p);
+            type_tbl_rrf(tn->d[4].p);
             break;
         case TYPE_CLS(C):
             switch (tn->d[1].u4) {

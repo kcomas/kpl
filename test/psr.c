@@ -621,7 +621,8 @@ T(leap) {
                         OP(N(INT), OP(N(VAR), N(INT))),
                         OP(N(INT), OP(N(VAR), N(INT)))),
                     OP(N(INT), OP(N(VAR), N(INT)))),
-                CMD(APLY(OP(N(NONE), N(NONE)), N(VAR), OP(N(VAR), N(INT))))))
+                OP(N(VAR), OP(N(VAR), N(INT))))),
+                CMD(N(VAR))
     ))});
     te_f(h);
 }

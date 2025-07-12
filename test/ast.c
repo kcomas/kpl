@@ -297,7 +297,7 @@ T(cj) {
 }
 
 T(leap) {
-    V(TPGM(leap), RN(AN(NULL, LN(NULL, L(3,
+    V(TPGM(leap), RN(AN(NULL, LN(NULL, L(4,
         ON(NULL, DFN, IN("y"), SN(I6, I6(1999))),
         ON(NULL, DFN, CN(E, IN("v")), ON(NULL, CST, AN(NULL, TN(VR), L(1, CN(T, IN("y")))), VN(NULL, LE()))),
         ON(NULL, LOOP,
@@ -308,8 +308,7 @@ T(leap) {
                         ON(NULL, EQ, SN(I6, I6(0)), ON(NULL, MOD, IN("y"), SN(I6, I6(4)))),
                         ON(NULL, NE, SN(I6, I6(0)), ON(NULL, MOD, IN("y"), SN(I6, I6(100)))))),
                     ON(NULL, EQ, SN(I6, I6(0)), ON(NULL, MOD, IN("y"), SN(I6, I6(400)))))),
-                    CN(P1, AN(NULL,
-                        ON(NULL, CNCTA, NULL, NULL), L(2, IN("v"),
-                            ON(NULL, ADDA, IN("y"), SN(I6, I6(1)))))))))
+                    ON(NULL, CNCTA, IN("v"), ON(NULL, ADDA, IN("y"), SN(I6, I6(1))))))),
+                    CN(P1, IN("v"))
     )), NULL)));
 }

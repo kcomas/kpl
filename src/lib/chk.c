@@ -44,7 +44,7 @@ static void chk_entry_f(void *p) {
 // zero for no chk
 const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(R)] = 1,
-    [AST_CLS(T)] = 0,
+    [AST_CLS(T)] = 1,
     [AST_CLS(E)] = 0,
     [AST_CLS(I)] = 0,
     [AST_CLS(S)] = 1,
@@ -106,10 +106,19 @@ static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bo
         if (n == 2 && an->d[2].u4 == AST_CLS(O)) {
             hsh = u4_s_o(hsh, AST_HSH_C, an->d[ncmp++].u4);
             hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
-        } else if (n == 0 && (an->d[2].u4 == AST_CLS(S) || an->d[2].u4 == AST_CLS(V))) {
-            hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
-            hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
-        } else hsh = ast_hsh(an->d[ncmp++].p);
+        } else {
+            switch (an->d[2].u4) {
+                case AST_CLS(T):
+                case AST_CLS(S):
+                case AST_CLS(V):
+                    hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
+                    hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
+                    break;
+                default:
+                    hsh = ast_hsh(an->d[ncmp++].p);
+                    break;
+            }
+        }
         if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n NF");
     }
     if (!kv->d[1].p) return chk_foe(c, foe, an, e, "chk_n inv fn");

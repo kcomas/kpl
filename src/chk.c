@@ -688,6 +688,7 @@ static chk_stat chk_op_levrro_vr(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+void chk_type(chk *c);
 void chk_dfnagn(chk *c);
 void chk_arith(chk *c);
 void chk_dump(chk *c);
@@ -744,8 +745,10 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_l_lst_bl, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_if, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_mtch, AST_CLS(O), TYPE(_N), OC(MTCH), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
-    CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(GT), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
+    CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(EQ), TYPE(_A), AST_CLS(S), TYPE(I6), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_lers_us_bl, AST_CLS(O), TYPE(_N), OC(EQ), TYPE(_A), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(I6));
+    CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(NE), TYPE(_A), AST_CLS(S), TYPE(I6), AST_CLS(O), TYPE(I6));
+    CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(GT), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lers_us_bl, AST_CLS(O), TYPE(_N), OC(GT), TYPE(_A), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq_bl, AST_CLS(O), TYPE(_N), OC(LT), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lers_fs_bl, AST_CLS(O), TYPE(_N), OC(LT), TYPE(_A), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(I6));
@@ -755,6 +758,8 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_or, AST_CLS(O), TYPE(_N), OC(OR), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(SG), OC(CSG), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(S), TYPE(CS));
     CHK_AA(c, chk_op_levrro_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6));
+    CHK_AA(c, chk_op_levrro_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6));
+    chk_type(c);
     chk_dfnagn(c);
     chk_arith(c);
     chk_dump(c);

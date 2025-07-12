@@ -33,4 +33,5 @@ void chk_arith(chk *c) {
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(O), TYPE(F6), AST_CLS(O), TYPE(F6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(O), TYPE(I6), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(DIVA), TYPE(_A), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(F6));
+    CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(MOD), TYPE(_A), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6));
 }
