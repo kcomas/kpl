@@ -47,8 +47,14 @@ static te *fn_call_lbl(gen *g, const te *an) {
 static atg_stat fn_call(atg *t, gen *g, te *restrict an, gen_op go, te *restrict ca, te *restrict tgt) {
     x64_type xt = type_g_x64_type(an->d[3].p);
     if (xt == X64_TYPE(N)) {
-        if (gen_a(g, go, ca, tgt, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
-    } else if (gen_a(g, go, gen_tmp(g, xt, t->tc++), ca, tgt) != GEN_STAT(OK)) return ATG_STAT(INV);
+        if (ca) {
+            if (gen_a(g, go, ca, tgt, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
+        } else if (gen_a(g, go, tgt, NULL, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
+    } else {
+        if (ca) {
+            if (gen_a(g, go, gen_tmp(g, xt, t->tc++), ca, tgt) != GEN_STAT(OK)) return ATG_STAT(INV);
+        } else if (gen_a(g, go, gen_tmp(g, xt, t->tc++), tgt, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
+    }
     return ATG_STAT(OK);
 }
 
@@ -280,6 +286,7 @@ static atg_stat aply_e_cj(atg *t, gen *g, te *an, err **e) {
 }
 
 void atg_aply(atg *t) {
+    atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(S), TYPE(FN), aply_s_fn);
     atg_a_a(t, TYPE(UN), AST_CLS(S), TYPE(FP), aply_s_fp);

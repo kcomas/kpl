@@ -1435,12 +1435,12 @@ T(leap) {
     S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(16))), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
     S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
     S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_tmp(gc, X64_TYPE(M), 0), NULL));
-(GT (V I6 0) (D I6 2030) (L N 2))
-(LBL (L N 1) (N) (N))
-(MOD (T I6 1) (V I6 0) (D I6 400))
-(EQ (D I6 0) (T I6 1) (L N 3))
-(MOD (T I6 2) (V I6 0) (D I6 100))
-(NE (D I6 0) (T I6 2) (T U3 3))
+    S(gen_a(gc, GEN_OP(GT), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(2030)), gen_lbl(gc, 2)));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(MOD), gen_tmp(gc, X64_TYPE(I6), 1), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(400))));
+    S(gen_a(gc, GEN_OP(EQ), gen_data(gc, X64_TYPE(I6), I6(0)), gen_tmp(gc, X64_TYPE(I6), 1), gen_lbl(gc, 3)));
+    S(gen_a(gc, GEN_OP(MOD), gen_tmp(gc, X64_TYPE(I6), 2), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(100))));
+    S(gen_a(gc, GEN_OP(NE), gen_data(gc, X64_TYPE(I6), I6(0)), gen_tmp(gc, X64_TYPE(I6), 2), gen_tmp(gc, X64_TYPE(U3), 3)));
 (MOD (T I6 4) (V I6 0) (D I6 4))
 (EQ (D I6 0) (T I6 4) (T U3 5))
 (AND (T U3 6) (T U3 3) (T U3 5))

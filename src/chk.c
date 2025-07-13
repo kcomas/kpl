@@ -54,7 +54,7 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     tbl **fat = (tbl**) &((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h, *lte, *kv;
-    if (!*fat) {
+    if (lt && !*fat) {
         *fat = tbl_i_tbl(lt);
         h = lt->i->h;
         uint32_t ra = 0, xa = 0;
@@ -67,7 +67,7 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
             }
             h = h->d[2].p;
         }
-    } else {
+    } else if (lt) {
         h = lt->i->h;
         while (h) {
             lte = h->d[0].p;
@@ -543,7 +543,7 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
 
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
-    te *h = lt->i->h;
+    te *h = lt ? lt->i->h : NULL;
     uint32_t ar = 0, ax = 0;
     while (h) {
         uint32_t flgs = ast_lst_tbl_e_g_f(h->d[0].p);

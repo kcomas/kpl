@@ -1,0 +1,6 @@
+
+// hello world in fn
+
+f::FN${"Hello World"\p1}
+
+f()

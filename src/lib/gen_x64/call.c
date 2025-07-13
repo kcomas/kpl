@@ -453,7 +453,7 @@ static gen_stat callvnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat callvnprnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
-   return call(g, s, ci, a, e, NULL, NULL, ((te*) ci->d[1].p)->d[1].p, ci->d[2].p, CFLG(V) | CFLG(NR) | CFLG(NPR));
+    return call(g, s, ci, a, e, NULL, NULL, ((te*) ci->d[1].p)->d[1].p, ci->d[2].p, CFLG(V) | CFLG(NR) | CFLG(NPR));
 }
 
 static gen_stat callnprnr_fn(gen *g, void *s, te *ci, as *a, err **e) {
@@ -481,12 +481,14 @@ void gen_call(gen *g) {
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(U5), callnpr_fn);
+    GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callvnprnr_fn);
     GEN_OP_A3(g, GEN_OP(CALLV), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callv_fn);
     GEN_OP_A2(g, GEN_OP(CALLV), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLVNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callvnprnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(D), X64_TYPE(M), callnprnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(M), X64_TYPE(N), GEN_CLS(T), X64_TYPE(M), callnprnr_fn);
     GEN_OP_A2(g, GEN_OP(CALLNPR), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnprnr_fn);
+    GEN_OP_A1(g, GEN_OP(CALLNPR), GEN_CLS(L), X64_TYPE(N), callnprnrna_fn);
     GEN_OP_A1(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(M), callnprnrna_fn);
     GEN_OP_A1(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(M), callnprnrna_fn);
 }
