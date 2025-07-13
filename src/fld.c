@@ -75,6 +75,7 @@ static bool lr_lst_t(const te *an) {
         case OC(IF):
         case OC(MTCH):
         case OC(OR):
+        case OC(AND):
             break;
         default:
             return false;

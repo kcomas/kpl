@@ -614,15 +614,15 @@ T(leap) {
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), N(INT)),
         OP(CMD(N(VAR)), OP(APLY(N(TYPE), CMD(N(VAR))), N(VEC))),
-        OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), // @
-            APLY(OP(N(NONE), N(NONE)),  // ?
-                APLY(OP(N(NONE), N(NONE)), // |
-                    APLY(OP(N(NONE), N(NONE)), // &
+        OP(APLY(OP(N(NONE), N(NONE)), N(VAR), N(INT)), LST(// @
+                OP(APLY(OP(N(NONE), N(NONE)),
+                    APLY(OP(N(NONE), N(NONE)),
                         OP(N(INT), OP(N(VAR), N(INT))),
                         OP(N(INT), OP(N(VAR), N(INT)))),
-                    OP(N(INT), OP(N(VAR), N(INT)))),
-                OP(N(VAR), OP(N(VAR), N(INT))))),
-                CMD(N(VAR))
+                        OP(N(INT), OP(N(VAR), N(INT)))),
+                        OP(N(VAR), N(VAR))),
+                OP(N(VAR), N(INT)))),
+        CMD(N(VAR))
     ))});
     te_f(h);
 }

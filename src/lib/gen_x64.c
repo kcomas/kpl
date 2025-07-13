@@ -736,9 +736,11 @@ void gen_arith(gen *g);
 void gen_cond(gen *g);
 void gen_call(gen *g);
 void gen_ref(gen *g);
+void gen_bin(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U3), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(M), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(MM), nop_fn);
     GEN_OP_A1(g, GEN_OP(JMP), GEN_CLS(L), X64_TYPE(N), jmp_fn);
@@ -748,5 +750,6 @@ gen *gen_b(gen *g) {
     gen_cond(g);
     gen_call(g);
     gen_ref(g);
+    gen_bin(g);
     return g;
 }

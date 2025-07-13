@@ -32,6 +32,7 @@ typedef enum {
     GEN_OP(NEG),
     GEN_OP(MUL),
     GEN_OP(DIV),
+    GEN_OP(MOD),
     GEN_OP(CST),
     GEN_OP(EQ),
     GEN_OP(NE),
@@ -40,11 +41,14 @@ typedef enum {
     GEN_OP(LT),
     GEN_OP(LTE),
     GEN_OP(AND),
+    GEN_OP(OR),
     GEN_OP(JMP),
     GEN_OP(_END)
 } gen_op; // not x64 opcodes, pseudo codes
 
 const char *gen_op_str(gen_op go);
+
+bool gen_is_cond(gen_op op);
 
 #define GEN_CLS(N) GEN_CLS_##N
 

@@ -85,8 +85,14 @@ T(ackrec) {
         ON(NULL, DFN, EN("ack", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(U6), 2, "m", TS(U6), 0, "n", TS(U6), 1)), LN(LT(3, "m", U6(0), NULL, "n", U6(0), NULL, "ack", U6(0), NULL), L(1,
             ON(NULL, IF, LN(NULL, NULL), LN(NULL, L(4,
                 ON(NULL, IF, LN(NULL, L(1, ON(NULL, EQ, EN("m", U6(0), NULL), SN(I6, I6(0))))), LN(NULL, L(1, ON(NULL, ADD, EN("n", U6(0), NULL), SN(I6, I6(1)))))),
-                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))), ON(NULL, EQ, EN("n", U6(0), NULL), SN(I6, I6(0)))))), LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), ON(NULL, CST, TN(U6), SN(I6, I6(1)))))))),
-                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))), ON(NULL, GT, EN("n", U6(0), NULL), SN(I6, I6(0)))))), LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), AN(NULL, EN("ack", U6(0), NULL), L(2, EN("m", U6(0), NULL), ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(1)))))))))),
+                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND,
+                    LN(NULL, L(1, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))))),
+                    LN(NULL, L(1, ON(NULL, EQ, EN("n", U6(0), NULL), SN(I6, I6(0)))))))),
+                        LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), ON(NULL, CST, TN(U6), SN(I6, I6(1)))))))),
+                ON(NULL, IF, LN(NULL, L(1, ON(NULL, AND,
+                    LN(NULL, L(1, ON(NULL, GT, EN("m", U6(0), NULL), SN(I6, I6(0))))),
+                    LN(NULL, L(1, ON(NULL, GT, EN("n", U6(0), NULL), SN(I6, I6(0)))))))),
+                        LN(NULL, L(1, AN(NULL, EN("ack", U6(0), NULL), L(2, ON(NULL, SUB, EN("m", U6(0), NULL), SN(I6, I6(1))), AN(NULL, EN("ack", U6(0), NULL), L(2, EN("m", U6(0), NULL), ON(NULL, SUB, EN("n", U6(0), NULL), SN(I6, I6(1)))))))))),
                 ON(NULL, ADD, EN("n", U6(0), NULL), SN(I6, I6(1)))
             )))
         )))),
@@ -342,18 +348,19 @@ T(cj) {
 
 T(leap) {
     V(TPGM(leap), RN(AN(NULL, LN(LT(2, "y", U6(0), NULL, "v", FLG(0, LTE_FLG(E)), NULL), L(4,
-        ON(NULL, DFN, EN("y", U6(0), NULL), SN(I6, I6(1999))),
+        ON(NULL, DFN, EN("y", U6(0), NULL), SN(I6, I6(2000))),
         ON(NULL, DFN, EN("v", FLG(0, LTE_FLG(E)), NULL),
             ON(NULL, CST, NN(T, (TV(VR, TRF()))), VN(NULL, LE()))),
-            ON(NULL, LOOP, LN(NULL, L(1, ON(NULL, LTE, EN("y", U6(0), NULL), SN(I6, I6(2030))))), LN(NULL, L(1,
-                ON(NULL, IF,
-                    LN(NULL, L(1, ON(NULL, OR,
-                        LN(NULL, L(1, ON(NULL, AND,
-                            ON(NULL, EQ, SN(I6, I6(0)), ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(4)))),
-                            ON(NULL, NE, SN(I6, I6(0)), ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(100))))))),
-                        LN(NULL, L(1, ON(NULL, EQ, SN(I6, I6(0)),
-                            ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(400))))))))),
-                    LN(NULL, L(1, ON(NULL, CNCTA, EN("v", FLG(0, LTE_FLG(E)), NULL), ON(NULL, ADDA, EN("y", U6(0), NULL), SN(I6, I6(1)))))))))),
-                    ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL))
+        ON(NULL, LOOP, LN(NULL, L(1, ON(NULL, LTE, EN("y", U6(0), NULL), SN(I6, I6(2030))))), LN(LT(2, "y", U6(0), NULL, "v", U6(0), NULL), L(2,
+            ON(NULL, IF,
+                LN(NULL, L(1, ON(NULL, OR,
+                    LN(NULL, L(1, ON(NULL, AND,
+                        LN(NULL, L(1, ON(NULL, EQ, SN(I6, I6(0)), ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(4)))))),
+                        LN(NULL, L(1, ON(NULL, NE, SN(I6, I6(0)), ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(100))))))))),
+                    LN(NULL, L(1, ON(NULL, EQ, SN(I6, I6(0)),
+                        ON(NULL, MOD, EN("y", U6(0), NULL), SN(I6, I6(400))))))))),
+                LN(NULL, L(1, ON(NULL, CNCTA, EN("v", U6(0), NULL), EN("y", U6(0), NULL))))),
+            ON(NULL, ADDA, EN("y", U6(0), NULL), SN(I6, I6(1)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }

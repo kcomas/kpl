@@ -120,10 +120,10 @@ T(ackrec) {
                     LN(NULL, L(1, ON(TS(BL), EQ, te_c(em), SN(U6, U6(0))))),
                     LN(NULL, L(1, ON(TS(U6), ADD, te_c(en), SN(U6, U6(1)))))),
                 ON(TS(U6), IF,
-                    LN(NULL, L(1, ON(TS(BL), AND, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))), ON(TS(BL), EQ, te_c(en), SN(U6, U6(0)))))),
+                    LN(NULL, L(1, ON(TS(BL), AND, LN(NULL, L(1, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))))), LN(NULL, L(1, ON(TS(BL), EQ, te_c(en), SN(U6, U6(0)))))))),
                     LN(NULL, L(1, AN(TS(U6), te_c(eack), L(2, ON(TS(U6), SUB, te_c(em), SN(U6, U6(1))), ON(TS(U6), CST, TN(U6), SN(I6, I6(1)))))))),
                 ON(TS(U6), IF,
-                    LN(NULL, L(1, ON(TS(BL), AND, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))), ON(TS(BL), GT, te_c(en), SN(U6, U6(0)))))),
+                    LN(NULL, L(1, ON(TS(BL), AND, LN(NULL, L(1, ON(TS(BL), GT, te_c(em), SN(U6, U6(0))))), LN(NULL, L(1, ON(TS(BL), GT, te_c(en), SN(U6, U6(0)))))))),
                     LN(NULL, L(1, AN(TS(U6), te_c(eack), L(2, ON(TS(U6), SUB, te_c(em), SN(U6, U6(1))), AN(TS(U6), te_c(eack), L(2, te_c(em), ON(TS(U6), SUB, te_c(en), SN(U6, U6(1)))))))))),
                 ON(TS(U6), ADD, te_c(en), SN(U6, U6(1)))
             )))
@@ -471,19 +471,20 @@ T(leap) {
     IC(TPGM(leap));
     te *vt = TV(VR, TS(I6));
     V(RN(AN(TS(VD), LN(LT(2, "y", FLG(0, LTE_FLG(L)), TS(I6), "v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)), L(4,
-        ON(TS(I6), DFN, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1999))),
+        ON(TS(I6), DFN, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(2000))),
         ON(te_c(vt), DFN, EN("v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)),
             ON(te_c(vt), CST, NN(T, te_c(vt)), VN(type_te_i(&al_te, NULL, 0), LE()))),
-            ON(TS(VD), LOOP, LN(NULL, L(1, ON(TS(BL), LTE, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(2030))))), LN(NULL, L(1,
-                ON(TS(VD), IF,
-                    LN(NULL, L(1, ON(TS(BL), OR,
-                        LN(NULL, L(1, ON(TS(BL), AND,
-                            ON(TS(BL), EQ, SN(I6, I6(0)), ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(4)))),
-                            ON(TS(BL), NE, SN(I6, I6(0)), ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(100))))))),
-                        LN(NULL, L(1, ON(TS(BL), EQ, SN(I6, I6(0)),
-                            ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(400))))))))),
-                    LN(NULL, L(1, ON(te_c(vt), CNCTA, EN("v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)), ON(TS(I6), ADDA, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))))))))),
-                    ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)))
+        ON(TS(VD), LOOP, LN(NULL, L(1, ON(TS(BL), LTE, EN("y", FLG(0, LTE_FLG(L)), TS(I6)), SN(I6, I6(2030))))), LN(LT(2, "y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6), "v", FLG(0, LTE_FLG(O) | LTE_FLG(L) | LTE_FLG(E)), te_c(vt)), L(2,
+            ON(TS(VD), IF,
+                LN(NULL, L(1, ON(TS(BL), OR,
+                    LN(NULL, L(1, ON(TS(BL), AND,
+                        LN(NULL, L(1, ON(TS(BL), EQ, SN(I6, I6(0)), ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(4)))))),
+                        LN(NULL, L(1, ON(TS(BL), NE, SN(I6, I6(0)), ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(100))))))))),
+                    LN(NULL, L(1, ON(TS(BL), EQ, SN(I6, I6(0)),
+                        ON(TS(I6), MOD, EN("y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(400))))))))),
+                LN(NULL, L(1, ON(te_c(vt), CNCTA, EN("v", FLG(0, LTE_FLG(O) | LTE_FLG(L) | LTE_FLG(E)), te_c(vt)), EN("y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)))))),
+            ON(TS(I6), ADDA, EN("y", FLG(0, LTE_FLG(O) | LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)))
     )), NULL)));
     te_f(vt);
 }

@@ -272,10 +272,12 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(I6), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(M), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(M), set_au_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(T), X64_TYPE(MM), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(V), X64_TYPE(I6), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(V), X64_TYPE(M), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(V), X64_TYPE(F6), set_avx_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(V), X64_TYPE(I6), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), set_vxax_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(F6), GEN_CLS(V), X64_TYPE(F6), set_vxvx_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(I), X64_TYPE(F6), set_axix_fn);

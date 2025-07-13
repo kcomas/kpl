@@ -244,6 +244,12 @@ MULDIVVUVUAU(imul, IMUL);
 
 MULDIVVUVUVU(imul, IMUL);
 
+static gen_stat imod_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    (void) s;
+    (void) a;
+    return gen_err(g, ci, e, "TODO mod");
+}
+
 #define UUDU(N, A, M, O, AI) static gen_stat N##_##A##u##A##udu_fn(gen *g, void *s, te *ci, as *a, err **e) { \
     gen_stat stat; \
     te *kv[2]; \
@@ -438,6 +444,7 @@ void gen_arith(gen *g) {
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), idiv_auauau_fn);
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(T), X64_TYPE(F6), divsd_axaxax_fn);
     GEN_OP_A3(g, GEN_OP(DIV), GEN_CLS(S), X64_TYPE(MF6), GEN_CLS(S), X64_TYPE(MF6), GEN_CLS(D), X64_TYPE(F6), divsd_sxsxdx_fn);
+    GEN_OP_A3(g, GEN_OP(MOD), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(D), X64_TYPE(I6), imod_auvudu_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(A), X64_TYPE(U6), cvtsi2sd_axau_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(I6), cst_auau_fn);
     GEN_OP_A2(g, GEN_OP(CST), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(U6), cst_auau_fn);

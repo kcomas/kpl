@@ -1417,3 +1417,59 @@ T(cj) {
     A(kv->d[1].i6 == 3, "inv exp value");
     opt_exp_tbl_f(xt);
 }
+
+/*
+T(leap) {
+    AI(TPGM(leap), 1, 1);
+    te *vt = TV(VR, TS(I6));
+    D(vt, NULL);
+    te_f(vt);
+    te *cn = RN(SN(_G, U5(0)));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 0), gen_data(gc, X64_TYPE(I6), I6(2000)), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 0), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(0)), gen_data(gc, X64_TYPE(M), P(&al_vr)), gen_data(gc, X64_TYPE(M), P(NULL))), gen_data(gc, X64_TYPE(M), P(vr_i))));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(16))), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_tmp(gc, X64_TYPE(M), 0), NULL));
+(GT (V I6 0) (D I6 2030) (L N 2))
+(LBL (L N 1) (N) (N))
+(MOD (T I6 1) (V I6 0) (D I6 400))
+(EQ (D I6 0) (T I6 1) (L N 3))
+(MOD (T I6 2) (V I6 0) (D I6 100))
+(NE (D I6 0) (T I6 2) (T U3 3))
+(MOD (T I6 4) (V I6 0) (D I6 4))
+(EQ (D I6 0) (T I6 4) (T U3 5))
+(AND (T U3 6) (T U3 3) (T U3 5))
+(NOP (T U3 6) (N) (N))
+(EQ (T U3 6) (D U3 0) (L N 4))
+(LBL (L N 3) (N) (N))
+(REF (T MM 0) (V M 1) (N))
+(SET (T M 8) (V I6 0) (N))
+(CALL (M [(T MM 0)(T M 8)]) (D M 0x55ffc1e9b5e3) (N))
+(NOP (T MM 0) (N) (N))
+(LBL (L N 4) (N) (N))
+(ADD (V I6 0) (V I6 0) (D I6 1))
+(LTE (V I6 0) (D I6 2030) (L N 1))
+(LBL (L N 2) (N) (N))
+(CALLV (M [(D M 0x7f7207d67760)(D M 0x55ffc1ecdeea)(D U5 0)(D M 0x55ffc1ed0160)]) (D M 0x7f7207be5df0) (N))
+(EQ (I U6 (V M 1)[(D U3 16)]) (D U6 0) (L N 6))
+(SET (T U6 9) (D U6 0) (N))
+(LBL (L N 5) (N) (N))
+(CALLV (M [(D M 0x7f7207d67760)(D M 0x55ffc1ecdeb9)(D U5 1)(D M 0x55ffc1ed0160)(I I6 (V M 1)[(D U3 40)(T U6 9)])]) (D M 0x7f7207be5df0) (N))
+(CALLV (M [(D M 0x7f7207d67760)(D M 0x55ffc1ecdf1d)]) (D M 0x7f7207be5df0) (N))
+(ADD (T U6 9) (T U6 9) (D U6 1))
+(LT (T U6 9) (I U6 (V M 1)[(D U3 16)]) (L N 5))
+(LBL (L N 6) (N) (N))
+(CALLV (M [(D M 0x7f7207d67760)(D M 0x55ffc1ecdeb4)(D U5 0)(D M 0x55ffc1ed0160)]) (D M 0x7f7207be5df0) (N))
+(CALLV (M [(D M 0x7f7207d67760)(D M 0x55ffc1ecdf1d)]) (D M 0x7f7207be5df0) (N))
+(SET (I N (A M 0)[(D U3 32)]) (V M 1) (N))
+(LEAVE (D M (nil)) (N) (N))
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+}
+*/

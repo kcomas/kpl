@@ -21,6 +21,7 @@ const char *gen_op_str(gen_op go) {
         "NEG",
         "MUL",
         "DIV",
+        "MOD",
         "CST",
         "EQ",
         "NE",
@@ -29,12 +30,17 @@ const char *gen_op_str(gen_op go) {
         "LT",
         "LTE",
         "AND",
+        "OR",
         "JMP",
         "_END"
     };
     const char *s = "INV";
     if (go > GEN_OP(_START) && go < GEN_OP(_END)) s = gos[go];
     return s;
+}
+
+bool gen_is_cond(gen_op op) {
+    return op >= GEN_OP(EQ) && op <= GEN_OP(LTE);
 }
 
 const char* gen_cls_str(gen_cls cls) {
