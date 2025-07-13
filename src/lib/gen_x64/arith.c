@@ -247,6 +247,7 @@ MULDIVVUVUVU(imul, IMUL);
 static gen_stat imod_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     (void) s;
     (void) a;
+    // TODO zero rdx
     return gen_err(g, ci, e, "TODO mod");
 }
 

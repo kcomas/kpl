@@ -221,6 +221,11 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
 }
 
+#define ZIE(N, C, E) x64_stat x64_##N##_i(size_t *p, uint8_t *m, uint32_t dsp) { \
+    x64_b(p, m, 3, REX(W), C, MOD(00) | E << 3 | RIP); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
+}
+
 #define ZRR(N, C, RR, RM) x64_stat x64_##N##_rr(size_t *p, uint8_t *m, reg d, reg s) { \
     if (RR > R(15)) return X64_STAT(INV_REG); \
     if (RM > R(15)) return X64_STAT(INV_REG); \
@@ -584,6 +589,8 @@ ZRMBE(imul, 0xF7, 5);
 ZRE(div, 0xF7, 6);
 
 ZRE(idiv, 0xF7, 7);
+
+ZIE(idiv, 0xF7, 7);
 
 ZZZXX(mulsd, 0xF2, 0x0F, 0x59, d, s);
 

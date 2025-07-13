@@ -315,6 +315,9 @@ x64_stat x64_div_r(size_t *p, uint8_t *m, reg r);
 // idiv rsi
 x64_stat x64_idiv_r(size_t *p, uint8_t *m, reg r);
 
+// idiv qword ptr[rip+dsp32]
+x64_stat x64_idiv_i(size_t *p, uint8_t *m, uint32_t dsp);
+
 // mulsd xmm0, xmm1
 x64_stat x64_mulsd_xx(size_t *p, uint8_t *m, reg d, reg s);
 

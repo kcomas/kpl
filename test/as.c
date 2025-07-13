@@ -346,3 +346,22 @@ T(arg_id_s) {
     mc_f(s);
     as_f(a);
 }
+
+T(inst_i) {
+    as *a = as_i_as(ba);
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DI)));
+    AS_A2(a, AS_X64(XOR), as_arg_r(a, R(DX)), as_arg_r(a, R(DX)));
+    AS_A1(a, AS_X64(IDIV), as_arg_qw(a, I6(6)));
+    AS_A2(a, AS_X64(MOV), as_arg_r(a, R(AX)), as_arg_r(a, R(DX)));
+    AS_A0(a, AS_X64(RET));
+    p = 0;
+    err *e = NULL;
+    UNLOCK();
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    LOCK();
+    as_code_p(a, m);
+    int64_t r = ((int64_t(*)(int64_t)) m)(10);
+    printf("10 %% 6 = %ld\n", r);
+    A(r == 4, "inv rem");
+    as_f(a);
+}

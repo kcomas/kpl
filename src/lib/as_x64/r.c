@@ -203,6 +203,16 @@ bool as_mov_rl(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1,
     return x64_mov_rq(p, m, arg1->d[1].u3, P(&m[lblc->d[8].u6])) == X64_STAT(OK);
 }
 
+#define INST_I(N) static bool as_##N##_i(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    as_dq_a(a, ci, sizeof(uint64_t), arg1->d[1], as_x64_dq); /* TODO fn to get sizeof*/ \
+    return x64_##N##_i(p, m, 0) == X64_STAT(OK); \
+}
+
+INST_I(idiv);
+
 void as_r_b(as *a) {
     as_op_a(a, AS_X64(PUSH), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_push_r, NULL);
     as_op_a(a, AS_X64(POP), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_pop_r, NULL);
@@ -238,6 +248,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(IMUL), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_imul_rmb, NULL);
     as_op_a(a, AS_X64(DIV), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_div_r, NULL);
     as_op_a(a, AS_X64(IDIV), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_idiv_r, NULL);
+    as_op_a(a, AS_X64(IDIV), ARG_ID(QW), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_idiv_i, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_inc_r, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(RM), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_inc_rm, NULL);
     as_op_a(a, AS_X64(INC), ARG_ID(RM), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_inc_rmb, NULL);
