@@ -455,7 +455,7 @@ static atg_stat if_l_l_1(atg *t, gen *g, te *an, err **e) {
     c = c->d[2].p; // gen code gen by cond
     if ((stat = cond_s_lbl(c, sl, el)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg if cond not lbl");
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, sl), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if ((stat = if_cond(t, g, an->d[6].p, e, 0)) != ATG_STAT(OK)) return stat;
+    if ((stat = if_cond(t, g, an->d[6].p, e, t->tc++)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
@@ -506,9 +506,12 @@ static atg_stat if_l_l_n(atg *t, gen *g, te *an, err **e) {
 static atg_stat if_l_l(atg *t, gen *g, te *an, err **e) {
     lst *ic = ((te*) an->d[5].p)->d[4].p;
     lst *ib = ((te*) an->d[6].p)->d[4].p;
+    te *tn = an->d[3].p;
+    if (!tn) return atg_err(t, an, e, "atg inv if type");
     if (ic && ib->l == 1) return if_l_l_1(t, g, an, e);
-    else if (ic && ib->l == 2) return  if_l_l_2(t, g, an, e);
-    else if (!ic && ib->l > 2) return if_l_l_n(t, g, an, e);
+    if (tn->d[1].u4 == TYPE(VD)) return atg_err(t, an, e, "atg if VD nyi");
+    if (ic && ib->l == 2) return  if_l_l_2(t, g, an, e);
+    if (!ic && ib->l > 2) return if_l_l_n(t, g, an, e);
     return atg_err(t, an, e, "atg if inv");
 }
 

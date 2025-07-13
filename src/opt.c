@@ -64,7 +64,6 @@ static fld_stat lst_inv_o(fld *f, te **an, err **e) {
     return fld_err(f, *an, e, "opt inv lst");
 }
 
-
 static bool lst_inv_t(const te *an) {
     if (an->d[2].u4 != AST_CLS(L)) return false;
     if (!an->d[0].p && !an->d[1].p && !an->d[3].p && !an->d[4].p) return false;
@@ -82,6 +81,7 @@ static void export_tbl_f(void *p) {
 
 static fld_stat lst_led_o(fld *f, te **an, err **e) {
     uint16_t eti = 0;
+    uint32_t lrc = 0, lxc = 0;
     if (!(*an)->d[3].p) return FLD_STAT(OK);
     tbl *lt = (*an)->d[3].p;
     te *h = lt->i->h, *lte, *kv, *rn = NULL;
@@ -89,12 +89,23 @@ static fld_stat lst_led_o(fld *f, te **an, err **e) {
         lte = h->d[0].p;
         uint32_t flgs = ast_lst_tbl_e_g_f(lte);
         if (flgs & LTE_FLG(D)) {
-           h = h->d[2].p;
-           if (tbl_s(lt, lte->d[0], &lte) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt failed to remove data node");
-           te_f(lte);
-           continue;
+            h = h->d[2].p;
+            if (tbl_s(lt, lte->d[0], &lte) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt failed to remove data node");
+            te_f(lte);
+            continue;
         }
         if ((flgs & LTE_FLG(O)) && (kv = chk_g_pn_lte((*an)->d[0].p, lte->d[0].p))) lte->d[1] = U6(kv->d[1].u6 | LTE_FLG(O));
+        if ((flgs & LTE_FLG(L)) && !(flgs & LTE_FLG(O))) {
+            switch (((te*) lte->d[2].p)->d[1].u4) {
+                case TYPE(F5):
+                case TYPE(F6):
+                    ast_lst_tbl_e_s_i(lte, lxc++);
+                    break;
+                default:
+                    ast_lst_tbl_e_s_i(lte, lrc++);
+                    break;
+            }
+        }
         if (!(flgs & LTE_FLG(O)) && (flgs & LTE_FLG(E))) {
             if (!rn && ast_g_pn(AST_CLS(R), *an, &rn) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get root node");
             if (!rn->d[3].p) rn->d[3] = P(f->fti());
@@ -171,9 +182,7 @@ static bool tmp_var_t(const te *an) {
 }
 
 static fld_stat aply_lst_o(fld *f, te **an, err **e) {
-    (void) f;
-    (void) e;
-    te *lp, *ln, *h, *lte;
+    te *lp, *ln;
     if (ast_g_pn(AST_CLS(L), *an, &lp) == AST_STAT(OK)) {
         return fld_err(f, *an, e, "TODO add to parent lst");
     } else {
@@ -181,24 +190,6 @@ static fld_stat aply_lst_o(fld *f, te **an, err **e) {
         ln->d[0] = (*an)->d[0];
         te_f(*an);
         *an = ln;
-        uint32_t lrc = 0, lxc = 0;
-        if (!ln->d[3].p) return FLD_STAT(OK);
-        h = ((tbl*) ln->d[3].p)->i->h;
-        while (h) {
-            lte = h->d[0].p;
-            if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(L)) {
-                switch (((te*) lte->d[2].p)->d[1].u4) {
-                    case TYPE(F5):
-                    case TYPE(F6):
-                        ast_lst_tbl_e_s_i(lte, lxc++);
-                        break;
-                    default:
-                        ast_lst_tbl_e_s_i(lte, lrc++);
-                        break;
-                }
-            }
-            h = h->d[2].p;
-        }
     }
     return FLD_STAT(OK);
 }

@@ -1,6 +1,12 @@
 
 // hello world in fn
 
-f::FN${"Hello World"\p1}
+g::FN${"Hello World"\p1}
+
+f::FN${
+    "Before"\p1
+    g()
+    "After"\p1
+}
 
 f()

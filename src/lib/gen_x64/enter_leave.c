@@ -40,7 +40,7 @@ static gen_stat enter_fn(gen *g, void *s, te *ci, as *a, err **e) {
     }
     if (st->rac >= 3 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(10))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     if (st->rac >= 4 && gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(11))), as_arg_i(a, ARG_ID(R), U3(R(CX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    if (st->xac >= 1 && gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(7))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (st->xac >= 1 && gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(XMM(8))), as_arg_i(a, ARG_ID(X), U3(XMM(0))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     return GEN_STAT(OK);
 }
 
