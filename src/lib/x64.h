@@ -471,5 +471,32 @@ x64_stat x64_jnlejg_d(size_t *p, uint8_t *m, uint32_t dw);
 // loop byte
 x64_stat x64_loop_b(size_t *p, uint8_t *m, uint8_t b);
 
+// setb setnae setc rax
+x64_stat x64_setbsetnaesetc_r(size_t *p, uint8_t *m, reg r);
+
+// setnb setae setnc rax
+x64_stat x64_setnbsetaesetnc_r(size_t *p, uint8_t *m, reg r);
+
+// setz sete rax
+x64_stat x64_setzsete_r(size_t *p, uint8_t *m, reg r);
+
+// setnz setne rax
+x64_stat x64_setnzsetne_r(size_t *p, uint8_t *m, reg r);
+
+// setbe setna rax
+x64_stat x64_setbesetna_r(size_t *p, uint8_t *m, reg r);
+
+// setnbe seta rax
+x64_stat x64_setnbeseta_r(size_t *p, uint8_t *m, reg r);
+
 // setl setnge rax
 x64_stat x64_setlsetnge_r(size_t *p, uint8_t *m, reg r);
+
+// setnl setge rax
+x64_stat x64_setnlsetge_r(size_t *p, uint8_t *m, reg r);
+
+// setle setng rax
+x64_stat x64_setlesetng_r(size_t *p, uint8_t *m, reg r);
+
+// setnle setg
+x64_stat x64_setnlesetg_r(size_t *p, uint8_t *m, reg r);

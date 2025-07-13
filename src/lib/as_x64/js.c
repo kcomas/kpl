@@ -1,7 +1,7 @@
 
 #include "../as_x64.h"
 
-// jmps
+// jmp, set
 
 #define JBS (sizeof(uint8_t) * 2)
 #define JMPS (sizeof(uint8_t) + sizeof(uint32_t))
@@ -71,6 +71,26 @@ INST_J_LE(jnljge);
 INST_J_LE(jlejng);
 INST_J_LE(jnlejg);
 
+#define SET(N) static bool as_##N##_r(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
+    (void) a; \
+    (void) ci; \
+    (void) arg2; \
+    (void) arg3; \
+    (void) arg4; \
+    return x64_##N##_r(p, m, arg1->d[1].u3) == X64_STAT(OK); \
+}
+
+SET(setbsetnaesetc);
+SET(setnbsetaesetnc);
+SET(setzsete);
+SET(setnzsetne);
+SET(setbesetna);
+SET(setnbeseta);
+SET(setlsetnge);
+SET(setnlsetge);
+SET(setlesetng);
+SET(setnlesetg);
+
 static bool as_loop_l(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) {
     (void) a;
     (void) arg2;
@@ -119,6 +139,28 @@ as *as_jmp_b(as *a) {
     as_op_a(a, AS_X64(JNG), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_jlejng_l, as_jlejng_e);
     as_op_a(a, AS_X64(JNLE), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_jnlejg_l, as_jnlejg_e);
     as_op_a(a, AS_X64(JG), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_jnlejg_l, as_jnlejg_e);
+    as_op_a(a, AS_X64(SETB), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setbsetnaesetc_r, NULL);
+    as_op_a(a, AS_X64(SETNAE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setbsetnaesetc_r, NULL);
+    as_op_a(a, AS_X64(SETC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setbsetnaesetc_r, NULL);
+    as_op_a(a, AS_X64(SETNB), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnbsetaesetnc_r, NULL);
+    as_op_a(a, AS_X64(SETAE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnbsetaesetnc_r, NULL);
+    as_op_a(a, AS_X64(SETNC), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnbsetaesetnc_r, NULL);
+    as_op_a(a, AS_X64(SETZ), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setzsete_r, NULL);
+    as_op_a(a, AS_X64(SETE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setzsete_r, NULL);
+    as_op_a(a, AS_X64(SETNZ), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnzsetne_r, NULL);
+    as_op_a(a, AS_X64(SETNE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnzsetne_r, NULL);
+    as_op_a(a, AS_X64(SETBE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setbesetna_r, NULL);
+    as_op_a(a, AS_X64(SETNA), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setbesetna_r, NULL);
+    as_op_a(a, AS_X64(SETNBE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnbeseta_r, NULL);
+    as_op_a(a, AS_X64(SETA), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnbeseta_r, NULL);
+    as_op_a(a, AS_X64(SETL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setlsetnge_r, NULL);
+    as_op_a(a, AS_X64(SETNGE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setlsetnge_r, NULL);
+    as_op_a(a, AS_X64(SETNL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnlsetge_r, NULL);
+    as_op_a(a, AS_X64(SETGE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnlsetge_r, NULL);
+    as_op_a(a, AS_X64(SETLE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setlesetng_r, NULL);
+    as_op_a(a, AS_X64(SETNG), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setlesetng_r, NULL);
+    as_op_a(a, AS_X64(SETNLE), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnlesetg_r, NULL);
+    as_op_a(a, AS_X64(SETG), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_setnlesetg_r, NULL);
     as_op_a(a, AS_X64(LOOP), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_loop_l, as_loop_e);
     return a;
 }
