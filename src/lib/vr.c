@@ -3,10 +3,7 @@
 
 static vr *vah = NULL;
 
-#define VR_S_MIN 5
-
 static void *al(size_t s) {
-    if (s < VR_S_MIN) s = VR_S_MIN;
 #ifdef NPOOL
     return malloc(sizeof(vr) + sizeof(un) * s);
 #else
@@ -49,7 +46,10 @@ static __attribute__((destructor(103))) void al_vr_f(void) {
     }
 }
 
+#define VR_S_MIN 5
+
 vr *vr_i(size_t s, const alfr *af, frfn *df) {
+    if (s < VR_S_MIN) s = VR_S_MIN;
     vr *v = af->a(s);
     v->r = 1;
     v->s = s;
@@ -111,7 +111,7 @@ static vr *resize(vr *v) {
 
 vr_stat vr_ab(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
-    if ((*v)->s - (*v)->l == 1) {
+    if ((*v)->s == (*v)->l) {
         *v = resize(*v);
         vstat = VR_STAT(RES);
     }
@@ -121,7 +121,7 @@ vr_stat vr_ab(vr **v, un d) {
 
 vr_stat vr_af(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
-    if ((*v)->s - (*v)->l == 1) {
+    if ((*v)->s == (*v)->l) {
         *v = resize(*v);
         vstat = VR_STAT(RES);
     }
