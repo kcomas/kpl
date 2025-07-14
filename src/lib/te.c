@@ -6,7 +6,6 @@
 static te *tah = NULL;
 
 static void *al(size_t n) {
-    if (n < 2) STOP("TE MUST HAVE LENGTH OF AT LEAST 2");
 #ifdef NPOOL
     return malloc(sizeof(te) + sizeof(un) * n);
 #else
@@ -57,6 +56,7 @@ static void td(void *p) {
 }
 
 te *te_i(size_t l, const alfr *af, frfn *tf) {
+    if (l < 2) STOP("TE MUST HAVE LENGTH OF AT LEAST 2");
     te *t = af->a(l);
     t->r = 1;
     t->l = l;

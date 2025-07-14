@@ -3,10 +3,7 @@
 
 static mc *mah = NULL;
 
-#define MC_S_MIN (sizeof(void*) * 2)
-
 static void *al(size_t s) {
-    if (s < MC_S_MIN) s = MC_S_MIN;
 #ifdef NPOOL
     return malloc(sizeof(mc) + sizeof(uint8_t) * s);
 #else
@@ -49,7 +46,10 @@ static __attribute__((destructor(103))) void al_mc_f(void) {
     }
 }
 
+#define MC_S_MIN (sizeof(void*) * 2)
+
 mc *mc_i(size_t s, const alfr *af) {
+    if (s < MC_S_MIN) s = MC_S_MIN;
     mc *m = af->a(s);
     m->r = 1;
     m->s = s;
