@@ -360,6 +360,9 @@ x64_stat x64_cmp_rrmd(size_t *p, uint8_t *m, reg d, reg s, uint32_t dsp);
 // cmp rax, qword ptr[rip+dsp32]
 x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp);
 
+// cmp qword ptr[rip+dsp32], rax
+x64_stat x64_cmp_ir(size_t *p, uint8_t *m, uint32_t dsp, reg r);
+
 // cmp rax, imm8
 x64_stat x64_cmp_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 

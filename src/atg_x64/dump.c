@@ -153,7 +153,7 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t
 static atg_stat dump_vd(atg *t, gen *g, te *restrict an, err **e, te *restrict cd) {
     atg_stat stat = ATG_STAT(OK);
     te *type;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
     return dump_v(t, g, an, e, f, 0, type, cd, true);
@@ -182,7 +182,7 @@ static atg_stat dump_vd_s_u5_e_sg(atg *t, gen *g, te *an, err **e) {
 static atg_stat dump_vd_s_u5_z(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *type;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
     return dump_v(t, g, an, e, f, 0, type->d[2].p, te_c(atg_g_g(an->d[6].p)->d[1].p), true);
@@ -192,7 +192,7 @@ static atg_stat dump_vd_s_u5_e_te(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *type, *lte = ((te*) an->d[6].p)->d[3].p;
     uint32_t idnt = 0;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
     te* cd = var_arg(g, lte, X64_TYPE(M));
@@ -206,7 +206,7 @@ static atg_stat dump_vd_s_u5_e_st(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *lte = ((te*) an->d[6].p)->d[3].p, *h;
     uint32_t idnt = 0, eid = 0;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
@@ -230,7 +230,7 @@ static atg_stat dump_vd_s_u5_e_et(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *lte = ((te*) an->d[6].p)->d[3].p, *h;
     uint32_t idnt = 0;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
@@ -253,7 +253,7 @@ static atg_stat dump_vd_s_u5_e_vr(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *type, *lte = ((te*) an->d[6].p)->d[3].p;
     uint32_t idnt = 0, tl = t->lc++, el = t->lc++, tv = t->tc++;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
     type = type->d[2].p;
@@ -277,7 +277,7 @@ static atg_stat dump_vd_s_u5_e_vr(atg *t, gen *g, te *an, err **e) {
 static atg_stat dump_vd_s_u5_e_un(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *type, *lte = ((te*) an->d[6].p)->d[3].p;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &type) != AST_STAT(OK)) return atg_err(t, an, e, "atg ast_g_t");
     te *cd = var_arg(g, lte, X64_TYPE(M));
@@ -290,7 +290,7 @@ static atg_stat dump_vd_s_u5_e_un(atg *t, gen *g, te *an, err **e) {
 static atg_stat dump_vd_s_u5_e_er(atg *t, gen *g, te *an, err **e) {
     atg_stat stat = ATG_STAT(OK);
     te *lte = ((te*) an->d[6].p)->d[3].p;
-    FILE *f;
+    FILE *f = NULL;
     if ((stat = dump_g_fd(t, an, e, &f)) != ATG_STAT(OK)) return stat;
     if ((stat = dump_err(t, g, an, e, f, 0, var_arg(g, lte, X64_TYPE(M)))) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P(stdout)), gen_data(g, X64_TYPE(M), P(atg_dump_nl))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);

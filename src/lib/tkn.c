@@ -109,7 +109,7 @@ uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf) {
     tbl *tl = t->t;
     size_t p = 0, e = 0;
     un c = c4_g(s, p, &e);
-    te *kv;
+    te *kv = NULL;
     while (c.c.a != '\0') {
         if (tbl_g_i(tl, c, &kv) == TBL_STAT(NF)) return entry_add(t, tl, p, s, tid, pf);
         tl = kv->d[3].p;

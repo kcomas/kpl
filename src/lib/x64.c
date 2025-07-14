@@ -221,6 +221,14 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
 }
 
+#define ZIR(N, C) x64_stat x64_##N##_ir(size_t *p, uint8_t *m, uint32_t dsp, reg r) { \
+    if (r > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (r >= R(8)) rex |= REX(R); \
+    x64_b(p, m, 3, rex, C, MOD(00) | rid(r) << 3 | RIP); \
+    return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
+}
+
 #define ZIE(N, C, E) x64_stat x64_##N##_i(size_t *p, uint8_t *m, uint32_t dsp) { \
     x64_b(p, m, 3, REX(W), C, MOD(00) | E << 3 | RIP); \
     return x64_e(p, m, sizeof(uint32_t), U5(dsp)); \
@@ -619,6 +627,8 @@ ZRRMB(cmp, 0x3B, d, s);
 ZRRMD(cmp, 0x3B, d, s);
 
 ZRI(cmp, 0x3B);
+
+ZIR(cmp, 0x39);
 
 ZREB(cmp, 0x83, 7);
 

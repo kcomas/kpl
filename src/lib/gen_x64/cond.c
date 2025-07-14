@@ -139,17 +139,14 @@ UIL(gte, u, JAE);
 VVL(gt, s, JG);
 VVL(lte, s, JLE);
 
-static gen_stat eq_duaua_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO eq");
+#define DUU(N, U, S) static gen_stat N##_d##U##a##U##a_fn(gen *g, void *s, te *ci, as *a, err **e) { \
+    (void) s; \
+    (void) a; \
+    return gen_err(g, ci, e, "TODO eq"); \
 }
 
-static gen_stat ne_duaua_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO eq");
-}
+DUU(eq, u, SETE);
+DUU(ne, u, SETNE);
 
 void gen_cond(gen *g) {
     GEN_OP_A3(g, GEN_OP(EQ), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(U6), GEN_CLS(L), X64_TYPE(N), eq_auaul_fn);

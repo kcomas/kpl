@@ -245,10 +245,16 @@ MULDIVVUVUAU(imul, IMUL);
 MULDIVVUVUVU(imul, IMUL);
 
 static gen_stat imod_auvudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    // TODO zero rdx
-    return gen_err(g, ci, e, "TODO mod");
+    int32_t v1;
+    te *kv;
+    if (get_reg(s, ci->d[1].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (stk_va(s, ci->d[2].p, &v1) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen tskv inv idx");
+    if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(DX))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v1, ci);
+    if (gen_as(a, AS_X64(IDIV), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kv->d[2]), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
 }
 
 #define UUDU(N, A, M, O, AI) static gen_stat N##_##A##u##A##udu_fn(gen *g, void *s, te *ci, as *a, err **e) { \

@@ -365,3 +365,22 @@ T(inst_i) {
     A(r == 4, "inv rem");
     as_f(a);
 }
+
+T(ir) {
+    int64_t t = 123;
+    as *a = as_i_as(ba);
+    AS_A2(a, AS_X64(XOR), as_arg_r(a, R(AX)), as_arg_r(a, R(AX)));
+    AS_A2(a, AS_X64(CMP), as_arg_qw(a, I6(t)), as_arg_r(a, R(DI)));
+    AS_A1(a, AS_X64(SETE), as_arg_r(a, R(AX)));
+    AS_A0(a, AS_X64(RET));
+    p = 0;
+    err *e = NULL;
+    UNLOCK();
+    A(as_n(a, &p, m, &e) == AS_STAT(OK), "as");
+    LOCK();
+    as_code_p(a, m);
+    bool r = ((bool(*)(int64_t)) m)(t);
+    printf("123 == 123 = %d\n", r);
+    A(r, "inv cmp");
+    as_f(a);
+}
