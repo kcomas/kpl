@@ -1418,10 +1418,9 @@ T(cj) {
     opt_exp_tbl_f(xt);
 }
 
-/*
 T(leap) {
     AI(TPGM(leap), 1, 1);
-    te *vt = TV(VR, TS(I6));
+    te *vt = TV(VR, TS(I6)), *kv;
     D(vt, NULL);
     te_f(vt);
     te *cn = RN(SN(_G, U5(0)));
@@ -1473,6 +1472,18 @@ T(leap) {
     gen_f(gc);
     tbl *xt = tbl_c(an->d[3].p);
     AR(0);
-    // TODO check export vec
+    A(xt->i->l == 1, "inv et");
+    mc *mv = mc_i_cstr("v", &al_mc);
+    A(tbl_g_i(xt, P(mv), &kv) == TBL_STAT(OK), "inv et");
+    mc_f(mv);
+    int64_t cmp[] = {2000, 2004, 2008, 2012, 2016, 2020, 2024, 2028};
+    size_t l = 8;
+    vr *v = kv->d[1].p;
+    A(v->l == l, "vr inv len");
+    for (size_t i = 0; i < v->l; i++) {
+        printf("%ld ", v->d[i].i6);
+        A(v->d[i].i6 == cmp[i], "inv year");
+    }
+    putchar('\n');
+    opt_exp_tbl_f(xt);
 }
-*/

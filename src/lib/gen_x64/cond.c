@@ -46,9 +46,12 @@ ADL(lte, u, JBE);
 ADL(lte, s, JLE);
 
 #define DUL(N, U, J) static gen_stat N##_d##U##a##U##l_fn(gen *g, void *s, te *ci, as *a, err **e) { \
-    (void) s; \
-    (void) a; \
-    return gen_err(g, ci, e, "TODO duaul"); \
+    te *kv; \
+    if (get_reg(s, ci->d[2].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if (gen_as(a, AS_X64(CMP), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (gen_as(a, AS_X64(J), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    drop_atm_kv(s, kv, ci); \
+    return GEN_STAT(OK); \
 }
 
 DUL(eq, u, JE);
@@ -140,9 +143,15 @@ VVL(gt, s, JG);
 VVL(lte, s, JLE);
 
 #define DUU(N, U, S) static gen_stat N##_d##U##a##U##a_fn(gen *g, void *s, te *ci, as *a, err **e) { \
-    (void) s; \
-    (void) a; \
-    return gen_err(g, ci, e, "TODO eq"); \
+    te *kc, *ks; \
+    if (get_reg(s, ci->d[2].p, &kc) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if (get_reg(s, ci->d[3].p, &ks) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), ks->d[2]), as_arg_i(a, ARG_ID(R), ks->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (gen_as(a, AS_X64(CMP), as_arg_i(a, ARG_ID(QW), ((te*) ci->d[1].p)->d[1]), as_arg_i(a, ARG_ID(R), kc->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (gen_as(a, AS_X64(S), as_arg_i(a, ARG_ID(R), ks->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    drop_atm_kv(s, kc, ci); \
+    drop_atm_kv(s, ks, ci); \
+    return GEN_STAT(OK); \
 }
 
 DUU(eq, u, SETE);

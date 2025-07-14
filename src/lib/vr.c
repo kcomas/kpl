@@ -111,7 +111,7 @@ static vr *resize(vr *v) {
 
 vr_stat vr_ab(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
-    if ((*v)->l == (*v)->s) {
+    if ((*v)->s - (*v)->l == 1) {
         *v = resize(*v);
         vstat = VR_STAT(RES);
     }
@@ -121,7 +121,7 @@ vr_stat vr_ab(vr **v, un d) {
 
 vr_stat vr_af(vr **v, un d) {
     vr_stat vstat = VR_STAT(OK);
-    if ((*v)->l + 1 >= (*v)->s) {
+    if ((*v)->s - (*v)->l == 1) {
         *v = resize(*v);
         vstat = VR_STAT(RES);
     }
