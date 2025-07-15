@@ -312,3 +312,18 @@ T(leap) {
        CN(P1, IN("v"))
     )), NULL)));
 }
+
+T(vrup) {
+    V(TPGM(vrup), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("v"), ON(NULL, CST, TN(VR), VN(NULL, L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))))),
+        ON(NULL, DFN, IN("f"), ON(NULL, CST, TN(FN), LN(NULL, L(4,
+            ON(NULL, AGN,
+                AN(NULL, AN(NULL, AN(NULL, TN(VR), L(1, TN(I6))), L(1, IN("a"))), L(1, SN(I6, I6(1)))),
+                SN(I6, I6(5))),
+            CN(P1, IN("a")),
+            ON(NULL, AGN, AN(NULL, IN("a"), L(1, SN(I6, I6(5)))), SN(I6, I6(1))),
+            ZN("v", SN(I6, I6(1)))
+        )))),
+        ON(NULL, DFN, CN(E, IN("e")), AN(NULL, IN("f"), L(1, IN("v"))))
+    )), NULL)));
+}

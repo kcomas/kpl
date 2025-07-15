@@ -229,3 +229,14 @@ const char *TPGM(leap) = "{\n"
                         " }\n"
                         " v\\p1\n"
                         "}()\n";
+
+const char *TPGM(vrup) = "{\n"
+                         " v::VR$[1;2;3]\n"
+                         " f::FN${\n"
+                         "  VR(I6)(a)(1):5\n"
+                         "  a\\p1\n"
+                         "  a(5):1\n"
+                         "  1`v\n"
+                         " }\n"
+                         " e\\e::f(v)\n"
+                         "}()\n";

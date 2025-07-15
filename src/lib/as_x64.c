@@ -355,16 +355,6 @@ static bool as_call_dw(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restri
     return x64_call_d(p, m, arg1->d[1].u5 - *p - CO) == X64_STAT(OK);
 }
 
-#define INST_I(N) static bool as_##N##_i(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
-    (void) arg2; \
-    (void) arg3; \
-    (void) arg4; \
-    as_dq_a(a, ci, sizeof(uint64_t), arg1->d[1], as_x64_dq); /* TODO fn to get sizeof*/ \
-    return x64_##N##_i(p, m, 0) == X64_STAT(OK); \
-}
-
-INST_I(idiv);
-
 // internal
 void as_r_b(as *a);
 void as_ro_b(as *a);
@@ -372,6 +362,7 @@ void as_xo_b(as *a);
 void as_rx_b(as *a);
 void as_x_b(as *a);
 void as_jmp_b(as *a);
+void as_i_b(as *a);
 
 as *as_b(as *a) {
     as_op_a(a, AS_X64(NOP), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_nop, NULL);
@@ -379,12 +370,12 @@ as *as_b(as *a) {
     as_op_a(a, AS_X64(LEAVE), ARG_ID(N), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_leave, NULL);
     as_op_a(a, AS_X64(CALL), ARG_ID(L), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_l, as_call_e);
     as_op_a(a, AS_X64(CALL), ARG_ID(DW), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_call_dw, NULL);
-    as_op_a(a, AS_X64(IDIV), ARG_ID(QW), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_idiv_i, NULL);
     as_jmp_b(a);
     as_r_b(a);
     as_ro_b(a);
     as_xo_b(a);
     as_x_b(a);
     as_rx_b(a);
+    as_i_b(a);
     return a;
 }

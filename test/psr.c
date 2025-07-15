@@ -626,3 +626,18 @@ T(leap) {
     ))});
     te_f(h);
 }
+
+T(vrup) {
+    te *h = ppnode(psr_r(bpsr(TPGM(vrup))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), VEC(N(INT), N(INT), N(INT)))),
+        OP(N(VAR), OP(N(TYPE), LST(
+            OP(APLY(APLY(APLY(N(TYPE), N(TYPE)), N(VAR)), N(INT)), N(INT)),
+            CMD(N(VAR)),
+            OP(APLY(N(VAR), N(INT)), N(INT)),
+            SYM(N(INT))
+        ))),
+        OP(CMD(N(VAR)), APLY(N(VAR), N(VAR)))
+    ))});
+    te_f(h);
+}
