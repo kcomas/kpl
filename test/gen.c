@@ -465,7 +465,7 @@ T(callstk) {
     te *call = gen_call_m(g, 1, gen_data(g, X64_TYPE(M), P("%lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu\n")));
     for (size_t i = 0; i < 11; i++) vr_ab((vr**) &call->d[1].p, P(gen_data(g, X64_TYPE(U6), U6(i))));
     te *xcall = gen_call_m(g, 1, gen_data(g, X64_TYPE(M), P("%lf %lf %lf %lf %lf %lf %lf %lf\n")));
-    for (size_t i = 0; i < 8; i++) vr_ab((vr**) &xcall->d[1].p, P(gen_data(g, X64_TYPE(F6), F6(i + i / 10))));
+    for (size_t i = 0; i < 8; i++) vr_ab((vr**) &xcall->d[1].p, P(gen_data(g, X64_TYPE(F6), F6(i + i / 10.0))));
     S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(g, GEN_OP(CALLV), call, gen_data(g, X64_TYPE(M), P(printf)), NULL));
     S(gen_a(g, GEN_OP(CALLV), xcall, gen_data(g, X64_TYPE(M), P(printf)), NULL));

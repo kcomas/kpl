@@ -118,6 +118,47 @@ tbl *chk_g_pn_lte_tbl(te *an, const mc *s) {
    return (tbl*) chk_g_pn_lte_(an, s, true);
 }
 
+te *chk_g_pn_fnnf_type(te *an) {
+    te *pn;
+    while (ast_g_pn(AST_CLS(O), an->d[0].p, &pn) == AST_STAT(OK)) {
+        an = pn;
+        if (pn->d[4].u4 != OC(CST)) continue;
+        pn = pn->d[5].p;
+        if (pn->d[2].u4 != AST_CLS(T)) continue;
+        pn = pn->d[3].p;
+        if (type_g_c(pn->d[1].u4 == TYPE_CLS(F))) return pn;
+    }
+    return NULL;
+}
+
+te *un_g_lte_ch(te *un, char c) {
+    if (!un) return NULL;
+    te *h = ((tbl*) un->d[2].p)->i->h, *n;
+    while (h) {
+        n = h->d[0].p;
+        mc *s = n->d[0].p;
+        if (s->l >= 2 && s->d[0] == c && s->d[1] == '\0') return n;
+        h = h->d[2].p;
+    }
+    return NULL;
+}
+
+chk_stat chk_fnnf_un_ret(chk *c, te *an, err **e) {
+    tbl *ft;
+    te *fn = chk_g_pn_fnnf_type(an), *fe, *ae;
+    if (!fn) return CHK_STAT(OK);
+    if (!fn->d[2].p) fn->d[2] = P(type_h_i(c->ta, NULL, TYPE(UN), tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(4, c->ta, NULL))));
+    fe = un_g_lte_ch(fn->d[2].p, 'e');
+    ae = un_g_lte_ch(an->d[3].p, 'e');
+    if (!ae) return chk_err(c, an, e, "chk inv un for access inside fn");
+    if (!fe) {
+        ft = ((te*) fn->d[2].p)->d[2].p;
+        tbl_a(ft, te_c(ae));
+        lst_s(ft->i, type_h_cmp);
+    } else if (!type_eq(fe->d[2].p, ae->d[2].p)) return chk_err(c, an, e, "chk inv un fn e type for impl err");
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     chk_stat stat;
     if ((stat = chk_cst_fn_lst_b(c, an, e)) != CHK_STAT(OK)) return stat;
@@ -542,8 +583,8 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
-    tbl *lt = ((te*) an->d[6].p)->d[3].p;
-    te *h = lt ? lt->i->h : NULL;
+    tbl *lt = ((te*) an->d[6].p)->d[3].p, *ut;
+    te *h = lt ? lt->i->h : NULL, *r, *rt, *kv;
     uint32_t ar = 0, ax = 0;
     while (h) {
         uint32_t flgs = ast_lst_tbl_e_g_f(h->d[0].p);
@@ -562,11 +603,20 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
         h = h->d[2].p;
     }
     an->d[3] = P(te_c(((te*) an->d[5].p)->d[3].p));
-    te *rt;
-    if (ast_g_t(((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get return type");
+    r = ((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p;
+    if (ast_g_t(r, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get return type");
     te **fr = (te**) &((te*) an->d[3].p)->d[2].p;
     if (*fr && (*fr)->d[1].u4 == TYPE(VD)) return CHK_STAT(OK);
-    else if (!*fr) *fr = te_c(rt);
+    else if (rt->d[1].u4 == TYPE(SL)) {
+        if (!*fr) return chk_err(c, an, e, "chk init ret un nyi");
+        if ((*fr)->d[1].u4 != TYPE(UN)) return chk_err(c, an, e, "chk inv ret for sl stmt");
+        ut = (*fr)->d[2].p;
+        if (tbl_g_i(ut, r->d[5], &kv) != TBL_STAT(OK)) {
+            if (ast_g_t(r->d[4].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv sl inner type");
+            type_tbl_a(ut, c->a->ta, mc_c(r->d[5].p), 0, te_c(rt));
+            lst_s(ut->i, type_h_cmp);
+        } else if (!type_eq(rt, kv->d[2].p)) return chk_err(c, an, e, "chk inv un ret type");
+    } else if (!*fr) *fr = te_c(rt);
     else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
     return CHK_STAT(OK);
 }
@@ -689,6 +739,15 @@ static chk_stat chk_op_levrroe_vr(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_uner_n_un(chk *c, te *an, err **e) {
+    te *u;
+    if (ast_g_t(an->d[6].p, &u) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get un type");
+    te *lte = un_g_lte_ch(u, 'v');
+    if (!lte) return chk_err(c, an, e, "chk inv un v type");
+    an->d[3] = P(te_c(lte->d[2].p));
+    return CHK_STAT(OK);
+}
+
 void chk_type(chk *c);
 void chk_dfnagn(chk *c);
 void chk_arith(chk *c);
@@ -761,6 +820,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6));
+    CHK_AA(c, chk_uner_n_un, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN));
     chk_type(c);
     chk_dfnagn(c);
     chk_arith(c);

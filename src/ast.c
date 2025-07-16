@@ -31,6 +31,7 @@ const char *ast_oc_str(oc o) {
         "CSG",
         "CNCT",
         "CNCTA",
+        "UNER",
         "DUMP",
         "_END"
     };
@@ -289,6 +290,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(OR), OC(OR));
     ast_t_a(a, TCUST(CNCT), OC(CNCT));
     ast_t_a(a, TCUST(CNCTA), OC(CNCTA));
+    ast_t_a(a, TCUST(UNER), OC(UNER));
     // cmds
     ast_t_a(a, TCUST(E), CC(E));
     ast_t_a(a, TCUST(L), CC(L));

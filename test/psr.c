@@ -637,7 +637,7 @@ T(vrup) {
             OP(APLY(N(VAR), N(INT)), N(INT)),
             SYM(N(INT))
         ))),
-        OP(CMD(N(VAR)), APLY(N(VAR), N(VAR)))
+        OP(N(NONE), APLY(N(VAR), N(VAR)))
     ))});
     te_f(h);
 }

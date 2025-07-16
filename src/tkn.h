@@ -61,6 +61,7 @@ typedef enum {
     TCUST(OR),
     TCUST(CNCT),
     TCUST(CNCTA),
+    TCUST(UNER),
     // cmds
     TCUST(E),
     TCUST(L),

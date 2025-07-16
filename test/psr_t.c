@@ -238,5 +238,5 @@ const char *TPGM(vrup) = "{\n"
                          "  a(5):1\n"
                          "  1`v\n"
                          " }\n"
-                         " e\\e::f(v)\n"
+                         " 'f(v)\n"
                          "}()\n";

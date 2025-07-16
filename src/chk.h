@@ -12,6 +12,12 @@ te *chk_g_pn_lte(te *an, const mc *s);
 
 tbl *chk_g_pn_lte_tbl(te *an, const mc *s);
 
+te *un_g_lte_ch(te *un, char c);
+
+te *chk_g_pn_fnnf_type(te *an);
+
+chk_stat chk_fnnf_un_ret(chk *c, te *an, err **e);
+
 chk_stat chk_nop(chk *c, te *an, err **e);
 
 ssize_t type_h_cmp(un a, un b);

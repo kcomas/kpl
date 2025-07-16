@@ -364,3 +364,17 @@ T(leap) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(vrup) {
+    V(TPGM(vrup), RN(AN(NULL, LN(LT(2, "v", U6(0), NULL, "f", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, TN(VR),
+            VN(NULL, L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))))),
+        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, TN(FN), LN(LT(1, "a", U6(0), TV(VR, TS(I6))), L(4,
+            ON(NULL, AGN, AN(NULL, EN("a", U6(0), TV(VR, TS(I6))), L(1, SN(I6, I6(1)))), SN(I6, I6(5))),
+            ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), TV(VR, TS(I6)))),
+            ON(NULL, AGN, AN(NULL, EN("a", U6(0), TV(VR, TS(I6))), L(1, SN(I6, I6(5)))), SN(I6, I6(1))),
+            ZN("v", SN(I6, I6(1)))
+        )))),
+        ON(NULL, UNER, NULL, AN(NULL, EN("f", U6(0), NULL), L(1, EN("v", U6(0), NULL))))
+    )), NULL)));
+}
