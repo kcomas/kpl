@@ -139,7 +139,8 @@ static bool tmp_var_t(const te *an) {
         [OC(AGN)] = true,
         [OC(IF)] = true,
         [OC(MTCH)] = true,
-        [OC(CNCTA)] = true
+        [OC(CNCTA)] = true,
+        [OC(UNER)] = true
     };
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
     if (an->d[2].u4 == AST_CLS(A)) {

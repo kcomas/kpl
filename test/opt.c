@@ -490,3 +490,26 @@ T(leap) {
     ))));
     te_f(vt);
 }
+
+T(vrup) {
+    IC(TPGM(vrup));
+    te *vt = TV(VR, TS(I6));
+    te *ue = chk_rt_err_t(&al_te);
+    te *ut = TH(UN, 2, "e", te_c(ue), "v", TS(I6));
+    te *ft = TFN(FN, te_c(ut), 1, "a", te_c(vt), 0);
+    V(RN(LN(LT(2, "v", FLG(0, LTE_FLG(L)), te_c(vt), "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(3,
+        ON(te_c(vt), DFN, EN("v", FLG(0, LTE_FLG(L)), te_c(vt)), VN(te_c(vt), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))),
+           ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
+                ON(te_c(ft), CST, NN(T, te_c(ft)), LN(LT(1, "a", FLG(0, LTE_FLG(A)), te_c(vt)), L(4,
+                    ON(TS(I6), AGN, AN(te_c(ut), EN("a", FLG(0, LTE_FLG(A)), te_c(vt)), L(1, SN(I6, I6(1)))), SN(I6, I6(5))),
+                    ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", FLG(0, LTE_FLG(A)), te_c(vt))),
+                    ON(TS(I6), AGN, AN(te_c(ut), EN("a", FLG(0, LTE_FLG(A)), te_c(vt)), L(1, SN(I6, I6(5)))), SN(I6, I6(1))),
+                    ZTN("v", TS(VD), SN(I6, I6(1)))
+                )))),
+           ON(TS(I6), UNER, NULL, AN(te_c(ut), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, EN("v", FLG(0, LTE_FLG(L)), te_c(vt)))))
+    ))));
+    te_f(vt);
+    te_f(ue);
+    te_f(ut);
+    te_f(ft);
+}

@@ -499,7 +499,6 @@ T(vrup) {
         ON(te_c(vt), DFN, EN("v", FLG(0, LTE_FLG(L)), te_c(vt)),
             ON(te_c(vt), CST, NN(T, te_c(vt)),
                 VN(type_te_i_v(&al_te, NULL, 3, TS(I6), TS(I6), TS(I6)), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3)))))),
-
            ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
                 ON(te_c(ft), CST, NN(T, te_c(ft)), LN(LT(1, "a", FLG(0, LTE_FLG(A)), te_c(vt)), L(4,
                     ON(TS(I6), AGN, AN(te_c(ut), EN("a", FLG(0, LTE_FLG(A)), te_c(vt)), L(1, SN(I6, I6(1)))), SN(I6, I6(5))),
