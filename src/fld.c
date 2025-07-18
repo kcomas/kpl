@@ -7,6 +7,15 @@ fld_stat fld_err(const fld *f, te *an, err **e, const char *m) {
     return FLD_STAT(INV);
 }
 
+static fld_stat lst_r(fld *f, te **an, err **e) {
+    return fld_err(f, *an, e, "fld bare lst");
+}
+
+static bool lst_t(const te *an) {
+    te *pn = an->d[0].p;
+    return pn->d[2].u4 == AST_CLS(L);
+}
+
 static fld_stat s_cs_sg_r(fld *f, te **an, err **e) {
     (void) e;
     te *nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(type_s_i(f->a->ta, NULL, TYPE(SG))), U4(OC(CSG)), NULL, *an);
@@ -389,6 +398,7 @@ static bool cmd_t(const te *an) {
 }
 
 fld *fld_b(fld *f) {
+    fld_a(f, AST_CLS(L), lst_t, lst_r);
     fld_a(f, AST_CLS(S), s_cs_sg_t, s_cs_sg_r);
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);

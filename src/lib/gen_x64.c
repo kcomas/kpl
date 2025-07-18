@@ -680,24 +680,41 @@ static void set_2_nop(gen *g, te *h) {
     }
 }
 
+static void jmp_2_rm(gen *g, te *h) {
+    te *tmp = h, *ci = h->d[0].p;
+    uint32_t lbl = ((te*) ci->d[1].p)->d[1].u5;
+    h = h->d[2].p;
+    while (h) {
+        ci = h->d[0].p;
+        if (ci->d[0].u6 != GEN_OP(LBL)) break;
+        if (((te*) ci->d[1].p)->d[1].u5 == lbl) {
+            te_f(tmp->d[0].p);
+            lst_li_d(g->code, tmp);
+            break;
+        }
+        h = h->d[2].p;
+    }
+}
+
 void gen_x64_opt(gen *g, gen_st *st) {
     (void) st; // TODO stack vars to available regs
-    te *h = g->code->h, *c;
+    te *h = g->code->h, *ci;
     while (h) {
-        c = h->d[0].p;
-        if (c->d[0].u6 == GEN_OP(LEAVE) && h->d[1].p) {
-            c = ((te*) h->d[1].p)->d[0].p;
-            if (c && c->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, c);
+        ci = h->d[0].p;
+        if (ci->d[0].u6 == GEN_OP(LEAVE) && h->d[1].p) {
+            ci = ((te*) h->d[1].p)->d[0].p;
+            if (ci && ci->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, ci);
         }
-        if (c->d[0].u6 == GEN_OP(SET) && gen_var_g_c(c->d[1].p) == GEN_CLS(T) && gen_var_g_c(c->d[2].p) == GEN_CLS(T) && h->d[1].p) {
-            c = ((te*) h->d[1].p)->d[0].p;
-            if (c && c->d[0].u6 == GEN_OP(NOP)) {
-                c = h->d[2].p;
+        if (ci->d[0].u6 == GEN_OP(SET) && gen_var_g_c(ci->d[1].p) == GEN_CLS(T) && gen_var_g_c(ci->d[2].p) == GEN_CLS(T) && h->d[1].p) {
+            ci = ((te*) h->d[1].p)->d[0].p;
+            if (ci && ci->d[0].u6 == GEN_OP(NOP)) {
+                ci = h->d[2].p;
                 set_2_nop(g, h);
-                h = c;
+                h = ci;
                 continue;
             }
         }
+        if (ci->d[0].u6 == GEN_OP(JMP)) jmp_2_rm(g, h);
         // TODO opt setting stk cls m vars to 0
         h = h->d[2].p;
     }
@@ -740,7 +757,9 @@ void gen_bin(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(D), X64_TYPE(I6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U3), nop_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(I6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(M), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(MM), nop_fn);
     GEN_OP_A1(g, GEN_OP(JMP), GEN_CLS(L), X64_TYPE(N), jmp_fn);

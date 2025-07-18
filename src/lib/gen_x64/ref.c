@@ -1,7 +1,7 @@
 
 #include "idx.h"
 
-static gen_stat ref_um_umm_fn(gen *g, void *s, te *ci, as *a, err **e) {
+static gen_stat ref_am_amm_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *kv[2];
     if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
@@ -10,7 +10,17 @@ static gen_stat ref_um_umm_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
-static gen_stat ref_umm_vm_fn(gen *g, void *s, te *ci, as *a, err **e) {
+static gen_stat ref_amm_im_fn(gen *g, void *s, te *ci, as *a, err **e) {
+    gen_stat stat;
+    te *kv;
+    vr *i = ((te*) ci->d[2].p)->d[1].p;
+    if ((stat = get_reg(s, ci->d[1].p, &kv)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if ((stat = idx_from(g, s, ci, a, e, AS_X64(LEA), i, as_arg_i(a, ARG_ID(R), kv->d[2]), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
+}
+
+static gen_stat ref_amm_vm_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     int32_t v1;
     te *kv;
@@ -54,8 +64,10 @@ static gen_stat ref_avd_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 void gen_ref(gen *g) {
-    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(MM), ref_um_umm_fn);
-    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(V), X64_TYPE(M), ref_umm_vm_fn);
+    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(MM), ref_am_amm_fn);
+    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(MM), ref_am_amm_fn);
+    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(I), X64_TYPE(M), ref_amm_im_fn);
+    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(V), X64_TYPE(M), ref_amm_vm_fn);
     GEN_OP_A3(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(M), GEN_CLS(D), X64_TYPE(U3), ref_aid_fn);
     GEN_OP_A3(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(M), GEN_CLS(D), X64_TYPE(U3), ref_aad_fn);
     GEN_OP_A3(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(M), GEN_CLS(D), X64_TYPE(U3), ref_aid_fn);

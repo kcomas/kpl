@@ -669,6 +669,15 @@ chk_stat chk_op_l_z_r(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+chk_stat chk_op_l_r_z(chk *c, te *an, err **e) {
+    te *lt, *rt = ((te*) an->d[6].p)->d[3].p;
+    rt = rt->d[2].p;
+    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(c, an->d[6].p, e, "chk z cannot get op l type");
+    if (!type_eq(lt, rt)) return chk_err(c, an, e, "chk z op l r type ne");
+    an->d[3] = P(te_c(lt));
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_op_lr(chk *c, te *an, err **e, te **lt) {
     te *rt;
     if (ast_g_t(an->d[5].p, lt) != AST_STAT(OK)) return chk_err(c, an->d[5].p, e, "chk cannot get op l type");

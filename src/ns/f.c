@@ -21,20 +21,20 @@ static te *ns_f_rs_err(mc *s, const char *msg) {
     return ns_un(0, P(err_i(&al_err, ns_f_rs_err_p, (void*) mc_f, mc_c(s), msg)), un_er_sg_f);
 }
 
-te *ns_f_rs(mc *s) {
+te *ns_f_rs(mc **s) {
     int fd;
-    if ((fd = open((char*) s->d, O_RDONLY)) == -1) return ns_f_rs_err(s, "inv path");
+    if ((fd = open((char*) (*s)->d, O_RDONLY)) == -1) return ns_f_rs_err(*s, "inv path");
     struct statx sx;
     if (statx(fd, "", AT_EMPTY_PATH, STATX_MODE | STATX_SIZE, &sx) == -1) {
         close(fd);
-        return ns_f_rs_err(s, "inv path");
+        return ns_f_rs_err(*s, "inv path");
     }
-    if (S_ISDIR(sx.stx_mode)) return ns_f_rs_err(s, "path is dir");
+    if (S_ISDIR(sx.stx_mode)) return ns_f_rs_err(*s, "path is dir");
     mc *f = mc_i(sx.stx_size + sizeof(char), &al_mc);
     if (read(fd, f->d, sx.stx_size) == -1) {
         close(fd);
         mc_f(f);
-        return ns_f_rs_err(s, "failed to read file");
+        return ns_f_rs_err(*s, "failed to read file");
     }
     close(fd);
     return ns_un(1, P(f), un_er_sg_f);

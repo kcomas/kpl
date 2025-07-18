@@ -22,7 +22,11 @@ te *atg_vr_idx_d(gen *g, uint32_t id);
 
 bool inloop(te *an);
 
+atg_stat atg_g_un_ev(te *tn, uint64_t *esym, uint64_t *vsym);
+
 te *var_arg(gen *g, te *lte, x64_type xt);
+
+atg_stat atg_an_var(atg *t, gen *g, te **i, err **e);
 
 atg_stat atg_nop(atg *t, gen *g, te *an, err **e);
 
@@ -40,9 +44,13 @@ atg_stat z_lte_id(atg *t, te *an, err **e, const te *zn, te **lte, size_t *id);
 
 atg_stat call_npr(gen_op *go, const te *an);
 
+atg_stat atg_aply_acc(atg *t, gen *g, te *restrict an, err **e, te *restrict vlte, te **i, uint32_t erlb);
+
 gen_stat atg_rt_err_c(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno, const char *msg);
 
-gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref);
+gen_stat aply_e_vr_err_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, mc *fname, uint16_t lno, uint32_t cno);
+
+gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref, uint64_t esym, uint64_t vsym);
 
 extern const char *atg_un_inv_str;
 

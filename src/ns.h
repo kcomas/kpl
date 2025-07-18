@@ -32,4 +32,4 @@ te *ns_n(size_t n, mc *m[NS_MAX_L]);
 void ns_p(void);
 
 // declarations needed for testing
-te *ns_f_rs(mc *s);
+te *ns_f_rs(mc **s);
