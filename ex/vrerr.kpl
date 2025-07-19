@@ -1,0 +1,13 @@
+
+// error example
+
+u::FN${:(VR(I6)(v)(I6(i));I6(n))`v}
+
+b::FN${::(x;'u(VR(I6)(v);7;8))`v}
+
+g::FN${::(x;'u(VR(I6)(v);0;1234))`v}
+
+v::VR$[0;1;2]
+b(v)\p1
+g(v)\p1
+v\p1

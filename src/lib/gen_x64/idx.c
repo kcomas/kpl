@@ -92,24 +92,30 @@ gen_stat idx_from(const gen *g, void *s, te *restrict ci, as *a, err **e, as_ins
             if (gen_as_rrmbd(a, tm, rtmp, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
             if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), U3(rtmp)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-        } else if ((x == GEN_CLS(T) || x == GEN_CLS(A)) && y == GEN_CLS(D)) {
+        } else if ((x == GEN_CLS(T) || x == GEN_CLS(A)) && (gen_var_g_t(i->d[0].p) == X64_TYPE(M) || gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) && y == GEN_CLS(D)) {
             if ((stat = get_reg(st, i->d[0].p, &kvib) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
-            if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), kvib->d[2]), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-            drop_atm_kv(st, kvib, ci);
-        } else return gen_err(g, ci, e, "nyi");
-    } else if (i->l == 3) {
-        z = gen_var_g_c(i->d[2].p);
-        if ((x == GEN_CLS(A) || x == GEN_CLS(T)) && (gen_var_g_t(i->d[0].p) == X64_TYPE(M) || gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) && y == GEN_CLS(D) && (z == GEN_CLS(A) || z == GEN_CLS(T))) {
-            if ((stat = get_reg(st, i->d[0].p, &kvib) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             reg = kvib->d[2];
             if (gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) {
                 if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
                 reg = st->rstk->d[0];
                 if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), reg), as_arg_i(a, ARG_ID(RM), kvib->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             }
+            if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), reg), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            drop_atm_kv(st, kvib, ci);
+        } else return gen_err(g, ci, e, "nyi");
+    } else if (i->l == 3) {
+        z = gen_var_g_c(i->d[2].p);
+        if ((x == GEN_CLS(A) || x == GEN_CLS(T)) && (gen_var_g_t(i->d[0].p) == X64_TYPE(M) || gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) && y == GEN_CLS(D) && (z == GEN_CLS(A) || z == GEN_CLS(T))) {
+            if ((stat = get_reg(st, i->d[0].p, &kvib) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             if ((stat = get_reg(st, i->d[2].p, &kvii) != GEN_STAT(OK))) return gen_err(g, ci, e, "gen reg");
             if (arg_id_bd_g(i->d[1].p, &di) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv data offset type");
+            reg = kvib->d[2];
+            if (gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) {
+                if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                reg = st->rstk->d[0];
+                if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), reg), as_arg_i(a, ARG_ID(RM), kvib->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+            }
             if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), reg), as_arg_i(a, ARG_ID(RS), as_x64_rs(kvii->d[2].u3, 8)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             drop_atm_kv(st, kvib, ci);
             drop_atm_kv(st, kvii, ci);

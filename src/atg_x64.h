@@ -34,7 +34,7 @@ typedef te *atg_idx_d(gen *g, uint32_t id);
 
 atg_stat v_set_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict n, uint32_t ti, uint32_t eid, atg_idx_d idxfn);
 
-gen_stat inc_ref_c(gen *g, uint32_t ti);
+gen_stat inc_ref_u(gen *g, x64_type xt, uint32_t ti);
 
 atg_stat atg_te_init(atg *t, gen *g, te *restrict an, err **e, te *restrict type, size_t l, uint32_t ti);
 
@@ -46,11 +46,11 @@ atg_stat call_npr(gen_op *go, const te *an);
 
 atg_stat atg_aply_acc(atg *t, gen *g, te *restrict an, err **e, te *restrict vlte, te **i, uint32_t erlb);
 
-gen_stat atg_rt_err_c(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno, const char *msg);
+gen_stat atg_rt_err_u(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno, const char *msg);
 
-gen_stat aply_e_vr_err_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, mc *fname, uint16_t lno, uint32_t cno);
+gen_stat aply_e_vr_err_u(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, mc *fname, uint16_t lno, uint32_t cno);
 
-gen_stat aply_e_vr_c(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref, uint64_t esym, uint64_t vsym);
+gen_stat aply_e_vr_u(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref, uint64_t esym, uint64_t vsym);
 
 extern const char *atg_un_inv_str;
 

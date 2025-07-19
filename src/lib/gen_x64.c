@@ -698,25 +698,25 @@ static void jmp_2_rm(gen *g, te *h) {
 
 void gen_x64_opt(gen *g, gen_st *st) {
     (void) st; // TODO stack vars to available regs
-    te *h = g->code->h, *ci;
+    te *h = g->code->h, *ci, *tmp;
     while (h) {
-        ci = h->d[0].p;
-        if (ci->d[0].u6 == GEN_OP(LEAVE) && h->d[1].p) {
-            ci = ((te*) h->d[1].p)->d[0].p;
-            if (ci && ci->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, h, ci);
+        tmp = h;
+        h = h->d[2].p;
+        ci = tmp->d[0].p;
+        if (ci->d[0].u6 == GEN_OP(LEAVE) && tmp->d[1].p) {
+            ci = ((te*) tmp->d[1].p)->d[0].p;
+            if (ci && ci->d[0].u6 == GEN_OP(LBL)) jmp_2_leave(g, tmp, ci);
         }
-        if (ci->d[0].u6 == GEN_OP(SET) && gen_var_g_c(ci->d[1].p) == GEN_CLS(T) && gen_var_g_c(ci->d[2].p) == GEN_CLS(T) && h->d[1].p) {
-            ci = ((te*) h->d[1].p)->d[0].p;
+        if (ci->d[0].u6 == GEN_OP(SET) && gen_var_g_c(ci->d[1].p) == GEN_CLS(T) && gen_var_g_c(ci->d[2].p) == GEN_CLS(T) && tmp->d[1].p) {
+            ci = ((te*) tmp->d[1].p)->d[0].p;
             if (ci && ci->d[0].u6 == GEN_OP(NOP)) {
-                ci = h->d[2].p;
-                set_2_nop(g, h);
-                h = ci;
+                ci = tmp->d[2].p;
+                set_2_nop(g, tmp);
                 continue;
             }
         }
-        if (ci->d[0].u6 == GEN_OP(JMP)) jmp_2_rm(g, h);
+        if (ci->d[0].u6 == GEN_OP(JMP)) jmp_2_rm(g, tmp);
         // TODO opt setting stk cls m vars to 0
-        h = h->d[2].p;
     }
 }
 

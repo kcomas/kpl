@@ -280,6 +280,8 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(I6), GEN_CLS(T), X64_TYPE(I6), set_va_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(V), X64_TYPE(M), GEN_CLS(T), X64_TYPE(M), set_va_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(F6), set_ax_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(A), X64_TYPE(I6), set_au_fn);
+    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(A), X64_TYPE(I6), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(T), X64_TYPE(I6), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(M), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(M), set_au_fn);

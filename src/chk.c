@@ -754,6 +754,12 @@ static chk_stat chk_uner_n_un(chk *c, te *an, err **e) {
     te *lte = un_g_lte_ch(u, 'v');
     if (!lte) return chk_err(c, an, e, "chk inv un v type");
     an->d[3] = P(te_c(lte->d[2].p));
+    if ((u = chk_g_pn_fnnf_type(an))) {
+        if (u->d[2].p) return chk_err(c, an, e, "chk type uner chk nyi");
+        tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
+        type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
+        u->d[2] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
+    }
     return CHK_STAT(OK);
 }
 
@@ -782,6 +788,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(F6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(F6));
+    CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(U6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(SG));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ST));

@@ -487,3 +487,17 @@ T(incref) {
     te_f(t);
     te_f(t);
 }
+
+T(vrreflen) {
+    vr *v = vr_i(10, &al_vr, NULL);
+    for (size_t i = 0; i < 10; i++) vr_ab(&v, I6(i));
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(U6), 0), gen_idx_m(g, X64_TYPE(U6), 2, gen_arg(g, X64_TYPE(MM), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(vr, l)))), NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(U6), 0), NULL, NULL));
+    BUILD(g, m);
+    uint64_t l = ((uint64_t(*)(vr**)) m)(&v);
+    printf("vr len %lu = %lu\n", v->l, l);
+    A(l == 10, "inv vr len");
+    vr_f(v);
+}
