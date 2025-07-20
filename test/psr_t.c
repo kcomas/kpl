@@ -240,3 +240,15 @@ const char *TPGM(vrup) = "{\n"
                          " }\n"
                          " 'f(v)\n"
                          "}()\n";
+
+const char *TPGM(stll) = "{\n"
+                         " l\\e::#{0`i;VD`y`n}\n"
+                         " l`n`z:l\\t\n"
+                         " a::NF${\n"
+                         "  b::FN${l\\t(x)`n#{b(z)`z;x`y}}\n"
+                         "  b(l)`n:l\\t$#{I6(i)`i;VD`y`n}\n"
+                         " }\n"
+                         " i::0\n"
+                         " <=(i;5)@a(i+:1)\n"
+                         " a\\p1\n"
+                         "}()\n";

@@ -327,3 +327,15 @@ T(vrup) {
         ON(NULL, UNER, NULL, AN(NULL, IN("f"), L(1, IN("v"))))
     )), NULL)));
 }
+
+/*
+T(stll) {
+    V(TPGM(stll), AN(NULL, LN(NULL, L(1,
+        ON(NULL, DFN, CN(E, IN("l")),
+            ON(NULL, MTCH, NULL, LN(NULL, L(2,
+                ZN("i", SN(I6, I6(0))),
+                ZN("n", ZN("y", TN(VD)))
+            ))))
+    )), NULL));
+}
+*/

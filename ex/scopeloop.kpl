@@ -1,0 +1,11 @@
+
+// loop with scope fn
+
+x::0
+g::NF${x}
+up::NF${
+    "up x: {}"(x)\p1
+    x+:1
+}
+<(g();5)@up()
+"x: {}"(x)\p1
