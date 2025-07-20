@@ -328,14 +328,29 @@ T(vrup) {
     )), NULL)));
 }
 
-/*
 T(stll) {
-    V(TPGM(stll), AN(NULL, LN(NULL, L(1,
+    V(TPGM(stll), RN(AN(NULL, LN(NULL, L(6,
         ON(NULL, DFN, CN(E, IN("l")),
             ON(NULL, MTCH, NULL, LN(NULL, L(2,
                 ZN("i", SN(I6, I6(0))),
-                ZN("n", ZN("y", TN(VD)))
-            ))))
-    )), NULL));
+                ZN("n", ZN("y", TN(VD))))))),
+        ON(NULL, AGN, ZN("z", ZN("n", IN("l"))), CN(T, IN("l"))),
+        ON(NULL, DFN, IN("a"), ON(NULL, CST, TN(NF), LN(NULL, L(2,
+            ON(NULL, DFN, IN("b"),
+                ON(NULL, CST, TN(FN), LN(NULL, L(1,
+                    ON(NULL, MTCH, ZN("n", AN(NULL, CN(T, IN("l")), L(1, IN("x")))), LN(NULL, L(2,
+                        ZN("z", AN(NULL, IN("b"), L(1, IN("z")))),
+                        ZN("y", IN("x")))))
+                )))),
+            ON(NULL, AGN, ZN("n", AN(NULL, IN("b"), L(1, IN("l")))),
+                ON(NULL, CST, CN(T, IN("l")), ON(NULL, MTCH, NULL, LN(NULL, L(2,
+                    ZN("i", AN(NULL, TN(I6), L(1, IN("i")))),
+                    ZN("n", ZN("y", TN(VD)))
+        ))))))))),
+        ON(NULL, DFN, IN("i"), SN(I6, I6(0))),
+        ON(NULL, LOOP,
+            AN(NULL, ON(NULL, LTE, NULL, NULL), L(2, IN("i"), SN(I6, I6(5)))),
+            AN(NULL, IN("a"), L(1, ON(NULL, ADDA, IN("i"), SN(I6, I6(1)))))),
+        CN(P1, IN("a"))
+    )), NULL)));
 }
-*/
