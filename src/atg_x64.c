@@ -477,9 +477,9 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
     if ((stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
     ende = g->code->t->d[0].p;
     if (!gen_is_cond(ende->d[0].u4)) return atg_err(t, an, e, "atg loop ende not cond");
-    ende->d[0].u4 = atg_gen_g_cond_rv(ende);
+    ende->d[0] = U4(atg_gen_g_cond_rv(ende));
     if (gen_var_g_c(ende->d[3].p) != GEN_CLS(L)) return atg_err(t, an, e, "atg loop ende not lbl");
-    ((te*) ende->d[3].p)->d[1].u5 = sl;
+    ((te*) ende->d[3].p)->d[1] = U5(sl);
     if (gen_u_fn(g, ende) != GEN_STAT(OK)) return atg_err(t, an, e, "atg ci update inv");
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
