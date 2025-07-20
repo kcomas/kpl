@@ -1,0 +1,14 @@
+
+// loop with scope fn
+
+x::0
+g::NF${
+    "get x: {}"(x)\p1
+    x
+}
+s::NF${
+    "set x: {}"(x+:1)\p1
+    x
+}
+<(g();5)@s()
+"x: {}"(x)\p1
