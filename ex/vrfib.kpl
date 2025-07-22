@@ -1,4 +1,6 @@
 
+// insert first n fib into vec
+
 v::VR$[0;1]
 n::50
 >(n;1)@{
