@@ -24,10 +24,16 @@ static chk_stat chk_z_vd_un(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_z_e__n(chk *c, te *an, err **e) {
-    te *lte = ((te*) an->d[4].p)->d[3].p;
+    te *lte = ((te*) an->d[4].p)->d[3].p, *pn, *kv;
     if (!(lte = chk_g_pn_lte(an, lte->d[0].p))) return chk_err(c, an, e, "chk inv lte in sym");
     te_f(((te*) an->d[4].p)->d[3].p);
     ((te*) an->d[4].p)->d[3] = P(te_c(lte));
+    if (ast_g_pn(AST_CLS(L), an, &pn) == AST_STAT(OK) && pn->d[3].p) {
+        if (tbl_g_i(pn->d[3].p, lte->d[0], &kv) == TBL_STAT(OK) && !kv->d[2].p) {
+            tbl_s(pn->d[3].p, kv->d[0], &kv);
+            te_f(kv);
+        }
+    }
     return chk_z_vd(c, an, e);
 }
 
