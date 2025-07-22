@@ -513,3 +513,10 @@ T(vrup) {
     te_f(ut);
     te_f(ft);
 }
+
+/*
+T(stll) {
+    IC(TPGM(stll));
+    V(NULL);
+}
+*/

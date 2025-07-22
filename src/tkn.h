@@ -31,9 +31,11 @@ typedef enum {
     TCUST(FN),
     TCUST(NF),
     TCUST(CJ),
+    TCUST(ST),
     TCUST(UN),
     TCUST(VR),
     // keys
+    TCUST(A),
     // ops
     TCUST(DFN),
     TCUST(AGN),

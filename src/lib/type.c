@@ -245,7 +245,7 @@ void type_rrf(te **t) {
             type_rrf((te**) &tn->d[2].p);
             break;
         case TYPE_CLS(H):
-            type_tbl_rrf(tn->d[2].p);
+            if (tn->d[1].u4 != TYPE(UN)) type_tbl_rrf(tn->d[2].p);
             break;
         case TYPE_CLS(F):
             type_rrf((te**) &tn->d[2].p);
@@ -258,13 +258,22 @@ void type_rrf(te **t) {
                     for (size_t i = 2; i < tn->l; i++) type_rrf((te**) &tn->d[2].p);
                     break;
                 case TYPE(RF):
-                    *t = te_c(*(te**) tn->d[2].p); // TODO cpy?
-                    te_f(tn);
+                    if (*(te**) tn->d[2].p) {
+                        *t = te_c(*(te**) tn->d[2].p); // TODO cpy?
+                        te_f(tn);
+                    }
                     break;
             }
         default:
             break;
     }
+}
+
+void type_rrf_sh(te **t) {
+    te *tn = *t;
+    if (!tn || tn->d[1].u4 != TYPE(RF) || !*(te**) tn->d[2].p) return;
+    *t = te_c(*(te**) tn->d[2].p); // TODO cpy?
+    te_f(tn);
 }
 
 static void type_tbl_p(const tbl *t, bool id) {
@@ -337,6 +346,19 @@ void type_p(const te *t) {
     }
 }
 
+static bool type_un_tbl_eq(tbl *restrict a, tbl *restrict b) { // b can be partial of a
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    te *bh = b->i->h, *n, *kv;
+    while (bh) {
+        n = bh->d[0].p;
+        if (tbl_g_i(a, n->d[0], &kv) != TBL_STAT(OK)) return false;
+        if (!type_eq(n->d[2].p, kv->d[2].p)) return false;
+        bh = bh->d[2].p;
+    }
+    return true;
+}
+
 static bool type_tbl_eq(const tbl *restrict a, const tbl *restrict b, bool id) {
     if (!a && !b) return true;
     if (!a || !b || a->i->l != b->i->l) return false;
@@ -360,7 +382,7 @@ bool type_eq(const te *restrict a, const te *restrict b) {
         case TYPE_CLS(V):
             return type_eq(a->d[2].p, b->d[2].p);
         case TYPE_CLS(H):
-            return type_tbl_eq(a->d[2].p, b->d[2].p, false);
+            return a->d[1].u4 == TYPE(UN) ? type_un_tbl_eq(a->d[2].p, b->d[2].p) : type_tbl_eq(a->d[2].p, b->d[2].p, false);
         case TYPE_CLS(F):
             return type_eq(a->d[2].p, b->d[2].p) && type_tbl_eq(a->d[3].p, b->d[3].p, true) && type_tbl_eq(a->d[4].p, b->d[4].p, true);
         case TYPE_CLS(C):

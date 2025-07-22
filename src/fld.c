@@ -222,20 +222,6 @@ fld_stat fld_tmp_var_a(fld *f, te **an, err **e, int32_t vi, lte_flg vf) {
     return FLD_STAT(OK);
 }
 
-static fld_stat cst_fn_r(fld *f, te **an, err **e) {
-    return fld_tmp_var_a(f, an, e, --f->tvc, LTE_FLG(F));
-}
-
-static bool cst_fn_t(const te *an) {
-    if (an->d[4].u4 != OC(CST)) return false;
-    te *tn = an->d[5].p, *pn;
-    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
-    tn = tn->d[3].p;
-    if (!tn || type_g_c(tn->d[1].u4) != TYPE_CLS(F)) return false;
-    pn = an->d[0].p;
-    return !pn || pn->d[2].u4 != AST_CLS(O) || pn->d[4].u4 != OC(DFN);
-}
-
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
     (void) f;
     // TODO ops that are not folded
@@ -261,7 +247,31 @@ static bool aply_op_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(O);
 }
 
-static fld_stat z_type_i(fld *f, lst *l, te *p) {
+static fld_stat aply_type_e_r(fld *f, te **an, err **e) {
+    te *t = ((te*) (*an)->d[4].p)->d[3].p;
+    te *en = ((lst*) (*an)->d[5].p)->h->d[0].p;
+    te *lte = en->d[3].p;
+    if (lte->d[2].p) return fld_err(f, *an, e, "fld lte type set");
+    lte->d[2] = P(te_c(t));
+    te_c(en);
+    en->d[0] = (*an)->d[0];
+    te_f(*an);
+    *an = en;
+    return FLD_STAT(OK);
+}
+
+static bool aply_type_e_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(A)) return false;
+    te *a4 = an->d[4].p;
+    if (!a4 || a4->d[2].u4 != AST_CLS(T)) return false;
+    lst *l = an->d[5].p;
+    if (!l || l->l != 1) return false;
+    te *e = l->h->d[0].p;
+    if (!e || e->d[2].u4 != AST_CLS(E)) return false;
+    return true;
+}
+
+static fld_stat z_type_i_fn(fld *f, lst *l, te *p) {
     if (!l->l) {
         lst_f(l);
         return FLD_STAT(OK);
@@ -291,28 +301,26 @@ static fld_stat z_type_i(fld *f, lst *l, te *p) {
     return FLD_STAT(OK);
 }
 
-static fld_stat aply_type_e_r(fld *f, te **an, err **e) {
-    te *t = ((te*) (*an)->d[4].p)->d[3].p;
-    te *en = ((lst*) (*an)->d[5].p)->h->d[0].p;
-    te *lte = en->d[3].p;
-    if (lte->d[2].p) return fld_err(f, *an, e, "fld lte type set");
-    lte->d[2] = P(te_c(t));
-    te_c(en);
-    en->d[0] = (*an)->d[0];
-    te_f(*an);
-    *an = en;
+static fld_stat z_type_i_h(fld *f, lst *l, te *p) {
+    if (!l->l) {
+        lst_f(l);
+        return FLD_STAT(OK);
+    }
+    tbl *t = p->d[2].p = f->fti();
+    un ln;
+    while (l->l) {
+        if (lst_sf(l, &ln) != LST_STAT(OK)) return FLD_STAT(INV);
+        te *zn = ln.p;
+        if (zn->d[2].u4 != AST_CLS(Z)) return FLD_STAT(INV);
+        te *tn = zn->d[4].p;
+        if (tn->d[2].u4 != AST_CLS(T)) return FLD_STAT(INV);
+        ((te*) tn->d[3].p)->d[0] = P(p); // set parent
+        type_tbl_a(t, f->a->ta, mc_c(zn->d[5].p), 0, te_c(tn->d[3].p));
+        te_f(zn);
+    }
+    lst_f(l);
+    lst_s(t->i, type_h_cmp);
     return FLD_STAT(OK);
-}
-
-static bool aply_type_e_t(const te *an) {
-    if (an->d[2].u4 != AST_CLS(A)) return false;
-    te *a4 = an->d[4].p;
-    if (!a4 || a4->d[2].u4 != AST_CLS(T)) return false;
-    lst *l = an->d[5].p;
-    if (!l || l->l != 1) return false;
-    te *e = l->h->d[0].p;
-    if (!e || e->d[2].u4 != AST_CLS(E)) return false;
-    return true;
 }
 
 static fld_stat aply_type_b_r(fld *f, te **an, err **e) {
@@ -329,14 +337,19 @@ static fld_stat aply_type_b_r(fld *f, te **an, err **e) {
             t->d[2] = P(te_c(n->d[3].p));
             lst_f(l);
             break;
+        case TYPE_CLS(H):
+            if ((stat = z_type_i_h(f, l, t)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv h type aply");
+            break;
         case TYPE_CLS(F):
             if (lst_sb(l, &ln) != LST_STAT(OK)) return fld_err(f, *an, e, "fld inv fn type len");
             te *rn = ln.p;
             if (rn->d[2].u4 != AST_CLS(T)) return fld_err(f, *an, e, "fld inv arg type");
-            t->d[2] = P(te_c(rn->d[3].p));
-            ((te*) t->d[2].p)->d[0] = P(t); // set parent
+            if (rn->d[3].p) {
+                t->d[2] = P(te_c(rn->d[3].p));
+                ((te*) t->d[2].p)->d[0] = P(t); // set parent
+            }
             te_f(rn);
-            if ((stat = z_type_i(f, l, t)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv fn type args");
+            if ((stat = z_type_i_fn(f, l, t)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv fn type args");
             break;
         default:
             return fld_err(f, *an, e, "fld inv aply type");
@@ -405,7 +418,6 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
     fld_a(f, AST_CLS(O), op_ns_t, op_ns_r);
     fld_a(f, AST_CLS(O), cst_cj_lst_t, cst_cj_lst_r);
-    fld_a(f, AST_CLS(O), cst_fn_t, cst_fn_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);

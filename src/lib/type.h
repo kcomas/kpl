@@ -108,6 +108,8 @@ te *type_rf_i(const alfr *af, te **p);
 
 void type_rrf(te **t); // remove refs
 
+void type_rrf_sh(te **t); // shallow remove refs
+
 void type_p(const te *t);
 
 bool type_eq(const te *restrict a, const te *restrict b);

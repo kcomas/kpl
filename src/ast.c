@@ -148,6 +148,19 @@ static ast_stat ast_type(ast *a, te *restrict pan, te *restrict pn, void **vn, e
     return AST_STAT(OK);
 }
 
+static ast_stat ast_key(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
+    te **an = (te**) vn;
+    te *tkn = pn->d[2].p;
+    switch (tkn->d[0].u4) {
+        case TCUST(A):
+            *an = ast_an_i(a, pan, pn, AST_CLS(T), P(NULL));
+            break;
+        default:
+            return ast_err(a, pn, e, "ast inv key");
+    }
+    return AST_STAT(OK);
+}
+
 static ast_stat ast_int(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
     te **an = (te**) vn;
     int64_t i = 0;
@@ -261,6 +274,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(FN), TYPE(FN));
     ast_t_a(a, TCUST(NF), TYPE(NF));
     ast_t_a(a, TCUST(CJ), TYPE(CJ));
+    ast_t_a(a, TCUST(ST), TYPE(ST));
     ast_t_a(a, TCUST(UN), TYPE(UN));
     ast_t_a(a, TCUST(VR), TYPE(VR));
     // ops
@@ -304,6 +318,7 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(ROOT), ast_root);
     ast_a(a, NODE_TYPE(VAR), ast_var);
     ast_a(a, NODE_TYPE(TYPE), ast_type);
+    ast_a(a, NODE_TYPE(KEY), ast_key);
     ast_a(a, NODE_TYPE(INT), ast_int);
     ast_a(a, NODE_TYPE(STR), ast_str);
     ast_a(a, NODE_TYPE(FLT), ast_flt);

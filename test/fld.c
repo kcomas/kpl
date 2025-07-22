@@ -380,27 +380,29 @@ T(vrup) {
 }
 
 T(stll) {
-    V(TPGM(stll), RN(AN(NULL, LN(LT(3, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL), L(6,
-        ON(NULL, DFN, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, MTCH, LN(NULL, NULL), LN(NULL, L(2,
-            ZN("i", SN(I6, I6(0))),
-            ZN("n", ZN("y", TN(VD)))
-        )))),
-        ON(NULL, AGN, ZN("z", ZN("n", EN("l", FLG(0, LTE_FLG(E)), NULL))), NN(T, TRF())),
+    V(TPGM(stll), RN(AN(NULL, LN(LT(3, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL), L(5,
+        ON(NULL, DFN, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, CST,
+            NN(T, TH(ST, 2, "i", TS(I6), "n", TH(UN, 2, "y", TS(VD), "z", TRF()))),
+            ON(NULL, MTCH, LN(NULL, NULL), LN(NULL, L(2,
+                ZN("i", SN(I6, I6(0))),
+                ZN("n", ZN("y", NULL))
+        ))))),
         ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST, TN(NF),
             LN(LT(3, "b", U6(0), NULL, "l", U6(0), NULL, "i", U6(0), TS(I6)), L(2,
-                ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, TN(FN), LN(LT(2, "l", U6(0), NULL, "x", U6(0), TRF()), L(1,
-                    ON(NULL, MTCH,
-                        LN(NULL, L(1, ZN("n", EN("x", U6(0), TRF())))),
-                        LN(LT(3, "b", U6(0), NULL, "z", U6(0), NULL, "x", U6(0), NULL), L(2,
-                            ZN("z", AN(NULL, EN("b", U6(0), NULL), L(1, EN("z", U6(0), NULL)))),
-                            ZN("y", EN("x", U6(0), NULL))
-                        )))
+                ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TRF(), 1, "x", TRF(), 0)),
+                    LN(LT(1, "x", U6(0), NULL), L(1,
+                        ON(NULL, MTCH,
+                            LN(NULL, L(1, ZN("n", EN("x", U6(0), NULL)))),
+                            LN(LT(3, "b", U6(0), NULL, "z", U6(0), NULL, "x", U6(0), NULL), L(2,
+                                ZN("z", AN(NULL, EN("b", U6(0), NULL), L(1, EN("z", U6(0), NULL)))),
+                                ZN("y", EN("x", U6(0), NULL))
+                            )))
                 )))),
-                ON(NULL, AGN, ZN("n", AN(NULL, EN("b", U6(0), NULL), L(1, EN("l", U6(0), NULL)))),
+                ON(NULL, AGN, ZN("z", ZN("n", AN(NULL, EN("b", U6(0), NULL), L(1, EN("l", U6(0), NULL))))),
                     ON(NULL, CST, NN(T, TRF()), ON(NULL, MTCH, LN(NULL, NULL),
                         LN(LT(1, "i", U6(0), TS(I6)), L(2,
                             ZN("i", EN("i", U6(0), TS(I6))),
-                            ZN("n", ZN("y", TN(VD)))
+                            ZN("n", ZN("y", NULL))
                         )))))
             )))),
         ON(NULL, DFN, EN("i", U6(0), NULL), SN(I6, I6(0))),
@@ -408,6 +410,6 @@ T(stll) {
             LN(NULL, L(1, ON(NULL, LTE, EN("i", U6(0), NULL), SN(I6, I6(5))))),
             LN(NULL, L(1, AN(NULL, EN("a", U6(0), NULL),
                 L(1, ON(NULL, ADDA, EN("i", U6(0), NULL), SN(I6, I6(1)))))))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), NULL))
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }

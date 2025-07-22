@@ -20,8 +20,6 @@ chk_stat chk_fnnf_un_ret(chk *c, te *an, err **e);
 
 chk_stat chk_nop(chk *c, te *an, err **e);
 
-ssize_t type_h_cmp(un a, un b);
-
 chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt);
 
 te *chk_rt_err_t(const alfr *ta);

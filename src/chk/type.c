@@ -18,4 +18,5 @@ void chk_type(chk *c) {
     CHK_AA(c, chk_type_fn, AST_CLS(T), TYPE(FN), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_type_fn, AST_CLS(T), TYPE(NF), AST_CLS(_), TYPE(_A));
     CHK_AA(c, chk_type_fn, AST_CLS(T), TYPE(CJ), AST_CLS(_), TYPE(_A));
+    CHK_AA(c, chk_type_fn, AST_CLS(T), TYPE(RF), AST_CLS(_), TYPE(_A));
 }
