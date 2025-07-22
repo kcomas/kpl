@@ -73,6 +73,8 @@ static gen_stat add_auiudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     int64_t d = ((te*) ci->d[3].p)->d[1].i6;
     if (d == -1) {
         if (gen_as(a, AS_X64(DEC), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    } else if (d >= INT32_MIN && d <= INT32_MAX) {
+        if (gen_as(a, AS_X64(ADD), as_arg_i(a, ARG_ID(R), kv->d[2]), bd_arg(a, d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     } else return gen_err(g, ci, e, "nyi");
     drop_atm_kv(s, kv, ci);
     return GEN_STAT(OK);
