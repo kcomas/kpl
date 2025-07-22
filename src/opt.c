@@ -138,6 +138,7 @@ static bool tmp_var_t(const te *an) {
         [OC(DFN)] = true,
         [OC(AGN)] = true,
         [OC(IF)] = true,
+        [OC(LOOP)] = true,
         [OC(MTCH)] = true,
         [OC(CNCTA)] = true,
         [OC(UNER)] = true
@@ -363,7 +364,7 @@ static fld_stat z_et_o(fld *f, te **an, err **e) {
 
 static bool z_et_t(const te *an) {
     te *n;
-    if (ast_g_t(an->d[4].p, &n) != AST_STAT(OK)) return false;
+    if (!an->d[4].p || ast_g_t(an->d[4].p, &n) != AST_STAT(OK)) return false;
     return n->d[1].u4 == TYPE(ET);
 }
 
