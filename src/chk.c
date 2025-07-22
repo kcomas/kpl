@@ -699,6 +699,14 @@ chk_stat chk_op_lr_teq(chk *c, te *an, err **e) {
     chk_stat stat;
     te *lt;
     if ((stat = chk_op_lr(c, an, e, &lt)) != CHK_STAT(OK)) return stat;
+    an->d[3] = P(te_c(lt));
+    return CHK_STAT(OK);
+}
+
+chk_stat chk_op_l_z_r_z_teq(chk *c, te *an, err **e) {
+    chk_stat stat;
+    te *lt;
+    if ((stat = chk_op_lr(c, an, e, &lt)) != CHK_STAT(OK)) return stat;
     if (lt->d[1].u4 == TYPE(SL)) lt = lt->d[2].p;
     an->d[3] = P(te_c(lt));
     return CHK_STAT(OK);

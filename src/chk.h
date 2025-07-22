@@ -30,6 +30,8 @@ chk_stat chk_op_l_r_z(chk *c, te *an, err **e);
 
 chk_stat chk_op_lr_teq(chk *c, te *an, err **e);
 
+chk_stat chk_op_l_z_r_z_teq(chk *c, te *an, err **e);
+
 chk_stat chk_op_lers_us_u(chk *c, te *an, err **e);
 
 chk_stat chk_op_lers_fs_f(chk *c, te *an, err **e);
