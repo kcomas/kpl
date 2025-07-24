@@ -15,6 +15,7 @@ TNAME = _test
 TESTS = tests
 .RECIPEPREFIX = >
 .PHONY: show_$(TESTS) clean
+MAKEFLAGS := --jobs=$(shell nproc)
 
 all: $(NAME)
 

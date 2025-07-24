@@ -817,9 +817,15 @@ static atg_stat z_e_un_o(atg *t, gen *g, te *an, err **e) {
 }
 
 static atg_stat z_un_(atg *t, gen *g, te *an, err **e) {
+    //size_t vidx = 0;
+    //uint32_t ui = t->tc++;
+    te *h = ((tbl*) ((te*) ((te*) an->d[3].p)->d[2].p)->d[2].p)->i->h;
+    while (h) {
+        HERE("TODO FIND VD");
+        h = h->d[2].p;
+    }
     (void) g;
     // TODO init un
-    // TODO determine idx of VD
     // TODO set idx of VD
     // TODO nop un
     return atg_err(t, an, e, "TODO INIT VD UN");
