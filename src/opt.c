@@ -247,6 +247,41 @@ static bool cst_v_t(const te *an) {
     return cst_x_t(an, AST_CLS(V));
 }
 
+static fld_stat cst_st_o(fld *f, te **an, err **e) {
+    (void) f;
+    (void) e;
+    te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *h, *n, *kv;
+    te_f(r->d[3].p);
+    te_c(r);
+    r->d[0] = (*an)->d[0];
+    r->d[3] = P(te_c(lt));
+    te_f(*an);
+    *an = r;
+    h = ((lst*) ((te*) r->d[6].p)->d[4].p)->h;
+    while (h) {
+        n = h->d[0].p;
+        if (n->d[2].u4 != AST_CLS(Z)) return fld_err(f, *an, e, "opt inv st inner");
+        mc *s = n->d[5].p;
+        n = n->d[4].p;
+        if (n && n->d[2].u4 == AST_CLS(Z)) {
+            n = n->d[3].p;
+            if (((te*) n->d[2].p)->d[1].u4 == TYPE(UN)) {
+                if (tbl_g_i(lt->d[2].p, P(s), &kv) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt inv st init");
+                te_f(n->d[2].p);
+                n->d[2] = P(te_c(kv->d[2].p));
+            }
+        }
+        h = h->d[2].p;
+    }
+    return FLD_STAT(OK);
+}
+
+static bool cst_st_t(const te *an) {
+    if (!cst_x_t(an, AST_CLS(O))) return false;
+    te *mn = an->d[6].p;
+    return mn->d[4].u4 == OC(MTCH) && !((te*) mn->d[5].p)->d[4].p;
+}
+
 #define S_OP(O) static un type_##O##_op(type t, un a, un b) { \
     switch (t) { \
         case TYPE(U3): return u3_##O(a, b); \
@@ -386,7 +421,7 @@ void opt_exp_tbl_f(tbl *et) {
     while (h) {
         kv = h->d[0].p;
         if (kv->d[2].p && type_is_ref(((te*) kv->d[2].p)->d[1].u4)) {
-            frfn *fn = type_ref_g_des(((te*) kv->d[2].p)->d[1].u4);
+            frfn *fn = type_ref_g_des(kv->d[2].p);
             if (fn) fn(kv->d[1].p);
         }
         h = h->d[2].p;
@@ -403,6 +438,7 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
     fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
+    fld_a(o, AST_CLS(O), cst_st_t, cst_st_o);
     fld_a(o, AST_CLS(O), op_s_s_t, op_s_s_o);
     fld_a(o, AST_CLS(O), op_s_s_mon_t, op_s_s_mon_o);
     fld_a(o, AST_CLS(O), tmp_var_t, tmp_var_o);

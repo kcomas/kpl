@@ -110,13 +110,50 @@ static void atg_dt_f(void *p) {
     t->af->f(t);
 }
 
-static void atg_dt_a(atg *t, te *an) {
-    te *nt, *kv;
-    if (ast_g_t(an, &nt) == AST_STAT(OK) && type_is_des(nt->d[1].u4) && tbl_g_i(t->dt, P(nt), &kv) != TBL_STAT(OK)) {
-        kv = te_i(2, t->ta, atg_dt_f);
-        kv->d[0] = P(te_c(nt));
-        tbl_a(t->dt, kv);
+static void _dt_a(atg *t, te *type);
+
+static void _dt_a_tbl(atg *t, tbl *tt) {
+    te *h = tt->i->h, *n;
+    while (h) {
+        n = h->d[0].p;
+        _dt_a(t, n->d[2].p);
+        h = h->d[2].p;
     }
+}
+
+static void _dt_a(atg *t, te *type) {
+    te *kv;
+    if (!type_is_des(type->d[1].u4) || tbl_g_i(t->dt, P(type), &kv) == TBL_STAT(OK)) return;
+    kv = te_i(2, t->ta, atg_dt_f);
+    kv->d[0] = P(te_c(type));
+    tbl_a(t->dt, kv);
+    switch (type_g_c(type->d[1].u4)) {
+        case TYPE_CLS(V):
+            _dt_a(t, type->d[2].p);
+            break;
+        case TYPE_CLS(H):
+            _dt_a_tbl(t, type->d[2].p);
+            break;
+        case TYPE_CLS(C):
+            switch (type->d[1].u4) {
+                case TYPE(TE):
+                    for (size_t i = 2; i < type->l; i++) _dt_a(t, type->d[i].p);
+                    break;
+                case TYPE(KV):
+                    STOP("TODO");
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+static void atg_dt_a(atg *t, te *an) {
+    te *nt;
+    if (ast_g_t(an, &nt) == AST_STAT(OK)) _dt_a(t, nt);
 }
 
 atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {

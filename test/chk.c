@@ -468,6 +468,7 @@ T(cj) {
 }
 
 T(leap) {
+    type_rf_test();
     IC(TPGM(leap));
     te *vt = TV(VR, TS(I6));
     V(RN(AN(TS(VD), LN(LT(2, "y", FLG(0, LTE_FLG(L)), TS(I6), "v", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vt)), L(4,
@@ -517,7 +518,7 @@ T(vrup) {
 T(stll) {
     IC(TPGM(stll));
     te *stut = TH(ST, 2, "i", TS(I6), "n", TH(UN, 1, "y", TS(VD)));
-    te *ut = TH(UN, 2, "y", TS(VD), "z", TRF());
+    te *ut = TH(UN, 2, "y", TS(VD), "z", TRF(2));
     te *st = TH(ST, 2, "i", TS(I6), "n", te_c(ut));
     tbl *args = fld_type_tbl_i(true, 1, "i", TS(I6), 0);
     tbl *scope = fld_type_tbl_i(true, 1, "l", te_c(st), 0);

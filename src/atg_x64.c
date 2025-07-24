@@ -338,6 +338,10 @@ atg_stat v_set_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict n, uint
             n = n->d[1].p;
             if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ti), idxfn(g, eid++)), te_c(n), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, "v_set_fn CLS O");
             break;
+        case AST_CLS(Z):
+            if ((stat = atg_r(t, g, n, e)) != ATG_STAT(OK)) return stat;
+            return atg_err(t, an, e, "TODO");
+            break;
         default:
             return atg_err(t, an, e, "atg inv vn lst cls");
     }
@@ -488,22 +492,32 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
 static atg_stat if_cond(atg *t, gen *g, te *an, err **e, uint32_t tl) {
     atg_stat stat;
     te *h;
-    if (an->d[2].u4 == AST_CLS(S)) {
-        x64_type xt = type_g_x64_type(an->d[3].p);
-        if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, tl), gen_data(g, xt, an->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
-    } else {
-        if (an->d[2].u4 == AST_CLS(L)) {
+    x64_type xt;
+    switch (an->d[2].u4) {
+        case AST_CLS(S):
+            xt = type_g_x64_type(an->d[3].p);
+            if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, tl), gen_data(g, xt, an->d[4]), NULL)) return atg_err(t, an, e, __FUNCTION__);
+            return ATG_STAT(OK);
+        case AST_CLS(E):
+            h = an->d[3].p;
+            xt = type_g_x64_type(h->d[2].p);
+            if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, tl), var_arg(g, h, xt), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            return ATG_STAT(OK);
+        case AST_CLS(L):
             h = ((lst*) an->d[4].p)->h;
             while (h) {
                 if ((stat = if_cond(t, g, h->d[0].p, e, tl)) != ATG_STAT(OK)) return stat;
                 h= h->d[2].p;
             }
-        } else if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
-        te *c = g->code->t->d[0].p;
-        if (gen_var_g_c(c->d[1].p) == GEN_CLS(T)) {
-            if (c->d[0].u6 != GEN_OP(NOP)) ((te*) c->d[1].p)->d[1] = U5(tl);
-            else if (gen_a(g, GEN_OP(SET), gen_tmp(g, gen_var_g_t(c->d[1].p), tl), te_c(c->d[1].p), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-        }
+            break;
+        default:
+            if ((stat = atg_r(t, g, an, e)) != ATG_STAT(OK)) return stat;
+            break;
+    }
+    te *c = g->code->t->d[0].p;
+    if (gen_var_g_c(c->d[1].p) == GEN_CLS(T)) {
+        if (c->d[0].u6 != GEN_OP(NOP)) ((te*) c->d[1].p)->d[1] = U5(tl);
+        else if (gen_a(g, GEN_OP(SET), gen_tmp(g, gen_var_g_t(c->d[1].p), tl), te_c(c->d[1].p), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     }
     return ATG_STAT(OK);
 }
@@ -619,6 +633,7 @@ static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
     te *l = an->d[6].p, *r = ((lst*) ((te*) an->d[5].p)->d[4].p)->h->d[0].p, *h, *n, *ut, *kv;
     if ((stat = atg_r(t, g, r, e)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(r, &ut) != AST_STAT(OK)) return atg_err(t, an, e, "atg inv type for mtch");
+    if (ut->d[1].u4 == TYPE(SL)) ut = ut->d[2].p;
     h = ((lst*) l->d[4].p)->h;
     while (h) {
         n = h->d[0].p;
@@ -627,9 +642,10 @@ static atg_stat mtch_l_l(atg *t, gen *g, te *an, err **e) {
                 if (tbl_g_i(ut->d[2].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for un tbl");
                 if (lst_g_i(((tbl*) ut->d[2].p)->i, P(kv), &eid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for un tbl itm");
                 if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, mtch_g_un(g, r, X64_TYPE(M)), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, h->d[2].p ? nl = t->lc++ : el)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-                if (tbl_g_i(l->d[3].p, n->d[5], &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv tmp var in mtch");
-                xt = type_g_x64_type(kv->d[2].p);
-                if (gen_a(g, xt == X64_TYPE(M) ? GEN_OP(REF) : GEN_OP(SET), var_arg(g, kv, xt), gen_idx_m(g, xt, 2, mtch_g_un(g, r, xt), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                if (tbl_g_i(l->d[3].p, n->d[5], &kv) == TBL_STAT(OK)) {
+                    xt = type_g_x64_type(kv->d[2].p);
+                    if (gen_a(g, xt == X64_TYPE(M) ? GEN_OP(REF) : GEN_OP(SET), var_arg(g, kv, xt), gen_idx_m(g, xt, 2, mtch_g_un(g, r, xt), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+                }
                 n = n->d[4].p;
                 if ((stat = if_cond(t, g, n, e, tl)) != ATG_STAT(OK)) return stat;
                 if (h->d[2].p) {
@@ -798,6 +814,15 @@ static atg_stat z_e_un_o(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
     return z_e_un_lte(t, g, an, e, ((te*) ((te*) an->d[4].p)->d[5].p)->d[3].p);
+}
+
+static atg_stat z_un_(atg *t, gen *g, te *an, err **e) {
+    (void) g;
+    // TODO init un
+    // TODO determine idx of VD
+    // TODO set idx of VD
+    // TODO nop un
+    return atg_err(t, an, e, "TODO INIT VD UN");
 }
 
 static atg_stat oc_cond_gen(oc c, gen_op *go, bool rv) {
@@ -1003,6 +1028,7 @@ atg *atg_b(atg *t) {
     atg_a_v(t, TYPE(VR), v_vr_fn);
     atg_a_z(t, TYPE(U6), AST_CLS(E), TYPE(ST), z_e_st);
     atg_a_z(t, TYPE(I6), AST_CLS(E), TYPE(ST), z_e_st);
+    atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(ST), z_e_st);
     atg_a_z(t, TYPE(I6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(F6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(SG), AST_CLS(E), TYPE(UN), z_e_un);
@@ -1010,6 +1036,7 @@ atg *atg_b(atg *t) {
     atg_a_z(t, TYPE(F6), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(SG), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(TE), AST_CLS(O), TYPE(UN), z_e_un_o);
+    atg_a_z(t, TYPE(UN), AST_CLS(_), TYPE(_N), z_un_);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(I6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(F6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(O), TYPE(I6), atg_nop);

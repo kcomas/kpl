@@ -294,6 +294,7 @@ void atg_aply(atg *t) {
     atg_a_a(t, TYPE(U6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(CJ), AST_CLS(E), TYPE(FN), aply_e_fn);
+    atg_a_a(t, TYPE(ST), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(NF), aply_e_nf);
     atg_a_a(t, TYPE(F6), AST_CLS(E), TYPE(NF), aply_e_nf);

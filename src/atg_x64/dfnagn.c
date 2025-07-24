@@ -14,7 +14,7 @@ DFNES(f6, F6)
 static atg_stat da_in_loop(atg *t, gen *g, te *restrict an, err **e, te *restrict lte, const char *pf) {
     te *tn = lte->d[2].p;
     if (type_is_ref(tn->d[1].u4) && inloop(an)) {
-        void *fn = type_ref_g_des(tn->d[1].u4);
+        void *fn = type_ref_g_des(tn);
         if (!fn) return atg_err(t, an, e, "atg inv des for define in loop");
         if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, var_arg(g, lte, type_g_x64_type(tn))), gen_data(g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, pf);
     }

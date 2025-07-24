@@ -68,6 +68,7 @@ static uint8_t props[TYPE(_END)] = {
     [TYPE(ST)] = REF | DES,
     [TYPE(UN)] = REF | DES,
     [TYPE(TE)] = REF | DES,
+    [TYPE(RF)] = REF,
     [TYPE(KV)] = REF | DES
 };
 
@@ -221,11 +222,18 @@ bool type_te_eq(const te *t) {
     return true;
 }
 
-te *type_rf_i(const alfr *af, te **p) {
-    te *t = te_i(3, af, NULL);
+static size_t rfid = 0;
+
+te *type_rf_i(const alfr *af, te **p, size_t id) {
+    te *t = te_i(4, af, NULL);
     t->d[1] = U4(TYPE(RF));
     t->d[2] = P(p);
+    t->d[3] = U6(id != 0 ? id : ++rfid);
     return t;
+}
+
+void type_rf_test(void) {
+    rfid = 0;
 }
 
 static void type_tbl_rrf(tbl *t) {
@@ -333,7 +341,7 @@ void type_p(const te *t) {
                     putchar(')');
                     break;
                 case TYPE(RF):
-                    putchar(')');
+                    printf("%lu)", t->d[3].u6);
                     break;
                 default:
                     printf("INV _C");
@@ -391,7 +399,7 @@ bool type_eq(const te *restrict a, const te *restrict b) {
                     for (size_t i = 2; i < a->l; i++) if (!type_eq(a->d[i].p, b->d[i].p)) return false;
                     return true;
                 case TYPE(RF):
-                    return true;
+                    return a->d[3].u6 == b->d[3].u6;
                 default:
                     return false;
             }
@@ -447,6 +455,9 @@ size_t type_hsh(const te *t) {
             switch (t->d[1].u4){
                 case TYPE(TE):
                     for (size_t i = 2; i < t->l; i++) hsh += (type_hsh(t->d[i].p) << (i % 31));
+                    break;
+                case TYPE(RF):
+                    hsh += t->d[3].u6;
                     break;
                 default:
                     break;

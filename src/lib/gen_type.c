@@ -7,7 +7,12 @@ static gen_stat gen_type_err(gen *g, te *t, err **e, const char *m) {
     return GEN_STAT(INV);
 }
 
-void* type_ref_g_des(type t) {
+void* type_ref_g_des(te *tn) {
+    type t = tn->d[1].u4;
+    if (t == TYPE(RF)) {
+        tn = *(te**) tn->d[2].p;
+        t = tn->d[1].u4;
+    }
     switch (t) {
         case TYPE(SG):
             return mc_f;
@@ -20,6 +25,7 @@ void* type_ref_g_des(type t) {
         case TYPE(UN):
         case TYPE(CJ):
             return te_f;
+            break;
         default:
             break;
     }
@@ -29,7 +35,7 @@ void* type_ref_g_des(type t) {
 static gen_stat v_des(gen *bg, te *t, void **fn, err **e) {
     te *st = t->d[2].p;
     if (!st || !type_is_ref(st->d[1].u4)) return gen_type_err(bg, t, e, "gen type inv vr ref");
-    *fn = type_ref_g_des(st->d[1].u4);
+    *fn = type_ref_g_des(st);
     if (!fn) return gen_type_err(bg, t, e, "gen unable to get type for vr des");
     return GEN_STAT(OK);
 }
@@ -51,7 +57,7 @@ static gen_stat st_des(gen *bg, te *t, gen **g, err **e) {
     while (h) {
         n = h->d[0].p;
         if (n->d[2].p && type_is_ref(((te*) n->d[2].p)->d[1].u4)) {
-            fn = type_ref_g_des(((te*) n->d[2].p)->d[1].u4);
+            fn = type_ref_g_des(n->d[2].p);
             if (!fn) return gen_type_err(bg, t, e, "gen unable to get fn for te des");
             int32_t off = offsetof(te, d) + sizeof(void*) * i;
             if (gen_a(*g, GEN_OP(CALL), gen_call_m(*g, 1, gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, off <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(off)))), gen_data(*g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
@@ -75,7 +81,7 @@ static gen_stat un_des(gen *bg, te *t, gen **g, err **e) {
             if (gen_a(*g, GEN_OP(NE), gen_idx_m(*g, X64_TYPE(U6), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(offsetof(te, d)))), gen_data(*g, X64_TYPE(U6), U6(ui++)), gen_lbl(*g, tl)) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
         }
         if (n->d[2].p && type_is_ref(((te*) n->d[2].p)->d[1].u4)) {
-            fn = type_ref_g_des(((te*) n->d[2].p)->d[1].u4);
+            fn = type_ref_g_des(n->d[2].p);
             if (!fn) return gen_type_err(bg, t, e, "gen unable to get fn for te des");
             if (gen_a(*g, GEN_OP(CALL), gen_call_m(*g, 1, gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*))))), gen_data(*g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
         }
@@ -95,7 +101,7 @@ static gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     if (gen_a(*g, GEN_OP(E), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
     for (size_t i = 2; i < t->l; i++) {
         if (!t->d[i].p || !type_is_ref(((te*) t->d[i].p)->d[1].u4)) continue;
-        fn = type_ref_g_des(((te*) t->d[i].p)->d[1].u4);
+        fn = type_ref_g_des(t->d[i].p);
         if (!fn) return gen_type_err(bg, t, e, "gen unable to get fn for te des");
         int32_t off = offsetof(te, d) + sizeof(void*) * (i - 2);
         if (gen_a(*g, GEN_OP(CALL), gen_call_m(*g, 1, gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, off <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(off)))), gen_data(*g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);

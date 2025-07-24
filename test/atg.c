@@ -150,7 +150,9 @@ static void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
     atg *t = atg_i_atg(batg); \
     gen_st *st = gen_st_i(&am, &al_te, gen_op_tbl(20), gen_op_tbl(20), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL)); \
     size_t cdl = t->dt->i->l; \
-    A(atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->dt->i->l - cdl == DL && t->q->l == QL, "atg_q");
+    bool okq = atg_q(t, &an, atg_x64_enq) == ATG_STAT(OK) && t->dt->i->l - cdl == DL && t->q->l == QL; \
+    if (!okq) printf("D: %lu, L: %lu\n", t->dt->i->l - cdl, t->q->l); \
+    A(okq, "atg_q")
 
 T(tbl) {
     atg_tbl_p(batg->ot, AST_CLS(O), 0);
@@ -1034,8 +1036,9 @@ static void ns_gen(_tests *_t, gen *gc, uint16_t lno, uint32_t cno, uint32_t lbl
 }
 
 T(ns) {
-    AI(TPGM(ns), 1, 1);
-    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "e", TV(ER, TS(SG)), "v", TS(SG)));
+    AI(TPGM(ns), 2, 1);
+    te *ter = TV(ER, TS(SG));
+    te *utd = type_h_i(&al_te, NULL, TYPE(UN), fld_type_tbl_i(false, 2, "e", te_c(ter), "v", TS(SG)));
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 1)));
@@ -1048,6 +1051,8 @@ T(ns) {
     D(utd, gc);
     te_f(utd);
     gen_f(gc);
+    D(ter, mc_f);
+    te_f(ter);
     te *cn = RN(SN(_G, U5(0)));
     gc = gen_i_gen(bg);
     ns_gen(_t, gc, 4, 3, 0, 1);
@@ -1121,7 +1126,7 @@ T(unsg) {
 
 T(vridx) {
     vr *v;
-    AI(TPGM(vridx), 3, 1);
+    AI(TPGM(vridx), 5, 1);
     te *et = chk_rt_err_t(&al_te), *tsg = type_te_i_v(&al_te, NULL, 2, TS(SG), TS(SG)), *vv = TV(VR, te_c(tsg)), *u = TH(UN, 2, "e", te_c(et), "v", te_c(tsg)), *kv;
     D(vv, te_f);
     gen *gc = gen_i_gen(bg);
@@ -1141,6 +1146,14 @@ T(vridx) {
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
     gen_type_aff(gc, u, &e, "");
     D(u, gc);
+    gen_f(gc);
+    D(et, te_f);
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32)))), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(48)))), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
+    gen_type_aff(gc, u, et->d[2].p, "");
+    D(et->d[2].p, gc);
     gen_f(gc);
     atg_d_p(t);
     te *cn = RN(SN(_G, U5(0)));
@@ -1419,6 +1432,7 @@ T(cj) {
 }
 
 T(leap) {
+    type_rf_test();
     AI(TPGM(leap), 1, 1);
     te *vt = TV(VR, TS(I6)), *kv;
     D(vt, NULL);
@@ -1600,3 +1614,87 @@ T(vrup) {
     A(s->d[0] == '5', "inv vr idx err num");
     err_f(e);
 }
+
+/*
+T(stll) {
+    AI(TPGM(stll), 2, 3);
+    te *utt = TH(UN, 2, "y", TS(VD), "z", TRF(2));
+    te *stt = TH(ST, 2, "i", TS(I6), "n", te_c(utt));
+    tbl *args = fld_type_tbl_i(true, 1, "i", TS(I6), 0);
+    tbl *scope = fld_type_tbl_i(true, 1, "l", te_c(stt), 0);
+    te *nf = TFS(NF, te_c(stt), args, scope);
+    te *fn = TFN(FN, te_c(stt), 1, "x", te_c(stt), 0);
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    gen_type_aff(gc, stt, &e, "");
+    D(stt, gc);
+    gen_f(gc);
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    gen_type_aff(gc, utt, &e, "");
+    D(utt, gc);
+    gen_f(gc);
+    atg_d_p(t);
+    te *cn = RN(LN(LT(3, "l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt), "a", FLG(-1, LTE_FLG(F)), te_c(nf), "i", FLG(1, LTE_FLG(L)), TS(I6)), L(5,
+        ON(te_c(stt), DFN, EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)),
+            ON(te_c(stt), MTCH, LN(NULL, NULL), LN(NULL, L(2,
+                ZTN("i", TS(VD), SN(I6, I6(0))),
+                ZTN("n", TS(VD), ZTN("y", TH(UN, 2, "y", TS(VD), "z", TRF(2)), NULL))
+            )))),
+        ON(te_c(nf), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(nf)), ON(te_c(nf), CST, NN(T, te_c(nf)),
+            LN(LT(4, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "l", FLG(0, LTE_FLG(S)), te_c(stt), "i", FLG(0, LTE_FLG(A)), TS(I6), "0", FLG(0, LTE_FLG(L)), te_c(stt)), L(2,
+                ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), SN(_G, U5(-2))),
+                ON(te_c(stt), AGN,
+                    ZTN("z", te_c(stt), ZTN("n", te_c(utt),
+                        ON(te_c(stt), DFN,
+                            EN("0", FLG(0, LTE_FLG(L)), te_c(stt)),
+                            AN(te_c(stt), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1,
+                                EN("l", FLG(0, LTE_FLG(S)), te_c(stt))
+                            ))))),
+                        ON(te_c(stt), MTCH, LN(NULL, NULL),
+                            LN(LT(1, "i", FLG(0, LTE_FLG(A)), TS(I6)), L(2,
+                                ZTN("i", TS(VD), EN("i", FLG(0, LTE_FLG(A)), TS(I6))),
+                                ZTN("n", TS(VD), ZTN("y", TH(UN, 2, "y", TS(VD), "z", TRF(2)), NULL))
+                            ))))
+            )))),
+            ON(TS(I6), DFN, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(0))),
+            ON(TS(VD), LOOP,
+                LN(NULL, L(1,
+                    ON(TS(BL), LTE, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(5)))
+                )),
+                LN(NULL, L(1,
+                    AN(te_c(stt), EN("a", FLG(-1, LTE_FLG(F)), te_c(nf)), L(1,
+                        ON(TS(I6), ADDA, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))
+                    ))
+                ))),
+            ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)))
+    )));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -2), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 1), gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(MM), 0), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), (uint32_t) -1), gen_idx_m(gc, X64_TYPE(M), 2, gen_tmp(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 0), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(MM), (uint32_t) -1)), gen_lbl(gc, (uint32_t) -2)));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 0), gen_arg(gc, X64_TYPE(MM), 0), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 0), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    V(NULL, NULL);
+    te_f(stt);
+    te_f(utt);
+    te_f(nf);
+    te_f(fn);
+}
+*/

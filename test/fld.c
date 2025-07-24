@@ -347,10 +347,11 @@ T(cj) {
 }
 
 T(leap) {
+    type_rf_test();
     V(TPGM(leap), RN(AN(NULL, LN(LT(2, "y", U6(0), NULL, "v", FLG(0, LTE_FLG(E)), NULL), L(4,
         ON(NULL, DFN, EN("y", U6(0), NULL), SN(I6, I6(2000))),
         ON(NULL, DFN, EN("v", FLG(0, LTE_FLG(E)), NULL),
-            ON(NULL, CST, NN(T, (TV(VR, TRF()))), VN(NULL, LE()))),
+            ON(NULL, CST, NN(T, (TV(VR, TRF(1)))), VN(NULL, LE()))),
         ON(NULL, LOOP, LN(NULL, L(1, ON(NULL, LTE, EN("y", U6(0), NULL), SN(I6, I6(2030))))), LN(LT(2, "y", U6(0), NULL, "v", U6(0), NULL), L(2,
             ON(NULL, IF,
                 LN(NULL, L(1, ON(NULL, OR,
@@ -382,14 +383,14 @@ T(vrup) {
 T(stll) {
     V(TPGM(stll), RN(AN(NULL, LN(LT(3, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL), L(5,
         ON(NULL, DFN, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, CST,
-            NN(T, TH(ST, 2, "i", TS(I6), "n", TH(UN, 2, "y", TS(VD), "z", TRF()))),
+            NN(T, TH(ST, 2, "i", TS(I6), "n", TH(UN, 2, "y", TS(VD), "z", TRF(2)))),
             ON(NULL, MTCH, LN(NULL, NULL), LN(NULL, L(2,
                 ZN("i", SN(I6, I6(0))),
                 ZN("n", ZN("y", NULL))
         ))))),
         ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST, TN(NF),
             LN(LT(3, "b", U6(0), NULL, "l", U6(0), NULL, "i", U6(0), TS(I6)), L(2,
-                ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TRF(), 1, "x", TRF(), 0)),
+                ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TRF(4), 1, "x", TRF(3), 0)),
                     LN(LT(1, "x", U6(0), NULL), L(1,
                         ON(NULL, MTCH,
                             LN(NULL, L(1, ZN("n", EN("x", U6(0), NULL)))),
@@ -399,7 +400,7 @@ T(stll) {
                             )))
                 )))),
                 ON(NULL, AGN, ZN("z", ZN("n", AN(NULL, EN("b", U6(0), NULL), L(1, EN("l", U6(0), NULL))))),
-                    ON(NULL, CST, NN(T, TRF()), ON(NULL, MTCH, LN(NULL, NULL),
+                    ON(NULL, CST, NN(T, TRF(5)), ON(NULL, MTCH, LN(NULL, NULL),
                         LN(LT(1, "i", U6(0), TS(I6)), L(2,
                             ZN("i", EN("i", U6(0), TS(I6))),
                             ZN("n", ZN("y", NULL))

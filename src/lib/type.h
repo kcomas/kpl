@@ -104,7 +104,9 @@ te *type_te_g_t(const te *t, size_t n); // zero indexed
 
 bool type_te_eq(const te *t); // if all types in te are the same
 
-te *type_rf_i(const alfr *af, te **p);
+te *type_rf_i(const alfr *af, te **p, size_t id); // 0 for auto
+
+void type_rf_test(void); // needed for tests
 
 void type_rrf(te **t); // remove refs
 
