@@ -145,6 +145,11 @@ static bool tmp_var_t(const te *an) {
     };
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
     if (an->d[2].u4 == AST_CLS(A)) {
+        pn = an->d[0].p;
+        if (pn->d[2].u4 == AST_CLS(Z)) {
+            pn = pn->d[0].p;
+            if (pn->d[2].u4 == AST_CLS(Z)) return false;
+        }
         if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return false;
         if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
         switch (tn->d[1].u4) {

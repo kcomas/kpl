@@ -501,3 +501,40 @@ T(vrreflen) {
     A(l == 10, "inv vr len");
     vr_f(v);
 }
+
+static void recf(void *p) {
+    te *t = p;
+    te_f(t->d[2].p);
+    t->af->f(t);
+}
+
+T(datarec) {
+    te *c = te_i(3, &al_te, recf);
+    c->d[0] = I6(1);
+    c->d[1] = U6(0);
+    te *b = te_i(3, &al_te, recf);
+    b->d[0] = I6(2);
+    b->d[1] = U6(1);
+    b->d[2] = P(c);
+    te *a = te_i(3, &al_te, recf);
+    a->d[0] = I6(3);
+    a->d[1] = U6(1);
+    a->d[2] = P(b);
+    gen *g = gen_i_gen(bg);
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 0), NULL, NULL));
+    S(gen_a(g, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(I6), 1), gen_idx_m(g, X64_TYPE(I6), 2, gen_arg(g, X64_TYPE(MM), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d)))), NULL));
+    S(gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, gen_data(g, X64_TYPE(M), P("called %ld\n")), gen_tmp(g, X64_TYPE(I6), 1)), gen_data(g, X64_TYPE(M), P(printf)), NULL));
+    S(gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, gen_arg(g, X64_TYPE(MM), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*)))), gen_data(g, X64_TYPE(U6), U6(1)), gen_lbl(g, 1)));
+    S(gen_a(g, GEN_OP(REF), gen_tmp(g, X64_TYPE(MM), 0), gen_arg(g, X64_TYPE(MM), 0), gen_data(g, X64_TYPE(U3), U3(offsetof(te, d) + sizeof(void*) * 2))));
+    S(gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(I6), 1), gen_call_m(g, 1, gen_tmp(g, X64_TYPE(MM), 0)), gen_lbl(g, 0)));
+    S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
+    S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 1), NULL, NULL));
+    BUILD(g, m);
+    X64_RS();
+    int64_t r = ((int64_t(*)(te**)) m)(&a);
+    printf("r: %ld\n", r);
+    A(r == 1, "inv ret");
+    X64_RR();
+    te_f(a);
+}

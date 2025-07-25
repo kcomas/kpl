@@ -129,7 +129,7 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A0(g, GEN_OP(E), e_fn);
     GEN_OP_A0(g, GEN_OP(L), l_fn);
     GEN_OP_A0(g, GEN_OP(ENTER), enter_fn);
-    GEN_OP_A0(g, GEN_OP(LEAVE), leave_fn);
+    GEN_OP_A0(g, GEN_OP(LEAVE), leave_fn); // can not leave MM
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(U6), leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(A), X64_TYPE(I6), leave_au_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(T), X64_TYPE(U6), leave_au_fn);

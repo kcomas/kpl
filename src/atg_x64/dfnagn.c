@@ -53,6 +53,7 @@ static atg_stat dfn_tevrst_e_tevrst_vo_tevrst(atg *t, gen *g, te *an, err **e) {
     if ((stat = da_in_loop(t, g, an, e, lte, __FUNCTION__)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(SET), gen_stkv(g, type_g_x64_type(lte->d[2].p), ast_lst_tbl_e_g_i(lte)), te_c(rgc), NULL)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
+
 }
 
 static atg_stat dfn_un_e_un_z(atg *t, gen *g, te *an, err **e) {
@@ -101,6 +102,22 @@ static atg_stat agn_i6_z_i6_o_i6(atg *t, gen *g, te *an, err **e) {
     te *r = atg_g_g(an->d[6].p)->d[1].p, *lte;
     if ((stat = z_lte_id(t, an, e, an->d[5].p, &lte, &eid)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, var_arg(g, lte, X64_TYPE(M)), atg_te_idx_d(g, eid)), te_c(r), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
+static atg_stat agn_st_z_st_o_st(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat;
+    size_t uid, ai = t->tc++;
+    te *lt = an->d[5].p, *kv;
+    mc *s = lt->d[5].p;
+    lt = ((te*) lt->d[4].p)->d[3].p;
+    lt = lt->d[2].p;
+    if (tbl_g_i(lt->d[2].p, P(s), &kv) != TBL_STAT(OK)) return atg_err(t, an, e, "atg inv key for st tbl");
+    if (lst_g_i(((tbl*) lt->d[2].p)->i, P(kv), &uid) != LST_STAT(OK)) return atg_err(t, an, e, "atg inv idx for st tbl itm");
+    if ((stat = atg_te_init(t, g, an, e, lt, 2, ai)) != ATG_STAT(OK)) return stat;
+    if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ai), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(uid)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ai), atg_te_idx_d(g, 1)), te_c(atg_g_g(an->d[6].p)->d[1].p), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(SET), te_c(atg_g_g(an->d[5].p)->d[1].p), gen_tmp(g, X64_TYPE(M), ai), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
@@ -161,6 +178,7 @@ void atg_dfn(atg *t) {
     atg_a_o(t, OC(AGN), TYPE(UN), AST_CLS(E), TYPE(UN), AST_CLS(Z), TYPE(VD), agn_un_e_un_z);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_a_i6_o_i6);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_z_i6_o_i6);
+    atg_a_o(t, OC(AGN), TYPE(ST), AST_CLS(Z), TYPE(ST), AST_CLS(O), TYPE(ST), agn_st_z_st_o_st);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), dfnagn_e_e_);
     atg_a_o(t, OC(AGN), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(E), TYPE(F6), dfnagn_e_e_);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(A), TYPE(UN), AST_CLS(S), TYPE(I6), agn_aply_un_);

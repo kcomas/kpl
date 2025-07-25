@@ -2,6 +2,7 @@
 #include "../atg_x64.h"
 
 const char *atg_dump_strs[TYPE(_END)] = {
+    [TYPE(VD)] = "%*s(VD)",
     [TYPE(U6)] = "%*s(U6 %lu)",
     [TYPE(I6)] = "%*s(I6 %ld)",
     [TYPE(F6)] = "%*s(F6 %lf)",
@@ -11,7 +12,8 @@ const char *atg_dump_strs[TYPE(_END)] = {
     [TYPE(ST)] = "%*s(ST \n",
     [TYPE(ET)] = "%*s(ET \n",
     [TYPE(UN)] = "%*s(UN\n",
-    [TYPE(VR)] = "%*s(VR \n"
+    [TYPE(VR)] = "%*s(VR \n",
+    [TYPE(RF)] = "%*s(RF)"
 };
 
 const char *atg_dump_end = "%*s)";
@@ -115,6 +117,9 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t
     te *tetmp;
     vr *v = NULL;
     switch (type->d[1].u4) {
+        case TYPE(VD):
+            v = dump_vr_i(g, f, TYPE(VD), idnt);
+            break;
         case TYPE(U6):
             v = dump_vr_i(g, f, TYPE(U6), idnt);
             vr_ab(&v, P(cd));
@@ -138,6 +143,9 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t
             if ((stat = dump_te(t, g, an, e, f, idnt, type, tetmp)) != ATG_STAT(OK)) return stat;
             te_f(tetmp);
             break;
+        case TYPE(ST):
+            return atg_err(t, an, e, "TODO DUMP ST");
+            break;
         case TYPE(UN):
             if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), ti = t->tc++), cd, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
             tetmp = gen_tmp(g, X64_TYPE(M), ti);
@@ -146,6 +154,9 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t
             break;
         case TYPE(ER):
             if ((stat = dump_err(t, g, an, e, f, idnt, cd)) != ATG_STAT(OK)) return stat;
+            break;
+        case TYPE(RF):
+            v = dump_vr_i(g, f, TYPE(RF), idnt);
             break;
         default:
             return atg_err(t, an, e, "atg inv dump type");

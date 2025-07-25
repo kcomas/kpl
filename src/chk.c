@@ -575,6 +575,18 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op, te **rt) {
+    (void) an;
+    (void) e;
+    if (!type_is_ref((*rt)->d[1].u4)) return CHK_STAT(OK);
+    // TODO need to check if this is an access or creation
+    if (op->d[2].u4 == AST_CLS(O) && op->d[4].u4 == OC(AGN)) {
+        te_f(*rt);
+        *rt = type_s_i(c->ta, NULL, TYPE(VD));
+    }
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     tbl *lt = ((te*) an->d[6].p)->d[3].p, *ut;
     te *h = lt ? lt->i->h : NULL, *r, *rt, *kv;
@@ -611,7 +623,8 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
         } else if (!type_eq(rt, kv->d[2].p)) return chk_err(c, an, e, "chk inv un ret type");
     } else if (!*fr) *fr = te_c(rt);
     else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
-    return CHK_STAT(OK);
+    h = ((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p;
+    return chk_fn_ref_ret(c, an, e, h, fr);
 }
 
 static chk_stat chk_set_ret_op_l(chk *c, te *an, err **e) {

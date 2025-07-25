@@ -1,4 +1,5 @@
 
+MAKEFLAGS := -j$(shell nproc)
 CC = gcc
 OO = -g -Og
 FFLAGS = -fno-omit-frame-pointer -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -ftrivial-auto-var-init=pattern -fPIE -fstack-protector-all -fstack-clash-protection -fcf-protection=full
@@ -15,7 +16,6 @@ TNAME = _test
 TESTS = tests
 .RECIPEPREFIX = >
 .PHONY: show_$(TESTS) clean
-MAKEFLAGS := --jobs=$(shell nproc)
 
 all: $(NAME)
 

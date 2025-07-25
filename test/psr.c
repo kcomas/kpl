@@ -648,11 +648,14 @@ T(stll) {
         OP(CMD(N(VAR)), OP(
             APLY(N(TYPE), SYM(N(TYPE)), SYM(APLY(N(TYPE), SYM(N(TYPE)), SYM(CMD(N(VAR)))))),
             OP(N(NONE), LST(SYM(N(INT)), SYM(SYM(N(NONE))))))),
+        CMD(N(VAR)),
         OP(N(VAR), OP(N(TYPE), LST(
+            CMD(APLY(N(STR), APLY(N(TYPE), N(VAR)))),
             OP(N(VAR), OP(APLY(N(TYPE), SYM(CMD(N(VAR))), CMD(N(VAR))), LST(
+                CMD(N(STR)),
                 OP(SYM(N(VAR)), LST(SYM(APLY(N(VAR), N(VAR))), SYM(N(VAR)))),
                 OP(SYM(SYM(APLY(N(VAR), N(VAR)))), OP(CMD(N(VAR)), OP(N(NONE), LST(
-                    SYM(APLY(N(TYPE), N(VAR))),
+                    SYM(N(VAR)),
                     SYM(SYM(N(NONE)))
                 ))))
             )))

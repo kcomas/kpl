@@ -381,17 +381,20 @@ T(vrup) {
 }
 
 T(stll) {
-    V(TPGM(stll), RN(AN(NULL, LN(LT(3, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL), L(5,
+    V(TPGM(stll), RN(AN(NULL, LN(LT(3, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL), L(6,
         ON(NULL, DFN, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, CST,
             NN(T, TH(ST, 2, "i", TS(I6), "n", TH(UN, 2, "y", TS(VD), "z", TRF(2)))),
             ON(NULL, MTCH, LN(NULL, NULL), LN(NULL, L(2,
                 ZN("i", SN(I6, I6(0))),
                 ZN("n", ZN("y", NULL))
         ))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(E)), NULL)),
         ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST, TN(NF),
-            LN(LT(3, "b", U6(0), NULL, "l", U6(0), NULL, "i", U6(0), TS(I6)), L(2,
+            LN(LT(3, "i", U6(0), TS(I6), "b", U6(0), NULL, "l", U6(0), NULL), L(3,
+                ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, CS("a: {}"), L(1, EN("i", U6(0), TS(I6))))),
                 ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TRF(4), 1, "x", TRF(3), 0)),
-                    LN(LT(1, "x", U6(0), NULL), L(1,
+                    LN(LT(1, "x", U6(0), NULL), L(2,
+                        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(TS(SG), CSG, NULL, CS("b"))),
                         ON(NULL, MTCH,
                             LN(NULL, L(1, ZN("n", EN("x", U6(0), NULL)))),
                             LN(LT(3, "b", U6(0), NULL, "z", U6(0), NULL, "x", U6(0), NULL), L(2,
@@ -401,8 +404,8 @@ T(stll) {
                 )))),
                 ON(NULL, AGN, ZN("z", ZN("n", AN(NULL, EN("b", U6(0), NULL), L(1, EN("l", U6(0), NULL))))),
                     ON(NULL, CST, NN(T, TRF(5)), ON(NULL, MTCH, LN(NULL, NULL),
-                        LN(LT(1, "i", U6(0), TS(I6)), L(2,
-                            ZN("i", EN("i", U6(0), TS(I6))),
+                        LN(LT(1, "i", U6(0), NULL), L(2,
+                            ZN("i", EN("i", U6(0), NULL)),
                             ZN("n", ZN("y", NULL))
                         )))))
             )))),
