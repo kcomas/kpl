@@ -68,4 +68,6 @@ extern const char *TPGM(leap);
 
 extern const char *TPGM(vrup);
 
+extern const char *TPGM(invstll);
+
 extern const char *TPGM(stll);

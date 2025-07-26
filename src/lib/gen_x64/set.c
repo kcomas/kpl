@@ -185,24 +185,6 @@ static gen_stat set_au_fn(gen *g, void *s, te *ci, as *a, err **e) {
     return GEN_STAT(OK);
 }
 
-static gen_stat set_aum_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    gen_stat stat;
-    te *kv[2];
-    if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
-    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(RM), U3(kv[1]->d[2].u3)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    drop_atm_kv_n(s, kv, ci, 2);
-    return GEN_STAT(OK);
-}
-
-static gen_stat set_uma_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    gen_stat stat;
-    te *kv[2];
-    if ((stat = get_reg_n(s, ci, kv, 2)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
-    if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(RM), U3(kv[0]->d[2].u3)), as_arg_i(a, ARG_ID(R), U3(kv[1]->d[2].u3)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-    drop_atm_kv_n(s, kv, ci, 2);
-    return GEN_STAT(OK);
-}
-
 static gen_stat set_av_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat;
     te *tgt = ci->d[2].p, *kv;
@@ -293,8 +275,6 @@ void gen_set(gen *g) {
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(M), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(I6), set_au_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(T), X64_TYPE(MM), set_au_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(MM), set_aum_fn);
-    GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(T), X64_TYPE(M), set_uma_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(V), X64_TYPE(I6), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(U6), GEN_CLS(V), X64_TYPE(I6), set_av_fn);
     GEN_OP_A2(g, GEN_OP(SET), GEN_CLS(T), X64_TYPE(M), GEN_CLS(V), X64_TYPE(M), set_av_fn);

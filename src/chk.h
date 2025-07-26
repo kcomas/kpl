@@ -24,7 +24,7 @@ chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt);
 
 te *chk_rt_err_t(const alfr *ta);
 
-chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op, te **rt);
+chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op);
 
 chk_stat chk_op_l_z_r(chk *c, te *an, err **e);
 

@@ -575,14 +575,39 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
-chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op, te **rt) {
-    (void) an;
-    (void) e;
-    if (!type_is_ref((*rt)->d[1].u4)) return CHK_STAT(OK);
-    // TODO need to check if this is an access or creation
-    if (op->d[2].u4 == AST_CLS(O) && op->d[4].u4 == OC(AGN)) {
-        te_f(*rt);
-        *rt = type_s_i(c->ta, NULL, TYPE(VD));
+chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op) {
+    chk_stat stat;
+    te *rt, *lte, *h, *n;
+    lst *l;
+    if (ast_g_t(op, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv ret type");
+    if (rt->d[1].u4 == TYPE(VD) || !type_is_ref(rt->d[1].u4)) return CHK_STAT(OK);
+    if (op->d[2].u4 == AST_CLS(E)) {
+        lte = op->d[3].p;
+        if (ast_lst_tbl_e_g_f(lte) & LTE_FLG(A)) return chk_err(c, an, e, "chk err ret arg ref");
+        return CHK_STAT(OK);
+    }
+    if (op->d[2].u4 != AST_CLS(O)) return CHK_STAT(OK);
+    switch (op->d[4].u4) {
+        case OC(AGN):
+            return chk_err(c, an, e, "check inv ref return");
+        case OC(MTCH):
+            h = op->d[5].p;
+            if (h->d[2].u4 == AST_CLS(L) && !h->d[4].p) break;
+            l = ((te*) op->d[6].p)->d[4].p;
+            if (!l) return chk_err(c, an, e, "chk inv lst for fn ret");
+            h = l->h;
+            while (h) {
+                n = h->d[0].p;
+                if (n->d[2].u4 != AST_CLS(Z)) return chk_err(c, an, e, "chk err inv lst itm");
+                if ((stat = chk_fn_ref_ret(c, an, e, n->d[4].p)) != CHK_STAT(OK)) return stat;
+                h = h->d[2].p;
+            }
+            break;
+        case OC(IF):
+            return chk_err(c, an, e, "TODO");
+            break;
+        default:
+            break;
     }
     return CHK_STAT(OK);
 }
@@ -624,7 +649,7 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
     } else if (!*fr) *fr = te_c(rt);
     else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
     h = ((lst*) ((te*) an->d[6].p)->d[4].p)->t->d[0].p;
-    return chk_fn_ref_ret(c, an, e, h, fr);
+    return chk_fn_ref_ret(c, an, e, h);
 }
 
 static chk_stat chk_set_ret_op_l(chk *c, te *an, err **e) {

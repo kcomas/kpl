@@ -531,10 +531,8 @@ T(datarec) {
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
     S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 1), NULL, NULL));
     BUILD(g, m);
-    X64_RS();
     int64_t r = ((int64_t(*)(te**)) m)(&a);
     printf("r: %ld\n", r);
     A(r == 1, "inv ret");
-    X64_RR();
     te_f(a);
 }

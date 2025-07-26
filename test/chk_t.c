@@ -17,7 +17,7 @@ tbl *cti(void) {
     return tbl_i(&al_tbl, tbl_no_hsh, tbl_un_eq, tl, b);
 }
 
-void rchk(_tests *_t, chk *c, te *an) {
+void rchk(_tests *_t, chk *c, te *an, bool he) {
     E();
     err *e = NULL;
     chk_stat stat = chk_n(c, an, &e);
@@ -26,5 +26,6 @@ void rchk(_tests *_t, chk *c, te *an) {
         err_p(e, true);
         err_f(e);
     }
-    A(stat == CHK_STAT(OK), "chk_n");
+    if (he) A(stat != CHK_STAT(OK), "chk valid");
+    else A(stat == CHK_STAT(OK), "chk_n");
 }

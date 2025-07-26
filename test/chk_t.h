@@ -6,7 +6,7 @@ extern chk *bchk;
 
 tbl *cti(void);
 
-void rchk(_tests *_t, chk *c, te *an);
+void rchk(_tests *_t, chk *c, te *an, bool he);
 
 #define IC(PGM) ast *a = ast_i_ast(bast); \
     te *an = NULL; \
@@ -14,5 +14,9 @@ void rchk(_tests *_t, chk *c, te *an);
     fast(_t, a, &an, bfld, true); \
     chk *c = chk_i_chk(bchk, a)
 
-#define RC() rchk(_t, c, an); \
+
+#define EC(PGM) IC(PGM); \
+    rchk(_t, c, an, true);
+
+#define RC() rchk(_t, c, an, false); \
     E()

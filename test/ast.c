@@ -328,8 +328,8 @@ T(vrup) {
     )), NULL)));
 }
 
-T(stll) {
-    V(TPGM(stll), RN(AN(NULL, LN(NULL, L(6,
+T(invstll) {
+    V(TPGM(invstll), RN(AN(NULL, LN(NULL, L(6,
         ON(NULL, DFN, CN(E, IN("l")),
             ON(NULL, CST,
                 AN(NULL, TN(ST), L(2, ZN("i", TN(I6)),

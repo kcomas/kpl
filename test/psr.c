@@ -642,8 +642,8 @@ T(vrup) {
     te_f(h);
 }
 
-T(stll) {
-    te *h = ppnode(psr_r(bpsr(TPGM(stll))));
+T(invstll) {
+    te *h = ppnode(psr_r(bpsr(TPGM(invstll))));
     V(h, {N(ROOT), APLY(LST(
         OP(CMD(N(VAR)), OP(
             APLY(N(TYPE), SYM(N(TYPE)), SYM(APLY(N(TYPE), SYM(N(TYPE)), SYM(CMD(N(VAR)))))),
@@ -666,3 +666,11 @@ T(stll) {
     ))});
     te_f(h);
 }
+
+/*
+T(stll) {
+    te *h = ppnode(psr_r(bpsr(TPGM(stll))));
+    V(h, {N(ROOT)});
+    te_f(h);
+}
+*/
