@@ -148,7 +148,7 @@ ATG = atg$(TNAME)
 $(ATG): $(OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
 > $(CCOBJ)
 
-#FSAN = -fsanitize=address,leak,undefined
+FSAN = -fsanitize=address,leak,undefined
 $(TESTS): OO = -O2
 $(TESTS): FLAGS += -DNTO
 $(TESTS): FFLAGS += $(FSAN)

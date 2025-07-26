@@ -359,3 +359,50 @@ T(invstll) {
         CN(P1, IN("l"))
     )), NULL)));
 }
+
+T(stll) {
+    V(TPGM(stll), RN(AN(NULL, LN(NULL, L(7,
+        ON(NULL, DFN, CN(E, IN("l")),
+            ON(NULL, CST, AN(NULL, TN(ST), L(2,
+                ZN("i", TN(I6)),
+                ZN("n", AN(NULL, TN(UN), L(2,
+                    ZN("y", TN(VD)),
+                    ZN("z", CN(T, IN("l")))
+                )))
+            )),
+            ON(NULL, MTCH, NULL, LN(NULL, L(2,
+                ZN("i", SN(I6, I6(0))),
+                ZN("n", ZN("y", NULL))
+            ))))),
+            ON(NULL, DFN, IN("a"),
+                ON(NULL, CST, AN(NULL, TN(FN), L(3,
+                    ZN("x", CN(T, IN("l"))),
+                    ZN("i", TN(I6)),
+                    TN(VD)
+                )),
+                LN(NULL, L(2,
+                    CN(P1, AN(NULL, CS("a: {}"), L(1, IN("i")))),
+                    ON(NULL, MTCH, ZN("n", IN("x")), LN(NULL, L(2,
+                        ZN("y", AN(NULL, ON(NULL, AGN, NULL, NULL), L(2,
+                            ZN("z", ZN("n", IN("x"))),
+                            ON(NULL, CST, CN(T, IN("l")), ON(NULL, MTCH, NULL,
+                                LN(NULL, L(2,
+                                    ZN("i", IN("i")),
+                                    ZN("n", ZN("y", NULL))
+                                ))))
+                        ))),
+                        ZN("z", AN(NULL, IN("a"), L(2, IN("z"), IN("i"))))
+                    )))
+                )))),
+            ON(NULL, DFN, IN("i"), SN(I6, I6(0))),
+            ON(NULL, LOOP,
+                AN(NULL, ON(NULL, LTE, NULL, NULL), L(2, IN("i"), SN(I6, I6(5)))),
+                AN(NULL, IN("a"), L(2, IN("l"), ON(NULL, ADDA, IN("i"), SN(I6, I6(1)))))),
+            CN(P1, IN("l")),
+            ON(NULL, DFN, IN("b"), ON(NULL, CST, AN(NULL, TN(FN), L(2, ZN("x", CN(T, IN("l"))), TN(VD))), LN(NULL, L(2,
+                CN(P1, AN(NULL, CS("b: {}"), L(1, ZN("i", IN("x"))))),
+                ON(NULL, MTCH, ZN("n", IN("x")), LN(NULL, L(1, ZN("z", AN(NULL, IN("b"), L(1, IN("z")))))))
+            )))),
+            AN(NULL, IN("b"), L(1, IN("l")))
+    )), NULL)));
+}

@@ -508,8 +508,15 @@ static void recf(void *p) {
     t->af->f(t);
 }
 
+static int64_t __attribute__((noinline)) crec(te **a, const uint8_t *m) {
+    X64_RS();
+    int64_t r = ((int64_t(*)(te**)) m)(a);
+    X64_RR();
+    return r;
+}
+
 T(datarec) {
-    te *c = te_i(3, &al_te, recf);
+    te *c = te_i(3, &al_te, NULL);
     c->d[0] = I6(1);
     c->d[1] = U6(0);
     te *b = te_i(3, &al_te, recf);
@@ -531,7 +538,7 @@ T(datarec) {
     S(gen_a(g, GEN_OP(LBL), gen_lbl(g, 1), NULL, NULL));
     S(gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(I6), 1), NULL, NULL));
     BUILD(g, m);
-    int64_t r = ((int64_t(*)(te**)) m)(&a);
+    int64_t r = crec(&a, m);
     printf("r: %ld\n", r);
     A(r == 1, "inv ret");
     te_f(a);

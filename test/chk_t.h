@@ -16,7 +16,9 @@ void rchk(_tests *_t, chk *c, te *an, bool he);
 
 
 #define EC(PGM) IC(PGM); \
-    rchk(_t, c, an, true);
+    rchk(_t, c, an, true); \
+    te_f(an); \
+    ast_f(a)
 
 #define RC() rchk(_t, c, an, false); \
     E()
