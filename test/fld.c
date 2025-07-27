@@ -417,3 +417,53 @@ T(invstll) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(stll) {
+    V(TPGM(stll), RN(AN(NULL, LN(LT(4, "l", FLG(0, LTE_FLG(E)), NULL, "a", U6(0), NULL, "i", U6(0), NULL, "b", U6(0), NULL), L(7,
+        ON(NULL, DFN, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, CST,
+            NN(T, TH(ST, 2, "i", TS(I6), "n", TH(UN, 2, "y", TS(VD), "z", TRF(6)))),
+            ON(NULL, MTCH, LN(NULL, NULL), LN(NULL, L(2,
+                ZN("i", SN(I6, I6(0))),
+                ZN("n", ZN("y", NULL))
+            ))))),
+        ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST,
+            NN(T, TFN(FN, TS(VD), 2, "x", TRF(7), 0, "i", TS(I6), 1)),
+            LN(LT(2, "i", U6(0), NULL, "x", U6(0), NULL), L(2,
+                ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, CS("a: {}"), L(1, EN("i", U6(0), NULL)))),
+                ON(NULL, MTCH,
+                    LN(NULL, L(1,
+                        ZN("n", EN("x", U6(0), NULL))
+                    )),
+                    LN(LT(5, "x", U6(0), NULL, "l", U6(0), NULL, "i", U6(0), NULL, "a", U6(0), NULL, "z", U6(0), NULL), L(2,
+                        ZN("y", ON(NULL, AGN, ZN("z", ZN("n", EN("x", U6(0), NULL))), ON(NULL, CST,
+                            NN(T, TRF(8)),
+                            ON(NULL, MTCH, LN(NULL, NULL), LN(LT(1, "i", U6(0), NULL), L(2,
+                                ZN("i", EN("i", U6(0), NULL)),
+                                ZN("n", ZN("y", NULL))
+                            )))))),
+                        ZN("z", AN(NULL, EN("a", U6(0), NULL), L(2,
+                            EN("z", U6(0), NULL),
+                            EN("i", U6(0), NULL)
+                        )))
+                    ))
+                )
+            )))),
+         ON(NULL, DFN, EN("i", U6(0), NULL), SN(I6, I6(0))),
+         ON(NULL, LOOP,
+            LN(NULL, L(1, ON(NULL, LTE, EN("i", U6(0), NULL), SN(I6, I6(5))))),
+            LN(NULL, L(1, AN(NULL, EN("a", U6(0), NULL),
+                L(2, EN("l", FLG(0, LTE_FLG(E)), NULL), ON(NULL, ADDA, EN("i", U6(0), NULL), SN(I6, I6(1)))))))),
+         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(E)), NULL)),
+         ON(NULL, DFN, EN("b", U6(0), NULL), ON(NULL, CST,
+            NN(T, TFN(FN, TS(VD), 1, "x", TRF(9), 0)),
+            LN(LT(1, "x", U6(0), NULL), L(2,
+                ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, CS("b: {}"), L(1, ZN("i", EN("x", U6(0), NULL))))),
+                ON(NULL, MTCH,
+                    LN(NULL, L(1, ZN("n", EN("x", U6(0), NULL)))),
+                    LN(LT(2, "b", U6(0), NULL, "z", U6(0), NULL), L(1,
+                        ZN("z", AN(NULL, EN("b", U6(0), NULL), L(1, EN("z", U6(0), NULL))))
+                    )))
+            )))),
+         AN(NULL, EN("b", U6(0), NULL), L(1, EN("l", FLG(0, LTE_FLG(E)), NULL)))
+    )), NULL)));
+}

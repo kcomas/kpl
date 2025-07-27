@@ -403,12 +403,14 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
             mi++;
         } else mi = -1;
         if (ast_g_t(n, &t) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv mtch type");
-        if (rt && !type_eq(rt, t)) return chk_err(c, an, e, "chk inv mtch type neq");
-        else rt = t;
+        if (rt && rt->d[1].u4 != TYPE(VD) && !type_eq(rt, t)) {
+            te_f(rt);
+            rt = type_s_i(c->a->ta, NULL, TYPE(VD));
+        } else if (!rt) rt = te_c(t);
         h = h->d[2].p;
     }
     if (rt->d[1].u4 != TYPE(VD) && mi > -1 && mi < (ssize_t) ((lst*) ((te*) an->d[6].p)->d[4].p)->l) return chk_err(c, an, e, "chk mtch need def case");
-    an->d[3] = P(te_c(rt));
+    an->d[3] = P(rt);
     return CHK_STAT(OK);
 }
 
