@@ -99,11 +99,11 @@ static void *chk_g_pn_lte_(te *an, const mc *s, bool tbl) {
         pln = NULL;
         if (ast_g_pn(AST_CLS(L), plns, &pln) != AST_STAT(OK)) return NULL;
         plns = pln->d[0].p;
-        if (tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) {
+        if (pln->d[3].p && tbl_g_i(pln->d[3].p, P(s), &kv) == TBL_STAT(OK) && kv->d[2].p) {
             if (pf && ((te*) kv->d[2].p)->d[1].u4 != TYPE(FN)) return NULL;
             return tbl ? pln->d[3].p : kv;
         }
-        if (plns->d[2].u4 == AST_CLS(O) && plns->d[4].u4 == OC(CST)) {
+        if (plns && plns->d[2].u4 == AST_CLS(O) && plns->d[4].u4 == OC(CST)) {
             if (ast_g_t(plns->d[5].p, &kv) != AST_STAT(OK)) return NULL;
             if (kv->d[1].u4 == TYPE(FN)) pf = true;
         }
@@ -227,6 +227,9 @@ static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
     while (h) {
         n = h->d[0].p;
         if (n->d[2].u4 == AST_CLS(Z)) {
+            kve = n->d[3].p;
+            if (kve->d[2].p) return chk_err(c, an, e, "chk inv z mtch itm type");
+            kve->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(_M)));
             if (tbl_g_i(((te*) an->d[6].p)->d[3].p, n->d[5], &kve) != TBL_STAT(OK)) {
                 h = h->d[2].p;
                 continue;
@@ -237,7 +240,6 @@ static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
             type_rrf_sh((te**) &kve->d[2].p);
             ast_lst_tbl_e_s_i(kve, c->yc--);
             ast_lst_tbl_e_s_f(kve, LTE_FLG(Y));
-            ((te*) n->d[3].p)->d[2] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
         } else if (n->d[2].u4 == AST_CLS(A)) return chk_err(c, an, e, "nyi");
         else if (h->d[2].p) return chk_err(c, an, e, "chk inv mtch default case");
         h = h->d[2].p;
@@ -515,6 +517,7 @@ static chk_stat chk_aply_cs(chk *c, te *an, err **e) {
                     ss = se + 1;
                     sc = c4_g((char*) s->d, ss, &se);
                     if (ast_g_t(h->d[0].p, &tn) != AST_STAT(OK) || !tn) return chk_err(c, an, e, "chk cs replace type nf");
+                    if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
                     if (!(rs = aply_cs_str[tn->d[1].u4])) return chk_err(c, an, e, "chk cs inv replace str");
                     mc_wcstr(&ns, rs);
                 }
@@ -814,6 +817,7 @@ static chk_stat chk_uner_n_un(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+void chk_entry(chk *c);
 void chk_type(chk *c);
 void chk_z(chk *c);
 void chk_dfnagn(chk *c);
@@ -858,6 +862,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_cst_cj, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(CJ), AST_CLS(O), TYPE(NF));
     CHK_AA(c, chk_cst_z, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(I6), AST_CLS(Z), TYPE(U6));
     CHK_AA(c, chk_cst_st, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(T), TYPE(ST), AST_CLS(O), TYPE(ST));
+    CHK_AA(c, chk_cst_st, AST_CLS(O), TYPE(_N), OC(CST), TYPE(_A), AST_CLS(E), TYPE(ST), AST_CLS(O), TYPE(ST));
     CHK_AA(c, chk_l_lst_bl, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_if, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_mtch, AST_CLS(O), TYPE(_N), OC(MTCH), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
@@ -878,6 +883,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_uner_n_un, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN));
+    chk_entry(c);
     chk_type(c);
     chk_z(c);
     chk_dfnagn(c);

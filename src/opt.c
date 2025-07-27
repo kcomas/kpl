@@ -84,9 +84,16 @@ static fld_stat lst_led_o(fld *f, te **an, err **e) {
     uint32_t lrc = 0, lxc = 0;
     if (!(*an)->d[3].p) return FLD_STAT(OK);
     tbl *lt = (*an)->d[3].p;
-    te *h = lt->i->h, *lte, *kv, *rn = NULL;
+    te *h = lt->i->h, *lte, *kv, *rn = NULL, *tmp;
     while (h) {
         lte = h->d[0].p;
+        if (!lte->d[2].p) {
+            tmp = h;
+            te_f(lte);
+            lst_li_d(lt->i, tmp);
+            h = h->d[2].p;
+            continue;
+        }
         uint32_t flgs = ast_lst_tbl_e_g_f(lte);
         if (flgs & LTE_FLG(D)) {
             h = h->d[2].p;

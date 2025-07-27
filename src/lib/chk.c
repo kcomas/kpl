@@ -45,7 +45,7 @@ static void chk_entry_f(void *p) {
 const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(R)] = 1,
     [AST_CLS(T)] = 1,
-    [AST_CLS(E)] = 0,
+    [AST_CLS(E)] = 1,
     [AST_CLS(I)] = 0,
     [AST_CLS(S)] = 1,
     [AST_CLS(V)] = 1,
@@ -109,6 +109,7 @@ static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bo
         } else {
             switch (an->d[2].u4) {
                 case AST_CLS(T):
+                case AST_CLS(E):
                 case AST_CLS(S):
                 case AST_CLS(V):
                     hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));

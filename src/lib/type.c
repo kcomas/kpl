@@ -9,6 +9,7 @@ const char *type_str(type t) {
         "_A",
         "_L",
         "_G",
+        "_M",
         "VD",
         "BL",
         "I3",

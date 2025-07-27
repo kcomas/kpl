@@ -15,6 +15,7 @@ typedef enum {
     TYPE(_A), // auto
     TYPE(_L), // deferred list {}
     TYPE(_G), // gen code
+    TYPE(_M), // match
     // user
     TYPE(VD), // void
     TYPE(BL),
