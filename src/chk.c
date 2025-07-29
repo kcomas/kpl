@@ -433,7 +433,6 @@ static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, ls
     return CHK_STAT(OK);
 }
 
-
 static chk_stat chk_aply_fn(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
     chk_stat stat;
     if ((stat = chk_fn_args(c, an, e, t, l)) != CHK_STAT(OK)) return stat;

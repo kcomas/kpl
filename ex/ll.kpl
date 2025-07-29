@@ -2,10 +2,14 @@
 // linked list
 
 l\e::ST(I6`i;UN(VD`y;l\t`z)`n)$#{0`i;`y`n}
+c::FN(l\t`x;I6`i;VD)${
+    x`n`z:x$#{i`i;`y`n}
+    "ADDED: {}"(i)\p1
+}
 a::FN(l\t`x;I6`i;VD)${
-    "a: {}"(i)\p1
+    "a: {}, next: {}"(x`i;i)\p1
     x`n#{
-        :(x`n`z;x$#{i`i;`y`n})`y
+        c(x;i)`y
         a(z;i)`z
     }
 }
