@@ -54,10 +54,10 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
     tbl **fat = (tbl**) &((te*) ((te*) an->d[5].p)->d[3].p)->d[3].p; // fn args tbl
     tbl *lt = ((te*) an->d[6].p)->d[3].p;
     te *h, *lte, *kv;
+    uint32_t ra = 0, xa = 0;
     if (lt && !*fat) {
         *fat = tbl_i_tbl(lt);
         h = lt->i->h;
-        uint32_t ra = 0, xa = 0;
         while (h) {
             lte = h->d[0].p;
             if (!ast_lst_tbl_e_g_f(lte) && lte->d[2].p) {
@@ -77,6 +77,17 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
                 type_rrf_sh((te**) &lte->d[2].p);
                 ast_lst_tbl_e_s_f(lte, LTE_FLG(A));
                 ast_lst_tbl_e_s_i(lte, kv->d[1].u5);
+            }
+            h = h->d[2].p;
+        }
+        h = (*fat)->i->h;
+        while (h) {
+            lte = h->d[0].p;
+            if (tbl_g_i(lt, lte->d[0], &kv) != TBL_STAT(OK)) {
+                kv = ast_lst_tbl_e_i(c->a, mc_c(lte->d[0].p), U6(0), te_c(lte->d[2].p));
+                ast_lst_tbl_e_s_f(kv, LTE_FLG(A));
+                ast_lst_tbl_e_s_i(kv, lte->d[1].u5);
+                tbl_a(lt, kv);
             }
             h = h->d[2].p;
         }
@@ -244,6 +255,7 @@ static chk_stat chk_op_mtch_lst_lr_b(chk *c, te *an, err **e) {
         else if (h->d[2].p) return chk_err(c, an, e, "chk inv mtch default case");
         h = h->d[2].p;
     }
+    h = ((tbl*) ((te*) an->d[6].p)->d[3].p)->i->h;
     return CHK_STAT(OK);
 }
 

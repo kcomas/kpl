@@ -7,7 +7,7 @@ c::FN(l\t`x;I6`i;VD)${
     "ADDED: {}"(i)\p1
 }
 a::FN(l\t`x;I6`i;VD)${
-    "a: {}, next: {}"(x`i;i)\p1
+    "a: {}"(x`i)\p1
     x`n#{
         c(x;i)`y
         a(z;i)`z
