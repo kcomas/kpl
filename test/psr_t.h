@@ -71,3 +71,5 @@ extern const char *TPGM(vrup);
 extern const char *TPGM(invstll);
 
 extern const char *TPGM(stll);
+
+extern const char *TPGM(validm);

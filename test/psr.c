@@ -693,3 +693,37 @@ T(stll) {
     ))});
     te_f(h);
 }
+
+T(tp) {
+    te *h = ppnode(psr_r(bpsr(TPGM(validm))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), VEC(
+            OP(N(TYPE), VEC(N(INT), N(INT), N(INT))),
+            OP(N(TYPE), VEC(N(INT), N(INT), N(INT)))
+        ))),
+        OP(N(VAR), OP(N(TYPE), VEC(
+            OP(N(TYPE), VEC(N(INT), N(INT))),
+            OP(N(TYPE), VEC(N(INT)))
+        ))),
+        OP(N(VAR), OP(APLY(N(TYPE), SYM(CMD(N(VAR))), N(KEY)), LST(
+            OP(APLY(OP(N(NONE), N(NONE)),
+                OP(N(VAR), OP(N(NONE), N(VAR))),
+                N(INT)
+            ),
+                OP(N(NONE), N(STR))
+            ),
+            OP(N(VAR), OP(N(NONE), SYM(APLY(N(VAR), N(INT))))),
+            OP( // @
+                APLY(N(NONE), OP(N(VAR), N(INT)), OP(N(VAR), N(VAR)), OP(N(VAR), N(INT))),
+                APLY(OP(N(NONE), N(NONE)),
+                    APLY(OP(N(NONE), N(NONE)), N(VAR), OP(N(NONE), SYM(APLY(N(VAR), N(VAR))))),
+                    OP(N(NONE), N(STR))
+                )
+            )
+        ))),
+        OP(N(NONE), APLY(N(VAR), N(VAR))),
+        CMD(N(VAR)),
+        OP(N(NONE), APLY(N(VAR), N(VAR)))
+    ))});
+    te_f(h);
+}

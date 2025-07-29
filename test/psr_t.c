@@ -274,3 +274,16 @@ const char *TPGM(stll) = "{\n"
                          " }\n"
                          " b(l)\n"
                          "}()\n";
+
+const char *TPGM(validm) = "{\n"
+                       " a::VR$[VR$[1;2;3];VR$[4;5;6]]\n"
+                       " b::VR$[VR$[1;2];VR$[4]]\n"
+                       " v::FN(a\\t`x;A)${\n"
+                       "  =(l::/x;0)?'\"Empty\"\n"
+                       "  t::/x(0)`v\n"
+                       "  (i::1;i<l;i+:1)@?(!=(t;/x(i)`v);'\"Inv\")\n"
+                       " }\n"
+                       " 'v(a)\n"
+                       " a\\p1\n"
+                       " 'v(b)\n"
+                       "}()\n";
