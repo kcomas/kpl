@@ -68,22 +68,16 @@ static chk_stat chk_cst_fn_lst_b(chk *c, te *an, err **e) {
             h = h->d[2].p;
         }
     } else if (lt) {
-        h = lt->i->h;
-        while (h) {
-            lte = h->d[0].p;
-            if (tbl_g_i(*fat, lte->d[0], &kv) == TBL_STAT(OK)) {
-                if (lte->d[2].p && !type_eq(kv->d[2].p, lte->d[2].p)) return chk_err(c, an, e, "chk fn type neq");
-                lte->d[2] = P(te_c(kv->d[2].p));
-                type_rrf_sh((te**) &lte->d[2].p);
-                ast_lst_tbl_e_s_f(lte, LTE_FLG(A));
-                ast_lst_tbl_e_s_i(lte, kv->d[1].u5);
-            }
-            h = h->d[2].p;
-        }
         h = (*fat)->i->h;
         while (h) {
             lte = h->d[0].p;
-            if (tbl_g_i(lt, lte->d[0], &kv) != TBL_STAT(OK)) {
+            if (tbl_g_i(lt, lte->d[0], &kv) == TBL_STAT(OK)) {
+                if (kv->d[2].p && !type_eq(lte->d[2].p, kv->d[2].p)) return chk_err(c, an, e, "chk fn type neq");
+                kv->d[2] = P(te_c(lte->d[2].p));
+                type_rrf_sh((te**) &kv->d[2].p);
+                ast_lst_tbl_e_s_f(kv, LTE_FLG(A));
+                ast_lst_tbl_e_s_i(kv, lte->d[1].u5);
+            } else {
                 kv = ast_lst_tbl_e_i(c->a, mc_c(lte->d[0].p), U6(0), te_c(lte->d[2].p));
                 ast_lst_tbl_e_s_f(kv, LTE_FLG(A));
                 ast_lst_tbl_e_s_i(kv, lte->d[1].u5);

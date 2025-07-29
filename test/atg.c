@@ -1817,5 +1817,14 @@ T(stll) {
     te_f(fb);
     tbl *xt = tbl_c(an->d[3].p);
     AR(3);
+    mc *mv = mc_i_cstr("l", &al_mc);
+    A(tbl_g_i(xt, P(mv), &kv) == TBL_STAT(OK), "inv et");
+    kv = kv->d[1].p;
+    for (int64_t i = 0; i <= 6; i++) {
+        A(kv->d[0].i6 == i, "inv st `i");
+        kv = kv->d[1].p;
+        kv = kv->d[1].p;
+    }
+    mc_f(mv);
     opt_exp_tbl_f(xt);
 }
