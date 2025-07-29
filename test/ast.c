@@ -406,3 +406,43 @@ T(stll) {
             AN(NULL, IN("b"), L(1, IN("l")))
     )), NULL)));
 }
+
+T(validm) {
+    V(TPGM(validm), RN(AN(NULL, LN(NULL, L(6,
+        ON(NULL, DFN, IN("a"), ON(NULL, CST, TN(VR), VN(NULL, L(2,
+            ON(NULL, CST, TN(VR), VN(NULL, L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))),
+            ON(NULL, CST, TN(VR), VN(NULL, L(3, SN(I6, I6(4)), SN(I6, I6(5)), SN(I6, I6(6)))))
+        )))),
+        ON(NULL, DFN, IN("b"), ON(NULL, CST, TN(VR), VN(NULL, L(2,
+            ON(NULL, CST, TN(VR), VN(NULL, L(2, SN(I6, I6(1)), SN(I6, I6(2))))),
+            ON(NULL, CST, TN(VR), VN(NULL, L(1, SN(I6, I6(4)))))
+        )))),
+        ON(NULL, DFN, IN("v"), ON(NULL, CST,
+            AN(NULL, TN(FN), L(2, ZN("x", CN(T, IN("a"))), NN(T, NULL))),
+            LN(NULL, L(3,
+                ON(NULL, IF,
+                    AN(NULL, ON(NULL, EQ, NULL, NULL), L(2,
+                        ON(NULL, DFN, IN("l"), ON(NULL, DIV, NULL, IN("x"))),
+                        SN(I6, I6(0))
+                    )),
+                    ON(NULL, UNER, NULL, CS("Empty"))),
+                ON(NULL, DFN, IN("t"), ON(NULL, DIV, NULL, ZN("v", AN(NULL, IN("x"), L(1, SN(I6, I6(0))))))),
+                ON(NULL, LOOP,
+                    AN(NULL, NULL, L(3,
+                        ON(NULL, DFN, IN("i"), SN(I6, I6(1))),
+                        ON(NULL, LT, IN("i"), IN("l")),
+                        ON(NULL, ADDA, IN("i"), SN(I6, I6(1)))
+                    )),
+                    AN(NULL, ON(NULL, IF, NULL, NULL), L(2,
+                        AN(NULL, ON(NULL, NE, NULL, NULL), L(2,
+                            IN("t"),
+                            ON(NULL, DIV, NULL, ZN("v", AN(NULL, IN("x"), L(1, IN("i")))))
+                        )),
+                        ON(NULL, UNER, NULL, CS("Inv"))
+                    )))
+            )))),
+        ON(NULL, UNER, NULL, AN(NULL, IN("v"), L(1, IN("a")))),
+        CN(P1, IN("a")),
+        ON(NULL, UNER, NULL, AN(NULL, IN("v"), L(1, IN("b"))))
+    )), NULL)));
+}

@@ -694,7 +694,7 @@ T(stll) {
     te_f(h);
 }
 
-T(tp) {
+T(validm) {
     te *h = ppnode(psr_r(bpsr(TPGM(validm))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(N(TYPE), VEC(
