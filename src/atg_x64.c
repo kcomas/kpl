@@ -123,7 +123,7 @@ static atg_stat ref_vars(atg *t, gen *g, te *an, err **e, tbl *tt, gen_op go, gc
     while (h) {
         lte = h->d[0].p;
         uint32_t flgs = ast_lst_tbl_e_g_f(lte);
-        if (!type_is_ref(((te*) lte->d[2].p)->d[1].u4) || (gc == GC_M(U) && (flgs & LTE_FLG(E))) || (flgs & (LTE_FLG(A) | LTE_FLG(S) | LTE_FLG(Y)))) {
+        if (!lte->d[2].p || !type_is_ref(((te*) lte->d[2].p)->d[1].u4) || (gc == GC_M(U) && (flgs & LTE_FLG(E))) || (flgs & (LTE_FLG(A) | LTE_FLG(S) | LTE_FLG(Y)))) {
             h = h->d[2].p;
             continue;
         }

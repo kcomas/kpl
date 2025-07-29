@@ -84,13 +84,10 @@ static fld_stat lst_led_o(fld *f, te **an, err **e) {
     uint32_t lrc = 0, lxc = 0;
     if (!(*an)->d[3].p) return FLD_STAT(OK);
     tbl *lt = (*an)->d[3].p;
-    te *h = lt->i->h, *lte, *kv, *rn = NULL, *tmp;
+    te *h = lt->i->h, *lte, *kv, *rn = NULL;
     while (h) {
         lte = h->d[0].p;
         if (!lte->d[2].p) {
-            tmp = h;
-            te_f(lte);
-            lst_li_d(lt->i, tmp);
             h = h->d[2].p;
             continue;
         }
@@ -140,7 +137,7 @@ static fld_stat tmp_var_o(fld *f, te **an, err **e) {
 static bool tmp_var_t(const te *an) {
     te *pn, *tn;
     if (an->d[2].u4 != AST_CLS(O) && an->d[2].u4 != AST_CLS(A)) return false;
-    if (!type_is_ref(((te*) an->d[3].p)->d[1].u4)) return false;
+    if (!an->d[3].p || !type_is_ref(((te*) an->d[3].p)->d[1].u4)) return false;
     static bool nc[OC(_END)] = {
         [OC(DFN)] = true,
         [OC(AGN)] = true,
@@ -213,11 +210,13 @@ static bool aply_lst_t(const te *an) {
 }
 
 static bool cst_x_t(const te *an, ast_cls c) {
-    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && ((te*) an->d[5].p)->d[2].u4 == AST_CLS(T) && ((te*) an->d[6].p)->d[2].u4 == c;
+    te *ln = an->d[5].p;
+    return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && (ln->d[2].u4 == AST_CLS(T) || ln->d[2].u4 == AST_CLS(E)) && ((te*) an->d[6].p)->d[2].u4 == c;
 }
 
 static fld_stat cst_s_o(fld *f, te **an, err **e) {
-    te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *rt = r->d[3].p;
+    te *lt, *r = (*an)->d[6].p, *rt = r->d[3].p;
+    if (ast_g_t((*an)->d[5].p, &lt) != AST_STAT(OK)) return fld_err(f, *an, e, "opt inv type for cst");
     if (lt->d[1].u4 == rt->d[1].u4) return fld_err(f, *an, e, "opt unnecessary cst");
     switch (lt->d[1].u4) {
         case TYPE(U6):
@@ -244,7 +243,8 @@ static bool cst_s_t(const te *an) {
 }
 
 static fld_stat cst_v_o(fld *f, te **an, err **e) {
-    te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *rt = r->d[3].p;
+    te *lt, *r = (*an)->d[6].p, *rt = r->d[3].p;
+    if (ast_g_t((*an)->d[5].p, &lt) != AST_STAT(OK)) return fld_err(f, *an, e, "opt inv type for cst");
     if (lt->d[1].u4 == rt->d[1].u4) return fld_err(f, *an, e, "opt unnecessary cst");
     te_f(rt);
     te_c(r);
@@ -262,7 +262,8 @@ static bool cst_v_t(const te *an) {
 static fld_stat cst_st_o(fld *f, te **an, err **e) {
     (void) f;
     (void) e;
-    te *lt = ((te*) (*an)->d[5].p)->d[3].p, *r = (*an)->d[6].p, *h, *n, *kv;
+    te *lt, *r = (*an)->d[6].p, *h, *n, *kv;
+    if (ast_g_t((*an)->d[5].p, &lt) != AST_STAT(OK)) return fld_err(f, *an, e, "opt inv type for cst");
     te_f(r->d[3].p);
     te_c(r);
     r->d[0] = (*an)->d[0];

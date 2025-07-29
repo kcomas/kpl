@@ -1,0 +1,21 @@
+
+// linked list
+
+l\e::ST(I6`i;UN(VD`y;l\t`z)`n)$#{0`i;`y`n}
+a::FN(l\t`x;I6`i;VD)${
+    "a: {}"(i)\p1
+    x`n#{
+        :(x`n`z;x$#{i`i;`y`n})`y
+        a(z;i)`z
+    }
+}
+i::0
+<=(i;5)@a(l;i+:1)
+l\p1
+b::FN(l\t`x;VD)${
+    "b: {}"(x`i)\p1
+    x`n#{
+        b(z)`z
+    }
+}
+b(l)

@@ -759,7 +759,7 @@ T(fnscope) {
     te *cn = RN(LN(LT(3, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "a", FLG(-1, LTE_FLG(F)), te_c(fn), "c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(5,
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), NN(T, te_c(fn))),
         ON(te_c(fn), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
-            LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
+            LN(LT(2, "b", U6(0), NULL, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
                 AN(TS(F6), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
             )))),
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
@@ -786,7 +786,7 @@ T(fnscope) {
     cn = RN(LN(LT(3, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "a", FLG(-1, LTE_FLG(F)), te_c(fn), "c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(5,
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), NN(T, te_c(fn))),
         ON(te_c(fn), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
-            LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
+            LN(LT(2, "b", U6(0), NULL, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
                 AN(TS(F6), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
             )))),
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
@@ -811,7 +811,7 @@ T(fnscope) {
     cn = RN(LN(LT(3, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "a", FLG(-1, LTE_FLG(F)), te_c(fn), "c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(5,
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), NN(T, te_c(fn))),
         ON(te_c(fn), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
-            LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
+            LN(LT(2, "b", U6(0), NULL, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
                 AN(TS(F6), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
             )))),
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), SN(_G, (uint32_t) -2)),
@@ -1016,19 +1016,18 @@ static void ns_gen(_tests *_t, gen *gc, uint16_t lno, uint32_t cno, uint32_t lbl
     S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 0), gen_call_m(gc, 2, gen_char(gc, "./ex/sum.kpl"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
     S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_tmp(gc, X64_TYPE(M), 0), NULL));
-    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), 1), gen_stkv(gc, X64_TYPE(M), 0), NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 2), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(MM), 1)), gen_data(gc, X64_TYPE(M), P(ns_f_rs))));
-    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_tmp(gc, X64_TYPE(M), 2), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 1), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(MM), 1, gen_stkv(gc, X64_TYPE(M), 0))), gen_data(gc, X64_TYPE(M), P(ns_f_rs))));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 1), gen_tmp(gc, X64_TYPE(M), 1), NULL));
     S(gen_a(gc, GEN_OP(EQ), gen_idx_m(gc, X64_TYPE(U6), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, lblb)));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 1)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 5), gen_call_m(gc, 2, gen_char(gc, "v"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
-    S(atg_rt_err_u(gc, 3, 0, 5, NULL, lno, cno, atg_un_inv_str));
-    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 3), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 4), gen_call_m(gc, 2, gen_char(gc, "v"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
+    S(atg_rt_err_u(gc, 2, 0, 4, NULL, lno, cno, atg_un_inv_str));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 2), NULL, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, lblb), NULL, NULL));
-    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 6), gen_idx_m(gc, X64_TYPE(M), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
-    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 7), gen_tmp(gc, X64_TYPE(M), 6), gen_data(gc, X64_TYPE(U3), U3(32))));
-    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(SG)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(M), 7)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 5), gen_idx_m(gc, X64_TYPE(M), 2, gen_stkv(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 6), gen_tmp(gc, X64_TYPE(M), 5), gen_data(gc, X64_TYPE(U3), U3(32))));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(SG)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(M), 6)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
     S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_nl))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
     S(gen_a(gc, GEN_OP(CALLNPR), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
     S(gen_a(gc, GEN_OP(CALLNPR), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 1)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
@@ -1580,24 +1579,23 @@ T(vrup) {
     S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 28), gen_data(gc, X64_TYPE(U3), U3(16))), gen_data(gc, X64_TYPE(U6), U6(3)), NULL));
     S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 28), NULL, NULL));
     S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_tmp(gc, X64_TYPE(M), 28), NULL));
-    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), 29), gen_stkv(gc, X64_TYPE(M), 0), NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 30), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(MM), 29)), gen_lbl(gc, (uint32_t) -1)));
-    S(gen_a(gc, GEN_OP(EQ), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 14)));
-    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 13)));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 29), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(MM), 1, gen_stkv(gc, X64_TYPE(M), 0))), gen_lbl(gc, (uint32_t) -1)));
+    S(gen_a(gc, GEN_OP(EQ), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 29), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 14)));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 29), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 13)));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(vr_f)), NULL));
-    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 31), gen_idx_m(gc, X64_TYPE(M), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
-    S(gen_a(gc, GEN_OP(ADD), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 31), gen_data(gc, X64_TYPE(U3), U3(0))), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 31), gen_data(gc, X64_TYPE(U3), U3(0))), gen_data(gc, X64_TYPE(I6), I6(1))));
-    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(M), 30)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
-    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 31), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 30), gen_idx_m(gc, X64_TYPE(M), 2, gen_tmp(gc, X64_TYPE(M), 29), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(0))), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(0))), gen_data(gc, X64_TYPE(I6), I6(1))));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(M), 29)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 30), NULL, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 13), NULL, NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(vr_f)), NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 34), gen_call_m(gc, 2, gen_char(gc, "v"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
-    S(atg_rt_err_u(gc, 32, 0, 34, NULL, 9, 2, atg_un_inv_str));
-    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 32), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 33), gen_call_m(gc, 2, gen_char(gc, "v"), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i_cstr))));
+    S(atg_rt_err_u(gc, 31, 0, 33, NULL, 9, 2, atg_un_inv_str));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(M), 31), NULL, NULL));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 14), NULL, NULL));
-    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(I6), 35), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 30), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
-    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(M), 30)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
-    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(I6), 35), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(I6), 34), gen_idx_m(gc, X64_TYPE(I6), 2, gen_tmp(gc, X64_TYPE(M), 29), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(M), 29)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(I6), 34), NULL, NULL));
     S(gen_a(gc, GEN_OP(CALLNPR), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(vr_f)), NULL));
     S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
     V(cn, gc);
@@ -1613,4 +1611,211 @@ T(vrup) {
     mc *s = kv->d[2].p;
     A(s->d[0] == '5', "inv vr idx err num");
     err_f(e);
+}
+
+T(stll) {
+    AI(TPGM(stll), 2, 3);
+    atg_d_p(t);
+    te *kv;
+    te *uv = TH(UN, 1, "y", TS(VD));
+    te *utt = TH(UN, 2, "y", TS(VD), "z", TRF(2));
+    te *stt = TH(ST, 2, "i", TS(I6), "n", te_c(utt));
+    te *fa = TFN(FN, TS(VD), 2, "x", te_c(stt), 0, "i", TS(I6), 1);
+    te *fb = TFN(FN, TS(VD), 1, "x", te_c(stt), 0);
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    gen_type_aff(gc, stt, &e, "");
+    D(stt, gc);
+    gen_f(gc);
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    gen_type_aff(gc, utt, &e, "");
+    D(utt, gc);
+    gen_f(gc);
+    te *cn = RN(LN(LT(4, "l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt), "a", FLG(-1, LTE_FLG(F)), te_c(fa), "i", FLG(1, LTE_FLG(L)), TS(I6), "b", FLG(-2, LTE_FLG(F)), te_c(fb)), L(7,
+        ON(te_c(stt), DFN, EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)), ON(te_c(stt), MTCH, LN(NULL, NULL), LN(NULL, L(2,
+                ZTN("i", TS(VD), SN(I6, I6(0))),
+                ZTN("n", TS(VD), ZTN("y", te_c(utt), NULL))
+            )))),
+        ON(te_c(fa), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), ON(te_c(fa), CST, NN(T, te_c(fa)),
+            LN(LT(3, "i", FLG(1, LTE_FLG(A)), TS(I6), "x", FLG(0, LTE_FLG(A)), te_c(stt), "0", FLG(0, LTE_FLG(L)), TS(SG)), L(2,
+                ON(TS(VD), DUMP, SN(U5, U5(1)), ON(TS(SG), DFN, EN("0", FLG(0, LTE_FLG(L)), TS(SG)),
+                    AN(TS(SG), CS("a: %ld"), L(1, EN("i", FLG(1, LTE_FLG(A)), TS(I6)))))),
+                ON(TS(VD), MTCH,
+                    LN(NULL, L(1, ZTN("n", te_c(utt), EN("x", FLG(0, LTE_FLG(A)), te_c(stt))))),
+                    LN(LT(4, "x", U6(0), NULL, "i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6), "a", U6(0), NULL, "z", FLG(-1, LTE_FLG(Y)), te_c(stt)), L(2,
+                        ZTN("y", TS(_M), ON(te_c(stt), AGN,
+                            ZTN("z", te_c(stt), ZTN("n", te_c(utt), EN("x", FLG(0, LTE_FLG(A)), te_c(stt)))),
+                            ON(te_c(stt), MTCH, LN(NULL, NULL),
+                                LN(LT(1, "i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6)), L(2,
+                                    ZTN("i", TS(VD), EN("i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6))),
+                                    ZTN("n", TS(VD), ZTN("y", te_c(uv), NULL))
+                                ))))),
+                        ZTN("z", TS(_M), AN(TS(VD), EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), L(2,
+                            EN("z", FLG(-1, LTE_FLG(Y)), te_c(stt)),
+                            EN("i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6))
+                        )))
+                    )))
+            )))),
+       ON(TS(I6), DFN, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(0))),
+       ON(TS(VD), LOOP,
+            LN(NULL, L(1, ON(TS(BL), LTE, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(5))))),
+            LN(NULL, L(1, AN(TS(VD), EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), L(2,
+                EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)),
+                ON(TS(I6), ADDA, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))
+            ))))),
+       ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt))),
+       ON(te_c(fb), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fb)), SN(_G, U5(-2))),
+        AN(TS(VD), EN("b", FLG(-2, LTE_FLG(F)), te_c(fb)), L(1,
+            EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt))))
+    )));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -2), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(U6), 0), gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(67))));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 1), gen_call_m(gc, 2, gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i))));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 2), gen_tmp(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(32))));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(I6), 3), gen_idx_m(gc, X64_TYPE(I6), 2, gen_arg(gc, X64_TYPE(MM), 0), gen_data(gc, X64_TYPE(U3), U3(32))), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_tmp(gc, X64_TYPE(U6), 0), gen_call_m(gc, 4, gen_tmp(gc, X64_TYPE(M), 2), gen_tmp(gc, X64_TYPE(U6), 0), gen_char(gc, "b: %ld"), gen_tmp(gc, X64_TYPE(I6), 3)), gen_data(gc, X64_TYPE(M), P(snprintf))));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(U6), 0), gen_tmp(gc, X64_TYPE(U6), 0), gen_data(gc, X64_TYPE(U6), U6(1))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 1), gen_data(gc, X64_TYPE(U3), U3(16))), gen_tmp(gc, X64_TYPE(U6), 0), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_tmp(gc, X64_TYPE(M), 1), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 4), gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(SG)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(M), 4)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_nl))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), 6), gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(MM), 0), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(MM), 6), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 0)));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), (uint32_t) -2), gen_tmp(gc, X64_TYPE(MM), 6), gen_data(gc, X64_TYPE(U3), U3(40))));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(MM), (uint32_t) -2)), gen_lbl(gc, (uint32_t) -2), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), NULL, NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    cn = RN(LN(LT(4, "l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt), "a", FLG(-1, LTE_FLG(F)), te_c(fa), "i", FLG(1, LTE_FLG(L)), TS(I6), "b", FLG(-2, LTE_FLG(F)), te_c(fb)), L(7,
+        ON(te_c(stt), DFN, EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)), ON(te_c(stt), MTCH, LN(NULL, NULL), LN(NULL, L(2,
+                ZTN("i", TS(VD), SN(I6, I6(0))),
+                ZTN("n", TS(VD), ZTN("y", te_c(utt), NULL))
+            )))),
+        ON(te_c(fa), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), SN(_G, U5(-1))),
+       ON(TS(I6), DFN, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(0))),
+       ON(TS(VD), LOOP,
+            LN(NULL, L(1, ON(TS(BL), LTE, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(5))))),
+            LN(NULL, L(1, AN(TS(VD), EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), L(2,
+                EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt)),
+                ON(TS(I6), ADDA, EN("i", FLG(1, LTE_FLG(L)), TS(I6)), SN(I6, I6(1)))
+            ))))),
+       ON(TS(VD), DUMP, SN(U5, U5(1)), EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt))),
+       ON(te_c(fb), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fb)), SN(_G, U5(-2))),
+        AN(TS(VD), EN("b", FLG(-2, LTE_FLG(F)), te_c(fb)), L(1,
+            EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt))))
+    )));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(U6), 7), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(U6), 7), gen_tmp(gc, X64_TYPE(U6), 7), gen_data(gc, X64_TYPE(U6), U6(67))));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 8), gen_call_m(gc, 2, gen_tmp(gc, X64_TYPE(U6), 7), gen_data(gc, X64_TYPE(M), P(&al_mc))), gen_data(gc, X64_TYPE(M), P(mc_i))));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 9), gen_tmp(gc, X64_TYPE(M), 8), gen_data(gc, X64_TYPE(U3), U3(32))));
+    S(gen_a(gc, GEN_OP(CALLV), gen_tmp(gc, X64_TYPE(U6), 7), gen_call_m(gc, 4, gen_tmp(gc, X64_TYPE(M), 9), gen_tmp(gc, X64_TYPE(U6), 7), gen_char(gc, "a: %ld"), gen_arg(gc, X64_TYPE(I6), 1)), gen_data(gc, X64_TYPE(M), P(snprintf))));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(U6), 7), gen_tmp(gc, X64_TYPE(U6), 7), gen_data(gc, X64_TYPE(U6), U6(1))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 8), gen_data(gc, X64_TYPE(U3), U3(16))), gen_tmp(gc, X64_TYPE(U6), 7), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 8), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_tmp(gc, X64_TYPE(M), 8), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 10), gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(SG)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_tmp(gc, X64_TYPE(M), 10)), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_nl))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), 12), gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(MM), 0), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(MM), 12), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 2)));
+    A(tbl_g_i(t->dt, P(stt), &kv) == TBL_STAT(OK), "inv des");
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 13), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 13), gen_data(gc, X64_TYPE(U3), U3(32))), gen_arg(gc, X64_TYPE(I6), 1), NULL));
+    A(tbl_g_i(t->dt, P(utt), &kv) == TBL_STAT(OK), "inv des");
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 14), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 14), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 14), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 13), gen_data(gc, X64_TYPE(U3), U3(40))), gen_tmp(gc, X64_TYPE(M), 14), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 13), NULL, NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), 11), gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(MM), 0), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 17), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 17), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 17), gen_data(gc, X64_TYPE(U3), U3(40))), gen_tmp(gc, X64_TYPE(M), 13), NULL));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(M), 16), gen_tmp(gc, X64_TYPE(MM), 11), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_tmp(gc, X64_TYPE(M), 16)), gen_data(gc, X64_TYPE(M), P(te_f)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(MM), 11), gen_tmp(gc, X64_TYPE(M), 17), NULL));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 2), NULL, NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(MM), 12), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(REF), gen_tmp(gc, X64_TYPE(MM), (uint32_t) -1), gen_tmp(gc, X64_TYPE(MM), 12), gen_data(gc, X64_TYPE(U3), U3(40))));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 2, gen_tmp(gc, X64_TYPE(MM), (uint32_t) -1), gen_arg(gc, X64_TYPE(I6), 1)), gen_lbl(gc, (uint32_t) -1), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_data(gc, X64_TYPE(M), P(mc_f)), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), NULL, NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    cn = RN(SN(_G, U5(3)));
+    gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 3), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(M), P(NULL)), NULL));
+    A(tbl_g_i(t->dt, P(stt), &kv) == TBL_STAT(OK), "inv des");
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 18), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 18), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(I6), I6(0)), NULL));
+    A(tbl_g_i(t->dt, P(utt), &kv) == TBL_STAT(OK), "inv des");
+    S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 19), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 19), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 19), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 18), gen_data(gc, X64_TYPE(U3), U3(40))), gen_tmp(gc, X64_TYPE(M), 19), NULL));
+    S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 18), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(M), 0), gen_tmp(gc, X64_TYPE(M), 18), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(0)), NULL));
+    S(gen_a(gc, GEN_OP(GT), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(5)), gen_lbl(gc, 5)));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 4), NULL, NULL));
+    S(gen_a(gc, GEN_OP(ADD), gen_stkv(gc, X64_TYPE(I6), 1), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(1))));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 2, gen_idx_m(gc, X64_TYPE(MM), 1, gen_stkv(gc, X64_TYPE(M), 0)), gen_stkv(gc, X64_TYPE(I6), 1)), gen_lbl(gc, (uint32_t) -1), NULL));
+    S(gen_a(gc, GEN_OP(LTE), gen_stkv(gc, X64_TYPE(I6), 1), gen_data(gc, X64_TYPE(I6), I6(5)), gen_lbl(gc, 4)));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 5), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(ST)])), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 5, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(I6)])), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt)), gen_idx_m(gc, X64_TYPE(I6), 2, gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32)))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_char(gc, "i")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_tmp(gc, X64_TYPE(M), 20), gen_idx_m(gc, X64_TYPE(M), 2, gen_stkv(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40))), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(UN)])), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_tmp(gc, X64_TYPE(M), 20), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 7)));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(VD)])), gen_data(gc, X64_TYPE(U5), U5(2)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_char(gc, "y")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 6), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 7), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_strs[TYPE(RF)])), gen_data(gc, X64_TYPE(U5), U5(2)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_char(gc, "z")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 6), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_end)), gen_data(gc, X64_TYPE(U5), U5(1)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_sym_str)), gen_char(gc, "n")), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 4, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_end)), gen_data(gc, X64_TYPE(U5), U5(0)), gen_data(gc, X64_TYPE(M), P(atg_dump_idnt))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALLV), gen_call_m(gc, 2, gen_data(gc, X64_TYPE(M), P(stdout)), gen_data(gc, X64_TYPE(M), P(atg_dump_nl))), gen_data(gc, X64_TYPE(M), P(fprintf)), NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(MM), 1, gen_stkv(gc, X64_TYPE(M), 0))), gen_lbl(gc, (uint32_t) -2), NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_stkv(gc, X64_TYPE(M), 0), NULL));
+    S(gen_a(gc, GEN_OP(LEAVE), gen_data(gc, X64_TYPE(M), P(NULL)), NULL, NULL));
+    V(cn, gc);
+    te_f(cn);
+    gen_f(gc);
+    te_f(uv);
+    te_f(utt);
+    te_f(stt);
+    te_f(fa);
+    te_f(fb);
+    tbl *xt = tbl_c(an->d[3].p);
+    AR(3);
+    opt_exp_tbl_f(xt);
 }

@@ -394,8 +394,10 @@ static chk_stat st_init(chk *c, te *an, err **e) {
 static chk_stat chk_mtch(chk *c, te *an, err **e) {
     if (!((te*) an->d[5].p)->d[4].p) return st_init(c, an, e);
     te *pn = an->d[0].p, *t, *rt = NULL, *h, *n;
-    if (pn->d[2].u4 == AST_CLS(L) && (((te*) pn->d[0].p)->d[2].u4 == AST_CLS(R) || ((lst*) pn->d[4].p)->t->d[0].p != an)) return CHK_STAT(OK);
-    // TODO chk for parent op or return else set return type to void
+    if (pn->d[2].u4 == AST_CLS(L) && (((te*) pn->d[0].p)->d[2].u4 == AST_CLS(R) || ((lst*) pn->d[4].p)->t->d[0].p != an)) {
+        if (!an->d[3].p) an->d[3] = P(type_s_i(c->a->ta, NULL, TYPE(VD)));
+        return CHK_STAT(OK);
+    }
     ssize_t mi = 0;
     h = ((lst*) ((te*) an->d[6].p)->d[4].p)->h;
     while (h) {
@@ -411,7 +413,7 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
         } else if (!rt) rt = te_c(t);
         h = h->d[2].p;
     }
-    if (rt->d[1].u4 != TYPE(VD) && mi > -1 && mi < (ssize_t) ((lst*) ((te*) an->d[6].p)->d[4].p)->l) return chk_err(c, an, e, "chk mtch need def case");
+    if (rt && rt->d[1].u4 != TYPE(VD) && mi > -1 && mi < (ssize_t) ((lst*) ((te*) an->d[6].p)->d[4].p)->l) return chk_err(c, an, e, "chk mtch need def case");
     an->d[3] = P(rt);
     return CHK_STAT(OK);
 }

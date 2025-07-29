@@ -287,7 +287,7 @@ T(fnscope) {
     V(RN(LN(LT(3, "b", FLG(-2, LTE_FLG(F)), te_c(fn), "a", FLG(-1, LTE_FLG(F)), te_c(fn), "c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(5,
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), NN(T, te_c(fn))),
         ON(te_c(fn), DFN, EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
-            LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
+            LN(LT(2, "b", U6(0), NULL, "n", FLG(0, LTE_FLG(A)), TS(F6)), L(1,
                 AN(TS(F6), EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
             )))),
         ON(te_c(fn), DFN, EN("b", FLG(-2, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
@@ -300,7 +300,7 @@ T(fnscope) {
                 AN(TS(F6), EN("f", FLG(-3, LTE_FLG(F)), te_c(ft)), L(1, EN("n", FLG(0, LTE_FLG(A)), TS(F6))))
             )))),
             ON(te_c(fn), DFN, EN("c", FLG(-4, LTE_FLG(F)), te_c(fn)), ON(te_c(fn), CST, NN(T, te_c(fn)),
-                LN(LT(1, "n", FLG(0, LTE_FLG(A)), TS(F6)),
+                LN(LT(2, "a", U6(0), NULL, "n", FLG(0, LTE_FLG(A)), TS(F6)),
                     L(1, AN(TS(F6), EN("a", FLG(-1, LTE_FLG(F)), te_c(fn)), L(1,
                         EN("n", FLG(0, LTE_FLG(A)), TS(F6)))))))),
             ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("c", FLG(-4, LTE_FLG(F)), te_c(fn)), L(1,
@@ -518,7 +518,6 @@ T(vrup) {
 T(stll) {
     IC(TPGM(stll));
     te *uv = TH(UN, 1, "y", TS(VD));
-    te *su = TH(ST, 2, "i", TS(I6), "n", te_c(uv));
     te *utt = TH(UN, 2, "y", TS(VD), "z", TRF(2));
     te *stt = TH(ST, 2, "i", TS(I6), "n", te_c(utt));
     te *fa = TFN(FN, TS(VD), 2, "x", te_c(stt), 0, "i", TS(I6), 1);
@@ -534,15 +533,14 @@ T(stll) {
                     AN(TS(SG), CS("a: %ld"), L(1, EN("i", FLG(1, LTE_FLG(A)), TS(I6)))))),
                 ON(TS(VD), MTCH,
                     LN(NULL, L(1, ZTN("n", te_c(utt), EN("x", FLG(0, LTE_FLG(A)), te_c(stt))))),
-                    LN(LT(2, "i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6), "z", FLG(-1, LTE_FLG(Y)), te_c(stt)), L(2,
+                    LN(LT(4, "x", U6(0), NULL, "i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6), "a", U6(0), NULL, "z", FLG(-1, LTE_FLG(Y)), te_c(stt)), L(2,
                         ZTN("y", TS(_M), ON(te_c(stt), AGN,
                             ZTN("z", te_c(stt), ZTN("n", te_c(utt), EN("x", FLG(0, LTE_FLG(A)), te_c(stt)))),
-                            ON(te_c(stt), CST, EN("x", FLG(0, LTE_FLG(A)), te_c(stt)),
-                            ON(te_c(su), MTCH, LN(NULL, NULL),
+                            ON(te_c(stt), MTCH, LN(NULL, NULL),
                                 LN(LT(1, "i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6)), L(2,
                                     ZTN("i", TS(VD), EN("i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6))),
                                     ZTN("n", TS(VD), ZTN("y", te_c(uv), NULL))
-                                )))))),
+                                ))))),
                         ZTN("z", TS(_M), AN(TS(VD), EN("a", FLG(-1, LTE_FLG(F)), te_c(fa)), L(2,
                             EN("z", FLG(-1, LTE_FLG(Y)), te_c(stt)),
                             EN("i", FLG(1, LTE_FLG(O) | LTE_FLG(A)), TS(I6))
@@ -564,7 +562,7 @@ T(stll) {
                         EN("x", FLG(0, LTE_FLG(A)), te_c(stt))))))),
                 ON(TS(VD), MTCH,
                     LN(NULL, L(1, ZTN("n", te_c(utt), EN("x", FLG(0, LTE_FLG(A)), te_c(stt))))),
-                    LN(LT(1, "z", FLG(-2, LTE_FLG(Y)), te_c(stt)), L(1,
+                    LN(LT(2, "b", U6(0), NULL, "z", FLG(-2, LTE_FLG(Y)), te_c(stt)), L(1,
                         ZTN("z", TS(_M), AN(TS(VD), EN("b", FLG(-2, LTE_FLG(F)), te_c(fb)), L(1,
                             EN("z", FLG(-2, LTE_FLG(Y)), te_c(stt))
                         )))
@@ -574,7 +572,6 @@ T(stll) {
             EN("l", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(stt))))
     ))));
     te_f(uv);
-    te_f(su);
     te_f(utt);
     te_f(stt);
     te_f(fa);

@@ -63,7 +63,7 @@ static atg_stat dump_un(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_
     atg_stat stat = ATG_STAT(OK);
     uint32_t el = t->lc++, cl = 0;
     size_t eid = 0;
-    te *h;
+    te *h, *ud;
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(UN)]))));
@@ -72,7 +72,9 @@ static atg_stat dump_un(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_
     h = ((tbl*) type->d[2].p)->i->h;
     while (h) {
         if (h->d[2].p && gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, te_c(cd), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(eid)), gen_lbl(g, cl = t->lc++)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-        if ((stat = dump_v(t, g, an, e, f, idnt + 1, ((te*) h->d[0].p)->d[2].p, gen_idx_m(g, type_g_x64_type(((te*) h->d[0].p)->d[2].p), 2, te_c(cd), atg_te_idx_d(g, 1)), false)) != ATG_STAT(OK)) return stat;
+        x64_type xt = type_g_x64_type(((te*) h->d[0].p)->d[2].p);
+        ud = xt != X64_TYPE(N) ? gen_idx_m(g, xt, 2, te_c(cd), atg_te_idx_d(g, 1)) : NULL;
+        if ((stat = dump_v(t, g, an, e, f, idnt + 1, ((te*) h->d[0].p)->d[2].p, ud, false)) != ATG_STAT(OK)) return stat;
         mc *sym = ((te*) h->d[0].p)->d[0].p;
         if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 3, gen_data(g, X64_TYPE(M), P(f)), gen_data(g, X64_TYPE(M), P(atg_sym_str)), gen_data(g, X64_TYPE(S), P(sym))), gen_data(g, X64_TYPE(M), P(fprintf)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         if (h->d[2].p) {

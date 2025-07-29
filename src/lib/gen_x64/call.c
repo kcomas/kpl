@@ -71,17 +71,17 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         }
     }
     /*
-       for (size_t i = 0; i < 12; i++) {
-       if (args[i].i < 0) continue;
-       printf("r: %s, i: %d, ", reg_str(args[i].r), args[i].i);
-       if (args[i].a > -1) printf("a: %s, ", reg_str(args[i].a));
-       printf("d: 0x%lX\n", args[i].d.u6);
-       }
-       for (size_t i = 0; i < ri; i++) printf("%s ", reg_str(rs[i]));
-       if (ri > 0) putchar('\n');
-       for (size_t i = 0; i < xi; i++) printf("%s ", reg_str(xs[i]));
-       if (xi > 0) putchar('\n');
-     */
+    for (size_t i = 0; i < 12; i++) {
+        if (args[i].i < 0) continue;
+        printf("r: %s, i: %d, ", reg_str(args[i].r), args[i].i);
+        if (args[i].a > -1) printf("a: %s, ", reg_str(args[i].a));
+        printf("d: 0x%lX\n", args[i].d.u6);
+    }
+    for (size_t i = 0; i < ri; i++) printf("%s ", reg_str(rs[i]));
+    if (ri > 0) putchar('\n');
+    for (size_t i = 0; i < xi; i++) printf("%s ", reg_str(xs[i]));
+    */
+    if (xi > 0) putchar('\n');
     if (ras & 1) align++;
     if (vs && vs->l & 1) align++;
     if (ri & 1) align++;
@@ -200,6 +200,22 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                             if ((stat = idx_from(g, st, ci, a, e, AS_X64(MOV), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(args[ra].r)), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
                             args[ra].a = args[ra].r;
                             ra++;
+                            break;
+                        case X64_TYPE(MM):
+                            if (((vr*) ovt->d[1].p)->l == 1) {
+                                h = ((vr*) ovt->d[1].p)->d[0].p;
+                                switch (gen_var_g_c(h)) {
+                                    case GEN_CLS(V):
+                                        args[ra].i = i;
+                                        if ((stat = st_stkv_idx(st, gen_var_g_t(h), h->d[1].u3, &idx)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv call stk idx");
+                                        if (gen_as_rrmbd(a, AS_X64(LEA), args[ra].r, R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                                        args[ra].a = args[ra].r;
+                                        ra++;
+                                        break;
+                                    default:
+                                        return gen_err(g, ci, e, "gen inv single MM cls");
+                                }
+                            } else return gen_err(g, ci, e, "gen cls I type MM inv");
                             break;
                         default:
                             return gen_err(g, ci, e, "gen call cls I inv type");

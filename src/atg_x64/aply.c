@@ -23,15 +23,13 @@ static atg_stat lst_args_var(atg *t, gen *g, err **e, lst *l, vr **v) {
                 break;
             case AST_CLS(O):
             case AST_CLS(A):
+            case AST_CLS(Z):
                 arg = te_c((atg_g_g(an))->d[1].p);
                 break;
             default:
                 return atg_err(t, an, e, "atg lst arg cls inv");
         }
-        if (gen_var_g_t(arg) == X64_TYPE(M)) {
-            if (gen_a(g, GEN_OP(REF), gen_tmp(g, X64_TYPE(MM), t->tc++), arg, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-            arg = te_c(((te*) g->code->t->d[0].p)->d[1].p);
-        }
+        if (gen_var_g_t(arg) == X64_TYPE(M)) arg = gen_idx_m(g, X64_TYPE(MM), 1, arg);
         vr_ab_nc(g, l->l, v, P(arg));
         h = h->d[2].p;
     }
@@ -173,6 +171,7 @@ static atg_stat aply_e_cs(atg *t, gen *g, te *an, err **e) {
     te *h = l->h, *tn;
     while (h) {
         if (ast_g_t(h->d[0].p, &tn) != AST_STAT(OK)) return atg_err(t, an, e, "atg aply cs inv arg type");
+        if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
         switch (tn->d[1].u4) {
             case TYPE(I6):
             case TYPE(F6):

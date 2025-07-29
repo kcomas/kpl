@@ -17,12 +17,13 @@ static const uint8_t dopts[26] = {
     ['c' - 'a'] = Z_D_FLG(C),
     ['o' - 'a'] = Z_D_FLG(O),
     ['g' - 'a'] = Z_D_FLG(G),
-    ['s' - 'a'] = Z_D_FLG(S)
+    ['s' - 'a'] = Z_D_FLG(S),
+    ['y' - 'a'] = Z_D_FLG(Y)
 };
 
 int main(int argc, char *argv[]) {
     ssize_t i = 1, x = 1, o = 0;
-    uint8_t dflgs = 0;
+    uint16_t dflgs = 0;
     while (i < argc && argv[i][0] == '-') {
         switch (argv[i][x]) {
             case 'h':

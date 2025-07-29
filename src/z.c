@@ -117,7 +117,7 @@ static err *z_err(mc *fn, err *e) {
     return err_i(&al_err, z_fn_e_p, (void*) te_f, t, __FUNCTION__);
 }
 
-err *z(mc *fn, tbl **et, uint8_t dflgs) {
+err *z(mc *fn, tbl **et, uint16_t dflgs) {
     err *e = NULL;
     mc *pgm = NULL;
     if (!(dflgs & Z_D_FLG(E))) {
@@ -307,6 +307,10 @@ err *z(mc *fn, tbl **et, uint8_t dflgs) {
             te_f(an);
             mc_f(pgm);
             return z_err(fn, e);
+        }
+        if (dflgs & Z_D_FLG(Y)) {
+            gen_p(zg, NULL);
+            putchar('\n');
         }
         gen_st_f(zst);
         gen_f(zg);
