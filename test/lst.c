@@ -147,3 +147,28 @@ T(sort) {
     lst_f(a);
     lst_f(b);
 }
+
+T(insb) {
+    lst *l = lst_i_v(&al_lst, &al_te, NULL, 3, 1, 2, 3);
+    A(lst_insb(l, I6(5), I6(2), eq_num) == LST_STAT(OK), "insb");
+    A(l->l == 4, "inv len");
+    lst_i6_p(l);
+    te *h = l->h;
+    A(h->d[0].i6 == 1, "inv v");
+    h = h->d[2].p;
+    A(h->d[0].i6 == 5, "inv v");
+    h = h->d[2].p;
+    A(h->d[0].i6 == 2, "inv v");
+    h = h->d[2].p;
+    A(h->d[0].i6 == 3, "inv v");
+    lst_f(l);
+    l = lst_i_v(&al_lst, &al_te, NULL, 1, 7);
+    A(lst_insb(l, I6(8), I6(7), eq_num) == LST_STAT(OK), "insb");
+    A(l->l == 2, "inv len");
+    lst_i6_p(l);
+    h = l->h;
+    A(h->d[0].i6 == 8, "inv v");
+    h = h->d[2].p;
+    A(h->d[0].i6 == 7, "inv v");
+    lst_f(l);
+}

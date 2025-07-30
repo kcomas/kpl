@@ -200,6 +200,25 @@ void lst_li_d(lst *l, te *li) {
     l->l--;
 }
 
+lst_stat lst_insb(lst *l, un d, un t, lst_eq_fn fn) {
+    te *h = l->h, *p;
+    while (h) {
+        if (fn(h->d[0], t)) {
+            te *li = te_i(3, l->ta, NULL);
+            li->d[0] = d;
+            li->d[2] = P(h);
+            p = h->d[1].p;
+            h->d[1] = P(li);
+            if (!p) l->h = li;
+            else p->d[2] = P(li);
+            l->l++;
+            return LST_STAT(OK);
+        }
+        h = h->d[2].p;
+    }
+    return LST_STAT(NF);
+}
+
 void lst_f(lst *l) {
     if (!l || --l->r > 0) return;
     te *h = l->h;

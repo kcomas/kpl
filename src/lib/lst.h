@@ -51,4 +51,6 @@ lst_stat lst_sf(lst *l, un *d);
 
 void lst_li_d(lst *l, te *li);
 
+lst_stat lst_insb(lst *l, un d, un t, lst_eq_fn fn);
+
 void lst_f(lst *l);

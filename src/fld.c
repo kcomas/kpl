@@ -72,6 +72,44 @@ static fld_stat enlst(fld *f, te **an, err **e) {
     return FLD_STAT(OK);
 }
 
+static bool loop_lst_eq(un a, un b) {
+    return a.p == b.p;
+}
+
+static fld_stat loop_r(fld *f, te **an, err **e) {
+    fld_stat fstat;
+    te *ap = (*an)->d[5].p, *a, *b, *c, *h;
+    lst *l = ap->d[5].p;
+    h = l->h;
+    a = te_c(h->d[0].p);
+    h = h->d[2].p;
+    b = te_c(h->d[0].p);
+    h = h->d[2].p;
+    c = te_c(h->d[0].p);
+    te_f(ap);
+    (*an)->d[5] = P(b);
+    b->d[0] = P(*an);
+    if ((fstat = enlst(f, (te**) &(*an)->d[6].p, e)) != FLD_STAT(OK)) return fstat;
+    ap = (*an)->d[6].p;
+    l = ap->d[4].p;
+    lst_ab(l, P(c));
+    c->d[0] = P(ap);
+    ap = (*an)->d[0].p;
+    if (ap->d[2].u4 != AST_CLS(L)) return fld_err(f, *an, e, "fld inv loop pn");
+    l = ap->d[4].p;
+    if (lst_insb(l, P(a), P(*an), loop_lst_eq) != LST_STAT(OK)) return fld_err(f, *an, e, "fld update loop error");
+    a->d[0] = P(ap);
+    return FLD_STAT(OK);
+}
+
+static bool loop_t(const te *an) {
+    if (an->d[4].u4 != OC(LOOP)) return false;
+    te *l = an->d[5].p;
+    if (l->d[2].u4 != AST_CLS(A)) return false;
+    if (l->d[4].p) return false;
+    return ((lst*) l->d[5].p)->l == 3;
+}
+
 static fld_stat op_lr_lst_r(fld *f, te **an, err **e) {
     fld_stat fstat;
     if ((fstat = enlst(f, (te**) &(*an)->d[5].p, e)) != FLD_STAT(OK)) return fstat;
@@ -414,6 +452,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(L), lst_t, lst_r);
     fld_a(f, AST_CLS(S), s_cs_sg_t, s_cs_sg_r);
     fld_a(f, AST_CLS(I), idnt_lst_t, idnt_lst_r);
+    fld_a(f, AST_CLS(O), loop_t, loop_r);
     fld_a(f, AST_CLS(O), op_lr_lst_t, op_lr_lst_r);
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
     fld_a(f, AST_CLS(O), op_ns_t, op_ns_r);
