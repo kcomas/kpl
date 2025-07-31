@@ -714,12 +714,13 @@ T(validm) {
             ),
             OP(N(VAR), OP(N(NONE), SYM(APLY(N(VAR), N(INT))))),
             OP( // @
-                APLY(N(NONE), OP(N(VAR), N(INT)), OP(N(VAR), N(VAR)), OP(N(VAR), N(INT))),
+                APLY(N(NONE), OP(N(VAR), OP(N(TYPE), N(INT))), OP(N(VAR), N(VAR)), OP(N(VAR), N(INT))),
                 APLY(OP(N(NONE), N(NONE)),
                     APLY(OP(N(NONE), N(NONE)), N(VAR), OP(N(NONE), SYM(APLY(N(VAR), N(VAR))))),
                     OP(N(NONE), N(STR))
                 )
-            )
+            ),
+            SYM(N(NONE))
         ))),
         OP(N(NONE), APLY(N(VAR), N(VAR))),
         CMD(N(VAR)),

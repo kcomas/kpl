@@ -468,7 +468,7 @@ T(stll) {
     )), NULL)));
 }
 
-TO(validm) {
+T(validm) {
     V(TPGM(validm), RN(AN(NULL, LN(LT(3, "a", U6(0), NULL, "b", U6(0), NULL, "v", U6(0), NULL), L(6,
         ON(NULL, DFN, EN("a", U6(0), NULL), ON(NULL, CST, TN(VR), VN(NULL, L(2,
             ON(NULL, CST, TN(VR), VN(NULL, L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))),
@@ -478,8 +478,8 @@ TO(validm) {
             ON(NULL, CST, TN(VR), VN(NULL, L(2, SN(I6, I6(1)), SN(I6, I6(2))))),
             ON(NULL, CST, TN(VR), VN(NULL, L(1, SN(I6, I6(4)))))
         )))),
-        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, NULL, 1, "x", TRF(1), 0)),
-            LN(LT(4, "l", U6(0), NULL, "x", U6(0), NULL, "t", U6(0), NULL, "i", U6(0), NULL), L(4,
+        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, NULL, 1, "x", TRF(9), 0)),
+            LN(LT(4, "l", U6(0), NULL, "x", U6(0), NULL, "t", U6(0), NULL, "i", U6(0), NULL), L(5,
                 ON(NULL, IF,
                     LN(NULL, L(1, ON(NULL, EQ,
                         ON(NULL, DFN, EN("l", U6(0), NULL), ON(NULL, DIV, NULL, EN("x", U6(0), NULL))),
@@ -487,7 +487,7 @@ TO(validm) {
                     LN(NULL, L(1, ON(NULL, UNER, NULL, ON(TS(SG), CSG, NULL, CS("Empty")))))),
                 ON(NULL, DFN, EN("t", U6(0), NULL), ON(NULL, DIV, NULL,
                     ZN("v", AN(NULL, EN("x", U6(0), NULL), L(1, SN(I6, I6(0))))))),
-                ON(NULL, DFN, EN("i", U6(0), NULL), SN(I6, I6(1))),
+                ON(NULL, DFN, EN("i", U6(0), NULL), ON(NULL, CST, TN(U6), SN(I6, I6(1)))),
                 ON(NULL, LOOP,
                     LN(NULL, L(1,
                         ON(NULL, LT, EN("i", U6(0), NULL), EN("l", U6(0), NULL))
@@ -498,7 +498,8 @@ TO(validm) {
                                 AN(NULL, EN("x", U6(0), NULL), L(1, EN("i", U6(0), NULL)))))))),
                             LN(NULL, L(1, ON(NULL, UNER, NULL, ON(TS(SG), CSG, NULL, CS("Inv")))))),
                         ON(NULL, ADDA, EN("i", U6(0), NULL), SN(I6, I6(1)))
-                    )))
+                    ))),
+                ZN("v", NULL)
             )))),
         ON(NULL, UNER, NULL, AN(NULL, EN("v", U6(0), NULL), L(1, EN("a", U6(0), NULL)))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), NULL)),

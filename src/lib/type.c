@@ -524,7 +524,7 @@ te *type_cpy(const te *t) {
             c = type_s_i(t->af, t->d[0].p, t->d[1].u4);
             break;
         case TYPE_CLS(V):
-            STOP("TODO TYPE CPY V");
+            c = type_v_i(t->af, t->d[0].p, t->d[1].u4, type_cpy(t->d[2].p));
             break;
         case TYPE_CLS(H):
             STOP("TODO TYPE CPY H");

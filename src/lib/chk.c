@@ -97,7 +97,7 @@ static chk_stat chk_foe(chk *c, bool foe, te *an, err **e, const char *m) {
 static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bool foe) { // if we fail on exit
     un hsh = ast_hsh(an);
     te *kv;
-    if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n NF");
+    if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n not found");
     while (n > 0) {
         hsh = U6(0);
         n--;
@@ -120,7 +120,7 @@ static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bo
                     break;
             }
         }
-        if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n NF");
+        if (tbl_g_i(t, hsh, &kv) == TBL_STAT(NF)) return chk_foe(c, foe, an, e, "chk_n not found");
     }
     if (!kv->d[1].p) return chk_foe(c, foe, an, e, "chk_n inv fn");
     return ((chk_fn*) kv->d[1].p)(c, an, e);

@@ -419,7 +419,7 @@ T(validm) {
         )))),
         ON(NULL, DFN, IN("v"), ON(NULL, CST,
             AN(NULL, TN(FN), L(2, ZN("x", CN(T, IN("a"))), NN(T, NULL))),
-            LN(NULL, L(3,
+            LN(NULL, L(4,
                 ON(NULL, IF,
                     AN(NULL, ON(NULL, EQ, NULL, NULL), L(2,
                         ON(NULL, DFN, IN("l"), ON(NULL, DIV, NULL, IN("x"))),
@@ -429,7 +429,7 @@ T(validm) {
                 ON(NULL, DFN, IN("t"), ON(NULL, DIV, NULL, ZN("v", AN(NULL, IN("x"), L(1, SN(I6, I6(0))))))),
                 ON(NULL, LOOP,
                     AN(NULL, NULL, L(3,
-                        ON(NULL, DFN, IN("i"), SN(I6, I6(1))),
+                        ON(NULL, DFN, IN("i"), ON(NULL, CST, TN(U6), SN(I6, I6(1)))),
                         ON(NULL, LT, IN("i"), IN("l")),
                         ON(NULL, ADDA, IN("i"), SN(I6, I6(1)))
                     )),
@@ -439,7 +439,8 @@ T(validm) {
                             ON(NULL, DIV, NULL, ZN("v", AN(NULL, IN("x"), L(1, IN("i")))))
                         )),
                         ON(NULL, UNER, NULL, CS("Inv"))
-                    )))
+                    ))),
+                ZN("v", NULL)
             )))),
         ON(NULL, UNER, NULL, AN(NULL, IN("v"), L(1, IN("a")))),
         CN(P1, IN("a")),
