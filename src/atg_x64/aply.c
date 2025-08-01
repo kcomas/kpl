@@ -210,7 +210,7 @@ atg_stat atg_aply_acc(atg *t, gen *g, te *restrict an, err **e, te *restrict vlt
         if(gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(U6), t->tc++), gen_var_g_c(x) == GEN_CLS(D) ? x : te_c(x), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         *i = te_c(((te*) g->code->t->d[0].p)->d[1].p);
     }
-    if (gen_var_g_c(x) != GEN_CLS(D) && gen_a(g, GEN_OP(LT), x, gen_data(g, X64_TYPE(I6), I6(0)), gen_lbl(g, erlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_var_g_c(x) != GEN_CLS(D) && gen_var_g_t(x) != X64_TYPE(U6) && gen_a(g, GEN_OP(LT), x, gen_data(g, X64_TYPE(I6), I6(0)), gen_lbl(g, erlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 

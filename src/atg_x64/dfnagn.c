@@ -13,11 +13,10 @@ DFNES(f6, F6)
 
 static atg_stat da_in_loop(atg *t, gen *g, te *restrict an, err **e, te *restrict lte, const char *pf) {
     te *tn = lte->d[2].p;
-    if (type_is_ref(tn->d[1].u4) && inloop(an)) {
-        void *fn = type_ref_g_des(tn);
-        if (!fn) return atg_err(t, an, e, "atg inv des for define in loop");
-        if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, var_arg(g, lte, type_g_x64_type(tn))), gen_data(g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, pf);
-    }
+    if (!type_is_ref(tn->d[1].u4) || !inloop(an)) return ATG_STAT(OK);
+    void *fn = type_ref_g_des(tn);
+    if (!fn) return atg_err(t, an, e, "atg inv des for define in loop");
+    if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, var_arg(g, lte, type_g_x64_type(tn))), gen_data(g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, pf);
     return ATG_STAT(OK);
 }
 
@@ -163,6 +162,7 @@ void atg_dfn(atg *t) {
     atg_a_o(t, OC(DFN), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), dfnagn_e_e_);
     atg_a_o(t, OC(DFN), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(O), TYPE(I6), dfn_t_e_t_oa_t);
     atg_a_o(t, OC(DFN), TYPE(I6), AST_CLS(E), TYPE(I6), AST_CLS(A), TYPE(I6), dfn_t_e_t_oa_t);
+    atg_a_o(t, OC(DFN), TYPE(U6), AST_CLS(E), TYPE(U6), AST_CLS(O), TYPE(U6), dfn_t_e_t_oa_t);
     atg_a_o(t, OC(DFN), TYPE(U6), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), dfn_u6_e_u6_s_u6);
     atg_a_o(t, OC(DFN), TYPE(F6), AST_CLS(E), TYPE(F6), AST_CLS(S), TYPE(F6), dfn_f6_e_f6_s_f6);
     atg_a_o(t, OC(DFN), TYPE(FN), AST_CLS(E), TYPE(FN), AST_CLS(S), TYPE(_G), dfn_fn_e_fn_s__g);

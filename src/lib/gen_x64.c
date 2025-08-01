@@ -733,7 +733,7 @@ static gen_stat lbl_fn(gen *g, void *s, te *ci, as *a, err **e)  {
 static gen_stat jmp_fn(gen *g, void *s, te *ci, as *a, err **e) {
     (void) s;
     te *lbl = ci->d[1].p;
-    if (gen_as(a, AS_X64(JMP), as_arg_i(a, ARG_ID(L), lbl->d[1]), NULL, NULL, NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(JMP), as_arg_i(a, ARG_ID(L), lbl->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
     return GEN_STAT(OK);
 }
 
@@ -759,6 +759,7 @@ gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(D), X64_TYPE(I6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U3), nop_fn);
+    GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(I6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(M), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(MM), nop_fn);

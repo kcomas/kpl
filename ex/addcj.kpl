@@ -1,0 +1,14 @@
+
+// add closure example
+
+m::FN${
+    c::0
+    CJ${
+        "Add: {}"(I6(x))\p1
+        c+:x
+    }
+}
+a::m()
+a(1)\p1
+a(5)\p1
+a(10)\p1

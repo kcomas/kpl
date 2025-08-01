@@ -491,6 +491,7 @@ bool type_has_refs(const te *t) {
         case TYPE_CLS(S):
             return type_is_ref(t->d[1].u4);
         case TYPE_CLS(V):
+            if (type_is_ref(((te*) t->d[2].p)->d[1].u4)) return true;
             if (type_has_refs(t->d[2].p)) return true;
             break;
         case TYPE_CLS(H):

@@ -432,8 +432,8 @@ static chk_stat chk_vr_len(chk *c, te *an, err **e) {
 
 static chk_stat chk_fn_args(chk *c, te *restrict an, err **e, te *restrict t, lst *l) {
     tbl *fa = t->d[3].p;
-    if (!l || fa->i->l == 0) return CHK_STAT(OK);
-    if (fa->i->l != l->l) return chk_err(c, an, e, "chk args len");
+    if (!l && (!fa || !fa->i->l)) return CHK_STAT(OK);
+    if ((!l && fa->i->l) || (fa->i->l != l->l)) return chk_err(c, an, e, "chk args len");
     te *fh = fa->i->h, *lh = l->h, *ft, *lt;
     while (fh && lh) {
         ft = ((te*) fh->d[0].p)->d[2].p;
@@ -596,8 +596,7 @@ static chk_stat chk_aply_cj(chk *c, te *an, err **e) {
     if (type_g_c(tn->d[1].u4) != TYPE_CLS(F)) return chk_err(c, an, e, "chk inv cj inner type");
     tbl *s = tn->d[4].p;
     if (!s || s->i->l == 0) return chk_err(c, an, e, "chk inv cj no scope");
-    an->d[3] = P(te_c(tn->d[2].p));
-    return CHK_STAT(OK);
+    return chk_aply_fn(c, an, e, tn, an->d[5].p);
 }
 
 chk_stat chk_fn_ref_ret(chk *c, te *restrict an, err **e, te *restrict op) {

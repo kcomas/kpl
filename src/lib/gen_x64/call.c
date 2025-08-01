@@ -98,6 +98,39 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
             } else if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(RM), U3(R(SP))), as_arg_i(a, ARG_ID(X), U3(xs[i])), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
         }
     }
+    if (vs) {
+        for (size_t i = 0; i < vs->l; i++) {
+            ovt = vs->d[i].p;
+            switch (gen_var_g_c(ovt)) {
+                case GEN_CLS(A):
+                case GEN_CLS(T):
+                    if (!x64_type_is_ref(gen_var_g_t(ovt))) return gen_err(g, ci, e, "gen arg tmp stk arg not ref");
+                    if (get_reg(st, ovt, &kvs) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv arg tmp stk reg");
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), kvs->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    drop_atm_kv(st, kvs, ci);
+                    break;
+                case GEN_CLS(V):
+                    if (st_stkv_idx(st, gen_var_g_t(ovt), ovt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call inv stk arg");
+                    if (!x64_type_is_ref(gen_var_g_t(ovt))) {
+                        if (gen_as_rrmbd(a, AS_X64(LEA), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    } else return gen_err(g, ci, e, "gen stk ref nyi");
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    break;
+                case GEN_CLS(S):
+                    if (st_stka_idx(gen_var_g_t(ovt), ovt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call inv stka arg");
+                    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    break;
+                case GEN_CLS(I):
+                    if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(LEA), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+                    break;
+                default:
+                    return gen_err(g, ci, e, "gen stk args cls inv");
+            }
+        }
+    }
     if (va) {
         for (size_t i = 0; i < va->l; i++) {
             if (xa > 13) return gen_err(g, ci, e, "gen call too many args");
@@ -295,39 +328,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                 if (gen_as(a, AS_X64(MOVSD), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(QW), args[i].d), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             } else {
                 if (gen_as(a, AS_X64(PXOR), as_arg_i(a, ARG_ID(X), U3(args[i].r)), as_arg_i(a, ARG_ID(X), U3(args[i].r)), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-            }
-        }
-    }
-    if (vs) {
-        for (size_t i = 0; i < vs->l; i++) {
-            ovt = vs->d[i].p;
-            switch (gen_var_g_c(ovt)) {
-                case GEN_CLS(A):
-                case GEN_CLS(T):
-                    if (!x64_type_is_ref(gen_var_g_t(ovt))) return gen_err(g, ci, e, "gen arg tmp stk arg not ref");
-                    if (get_reg(st, ovt, &kvs) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen inv arg tmp stk reg");
-                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), kvs->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    drop_atm_kv(st, kvs, ci);
-                    break;
-                case GEN_CLS(V):
-                    if (st_stkv_idx(st, gen_var_g_t(ovt), ovt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call inv stk arg");
-                    if (!x64_type_is_ref(gen_var_g_t(ovt))) {
-                        if (gen_as_rrmbd(a, AS_X64(LEA), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    } else return gen_err(g, ci, e, "gen stk ref nyi");
-                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    break;
-                case GEN_CLS(S):
-                    if (st_stka_idx(gen_var_g_t(ovt), ovt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen call inv stka arg");
-                    if (gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), idx, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    break;
-                case GEN_CLS(I):
-                    if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
-                    if ((stat = idx_from(g, st, ci, a, e, AS_X64(LEA), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(R(AX))), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
-                    if (gen_as(a, AS_X64(PUSH), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
-                    break;
-                default:
-                    return gen_err(g, ci, e, "gen stk args cls inv");
             }
         }
     }
