@@ -757,6 +757,7 @@ void gen_bin(gen *g);
 
 gen *gen_b(gen *g) {
     GEN_OP_A1(g, GEN_OP(LBL), GEN_CLS(L), X64_TYPE(N), lbl_fn);
+    GEN_OP_A0(g, GEN_OP(NOP), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(D), X64_TYPE(I6), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U3), nop_fn);
     GEN_OP_A1(g, GEN_OP(NOP), GEN_CLS(T), X64_TYPE(U6), nop_fn);

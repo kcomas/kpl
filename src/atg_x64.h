@@ -26,7 +26,7 @@ atg_stat atg_g_un_ev(te *tn, uint64_t *esym, uint64_t *vsym);
 
 te *var_arg(gen *g, te *lte, x64_type xt);
 
-atg_stat atg_an_var(atg *t, gen *g, te **i, err **e);
+atg_stat atg_an_var(gen *g, te **i);
 
 atg_stat atg_nop(atg *t, gen *g, te *an, err **e);
 

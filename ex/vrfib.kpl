@@ -2,9 +2,5 @@
 // insert first n fib into vec
 
 v::VR$[0;1]
-n::50
->(n;1)@{
-    v,:v(-1)`v+v(-2)`v
-    n-:1
-}
+(n::50;n>1;n-:1)@v,:v(-1)`v+v(-2)`v
 v\p1

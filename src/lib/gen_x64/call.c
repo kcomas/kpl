@@ -25,7 +25,6 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
     int8_t ras = 0;
     uint8_t ra = 0, xa = 6, cr = 0, cx = 0, align = 0;
     int32_t idx;
-    rac tmp;
     rac args[] = {
         { R(DI), -1, -1, U6(0) },
         { R(SI), -1, -1, U6(0) },
@@ -41,7 +40,7 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
         { XMM(5), -1, -1, U6(0) },
         { XMM(6), -1, -1, U6(0) },
         { XMM(7), -1, -1, U6(0) }
-    };
+    }, tmp;
     size_t kvi = 0;
     te *ovt, *kvs, *kv[14], *rkv, *h, *sa[MAX_R_STK];
     reg ret = R(AX), save;

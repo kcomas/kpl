@@ -127,7 +127,7 @@ static atg_stat agn_vr_idx(atg *t, gen *g, te *an, err **e) {
     uint32_t erlb = t->lc++, glb = t->lc++, ei = t->tc++, esi = t->tc++, si = t->tc++, ii = t->tc++, ui = t->tc++, ri = t->tc++;
     uint64_t esym, vsym;
     te *l = an->d[5].p, *v = l->d[4].p, *i = ((lst*) l->d[5].p)->h->d[0].p, *tkn = ((te*) an->d[1].p)->d[2].p, *r = an->d[6].p, *rt;
-    if ((stat = atg_an_var(t, g, &i, e)) != ATG_STAT(OK)) return stat;
+    if ((stat = atg_an_var(g, &i)) != ATG_STAT(OK)) return stat;
     if (v->d[2].u4 != AST_CLS(E)) return atg_err(t, an, e, "atg inv vr agn");
     v = var_arg(g, v->d[3].p, X64_TYPE(M));
     if ((stat = atg_aply_acc(t, g, an, e, v, &i, erlb)) != ATG_STAT(OK)) return stat;
@@ -140,7 +140,7 @@ static atg_stat agn_vr_idx(atg *t, gen *g, te *an, err **e) {
         if (gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(M), ui), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     } else if (gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(M), ei), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, glb), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if ((stat = atg_an_var(t, g, &r, e)) != ATG_STAT(OK)) return stat;
+    if ((stat = atg_an_var(g, &r)) != ATG_STAT(OK)) return stat;
     if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return atg_err(t, an, e, "atg agn vr inv rt");
     x64_type xt = gen_var_g_t(r);
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, ri), r, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);

@@ -119,6 +119,8 @@ gen_stat idx_from(const gen *g, void *s, te *restrict ci, as *a, err **e, as_ins
             if (gen_as(a, ai, to, as_arg_i(a, ARG_ID(RM), reg), as_arg_i(a, ARG_ID(RS), as_x64_rs(kvii->d[2].u3, 8)), as_arg_i(a, di, ((te*) i->d[1].p)->d[1]), ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
             drop_atm_kv(st, kvib, ci);
             drop_atm_kv(st, kvii, ci);
+        } else if ((x == GEN_CLS(A) || x == GEN_CLS(T)) && (gen_var_g_t(i->d[0].p) == X64_TYPE(M) || gen_var_g_t(i->d[0].p) == X64_TYPE(MM)) && y == GEN_CLS(D) && z == GEN_CLS(V)) {
+            return gen_err(g, ci, e, "TODO");
         } else if (x == GEN_CLS(V) && gen_var_g_t(i->d[0].p) == X64_TYPE(M) && y == GEN_CLS(D) && (z == GEN_CLS(A) || z == GEN_CLS(T))) {
             tgt = i->d[0].p;
             if (st_stkv_idx(st, gen_var_g_t(tgt), tgt->d[1].u3, &idx) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx");

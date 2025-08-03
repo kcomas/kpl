@@ -249,7 +249,7 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
     uint64_t esym, vsym;
     te *vlte = ((te*) an->d[4].p)->d[3].p, *i = ((lst*) an->d[5].p)->h->d[0].p, *vt = ((te*) vlte->d[2].p)->d[2].p, *tkn = ((te*) an->d[1].p)->d[2].p, *pn = an->d[0].p;
     if (pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(AGN)) return ATG_STAT(OK);
-    if ((stat = atg_an_var(t, g, &i, e)) != ATG_STAT(OK)) return stat;
+    if ((stat = atg_an_var(g, &i)) != ATG_STAT(OK)) return stat;
     if ((stat = atg_te_init(t, g, an, e, an->d[3].p, 2, ui)) != ATG_STAT(OK)) return stat;
     if ((stat = atg_aply_acc(t, g, an, e, vlte, &i, erlb)) != ATG_STAT(OK)) return stat;
     if (atg_g_un_ev(an->d[3].p, &esym, &vsym) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv `e`v for un");

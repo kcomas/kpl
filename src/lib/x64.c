@@ -265,6 +265,17 @@ x64_stat x64_e(size_t *p, uint8_t *m, size_t size, un v) {
     return x64_a(p, m, dsp); \
 }
 
+#define ZRMDR(N, C, RR, RM) x64_stat x64_##N##_rmdr(size_t *p, uint8_t *m, reg d, uint32_t dsp, reg s) { \
+    if (RR > R(15)) return X64_STAT(INV_REG); \
+    if (RM > R(15)) return X64_STAT(INV_REG); \
+    uint8_t rex = REX(W); \
+    if (RR >= R(8)) rex |= REX(R); \
+    if (RM >= R(8)) rex |= REX(B); \
+    x64_b(p, m, 3, rex, C, MOD(10) | rid(RR) << 3 | rid(RM)); \
+    if (RM == R(SP) || RM == R(12)) x64_a(p, m, S1 | RM << 3 | RM); \
+    return x64_a(p, m, dsp); \
+}
+
 #define ZRMOR(N, C, RR, RS, RM) x64_stat x64_##N##_rmor(size_t *p, uint8_t *m, reg d, reg o, scale x, reg s) { \
     if (RR > R(15)) return X64_STAT(INV_REG); \
     if (RS > R(15)) return X64_STAT(INV_REG); \
@@ -625,6 +636,12 @@ ZRRM(cmp, 0x3B, d, s);
 ZRRMB(cmp, 0x3B, d, s);
 
 ZRRMD(cmp, 0x3B, d, s);
+
+ZRMR(cmp, 0x39, s, d);
+
+ZRMBR(cmp, 0x39, s, d);
+
+ZRMDR(cmp, 0x39, s, d);
 
 ZRI(cmp, 0x3B);
 

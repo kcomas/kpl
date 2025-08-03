@@ -333,7 +333,7 @@ x64_stat x64_divsd_xi(size_t *p, uint8_t *m, reg d, uint32_t dsp);
 // cvtsi2sd xmm0, rax
 x64_stat x64_cvtsi2sd_xr(size_t *p, uint8_t *m, reg d, reg s);
 
-// and rax, rdi
+// //and rax, rdi
 x64_stat x64_and_rr(size_t *p, uint8_t *m, reg d, reg s);
 
 // and rax, byte
@@ -351,11 +351,20 @@ x64_stat x64_cmp_rr(size_t *p, uint8_t *m, reg d, reg s);
 // cmp rax, qword ptr[rsp]
 x64_stat x64_cmp_rrm(size_t *p, uint8_t *m, reg d, reg s);
 
-// cmp rax quowrd ptr[rsp+dsp8]
+// cmp rax, quowrd ptr[rsp+dsp8]
 x64_stat x64_cmp_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 
-// cmp rax qword ptr[rsp+dsp32]
+// cmp rax, qword ptr[rsp+dsp32]
 x64_stat x64_cmp_rrmd(size_t *p, uint8_t *m, reg d, reg s, uint32_t dsp);
+
+// cmp qword ptr[rsp], rax
+x64_stat x64_cmp_rmr(size_t *p, uint8_t *m, reg d, reg s);
+
+// cmp qword ptr[rsp+dsp8], rax
+x64_stat x64_cmp_rmbr(size_t *p, uint8_t *m, reg d, uint8_t dsp, reg s);
+
+// cmp qword ptr[rsp+dsp32], rax
+x64_stat x64_cmp_rmdr(size_t *p, uint8_t *m, reg d, uint32_t dsp, reg s);
 
 // cmp rax, qword ptr[rip+dsp32]
 x64_stat x64_cmp_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp);

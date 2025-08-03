@@ -160,9 +160,14 @@ DUU(eq, u, SETE);
 DUU(ne, u, SETNE);
 
 static gen_stat lt_vuiul_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO vuiul");
+    gen_stat stat;
+    int32_t v0;
+    vr *i = ((te*) ci->d[2].p)->d[1].p;
+    if (st_stkv_idx(s, gen_var_g_t(ci->d[1].p), ((te*) ci->d[1].p)->d[1].u3, &v0) != GEN_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if ((stat = idx_from(g, s, ci, a, e, AS_X64(MOV), i, as_arg_i(a, ARG_ID(R), U3(R(AX))), R(AX), ARG_ID(R))) != GEN_STAT(OK)) return stat;
+    if (gen_as(a, AS_X64(CMP), as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v0), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(JB), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    return GEN_STAT(OK);
 }
 
 static gen_stat eq_vuaul_fn(gen *g, void *s, te *ci, as *a, err **e) {
