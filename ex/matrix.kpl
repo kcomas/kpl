@@ -1,0 +1,21 @@
+
+// matrix transpose
+
+v::VR$[VR$[1;2;3];VR$[4;5;6]]
+mtp::FN(v\t`a;A)${
+    =(l::/a;0)?'"Empty"
+    t::/a(0)`v
+    (i::U6$1;i<l;i+:1)@?(!=(t;/a(i)`v);'"Inv")
+    n::VR(VR(I6))$[]
+    (x::U6$0;x<t;x+:1)@{
+        nn::VR(I6)$[]
+        (y::U6$0;y<l;y+:1)@nn,:a(y)`v(x)`v
+        n,:nn
+    }
+    n`v
+}
+"v"\p1
+v\p1
+x::'mtp(v)
+"vᵀ"\p1
+x\p1

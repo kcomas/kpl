@@ -175,8 +175,7 @@ atg_stat atg_q(atg *t, te **an, atg_test_fn enq) {
         case AST_CLS(L):
             return atg_lst_q(t, (*an)->d[4].p, enq);
         case AST_CLS(Z):
-            if ((*an)->d[4].p) atg_dt_a(t, (*an)->d[4].p);
-            break;
+            return atg_q(t, (te**) &(*an)->d[4].p, enq);
         default:
             break;
     }
