@@ -118,6 +118,7 @@ typedef enum {
 
 static atg_stat ref_vars(atg *t, gen *g, te *an, err **e, tbl *tt, gen_op go, gc_m gc) {
     atg_stat stat = ATG_STAT(OK);
+    if (!tt) return stat;
     te *h = tt->i->h, *lte;
     un gcfn;
     while (h) {
@@ -267,6 +268,7 @@ bool inloop(te *an) {
 }
 
 atg_stat atg_g_un_ev(te *tn, uint64_t *esym, uint64_t *vsym) {
+    if (tn->d[1].u4 != TYPE(UN)) return ATG_STAT(INV);
     te *h = ((tbl*) tn->d[2].p)->i->h;
     uint64_t i = 0, a = 0, b = 0;
     while (h) {
@@ -825,7 +827,7 @@ static atg_stat atg_uner(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     uint32_t nlb = t->lc++, glb = t->lc++, ei = t->tc++, ri = t->tc++, si = t->tc++, ti = t->tc++, vi = t->tc++;
     uint64_t esym, vsym;
-    te *rt = ((te*) an->d[6].p)->d[3].p, *r = atg_g_g(an->d[6].p)->d[1].p, *syme;
+    te *rt = ((te*) an->d[6].p)->d[3].p, *r = atg_g_g(an->d[6].p)->d[1].p, *syme, *tn = an->d[3].p;
     if (atg_g_un_ev(rt, &esym, &vsym) != ATG_STAT(OK)) return atg_err(t, an, e, "atg uner inv un `e`v");
     if (gen_a(g, GEN_OP(EQ), gen_idx_m(g, X64_TYPE(U6), 2, te_c(r), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(vsym)), gen_lbl(g, glb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(NE), gen_idx_m(g, X64_TYPE(U6), 2, te_c(r), atg_te_idx_d(g, 0)), gen_data(g, X64_TYPE(U6), U6(esym)), gen_lbl(g, nlb)) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -840,11 +842,13 @@ static atg_stat atg_uner(atg *t, gen *g, te *an, err **e) {
     if (!(syme = un_g_lte_ch(rt, 'v'))) return atg_err(t, an, e, "atg inv v in uner");
     if ((stat = un_inv_a(t, g, an, e, syme->d[0].p, ri, si, ti)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, glb), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    x64_type xt = type_g_x64_type(syme->d[2].p);
-    if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, vi), gen_idx_m(g, xt, 2, te_c(r), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if (type_is_ref(((te*) syme->d[2].p)->d[1].u4) && inc_ref_u(g, xt, vi) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, te_c(r)), gen_data(g, X64_TYPE(M), P(te_f)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if (gen_a(g, GEN_OP(NOP), gen_tmp(g, xt, vi), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (tn->d[1].u4 != TYPE(VD)) {
+        x64_type xt = type_g_x64_type(syme->d[2].p);
+        if (gen_a(g, GEN_OP(SET), gen_tmp(g, xt, vi), gen_idx_m(g, xt, 2, te_c(r), atg_te_idx_d(g, 1)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (type_is_ref(((te*) syme->d[2].p)->d[1].u4) && inc_ref_u(g, xt, vi) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, te_c(r)), gen_data(g, X64_TYPE(M), P(te_f)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (gen_a(g, GEN_OP(NOP), gen_tmp(g, xt, vi), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    } else if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, te_c(r)), gen_data(g, X64_TYPE(M), P(te_f)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
@@ -901,6 +905,8 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(E), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(UNER), TYPE(I6), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);
+    atg_a_o(t, OC(UNER), TYPE(VD), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);
+    atg_a_o(t, OC(UNER), TYPE(VR), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);
     atg_a_o(t, OC(UNER), TYPE(VD), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(SG), atg_uner_sg);
     atg_cond(t);
     atg_dfn(t);

@@ -419,6 +419,7 @@ static fld_stat cmd_r(fld *f, te **an, err **e) {
             if (((te*) (*an)->d[4].p)->d[2].u4 != AST_CLS(E)) return fld_err(f, *an, e, "fld not exportable entry");
             nn = te_c((*an)->d[4].p);
             ast_lst_tbl_e_s_f(nn->d[3].p, LTE_FLG(E));
+            ((te*) (*an)->d[4].p)->d[0] = (*an)->d[0]; // update tgt parent
             break;
         case CC(L):
             nn = (*an)->d[4].p;

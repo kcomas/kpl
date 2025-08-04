@@ -138,7 +138,7 @@ te *chk_g_pn_fnnf_type(te *an) {
 }
 
 te *un_g_lte_ch(te *un, char c) {
-    if (!un) return NULL;
+    if (!un || un->d[1].u4 != TYPE(UN)) return NULL;
     te *h = ((tbl*) un->d[2].p)->i->h, *n;
     while (h) {
         n = h->d[0].p;
@@ -671,6 +671,8 @@ static chk_stat chk_cst_fn_lst(chk *c, te *an, err **e) {
                 type_tbl_a(ut, c->a->ta, mc_c(r->d[5].p), 0, te_c(rt));
             } else type_tbl_a(ut, c->a->ta, mc_c(r->d[5].p), 0, type_s_i(c->a->ta, NULL, TYPE(VD)));
             lst_s(ut->i, type_h_cmp);
+            te_f(((te*) r->d[3].p)->d[2].p);
+            ((te*) r->d[3].p)->d[2] = P(te_c(*fr));
         } else if (!type_eq(rt, kv->d[2].p)) return chk_err(c, an, e, "chk inv un ret type");
     } else if (!*fr) *fr = te_c(rt);
     else if (!type_eq(*fr, rt)) return chk_err(c, an, e, "chk lst stmt inv ret type");
@@ -828,8 +830,8 @@ static chk_stat chk_uner_pn_fn(chk *c, te *an, err **e) {
     if (!u) return CHK_STAT(OK);
     if (u->d[2].p) {
         u = un_g_lte_ch(u->d[2].p, 'e');
+        if (!u || !u->d[2].p) return chk_err(c, an, e, "chk inv uner fn ret type");
         u = u->d[2].p;
-        if (!u) return chk_err(c, an, e, "chk inv uner fn ret type");
         if (!chk_is_un_err(u)) return chk_err(c, an, e, "chk uner fn ret err inv");
         return CHK_STAT(OK);
     }

@@ -46,6 +46,7 @@ void chk_z(chk *c) {
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(U6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(SG));
+    CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_z_vd_un, AST_CLS(Z), TYPE(_N), AST_CLS(_), TYPE(_N));
     CHK_AA(c, chk_z_z_, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(_N));
     CHK_AA(c, chk_z_z_un, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(UN));

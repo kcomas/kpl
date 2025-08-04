@@ -171,9 +171,14 @@ static gen_stat lt_vuiul_fn(gen *g, void *s, te *ci, as *a, err **e) {
 }
 
 static gen_stat eq_vuaul_fn(gen *g, void *s, te *ci, as *a, err **e) {
-    (void) s;
-    (void) a;
-    return gen_err(g, ci, e, "TODO vuaul");
+    int32_t v0;
+    te *kv;
+    if (st_stkv_idx(s, gen_var_g_t(ci->d[1].p), ((te*) ci->d[1].p)->d[1].u3, &v0) != GEN_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    if (get_reg(s, ci->d[2].p, &kv) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg");
+    if (gen_as(a, AS_X64(CMP), as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v0), as_arg_i(a, ARG_ID(R), kv->d[2]), NULL, ci)) return gen_err(g, ci, e, __FUNCTION__);
+    if (gen_as(a, AS_X64(JE), as_arg_i(a, ARG_ID(L), ((te*) ci->d[3].p)->d[1]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__);
+    drop_atm_kv(s, kv, ci);
+    return GEN_STAT(OK);
 }
 
 void gen_cond(gen *g) {

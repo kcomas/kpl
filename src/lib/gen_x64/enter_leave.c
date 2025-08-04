@@ -141,6 +141,7 @@ void gen_enter_leave(gen *g) {
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(F6), leave_dx_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(D), X64_TYPE(M), leave_du_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(I6), leave_vu_fn);
+    GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(U6), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(M), leave_vu_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(V), X64_TYPE(F6), leave_vx_fn);
     GEN_OP_A1(g, GEN_OP(LEAVE), GEN_CLS(S), X64_TYPE(MI6), leave_su_fn);

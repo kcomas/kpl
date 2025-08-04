@@ -505,7 +505,7 @@ T(vrup) {
                     ON(TS(I6), AGN, AN(te_c(ut), EN("a", FLG(0, LTE_FLG(A)), te_c(vt)), L(1, SN(I6, I6(1)))), SN(I6, I6(5))),
                     ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", FLG(0, LTE_FLG(A)), te_c(vt))),
                     ON(TS(I6), AGN, AN(te_c(ut), EN("a", FLG(0, LTE_FLG(A)), te_c(vt)), L(1, SN(I6, I6(5)))), SN(I6, I6(1))),
-                    ZTN("v", TS(VD), SN(I6, I6(1)))
+                    ZTN("v", te_c(ut), SN(I6, I6(1)))
                 )))),
            ON(TS(I6), UNER, NULL, AN(te_c(ut), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(1, EN("v", FLG(0, LTE_FLG(L)), te_c(vt)))))
     ))));
