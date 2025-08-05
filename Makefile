@@ -133,19 +133,23 @@ OBJS += $(ATG_OBJS) $(ATGX64_OBJS)
 OBJS := $(SRC)/z.o $(sort $(OBJS))
 
 FLD = fld$(TNAME)
-$(FLD): $(OBJS) $(TEST)/fld.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+FLD_TEST_OBJS = $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+$(FLD): $(OBJS) $(TEST)/fld.o $(FLD_TEST_OBJS)
 > $(CCOBJ)
 
 CHK = chk$(TNAME)
-$(CHK): $(OBJS) $(TEST)/chk.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+CHK_TEST_OBJS = $(TEST)/chk_t.o $(FLD_TEST_OBJS)
+$(CHK): $(OBJS) $(TEST)/chk.o $(CHK_TEST_OBJS)
 > $(CCOBJ)
 
 OPT = opt$(TNAME)
-$(OPT): $(OBJS) $(TEST)/opt.o $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+OPT_TEST_OBJS = $(TEST)/opt_t.o $(CHK_TEST_OBJS)
+$(OPT): $(OBJS) $(TEST)/opt.o $(OPT_TEST_OBJS)
 > $(CCOBJ)
 
-ATG = atg$(TNAME)
-$(ATG): $(OBJS) $(TEST)/atg.o $(TEST)/gen_t.o $(TEST)/as_t.o $(TEST_OBJS) $(TEST)/opt_t.o $(TEST)/chk_t.o $(TEST)/fld_t.o $(TEST)/ast_t.o $(TEST)/psr_t.o $(TEST_OBJS)
+ATG_TEST_OBJS = $(OBJS) $(TEST)/atg_t.o $(TEST)/gen_t.o $(TEST)/as_t.o $(OPT_TEST_OBJS)
+
+atg$(TNAME): $(TEST)/atg.o $(ATG_TEST_OBJS)
 > $(CCOBJ)
 
 FSAN = -fsanitize=address,leak,undefined
