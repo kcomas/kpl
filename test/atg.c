@@ -1940,6 +1940,7 @@ T(validm) {
     S(gen_a(gc, GEN_OP(ADD), gen_stkv(gc, X64_TYPE(U6), 2), gen_stkv(gc, X64_TYPE(U6), 2), gen_data(gc, X64_TYPE(U6), U6(1))));
     S(gen_a(gc, GEN_OP(LT), gen_stkv(gc, X64_TYPE(U6), 2), gen_stkv(gc, X64_TYPE(U6), 0), gen_lbl(gc, 6)));
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 7), NULL, NULL));
+    S(gen_a(gc, GEN_OP(SET), gen_arg(gc, X64_TYPE(MM), 0), gen_arg(gc, X64_TYPE(MM), 0), NULL));
     S(gen_a(gc, GEN_OP(CALL), gen_tmp(gc, X64_TYPE(M), 34), gen_call_m(gc, 3, gen_data(gc, X64_TYPE(U6), U6(2)), gen_data(gc, X64_TYPE(M), P(&al_te)), gen_data(gc, X64_TYPE(M), kv->d[1])), gen_data(gc, X64_TYPE(M), P(te_i))));
     S(gen_a(gc, GEN_OP(SET), gen_idx_m(gc, X64_TYPE(N), 2, gen_tmp(gc, X64_TYPE(M), 34), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(1)), NULL));
     S(gen_a(gc, GEN_OP(NOP), gen_tmp(gc, X64_TYPE(M), 34), NULL, NULL));

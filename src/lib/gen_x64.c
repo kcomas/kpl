@@ -566,7 +566,8 @@ gen_stat get_reg_n(gen_st *st, te *ci, te **kv, size_t n) {
 
 void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
     te *kv = NULL;
-    if (gen_var_g_c(atm_kv) == GEN_CLS(A)) return;
+    // uncomment to save args for entire function
+    //if (gen_var_g_c(atm_kv) == GEN_CLS(A)) return;
     if (tbl_g_i(st->lat, atm_kv->d[0], &kv) == TBL_STAT(NF)) return;
     if (kv->d[2].p != ci) return;
     reg r = atm_kv->d[2].u3;

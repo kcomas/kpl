@@ -474,7 +474,7 @@ static atg_stat cond_s_lbl(te *cnds, uint32_t sl, uint32_t el) {
 static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     uint32_t sl = t->lc++, el = t->lc++;
-    te *cnds = g->code->t, *ende;
+    te *cnds = g->code->t, *ende, *fn, *h;
     if ((stat = atg_r(t, g, an->d[5].p, e)) != ATG_STAT(OK)) return stat;
     cnds = cnds->d[2].p; // gen code gen by cond
     if ((stat = cond_s_lbl(cnds, sl, el)) != ATG_STAT(OK)) return atg_err(t, an, e, "atg loop cond not lbl");
@@ -488,6 +488,19 @@ static atg_stat loop_l_l(atg *t, gen *g, te *an, err **e) {
     ((te*) ende->d[3].p)->d[1] = U5(sl);
     if (gen_u_fn(g, ende) != GEN_STAT(OK)) return atg_err(t, an, e, "atg ci update inv");
     if (gen_a(g, GEN_OP(LBL), gen_lbl(g, el), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    fn = chk_g_pn_cst_fn(an);
+    if (fn) {
+        tbl *args = ((te*) fn->d[6].p)->d[3].p;
+        h = args->i->h;
+        while (h) {
+            fn = h->d[0].p;
+            if ((ast_lst_tbl_e_g_f(fn) & LTE_FLG(A)) && type_is_ref(((te*) fn->d[2].p)->d[1].u4)) {
+                fn = gen_arg(g, X64_TYPE(MM), ast_lst_tbl_e_g_i(fn));
+                if (gen_a(g, GEN_OP(SET), fn, te_c(fn), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            }
+            h = h->d[2].p;
+        }
+    }
     return ATG_STAT(OK);
 }
 

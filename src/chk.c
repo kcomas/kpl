@@ -124,17 +124,25 @@ tbl *chk_g_pn_lte_tbl(te *an, const mc *s) {
    return (tbl*) chk_g_pn_lte_(an, s, true);
 }
 
-te *chk_g_pn_fnnf_type(te *an) {
-    te *pn;
+te *_chk_g_pn_fn(te *an, bool cst) {
+    te *pn, *cn;
     while (ast_g_pn(AST_CLS(O), an->d[0].p, &pn) == AST_STAT(OK)) {
         an = pn;
         if (pn->d[4].u4 != OC(CST)) continue;
-        pn = pn->d[5].p;
-        if (pn->d[2].u4 != AST_CLS(T)) continue;
-        pn = pn->d[3].p;
-        if (type_g_c(pn->d[1].u4 == TYPE_CLS(F))) return pn;
+        cn = pn->d[5].p;
+        if (cn->d[2].u4 != AST_CLS(T)) continue;
+        cn = cn->d[3].p;
+        if (type_g_c(cn->d[1].u4 == TYPE_CLS(F))) return cst ?  pn : cn;
     }
     return NULL;
+}
+
+te *chk_g_pn_cst_fn(te *an) {
+    return _chk_g_pn_fn(an, true);
+}
+
+te *chk_g_pn_fnnf_type(te *an) {
+    return _chk_g_pn_fn(an, false);
 }
 
 te *un_g_lte_ch(te *un, char c) {
