@@ -149,7 +149,7 @@ $(OPT): $(OBJS) $(TEST)/opt.o $(OPT_TEST_OBJS)
 
 ATG_TEST_OBJS = $(OBJS) $(TEST)/atg_t.o $(TEST)/gen_t.o $(TEST)/as_t.o $(OPT_TEST_OBJS)
 
-atg$(TNAME): $(TEST)/atg.o $(ATG_TEST_OBJS)
+atga$(TNAME): $(TEST)/atga.o $(ATG_TEST_OBJS)
 > $(CCOBJ)
 
 FSAN = -fsanitize=address,leak,undefined

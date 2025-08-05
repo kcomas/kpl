@@ -21,14 +21,14 @@ T(fnadd3) {
     te_f(ft);
 }
 
-T(fnf6muli6cstdiv) {
-    IC(TPGM(fnf6muli6cstdiv));
+T(fnf6muli6cstadd) {
+    IC(TPGM(fnf6muli6cstadd));
     te *ft = TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
             ON(te_c(ft), CST, NN(T, te_c(ft)),
                 LN(LT(3, "x", FLG(0, LTE_FLG(A)), TS(F6), "y", FLG(1, LTE_FLG(A)), TS(F6), "z", FLG(0, LTE_FLG(A)), TS(U6)), L(1,
-                    ON(TS(F6), DIV, ON(TS(F6), MUL, EN("x", FLG(0, LTE_FLG(A)), TS(F6)), EN("y", FLG(1, LTE_FLG(A)), TS(F6))), ON(TS(F6), CST, TN(F6), EN("z", FLG(0, LTE_FLG(A)), TS(U6)))))))),
+                    ON(TS(F6), ADD, ON(TS(F6), MUL, EN("x", FLG(0, LTE_FLG(A)), TS(F6)), EN("y", FLG(1, LTE_FLG(A)), TS(F6))), ON(TS(F6), CST, TN(F6), EN("z", FLG(0, LTE_FLG(A)), TS(U6)))))))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(TS(F6), EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)),
             L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), SN(U6, U6(2)))))
     )));
@@ -433,7 +433,7 @@ T(nscope) {
         ON(te_c(fb), DFN, EN("fa", FLG(-1, LTE_FLG(F)), te_c(fb)), ON(te_c(fb), CST, NN(T, te_c(fb)),
             LN(LT(1, "fb", FLG(-2, LTE_FLG(F)), te_c(fb)), L(2,
                 ON(te_c(fb), DFN, EN("fb", FLG(-2, LTE_FLG(F)), te_c(fb)), ON(te_c(fb), CST, NN(T, te_c(fb)), LN(LT(1, "x", FLG(0, LTE_FLG(S)), TS(F6)), L(1,
-                    ON(TS(F6), DIVA, EN("x", FLG(0, LTE_FLG(S)), TS(F6)), SN(F6, F6(2.0)))
+                    ON(TS(F6), MULA, EN("x", FLG(0, LTE_FLG(S)), TS(F6)), SN(F6, F6(2.0)))
                 )))),
                 AN(TS(F6), EN("fb", FLG(-2, LTE_FLG(F)), te_c(fb)), NULL)
         )))),

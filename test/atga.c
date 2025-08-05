@@ -41,8 +41,8 @@ T(fnadd3) {
     AR(0);
 }
 
-T(fnf6muli6cstdiv) {
-    AI(TPGM(fnf6muli6cstdiv), 0, 2);
+T(fnf6muli6cstadd) {
+    AI(TPGM(fnf6muli6cstadd), 0, 2);
     te *ft = TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
         ON(te_c(ft), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(ft)), SN(_G, I5(-1))),
@@ -54,7 +54,7 @@ T(fnf6muli6cstdiv) {
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
     S(gen_a(gc, GEN_OP(CST), gen_tmp(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(U6), 0), NULL));
     S(gen_a(gc, GEN_OP(MUL), gen_tmp(gc, X64_TYPE(F6), 1), gen_arg(gc, X64_TYPE(F6), 0), gen_arg(gc, X64_TYPE(F6), 1)));
-    S(gen_a(gc, GEN_OP(DIV), gen_tmp(gc, X64_TYPE(F6), 2), gen_tmp(gc, X64_TYPE(F6), 1), gen_tmp(gc, X64_TYPE(F6), 0)));
+    S(gen_a(gc, GEN_OP(ADD), gen_tmp(gc, X64_TYPE(F6), 2), gen_tmp(gc, X64_TYPE(F6), 1), gen_tmp(gc, X64_TYPE(F6), 0)));
     S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(F6), 2), NULL, NULL));
     V(cn, gc);
     te_f(cn);
@@ -1155,7 +1155,7 @@ T(nscope) {
     gen *gc = gen_i_gen(bg);
     S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, (uint32_t) -2), NULL, NULL));
     S(gen_a(gc, GEN_OP(ENTER), NULL, NULL, NULL));
-    S(gen_a(gc, GEN_OP(DIV), gen_stka(gc, X64_TYPE(MF6), 0), gen_stka(gc, X64_TYPE(MF6), 0), gen_data(gc, X64_TYPE(F6), F6(2.0))));
+    S(gen_a(gc, GEN_OP(MUL), gen_stka(gc, X64_TYPE(MF6), 0), gen_stka(gc, X64_TYPE(MF6), 0), gen_data(gc, X64_TYPE(F6), F6(2.0))));
     S(gen_a(gc, GEN_OP(LEAVE), gen_stka(gc, X64_TYPE(MF6), 0), NULL, NULL));
     V(cn, gc);
     te_f(cn);

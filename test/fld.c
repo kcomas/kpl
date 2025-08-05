@@ -25,10 +25,10 @@ T(fnadd3) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(3, SN(I6, I6(1)), SN(I6, I6(2)), SN(I6, I6(3))))))), NULL)));
 }
 
-T(fnf6muli6cstdiv) {
-    V(TPGM(fnf6muli6cstdiv), RN(AN(NULL,
+T(fnf6muli6cstadd) {
+    V(TPGM(fnf6muli6cstadd), RN(AN(NULL,
         LN(LT(1, "f", U6(0), NULL), L(2,
-        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0)), LN(LT(3, "x", U6(0), NULL, "y", U6(0), NULL, "z", U6(0), NULL), L(1, ON(NULL, DIV,
+        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, NN(T, TFN(FN, TS(F6), 3, "x", TS(F6), 0, "y", TS(F6), 1, "z", TS(U6), 0)), LN(LT(3, "x", U6(0), NULL, "y", U6(0), NULL, "z", U6(0), NULL), L(1, ON(NULL, ADD,
             ON(NULL, MUL, EN("x", U6(0), NULL), EN("y", U6(0), NULL)),
             ON(NULL, CST, TN(F6), EN("z", U6(0), NULL))))))),
         ON(TS(VD), DUMP, SN(U5, U5(1)), AN(NULL, EN("f", U6(0), NULL), L(3, SN(F6, F6(4.4)), SN(F6, F6(6.6)), ON(NULL, CST, TN(U6), SN(I6, I6(2)))))))),
@@ -317,7 +317,7 @@ T(nscope) {
         ON(NULL, DFN, EN("x", U6(0), NULL), SN(F6, F6(6.6))),
         ON(NULL, DFN, EN("fa", U6(0), NULL), ON(NULL, CST, TN(NF), LN(LT(1, "fb", U6(0), NULL), L(2,
             ON(NULL, DFN, EN("fb", U6(0), NULL), ON(NULL, CST, TN(NF), LN(LT(1, "x", U6(0), NULL), L(1,
-                ON(NULL, DIVA, EN("x", U6(0), NULL), SN(F6, F6(2.0)))
+                ON(NULL, MULA, EN("x", U6(0), NULL), SN(F6, F6(2.0)))
             )))),
             AN(NULL, EN("fb", U6(0), NULL), NULL)
         )))),

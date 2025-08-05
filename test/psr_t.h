@@ -16,7 +16,7 @@ extern const char *TPGM(typetype);
 
 extern const char *TPGM(fnadd3);
 
-extern const char *TPGM(fnf6muli6cstdiv);
+extern const char *TPGM(fnf6muli6cstadd);
 
 extern const char *TPGM(apltypefn);
 

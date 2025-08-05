@@ -204,8 +204,8 @@ T(fnadd3) {
     te_f(h);
 }
 
-T(fnf6muli6cstdiv) {
-    te *h = ppnode(psr_r(bpsr(TPGM(fnf6muli6cstdiv))));
+T(fnf6muli6cstadd) {
+    te *h = ppnode(psr_r(bpsr(TPGM(fnf6muli6cstadd))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(APLY(N(TYPE), SYM(N(TYPE)), SYM(N(TYPE)), SYM(N(TYPE)), N(TYPE)),
             LST(
