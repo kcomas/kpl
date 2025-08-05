@@ -5,6 +5,12 @@
 #include "opt_t.h"
 #include "gen_t.h"
 
+extern atg *batg;
+
+void atg_t_i(void);
+
+void atg_t_f(void);
+
 void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st *st);
 
 void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict tn, const gen *gc, gen_st *st);

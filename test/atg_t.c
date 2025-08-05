@@ -1,6 +1,18 @@
 
 #include "atg_t.h"
 
+atg *batg = NULL;
+
+void atg_t_i(void) {
+    batg = atg_b(atg_i(&ast_am, &al_te, &al_err, atg_err, cti, lst_i(&al_lst, &al_te, NULL), ali(), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(5, &al_te, NULL)), gen_i_gen(bg), as_i_as(ba)));
+    p = 0; // do not reset per test, need reset here
+}
+
+void atg_t_f(void) {
+    atg_f(batg);
+    batg = NULL;
+}
+
 void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st *st) {
     E();
     te *h;

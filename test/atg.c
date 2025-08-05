@@ -1,21 +1,11 @@
 
 #include "atg_t.h"
 
-atg *batg = NULL;
-
-static __attribute__((constructor(107))) void atg_con(void) {
-    batg = atg_b(atg_i(&ast_am, &al_te, &al_err, atg_err, cti, lst_i(&al_lst, &al_te, NULL), ali(), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(5, &al_te, NULL)), gen_i_gen(bg), as_i_as(ba)));
-}
-
-static __attribute__((destructor)) void atg_des(void) {
-    atg_f(batg);
-}
-
 T(tbl) {
+    atg_t_i();
     atg_tbl_p(batg->ot, AST_CLS(O), 0);
     atg_tbl_p(batg->at, AST_CLS(A), 0);
     atg_tbl_p(batg->vt, AST_CLS(V), 0);
-    p = 0; // do not reset per test, need reset here
 }
 
 T(fnadd3) {
@@ -1925,4 +1915,5 @@ T(validm) {
     A(e->m == atg_user_inv_str, "inv err str");
     A(((mc*) ((te*) e->d)->d[2].p)->d[0] == 'I', "inv err mc char");
     err_f(e);
+    atg_t_f();
 }
