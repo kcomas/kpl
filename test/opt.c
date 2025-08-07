@@ -662,3 +662,21 @@ T(fndiv) {
     te_f(eu);
     te_f(fn);
 }
+
+T(uperr) {
+    IC(TPGM(uperr));
+    te *ee = chk_rt_err_t(&al_te);
+    te *eu = TH(UN, 2, "e", te_c(ee), "v", TS(SG));
+    te *us = TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG));
+    V(RN(LN(LT(2, "x", FLG(0, LTE_FLG(L)), TS(SG), "0", FLG(1, LTE_FLG(L)), TS(SG)), L(2,
+        ON(TS(SG), DFN, EN("x", FLG(0, LTE_FLG(L)), TS(SG)),
+            ON(TS(SG), UNER, NULL, ON(te_c(eu), UPER, NULL,
+                AN(te_c(us), NNV(S, TFN(FP, te_c(us), 1, "s", TS(SG), 0), P(NULL)),
+                    L(1, ON(TS(SG), DFN, EN("0", FLG(1, LTE_FLG(L)), TS(SG)),
+                        ON(TS(SG), CSG, NULL, CS("fileshouldnotexist")))))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("x", FLG(0, LTE_FLG(L)), TS(SG)))
+    ))));
+    te_f(ee);
+    te_f(eu);
+    te_f(us);
+}

@@ -145,7 +145,8 @@ static bool tmp_var_t(const te *an) {
         [OC(LOOP)] = true,
         [OC(MTCH)] = true,
         [OC(CNCTA)] = true,
-        [OC(UNER)] = true
+        [OC(UNER)] = true,
+        [OC(UPER)] = true
     };
     if (an->d[2].u4 == AST_CLS(O) && nc[an->d[4].u4]) return false;
     if (an->d[2].u4 == AST_CLS(A)) {
