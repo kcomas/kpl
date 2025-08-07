@@ -98,7 +98,7 @@ T(fndiv) {
     te_f(eu);
     te_f(fn);
     AE(1);
-    err_p(e, true);
+    err_p(e, 0, true);
     A(e->m == atg_div_inv_str, "inv err msg");
     err_f(e);
     atg_t_f();

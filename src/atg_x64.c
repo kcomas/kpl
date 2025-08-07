@@ -753,15 +753,15 @@ const char *atg_un_inv_str = "inv un";
 
 const char *atg_user_inv_str = "user";
 
-void atg_rt_err_p(void *p) {
+void atg_rt_err_p(void *p, uint32_t idnt) {
     te *t = p;
     uint32_t cno = t->d[1].u5;
     uint16_t lno = t->d[1].u6 >> 32;
-    printf("\e[1m%d::%d ", lno, cno);
+    printf("%*s\e[1m%d::%d ", idnt, "", lno, cno);
     mc *s = t->d[0].p;
     if (s) printf("%s", (char*) s->d);
     s = t->d[2].p;
-    printf("\e[0m\n\e[91m`%s\e[0m", (char*) s->d);
+    printf("\e[0m\n%*s\e[91m`%s\e[0m", idnt, "", (char*) s->d);
 }
 
 void atg_rt_err_f(void *p) {

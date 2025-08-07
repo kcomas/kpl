@@ -36,7 +36,7 @@ static void dump_idnt(gen *g, vr **v, uint32_t n) {
     vr_ab(v, P(gen_data(g, X64_TYPE(M), P(atg_dump_idnt))));
 }
 
-static atg_stat atg_dump_e(atg *t, gen *g, te *an, err **e, FILE *f, size_t idnt) {
+static atg_stat atg_dump_e(atg *t, gen *g, te *an, err **e, FILE *f, uint32_t idnt) {
     vr *v = vr_i(5, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_end))));
@@ -45,9 +45,9 @@ static atg_stat atg_dump_e(atg *t, gen *g, te *an, err **e, FILE *f, size_t idnt
     return ATG_STAT(OK);
 }
 
-static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict type, te *restrict cd, bool nl);
+static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict type, te *restrict cd, bool nl);
 
-static atg_stat dump_te(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict type, te *restrict cd) {
+static atg_stat dump_te(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict type, te *restrict cd) {
     atg_stat stat = ATG_STAT(OK);
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
@@ -59,7 +59,7 @@ static atg_stat dump_te(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_
     return stat;
 }
 
-static atg_stat dump_vr(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict type, te *restrict cd) {
+static atg_stat dump_vr(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict type, te *restrict cd) {
     atg_stat stat = ATG_STAT(OK);
     uint32_t tl = t->lc++, el = t->lc++, tv = t->tc++;
     type = type->d[2].p;
@@ -79,7 +79,7 @@ static atg_stat dump_vr(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_
     return stat;
 }
 
-static atg_stat dump_un(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict type, te *restrict cd) {
+static atg_stat dump_un(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict type, te *restrict cd) {
     atg_stat stat = ATG_STAT(OK);
     uint32_t el = t->lc++, cl = 0;
     size_t eid = 0;
@@ -109,7 +109,7 @@ static atg_stat dump_un(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_
     return stat;
 }
 
-static atg_stat dump_err(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict cd) {
+static atg_stat dump_err(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict cd) {
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[TYPE(ER)]))));
@@ -120,12 +120,12 @@ static atg_stat dump_err(atg *t, gen *g, te *restrict an, err **e, FILE *f, size
         if (gen_a(g, GEN_OP(REF), cmd = gen_tmp(g, X64_TYPE(M), t->tc++), cd, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
         te_c(cmd);
     }
-    if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 2, cmd, gen_data(g, X64_TYPE(U3), U3(1))), gen_data(g, X64_TYPE(M), P(err_p)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(CALLV), gen_call_m(g, 3, cmd, gen_data(g, X64_TYPE(U5), U5(idnt + 1)), gen_data(g, X64_TYPE(U3), U3(1))), gen_data(g, X64_TYPE(M), P(err_p)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     atg_dump_e(t, g, an, e, f, idnt);
     return ATG_STAT(OK);
 }
 
-static vr *dump_vr_i(gen *g, FILE *f, type t, size_t idnt) {
+static vr *dump_vr_i(gen *g, FILE *f, type t, uint32_t idnt) {
     vr *v = vr_i(6, g->va, (void*) te_f);
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(f))));
     vr_ab(&v, P(gen_data(g, X64_TYPE(M), P(atg_dump_strs[t]))));
@@ -133,7 +133,7 @@ static vr *dump_vr_i(gen *g, FILE *f, type t, size_t idnt) {
     return v;
 }
 
-static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, size_t idnt, te *restrict type, te *restrict cd, bool nl) {
+static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32_t idnt, te *restrict type, te *restrict cd, bool nl) {
     uint32_t ti;
     atg_stat stat = ATG_STAT(OK);
     te *tetmp;

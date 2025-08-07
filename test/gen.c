@@ -54,7 +54,7 @@ T(call) {
     S(gen_a(gc, GEN_OP(LEAVE), gen_tmp(gc, X64_TYPE(U6), 0), NULL, NULL));
     A(gen_st_p1(gc, st) == GEN_STAT(OK), "gen_st_p1");
     gen_stat stat = gen_n(gc, st, a, &e);
-    if (e) err_p(e, true);
+    if (e) err_p(e, 0, true);
     A(stat == GEN_STAT(OK), "gen");
     printf("FN1\n");
     gen_p(gc, NULL);
@@ -64,7 +64,7 @@ T(call) {
     UNLOCK();
     as_stat astat = as_n(a, &p, m, &e);
     LOCK();
-    if (e) err_p(e, true);
+    if (e) err_p(e, 0, true);
     A(astat == AS_STAT(OK), "as");
     as_code_p(a, m);
     int64_t x = 3, y = 5, z = 7;

@@ -75,7 +75,8 @@ size_t psr_a(psr *p, size_t pid, size_t mode, te *st, psr_each_fn *ef, psr_megre
     return nid;
 }
 
-static void psr_err_p(void *d) {
+static void psr_err_p(void *d, uint32_t idnt) {
+    (void) idnt;
     psr *p = d;
     printf("lno:%u,cno:%u\n", p->tt->lno, p->tt->cno);
 }

@@ -245,7 +245,8 @@ void as_code_p(const as *a, const uint8_t *m) {
     if (a->dq->l && m) as_data_p(a, m);
 }
 
-static void as_code_err_p(void *d) {
+static void as_code_err_p(void *d, uint32_t idnt) {
+    (void) idnt;
     as_code_i_p(d, NULL);
 }
 

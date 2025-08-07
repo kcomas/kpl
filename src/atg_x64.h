@@ -66,7 +66,7 @@ extern const char *atg_vr_inv_str;
 
 extern const char *atg_div_inv_str;
 
-void atg_rt_err_p(void *p);
+void atg_rt_err_p(void *p, uint32_t idnt);
 
 void atg_rt_err_f(void *p);
 

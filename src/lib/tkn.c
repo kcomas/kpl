@@ -122,7 +122,8 @@ uint16_t tkn_a(tkn *t, uint16_t tid, const char *s, tkn_pf *pf) {
     return kv->d[1].u4;
 }
 
-static void tkn_err_p(void *d) {
+static void tkn_err_p(void *d, uint32_t idnt) {
+    (void) idnt;
     tkn *t = d;
     printf("lno: %d, cno: %d", t->lno, t->cno);
 }

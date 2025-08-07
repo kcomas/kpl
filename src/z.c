@@ -87,9 +87,9 @@ static __attribute__((destructor)) void z_des(void) {
     gen_f(bg);
 }
 
-static void z_e_p(void *d) {
+static void z_e_p(void *d, uint32_t idnt) {
     mc *fn = d;
-    printf("\e[1m%s\e[0m", (char*) fn->d);
+    printf("%*s\e[1m%s\e[0m", idnt, "", (char*) fn->d);
 }
 
 #define APLYLSTS 4 // {}()
@@ -103,11 +103,11 @@ static void z_fn_err_f(void *p) {
     t->af->f(t);
 }
 
-static void z_fn_e_p(void *p) {
+static void z_fn_e_p(void *p, uint32_t idnt) {
     te *t = p;
-    z_e_p(t->d[0].p);
+    z_e_p(t->d[0].p, idnt);
     putchar('\n');
-    err_p(t->d[1].p, false);
+    err_p(t->d[1].p, idnt, false);
 }
 
 static err *z_err(mc *fn, err *e) {

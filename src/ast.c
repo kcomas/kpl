@@ -91,7 +91,8 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
     ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
-void node_err_p(void *d) {
+void node_err_p(void *d, uint32_t idnt) {
+    (void) idnt;
     uint32_t s = 0, e = 0;
     if (node_tkn_s_e(d, &s, &e) != PSR_STAT(OK)) {
         printf("\e[1;91mCANNOT PRINT STR FROM AST\e[0m\n");
@@ -107,11 +108,11 @@ void node_err_f(void *d) {
     te_f(node_g_root(d));
 }
 
-void ast_err_p(void *d) {
+void ast_err_p(void *d, uint32_t idnt) {
     te *t = d;
-    node_err_p(t->d[1].p);
+    node_err_p(t->d[1].p, idnt);
     putchar('\n');
-    ast_p(t, 0);
+    ast_p(t, idnt);
 }
 
 void ast_err_f(void *d) {

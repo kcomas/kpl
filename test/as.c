@@ -224,7 +224,7 @@ T(err) {
     UNLOCK();
     A(as_n(a, &p, m, &e) != AS_STAT(OK), "as");
     LOCK();
-    err_p(e, true);
+    err_p(e, 0, true);
     err_f(e);
     as_f(a);
 }

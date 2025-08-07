@@ -12,9 +12,9 @@ static void un_er_sg_f(void *p) {
     u->af->f(u);
 }
 
-static void ns_f_rs_err_p(void *d) {
+static void ns_f_rs_err_p(void *d, uint32_t idnt) {
     mc *s = d;
-    printf("\e[1m%s\e[0m", (char*) s->d);
+    printf("%*s\e[1m%s\e[0m", idnt, "", (char*) s->d);
 }
 
 static te *ns_f_rs_err(mc *s, const char *msg) {

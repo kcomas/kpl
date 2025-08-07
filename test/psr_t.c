@@ -39,7 +39,7 @@ te *psr_r(psr *p) {
     te *nh = te_i(3, p->ta, psr_n_err_f);
     err *e = NULL;
     if ((pstat = psr_n(p, nh, &e)) != PSR_STAT(END)) {
-        err_p(e, true);
+        err_p(e, 0, true);
         err_f(e);
         te_f(nh);
         psr_f(p);

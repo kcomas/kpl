@@ -624,7 +624,8 @@ as_stat gen_as(as *a, size_t op_id, te *restrict arg1, te *restrict arg2, te *re
     return stat;
 }
 
-static void gen_err_p(void *d) {
+static void gen_err_p(void *d, uint32_t idnt) {
+    (void) idnt;
     gen_ci_p(d);
 }
 

@@ -43,17 +43,17 @@ err *err_i(const alfr *af, err_d_p dp, err_d_f df, void *d, const char *m) {
     return e;
 }
 
-void err_p(const err *e, bool nl) {
+void err_p(const err *e, uint32_t idnt, bool nl) {
     if (!e) {
-        printf("\e[3;4;1;31mNULL ERR PRINT\e[0m\n");
+        printf("%*s\e[3;4;1;31mNULL ERR PRINT\e[0m\n", idnt, "");
         return;
     }
     if (!e->m && !e->d) {
-        printf("\e[3;4;1;31mEMPTY ERR PRINT\e[0m\n");
+        printf("%*s\e[3;4;1;31mEMPTY ERR PRINT\e[0m\n", idnt, "");
         return;
     }
-    if (e->m) printf("\e[1;91m%s\e[0m\n", e->m);
-    if (e->d && e->dp) e->dp(e->d);
+    if (e->m) printf("%*s\e[1;91m%s\e[0m\n", idnt, "", e->m);
+    if (e->d && e->dp) e->dp(e->d, idnt);
     if (nl) putchar('\n');
 }
 

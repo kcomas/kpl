@@ -8,7 +8,7 @@ T(vr_mc) {
     void *fn = NULL;
     err *e = NULL;
     gen_stat stat = gen_type_des(bg, type, &g, &fn,  &e);
-    if (e) err_p(e, true);
+    if (e) err_p(e, 0, true);
     A(stat == GEN_STAT(OK), "vr_mv_des");
     A(!g, "gen should be null");
     A(fn == mc_f, "inv des fn");
@@ -38,7 +38,7 @@ T(te_mc) {
     void *fn = NULL;
     err *e = NULL;
     gen_stat stat = gen_type_des(bg, type, &g, &fn, &e);
-    if (e) err_p(e, true);
+    if (e) err_p(e, 0, true);
     A(stat == GEN_STAT(OK), "te_mc_des");
     A(!fn, "fn should be null");
     te_f(type);

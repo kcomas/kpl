@@ -29,7 +29,7 @@ void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st 
     void *fn = NULL;
     atg_stat stat = atg_d_n(t, h, &g, &fn, gen_type_des, &e);
     if (e) {
-        err_p(e, true);
+        err_p(e, 0, true);
         err_f(e);
     }
     A(stat == ATG_STAT(OK), "atg_d_n");
@@ -55,7 +55,7 @@ void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st 
         size_t pc = p;
         gen_stat gstat = gen_n(g, sc, t->a, &e);
         if (e) {
-            err_p(e, true);
+            err_p(e, 0, true);
             err_f(e);
         }
         A(gstat == GEN_STAT(OK), "gen_n");
@@ -63,7 +63,7 @@ void atg_des_verify(_tests *_t, atg *t, te *restrict tn, const void *fg, gen_st 
         as_stat astat = as_n(t->a, &p, m, &e);
         LOCK();
         if (e) {
-            err_p(e, true);
+            err_p(e, 0, true);
             err_f(e);
         }
         A(astat == AS_STAT(OK), "as_n");
@@ -81,7 +81,7 @@ void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict tn, co
     gen *g = NULL;
     atg_stat astat = atg_n(t, &g, a, &e);
     if (e) {
-        err_p(e, true);
+        err_p(e, 0, true);
         err_f(e);
     }
     A(astat == ATG_STAT(OK), "atg_n");
@@ -105,7 +105,7 @@ void atg_verify(_tests *_t, atg *t, ast *a, te *restrict an, te *restrict tn, co
     A(eq, "gen_code_eq");
     gen_stat gstat = gen_n(g, sc, t->a, &e);
     if (e) {
-        err_p(e, true);
+        err_p(e, 0, true);
         err_f(e);
     }
     A(gstat == GEN_STAT(OK), "gen_n");
@@ -118,7 +118,7 @@ void atg_run(_tests *_t, atg *t, te *an, uint32_t elcmp, err **e) {
     UNLOCK();
     as_stat stat = as_n(t->a, &p, m, e);
     LOCK();
-    if (*e) err_p(*e, true);
+    if (*e) err_p(*e, 0, true);
     A(stat == AS_STAT(OK), "as_n");
     as_code_p(t->a, m);
     uint32_t el = ((te*) an->d[4].p)->d[4].u5;
