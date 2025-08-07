@@ -171,13 +171,32 @@ tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restri
     return TKN_STAT(OK);
 }
 
+#define MC_PAD 10
+
 static tkn_stat _tkn_g_mc(const mc *s, ssize_t start, ssize_t end, const alfr *af, mc **v) {
-    size_t i = 0;
     if (start < 0 || end < 0 || start > end) return TKN_STAT(INV);
-    size_t l = end - start + sizeof(char);
+    size_t l = end - start + MC_PAD;
     *v = mc_i(l, af);
-    (*v)->l = l;
-    while (start < end) (*v)->d[i++] = s->d[start++];
+    while (start < end) {
+        if (s->d[start] == '\\') {
+            start++;
+            switch (s->d[start]) {
+                case 'e':
+                    mc_wa(v, '\e');
+                    break;
+                case 'n':
+                    mc_wa(v, '\n');
+                    break;
+                case '\\':
+                    mc_wa(v, '\\');
+                    break;
+                default:
+                    return TKN_STAT(INV);
+            }
+        } else mc_wa(v, s->d[start]);
+        start++;
+    }
+    mc_wa(v, '\0');
     return TKN_STAT(OK);
 }
 
