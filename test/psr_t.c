@@ -288,3 +288,9 @@ const char *TPGM(validm) = "{\n"
                        " a\\p1\n"
                        " 'v(b)\n"
                        "}()\n";
+
+const char *TPGM(fndiv) = "{\n"
+                        " f::FN${/(I6(x);I6(y))`v}\n"
+                        " '(f(4;2))\\p1\n"
+                        " '(f(1;0))\\p1\n"
+                        "}()\n";

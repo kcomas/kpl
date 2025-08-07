@@ -640,3 +640,25 @@ T(validm) {
     te_f(ue);
     te_f(fn);
 }
+
+T(fndiv) {
+    IC(TPGM(fndiv));
+    te *ee = chk_rt_err_t(&al_te);
+    te *eu = TH(UN, 2, "e", te_c(ee), "v", TS(I6));
+    te *fn = TFN(FN, te_c(eu), 2, "x", TS(I6), 0, "y", TS(I6), 1);
+    V(RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(fn)), L(3,
+        ON(te_c(fn), DFN, EN("f", FLG(-1, LTE_FLG(F)), te_c(fn)),
+            ON(te_c(fn), CST, NN(T, te_c(fn)),
+                LN(LT(2, "x", FLG(0, LTE_FLG(A)), TS(I6), "y", FLG(1, LTE_FLG(A)), TS(I6)), L(1,
+                    ZTN("v", te_c(eu),
+                        ON(TS(I6), DIV, EN("x", FLG(0, LTE_FLG(A)), TS(I6)), EN("y", FLG(1, LTE_FLG(A)), TS(I6))))
+                )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(TS(I6), UNER, NULL,
+            AN(te_c(eu), EN("f", FLG(-1, LTE_FLG(F)), te_c(fn)), L(2, SN(I6, I6(4)), SN(I6, I6(2)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(TS(I6), UNER, NULL,
+            AN(te_c(eu), EN("f", FLG(-1, LTE_FLG(F)), te_c(fn)), L(2, SN(I6, I6(1)), SN(I6, I6(0))))))
+    ))));
+    te_f(ee);
+    te_f(eu);
+    te_f(fn);
+}

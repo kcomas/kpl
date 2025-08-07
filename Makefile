@@ -152,6 +152,9 @@ ATG_TEST_OBJS = $(OBJS) $(TEST)/atg_t.o $(TEST)/gen_t.o $(TEST)/as_t.o $(OPT_TES
 atga$(TNAME): $(TEST)/atga.o $(ATG_TEST_OBJS)
 > $(CCOBJ)
 
+atgb$(TNAME): $(TEST)/atgb.o $(ATG_TEST_OBJS)
+> $(CCOBJ)
+
 FSAN = -fsanitize=address,leak,undefined
 $(TESTS): OO = -O2
 $(TESTS): FLAGS += -DNTO

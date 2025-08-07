@@ -447,3 +447,18 @@ T(validm) {
         ON(NULL, UNER, NULL, AN(NULL, IN("v"), L(1, IN("b"))))
     )), NULL)));
 }
+
+T(fndiv) {
+    V(TPGM(fndiv), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("f"), ON(NULL, CST, TN(FN), LN(NULL, L(1,
+            ZN("v", AN(NULL, ON(NULL, DIV, NULL, NULL), L(2,
+                AN(NULL, TN(I6), L(1, IN("x"))),
+                AN(NULL, TN(I6), L(1, IN("y")))
+            )))
+        )))),
+        CN(P1, AN(NULL, ON(NULL, UNER, NULL, NULL), L(1, AN(NULL, IN("f"),
+            L(2, SN(I6, I6(4)), SN(I6, I6(2))))))),
+        CN(P1, AN(NULL, ON(NULL, UNER, NULL, NULL), L(1, AN(NULL, IN("f"),
+            L(2, SN(I6, I6(1)), SN(I6, I6(0)))))))
+    )), NULL)));
+}

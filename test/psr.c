@@ -728,3 +728,15 @@ T(validm) {
     ))});
     te_f(h);
 }
+
+T(fndiv) {
+    te *h = ppnode(psr_r(bpsr(TPGM(fndiv))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(TYPE), LST(
+            SYM(APLY(OP(N(NONE), N(NONE)), APLY(N(TYPE), N(VAR)), APLY(N(TYPE), N(VAR)))),
+            CMD(APLY(OP(N(NONE), N(NONE)), APLY(N(VAR), N(INT), N(INT)))),
+            CMD(APLY(OP(N(NONE), N(NONE)), APLY(N(VAR), N(INT), N(INT))))
+        )))
+    ))});
+    te_f(h);
+}

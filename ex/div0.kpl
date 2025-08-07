@@ -1,0 +1,18 @@
+
+// divide by zero error
+
+v::VR$[16;8;4;2;0]
+
+d::FN${/(I6(x);I6(y))`v}
+
+g::FN(I6`x;I6`y;I6`z;VD)${"{} / {} = {}"(x;y;z)\p1}
+
+(i::U6$0;i<-(/v;U6$1);i+:1)@{
+    x::'v(i)
+    y::'v(i+1)
+    "{} / {}"(x;y)\p1
+    d(x;y)#{
+        g(x;y;v)`v
+        e\p1`e
+    }
+}

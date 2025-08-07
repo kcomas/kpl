@@ -796,7 +796,6 @@ static atg_stat atg_gc_scope(atg *t, gen *g, te *an, err **e) {
 atg_stat un_inv_a(atg *t, gen *g, te *an, err **e, mc *s, uint32_t ri, uint32_t si, uint32_t ti) {
     atg_stat stat;
     if ((stat = atg_gc_scope(t, g, an, e)) != ATG_STAT(OK)) return stat;
-    // TODO check if inside function
     te *tkn = ((te*) an->d[1].p)->d[2].p;
     if (gen_a(g, GEN_OP(CALL), gen_tmp(g, X64_TYPE(M), ti), gen_call_m(g, 2, gen_data(g, X64_TYPE(S), P(s)), gen_data(g, X64_TYPE(M), P(&al_mc))), gen_data(g, X64_TYPE(M), P(mc_i_cstr))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (atg_rt_err_u(g, ri, si, ti, node_root_fname(an->d[1].p), tkn_m_g_l(tkn), tkn_m_g_c(tkn), atg_un_inv_str) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
@@ -859,15 +858,18 @@ static atg_stat atg_uner(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
-static atg_stat atg_uner_sg(atg *t, gen *g, te *an, err **e) {
+atg_stat atg_err_r(atg *t, gen *g, te *restrict an, err **e, const te *restrict s, const char *msg) {
     atg_stat stat;
+    gen_cls cls = gen_var_g_c(s);
     uint32_t ri = t->tc++, si = t->tc++, ti, ui;
     uint64_t esym, vsym;
     (void) vsym;
-    te *s = atg_g_g(an->d[6].p)->d[1].p, *tkn = ((te*) an->d[1].p)->d[2].p, *fn;
+    te *tkn = ((te*) an->d[1].p)->d[2].p, *fn;
+    if (cls != GEN_CLS(A) && cls != GEN_CLS(T)) return atg_err(t, an, e, "atg err_r inv s cls");
+    if (gen_var_g_t(s) != X64_TYPE(M)) return atg_err(t, an, e, "atg err_r inv s type");
     ti = s->d[1].u5;
     if ((stat = atg_gc_scope(t, g, an, e)) != ATG_STAT(OK)) return stat;
-    if (atg_rt_err_u(g, ri, si, ti, node_root_fname(an->d[1].p), tkn_m_g_l(tkn), tkn_m_g_c(tkn), atg_user_inv_str) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (atg_rt_err_u(g, ri, si, ti, node_root_fname(an->d[1].p), tkn_m_g_l(tkn), tkn_m_g_c(tkn), msg) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if ((fn = chk_g_pn_fnnf_type(an))) {
       if ((stat = atg_te_init(t, g, an, e, fn->d[2].p, 2, ui = t->tc++)) != ATG_STAT(OK)) return stat;
       if ((stat = atg_g_un_ev(fn->d[2].p, &esym, &vsym)) != ATG_STAT(OK)) return stat;
@@ -876,6 +878,10 @@ static atg_stat atg_uner_sg(atg *t, gen *g, te *an, err **e) {
       if (gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(M), ui), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     } else if (gen_a(g, GEN_OP(LEAVE), gen_tmp(g, X64_TYPE(M), ri), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
+}
+
+static atg_stat atg_uner_sg(atg *t, gen *g, te *an, err **e) {
+    return atg_err_r(t, g, an, e, atg_g_g(an->d[6].p)->d[1].p, atg_user_inv_str);
 }
 
 void atg_z(atg *t);

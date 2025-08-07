@@ -56,11 +56,15 @@ gen_stat aply_e_vr_err_u(gen *g, te *restrict i, te *restrict v, uint32_t erlb, 
 
 gen_stat aply_e_vr_u(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint32_t glb, uint32_t el, uint32_t ui, uint32_t ei, uint32_t esi, uint32_t si, uint32_t ii, uint32_t vi, mc *fname, uint16_t lno, uint32_t cno, x64_type xt, bool ref, uint64_t esym, uint64_t vsym);
 
+atg_stat atg_err_r(atg *t, gen *g, te *restrict an, err **e, const te *restrict s, const char *msg);
+
 extern const char *atg_un_inv_str;
 
 extern const char *atg_user_inv_str;
 
 extern const char *atg_vr_inv_str;
+
+extern const char *atg_div_inv_str;
 
 void atg_rt_err_p(void *p);
 

@@ -506,3 +506,16 @@ T(validm) {
         ON(NULL, UNER, NULL, AN(NULL, EN("v", U6(0), NULL), L(1, EN("b", U6(0), NULL))))
     )), NULL)));
 }
+
+T(fndiv) {
+    V(TPGM(fndiv), RN(AN(NULL, LN(LT(1, "f", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, TN(FN),
+            LN(LT(2, "x", U6(0), TS(I6), "y", U6(0), TS(I6)), L(1,
+                ZN("v", ON(NULL, DIV, EN("x", U6(0), TS(I6)), EN("y", U6(0), TS(I6))))
+            )))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(NULL, UNER, NULL, AN(NULL, EN("f", U6(0), NULL),
+            L(2, SN(I6, I6(4)), SN(I6, I6(2)))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(NULL, UNER, NULL, AN(NULL, EN("f", U6(0), NULL),
+            L(2, SN(I6, I6(1)), SN(I6, I6(0))))))
+    )), NULL)));
+}

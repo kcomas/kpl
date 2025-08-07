@@ -158,6 +158,7 @@ static bool tmp_var_t(const te *an) {
         if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
         switch (tn->d[1].u4) {
             case TYPE(VR):
+            case TYPE(FN):
             case TYPE(CJ):
             case TYPE(FP):
                 pn = an->d[0].p;
