@@ -32,6 +32,7 @@ const char *ast_oc_str(oc o) {
         "CNCT",
         "CNCTA",
         "UNER",
+        "UPER",
         "DUMP",
         "_END"
     };

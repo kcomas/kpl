@@ -519,3 +519,13 @@ T(fndiv) {
             L(2, SN(I6, I6(1)), SN(I6, I6(0))))))
     )), NULL)));
 }
+
+T(uperr) {
+    V(TPGM(uperr), RN(AN(NULL, LN(LT(1, "x", U6(0), NULL), L(2,
+        ON(NULL, DFN, EN("x", U6(0), NULL), ON(NULL, UNER, NULL,
+            AN(NULL,
+                NNV(S, TFN(FP, TH(UN, 2, "e", TV(ER, TS(SG)), "v", TS(SG)), 1, "s", TS(SG), 0), P(NULL)),
+                L(1, ON(TS(SG), CSG, NULL, CS("fileshouldnotexist")))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("x", U6(0), NULL))
+    )), NULL)));
+}

@@ -740,3 +740,12 @@ T(fndiv) {
     ))});
     te_f(h);
 }
+
+T(uperr) {
+    te *h = ppnode(psr_r(bpsr(TPGM(uperr))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), OP(N(NONE), OP(N(NONE), OP(N(VAR), APLY(N(VAR), N(STR)))))),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}

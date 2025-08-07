@@ -853,11 +853,25 @@ chk_stat chk_er_pn_fn(chk *c, te *an, err **e) {
 }
 
 static chk_stat chk_uner_n_un(chk *c, te *an, err **e) {
-    te *u;
+    te *u, *nn;
     if (ast_g_t(an->d[6].p, &u) != AST_STAT(OK)) return chk_err(c, an, e, "chk cannot get un type");
     te *lte = un_g_lte_ch(u, 'v');
     if (!lte) return chk_err(c, an, e, "chk inv un v type");
     an->d[3] = P(te_c(lte->d[2].p));
+    lte = un_g_lte_ch(u, 'e');
+    if (!lte) return chk_err(c, an, e, "chk inv un e type");
+    lte = lte->d[2].p;
+    if (!chk_is_un_err(lte)) {
+        if (lte->d[1].u4 != TYPE(ER)) return chk_err(c, an, e, "chk inv uner err type");
+        lte = lte->d[2].p;
+        if (lte->d[1].u4 != TYPE(SG)) return chk_err(c, an, e, "chk inv uper type not sg");
+        tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
+        type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
+        type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 1, te_c(an->d[3].p));
+        nn = ast_an_i(c->a, an->d[0].p, an->d[1].p, AST_CLS(O), P(type_h_i(c->ta, NULL, TYPE(UN), tt)), U4(OC(UPER)), NULL, an->d[6].p);
+        ((te*) an->d[6].p)->d[0] = P(nn);
+        an->d[6] = P(nn);
+    }
     return chk_er_pn_fn(c, an, e);
 }
 

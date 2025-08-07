@@ -37,6 +37,7 @@ typedef enum {
     OC(CNCT),
     OC(CNCTA),
     OC(UNER),
+    OC(UPER),
     OC(DUMP),
     OC(_END)
 } oc; // op code

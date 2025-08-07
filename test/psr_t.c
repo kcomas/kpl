@@ -294,3 +294,5 @@ const char *TPGM(fndiv) = "{\n"
                         " '(f(4;2))\\p1\n"
                         " '(f(1;0))\\p1\n"
                         "}()\n";
+
+const char *TPGM(uperr) = "{x::'.f.rs(\"fileshouldnotexist\");x\\p1}()\n";

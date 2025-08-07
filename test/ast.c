@@ -462,3 +462,12 @@ T(fndiv) {
             L(2, SN(I6, I6(1)), SN(I6, I6(0)))))))
     )), NULL)));
 }
+
+T(uperr) {
+    V(TPGM(uperr), RN(AN(NULL, LN(NULL, L(2,
+        ON(NULL, DFN, IN("x"), ON(NULL, UNER, NULL,
+            ON(NULL, NS, NULL, ON(NULL, NS, IN("f"),
+                AN(NULL, IN("rs"), L(1, CS("fileshouldnotexist"))))))),
+        CN(P1, IN("x"))
+    )), NULL)));
+}
