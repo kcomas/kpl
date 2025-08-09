@@ -28,6 +28,7 @@ typedef enum {
     TCUST(I6),
     TCUST(U6),
     TCUST(F6),
+    TCUST(SG),
     TCUST(FN),
     TCUST(NF),
     TCUST(CJ),

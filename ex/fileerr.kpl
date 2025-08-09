@@ -1,0 +1,10 @@
+
+// read file to string fn with err
+
+rf::FN${
+       y::'.f.rs(SG(x))
+       y`v
+}
+
+rf("./ex/hello.kpl")\p1
+rf("fileshouldnotexist")\p1

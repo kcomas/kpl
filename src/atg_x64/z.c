@@ -100,7 +100,7 @@ static atg_stat z_un_o_i6(atg *t, gen *g, te *an, err **e) {
     return z_un(t, g, an, e, type->d[3].p);
 }
 
-static atg_stat z_un_e_vr(atg *t, gen *g, te *an, err **e) {
+static atg_stat z_un_e_(atg *t, gen *g, te *an, err **e) {
     te *lte = ((te*) an->d[4].p)->d[3].p;
     return z_un(t, g, an, e, lte->d[2].p);
 }
@@ -123,7 +123,8 @@ void atg_z(atg *t) {
     atg_a_z(t, TYPE(UN), AST_CLS(_), TYPE(_N), z_un_);
     atg_a_z(t, TYPE(UN), AST_CLS(S), TYPE(I6), z_un_s_i6);
     atg_a_z(t, TYPE(UN), AST_CLS(O), TYPE(I6), z_un_o_i6);
-    atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(VR), z_un_e_vr);
+    atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(VR), z_un_e_);
+    atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(SG), z_un_e_);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(I6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(F6), atg_nop);
     atg_a_z(t, TYPE(VD), AST_CLS(O), TYPE(I6), atg_nop);

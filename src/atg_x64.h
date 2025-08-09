@@ -48,6 +48,8 @@ atg_stat call_npr(gen_op *go, const te *an);
 
 atg_stat atg_aply_acc(atg *t, gen *g, te *restrict an, err **e, te *restrict vlte, te **i, uint32_t erlb);
 
+gen_stat atg_rt_err_te_u(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno);
+
 gen_stat atg_rt_err_u(gen *g, uint32_t ri, uint32_t si, uint32_t ti, mc *fname, uint16_t lno, uint32_t cno, const char *msg);
 
 atg_stat un_inv_a(atg *t, gen *g, te *an, err **e, mc *s, uint32_t ri, uint32_t si, uint32_t ti);

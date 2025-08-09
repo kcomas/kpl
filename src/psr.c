@@ -449,6 +449,7 @@ psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(I6), "I6", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(U6), "U6", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(F6), "F6", tkn_ft));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(SG), "SG", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(FN), "FN", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(NF), "NF", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_type_i, 1, tkn_a(p->tt, TCUST(CJ), "CJ", tkn_ft));

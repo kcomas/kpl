@@ -273,6 +273,7 @@ static ast *ast_tkn(ast *a) {
     ast_t_a(a, TCUST(I6), TYPE(I6));
     ast_t_a(a, TCUST(U6), TYPE(U6));
     ast_t_a(a, TCUST(F6), TYPE(F6));
+    ast_t_a(a, TCUST(SG), TYPE(SG));
     ast_t_a(a, TCUST(FN), TYPE(FN));
     ast_t_a(a, TCUST(NF), TYPE(NF));
     ast_t_a(a, TCUST(CJ), TYPE(CJ));
