@@ -6,5 +6,7 @@ rf::FN${
        y`v
 }
 
-rf("./ex/hello.kpl")\p1
+x::'rf("./ex/hello.kpl")
+x\p1
+
 rf("fileshouldnotexist")\p1
