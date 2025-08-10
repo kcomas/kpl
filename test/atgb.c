@@ -182,9 +182,16 @@ T(uperr) {
     te_f(eu);
     te_f(es);
     te_f(us);
-    atg_t_f();
     AE(0);
     err_p(e, 0, true);
     A(strcmp(e->m, "inv path") == 0, "inv err msg");
     err_f(e);
 }
+
+/*
+T(movep) {
+    AI(TPGM(movep), 3, 1);
+    atg_d_p(t);
+    atg_t_f();
+}
+*/

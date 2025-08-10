@@ -76,7 +76,14 @@ static atg_stat z_un(atg *t, gen *g, te *restrict an, err **e, te *restrict type
         if (n->d[2].u4 == AST_CLS(E)) lte = n->d[3].p;
         if (atg_an_var(g, &n) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv z un val");
         if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ui), atg_te_idx_d(g, 1)), n, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-        if (lte && (ast_lst_tbl_e_g_f(lte) & LTE_FLG(M)) && gen_a(g, GEN_OP(SET), var_arg(g, lte, X64_TYPE(M)), gen_data(g, X64_TYPE(M), P(NULL)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        if (type_is_ref(type->d[1].u4)) {
+            if (lte && (ast_lst_tbl_e_g_f(lte) & LTE_FLG(M))) {
+                if (gen_a(g, GEN_OP(SET), var_arg(g, lte, X64_TYPE(M)), gen_data(g, X64_TYPE(M), P(NULL)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            } else {
+                h = gen_idx_m(g, X64_TYPE(I6), 2, te_c(n), gen_data(g, X64_TYPE(U3), U3(0)));
+                if (gen_a(g, GEN_OP(ADD), h, te_c(h), gen_data(g, X64_TYPE(I6), I6(1))) != GEN_STAT(OK)) return atg_err(t, an, e, "atg inv z un ref inc");
+            }
+        }
     }
     if (gen_a(g, GEN_OP(NOP), gen_tmp(g, X64_TYPE(M), ui), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
