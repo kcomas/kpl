@@ -173,6 +173,28 @@ chk_stat chk_fnnf_un_ret(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+chk_stat chk_move_var(chk *c, te *an, err **e, const mc *s) {
+    te *pn, *ppn = an, *kv;
+    while (ast_g_pn(AST_CLS(L), ppn, &pn) == AST_STAT(OK)) {
+        tbl *tt = pn->d[3].p;
+        if (tt && tbl_g_i(tt, P(s), &kv) == TBL_STAT(OK)) {
+            if (ast_lst_tbl_e_g_f(kv) & LTE_FLG(M)) return chk_err(c, an, e, "chk var all ready moved");
+            ast_lst_tbl_e_s_f(kv, LTE_FLG(M));
+        }
+        ppn = an->d[0].p;
+        if (ppn->d[2].u4 == AST_CLS(R)) break;
+        if (ppn->d[2].u4 == AST_CLS(O) && ppn->d[4].u4 == OC(CST)) {
+            ppn = ppn->d[5].p;
+            if (ppn->d[2].u4 == AST_CLS(T)) {
+                ppn = ppn->d[3].p;
+                if (type_g_c(ppn->d[1].u4 == TYPE_CLS(F))) break;
+            }
+        }
+        ppn = pn->d[0].p;
+    }
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_cst_nf_lst_b(chk *c, te *an, err **e) {
     chk_stat stat;
     if ((stat = chk_cst_fn_lst_b(c, an, e)) != CHK_STAT(OK)) return stat;

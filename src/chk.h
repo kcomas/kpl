@@ -20,6 +20,8 @@ te *chk_g_pn_fnnf_type(te *an);
 
 chk_stat chk_fnnf_un_ret(chk *c, te *an, err **e);
 
+chk_stat chk_move_var(chk *c, te *an, err **e, const mc *s);
+
 chk_stat chk_nop(chk *c, te *an, err **e);
 
 chk_stat a_te_g_rt(chk *c, te *an, err **e, te **rt);

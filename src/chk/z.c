@@ -15,6 +15,13 @@ static chk_stat chk_z_vd(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_z_vd_move(chk *c, te *an, err **e) {
+    chk_stat stat;
+    te *lte = ((te*) an->d[4].p)->d[3].p;
+    if ((stat = chk_move_var(c, an, e, lte->d[0].p)) != CHK_STAT(OK)) return stat;
+    return chk_z_vd(c, an, e);
+}
+
 static chk_stat chk_z_vd_un(chk *c, te *an, err **e) {
     (void) e;
     tbl *tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(4, c->ta, NULL));
@@ -43,11 +50,12 @@ void chk_z(chk *c) {
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(S), TYPE(F6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(F6));
-    CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(SG));
+    CHK_AA(c, chk_z_vd_move, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(SG));
+    CHK_AA(c, chk_z_vd_move, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(TE));
+    CHK_AA(c, chk_z_vd_move, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(U6));
     CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(O), TYPE(SG));
-    CHK_AA(c, chk_z_vd, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_z_vd_un, AST_CLS(Z), TYPE(_N), AST_CLS(_), TYPE(_N));
     CHK_AA(c, chk_z_z_, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(_N));
     CHK_AA(c, chk_z_z_un, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(UN));
