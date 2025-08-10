@@ -471,3 +471,15 @@ T(uperr) {
         CN(P1, IN("x"))
     )), NULL)));
 }
+
+T(movep) {
+    V(TPGM(movep), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("x"), VN(NULL, L(2, SN(F6, F6(1.1)), SN(F6, F6(2.2))))),
+        ON(NULL, DFN, IN("y"), VN(NULL, L(2, SN(I6, I6(3)), SN(I6, I6(4))))),
+        ON(NULL, DFN, IN("s"), ON(NULL, MTCH, NULL, LN(NULL, L(2,
+            ZN("x", IN("x")),
+            ZN("y", IN("y"))
+        )))),
+        CN(P1, IN("s"))
+    )), NULL)));
+}

@@ -296,3 +296,13 @@ const char *TPGM(fndiv) = "{\n"
                         "}()\n";
 
 const char *TPGM(uperr) = "{x::'.f.rs(\"fileshouldnotexist\");x\\p1}()\n";
+
+const char *TPGM(movep) = "{\n"
+                         " x::[1.1;2.2]\n"
+                         " y::[3;4]\n"
+                         " s::#{\n"
+                         "  x`x\n"
+                         "  y`y\n"
+                         " }\n"
+                         " s\\p1\n"
+                         "}()\n";
