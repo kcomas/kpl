@@ -688,17 +688,17 @@ T(movep) {
     te *ti = type_te_i_v(&al_te, NULL, 2, TS(I6), TS(I6));
     te *ts = TH(ST, 2, "x", te_c(tf), "y", te_c(ti));
     IC(TPGM(movep));
-    V(RN(AN(TS(VD), LN(LT(3, "x", FLG(0, LTE_FLG(L) | LTE_FLG(M)), te_c(tf), "y", FLG(1, LTE_FLG(L) | LTE_FLG(M)), te_c(ti), "s", FLG(2, LTE_FLG(L)), te_c(ts)), L(4,
+    V(RN(AN(TS(VD), LN(LT(3, "x", FLG(0, LTE_FLG(L) | LTE_FLG(M)), te_c(tf), "y", FLG(1, LTE_FLG(L) | LTE_FLG(M)), te_c(ti), "s", FLG(2, LTE_FLG(E) | LTE_FLG(L)), te_c(ts)), L(4,
         ON(te_c(tf), DFN, EN("x", FLG(0, LTE_FLG(M) | LTE_FLG(L)), te_c(tf)),
             VN(te_c(tf), L(2, SN(F6, F6(1.1)), SN(F6, F6(2.2))))),
         ON(te_c(ti), DFN, EN("y", FLG(1, LTE_FLG(M) | LTE_FLG(L)), te_c(ti)),
             VN(te_c(ti), L(2, SN(I6, I6(3)), SN(I6, I6(4))))),
-        ON(te_c(ts), DFN, EN("s", FLG(2, LTE_FLG(L)), te_c(ts)), ON(te_c(ts), MTCH, LN(NULL, NULL),
+        ON(te_c(ts), DFN, EN("s", FLG(2, LTE_FLG(E) | LTE_FLG(L)), te_c(ts)), ON(te_c(ts), MTCH, LN(NULL, NULL),
             LN(LT(2, "x", FLG(0, LTE_FLG(M) | LTE_FLG(O) | LTE_FLG(L)), te_c(tf), "y", FLG(0, LTE_FLG(M) | LTE_FLG(O) | LTE_FLG(L)), te_c(ti)), L(2,
                 ZTN("x", TS(VD), EN("x", FLG(0, LTE_FLG(M) | LTE_FLG(O) | LTE_FLG(L)), te_c(tf))),
                 ZTN("y", TS(VD), EN("y", FLG(0, LTE_FLG(M) | LTE_FLG(O) | LTE_FLG(L)), te_c(ti)))
             )))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(2, LTE_FLG(L)), te_c(ts)))
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(2, LTE_FLG(E) | LTE_FLG(L)), te_c(ts)))
     )), NULL)));
     te_f(tf);
     te_f(ti);

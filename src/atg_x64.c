@@ -328,12 +328,15 @@ atg_stat atg_nop(atg *t, gen *g, te *an, err **e) {
 
 atg_stat v_set_fn(atg *t, gen *g, te *restrict an, err **e, te *restrict n, uint32_t ti, uint32_t eid, atg_idx_d idxfn) {
     atg_stat stat;
+    te *lte;
     switch (n->d[2].u4) {
         case AST_CLS(S):
             if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ti), idxfn(g, eid++)), gen_data(g, type_g_x64_type(n->d[3].p), n->d[4]), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, "v_set_fn CLS S");
             break;
         case AST_CLS(E):
-            if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ti), idxfn(g, eid++)), var_arg(g, n->d[3].p, type_g_x64_type(((te*) n->d[3].p)->d[2].p)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, "v_set_fn CLS E");
+            lte = n->d[3].p;
+            if (gen_a(g, GEN_OP(SET), gen_idx_m(g, X64_TYPE(N), 2, gen_tmp(g, X64_TYPE(M), ti), idxfn(g, eid++)), var_arg(g, lte, type_g_x64_type(lte->d[2].p)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, "v_set_fn CLS E");
+            if ((ast_lst_tbl_e_g_f(lte) & LTE_FLG(M)) && gen_a(g, GEN_OP(SET), var_arg(g, lte, X64_TYPE(M)), gen_data(g, X64_TYPE(M), P(NULL)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
             break;
         case AST_CLS(V):
         case AST_CLS(O):

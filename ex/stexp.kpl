@@ -1,0 +1,7 @@
+
+// print and export st
+
+x::[1.1;2.2]
+y::[3;4]
+z\e::#{x`x;y`y}
+z\p1

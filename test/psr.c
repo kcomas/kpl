@@ -755,7 +755,7 @@ T(movep) {
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), VEC(N(FLT), N(FLT))),
         OP(N(VAR), VEC(N(INT), N(INT))),
-        OP(N(VAR), OP(N(NONE), LST(
+        OP(CMD(N(VAR)), OP(N(NONE), LST(
             SYM(N(VAR)),
             SYM(N(VAR))
         ))),

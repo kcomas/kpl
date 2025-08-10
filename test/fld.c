@@ -531,14 +531,14 @@ T(uperr) {
 }
 
 T(movep) {
-    V(TPGM(movep), RN(AN(NULL, LN(LT(3, "x", U6(0), NULL, "y", U6(0), NULL, "s", U6(0), NULL), L(4,
+    V(TPGM(movep), RN(AN(NULL, LN(LT(3, "x", U6(0), NULL, "y", U6(0), NULL, "s", FLG(0, LTE_FLG(E)), NULL), L(4,
         ON(NULL, DFN, EN("x", U6(0), NULL), VN(NULL, L(2, SN(F6, F6(1.1)), SN(F6, F6(2.2))))),
         ON(NULL, DFN, EN("y", U6(0), NULL), VN(NULL, L(2, SN(I6, I6(3)), SN(I6, I6(4))))),
-        ON(NULL, DFN, EN("s", U6(0), NULL), ON(NULL, MTCH, LN(NULL, NULL),
+        ON(NULL, DFN, EN("s", FLG(0, LTE_FLG(E)), NULL), ON(NULL, MTCH, LN(NULL, NULL),
             LN(LT(2, "x", U6(0), NULL, "y", U6(0), NULL), L(2,
                 ZN("x", EN("x", U6(0), NULL)),
                 ZN("y", EN("y", U6(0), NULL))
             )))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", U6(0), NULL))
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }

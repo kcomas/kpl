@@ -5,7 +5,7 @@
 
 static int usage(const char *name) {
     printf("\e[1musage: %s [opts] file.kpl\n", name);
-    printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as)\n");
+    printf(" -d[step] dumps output from: p(psr) a(ast) f(fld) c(chk) o(opt) g(gen) s(as) y(gen+as)\n");
     printf(" -h show this msg\e[0m\n");
     return 1;
 }
