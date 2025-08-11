@@ -210,6 +210,7 @@ static gen_stat imul_auaudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat; \
     te *kv[3]; \
     if ((stat = get_reg_n(s, ci, kv, 3)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
+    if (AS_X64(O) == AS_X64(DIV) || AS_X64(O) == AS_X64(IDIV)) if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(DX))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), kv[1]->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(R), kv[2]->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \

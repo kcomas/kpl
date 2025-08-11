@@ -702,3 +702,24 @@ T(movep) {
     te_f(ti);
     te_f(ts);
 }
+
+/*
+T(impst) {
+    te *tf = type_te_i_v(&al_te, NULL, 2, TS(F6), TS(F6));
+    te *ti = type_te_i_v(&al_te, NULL, 2, TS(I6), TS(I6));
+    te *ts = TH(ST, 2, "x", te_c(tf), "y", te_c(ti));
+    te *et = TH(ET, 1, "z", te_c(ts));
+    IC(TPGM(impst));
+    V(RN(LN(LT(1, "r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), L(3,
+        ON(te_c(et), NOP, EN("s", FLG(0, LTE_FLG(D)), te_c(et)), NN(S, te_c(et))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("x", te_c(tf), NN(S, te_c(ts)))),
+        ON(TS(I6), DFN, EN("r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), ON(TS(I6), ADD,
+            AN(TS(I6), ZTN("y", te_c(ti), NN(S, te_c(ts))), L(1, SN(I6, I6(0)))),
+            AN(TS(I6), ZTN("y", te_c(ti), NN(S, te_c(ts))), L(1, SN(I6, I6(1))))))
+    ))));
+    te_f(tf);
+    te_f(ti);
+    te_f(ts);
+    te_f(et);
+}
+*/
