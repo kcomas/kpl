@@ -542,3 +542,14 @@ T(movep) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("s", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(impst) {
+    V(TPGM(impst), RN(AN(NULL, LN(LT(2, "s", U6(0), NULL, "r", FLG(0, LTE_FLG(E)), NULL), L(3,
+        ON(NULL, DFN, EN("s", U6(0), NULL),
+            SET(1, "z", P(NULL), TH(ST, 2, "x", type_te_i_v(&al_te, NULL, 2, TS(F6), TS(F6)), "y", type_te_i_v(&al_te, NULL, 2, TS(I6), TS(I6))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZN("x", ZN("z", EN("s", U6(0), NULL)))),
+        ON(NULL, DFN, EN("r", FLG(0, LTE_FLG(E)), NULL), ON(NULL, ADD,
+            AN(NULL, ZN("y", ZN("z", EN("s", U6(0), NULL))), L(1, SN(I6, I6(0)))),
+            AN(NULL, ZN("y", ZN("z", EN("s", U6(0), NULL))), L(1, SN(I6, I6(1))))))
+    )), NULL)));
+}

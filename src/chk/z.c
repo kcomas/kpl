@@ -4,6 +4,7 @@
 static chk_stat chk_z_type_h(chk *c, te *an, err **e) {
     te *st, *kv;
     if (ast_g_t(an->d[4].p, &st) != AST_STAT(OK)) return chk_err(c, an, e, "chk st cannot get access type");
+    if (st->d[1].u4 == TYPE(SL)) st = st->d[2].p;
     if (tbl_g_i(st->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return chk_err(c, an, e, "chk st inv access type");
     ((te*) an->d[3].p)->d[2] = P(te_c(kv->d[2].p));
     return CHK_STAT(OK);
@@ -61,6 +62,7 @@ void chk_z(chk *c) {
     CHK_AA(c, chk_z_z_un, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(UN));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ST));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(A), TYPE(ST));
+    CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(Z), TYPE(ST));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(ET));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(E), TYPE(UN));
     CHK_AA(c, chk_z_type_h, AST_CLS(Z), TYPE(_N), AST_CLS(A), TYPE(UN));

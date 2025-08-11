@@ -308,7 +308,7 @@ const char *TPGM(movep) = "{\n"
                          "}()\n";
 
 const char *TPGM(impst) = "{\n"
-                          " s::\"./ex/stexp.kpl\"\\l`s\n"
-                          " s`x\\p1\n"
-                          " r\\e::s`y(0)+s`y(1)\n"
+                          " s::\"./ex/stexp.kpl\"\\l\n"
+                          " s`z`x\\p1\n"
+                          " r\\e::s`z`y(0)+s`z`y(1)\n"
                           "}()\n";
