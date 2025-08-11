@@ -79,3 +79,5 @@ extern const char *TPGM(fndiv);
 extern const char *TPGM(uperr);
 
 extern const char *TPGM(movep);
+
+extern const char *TPGM(impst);

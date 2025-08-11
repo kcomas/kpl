@@ -483,3 +483,13 @@ T(movep) {
         CN(P1, IN("s"))
     )), NULL)));
 }
+
+T(impst) {
+    V(TPGM(impst), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("s"), ZN("s", CN(L, CS("./ex/stexp.kpl")))),
+        CN(P1, ZN("x", IN("s"))),
+        ON(NULL, DFN, CN(E, IN("r")), ON(NULL, ADD,
+            AN(NULL, ZN("y", IN("s")), L(1, SN(I6, I6(0)))),
+            AN(NULL, ZN("y", IN("s")), L(1, SN(I6, I6(1))))))
+    )), NULL)));
+}

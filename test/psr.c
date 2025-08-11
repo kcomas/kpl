@@ -762,5 +762,14 @@ T(movep) {
         CMD(N(VAR))
     ))});
     te_f(h);
+}
 
+T(impst) {
+    te *h = ppnode(psr_r(bpsr(TPGM(impst))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), SYM(CMD(N(STR)))),
+        CMD(SYM(N(VAR))),
+        OP(CMD(N(VAR)), OP(APLY(SYM(N(VAR)), N(INT)), APLY(SYM(N(VAR)), N(INT))))
+    ))});
+    te_f(h);
 }
