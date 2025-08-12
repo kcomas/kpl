@@ -211,6 +211,25 @@ static bool aply_lst_t(const te *an) {
     return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(L);
 }
 
+static fld_stat aply_s_o(fld *f, te **an, err **e) {
+    te *tgt = (*an)->d[4].p, *tt = tgt->d[3].p, *tv = tgt->d[4].p, *n;
+    if (tt->d[1].u4 != TYPE(TE)) return fld_err(f, *an, e, "opt aply_s_o nyi");
+    tgt = ((lst*) (*an)->d[5].p)->h->d[0].p;
+    int64_t idx = tgt->d[4].i6;
+    tt = tt->d[idx + 2].p;
+    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, ast_s_f, P(te_c(tt)), tv->d[idx]);
+    te_f(*an);
+    *an = n;
+    return FLD_STAT(OK);
+}
+
+static bool aply_s_t(const te *an) {
+    te *tgt = an->d[4].p;
+    if (!tgt || tgt->d[2].u4 != AST_CLS(S)) return false;
+    tgt = tgt->d[3].p;
+    return tgt->d[1].u4 == TYPE(TE) || type_g_c(tgt->d[1].u4) == TYPE_CLS(V);
+}
+
 static bool cst_x_t(const te *an, ast_cls c) {
     te *ln = an->d[5].p;
     return an->d[2].u4 == AST_CLS(O) && an->d[4].u4 == OC(CST) && (ln->d[2].u4 == AST_CLS(T) || ln->d[2].u4 == AST_CLS(E)) && ((te*) an->d[6].p)->d[2].u4 == c;
@@ -473,6 +492,7 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(L), lst_led_t, lst_led_o);
     fld_a(o, AST_CLS(A), tmp_var_t, tmp_var_o);
     fld_a(o, AST_CLS(A), aply_lst_t, aply_lst_o);
+    fld_a(o, AST_CLS(A), aply_s_t, aply_s_o);
     fld_a(o, AST_CLS(O), cst_s_t, cst_s_o);
     fld_a(o, AST_CLS(O), cst_v_t, cst_v_o);
     fld_a(o, AST_CLS(O), cst_st_t, cst_st_o);
