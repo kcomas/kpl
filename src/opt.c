@@ -434,7 +434,6 @@ static fld_stat z_s_o(fld *f, te **an, err **e) {
 }
 
 static bool z_s_t(const te *an) {
-    if (an->d[2].u4 != AST_CLS(Z)) return false;
     te *sn = an->d[4].p;
     if (!sn || sn->d[2].u4 != AST_CLS(S)) return false;
     sn = sn->d[3].p;

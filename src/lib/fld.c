@@ -87,11 +87,13 @@ fld_stat fld_n(fld *f, te **an, err **e, bool rr) {
     te *pan, *kv, *h, *fns;
     do {
         pan = *an;
+        uint16_t cls = (*an)->d[2].u4;
         if (tbl_g_i(f->ft, (*an)->d[2], &kv) == TBL_STAT(OK)) {
             h = ((lst*) kv->d[1].p)->h;
             while (h) {
                 fns = h->d[0].p;
-                if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat; // if an changes cls loop keeps running
+                if (((fld_test_fn*) fns->d[0].p)(*an) && (stat = ((fld_fn*) fns->d[1].p)(f, an, e)) != FLD_STAT(OK)) return stat;
+                if ((*an)->d[2].u4 != cls) break;
                 h = h->d[2].p;
             }
         }
