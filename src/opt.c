@@ -403,7 +403,7 @@ static fld_stat z_et_o(fld *f, te **an, err **e) {
     if (ast_g_t((*an)->d[4].p, &kv) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get ET type for Z");
     if (tbl_g_i(kv->d[2].p, (*an)->d[5], &kv) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt cannot get value in ET tbl");
     // weak ref while in scope
-    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, NULL, kv->d[2], kv->d[1]);
+    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, ast_s_f, P(te_c(kv->d[2].p)), kv->d[1]);
     te_f(*an);
     *an = n;
     return FLD_STAT(OK);
@@ -415,6 +415,32 @@ static bool z_et_t(const te *an) {
     return n->d[1].u4 == TYPE(ET);
 }
 
+static fld_stat z_s_o(fld *f, te **an, err **e) {
+    uint32_t idx = 0;
+    mc *s = (*an)->d[5].p;
+    te *sn = (*an)->d[4].p, *st = sn->d[3].p, *sv = sn->d[4].p, *kv, *h, *n;
+    if (st->d[1].u4 != TYPE(ST)) return fld_err(f, *an, e, "opt z_s_o nyi");
+    tbl *tt = st->d[2].p;
+    if (tbl_g_i(tt, P(s), &kv) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt cannot get z s type");
+    h = tt->i->h;
+    while (h && h->d[0].p != kv) {
+        h = h->d[2].p;
+        idx++;
+    }
+    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, ast_s_f, P(te_c(kv->d[2].p)), sv->d[idx]);
+    te_f(*an);
+    *an = n;
+    return FLD_STAT(OK);
+}
+
+static bool z_s_t(const te *an) {
+    if (an->d[2].u4 != AST_CLS(Z)) return false;
+    te *sn = an->d[4].p;
+    if (!sn || sn->d[2].u4 != AST_CLS(S)) return false;
+    sn = sn->d[3].p;
+    return sn && type_is_ref(sn->d[1].u4);
+}
+
 uint32_t opt_exp_id(te *x) {
     return u5_g_o(x->d[1], 1);
 }
@@ -423,7 +449,7 @@ uint16_t opt_exp_eid(te *x) {
     return u4_g_o(x->d[1], 1);
 }
 
-uint32_t opt_exp_flgs(te *x) {
+uint16_t opt_exp_flgs(te *x) {
     return u4_g_o(x->d[1], 0);
 }
 
@@ -455,5 +481,6 @@ fld *opt_b(fld *o) {
     fld_a(o, AST_CLS(O), op_s_s_mon_t, op_s_s_mon_o);
     fld_a(o, AST_CLS(O), tmp_var_t, tmp_var_o);
     fld_a(o, AST_CLS(Z), z_et_t, z_et_o);
+    fld_a(o, AST_CLS(Z), z_s_t, z_s_o);
     return o;
 }

@@ -714,10 +714,10 @@ T(impst) {
     IC(TPGM(impst));
     V(RN(LN(LT(1, "r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), L(3,
         ON(te_c(et), NOP, EN("s", FLG(0, LTE_FLG(D)), te_c(et)), NN(S, te_c(et))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("x", te_c(tf), NN(S, te_c(ts)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), NN(S, te_c(tf))),
         ON(TS(I6), DFN, EN("r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), ON(TS(I6), ADD,
-            AN(TS(I6), ZTN("y", te_c(ti), NN(S, te_c(ts))), L(1, SN(I6, I6(0)))),
-            AN(TS(I6), ZTN("y", te_c(ti), NN(S, te_c(ts))), L(1, SN(I6, I6(1))))))
+            AN(TS(I6), NN(S, te_c(ti)), L(1, SN(I6, I6(0)))),
+            AN(TS(I6), NN(S, te_c(ti)), L(1, SN(I6, I6(1))))))
     ))));
     te_f(tf);
     te_f(ti);

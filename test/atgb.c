@@ -268,5 +268,12 @@ T(movep) {
     A(((te*) v->d[1].p)->d[1].i6 == 4, "inv exp val");
     mc_f(ms);
     opt_exp_tbl_f(xt);
+}
+
+/*
+T(impst) {
+    AI(TPGM(impst), 0, 1);
+    V(NULL, NULL);
     atg_t_f();
 }
+*/
