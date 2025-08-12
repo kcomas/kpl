@@ -590,7 +590,11 @@ void drop_atm_kv(gen_st *st, const te *atm_kv, const te *ci) {
 }
 
 void drop_atm_kv_n(gen_st *st, te **atm_kv, const te *ci, size_t n) {
-    for (size_t i = 0; i < n; i++) drop_atm_kv(st, atm_kv[i], ci);
+    for (size_t i = 0; i < n; i++) {
+        for (size_t x = 0; x < i; x++) if (atm_kv[x] == atm_kv[i]) goto next;
+        drop_atm_kv(st, atm_kv[i], ci);
+        next:
+    }
 }
 
 gen_stat stk_va(gen_st *st, te *c, int32_t *v) {

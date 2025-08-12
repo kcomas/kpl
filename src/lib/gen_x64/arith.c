@@ -210,8 +210,8 @@ static gen_stat imul_auaudu_fn(gen *g, void *s, te *ci, as *a, err **e) {
     gen_stat stat; \
     te *kv[3]; \
     if ((stat = get_reg_n(s, ci, kv, 3)) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen reg"); \
-    if (AS_X64(O) == AS_X64(DIV) || AS_X64(O) == AS_X64(IDIV)) if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(DX))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), U3(R(AX))), as_arg_i(a, ARG_ID(R), kv[1]->d[2]), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
+    if (AS_X64(O) == AS_X64(DIV) || AS_X64(O) == AS_X64(IDIV)) if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(DX))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(R), kv[2]->d[2]), NULL, NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(MOV), as_arg_i(a, ARG_ID(R), kv[0]->d[2]), as_arg_i(a, ARG_ID(R), U3(R(AX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     drop_atm_kv_n(s, kv, ci, 3); \
@@ -242,6 +242,7 @@ MULDIVVUVUAU(imul, IMUL);
     int32_t v0, v1, v2; \
     if (stk_g_idx3(s, ci->d[1].p, ci->d[2].p, ci->d[3].p, &v0, &v1, &v2) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen stkv inv idx"); \
     gen_as_rrmbd(a, AS_X64(MOV), R(AX), R(BP), v1, ci); \
+    if (AS_X64(O) == AS_X64(DIV) || AS_X64(O) == AS_X64(IDIV)) if (gen_as(a, AS_X64(XOR), as_arg_i(a, ARG_ID(R), U3(R(DX))), as_arg_i(a, ARG_ID(R), U3(R(DX))), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     if (gen_as(a, AS_X64(O), as_arg_i(a, ARG_ID(RM), U3(R(BP))), bd_arg(a, v2), NULL, NULL, ci) != AS_STAT(OK)) return gen_err(g, ci, e, __FUNCTION__); \
     gen_as_rmbdr(a, AS_X64(MOV), R(BP), v0, R(AX), ci); \
     return GEN_STAT(OK); \
