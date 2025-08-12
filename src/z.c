@@ -72,7 +72,7 @@ static __attribute__((constructor)) void z_con(void) {
     bs = as_b(as_i(&z_al, &al_te, &al_lst, &al_err, as_x64_err_g_p, as_arg_tbl, mktbls(AS_X64(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
     bst = gen_st_i(&z_al, &al_te, mktbls(10), mktbls(10), vr_i(16, &al_vr, NULL), vr_i(16, &al_vr, NULL));
     bg = gen_b(gen_i(&z_al, &al_te, &al_vr, &al_err, gen_cls_info_tbl, mktbls(GEN_OP(_END)), lst_i(&al_lst, &al_te, (void*) te_f)));
-    bt = atg_b(atg_i(&z_al, &al_te, &al_err, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)),gen_i_gen(bg), as_i_as(bs)));
+    bt = atg_b(atg_i(&z_al, &al_te, &al_err, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)), gen_i_gen(bg), as_i_as(bs)));
 }
 
 static __attribute__((destructor)) void z_des(void) {
@@ -87,14 +87,25 @@ static __attribute__((destructor)) void z_des(void) {
     gen_f(bg);
 }
 
+static size_t cdl = 0; // current number of destructors
+
+void z_atg_rst(void) {
+    atg_f(bt);
+    bt = atg_b(atg_i(&z_al, &al_te, &al_err, atg_err, mktbl, lst_i(&al_lst, &al_te, NULL), lst_i(&al_lst, &al_te, (void*) te_f), tbl_i(&al_tbl, type_un_hsh, type_un_eq, lst_i(&al_lst, &al_te, (void*) te_f), te_i(10, &al_te, NULL)), gen_i_gen(bg), as_i_as(bs)));
+    p = 0;
+    cdl = 0;
+}
+
+void z_atg_d_p(void) {
+    atg_d_p(bt);
+}
+
 static void z_e_p(void *d, uint32_t idnt) {
     mc *fn = d;
     printf("%*s\e[1m%s\e[0m", idnt, "", (char*) fn->d);
 }
 
 #define APLYLSTS 4 // {}()
-
-static size_t cdl = 0; // current number of destructors
 
 static void z_fn_err_f(void *p) {
     te *t = p;

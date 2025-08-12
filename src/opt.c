@@ -398,32 +398,12 @@ static bool op_s_s_mon_t(const te *an) {
     return false;
 }
 
-static void opt_te_f(void *p) {
-    te *t = p;
-    te_f(t->d[3].p);
-    te_f(t->d[4].p);
-    t->af->f(t);
-}
-
 static fld_stat z_et_o(fld *f, te **an, err **e) {
     te *kv, *n;
     if (ast_g_t((*an)->d[4].p, &kv) != AST_STAT(OK)) return fld_err(f, *an, e, "opt cannot get ET type for Z");
     if (tbl_g_i(kv->d[2].p, (*an)->d[5], &kv) != TBL_STAT(OK)) return fld_err(f, *an, e, "opt cannot get value in ET tbl");
-    void *fn = NULL;
-    n = kv->d[2].p;
-    if (type_is_ref(n->d[1].u4)) {
-        switch (n->d[1].u4) {
-            case TYPE(TE):
-            case TYPE(ST):
-                fn = opt_te_f;
-                te_c(kv->d[2].p);
-                te_c(kv->d[1].p);
-                break;
-            default:
-                return fld_err(f, *an, e, "fld inv des update for et");
-        }
-    }
-    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, fn, kv->d[2], kv->d[1]);
+    // weak ref while in scope
+    n = ast_s_i(f->a, (*an)->d[0].p, (*an)->d[1].p, NULL, kv->d[2], kv->d[1]);
     te_f(*an);
     *an = n;
     return FLD_STAT(OK);

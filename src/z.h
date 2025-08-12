@@ -21,4 +21,8 @@ typedef enum {
     Z_D_FLG(E) = 1 << 8 // exec
 } z_d_flgs;
 
+void z_atg_rst(void); // testing
+
+void z_atg_d_p(void);
+
 err *z(mc *fn, tbl **et, uint16_t dflgs); // file name, exports tbl, dump flgs

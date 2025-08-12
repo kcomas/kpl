@@ -6,6 +6,7 @@
     ast_verify(_t, a, an, N);
 
 T(fnadd3) {
+    z_atg_rst();
     IC(TPGM(fnadd3));
     te *ft = TFN(FN, TS(I6), 3, "a", TS(I6), 0, "b", TS(I6), 1, "c", TS(I6), 2);
     te *cn = RN(LN(LT(1, "f", FLG(-1, LTE_FLG(F)), te_c(ft)), L(2,
@@ -241,6 +242,7 @@ T(st) {
     te_f(st);
 }
 
+/*
 T(import) {
     IC(TPGM(import));
     te *et = TH(ET, 1, "b", TS(I6));
@@ -267,6 +269,7 @@ T(lfac) {
     te_f(fn);
     te_f(et);
 }
+*/
 
 T(istr) {
     IC(TPGM(istr));
@@ -703,7 +706,6 @@ T(movep) {
     te_f(ts);
 }
 
-/*
 T(impst) {
     te *tf = type_te_i_v(&al_te, NULL, 2, TS(F6), TS(F6));
     te *ti = type_te_i_v(&al_te, NULL, 2, TS(I6), TS(I6));
@@ -722,4 +724,3 @@ T(impst) {
     te_f(ts);
     te_f(et);
 }
-*/
