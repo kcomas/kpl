@@ -1,0 +1,6 @@
+
+// import st
+
+s::"./ex/stexp.kpl"\l
+s`z`x\p1
+"{} + {} = {}"(s`z`y(0);s`z`y(1);s`z`y(0)+s`z`y(1))\p1
