@@ -312,3 +312,12 @@ const char *TPGM(impst) = "{\n"
                           " s`z`x\\p1\n"
                           " r\\e::s`z`y(0)+s`z`y(1)\n"
                           "}()\n";
+
+const char *TPGM(mmut) = "{\n"
+                         " a::$(VR(I6);[])`s\n"
+                         " a`s,:1\n"
+                         " b\\e::a\n"
+                         " b`s,:2\n"
+                         " a\\p1\n"
+                         " b\\p1\n"
+                         "}()\n";

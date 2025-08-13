@@ -722,3 +722,22 @@ T(impst) {
     te_f(ts);
     te_f(et);
 }
+
+T(mmut) {
+    te *vt = TV(VR, TS(I6));
+    te *ut = TH(UN, 1, "s", te_c(vt));
+    IC(TPGM(mmut));
+    V(RN(LN(LT(2, "a", FLG(0, LTE_FLG(L)), te_c(ut), "b", FLG(1, LTE_FLG(L) | LTE_FLG(E)), te_c(ut)), L(6,
+        ON(te_c(ut), DFN, EN("a", FLG(0, LTE_FLG(L)), te_c(ut)),
+            ZTN("s", TS(VD), VN(te_c(vt), L0()))),
+        ON(te_c(vt), CNCTA, ZTN("s", te_c(vt), EN("a", FLG(0, LTE_FLG(L)), te_c(ut))), SN(I6, I6(1))),
+        ON(te_c(ut), DFN,
+            EN("b", FLG(1, LTE_FLG(L) | LTE_FLG(E)), te_c(ut)),
+            EN("a", FLG(0, LTE_FLG(L)), te_c(ut))),
+        ON(te_c(vt), CNCTA, ZTN("s", te_c(vt), EN("b", FLG(1, LTE_FLG(L) | LTE_FLG(E)), te_c(ut))), SN(I6, I6(2))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", FLG(0, LTE_FLG(L)), te_c(ut))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("b", FLG(1, LTE_FLG(L) | LTE_FLG(E)), te_c(ut)))
+    ))));
+    te_f(vt);
+    te_f(ut);
+}

@@ -493,3 +493,16 @@ T(impst) {
             AN(NULL, ZN("y", ZN("z", IN("s"))), L(1, SN(I6, I6(1))))))
     )), NULL)));
 }
+
+T(mmut) {
+    V(TPGM(mmut), RN(AN(NULL, LN(NULL, L(6,
+        ON(NULL, DFN, IN("a"), ZN("s",
+            AN(NULL, ON(NULL, CST, NULL, NULL),
+                L(2, AN(NULL, TN(VR), L(1, TN(I6))), VN(NULL, L0()))))),
+        ON(NULL, CNCTA, ZN("s", IN("a")), SN(I6, I6(1))),
+        ON(NULL, DFN, CN(E, IN("b")), IN("a")),
+        ON(NULL, CNCTA, ZN("s", IN("b")), SN(I6, I6(2))),
+        CN(P1, IN("a")),
+        CN(P1, IN("b"))
+    )), NULL)));
+}

@@ -773,3 +773,16 @@ T(impst) {
     ))});
     te_f(h);
 }
+
+T(mmut) {
+    te *h = ppnode(psr_r(bpsr(TPGM(mmut))));
+    V(h, {N(ROOT), APLY(LST(
+        OP(N(VAR), SYM(APLY(OP(N(NONE), N(NONE)), APLY(N(TYPE), N(TYPE)), N(VEC)))),
+        OP(SYM(N(VAR)), N(INT)),
+        OP(CMD(N(VAR)), N(VAR)),
+        OP(SYM(N(VAR)), N(INT)),
+        CMD(N(VAR)),
+        CMD(N(VAR))
+    ))});
+    te_f(h);
+}

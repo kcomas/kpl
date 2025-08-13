@@ -553,3 +553,14 @@ T(impst) {
             AN(NULL, ZN("y", ZN("z", EN("s", U6(0), NULL))), L(1, SN(I6, I6(1))))))
     )), NULL)));
 }
+
+T(mmut) {
+    V(TPGM(mmut), RN(AN(NULL, LN(LT(2, "a", U6(0), NULL, "b", FLG(0, LTE_FLG(E)), NULL), L(6,
+        ON(NULL, DFN, EN("a", U6(0), NULL), ZN("s", ON(NULL, CST, NN(T, TV(VR, TS(I6))), VN(NULL, L0())))),
+        ON(NULL, CNCTA, ZN("s", EN("a", U6(0), NULL)), SN(I6, I6(1))),
+        ON(NULL, DFN, EN("b", FLG(0, LTE_FLG(E)), NULL), EN("a", U6(0), NULL)),
+        ON(NULL, CNCTA, ZN("s", EN("b", FLG(0, LTE_FLG(E)), NULL)), SN(I6, I6(2))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("a", U6(0), NULL)),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("b", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}

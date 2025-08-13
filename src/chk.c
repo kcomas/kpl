@@ -977,6 +977,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(Z), TYPE(I6));
+    CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(Z), TYPE(VR), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_uner_n_un, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN));
     CHK_AA(c, chk_uner_sg, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(SG));
     chk_entry(c);
