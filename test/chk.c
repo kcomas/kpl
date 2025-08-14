@@ -713,23 +713,29 @@ T(movep) {
 
 T(impst) {
     te *tf = type_te_i_v(&al_te, NULL, 2, TS(F6), TS(F6));
+    te *wtf = type_cpy(tf);
+    wtf->d[1].u4 = TYPE(WTE);
     te *ti = type_te_i_v(&al_te, NULL, 2, TS(I6), TS(I6));
+    te *wti = type_cpy(ti);
+    wti->d[1].u4 = TYPE(WTE);
     te *ts = TH(ST, 2, "x", te_c(tf), "y", te_c(ti));
     te *et = TH(ET, 1, "z", te_c(ts));
     IC(TPGM(impst));
     V(RN(AN(TS(VD), LN(LT(2, "s", FLG(0, LTE_FLG(D)), te_c(et), "r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), L(3,
         ON(te_c(et), NOP, EN("s", FLG(0, LTE_FLG(D)), te_c(et)), SET(1, "z", P(NULL), te_c(ts))),
-        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("x", te_c(tf), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ZTN("x", te_c(wtf), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et))))),
         ON(TS(I6), DFN, EN("r", FLG(0, LTE_FLG(L) | LTE_FLG(E)), TS(I6)), ON(TS(I6), ADD,
             AN(TS(I6),
-                ZTN("y", te_c(ti), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et)))),
+                ZTN("y", te_c(wti), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et)))),
                     L(1, SN(I6, I6(0)))),
             AN(TS(I6),
-                ZTN("y", te_c(ti), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et)))),
+                ZTN("y", te_c(wti), ZTN("z", te_c(ts), EN("s", FLG(0, LTE_FLG(D)), te_c(et)))),
                     L(1, SN(I6, I6(1))))))
     )), NULL)));
     te_f(tf);
+    te_f(wtf);
     te_f(ti);
+    te_f(wti);
     te_f(ts);
     te_f(et);
 }

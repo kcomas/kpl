@@ -457,7 +457,7 @@ static bool z_s_t(const te *an) {
     te *sn = an->d[4].p;
     if (!sn || sn->d[2].u4 != AST_CLS(S)) return false;
     sn = sn->d[3].p;
-    return sn && type_is_ref(sn->d[1].u4);
+    return sn && (type_is_ref(sn->d[1].u4) || type_is_weak(sn->d[1].u4));
 }
 
 uint32_t opt_exp_id(te *x) {
