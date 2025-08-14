@@ -32,17 +32,24 @@ typedef enum {
     TYPE(C4),
     TYPE(CS),
     TYPE(SG),
+    TYPE(WSG),
     // vector
     TYPE(_V),
     TYPE(SL),
     TYPE(VR),
+    TYPE(WVR),
     TYPE(LT),
+    TYPE(WLT),
     TYPE(MC),
+    TYPE(WMC),
     TYPE(ER),
+    TYPE(WER),
     TYPE(CJ),
+    TYPE(WCJ),
     // hash
     TYPE(_H),
     TYPE(ST),
+    TYPE(WST),
     TYPE(ET),
     TYPE(UN),
     // function
@@ -53,8 +60,10 @@ typedef enum {
     // collection
     TYPE(_C),
     TYPE(TE),
+    TYPE(WTE),
     TYPE(RF), // ref to another type
     TYPE(KV),
+    TYPE(WKV),
     TYPE(BA),
     TYPE(TD),
     TYPE(_END)
@@ -67,6 +76,11 @@ bool type_is_ref(type t);
 
 // check if type needs a destructor fn
 bool type_is_des(type t);
+
+bool type_is_weak(type t);
+
+// get the weak version
+type type_g_weak(type t);
 
 #define TYPE_CLS(N) TYPE_CLS_##N
 

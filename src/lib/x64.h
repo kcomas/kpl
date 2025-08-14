@@ -225,6 +225,12 @@ x64_stat x64_lea_rrmb(size_t *p, uint8_t *m, reg d, reg s, uint8_t dsp);
 // lea rax, qword ptr[rip+dsp32]
 x64_stat x64_lea_ri(size_t *p, uint8_t *m, reg r, uint32_t dsp);
 
+// lea rax, qword ptr[rdi+rsi*x]
+x64_stat x64_lea_rrmo(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x);
+
+// lea rax, qword ptr[rdi+rsi*x+dsp8]
+x64_stat x64_lea_rrmob(size_t *p, uint8_t *m, reg d, reg s, reg o, scale x, uint8_t dsp);
+
 // inc rax
 x64_stat x64_inc_r(size_t *p, uint8_t *m, reg r);
 

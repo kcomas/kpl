@@ -158,6 +158,7 @@ static bool tmp_var_t(const te *an) {
         if (ast_g_t(an->d[4].p, &tn) != AST_STAT(OK)) return false;
         if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
         switch (tn->d[1].u4) {
+            case TYPE(WVR):
             case TYPE(VR):
             case TYPE(FN):
             case TYPE(CJ):
@@ -168,7 +169,7 @@ static bool tmp_var_t(const te *an) {
             default:
                 break;
         }
-        if (tn->d[1].u4 == TYPE(TE)) return false;
+        if (type_is_weak(tn->d[1].u4)) return false;
     }
     pn = an->d[0].p;
     switch (pn->d[2].u4) {
@@ -177,7 +178,7 @@ static bool tmp_var_t(const te *an) {
         case AST_CLS(A): return an != pn->d[4].p;
         case AST_CLS(Z):
             if (ast_g_t(pn->d[0].p, &tn) != AST_STAT(OK)) return false;
-            if (tn->d[1].u4 == TYPE(UN)) return false;
+            if (tn->d[1].u4 == TYPE(UN) || type_g_weak(tn->d[1].u4)) return false;
             break;
         case AST_CLS(L):
             pn = pn->d[0].p;

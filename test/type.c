@@ -129,8 +129,13 @@ T(reftype) {
     te *a = type_v_i(&al_te, NULL, TYPE(VR), type_s_i(&al_te, NULL, TYPE(U6)));
     te *b = type_rf_i(&al_te, &a, 1);
     type_p(b);
+    putchar('\n');
     type_rrf(&b);
     A(type_eq(a, b), "inv deref");
     te_f(a);
     te_f(b);
+}
+
+T(weak) {
+    A(type_g_weak(TYPE(TE)) == TYPE(WTE), "inv weak type");
 }

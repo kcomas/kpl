@@ -3,50 +3,59 @@
 
 const char *type_str(type t) {
     static const char *ts[] = {
-        "_START",
-        "_S",
-        "_N",
-        "_A",
-        "_L",
-        "_G",
-        "_M",
-        "VD",
-        "BL",
-        "I3",
-        "I4",
-        "I5",
-        "I6",
-        "U3",
-        "U4",
-        "U5",
-        "U6",
-        "F5",
-        "F6",
-        "C4",
-        "CS",
-        "SG",
-        "_V",
-        "SL",
-        "VR",
-        "LT",
-        "MC",
-        "ER",
-        "CJ",
-        "_H",
-        "ST",
-        "ET",
-        "UN",
-        "_F",
-        "FN",
-        "NF",
-        "FP",
-        "_C",
-        "TE",
-        "RF",
-        "KV",
-        "BA",
-        "TD",
-        "_END"
+         "_START",
+         "_S",
+         "_N", // none
+         "_A", // auto
+         "_L", // deferred list {}
+         "_G", // gen code
+         "_M", // match
+         "VD", // void
+         "BL",
+         "I3",
+         "I4",
+         "I5",
+         "I6",
+         "U3",
+         "U4",
+         "U5",
+         "U6",
+         "F5",
+         "F6",
+         "C4",
+         "CS",
+         "SG",
+         "WSG",
+         "_V",
+         "SL",
+         "VR",
+         "WVR",
+         "LT",
+         "WLT",
+         "MC",
+         "WMC",
+         "ER",
+         "WER",
+         "CJ",
+         "WCJ",
+         "_H",
+         "ST",
+         "WST",
+         "ET",
+         "UN",
+         "_F",
+         "FN",
+         "NF",
+         "FP",
+         "_C",
+         "TE",
+         "WTE",
+         "RF", // ref to another type
+         "KV",
+         "WKV",
+         "BA",
+         "TD",
+         "_END"
     };
     const char *s = "INV TYPE";
     if (t > TYPE(_START) && t < TYPE(_END)) s = ts[t];
@@ -55,22 +64,32 @@ const char *type_str(type t) {
 
 typedef enum {
     REF = 1 << 0,
-    DES = 1 << 1
+    DES = 1 << 1,
+    WEAK = 1 << 2
 } prop_flgs;
 
 static uint8_t props[TYPE(_END)] = {
     [TYPE(SL)] = REF,
     [TYPE(SG)] = REF,
+    [TYPE(WSG)] = WEAK,
     [TYPE(VR)] = REF | DES,
+    [TYPE(WVR)] = WEAK,
     [TYPE(ER)] = REF | DES,
+    [TYPE(WER)] = WEAK,
     [TYPE(LT)] = REF | DES,
+    [TYPE(WLT)] = WEAK,
     [TYPE(CJ)] = REF | DES,
+    [TYPE(WCJ)] = WEAK,
     [TYPE(MC)] = REF,
+    [TYPE(WMC)] = WEAK,
     [TYPE(ST)] = REF | DES,
+    [TYPE(WST)] = WEAK,
     [TYPE(UN)] = REF | DES,
     [TYPE(TE)] = REF | DES,
+    [TYPE(WTE)] = WEAK,
     [TYPE(RF)] = REF,
-    [TYPE(KV)] = REF | DES
+    [TYPE(KV)] = REF | DES,
+    [TYPE(WKV)] = WEAK
 };
 
 bool type_is_ref(type t) {
@@ -81,6 +100,26 @@ bool type_is_ref(type t) {
 bool type_is_des(type t) {
     if (t >= TYPE(_END)) return false;
     return props[t] & DES;
+}
+
+bool type_is_weak(type t) {
+    if (t >= TYPE(_END)) return false;
+    return props[t] & WEAK;
+}
+
+static type to_weak[TYPE(_END)] = {
+    [TYPE(SG)] = TYPE(WSG),
+    [TYPE(VR)] = TYPE(WVR),
+    [TYPE(LT)] = TYPE(WLT),
+    [TYPE(MC)] = TYPE(WMC),
+    [TYPE(ER)] = TYPE(WER),
+    [TYPE(CJ)] = TYPE(WCJ),
+    [TYPE(TE)] = TYPE(WTE),
+    [TYPE(KV)] = TYPE(WKV)
+};
+
+type type_g_weak(type t) {
+    return to_weak[t];
 }
 
 type_cls type_g_c(type t) {
@@ -335,6 +374,7 @@ void type_p(const te *t) {
             printf("%s(", type_str(t->d[1].u4));
             switch (t->d[1].u4) {
                 case TYPE(TE):
+                case TYPE(WTE):
                     for (size_t i = 2; i < t->l; i++) {
                         type_p(t->d[i].p);
                         if (i < t->l - 1) putchar(';');
@@ -397,6 +437,7 @@ bool type_eq(const te *restrict a, const te *restrict b) {
         case TYPE_CLS(C):
             switch (a->d[1].u4) {
                 case TYPE(TE):
+                case TYPE(WTE):
                     for (size_t i = 2; i < a->l; i++) if (!type_eq(a->d[i].p, b->d[i].p)) return false;
                     return true;
                 case TYPE(RF):
@@ -503,6 +544,7 @@ bool type_has_refs(const te *t) {
         case TYPE_CLS(C):
             switch (t->d[1].u4){
                 case TYPE(TE):
+                case TYPE(WTE):
                     for (size_t i = 2; i < t->l; i++) {
                         if (type_has_refs(t->d[i].p)) return true;
                     }
@@ -536,6 +578,7 @@ te *type_cpy(const te *t) {
         case TYPE_CLS(C):
             switch (t->d[1].u4) {
                 case TYPE(TE):
+                case TYPE(WTE):
                     c = type_te_i(t->af, t->d[0].p, t->l - 2);
                     for (size_t i = 2; i < t->l; i++) c->d[i] = P(type_cpy(t->d[i].p));
                     break;

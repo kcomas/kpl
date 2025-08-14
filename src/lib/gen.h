@@ -23,6 +23,7 @@ typedef enum {
     GEN_OP(LEAVE),
     GEN_OP(SET),
     GEN_OP(REF),
+    GEN_OP(DREF),
     GEN_OP(CALL),
     GEN_OP(CALLNPR), // no preserve registers
     GEN_OP(CALLV), // varardic

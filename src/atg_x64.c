@@ -92,10 +92,15 @@ x64_type type_g_x64_type(const te *type) {
         [TYPE(F6)] = X64_TYPE(F6),
         [TYPE(CS)] = X64_TYPE(S),
         [TYPE(SG)] = X64_TYPE(M),
+        [TYPE(WSG)] = X64_TYPE(MM),
         [TYPE(ER)] = X64_TYPE(M),
+        [TYPE(WER)] = X64_TYPE(MM),
         [TYPE(TE)] = X64_TYPE(M),
+        [TYPE(WTE)] = X64_TYPE(MM),
         [TYPE(VR)] = X64_TYPE(M),
+        [TYPE(WVR)] = X64_TYPE(MM),
         [TYPE(ST)] = X64_TYPE(M),
+        [TYPE(WST)] = X64_TYPE(MM),
         [TYPE(UN)] = X64_TYPE(M),
         [TYPE(CJ)] = X64_TYPE(M)
     };
@@ -955,6 +960,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(Z), TYPE(I6), atg_cnct_vr_e_vr_);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(E), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(VR), atg_vr_len);
+    atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(WVR), atg_vr_len);
     atg_a_o(t, OC(UNER), TYPE(I6), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);
     atg_a_o(t, OC(UNER), TYPE(SG), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);
     atg_a_o(t, OC(UNER), TYPE(VD), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN), atg_uner);

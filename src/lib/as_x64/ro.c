@@ -34,6 +34,7 @@ INST_RMOBR(mov);
 }
 
 INST_RRMO(mov);
+INST_RRMO(lea);
 
 #define INST_RRMOB(N) static bool as_##N##_rrmob(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
     (void) a; \
@@ -44,10 +45,13 @@ INST_RRMO(mov);
 }
 
 INST_RRMOB(mov);
+INST_RRMOB(lea);
 
 void as_ro_b(as *a) {
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(RS), ARG_ID(R), ARG_ID(N), as_mov_rmor, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(RM), ARG_ID(RS), ARG_ID(B), ARG_ID(R), as_mov_rmobr, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(N), as_mov_rrmo, NULL);
     as_op_a(a, AS_X64(MOV), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(B), as_mov_rrmob, NULL);
+    as_op_a(a, AS_X64(LEA), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(N), as_lea_rrmo, NULL);
+    as_op_a(a, AS_X64(LEA), ARG_ID(R), ARG_ID(RM), ARG_ID(RS), ARG_ID(B), as_lea_rrmob, NULL);
 }
