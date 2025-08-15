@@ -7,7 +7,7 @@ static chk_stat chk_z_type_h(chk *c, te *an, err **e) {
     if (st->d[1].u4 == TYPE(SL)) st = st->d[2].p;
     if (tbl_g_i(st->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return chk_err(c, an, e, "chk st inv access type");
     kv = kv->d[2].p;
-    if (st->d[1].u4 != TYPE(UN) && type_g_weak(kv->d[1].u4)) {
+    if (type_g_weak(kv->d[1].u4)) {
         kv = type_cpy(kv);
         kv->d[1].u4 = type_g_weak(kv->d[1].u4);
     } else kv = te_c(kv);

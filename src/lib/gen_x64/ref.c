@@ -107,7 +107,7 @@ void gen_ref(gen *g) {
     GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(A), X64_TYPE(MM), ref_am_amm_fn);
     GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(T), X64_TYPE(MM), ref_am_amm_fn);
     GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(I), X64_TYPE(M), ref_amm_im_fn);
-    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(MM), ref_amm_im_fn);
+    GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(MM), ref_amm_im_fn); // for storing weak refs
     GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(I), X64_TYPE(MM), ref_amm_im_fn);
     GEN_OP_A2(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(MM), GEN_CLS(V), X64_TYPE(M), ref_amm_vm_fn);
     GEN_OP_A3(g, GEN_OP(REF), GEN_CLS(T), X64_TYPE(M), GEN_CLS(I), X64_TYPE(M), GEN_CLS(D), X64_TYPE(U3), ref_aid_fn);

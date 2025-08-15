@@ -296,5 +296,23 @@ T(impst) {
     mc_f(ms);
     A(kv->d[1].i6 == 7, "inv exp val");
     opt_exp_tbl_f(xt);
+}
+
+/*
+T(mmut) {
+    AI(TPGM(mmut), 2, 1);
+    te *vt = TV(VR, TS(I6));
+    te *ut = TH(UN, 1, "s", te_c(vt));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(vr_f)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    gen_type_aff(gc, ut, &e, "");
+    D(ut, gc);
+    gen_f(gc);
+    D(vt, NULL);
+    atg_d_p(t);
+    V(NULL, NULL);
     atg_t_f();
 }
+*/
