@@ -107,6 +107,7 @@ INST_RMBD(cmp);
 }
 
 INST_RD(add);
+INST_RD(sub);
 INST_RD(cmp);
 
 #define INST_RMR(N) static bool as_##N##_rmr(as *a, te *restrict ci, size_t *p, uint8_t *m, te *restrict arg1, te *restrict arg2, te *restrict arg3, te *restrict arg4) { \
@@ -251,6 +252,7 @@ void as_r_b(as *a) {
     as_op_a(a, AS_X64(ADD), ARG_ID(RM), ARG_ID(B), ARG_ID(B), ARG_ID(N), as_add_rmbb, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(R), ARG_ID(N), ARG_ID(N), as_sub_rr, NULL);
     as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(B), ARG_ID(N), ARG_ID(N), as_sub_rb, NULL);
+    as_op_a(a, AS_X64(SUB), ARG_ID(R), ARG_ID(DW), ARG_ID(N), ARG_ID(N), as_sub_rd, NULL);
     as_op_a(a, AS_X64(NEG), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_neg_r, NULL);
     as_op_a(a, AS_X64(MUL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_mul_r, NULL);
     as_op_a(a, AS_X64(IMUL), ARG_ID(R), ARG_ID(N), ARG_ID(N), ARG_ID(N), as_imul_r, NULL);

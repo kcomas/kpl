@@ -1,7 +1,10 @@
 
 // matrix transpose
 
-v::VR$[VR$[1;2;3];VR$[4;5;6]]
+v::VR$[
+    VR$[1;2;3]
+    VR$[4;5;6]
+]
 mtp::FN(v\t`a;A)${
     =(l::/a;0)?'"Empty"
     t::/a(0)`v

@@ -122,6 +122,7 @@ void atg_z(atg *t) {
     atg_a_z(t, TYPE(I6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(F6), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(WSG), AST_CLS(E), TYPE(UN), z_e_un);
+    atg_a_z(t, TYPE(WVR), AST_CLS(E), TYPE(UN), z_e_un);
     atg_a_z(t, TYPE(I6), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(F6), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(WSG), AST_CLS(O), TYPE(UN), z_e_un_o);

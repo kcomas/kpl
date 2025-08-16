@@ -52,7 +52,6 @@ static atg_stat dfn_tevrst_e_tevrst_vo_tevrst(atg *t, gen *g, te *an, err **e) {
     if ((stat = da_in_loop(t, g, an, e, lte, __FUNCTION__)) != ATG_STAT(OK)) return stat;
     if (gen_a(g, GEN_OP(SET), gen_stkv(g, type_g_x64_type(lte->d[2].p), ast_lst_tbl_e_g_i(lte)), te_c(rgc), NULL)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
-
 }
 
 static atg_stat dfn_un_e_un_z(atg *t, gen *g, te *an, err **e) {
@@ -71,12 +70,22 @@ static atg_stat dfn_un_e_un_z(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat dfn_un_e_un_e_un(atg *t, gen *g, te *an, err **e) {
+    te *l = an->d[5].p, *r = an->d[6].p, *i;
+    if (atg_an_var(g, &l) != ATG_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, l), gen_data(g, X64_TYPE(M), P(te_f)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (atg_an_var(g, &r) != ATG_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    i = gen_idx_m(g, X64_TYPE(I6), 2, r, gen_data(g, X64_TYPE(U3), U3(0)));
+    if (gen_a(g, GEN_OP(ADD), i, te_c(i), gen_data(g, X64_TYPE(I6), I6(1))) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(SET), te_c(l), te_c(r), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
 static atg_stat agn_un_e_un_z(atg *t, gen *g, te *an, err **e) {
     te *lte = ((te*) an->d[5].p)->d[3].p;
     if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 1, gen_stkv(g, X64_TYPE(M), ast_lst_tbl_e_g_i(lte))), gen_data(g, X64_TYPE(M), P(te_f)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return dfn_un_e_un_z(t, g, an, e);
 }
-
 
 static atg_stat agn_i6_a_i6_o_i6(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
@@ -178,6 +187,7 @@ void atg_dfn(atg *t) {
     atg_a_o(t, OC(DFN), TYPE(CJ), AST_CLS(E), TYPE(CJ), AST_CLS(A), TYPE(CJ), dfn_tevrst_e_tevrst_vo_tevrst);
     atg_a_o(t, OC(DFN), TYPE(FN), AST_CLS(E), TYPE(FN), AST_CLS(T), TYPE(FN), atg_nop);
     atg_a_o(t, OC(DFN), TYPE(UN), AST_CLS(E), TYPE(UN), AST_CLS(Z), TYPE(VD), dfn_un_e_un_z);
+    atg_a_o(t, OC(DFN), TYPE(UN), AST_CLS(E), TYPE(UN), AST_CLS(E), TYPE(UN), dfn_un_e_un_e_un);
     atg_a_o(t, OC(AGN), TYPE(UN), AST_CLS(E), TYPE(UN), AST_CLS(Z), TYPE(VD), agn_un_e_un_z);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(A), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_a_i6_o_i6);
     atg_a_o(t, OC(AGN), TYPE(I6), AST_CLS(Z), TYPE(I6), AST_CLS(O), TYPE(I6), agn_i6_z_i6_o_i6);

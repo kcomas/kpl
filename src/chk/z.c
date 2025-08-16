@@ -5,7 +5,7 @@ static chk_stat chk_z_type_h(chk *c, te *an, err **e) {
     te *st, *kv;
     if (ast_g_t(an->d[4].p, &st) != AST_STAT(OK)) return chk_err(c, an, e, "chk st cannot get access type");
     if (st->d[1].u4 == TYPE(SL)) st = st->d[2].p;
-    if (tbl_g_i(st->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return chk_err(c, an, e, "chk st inv access type");
+    if (tbl_g_i(st->d[2].p, an->d[5], &kv) != TBL_STAT(OK)) return chk_err(c, an, e, "chk inv access type");
     kv = kv->d[2].p;
     if (type_g_weak(kv->d[1].u4)) {
         kv = type_cpy(kv);

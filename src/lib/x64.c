@@ -593,6 +593,8 @@ ZRMBE(dec, 0xFF, 1);
 
 ZREB(sub, 0x83, 5);
 
+ZRED(sub, 0x81, 5);
+
 ZRR(sub, 0x29, s, d);
 
 ZZZXX(subsd, 0xF2, 0x0F, 0x5C, d, s);

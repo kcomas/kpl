@@ -1,0 +1,9 @@
+
+// multiple references to vec
+
+a::$(VR(I6);[])`s
+a`s,:1
+b\e::a
+b`s,:2
+a\p1
+b\p1

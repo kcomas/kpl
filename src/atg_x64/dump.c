@@ -174,7 +174,11 @@ static atg_stat dump_v(atg *t, gen *g, te *restrict an, err **e, FILE *f, uint32
             return atg_err(t, an, e, "TODO DUMP ST");
             break;
         case TYPE(VR):
-            if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), ti = t->tc++), cd, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+        case TYPE(WVR):
+            ti = t->tc++;
+            if (type->d[1].u4 == TYPE(WVR)) {
+                if (gen_a(g, GEN_OP(DREF), gen_tmp(g, X64_TYPE(M), ti), cd, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            } else if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), ti), cd, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
             tetmp = gen_tmp(g, X64_TYPE(M), ti);
             if ((stat = dump_vr(t, g, an, e, f, idnt, type, tetmp)) != ATG_STAT(OK)) return stat;
             te_f(tetmp);
@@ -404,5 +408,6 @@ void atg_dump(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(I6), dump_vd_s_u5_z);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(SG), dump_vd_s_u5_z);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(WSG), dump_vd_s_u5_z);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(Z), TYPE(WVR), dump_vd_s_u5_z);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(S), TYPE(TE), dump_vd_s_u5_s_te);
 }

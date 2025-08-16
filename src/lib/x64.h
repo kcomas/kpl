@@ -291,6 +291,9 @@ x64_stat x64_dec_rmb(size_t *p, uint8_t *m, reg r, uint8_t dsp);
 // sub rax, byte
 x64_stat x64_sub_rb(size_t *p, uint8_t *m, reg r, uint8_t b);
 
+// sub rax, word
+x64_stat x64_sub_rd(size_t *p, uint8_t *m, reg r, uint32_t d);
+
 // sub rax, rdi
 x64_stat x64_sub_rr(size_t *p, uint8_t *m, reg d, reg s);
 

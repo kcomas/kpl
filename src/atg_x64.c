@@ -823,14 +823,29 @@ static atg_stat atg_cs_sg(atg *t, gen *g, te *an, err **e) {
 
 static atg_stat atg_cnct_vr_e_vr_(atg *t, gen *g, te *an, err **e) {
     uint32_t vt = t->tc++, xt = t->tc++;
-    te *vlte = ((te*) an->d[5].p)->d[3].p, *rc;
+    te *vlte = ((te*) an->d[5].p)->d[3].p, *rc, *tn;
     rc = an->d[6].p;
+    if (ast_g_t(an->d[6].p, &tn) != AST_STAT(OK)) return atg_err(t, an, e, "atg cncr_vr_e cannot get type");
+    if (tn->d[1].u4 == TYPE(SL)) tn = tn->d[2].p;
     if (atg_an_var(g, &rc) != ATG_STAT(OK)) return atg_err(t, an, e, "atg inv rc");
     if (gen_a(g, GEN_OP(REF), gen_tmp(g, X64_TYPE(MM), vt), var_arg(g, vlte, X64_TYPE(M)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), xt), rc, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
-    if (gen_var_g_t(rc) == X64_TYPE(M) && inc_ref_u(g, X64_TYPE(M), xt) != GEN_STAT(OK)) return atg_err(t, an, e, "atg inv cnct inc ref");
+    if (type_is_ref(tn->d[1].u4) && inc_ref_u(g, X64_TYPE(M), xt) != GEN_STAT(OK)) return atg_err(t, an, e, "atg inv cnct inc ref");
     if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 2, gen_tmp(g, X64_TYPE(MM), vt), gen_tmp(g, X64_TYPE(M), xt)), gen_data(g, X64_TYPE(M), P(vr_ab)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     if (gen_a(g, GEN_OP(NOP), gen_tmp(g, X64_TYPE(MM), vt), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    return ATG_STAT(OK);
+}
+
+static atg_stat atg_cnct_wvr(atg *t, gen *g, te *an, err **e) {
+    uint32_t xt = t->tc++;
+    te *l = an->d[5].p, *r = an->d[6].p, *tn;
+    if (ast_g_t(r, &tn) != AST_STAT(OK)) return atg_err(t, an, e, "atg cncr_wvr cannot get type");
+    if (atg_an_var(g, &l) != ATG_STAT(OK)) return atg_err(t, an, e, "atg cnct_wvr inv var");
+    if (atg_an_var(g, &r) != ATG_STAT(OK)) return atg_err(t, an, e, "atg cnct_wvr inv var");
+    if (gen_a(g, GEN_OP(SET), gen_tmp(g, X64_TYPE(M), xt), r, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (type_is_ref(tn->d[1].u4) && inc_ref_u(g, X64_TYPE(M), xt) != GEN_STAT(OK)) return atg_err(t, an, e, "atg inv cnct inc ref");
+    if (gen_a(g, GEN_OP(CALL), gen_call_m(g, 2, l, gen_tmp(g, X64_TYPE(M), xt)), gen_data(g, X64_TYPE(M), P(vr_ab)), NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+    if (gen_a(g, GEN_OP(NOP), te_c(l), NULL, NULL) != GEN_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
     return ATG_STAT(OK);
 }
 
@@ -958,6 +973,7 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(VR), atg_cnct_vr_e_vr_);
     atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6), atg_cnct_vr_e_vr_);
     atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(Z), TYPE(I6), atg_cnct_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(WVR), AST_CLS(Z), TYPE(WVR), AST_CLS(S), TYPE(I6), atg_cnct_wvr);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(E), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(WVR), atg_vr_len);
