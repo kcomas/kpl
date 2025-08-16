@@ -83,3 +83,5 @@ extern const char *TPGM(movep);
 extern const char *TPGM(impst);
 
 extern const char *TPGM(mmut);
+
+extern const char *TPGM(cjvr);

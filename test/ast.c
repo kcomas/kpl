@@ -506,3 +506,35 @@ T(mmut) {
         CN(P1, IN("b"))
     )), NULL)));
 }
+
+T(cjvr) {
+    V(TPGM(cjvr), RN(AN(NULL, LN(NULL, L(4,
+        ON(NULL, DFN, IN("f"), ON(NULL, CST, TN(FN), LN(NULL, L(2,
+            ON(NULL, DFN, IN("v"), ON(NULL, CST, AN(NULL, TN(VR), L(1, TN(U6))), VN(NULL, L0()))),
+            AN(NULL, ON(NULL, CST, NULL, NULL), L(2,
+                ON(NULL, CST, TN(CJ), AN(NULL, TN(NF), L(3,
+                    ZN("v", CN(T, IN("v"))),
+                    ZN("x", TN(U6)),
+                    NN(T, NULL)
+                ))),
+                LN(NULL, L(5,
+                    ON(NULL, CNCTA, IN("v"), IN("x")),
+                    CN(P1, IN("v")),
+                    ON(NULL, DFN, IN("s"), ON(NULL, CST, TN(U6), SN(I6, I6(0)))),
+                    ON(NULL, LOOP,
+                        AN(NULL, NULL, L(3,
+                            ON(NULL, DFN, IN("i"), ON(NULL, CST, TN(U6), SN(I6, I6(0)))),
+                            ON(NULL, LT, IN("i"), ON(NULL, DIV, NULL, IN("v"))),
+                            ON(NULL, ADDA, IN("i"), SN(I6, I6(1)))
+                        )),
+                        ON(NULL, ADDA, IN("s"), ON(NULL, UNER, NULL, AN(NULL, IN("v"), L(1, IN("i")))))),
+                    ZN("v", IN("s"))
+                ))
+            ))
+        )))),
+        ON(NULL, DFN, IN("c"), AN(NULL, IN("f"), NULL)),
+        AN(NULL, IN("c"), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(5))))),
+        CN(P1, AN(NULL, ON(NULL, DFN, NULL, NULL), L(2, CN(E, IN("e")),
+            AN(NULL, IN("c"), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(6))))))))
+    )), NULL)));
+}
