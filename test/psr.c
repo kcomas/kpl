@@ -804,7 +804,7 @@ T(cjvr) {
         ))),
         OP(N(VAR), APLY(N(VAR))),
         APLY(N(VAR), OP(N(TYPE), N(INT))),
-        CMD(APLY(OP(N(NONE), N(NONE)), CMD(N(VAR)), APLY(N(VAR), OP(N(TYPE), N(INT)))))
+        CMD(APLY(OP(N(NONE), N(NONE)), CMD(N(VAR)), OP(N(NONE), APLY(N(VAR), OP(N(TYPE), N(INT))))))
     ))});
     te_f(h);
 }
