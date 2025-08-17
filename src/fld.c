@@ -214,8 +214,10 @@ static bool op_ns_t(const te *an) {
 static fld_stat cst_cj_lst_r(fld *f, te **an, err **e) {
     (void) e;
     te *r = (*an)->d[6].p, *nn;
+    if (r->d[2].u4 == AST_CLS(L)) {
     nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(NULL), OC(CST), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(T), P(type_f_i(f->a->ta, NULL, TYPE(NF), NULL, NULL, NULL))), P(r));
     r->d[0] = P(nn);
+    } else nn = r;
     if (fld_tmp_var_a(f, &nn, e, --f->tvc, LTE_FLG(F)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv cj cst nf fn def");
     (*an)->d[6] = P(nn);
     return FLD_STAT(OK);
@@ -228,7 +230,12 @@ static bool cst_cj_lst_t(const te *an) {
     tn = tn->d[3].p;
     if (!tn || tn->d[1].u4 != TYPE(CJ)) return false;
     tn = an->d[6].p;
-    return tn && tn->d[2].u4 == AST_CLS(L);
+    if (tn && tn->d[2].u4 == AST_CLS(L)) return true;
+    if (!tn || tn->d[2].u4 != AST_CLS(O) || tn->d[4].u4 != OC(CST)) return false;
+    tn = tn->d[5].p;
+    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
+    tn = tn->d[3].p;
+    return tn && tn->d[1].u4 == TYPE(NF);
 }
 
 fld_stat fld_tmp_var_a(fld *f, te **an, err **e, int32_t vi, lte_flg vf) {
