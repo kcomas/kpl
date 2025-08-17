@@ -564,3 +564,31 @@ T(mmut) {
         ON(TS(VD), DUMP, SN(U5, U5(1)), EN("b", FLG(0, LTE_FLG(E)), NULL))
     )), NULL)));
 }
+
+T(cjvr) {
+    V(TPGM(cjvr), RN(AN(NULL, LN(LT(3, "f", U6(0), NULL, "c", U6(0), NULL, "e", FLG(0, LTE_FLG(E)), NULL), L(4,
+        ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, TN(FN), LN(LT(1, "v", U6(0), NULL), L(2,
+            ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, NN(T, TV(VR, TS(U6))), VN(NULL, L0()))),
+            ON(NULL, CST, ON(NULL, CST, TN(CJ), NN(T, TFN(NF, NULL, 2, "v", TRF(10), 0, "x", TS(U6), 1))),
+                LN(LT(4, "v", U6(0), NULL, "x", U6(0), NULL, "s", U6(0), NULL, "i", U6(0), NULL), L(6,
+                    ON(NULL, CNCTA, EN("v", U6(0), NULL), EN("x", U6(0), NULL)),
+                    ON(TS(VD), DUMP, SN(U5, U5(1)), EN("v", U6(0), NULL)),
+                    ON(NULL, DFN, EN("s", U6(0), NULL), ON(NULL, CST, TN(U6), SN(I6, I6(0)))),
+                    ON(NULL, DFN, EN("i", U6(0), NULL), ON(NULL, CST, TN(U6), SN(I6, I6(0)))),
+                    ON(NULL, LOOP,
+                        LN(NULL, L(1,
+                            ON(NULL, LT, EN("i", U6(0), NULL), ON(NULL, DIV, NULL, EN("v", U6(0), NULL))))),
+                        LN(NULL, L(2,
+                            ON(NULL, ADDA, EN("s", U6(0), NULL), ON(NULL, UNER, NULL,
+                                AN(NULL, EN("v", U6(0), NULL), L(1, EN("i", U6(0), NULL))))),
+                            ON(NULL, ADDA, EN("i", U6(0), NULL), SN(I6, I6(1)))
+                        ))),
+                    ZN("v", EN("s", U6(0), NULL))
+                )))
+        )))),
+        ON(NULL, DFN, EN("c", U6(0), NULL), AN(NULL, EN("f", U6(0), NULL), NULL)),
+        AN(NULL, EN("c", U6(0), NULL), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(5))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), ON(NULL, DFN, EN("e", FLG(0, LTE_FLG(E)), NULL),
+            AN(NULL, EN("c", U6(0), NULL), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(6)))))))
+    )), NULL)));
+}
