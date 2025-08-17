@@ -792,7 +792,7 @@ T(cjvr) {
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(N(TYPE), LST(
             OP(N(VAR), OP(APLY(N(TYPE), N(TYPE)), N(VEC))),
-            OP(N(TYPE), OP(APLY(N(TYPE), SYM(CMD(N(VAR))), SYM(N(TYPE)), N(KEY)), LST(
+            OP(N(TYPE), OP(APLY(N(TYPE), SYM(N(TYPE)), N(KEY)), LST(
                 OP(N(VAR), N(VAR)),
                 CMD(N(VAR)),
                 OP(N(VAR), OP(N(TYPE), N(INT))),

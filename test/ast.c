@@ -511,8 +511,7 @@ T(cjvr) {
     V(TPGM(cjvr), RN(AN(NULL, LN(NULL, L(4,
         ON(NULL, DFN, IN("f"), ON(NULL, CST, TN(FN), LN(NULL, L(2,
             ON(NULL, DFN, IN("v"), ON(NULL, CST, AN(NULL, TN(VR), L(1, TN(U6))), VN(NULL, L0()))),
-                ON(NULL, CST, TN(CJ), ON(NULL, CST, AN(NULL, TN(NF), L(3,
-                    ZN("v", CN(T, IN("v"))),
+                ON(NULL, CST, TN(CJ), ON(NULL, CST, AN(NULL, TN(NF), L(2,
                     ZN("x", TN(U6)),
                     NN(T, NULL)
                 )),

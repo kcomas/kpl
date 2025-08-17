@@ -566,7 +566,7 @@ T(mmut) {
 }
 
 T(cjvr) {
-    te *nf = TFN(NF, NULL, 2, "v", TRF(10), 0, "x", TS(U6), 1);
+    te *nf = TFN(NF, NULL, 1, "x", TS(U6), 0);
     V(TPGM(cjvr), RN(AN(NULL, LN(LT(3, "f", U6(0), NULL, "c", U6(0), NULL, "e", FLG(0, LTE_FLG(E)), NULL), L(4,
         ON(NULL, DFN, EN("f", U6(0), NULL), ON(NULL, CST, TN(FN), LN(LT(2, "v", U6(0), NULL, "-1", U6(0), NULL), L(2,
             ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, NN(T, TV(VR, TS(U6))), VN(NULL, L0()))),
