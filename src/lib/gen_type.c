@@ -95,6 +95,26 @@ static gen_stat un_des(gen *bg, te *t, gen **g, err **e) {
     return gen_type_aff(*g, t, e, __FUNCTION__);
 }
 
+static gen_stat cj_des(gen *bg, te *t, gen **g, err **e) {
+    size_t i = 0;
+    *g = gen_i_gen(bg);
+    t = t->d[2].p;
+    te *h = ((tbl*) t->d[4].p)->i->h, *tn;
+    if (gen_a(*g, GEN_OP(E), NULL, NULL, NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+    while (h) {
+        tn = ((te*) h->d[0].p)->d[2].p;
+        if (tn && type_is_ref(tn->d[1].u4)) {
+            void *fn = type_ref_g_des(tn);
+            if (!fn) return gen_type_err(bg, t, e, "gen unable to get fn for te des");
+            int32_t off = offsetof(te, d) + sizeof(void*) * i;
+            if (gen_a(*g, GEN_OP(CALL), gen_call_m(*g, 1, gen_idx_m(*g, X64_TYPE(M), 2, gen_arg(*g, X64_TYPE(M), 0), gen_data(*g, off <= INT8_MAX ? X64_TYPE(U3) : X64_TYPE(U5), U5(off)))), gen_data(*g, X64_TYPE(M), P(fn)), NULL) != GEN_STAT(OK)) return gen_type_err(bg, t, e, __FUNCTION__);
+        }
+        h = h->d[2].p;
+        i++;
+    }
+    return gen_type_aff(*g, t, e, __FUNCTION__);
+}
+
 static gen_stat te_des(gen *bg, te *t, gen **g, err **e) {
     void *fn = NULL;
     *g = gen_i_gen(bg);
@@ -113,7 +133,7 @@ gen_stat gen_type_des(gen *bg, te *t, gen **g, void **fn, err **e) {
     if (!t) return gen_type_err(bg, t, e, "gen type inv for des");
     switch (type_g_c(t->d[1].u4)) {
         case TYPE_CLS(V):
-            if (t->d[1].u4 == TYPE(CJ)) STOP("CJ DES");
+            if (t->d[1].u4 == TYPE(CJ)) return cj_des(bg, t, g, e);
             return v_des(bg, t, fn, e);
         case TYPE_CLS(H):
             switch(t->d[1].u4) {

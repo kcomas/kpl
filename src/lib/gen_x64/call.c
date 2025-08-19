@@ -550,6 +550,7 @@ void gen_call(gen *g) {
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(M), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callnr_fn);
     GEN_OP_A2(g, GEN_OP(CALL), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnr_fn);
     GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(I6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(T), X64_TYPE(M), callw_fn);
+    GEN_OP_A3(g, GEN_OP(CALL), GEN_CLS(T), X64_TYPE(M), GEN_CLS(W), X64_TYPE(N), GEN_CLS(T), X64_TYPE(M), callw_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(F6), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnpr_fn);
     GEN_OP_A3(g, GEN_OP(CALLNPR), GEN_CLS(T), X64_TYPE(M), GEN_CLS(W), X64_TYPE(N), GEN_CLS(L), X64_TYPE(N), callwnpr_fn);

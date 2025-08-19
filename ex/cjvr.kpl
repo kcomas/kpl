@@ -1,0 +1,16 @@
+
+// closure with vr example append to vr and print vr and return sum
+
+f::FN${
+ v::VR(U6)$[]
+ CJ$NF(U6`x;A)${
+  v,:x
+  v\p1
+  s::U6$0
+  (i::U6$0;i</v;i+:1)@s+:'v(i)
+  s`v
+ }
+}
+
+c::f()
+(i::U6$5;i<=8;i+:1)@'(c(i))\p1

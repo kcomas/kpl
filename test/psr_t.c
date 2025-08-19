@@ -334,6 +334,6 @@ const char *TPGM(cjvr) = "{\n"
                          "  }\n"
                          " }\n"
                          " c::f()\n"
-                         " c(U6$5)\n"
+                         " c(U6$5) //ignore error\n"
                          " ::(e\\e;'c(U6$6))\\p1\n"
                          "}()\n";

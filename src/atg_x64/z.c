@@ -96,12 +96,12 @@ static atg_stat z_un_(atg *t, gen *g, te *an, err **e) {
     return z_un(t, g, an, e, NULL);
 }
 
-static atg_stat z_un_s_i6(atg *t, gen *g, te *an, err **e) {
+static atg_stat z_un_s_(atg *t, gen *g, te *an, err **e) {
     te *type = an->d[4].p;
     return z_un(t, g, an, e, type->d[3].p);
 }
 
-static atg_stat z_un_o_i6(atg *t, gen *g, te *an, err **e) {
+static atg_stat z_un_o_(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
     te *type = an->d[4].p;
@@ -130,8 +130,9 @@ void atg_z(atg *t) {
     atg_a_z(t, TYPE(WVR), AST_CLS(O), TYPE(UN), z_e_un_o);
     atg_a_z(t, TYPE(ST), AST_CLS(Z), TYPE(UN), z_e_un_z);
     atg_a_z(t, TYPE(UN), AST_CLS(_), TYPE(_N), z_un_);
-    atg_a_z(t, TYPE(UN), AST_CLS(S), TYPE(I6), z_un_s_i6);
-    atg_a_z(t, TYPE(UN), AST_CLS(O), TYPE(I6), z_un_o_i6);
+    atg_a_z(t, TYPE(UN), AST_CLS(S), TYPE(I6), z_un_s_);
+    atg_a_z(t, TYPE(UN), AST_CLS(O), TYPE(I6), z_un_o_);
+    atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(U6), z_un_e_);
     atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(VR), z_un_e_);
     atg_a_z(t, TYPE(UN), AST_CLS(E), TYPE(SG), z_un_e_);
     atg_a_z(t, TYPE(VD), AST_CLS(S), TYPE(I6), atg_nop);

@@ -165,6 +165,7 @@ void atg_cond(atg *t) {
     atg_a_o(t, OC(LT), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(O), TYPE(U6), cond_bl_e_u6_o_u6);
     atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(S), TYPE(I6), cond_bl_e_i6_s_i6);
     atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(I6), AST_CLS(E), TYPE(I6), cond_bl_e_e_);
+    atg_a_o(t, OC(LTE), TYPE(BL), AST_CLS(E), TYPE(U6), AST_CLS(S), TYPE(U6), cond_bl_e_u6_s_u6);
     atg_a_o(t, OC(AND), TYPE(BL), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), atg_and);
     atg_a_o(t, OC(OR), TYPE(BL), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), atg_or);
 }
