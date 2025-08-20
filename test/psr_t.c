@@ -337,3 +337,5 @@ const char *TPGM(cjvr) = "{\n"
                          " c(U6$5) //ignore error\n"
                          " ::(e\\e;'c(U6$6))\\p1\n"
                          "}()\n";
+
+const char *TPGM(args) = "{::(a\\e;.s.a())\\p1}()\n";

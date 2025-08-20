@@ -12,10 +12,12 @@ static tbl *ntbl(size_t n) {
 }
 
 void ns_f_b();
+void ns_s_b();
 
 static __attribute__((constructor)) void ns_con(void) {
     ns = ntbl(NS_TBL_S);
     ns_f_b();
+    ns_s_b();
 }
 
 static __attribute__((destructor)) void ns_des(void) {
@@ -51,7 +53,7 @@ te *ns_type_h(type t, size_t n, ...) {
 te *ns_type_fp(te *rt, size_t n, ...) {
     uint32_t ic = 0, fc = 0;
     va_list args;
-    tbl *tt = ntbl(n + 1);
+    tbl *tt = n ? ntbl(n + 1) : NULL;
     va_start(args, n);
     while (n > 0) {
         mc *s = mc_i_cstr(va_arg(args, char*), &al_mc);

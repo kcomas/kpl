@@ -7,6 +7,8 @@
 #include "ns.h"
 #include "atg_x64.h"
 
+void z_s_arg(int argc, char *argv[]);
+
 #define Z_D_FLG(N) Z_D_FLG_##N
 
 typedef enum {

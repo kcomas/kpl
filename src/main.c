@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
         i++;
     }
     run:
+    ns_args(argc, argv);
     mc *fn;
     if (i == argc) {
         if (isatty(STDIN_FILENO)) {

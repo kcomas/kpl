@@ -805,3 +805,14 @@ T(cjvr) {
     te_f(cj);
     te_f(fn);
 }
+
+T(args) {
+    IC(TPGM(args));
+    te *vv = TV(VR, TS(SG));
+    V(RN(AN(TS(VD), LN(LT(1, "a", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(vv)), L(1,
+        ON(TS(VD), DUMP, SN(U5, U5(1)),
+            ON(te_c(vv), DFN, EN("a", FLG(0, LTE_FLG(L) | LTE_FLG(E)), te_c(vv)),
+            AN(te_c(vv), NN(S, TF(FP, te_c(vv))), NULL)))
+    )), NULL)));
+    te_f(vv);
+}

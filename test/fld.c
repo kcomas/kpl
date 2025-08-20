@@ -594,3 +594,11 @@ T(cjvr) {
     )), NULL)));
     te_f(nf);
 }
+
+T(args) {
+    V(TPGM(args), RN(AN(NULL, LN(LT(1, "a", FLG(0, LTE_FLG(E)), NULL), L(1,
+        ON(TS(VD), DUMP, SN(U5, U5(1)),
+            ON(NULL, DFN, EN("a", FLG(0, LTE_FLG(E)), NULL),
+                AN(NULL, NNV(S, TF(FP, TV(VR, TS(SG))), P(NULL)), NULL)))
+    )), NULL)));
+}

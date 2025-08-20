@@ -324,7 +324,7 @@ static atg_stat dump_vd_s_u5_e_vr(atg *t, gen *g, te *an, err **e) {
     return dump_vd_s_u5__vr(t, g, an, e, var_arg(g, lte, X64_TYPE(M)));
 }
 
-static atg_stat dump_vd_s_u5_o_vr(atg *t, gen *g, te *an, err **e) {
+static atg_stat dump_vd_s_u5_oa_vr(atg *t, gen *g, te *an, err **e) {
     return dump_vd_s_u5__vr(t, g, an, e, te_c(atg_g_g(an->d[6].p)->d[1].p));
 }
 
@@ -401,7 +401,8 @@ void atg_dump(atg *t) {
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ST), dump_vd_s_u5_e_st);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ET), dump_vd_s_u5_e_et);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(VR), dump_vd_s_u5_e_vr);
-    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(O), TYPE(VR), dump_vd_s_u5_o_vr);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(O), TYPE(VR), dump_vd_s_u5_oa_vr);
+    atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(A), TYPE(VR), dump_vd_s_u5_oa_vr);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(UN), dump_vd_s_u5_e_un);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(O), TYPE(UN), dump_vd_s_u5_oa_);
     atg_a_o(t, OC(DUMP), TYPE(VD), AST_CLS(S), TYPE(U5), AST_CLS(E), TYPE(ER), dump_vd_s_u5_e_er);

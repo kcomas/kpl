@@ -808,3 +808,11 @@ T(cjvr) {
     ))});
     te_f(h);
 }
+
+T(args) {
+    te *h = ppnode(psr_r(bpsr(TPGM(args))));
+    V(h, {N(ROOT), APLY(LST(
+        CMD(APLY(OP(N(NONE), N(NONE)), CMD(N(VAR)), OP(N(NONE), OP(N(VAR), APLY(N(VAR))))))
+    ))});
+    te_f(h);
+}

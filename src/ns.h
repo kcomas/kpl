@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "./lib/mc.h"
+#include "./lib/vr.h"
 #include "./lib/tbl.h"
 #include "./lib/type.h"
 #include "./lib/err.h"
@@ -31,5 +33,9 @@ te *ns_n(size_t n, mc *m[NS_MAX_L]);
 
 void ns_p(void);
 
+void ns_args(int argc, char *argv[]);
+
 // declarations needed for testing
 te *ns_f_rs(mc **s);
+
+vr *ns_s_a(void);

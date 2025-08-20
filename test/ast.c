@@ -536,3 +536,12 @@ T(cjvr) {
             ON(NULL, UNER, NULL, AN(NULL, IN("c"), L(1, ON(NULL, CST, TN(U6), SN(I6, I6(6)))))))))
     )), NULL)));
 }
+
+T(args) {
+    V(TPGM(args), RN(AN(NULL, LN(NULL, L(1,
+        CN(P1, AN(NULL, ON(NULL, DFN, NULL, NULL), L(2,
+            CN(E, IN("a")),
+            ON(NULL, NS, NULL, ON(NULL, NS, IN("s"), AN(NULL, IN("a"), NULL)))
+        )))
+    )), NULL)));
+}
