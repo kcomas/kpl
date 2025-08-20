@@ -816,3 +816,27 @@ T(args) {
     )), NULL)));
     te_f(vv);
 }
+
+T(mapstrs) {
+    IC(TPGM(mapstrs));
+    te *vv = TV(VR, TS(SG));
+    te *eu = TH(UN, 2, "e", chk_rt_err_t(&al_te), "v", te_c(vv));
+    te *fv = TFN(FN, TS(SG), 1, "x", TS(SG), 0);
+    V(RN(AN(TS(VD), LN(LT(3, "v", FLG(0, LTE_FLG(L)), te_c(vv), "m", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vv), "-1", FLG(-1, LTE_FLG(F)), te_c(fv)), L(3,
+        ON(te_c(vv), DFN, EN("v", FLG(0, LTE_FLG(L)), te_c(vv)), ON(te_c(vv), CST, NN(T, te_c(vv)),
+            VN(type_te_i_v(&al_te, NULL, 2, TS(SG), TS(SG)), L(2,
+                ON(TS(SG), CSG, NULL, CS("a")),
+                ON(TS(SG), CSG, NULL, CS("b"))
+            )))),
+        ON(te_c(vv), DFN, EN("m", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vv)), ON(te_c(vv), UNER, NULL,
+            ON(te_c(eu), MUL,
+                ON(te_c(fv), DFN, EN("-1", FLG(-1, LTE_FLG(F)), te_c(fv)), ON(te_c(fv), CST, NN(T, te_c(fv)),
+                    LN(LT(1, "x", FLG(0, LTE_FLG(A)), TS(SG)),
+                        L(1, ON(TS(SG), CNCT, ON(TS(SG), CSG, NULL, CS("_")), EN("x", FLG(0, LTE_FLG(A)), TS(SG))))))),
+                EN("v", FLG(0, LTE_FLG(L)), te_c(vv))))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("m", FLG(1, LTE_FLG(E) | LTE_FLG(L)), te_c(vv)))
+    )), NULL)));
+    te_f(vv);
+    te_f(eu);
+    te_f(fv);
+}

@@ -454,6 +454,27 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
     return CHK_STAT(OK);
 }
 
+static chk_stat chk_map_vr(chk *c, te *an, err **e) {
+    te *lt, *rt, *h, *n;
+    tbl *fa, *tt;
+    if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv map type");
+    if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv map type");
+    fa = lt->d[3].p;
+    if (!fa || !fa->i->l) return chk_err(c, an, e, "chk inv fn for map");
+    h = fa->i->h;
+    n = h->d[0].p;
+    if (!type_eq(n->d[2].p, rt->d[2].p)) return chk_err(c, an, e, "chk inv arg type for map");
+    h = h->d[2].p;
+    if (h) STOP("TODO CHK IDX IS U6");
+    tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
+    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
+    lt = te_c(lt->d[2].p);
+    if (lt->d[1].u4 != TYPE(VD)) lt = type_v_i(c->ta, NULL, TYPE(VR), lt);
+    type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 1, lt);
+    an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
+    return CHK_STAT(OK);
+}
+
 static chk_stat chk_vr_len(chk *c, te *an, err **e) {
     (void) e;
     an->d[3] = P(type_s_i(c->a->ta, NULL, TYPE(U6)));
@@ -625,7 +646,7 @@ static chk_stat chk_aply_vr(chk *c, te *an, err **e) {
         tn = type_cpy(tn);
         tn->d[1].u4 = type_g_weak(tn->d[1].u4);
     } else te_c(tn);
-    type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 0, tn);
+    type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 1, tn);
     an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
     return CHK_STAT(OK);
 }
@@ -980,6 +1001,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_l_lst_bl, AST_CLS(O), TYPE(_N), OC(LOOP), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_if, AST_CLS(O), TYPE(_N), OC(IF), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_mtch, AST_CLS(O), TYPE(_N), OC(MTCH), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
+    CHK_AA(c, chk_map_vr, AST_CLS(O), TYPE(_N), OC(MUL), TYPE(_A), AST_CLS(O), TYPE(FN), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_vr_len, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(E), TYPE(VR));
     CHK_AA(c, chk_vr_len, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(VR));
     CHK_AA(c, chk_vr_len, AST_CLS(O), TYPE(_N), OC(DIV), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(WVR));
@@ -1001,6 +1023,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_and_or, AST_CLS(O), TYPE(_N), OC(AND), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_and_or, AST_CLS(O), TYPE(_N), OC(OR), TYPE(_A), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A));
     CHK_AA(c, chk_nop, AST_CLS(O), TYPE(SG), OC(CSG), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(S), TYPE(CS));
+    CHK_AA(c, chk_op_lr_teq, AST_CLS(O), TYPE(_N), OC(CNCT), TYPE(_A), AST_CLS(O), TYPE(SG), AST_CLS(E), TYPE(SG));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6));
@@ -1010,6 +1033,7 @@ chk *chk_b(chk *c) {
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(Z), TYPE(VR), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_op_levrroe_vr, AST_CLS(O), TYPE(_N), OC(CNCTA), TYPE(_A), AST_CLS(Z), TYPE(WVR), AST_CLS(S), TYPE(I6));
     CHK_AA(c, chk_uner_n_un, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(A), TYPE(UN));
+    CHK_AA(c, chk_uner_n_un, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(UN));
     CHK_AA(c, chk_uner_sg, AST_CLS(O), TYPE(_N), OC(UNER), TYPE(_A), AST_CLS(_), TYPE(_N), AST_CLS(O), TYPE(SG));
     chk_entry(c);
     chk_type(c);
