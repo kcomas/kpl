@@ -33,4 +33,6 @@ void mc_wc4(mc **m, un c);
 
 void mc_wcstr(mc **m, const char *s);
 
+mc *mc_str_cnct(const mc *restrict a, const mc *restrict b);
+
 void mc_f(mc *m);

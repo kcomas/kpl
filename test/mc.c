@@ -21,3 +21,16 @@ T(mc_eq) {
     mc_f(b);
     mc_f(c);
 }
+
+T(str_cnct) {
+    mc *a = mc_i_cstr("_", &al_mc);
+    mc *b = mc_i_cstr("a", &al_mc);
+    mc *c = mc_str_cnct(a, b);
+    mc *d = mc_i_cstr("_a", &al_mc);
+    printf("%s\n", (char*) c->d);
+    A(mc_eq(c, d), "inv cnct");
+    mc_f(a);
+    mc_f(b);
+    mc_f(c);
+    mc_f(d);
+}

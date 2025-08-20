@@ -615,3 +615,27 @@ T(args) {
     opt_exp_tbl_f(xt);
     atg_t_f();
 }
+
+/*
+T(mapstrs) {
+    AI(TPGM(mapstrs), 1, 2);
+    atg_d_p(t);
+    te *vv = TV(VR, TS(SG));
+    te *eu = TH(UN, 2, "e", chk_rt_err_t(&al_te), "v", te_c(vv));
+    gen *gc = gen_i_gen(bg);
+    S(gen_a(gc, GEN_OP(E), NULL, NULL, NULL));
+    S(gen_a(gc, GEN_OP(NE), gen_idx_m(gc, X64_TYPE(U6), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(32))), gen_data(gc, X64_TYPE(U6), U6(0)), gen_lbl(gc, 1)));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(err_f)), NULL));
+    S(gen_a(gc, GEN_OP(JMP), gen_lbl(gc, 0), NULL, NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 1), NULL, NULL));
+    S(gen_a(gc, GEN_OP(CALL), gen_call_m(gc, 1, gen_idx_m(gc, X64_TYPE(M), 2, gen_arg(gc, X64_TYPE(M), 0), gen_data(gc, X64_TYPE(U3), U3(40)))), gen_data(gc, X64_TYPE(M), P(vr_f)), NULL));
+    S(gen_a(gc, GEN_OP(LBL), gen_lbl(gc, 0), NULL, NULL));
+    gen_type_aff(gc, eu, &e, "");
+    D(eu, gc);
+    gen_f(gc);
+    V(NULL, NULL);
+    te_f(vv);
+    te_f(eu);
+    atg_t_f();
+}
+*/

@@ -824,7 +824,12 @@ static atg_stat atg_cs_sg(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
-static atg_stat atg_cnct_vr_e_vr_(atg *t, gen *g, te *an, err **e) {
+static atg_stat atg_cnct_sg_sg_(atg *t, gen *g, te *an, err **e) {
+    (void) g;
+    return atg_err(t, an, e, "TODO");
+}
+
+static atg_stat atg_cncta_vr_e_vr_(atg *t, gen *g, te *an, err **e) {
     uint32_t vt = t->tc++, xt = t->tc++;
     te *vlte = ((te*) an->d[5].p)->d[3].p, *rc, *tn;
     rc = an->d[6].p;
@@ -972,12 +977,13 @@ atg *atg_b(atg *t) {
     atg_a_o(t, OC(MTCH), TYPE(ST), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(MTCH), TYPE(VD), AST_CLS(L), TYPE(_A), AST_CLS(L), TYPE(_A), mtch_l_l);
     atg_a_o(t, OC(CSG), TYPE(SG), AST_CLS(_), TYPE(_N), AST_CLS(S), TYPE(CS), atg_cs_sg);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6), atg_cnct_vr_e_vr_);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6), atg_cnct_vr_e_vr_);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(U6), atg_cnct_vr_e_vr_);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(VR), atg_cnct_vr_e_vr_);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6), atg_cnct_vr_e_vr_);
-    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(Z), TYPE(I6), atg_cnct_vr_e_vr_);
+    atg_a_o(t, OC(CNCT), TYPE(SG), AST_CLS(O), TYPE(SG), AST_CLS(E), TYPE(SG), atg_cnct_sg_sg_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(I6), atg_cncta_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(I6), atg_cncta_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(U6), atg_cncta_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(E), TYPE(VR), atg_cncta_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(O), TYPE(F6), atg_cncta_vr_e_vr_);
+    atg_a_o(t, OC(CNCTA), TYPE(VR), AST_CLS(E), TYPE(VR), AST_CLS(Z), TYPE(I6), atg_cncta_vr_e_vr_);
     atg_a_o(t, OC(CNCTA), TYPE(WVR), AST_CLS(Z), TYPE(WVR), AST_CLS(S), TYPE(I6), atg_cnct_wvr);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(E), TYPE(VR), atg_vr_len);
     atg_a_o(t, OC(DIV), TYPE(U6), AST_CLS(_), TYPE(_N), AST_CLS(Z), TYPE(VR), atg_vr_len);

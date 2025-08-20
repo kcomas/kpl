@@ -135,6 +135,16 @@ void mc_wcstr(mc **m, const char *s) {
     while (*s) mc_wa(m, *s++);
 }
 
+mc *mc_str_cnct(const mc *restrict a, const mc *restrict b) {
+    mc *c = mc_i(a->l + b->l + 1, a->af);
+    char *s = (char*) a->d;
+    while (*s) mc_wa(&c, *s++);
+    s = (char*) b->d;
+    while (*s) mc_wa(&c, *s++);
+    mc_wa(&c, '\0');
+    return c;
+}
+
 void mc_f(mc *m) {
     if (!m || --m->r > 0) return;
     m->af->f(m);
