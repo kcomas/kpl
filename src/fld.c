@@ -212,7 +212,6 @@ static bool op_ns_t(const te *an) {
 }
 
 static fld_stat cst_cj_lst_r(fld *f, te **an, err **e) {
-    (void) e;
     te *r = (*an)->d[6].p, *nn;
     if (r->d[2].u4 == AST_CLS(L)) {
     nn = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P(NULL), OC(CST), ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(T), P(type_f_i(f->a->ta, NULL, TYPE(NF), NULL, NULL, NULL))), P(r));
@@ -230,12 +229,7 @@ static bool cst_cj_lst_t(const te *an) {
     tn = tn->d[3].p;
     if (!tn || tn->d[1].u4 != TYPE(CJ)) return false;
     tn = an->d[6].p;
-    if (tn && tn->d[2].u4 == AST_CLS(L)) return true;
-    if (!tn || tn->d[2].u4 != AST_CLS(O) || tn->d[4].u4 != OC(CST)) return false;
-    tn = tn->d[5].p;
-    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
-    tn = tn->d[3].p;
-    return tn && tn->d[1].u4 == TYPE(NF);
+    return tn && tn->d[2].u4 == AST_CLS(L);
 }
 
 fld_stat fld_tmp_var_a(fld *f, te **an, err **e, int32_t vi, lte_flg vf) {
@@ -265,6 +259,24 @@ fld_stat fld_tmp_var_a(fld *f, te **an, err **e, int32_t vi, lte_flg vf) {
     *an = ast_an_i(f->a, (*an)->d[0].p, (*an)->d[1].p, AST_CLS(O), P((*an)->d[3].p ? te_c((*an)->d[3].p) : NULL), U4(OC(DFN)), en, *an);
     ((te*) (*an)->d[6].p)->d[0] = P(*an);
     return FLD_STAT(OK);
+}
+
+static fld_stat cst_anon_fn_r(fld *f, te **an, err **e) {
+    if (fld_tmp_var_a(f, an, e, --f->tvc, LTE_FLG(F)) != FLD_STAT(OK)) return fld_err(f, *an, e, "fld inv cst anon fn def");
+    return FLD_STAT(OK);
+}
+
+static bool cst_anon_fn_t(const te *an) {
+    if (an->d[4].u4 != OC(CST)) return false;
+    te *tn = an->d[5].p;
+    if (!tn || tn->d[2].u4 != AST_CLS(T)) return false;
+    tn = tn->d[3].p;
+    if (!tn || type_g_c(tn->d[1].u4) != TYPE_CLS(F)) return false;
+    tn = an->d[6].p;
+    if (!tn || tn->d[2].u4 != AST_CLS(L)) return false;
+    tn = an->d[0].p;
+    if (!tn || tn->d[2].u4 != AST_CLS(O)) return true;
+    return tn->d[4].u4 != OC(DFN) && tn->d[4].u4 != OC(AGN);
 }
 
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
@@ -465,6 +477,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(O), op_lr_lst_scope_t, op_lr_lst_scope_r);
     fld_a(f, AST_CLS(O), op_ns_t, op_ns_r);
     fld_a(f, AST_CLS(O), cst_cj_lst_t, cst_cj_lst_r);
+    fld_a(f, AST_CLS(O), cst_anon_fn_t, cst_anon_fn_r);
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);

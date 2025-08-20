@@ -602,3 +602,19 @@ T(args) {
                 AN(NULL, NNV(S, TF(FP, TV(VR, TS(SG))), P(NULL)), NULL)))
     )), NULL)));
 }
+
+T(mapstrs) {
+    V(TPGM(mapstrs), RN(AN(NULL, LN(LT(3, "v", U6(0), NULL, "m", FLG(0, LTE_FLG(E)), NULL, "-1", U6(0), NULL), L(3,
+        ON(NULL, DFN, EN("v", U6(0), NULL), ON(NULL, CST, TN(VR), VN(NULL, L(2,
+            ON(TS(SG), CSG, NULL, CS("a")),
+            ON(TS(SG), CSG, NULL, CS("b"))
+        )))),
+        ON(NULL, DFN, EN("m", FLG(0, LTE_FLG(E)), NULL), ON(NULL, UNER, NULL,
+            ON(NULL, MUL,
+                ON(NULL, DFN, EN("-1", U6(0), NULL), ON(NULL, CST, TN(FN),
+                    LN(LT(1, "x", U6(0), TS(SG)),
+                        L(1, ON(NULL, CNCT, ON(TS(SG), CSG, NULL, CS("_")), EN("x", U6(0), TS(SG))))))),
+                EN("v", U6(0), NULL)))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), EN("m", FLG(0, LTE_FLG(E)), NULL))
+    )), NULL)));
+}
