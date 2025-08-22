@@ -1,0 +1,6 @@
+
+// map strings
+
+v::VR$["a";"b"]
+m::$(FN;{"_",SG(x)})*v
+m\p1

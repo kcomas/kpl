@@ -306,6 +306,28 @@ static atg_stat aply_e_cj(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat fn_call_ret(gen *g, gen_op go, te *restrict rci, te *restrict ca, te *restrict tgt) {
+    if (rci) {
+        if (gen_a(g, go, rci, ca, tgt) != GEN_STAT(OK)) return ATG_STAT(INV);
+    } else if (gen_a(g, go, tgt, ca, NULL) != GEN_STAT(OK)) return ATG_STAT(INV);
+    return ATG_STAT(OK);
+}
+
+atg_stat fn_call_fnn_vr_rci(atg *t, gen *g, te *restrict an, err **e, te *restrict fnn, vr *v, te *restrict rci) {
+    if (fnn->d[2].u4 == AST_CLS(S)) return atg_err(t, an, e, "nyi");
+    if (fnn->d[2].u4 == AST_CLS(O) && fnn->d[4].u4 == OC(DFN)) fnn = fnn->d[5].p;
+    if (fnn->d[2].u4 != AST_CLS(E)) return atg_err(t, an, e, "atg inv fn call entry");
+    te *lte = fnn->d[3].p;
+    switch (((te*) lte->d[2].p)->d[1].u4) {
+        case TYPE(FN):
+            if (fn_call_ret(g, GEN_OP(CALL), rci, gen_call_v(g, v), gen_lbl(g, ast_lst_tbl_e_g_i(lte))) != ATG_STAT(OK)) return atg_err(t, an, e, __FUNCTION__);
+            break;
+        default:
+            return atg_err(t, an, e, "atg fn call inv fn type");
+    }
+    return ATG_STAT(OK);
+}
+
 void atg_aply(atg *t) {
     atg_a_a(t, TYPE(VD), AST_CLS(E), TYPE(FN), aply_e_fn);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(FN), aply_e_fn);

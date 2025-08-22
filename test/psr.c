@@ -821,8 +821,7 @@ T(mapstrs) {
     te *h = ppnode(psr_r(bpsr(TPGM(mapstrs))));
     V(h, {N(ROOT), APLY(LST(
         OP(N(VAR), OP(N(TYPE), VEC(N(STR), N(STR)))),
-        OP(CMD(N(VAR)), OP(N(NONE), //'
-            OP(APLY(OP(N(NONE), N(NONE)), N(TYPE), LST(OP(N(STR), APLY(N(TYPE), N(VAR))))), N(VAR)))),
+        OP(CMD(N(VAR)),OP(APLY(OP(N(NONE), N(NONE)), N(TYPE), LST(OP(N(STR), APLY(N(TYPE), N(VAR))))), N(VAR))),
         CMD(N(VAR))
     ))});
     te_f(h);

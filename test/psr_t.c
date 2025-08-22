@@ -342,6 +342,6 @@ const char *TPGM(args) = "{::(a\\e;.s.a())\\p1}()\n";
 
 const char *TPGM(mapstrs) = "{\n"
                          " v::VR$[\"a\";\"b\"]\n"
-                         " m\\e::'$(FN;{\"_\",SG(x)})*v\n"
+                         " m\\e::$(FN;{\"_\",SG(x)})*v\n"
                          " m\\p1 // _a, _b\n"
                          "}()\n";

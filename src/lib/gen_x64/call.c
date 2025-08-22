@@ -302,7 +302,14 @@ static gen_stat call(gen *g, gen_st *st, te *restrict ci, as *a, err **e, te *re
                                     default:
                                         return gen_err(g, ci, e, "gen inv single MM cls");
                                 }
-                            } else return gen_err(g, ci, e, "gen cls I type MM inv");
+                            } else {
+                                args[ra].i = i;
+                                if (ur(st, args, args[ra].r, &cr, &cx, a, ci) != GEN_STAT(OK)) return gen_err(g, ci, e, "gen update arg reg inv");
+                                if (st->rstk->l == 0) return gen_err(g, ci, e, "gen call idx no tmp r regs");
+                                if ((stat = idx_from(g, st, ci, a, e, AS_X64(LEA), ovt->d[1].p, as_arg_i(a, ARG_ID(R), U3(args[ra].r)), st->rstk->d[0].u3, ARG_ID(R))) != GEN_STAT(OK)) return stat;
+                                args[ra].a = args[ra].r;
+                                ra++;
+                            }
                             break;
                         default:
                             return gen_err(g, ci, e, "gen call cls I inv type");

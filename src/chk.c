@@ -456,7 +456,7 @@ static chk_stat chk_mtch(chk *c, te *an, err **e) {
 
 static chk_stat chk_map_vr(chk *c, te *an, err **e) {
     te *lt, *rt, *h, *n;
-    tbl *fa, *tt;
+    tbl *fa;
     if (ast_g_t(an->d[5].p, &lt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv map type");
     if (ast_g_t(an->d[6].p, &rt) != AST_STAT(OK)) return chk_err(c, an, e, "chk inv map type");
     fa = lt->d[3].p;
@@ -466,12 +466,17 @@ static chk_stat chk_map_vr(chk *c, te *an, err **e) {
     if (!type_eq(n->d[2].p, rt->d[2].p)) return chk_err(c, an, e, "chk inv arg type for map");
     h = h->d[2].p;
     if (h) STOP("TODO CHK IDX IS U6");
-    tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
-    type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
     lt = te_c(lt->d[2].p);
-    if (lt->d[1].u4 != TYPE(VD)) lt = type_v_i(c->ta, NULL, TYPE(VR), lt);
-    type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 1, lt);
-    an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
+    if (lt->d[1].u4 == TYPE(UN)) {
+        STOP("TODO UN");
+        /*
+        tt = tbl_i(c->tbla, tbl_mc_sdbm, tbl_mc_eq, lst_i(c->la, c->ta, (void*) te_f), te_i(3, c->ta, NULL));
+        type_tbl_a(tt, c->ta, mc_i_cstr("e", c->a->ma), 0, chk_rt_err_t(c->ta));
+        if (lt->d[1].u4 != TYPE(VD)) lt = type_v_i(c->ta, NULL, TYPE(VR), lt);
+        type_tbl_a(tt, c->ta, mc_i_cstr("v", c->a->ma), 1, lt);
+        an->d[3] = P(type_h_i(c->ta, NULL, TYPE(UN), tt));
+        */
+    } else an->d[3] = P(type_v_i(c->ta, NULL, TYPE(VR), lt));
     return CHK_STAT(OK);
 }
 

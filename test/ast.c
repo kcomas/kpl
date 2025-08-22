@@ -549,12 +549,12 @@ T(args) {
 T(mapstrs) {
     V(TPGM(mapstrs), RN(AN(NULL, LN(NULL, L(3,
         ON(NULL, DFN, IN("v"), ON(NULL, CST, TN(VR), VN(NULL, L(2, CS("a"), CS("b"))))),
-        ON(NULL, DFN, CN(E, IN("m")), ON(NULL, UNER, NULL,
-            ON(NULL, MUL, AN(NULL, ON(NULL, CST, NULL, NULL), L(2,
+        ON(NULL, DFN, CN(E, IN("m")), ON(NULL, MUL,
+            AN(NULL, ON(NULL, CST, NULL, NULL), L(2,
                 TN(FN),
                 LN(NULL, L(1,
                     ON(NULL, CNCT, CS("_"), AN(NULL, TN(SG), L(1, IN("x"))))
-                )))), IN("v")))),
+                )))), IN("v"))),
         CN(P1, IN("m"))
     )), NULL)));
 }

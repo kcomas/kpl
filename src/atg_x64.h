@@ -60,6 +60,8 @@ gen_stat aply_e_vr_u(gen *g, te *restrict i, te *restrict v, uint32_t erlb, uint
 
 atg_stat atg_err_r(atg *t, gen *g, te *restrict an, err **e, const te *restrict s, const char *msg);
 
+atg_stat fn_call_fnn_vr_rci(atg *t, gen *g, te *restrict an, err **e, te *restrict fnn, vr *v, te *restrict rci);
+
 extern const char *atg_un_inv_str;
 
 extern const char *atg_user_inv_str;
