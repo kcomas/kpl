@@ -94,3 +94,34 @@ T(eq) {
     vr_f(b);
     vr_f(c);
 }
+
+typedef void vr_test_print(un u);
+
+static void print_vr(vr *v, vr_test_print fn) {
+    for (size_t i = 0; i < v->l; i++) fn(v->d[i]);
+    putchar('\n');
+}
+
+static void vr_i6_p(un u) {
+    printf("%ld ", u.i6);
+}
+
+static ssize_t vr_i6_lt_cmp(un a, un b) {
+    return a.i6 - b.i6;
+}
+
+static ssize_t vr_i6_gt_cmp(un a, un b) {
+    return b.i6 - a.i6;
+}
+
+T(sort) {
+    vr *a = vr_i_v(&al_vr, NULL, 5, 5, 2, 1, 3, 4);
+    print_vr(a, vr_i6_p);
+    vr_s(a, vr_i6_lt_cmp);
+    for (size_t i = 1; i < a->l; i++) A(a->d[i-1].i6 < a->d[i].i6, "inv sort");
+    print_vr(a, vr_i6_p);
+    vr_s(a, vr_i6_gt_cmp);
+    for (size_t i = 1; i < a->l; i++) A(a->d[i-1].i6 > a->d[i].i6, "inv sort");
+    print_vr(a, vr_i6_p);
+    vr_f(a);
+}

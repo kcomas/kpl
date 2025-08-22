@@ -25,11 +25,9 @@ typedef struct {
 
 vr *vr_i(size_t s, const alfr *af, frfn *df);
 
+vr *vr_i_v(const alfr *af, frfn *df, size_t n, ...);
+
 vr *vr_i_vr(const vr *v);
-
-typedef bool vr_eq_fn(un a, un b);
-
-bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn);
 
 vr *vr_c(vr *v);
 
@@ -40,6 +38,14 @@ vr_stat vr_s_i(vr *v, size_t i, un d);
 size_t vr_g_l(const vr *v);
 
 vr_stat vr_g_i(vr *v, size_t i, un *d);
+
+typedef ssize_t vr_cmp_fn(un a, un b);
+
+void vr_s(vr *v, vr_cmp_fn fn);
+
+typedef bool vr_eq_fn(un a, un b);
+
+bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn);
 
 vr_stat vr_ab(vr **v, un d);
 

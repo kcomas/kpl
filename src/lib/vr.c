@@ -60,15 +60,18 @@ vr *vr_i(size_t s, const alfr *af, frfn *df) {
     return v;
 }
 
-vr *vr_i_vr(const vr *v) {
-    return vr_i(v->s, v->af, v->df);
+vr *vr_i_v(const alfr *af, frfn *df, size_t n, ...) {
+    vr *v = vr_i(n, af, df);
+    v->l = n;
+    va_list args;
+    va_start(args, n);
+    for (size_t i = 0; i < n; i++) v->d[i] = va_arg(args, un);
+    va_end(args);
+    return v;
 }
 
-bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn) {
-    if (!a && !b) return true;
-    if (!a || !b || a->l != b->l) return false;
-    for (size_t i = 0; i < a->l; i++) if (!fn(a->d[i], b->d[i])) return false;
-    return true;
+vr *vr_i_vr(const vr *v) {
+    return vr_i(v->s, v->af, v->df);
 }
 
 vr *vr_c(vr *v) {
@@ -95,6 +98,40 @@ vr_stat vr_s_i(vr *v, size_t i, un d) {
     if (v->df) v->df(v->d[i].p);
     v->d[i] = d;
     return VR_STAT(OK);
+}
+
+static ssize_t qsp(vr *v, ssize_t s, ssize_t e, vr_cmp_fn fn) {
+    un pv = v->d[e], tmp;
+    ssize_t pi = s;
+    for (ssize_t i = s; i < e; i++) {
+        if (fn(v->d[i], pv) > 0) continue;
+        tmp = v->d[pi];
+        v->d[pi] = v->d[i];
+        v->d[i] = tmp;
+        pi += 1;
+    }
+    tmp = v->d[pi];
+    v->d[pi] = v->d[e];
+    v->d[e] = tmp;
+    return pi;
+}
+
+static void qs(vr *v, ssize_t s, ssize_t e, vr_cmp_fn fn) {
+    if (s >= e || s < 0) return;
+    ssize_t p = qsp(v, s, e, fn);
+    qs(v, s, p - 1, fn);
+    qs(v, p + 1, e, fn);
+}
+
+void vr_s(vr *v, vr_cmp_fn fn) {
+    qs(v, 0, v->l - 1, fn);
+}
+
+bool vr_eq(const vr *restrict a, const vr *const b, vr_eq_fn fn) {
+    if (!a && !b) return true;
+    if (!a || !b || a->l != b->l) return false;
+    for (size_t i = 0; i < a->l; i++) if (!fn(a->d[i], b->d[i])) return false;
+    return true;
 }
 
 #ifndef VR_RES
