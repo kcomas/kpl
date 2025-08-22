@@ -34,3 +34,10 @@ T(s_ls) {
     mc_f(s);
     te_f(u);
 }
+
+T(s_r) {
+    mc *c = mc_i_cstr("uname -r", &al_mc);
+    int64_t r = ns_s_r(&c);
+    A(r == 0, "inv ret code");
+    mc_f(c);
+}

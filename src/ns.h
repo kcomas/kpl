@@ -53,3 +53,5 @@ te *ns_f_rs(mc **s);
 vr *ns_s_a(void);
 
 te* ns_s_ls(mc **d);
+
+int64_t ns_s_r(mc **c);
