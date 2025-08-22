@@ -27,4 +27,10 @@ T(s_ls) {
     putchar('\n');
     mc_f(s);
     te_f(u);
+    s = mc_i_cstr("fileshouldnotexist", &al_mc);
+    u = ns_s_ls(&s);
+    A(!u->d[0].u6, "inv un key");
+    err_p(u->d[1].p, 0, true);
+    mc_f(s);
+    te_f(u);
 }
