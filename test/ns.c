@@ -16,3 +16,15 @@ T(f_rs) {
    te_f(ct);
    for (size_t i = 0; i < n; i++) mc_f(m[i]);
 }
+
+T(s_ls) {
+    mc *s = mc_i_cstr(".", &al_mc);
+    te *u = ns_s_ls(&s);
+    A(u->d[0].u6, "inv un key");
+    vr *v = u->d[1].p;
+    A(v->l > 1, "inv dir len");
+    for (size_t i = 0; i < v->l; i++) printf("%s ", ((mc*) v->d[i].p)->d);
+    putchar('\n');
+    mc_f(s);
+    te_f(u);
+}

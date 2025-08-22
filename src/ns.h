@@ -1,6 +1,12 @@
 
 #pragma once
 
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include "./lib/mc.h"
 #include "./lib/vr.h"
 #include "./lib/tbl.h"
@@ -33,9 +39,17 @@ te *ns_n(size_t n, mc *m[NS_MAX_L]);
 
 void ns_p(void);
 
+void ns_un_er_sg_f(void *p);
+
+void ns_un_er_vr_f(void *p);
+
+te *ns_err(mc *s, const char *msg, frfn des);
+
 void ns_args(int argc, char *argv[]);
 
 // declarations needed for testing
 te *ns_f_rs(mc **s);
 
 vr *ns_s_a(void);
+
+te* ns_s_ls(mc **d);

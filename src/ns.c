@@ -100,7 +100,7 @@ void ns_a(te *type, void *any, size_t n, ...) {
             kv->d[0] = P(s);
             kv->d[3] = P(ntbl(NS_TBL_S));
             tbl_a(t, kv);
-        }
+        } else mc_f(s);
         t = kv->d[3].p;
         n--;
     }
@@ -132,6 +132,29 @@ static void _ns_p(tbl *t, size_t idnt) {
         if (nte->d[3].p) _ns_p(nte->d[3].p, idnt + 1);
         h = h->d[2].p;
     }
+}
+
+void ns_un_er_sg_f(void *p) {
+    te *u = p;
+    if (!u->d[0].u6) err_f(u->d[1].p);
+    else mc_f(u->d[1].p);
+    u->af->f(u);
+}
+
+void ns_un_er_vr_f(void *p) {
+    te *u = p;
+    if (!u->d[0].u6) err_f(u->d[1].p);
+    else vr_f(u->d[1].p);
+    u->af->f(u);
+}
+
+static void ns_err_p(void *d, uint32_t idnt) {
+    mc *s = d;
+    printf("%*s\e[1m%s\e[0m", idnt, "", (char*) s->d);
+}
+
+te *ns_err(mc *s, const char *msg, frfn des) {
+    return ns_un(0, P(err_i(&al_err, ns_err_p, (void*) mc_f, mc_c(s), msg)), des);
 }
 
 void ns_p(void) {

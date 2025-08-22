@@ -1,43 +1,23 @@
 
-#define _GNU_SOURCE
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include "../ns.h"
-
-static void un_er_sg_f(void *p) {
-    te *u = p;
-    if (!u->d[0].u6) err_f(u->d[1].p);
-    else mc_f(u->d[1].p);
-    u->af->f(u);
-}
-
-static void ns_f_rs_err_p(void *d, uint32_t idnt) {
-    mc *s = d;
-    printf("%*s\e[1m%s\e[0m", idnt, "", (char*) s->d);
-}
-
-static te *ns_f_rs_err(mc *s, const char *msg) {
-    return ns_un(0, P(err_i(&al_err, ns_f_rs_err_p, (void*) mc_f, mc_c(s), msg)), un_er_sg_f);
-}
 
 te *ns_f_rs(mc **s) {
     int fd;
-    if ((fd = open((char*) (*s)->d, O_RDONLY)) == -1) return ns_f_rs_err(*s, "inv path");
+    if ((fd = open((char*) (*s)->d, O_RDONLY)) == -1) return ns_err(*s, "inv path", ns_un_er_sg_f);
     struct statx sx;
     if (statx(fd, "", AT_EMPTY_PATH, STATX_MODE | STATX_SIZE, &sx) == -1) {
         close(fd);
-        return ns_f_rs_err(*s, "inv path");
+        return ns_err(*s, "inv path", ns_un_er_sg_f);
     }
-    if (S_ISDIR(sx.stx_mode)) return ns_f_rs_err(*s, "path is dir");
+    if (S_ISDIR(sx.stx_mode)) return ns_err(*s, "path is dir", ns_un_er_sg_f);
     mc *f = mc_i(sx.stx_size + sizeof(char), &al_mc);
     if (read(fd, f->d, sx.stx_size) == -1) {
         close(fd);
         mc_f(f);
-        return ns_f_rs_err(*s, "failed to read file");
+        return ns_err(*s, "failed to read file", ns_un_er_sg_f);
     }
     close(fd);
-    return ns_un(1, P(f), un_er_sg_f);
+    return ns_un(1, P(f), ns_un_er_sg_f);
 }
 
 void ns_f_b() {
