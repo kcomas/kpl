@@ -111,11 +111,29 @@ tkn_stat tkn_str(tkn *t, te *m, err **e) {
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
     if (t->s->d[t->pos] == '\0') return tkn_err(t, e, "tkn sg inv");
+    t->cno++;
     t->pos++;
     tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     return TKN_STAT(OK);
 }
 
+tkn_stat tkn_regt(tkn *t, te *m, err **e) {
+    while (t->s->d[t->pos] != '~' && t->s->d[t->pos] != '\0') {
+        t->cno++;
+        t->pos++;
+        tkn_m_s_e(m, tkn_m_g_e(m) + 1);
+    }
+    if (t->s->d[t->pos] == '\0') return tkn_err(t, e, "tkn regt inv");
+    t->pos++;
+    t->cno++;
+    tkn_m_s_e(m, tkn_m_g_e(m) + 1);
+    while (isalpha(t->s->d[t->pos])) {
+        t->cno++;
+        t->pos++;
+        tkn_m_s_e(m, tkn_m_g_e(m) + 1);
+    }
+    return TKN_STAT(OK);
+}
 
 tkn *tkn_b(tkn *t) {
     tkn_a(t, TCUST(NL), "\n", tkn_nl);
@@ -135,6 +153,7 @@ tkn *tkn_b(tkn *t) {
     tkn_a(t, TCUST(SYM), "`", tkn_sym);
     tkn_a(t, TCUST(STR), "\"", tkn_str);
     tkn_a(t, TCUST(DOT), ".", tkn_ft);
+    tkn_a(t, TCUST(REGT), "t~", tkn_regt);
     return t;
 }
 

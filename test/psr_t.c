@@ -345,3 +345,9 @@ const char *TPGM(mapstrs) = "{\n"
                          " m\\e::$(FN;{\"_\",SG(x)})*v\n"
                          " m\\p1 // _a, _b\n"
                          "}()\n";
+
+const char *TPGM(retest) = "{\n"
+                           " r::t~^a.$~i\n"
+                           " t\\e::[r(\"ab\");r(\"Ab\");r(\"abc\");r(\"a\")]\n"
+                           " t\\p1 //TTFF\n"
+                           "}()\n";

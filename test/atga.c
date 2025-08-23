@@ -913,7 +913,7 @@ T(iline) {
     AI(TPGM(iline), 0, 1);
     te *cn = RN(SN(_G, U5(0)));
     gen *gc = gen_i_gen(bg);
-    ns_gen(_t, gc, 1, 25, 0, 1);
+    ns_gen(_t, gc, 1, 26, 0, 1);
     E();
     V(cn, gc);
     te_f(cn);

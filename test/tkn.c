@@ -31,6 +31,10 @@ static __attribute__((destructor)) void tkn_des(void) {
         putchar('\n'); \
         A(tkn_m_g_i(m) == IDS[id++], "tid"); \
     } \
+    if (e) {  \
+        err_p(e, 0, true); \
+        err_f(e); \
+    } \
     A(tstat == TKN_STAT(END), "END"); \
     te_f(m);
 
@@ -185,4 +189,14 @@ T(strtest) {
     te_f(m);
     tkn_f(t);
     for (size_t i = 0; i < 2; i++) mc_f(strs[i]);
+}
+
+T(regt) {
+    const char *pgm = "1 t~asdf~i a";
+    const uint16_t tids[] = {TCUST(NUM), TCUST(WS), TCUST(REGT), TCUST(WS), TCUST(VAR)};
+    tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
+    printf("%s\n", pgm);
+    tkn_p(t->t, 0);
+    R(t, tids);
+    tkn_f(t);
 }

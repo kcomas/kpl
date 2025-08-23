@@ -37,6 +37,8 @@ typedef enum {
     TCUST(VR),
     // keys
     TCUST(A),
+    // regex
+    TCUST(REGT),
     // ops
     TCUST(DFN),
     TCUST(AGN),

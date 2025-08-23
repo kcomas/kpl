@@ -89,3 +89,5 @@ extern const char *TPGM(cjvr);
 extern const char *TPGM(args);
 
 extern const char *TPGM(mapstrs);
+
+extern const char *TPGM(retest);
