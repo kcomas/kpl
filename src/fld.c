@@ -207,8 +207,16 @@ static bool op_ns_t(const te *an) {
     if (an->d[4].u4 != OC(NS)) return false;
     te *pn = an->d[0].p;
     if (pn->d[2].u4 == AST_CLS(A)) pn = pn->d[4].p;
-    if (pn->d[2].u4 == AST_CLS(O) && pn->d[4].u4 == OC(NS)) return false;
-    return true;
+    return pn->d[2].u4 != AST_CLS(O) || pn->d[4].u4 != OC(NS);
+}
+
+static fld_stat aply_ns_r(fld *f, te **an, err **e) {
+    return op_ns_r(f, (te**) &(*an)->d[4].p, e);
+}
+
+static bool aply_ns_t(const te *an) {
+    te *tgt = an->d[4].p;
+    return tgt && tgt->d[2].u4 == AST_CLS(O) && tgt->d[4].u4 == OC(NS) && tgt->d[6].p;
 }
 
 static fld_stat cst_cj_lst_r(fld *f, te **an, err **e) {
@@ -280,7 +288,6 @@ static bool cst_anon_fn_t(const te *an) {
 }
 
 static fld_stat aply_op_r(fld *f, te **an, err **e) {
-    (void) f;
     // TODO ops that are not folded
     lst *l = lst_c((*an)->d[5].p);
     if (l->l < 1 || l-l > 2) return fld_err(f, *an, e, "fld aply op inv num args");
@@ -301,7 +308,10 @@ static fld_stat aply_op_r(fld *f, te **an, err **e) {
 }
 
 static bool aply_op_t(const te *an) {
-    return an->d[2].u4 == AST_CLS(A) && an->d[4].p && ((te*) an->d[4].p)->d[2].u4 == AST_CLS(O);
+    if (an->d[2].u4 != AST_CLS(A)) return false;
+    te *on = an->d[4].p;
+    if (!on || on->d[2].u4 != AST_CLS(O)) return false;
+    return !on->d[5].p && !on->d[6].p;
 }
 
 static fld_stat aply_type_e_r(fld *f, te **an, err **e) {
@@ -481,6 +491,7 @@ fld *fld_b(fld *f) {
     fld_a(f, AST_CLS(A), aply_op_t, aply_op_r);
     fld_a(f, AST_CLS(A), aply_type_e_t, aply_type_e_r);
     fld_a(f, AST_CLS(A), aply_type_b_t, aply_type_b_r);
+    fld_a(f, AST_CLS(A), aply_ns_t, aply_ns_r);
     fld_a(f, AST_CLS(C), cmd_t, cmd_r);
     return f;
 }

@@ -269,14 +269,21 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
     return ATG_STAT(OK);
 }
 
+static atg_stat aply_o_vr(atg *t, gen *g, te *an, err **e) {
+    atg_stat stat;
+    if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
+    te *ci = te_c(atg_g_g(an->d[4].p)->d[1].p), *vt;
+    if (ast_g_t(an->d[4].p, &vt) != AST_STAT(OK)) return atg_err(t, an, e, "atg aply o vr inv vr type");
+    return aply_vr(t, g, an, e, ci, vt->d[2].p);
+}
+
 static atg_stat aply_z_vr(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
     te *v = atg_g_g(an->d[4].p)->d[1].p, *vt;
     if (ast_g_t(an->d[4].p, &vt) != AST_STAT(OK)) return atg_err(t, an, e, "atg inv type for aply z vr");
     vt = ((te*) vt->d[2].p)->d[2].p; // sl -> vr -> type
-    if ((stat = aply_vr(t, g, an, e, v, vt)) != ATG_STAT(OK)) return stat;
-    return ATG_STAT(OK);
+    return aply_vr(t, g, an, e, v, vt);
 }
 
 static atg_stat aply_e_cj(atg *t, gen *g, te *an, err **e) {
@@ -349,6 +356,7 @@ void atg_aply(atg *t) {
     atg_a_a(t, TYPE(WSG), AST_CLS(Z), TYPE(WTE), aply_z_te);
     atg_a_a(t, TYPE(SG), AST_CLS(S), TYPE(CS), aply_e_cs);
     atg_a_a(t, TYPE(UN), AST_CLS(E), TYPE(VR), aply_e_vr);
+    atg_a_a(t, TYPE(UN), AST_CLS(O), TYPE(VR), aply_o_vr);
     atg_a_a(t, TYPE(UN), AST_CLS(Z), TYPE(VR), aply_z_vr);
     atg_a_a(t, TYPE(UN), AST_CLS(Z), TYPE(WVR), aply_z_vr);
     atg_a_a(t, TYPE(I6), AST_CLS(E), TYPE(CJ), aply_e_cj);
