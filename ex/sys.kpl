@@ -9,4 +9,5 @@
 .(s;.ls("."))\p1
 
 "CMD"\p1
-.(s;.r("uname -r"))\p1
+::(c;"uname -r")\p1
+.(s;.r(c))\p1

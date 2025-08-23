@@ -272,9 +272,9 @@ static atg_stat aply_e_vr(atg *t, gen *g, te *an, err **e) {
 static atg_stat aply_o_vr(atg *t, gen *g, te *an, err **e) {
     atg_stat stat;
     if ((stat = atg_r(t, g, an->d[4].p, e)) != ATG_STAT(OK)) return stat;
-    te *ci = te_c(atg_g_g(an->d[4].p)->d[1].p), *vt;
+    te *v = atg_g_g(an->d[4].p)->d[1].p, *vt;
     if (ast_g_t(an->d[4].p, &vt) != AST_STAT(OK)) return atg_err(t, an, e, "atg aply o vr inv vr type");
-    return aply_vr(t, g, an, e, ci, vt->d[2].p);
+    return aply_vr(t, g, an, e, v, vt->d[2].p);
 }
 
 static atg_stat aply_z_vr(atg *t, gen *g, te *an, err **e) {
