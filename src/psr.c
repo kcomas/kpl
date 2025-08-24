@@ -81,9 +81,9 @@ psr_stat psr_key_i(psr *p, te **n, err **e) {
     return PSR_STAT(OK);
 }
 
-psr_stat psr_reg_i(psr *p, te **n, err **e) {
+psr_stat psr_regx_i(psr *p, te **n, err **e) {
     (void) e;
-    *n = node_i(p, NODE_TYPE(REG), 3, p_vtkris_f);
+    *n = node_i(p, NODE_TYPE(REGX), 3, p_vtkris_f);
     return PSR_STAT(OK);
 }
 
@@ -287,7 +287,7 @@ void node_p(const te *n, size_t idnt) {
         case NODE_TYPE(VAR):
         case NODE_TYPE(TYPE):
         case NODE_TYPE(KEY):
-        case NODE_TYPE(REG):
+        case NODE_TYPE(REGX):
         case NODE_TYPE(INT):
         case NODE_TYPE(STR):
             putchar('|');
@@ -467,7 +467,7 @@ psr *psr_b(psr *p) {
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_key_i, 1, tkn_a(p->tt, TCUST(A), "A", tkn_ft));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_key_i, 1, tkn_a(p->tt, TOKEN(UN), "S", tkn_ft));
     // regex
-    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_reg_i, 1, TCUST(REGT));
+    psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_val_m, psr_regx_i, 1, TCUST(REGXT));
     // op
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, TCUST(DOT));
     psr_a(p, PARSER(UN), PSR_MODE(ONCE), NULL, NULL, psr_op_m, psr_op_i, 1, tkn_a(p->tt, TCUST(AGN), ":", tkn_ft));

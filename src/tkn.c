@@ -117,13 +117,13 @@ tkn_stat tkn_str(tkn *t, te *m, err **e) {
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_regt(tkn *t, te *m, err **e) {
+tkn_stat tkn_regxt(tkn *t, te *m, err **e) {
     while (t->s->d[t->pos] != '~' && t->s->d[t->pos] != '\0') {
         t->cno++;
         t->pos++;
         tkn_m_s_e(m, tkn_m_g_e(m) + 1);
     }
-    if (t->s->d[t->pos] == '\0') return tkn_err(t, e, "tkn regt inv");
+    if (t->s->d[t->pos] == '\0') return tkn_err(t, e, "tkn regxt inv");
     t->pos++;
     t->cno++;
     tkn_m_s_e(m, tkn_m_g_e(m) + 1);
@@ -153,7 +153,7 @@ tkn *tkn_b(tkn *t) {
     tkn_a(t, TCUST(SYM), "`", tkn_sym);
     tkn_a(t, TCUST(STR), "\"", tkn_str);
     tkn_a(t, TCUST(DOT), ".", tkn_ft);
-    tkn_a(t, TCUST(REGT), "t~", tkn_regt);
+    tkn_a(t, TCUST(REGXT), "t~", tkn_regxt);
     return t;
 }
 
@@ -231,22 +231,22 @@ tkn_stat tkn_g_str(const te *t, const mc *s, const alfr *af, mc **v) {
     return _tkn_g_mc(s, tkn_m_g_s(t) + 1, tkn_m_g_e(t) - 1, af, v);
 }
 
-const char *reg_mode_str(reg_mode m) {
+const char *regx_mode_str(regx_mode m) {
     const char *modes[] = {
         "N",
         "T"
     };
-    if (m < REG_MODE(_)) return modes[m];
-    return "REG MODE INV";
+    if (m < REGX_MODE(_)) return modes[m];
+    return "REGX MODE INV";
 }
 
-tkn_stat tkn_g_reg_mode(const te *t, const mc *s, uint16_t *mode) {
+tkn_stat tkn_g_regx_mode(const te *t, const mc *s, uint16_t *mode) {
     uint16_t id = tkn_m_g_i(t);
-    if (id < TCUST(REGT) || id > TCUST(REGS)) return TKN_STAT(INV);
+    if (id < TCUST(REGXT) || id > TCUST(REGXS)) return TKN_STAT(INV);
     ssize_t start = tkn_m_g_s(t);
     switch (s->d[start]) {
         case 't':
-            *mode = REG_MODE(T);
+            *mode = REGX_MODE(T);
             break;
         default:
             return TKN_STAT(INV);
@@ -254,20 +254,20 @@ tkn_stat tkn_g_reg_mode(const te *t, const mc *s, uint16_t *mode) {
     return TKN_STAT(OK);
 }
 
-const char *reg_flg_str[] = {
+const char *regx_flg_str[] = {
     "I"
 };
 
-tkn_stat tkn_g_reg_flg(const te *t, const mc *s, uint16_t *flgs) {
+tkn_stat tkn_g_regx_flg(const te *t, const mc *s, uint16_t *flgs) {
     uint16_t id = tkn_m_g_i(t);
-    if (id < TCUST(REGT) || id > TCUST(REGS)) return TKN_STAT(INV);
+    if (id < TCUST(REGXT) || id > TCUST(REGXS)) return TKN_STAT(INV);
     uint32_t f = 0;
     ssize_t end = tkn_m_g_e(t) - 1;
     while (s->d[end] != '~') {
         switch (s->d[end--]) {
             case 'i':
-                if (f & REG_FLG(I)) return TKN_STAT(INV);
-                f |= REG_FLG(I);
+                if (f & REGX_FLG(I)) return TKN_STAT(INV);
+                f |= REGX_FLG(I);
                 break;
             default:
                 return TKN_STAT(INV);
@@ -277,9 +277,9 @@ tkn_stat tkn_g_reg_flg(const te *t, const mc *s, uint16_t *flgs) {
     return TKN_STAT(OK);
 }
 
-tkn_stat tkn_g_reg_mtch(const te *t, const mc *s, const alfr *af, mc **m) {
+tkn_stat tkn_g_regx_mtch(const te *t, const mc *s, const alfr *af, mc **m) {
     uint16_t id = tkn_m_g_i(t);
-    if (id != TCUST(REGT) && id != TCUST(REGM)) return TKN_STAT(INV);
+    if (id != TCUST(REGXT) && id != TCUST(REGXM)) return TKN_STAT(INV);
     ssize_t start = tkn_m_g_s(t) + 2;
     *m = mc_i(tkn_m_g_e(t) - start + 5, af);
     while (s->d[start] != '~') mc_wa(m, s->d[start++]);

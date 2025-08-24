@@ -837,3 +837,25 @@ T(mapstrs) {
     te_f(vv);
     te_f(fv);
 }
+
+T(retest) {
+    IC(TPGM(retest));
+    te *rt = TFN(FN, TS(BL), 1, "s", TS(SG), 0);
+    te *tt = type_te_i_v(&al_te, NULL, 4, TS(BL), TS(BL), TS(BL), TS(BL));
+    te *re = EN("r", FLG(-1, LTE_FLG(F)), te_c(rt));
+    te *et = EN("t", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(tt));
+    V(RN(AN(TS(VD), LN(LT(2, "r", FLG(-1, LTE_FLG(F)), te_c(rt), "t", FLG(0, LTE_FLG(E) | LTE_FLG(L)), te_c(tt)), L(3,
+        ON(te_c(rt), DFN, te_c(re), REGX(te_c(rt), -1, REGX_MODE(T), REGX_FLG(I), "^a.$", NULL)),
+        ON(te_c(tt), DFN, te_c(et), VN(te_c(tt), L(4,
+            AN(TS(BL), te_c(re), L(1, ON(TS(SG), CSG, NULL, CS("ab")))),
+            AN(TS(BL), te_c(re), L(1, ON(TS(SG), CSG, NULL, CS("Ab")))),
+            AN(TS(BL), te_c(re), L(1, ON(TS(SG), CSG, NULL, CS("abc")))),
+            AN(TS(BL), te_c(re), L(1, ON(TS(SG), CSG, NULL, CS("a"))))
+        ))),
+        ON(TS(VD), DUMP, SN(U5, U5(1)), te_c(et))
+    )), NULL)));
+    te_f(rt);
+    te_f(tt);
+    te_f(re);
+    te_f(et);
+}

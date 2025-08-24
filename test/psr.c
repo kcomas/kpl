@@ -46,8 +46,8 @@ void psr_verify(_tests *_t, const te *n, const node_id v[], size_t *i, size_t vl
         case NODE_TYPE(KEY):
             VN(v, i, vl, KEY);
             break;
-        case NODE_TYPE(REG):
-            VN(v, i, vl, REG);
+        case NODE_TYPE(REGX):
+            VN(v, i, vl, REGX);
             break;
         case NODE_TYPE(INT):
             VN(v, i, vl, INT);
@@ -833,7 +833,7 @@ T(mapstrs) {
 T(retest) {
     te *h = ppnode(psr_r(bpsr(TPGM(retest))));
     V(h, {N(ROOT), APLY(LST(
-        OP(N(VAR), N(REG)),
+        OP(N(VAR), N(REGX)),
         OP(CMD(N(VAR)), VEC(APLY(N(VAR), N(STR)), APLY(N(VAR), N(STR)), APLY(N(VAR), N(STR)), APLY(N(VAR), N(STR)))),
         CMD(N(VAR))
     ))});

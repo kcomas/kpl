@@ -958,6 +958,7 @@ void chk_type(chk *c);
 void chk_z(chk *c);
 void chk_dfnagn(chk *c);
 void chk_arith(chk *c);
+void chk_regx(chk *c);
 void chk_dump(chk *c);
 
 chk *chk_b(chk *c) {
@@ -1046,6 +1047,7 @@ chk *chk_b(chk *c) {
     chk_z(c);
     chk_dfnagn(c);
     chk_arith(c);
+    chk_regx(c);
     chk_dump(c);
     return c;
 }

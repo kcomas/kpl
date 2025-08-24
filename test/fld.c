@@ -620,7 +620,7 @@ T(mapstrs) {
 
 T(retest) {
     V(TPGM(retest), RN(AN(NULL, LN(LT(2, "r", U6(0), NULL, "t", FLG(0, LTE_FLG(E)), NULL), L(3,
-        ON(NULL, DFN, EN("r", U6(0), NULL), REG(NULL, 0, REG_MODE(T), REG_FLG(I), "^a.$", NULL)),
+        ON(NULL, DFN, EN("r", U6(0), NULL), REGX(NULL, 0, REGX_MODE(T), REGX_FLG(I), "^a.$", NULL)),
         ON(NULL, DFN, EN("t", FLG(0, LTE_FLG(E)), NULL), VN(NULL, L(4,
             AN(NULL, EN("r", U6(0), NULL), L(1, ON(TS(SG), CSG, NULL, CS("ab")))),
             AN(NULL, EN("r", U6(0), NULL), L(1, ON(TS(SG), CSG, NULL, CS("Ab")))),

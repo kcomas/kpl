@@ -191,14 +191,14 @@ T(strtest) {
     for (size_t i = 0; i < 2; i++) mc_f(strs[i]);
 }
 
-T(reg) {
+T(regx) {
     const char *pgm = "1 t~asdf~i a";
-    const uint16_t tids[] = {TCUST(NUM), TCUST(WS), TCUST(REGT), TCUST(WS), TCUST(VAR)};
+    const uint16_t tids[] = {TCUST(NUM), TCUST(WS), TCUST(REGXT), TCUST(WS), TCUST(VAR)};
     tkn *t = tkn_i_tkn(btkn, mc_i_cstr(pgm, &al_mc));
     size_t i = 0;
     uint16_t mode, flg;
-    const reg_mode modes[] = {REG_MODE(T)};
-    const uint16_t flgs[] = {REG_FLG(I)};
+    const regx_mode modes[] = {REGX_MODE(T)};
+    const uint16_t flgs[] = {REGX_FLG(I)};
     mc *mtch, *mtchs[] = {mc_i_cstr("asdf", &al_mc)};
     printf("%s\n", pgm);
     tkn_p(t->t, 0);
@@ -210,12 +210,12 @@ T(reg) {
         tkn_m_p(m, t->s);
         putchar('\n');
         A(tkn_m_g_i(m) == tids[id++], "tid");
-        if (tkn_m_g_i(m) >= TCUST(REGT) && tkn_m_g_i(m) <= TCUST(REGS)) {
-            A(tkn_g_reg_mode(m, t->s, &mode) == TKN_STAT(OK), "inv g reg mode");
+        if (tkn_m_g_i(m) >= TCUST(REGXT) && tkn_m_g_i(m) <= TCUST(REGXS)) {
+            A(tkn_g_regx_mode(m, t->s, &mode) == TKN_STAT(OK), "inv g reg mode");
             A(mode == modes[i], "inv reg mode");
-            A(tkn_g_reg_flg(m, t->s, &flg) == TKN_STAT(OK), "inv g reg flgs");
+            A(tkn_g_regx_flg(m, t->s, &flg) == TKN_STAT(OK), "inv g reg flgs");
             A(flg == flgs[i], "inv reg flgs");
-            A(tkn_g_reg_mtch(m, t->s, &al_mc, &mtch) == TKN_STAT(OK), "inv g reg mtch");
+            A(tkn_g_regx_mtch(m, t->s, &al_mc, &mtch) == TKN_STAT(OK), "inv g reg mtch");
             A(mc_eq(mtchs[i++], mtch), "inv reg mtch");
             mc_f(mtch);
         }

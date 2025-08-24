@@ -92,19 +92,19 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
     ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
-uint32_t ast_reg_g_i(const te *n) {
+uint32_t ast_regx_g_i(const te *n) {
     return u5_g_o(n->d[4], 1);
 }
 
-void ast_reg_s_i(te *n, uint32_t id) {
+void ast_regx_s_i(te *n, uint32_t id) {
     n->d[4] = u5_s_o(n->d[4], 1, id);
 }
 
-uint16_t ast_reg_g_mode(const te *n) {
+uint16_t ast_regx_g_mode(const te *n) {
     return u4_g_o(n->d[4], 1);
 }
 
-uint16_t ast_reg_g_flgs(const te *n) {
+uint16_t ast_regx_g_flgs(const te *n) {
     return u4_g_o(n->d[4], 0);
 }
 
@@ -283,16 +283,16 @@ static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, er
     return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
 }
 
-static ast_stat ast_reg(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
+static ast_stat ast_regx(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
     uint16_t mode, flgs;
     te **an = (te**) vn;
     un mf = U6(0);
     const mc *s = node_root_mc(pn);
     mc *mtch = NULL, *rplc = NULL;
-    if (tkn_g_reg_mode(pn->d[2].p, s, &mode) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g reg mode");
-    if (tkn_g_reg_flg(pn->d[2].p, s, &flgs) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g reg flgs");
-    if (tkn_g_reg_mtch(pn->d[2].p, s, a->ma, &mtch) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast g reg mtch");
-    // TODO reg replace
+    if (tkn_g_regx_mode(pn->d[2].p, s, &mode) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g regx mode");
+    if (tkn_g_regx_flg(pn->d[2].p, s, &flgs) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g regx flgs");
+    if (tkn_g_regx_mtch(pn->d[2].p, s, a->ma, &mtch) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast g regx mtch");
+    // TODO regx replace
     mf = u4_s_o(mf, 1, mode);
     mf = u4_s_o(mf, 0, flgs);
     *an = ast_an_i(a, pan, pn, AST_CLS(X), P(NULL), mf, mtch, rplc);
@@ -363,7 +363,7 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(APLY), ast_aply);
     ast_a(a, NODE_TYPE(SYM), ast_z);
     ast_a(a, NODE_TYPE(CMD), ast_cmd);
-    ast_a(a, NODE_TYPE(REG), ast_reg);
+    ast_a(a, NODE_TYPE(REGX), ast_regx);
     return ast_tkn(a);
 }
 
@@ -544,8 +544,8 @@ void ast_p(const te *an, size_t idnt) {
         case AST_CLS(X):
             printf("(X ");
             type_p(an->d[3].p);
-            printf("<%d>%s~%s~%s~", ast_reg_g_i(an), reg_mode_str(ast_reg_g_mode(an)), an->d[5].p ? (char*) ((mc*) an->d[5].p)->d : "``", an->d[6].p ? (char*) ((mc*) an->d[6].p)->d : "``");
-            flgs_p(reg_flg_str, REG_FLGS, ast_reg_g_flgs(an));
+            printf("<%d>%s~%s~%s~", ast_regx_g_i(an), regx_mode_str(ast_regx_g_mode(an)), an->d[5].p ? (char*) ((mc*) an->d[5].p)->d : "``", an->d[6].p ? (char*) ((mc*) an->d[6].p)->d : "``");
+            flgs_p(regx_flg_str, REGX_FLGS, ast_regx_g_flgs(an));
             putchar(')');
             break;
         default:

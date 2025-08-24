@@ -53,7 +53,8 @@ const uint8_t chk_cls_conts[AST_CLS(_)] = {
     [AST_CLS(Z)] = 1,
     [AST_CLS(A)] = 1,
     [AST_CLS(L)] = 0,
-    [AST_CLS(C)] = 0
+    [AST_CLS(C)] = 0,
+    [AST_CLS(X)] = 1
 };
 
 static void add_entry(chk *c, tbl *ct, te **kv, uint16_t cls, uint16_t type, uint8_t n) {
@@ -112,6 +113,7 @@ static chk_stat run(chk *c, tbl *t, te *an, err **e, uint8_t n, uint8_t ncmp, bo
                 case AST_CLS(E):
                 case AST_CLS(S):
                 case AST_CLS(V):
+                case AST_CLS(X):
                     hsh = u4_s_o(hsh, AST_HSH_C, AST_CLS(_));
                     hsh = u4_s_o(hsh, AST_HSH_T, TYPE(_A));
                     break;
@@ -150,6 +152,7 @@ chk_stat chk_n(chk *c, te *an, err **e) {
             break;
         case AST_CLS(E):
         case AST_CLS(S):
+        case AST_CLS(X):
             break;
         case AST_CLS(V):
             if ((stat = chk_lst_n(c, an->d[4].p, e)) != CHK_STAT(OK)) return stat;
