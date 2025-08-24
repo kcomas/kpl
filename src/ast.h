@@ -88,6 +88,14 @@ uint32_t ast_lst_tbl_e_g_i(te *ent);
 
 void ast_lst_tbl_e_s_i(te *ent, uint32_t id);
 
+uint32_t ast_reg_g_i(const te *n);
+
+void ast_reg_s_i(te *n, uint32_t id);
+
+uint16_t ast_reg_g_mode(const te *n);
+
+uint16_t ast_reg_g_flgs(const te *n);
+
 void node_err_p(void *d, uint32_t idnt);
 
 void node_err_f(void *d);

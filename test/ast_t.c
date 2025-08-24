@@ -49,6 +49,17 @@ void astb(_tests *_t, ast *a, const char *pgm, te **an) {
     A(stat == AST_STAT(OK), "ast_n");
 }
 
+te *ast_t_reg(ast *a, te *type, uint32_t id, uint16_t mode, uint16_t flgs, const char *mtch, const char *rplc) {
+    un mf = U6(0);
+    mf = u5_s_o(mf, 1, id);
+    mf = u4_s_o(mf, 1, mode);
+    mf = u4_s_o(mf, 0, flgs);
+    mc *ms = NULL, *rs = NULL;
+    if (mtch) ms = mc_i_cstr(mtch, a->ma);
+    if (rs) rs = mc_i_cstr(rplc, a->ma);
+    return NNV(X, type, mf, ms, rs);
+}
+
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn) {
     E();
     ast_p(an, 0);

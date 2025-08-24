@@ -16,6 +16,8 @@ tbl *mktbl(size_t size);
 
 void astb(_tests *_t, ast *a, const char *pgm, te **an);
 
+te *ast_t_reg(ast *a, te *type, uint32_t id, uint16_t mode, uint16_t flgs, const char *mtch, const char *rplc);
+
 void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 
 #define NN(C, T) ast_an_i(a, NULL, NULL, AST_CLS(C), P(T))
@@ -53,3 +55,5 @@ void ast_verify(_tests *_t, ast *a, te *restrict an, te *restrict tn);
 #define VN(TYPE, LST) NNV(V, TYPE, LST)
 
 #define CN(CMD, TGT) NNV(C, CC(CMD), TGT)
+
+#define REG(T, I, M, F, H, R) ast_t_reg(a, T, I, M, F, H, R)

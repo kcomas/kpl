@@ -92,6 +92,22 @@ void ast_lst_tbl_e_s_i(te *ent, uint32_t id) {
     ent->d[1] = u5_s_o(ent->d[1], 1, id);
 }
 
+uint32_t ast_reg_g_i(const te *n) {
+    return u5_g_o(n->d[4], 1);
+}
+
+void ast_reg_s_i(te *n, uint32_t id) {
+    n->d[4] = u5_s_o(n->d[4], 1, id);
+}
+
+uint16_t ast_reg_g_mode(const te *n) {
+    return u4_g_o(n->d[4], 1);
+}
+
+uint16_t ast_reg_g_flgs(const te *n) {
+    return u4_g_o(n->d[4], 0);
+}
+
 void node_err_p(void *d, uint32_t idnt) {
     (void) idnt;
     uint32_t s = 0, e = 0;
@@ -267,6 +283,22 @@ static ast_stat ast_cmd(ast *a, te *restrict pan, te *restrict pn, void **vn, er
     return ast_n(a, *an, pn->d[3].p, &(*an)->d[4].p, e);
 }
 
+static ast_stat ast_reg(ast *a, te *restrict pan, te *restrict pn, void **vn, err **e) {
+    uint16_t mode, flgs;
+    te **an = (te**) vn;
+    un mf = U6(0);
+    const mc *s = node_root_mc(pn);
+    mc *mtch = NULL, *rplc = NULL;
+    if (tkn_g_reg_mode(pn->d[2].p, s, &mode) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g reg mode");
+    if (tkn_g_reg_flg(pn->d[2].p, s, &flgs) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast tkn g reg flgs");
+    if (tkn_g_reg_mtch(pn->d[2].p, s, a->ma, &mtch) != TKN_STAT(OK)) return ast_err(a, pn, e, "ast g reg mtch");
+    // TODO reg replace
+    mf = u4_s_o(mf, 1, mode);
+    mf = u4_s_o(mf, 0, flgs);
+    *an = ast_an_i(a, pan, pn, AST_CLS(X), P(NULL), mf, mtch, rplc);
+    return AST_STAT(OK);
+}
+
 static ast *ast_tkn(ast *a) {
     // types
     ast_t_a(a, TCUST(VD), TYPE(VD));
@@ -331,7 +363,13 @@ ast *ast_b(ast *a) {
     ast_a(a, NODE_TYPE(APLY), ast_aply);
     ast_a(a, NODE_TYPE(SYM), ast_z);
     ast_a(a, NODE_TYPE(CMD), ast_cmd);
+    ast_a(a, NODE_TYPE(REG), ast_reg);
     return ast_tkn(a);
+}
+
+static void flgs_p(const char *strs[], int32_t l, uint32_t flgs) {
+    if (!flgs) return;
+    for (int32_t i = l; i > -1; i--) if (flgs & ((uint32_t) 1 << i)) printf("%s", strs[i]);
 }
 
 static void lst_tbl_e_p(te *lte) {
@@ -353,9 +391,7 @@ static void lst_tbl_e_p(te *lte) {
     uint32_t flgs = ast_lst_tbl_e_g_f(lte);
     if (flgs) {
         printf("<%d|", id);
-        for (int32_t i = LTE_FLGS - 1; i > -1; i--) {
-            if (flgs & ((uint32_t) 1 << i)) printf("%s", lbl_flag_str[i]);
-        }
+        flgs_p(lbl_flag_str, LTE_FLGS - 1, flgs);
         printf(">");
     }
     // TODO ast node
@@ -505,6 +541,13 @@ void ast_p(const te *an, size_t idnt) {
             }
             putchar(')');
             break;
+        case AST_CLS(X):
+            printf("(X ");
+            type_p(an->d[3].p);
+            printf("<%d>%s~%s~%s~", ast_reg_g_i(an), reg_mode_str(ast_reg_g_mode(an)), an->d[5].p ? (char*) ((mc*) an->d[5].p)->d : "``", an->d[6].p ? (char*) ((mc*) an->d[6].p)->d : "``");
+            flgs_p(reg_flg_str, REG_FLGS, ast_reg_g_flgs(an));
+            putchar(')');
+            break;
         default:
             printf("INV CLS");
             break;
@@ -579,6 +622,8 @@ bool ast_eq(const te *restrict a, const te *restrict b) {
             return tbl_eq(a->d[3].p, b->d[3].p, lst_tbl_e_eq) && lst_eq(a->d[4].p, b->d[4].p, ast_un_eq);
         case AST_CLS(C):
             return a->d[3].u4 == b->d[3].u4 && ast_eq(a->d[4].p, b->d[4].p);
+        case AST_CLS(X):
+            return type_eq(a->d[3].p, b->d[3].p) && a->d[4].u6 == b->d[4].u6 && mc_eq(a->d[5].p, b->d[5].p) && mc_eq(a->d[6].p, b->d[6].p);
         default:
             break;
     }

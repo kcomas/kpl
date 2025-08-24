@@ -558,3 +558,16 @@ T(mapstrs) {
         CN(P1, IN("m"))
     )), NULL)));
 }
+
+T(retest) {
+    V(TPGM(retest), RN(AN(NULL, LN(NULL, L(3,
+        ON(NULL, DFN, IN("r"), REG(NULL, 0, REG_MODE(T), REG_FLG(I), "^a.$", NULL)),
+        ON(NULL, DFN, CN(E, IN("t")), VN(NULL, L(4,
+            AN(NULL, IN("r"), L(1, CS("ab"))),
+            AN(NULL, IN("r"), L(1, CS("Ab"))),
+            AN(NULL, IN("r"), L(1, CS("abc"))),
+            AN(NULL, IN("r"), L(1, CS("a")))
+        ))),
+        CN(P1, IN("t"))
+    )), NULL)));
+}

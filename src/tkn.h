@@ -39,6 +39,8 @@ typedef enum {
     TCUST(A),
     // regex
     TCUST(REGT),
+    TCUST(REGM),
+    TCUST(REGS),
     // ops
     TCUST(DFN),
     TCUST(AGN),
@@ -106,3 +108,32 @@ tkn_stat tkn_g_f6(const te *restrict tu, const te *restrict tm, const te *restri
 tkn_stat tkn_g_mc(const te *t, const mc *s, ssize_t off, const alfr *af, mc **v);
 
 tkn_stat tkn_g_str(const te *t, const mc *s, const alfr *af, mc **v);
+
+#define REG_MODE(N) REG_MODE_##N
+
+typedef enum {
+    REG_MODE(N), // none
+    REG_MODE(T), // test
+    REG_MODE(_)
+} reg_mode;
+
+const char *reg_mode_str(reg_mode m);
+
+tkn_stat tkn_g_reg_mode(const te *t, const mc *s, uint16_t *mode);
+
+#define REG_FLG(N) REG_FLG_##N
+
+typedef enum {
+    REG_FLG(I) = 1 << 0, // case insensitive
+    REG_FLG(G) = 1 << 1 // global
+} reg_flg;
+
+#define REG_FLGS 2
+
+extern const char *reg_flg_str[];
+
+tkn_stat tkn_g_reg_flg(const te *t, const mc *s, uint16_t *flgs);
+
+tkn_stat tkn_g_reg_mtch(const te *t, const mc *s, const alfr *af, mc **m);
+
+// TODO get reg replace

@@ -14,6 +14,7 @@ const char *ast_cls_str(ast_cls cls) {
         case AST_CLS(A): return "A";
         case AST_CLS(L): return "L";
         case AST_CLS(C): return "C";
+        case AST_CLS(X): return "X";
         case AST_CLS(_): return "_";
         default:
             break;
@@ -192,6 +193,14 @@ static void t_c_f(void *p) {
     n->af->f(n);
 }
 
+static void t_x_f(void *p) {
+    te *n = p;
+    te_f(n->d[3].p);
+    mc_f(n->d[5].p);
+    mc_f(n->d[6].p);
+    n->af->f(n);
+}
+
 te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...) {
     size_t len = AST_MIN_LEN + 1; // add extra bucket at end for any
     frfn *nf = NULL;
@@ -234,6 +243,10 @@ te *ast_an_i(ast *a, te *restrict pan, te *restrict psr, ast_cls cls, un ct, ...
         case AST_CLS(C):
             len += 1;
             nf = t_c_f;
+            break;
+        case AST_CLS(X):
+            len += 3;
+            nf = t_x_f;
             break;
         default:
             return NULL;
