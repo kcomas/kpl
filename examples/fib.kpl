@@ -1,0 +1,38 @@
+
+// Fibonacci example
+
+fib :: Fn[I64] { I64`n
+    ? {
+        n < 1 ? 0
+        n <= 2 ? 1
+        fib(n - 1) + fib(n - 2)
+    }
+}
+
+fib\export // "fib" . fib
+
+print_fib :: Fn { U64`idx; I64`n
+    colors :: .sys.colors.strings
+    .io.stdout.print(String {
+        colors.blue
+        "fib"
+        colors.clear
+        "("
+        colors.magenta
+        idx
+        colors.clear
+        ") = "
+        colors.green
+        fib(n)
+        colors.clear
+        "\n"
+    })
+}
+
+print_fib\export
+
+\is_main ? {
+    arg :: .sys.args(2) ' "Usage {.sys.args(0)`value} ./{.sys.args(1)`value} nth_number_to_calculate"
+    n :: $(U64; arg) ' "Invalid number got: {arg}"
+    print_fib(n; fib(n))
+}
