@@ -9,7 +9,7 @@ fib :: Fn[I64] { I64`n
     }
 }
 
-fib\export // "fib" . fib
+fib\export
 
 print_fib :: Fn { U64`idx; I64`n
     colors :: .sys.colors.strings
@@ -19,11 +19,11 @@ print_fib :: Fn { U64`idx; I64`n
         colors.clear
         "("
         colors.magenta
-        idx
+        String $ idx
         colors.clear
         ") = "
         colors.green
-        fib(n)
+        String $ fib(n)
         colors.clear
         "\n"
     })

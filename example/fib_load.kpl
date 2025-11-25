@@ -3,7 +3,7 @@
 
 fib_import :: "./fib.kpl"\load
 
-total :: Const[U64]$30
+total :: Const[U64] $ 30
 
 values :: { I64`_; U64`idx; fib(I64 $ idx + 1) } @ Array[I64; total] { 0 }
 

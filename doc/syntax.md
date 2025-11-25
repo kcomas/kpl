@@ -76,7 +76,7 @@ Array { 1
 
 Each item is a statement
 
-Runs statements from left to right "returning" the value from the last statement
+By default statements from left to right "returning" the value from the last statement
 
 Types and operators change statement behavior
 

@@ -7,7 +7,9 @@
 
 ## Operators
 
-## Control Flow
+## [Control Flow](./control_flow.md)
+
+## Functions
 
 ## Commands
 
