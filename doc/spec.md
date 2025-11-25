@@ -5,12 +5,12 @@
 
 ## [Types](./types.md)
 
-## Operators
+## [Operators](./operators.md)
 
 ## [Control Flow](./control_flow.md)
 
 ## Functions
 
-## Commands
-
 ## Namespaces
+
+## Commands

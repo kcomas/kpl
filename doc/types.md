@@ -35,9 +35,17 @@ How a type is stored internally
 
 #### Char
 
+#### String
+
+#### Regex
+
 #### Root
 
 #### Error
+
+#### Fd
+
+#### Socket
 
 ### Array[Inner Type; Length]
 
