@@ -35,13 +35,13 @@ Statement List can be used for precedence
 
 Reads until end of statement
 
-`1 + 2 * 3` = 7
+`7 = 1 + 2 * 3`
 
-`3 * 2 + 1` = 9
+`9 = 3 * 2 + 1`
 
-`*(3; 2) + 1` = 7
+`7 = *(3; 2) + 1`
 
-`{ 3 * 2 } + 1` = 7
+`7 = { 3 * 2 } + 1`
 
 
 ```
@@ -73,8 +73,6 @@ Array { 1
 ```
 
 #### {} List of Statements
-
-Each item is a statement
 
 By default statements from left to right "returning" the value from the last statement
 

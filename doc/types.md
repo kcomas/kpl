@@ -5,6 +5,10 @@
 
 How a type is stored internally
 
+### Symbol
+
+A unique identifier, cannot be stored
+
 ### Scalar
 
 #### Void
@@ -47,7 +51,7 @@ How a type is stored internally
 
 #### Socket
 
-### Array[Inner Type; Length]
+### Array[Inner Type] { Length }
 
 #### Array
 
@@ -75,7 +79,7 @@ How a type is stored internally
 
 #### Table
 
-### Union[\`Active Symbol] { Type\`Symbol...}
+### Union { Type\`Symbol...}
 
 #### Union
 
@@ -90,6 +94,10 @@ How a type is stored internally
 ### Lambda[Return Type] {Type\`Arg Symbol...} {Type\`Scope Symbol...}
 
 #### Lambda
+
+### Overload { Fn1; Fn2; ...}
+
+#### Overload
 
 ### C[Type]
 

@@ -32,7 +32,7 @@ print_fib :: Fn { U64`idx; I64`n
 print_fib\export
 
 \is_main ? {
-    arg :: .sys.args(2) ' "Usage {.sys.args(0)`value} ./{.sys.args(1)`value} nth_number_to_calculate"
-    n :: $(U64; arg) ' "Invalid number got: {arg}"
+    arg :: "Usage {.sys.args(0)`value} ./{.sys.args(1)`value} nth_number_to_calculate" ' .sys.args(2)
+    n :: "Invalid number got: {arg}" ' U64 $ arg
     print_fib(n; fib(n))
 }

@@ -9,8 +9,10 @@
 
 ## [Control Flow](./control_flow.md)
 
-## Functions
+## [Functions](./functions.md)
 
-## Namespaces
+## [Namespaces](./namespaces.md)
 
 ## Commands
+
+## REPL

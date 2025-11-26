@@ -3,6 +3,7 @@
 
 ## If
 
+```
 condition ? statement or { lambda }
 
 value :: condition ? {
@@ -15,16 +16,21 @@ value :: ? {
     ...
     statement or { lambda } else
 }
+```
 
 ## Loop
 
+```
 condition @ statement or { lambda }
 
 { variable; condition; each } @ statement or { lambda }
+```
 
 ## Match
 
+```
 value :: matchable # {
-    var\`symbol { lambda }
+    var`symbol { lambda }
     ...
 }
+```
