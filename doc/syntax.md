@@ -15,7 +15,7 @@ Removed in parsing
 
 ## Naming
 
-All types, variables and symbols can be named with a-zA-Z0-9_ with a 40 character limit
+All types, variables symbols can be named with a-zA-Z0-9_ with a 40 character limit
 
 Variables start with a lowercase letter
 
@@ -85,3 +85,13 @@ Apply list of statements to a target
 #### [] List of Types
 
 For type definitions
+
+## Grammar
+
+Precedence is from left to right
+
+Statement <- Op -> Statement
+
+Statement <- List, Symbol, Command
+
+Statement = Var, Value, Type, List, Symbol, Command, Op

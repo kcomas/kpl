@@ -11,8 +11,10 @@
 
 ## [Functions](./functions.md)
 
+## [Inner Access](./inner_access.md)
+
 ## [Namespaces](./namespaces.md)
 
-## Commands
+## [Commands](./commands.md)
 
 ## REPL

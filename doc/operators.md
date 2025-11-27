@@ -3,15 +3,11 @@
 
 ## Variables
 
-:: Define
+### :: Define
 
 Define a new var and set its value
 
-```
-var :: statement
-
-: Assign
-```
+### : Assign
 
 Update a value
 

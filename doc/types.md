@@ -35,15 +35,13 @@ A unique identifier, cannot be stored
 
 #### F64
 
-#### Mask
-
 #### Char
 
 #### String
 
 #### Regex
 
-#### Root
+#### Base
 
 #### Error
 
@@ -73,13 +71,15 @@ A unique identifier, cannot be stored
 
 ### Dyadic[Return Type; Left Type; Right Type]
 
+### Enum[Type] { \`Symbol { Value } }
+
+#### Enum
+
 ### Struct {Type\`Symbol...}
 
 #### Struct
 
 #### Table
-
-### Union { Type\`Symbol...}
 
 #### Union
 
