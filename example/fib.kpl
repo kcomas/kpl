@@ -12,19 +12,19 @@ fib :: Fn[I64] { I64`n
 fib\export
 
 print_fib :: Fn { U64`idx; I64`n
-    colors :: .sys.colors.strings
+    { clear; blue; magenta; green } :: .sys.colors.strings
     .io.stdout.print(String {
-        colors.blue
+        blue
         "fib"
-        colors.clear
+        clear
         "("
-        colors.magenta
+        magenta
         String $ idx
-        colors.clear
+        clear
         ") = "
-        colors.green
+        green
         String $ fib(n)
-        colors.clear
+        clear
         "\n"
     })
 }
@@ -32,7 +32,8 @@ print_fib :: Fn { U64`idx; I64`n
 print_fib\export
 
 \is_main ? {
-    arg :: "Usage {.sys.args(0)`value} ./{.sys.args(1)`value} nth_number_to_calculate" ' .sys.args(2)
-    n :: "Invalid number got: {arg}" ' U64 $ arg
+    usage :: "Usage {.sys.args`0} ./{.sys.args`1} nth_number_to_calculate"
+    arg ::  usage ' .sys.args`2
+    n :: String { "Invalid number got: {arg}\n"; usage } ' U64 $ arg
     print_fib(n; fib(n))
 }

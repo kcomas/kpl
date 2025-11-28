@@ -11,7 +11,7 @@
 
 ## [Functions](./functions.md)
 
-## [Inner Access](./inner_access.md)
+## [Access](./access.md)
 
 ## [Namespaces](./namespaces.md)
 

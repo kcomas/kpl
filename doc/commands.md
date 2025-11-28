@@ -14,3 +14,7 @@ Export from file
 ## \import
 
 Load from other files
+
+## \log
+
+Send information

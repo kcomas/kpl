@@ -8,11 +8,7 @@ How code/data is shared during runtime
 ## Exporting
 
 ```
-"name" . var
-
-{ "name" ; "name"; ... } . name
-
-var\export // "var_name" . var
+var\export
 ```
 
 ## Importing
@@ -27,8 +23,16 @@ A key to access an exported namespace
 
 ```
 var :: "./path/to/file/"\import
-
 var.fn(...)
+```
+
+### Destructuring
+
+Names can be moved out of a base into the scope
+
+```
+{ fn } :: "./file"\import
+fn(...)
 ```
 
 ## Built In
@@ -39,8 +43,7 @@ var.fn(...)
 
 ```
 .sys.args :: Namespace[Const[Arary[String] { determined at runtime }]]
-
-argv0 .sys.args(0) // Result[Const[String]]
+argv0 :: .sys.args`0 // Const[String]
 ```
 
 ### io
@@ -48,7 +51,7 @@ argv0 .sys.args(0) // Result[Const[String]]
 #### Console
 
 ```
-.io.Console :: Enum[U32] { `stdin { 0 }; `stdout { 1 }; `stderr { 2 } }
+.io.Console :: Enum[I32] { 0`stdin; 1`stdout; 2`stderr }
 
 ```
 

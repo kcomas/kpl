@@ -19,4 +19,8 @@ defined_var`symbol : statement
 defined_var(accessor) : statement
 ```
 
+## [Bitwise](./operators/bitwise.md)
+
 ## [Arithmetic](./operators/arithmetic.md)
+
+## [Logic](./operators/logic.md)

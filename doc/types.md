@@ -59,7 +59,7 @@ A unique identifier, cannot be stored
 
 #### Set
 
-#### Result
+#### [Result](./types/result.md)
 
 #### Closure
 
@@ -71,7 +71,7 @@ A unique identifier, cannot be stored
 
 ### Dyadic[Return Type; Left Type; Right Type]
 
-### Enum[Type] { \`Symbol { Value } }
+### Enum[Type] { Value\`Symbol }
 
 #### Enum
 
@@ -103,7 +103,7 @@ A unique identifier, cannot be stored
 
 ## Tags
 
-A type associated with a symbol
+A type associated with a symbol or data
 
 ## Qualifiers
 

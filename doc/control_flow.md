@@ -24,6 +24,8 @@ var :: ? {
 condition @ statement or { lambda }
 
 { variable; condition; each } @ statement or { lambda }
+
+loopable @ { each }
 ```
 
 ## Match
