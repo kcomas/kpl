@@ -1,0 +1,21 @@
+
+// Double linked list example
+
+Node :: Shared[Option[Struct { Weak[Node]`prev; Owned[Node]`next; I64`value }]]
+
+head :: tail :: Node { `none }
+
+list_push :: { I64`value
+    head ? {
+        head :: tail :: Node {
+            `prev { `none }
+            `next { `none }
+            `value { value }
+        }
+        tail :: tail`next :: Node {
+            `prev { tail }
+            `next { `none }
+            `value { value }
+        }
+    }
+}

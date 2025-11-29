@@ -33,7 +33,7 @@ var :: "Bad Index" ' string_array(n) // Ref[String]
 ### Static access only
 
 ```
-struct :: Struct { I64`a; U64`b } { 1`a; 2`b }
+struct :: Struct { I64`a { 1 }; U64`b { 2 } }
 struct`a // I64
 ```
 

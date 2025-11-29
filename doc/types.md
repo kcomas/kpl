@@ -61,6 +61,8 @@ A unique identifier, cannot be stored
 
 #### [Result](./types/result.md)
 
+#### Option
+
 #### Closure
 
 #### Thread
@@ -71,7 +73,7 @@ A unique identifier, cannot be stored
 
 ### Dyadic[Return Type; Left Type; Right Type]
 
-### Enum[Type] { Value\`Symbol }
+### Enum[Type] { \`Symbol { Value } }
 
 #### Enum
 
@@ -101,23 +103,9 @@ A unique identifier, cannot be stored
 
 ### C[Type]
 
-## Tags
+## [Tag](./types/tag.md)
 
-A type associated with a symbol or data
-
-## Qualifiers
-
-Type modifications, only one can be applied
-
-### Const[Type]
-
-### Ref[Type]
-
-### Namespace[Type]
-
-### Shared[Type]
-
-### Mutex[Type]
+## [Qualifiers](./types/qualifiers.md)
 
 ## Aliases
 

@@ -51,7 +51,7 @@ argv0 :: .sys.args`0 // Const[String]
 #### Console
 
 ```
-.io.Console :: Enum[I32] { 0`stdin; 1`stdout; 2`stderr }
+.io.Console :: Enum[I32] { `stdin { 0 }; `stdout { 1 }; `stderr { 2 } }
 
 ```
 

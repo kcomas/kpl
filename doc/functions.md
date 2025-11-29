@@ -11,6 +11,12 @@
 
 ### Result with error '
 
+## Default Values
+
+## Call By Position
+
+## Call By Symbol
+
 ## C Compatible
 
 Functions can be assigned to vars and cannot non function or namespace variables outside it's scope

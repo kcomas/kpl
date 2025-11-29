@@ -11,8 +11,8 @@ Automatically returns when an error occurs that is not checked
 
 ```
 var :: operation # {
-    v`value { lamba }
-    e`error { lambda }
+    var_value`value { lamba }
+    var_error`error { lambda }
 }
 ```
 
