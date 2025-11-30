@@ -13,7 +13,7 @@ Reference, cannot be assigned
 
 ### Shared[Type]
 
-Shareable reference
+Reference counting, self referential types use tracing garbage collection
 
 ### Namespace[Type]
 
@@ -21,4 +21,4 @@ Global
 
 ### Mutex[Type]
 
-Assignable counted reference with lock
+Assignable counted reference with lock, cannot be self referential

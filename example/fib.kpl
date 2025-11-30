@@ -33,7 +33,7 @@ print_fib\export
 
 \is_main ? {
     usage :: "Usage {.sys.args`0} ./{.sys.args`1} nth_number_to_calculate"
-    arg ::  usage ' .sys.args`2
-    n :: String { "Invalid number got: {arg}\n"; usage } ' U64 $ arg
+    arg ::  usage ^ .sys.args`2
+    n :: String { "Invalid number got: {arg}\n"; usage } ^ U64 $ arg
     print_fib(n; fib(n))
 }

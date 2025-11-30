@@ -18,3 +18,5 @@ Load from other files
 ## \log
 
 Send information
+
+## \debug

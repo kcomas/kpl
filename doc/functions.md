@@ -7,9 +7,7 @@
 
 ### Keyword return
 
-### Result with value $
-
-### Result with error '
+### Result ^
 
 ## Default Values
 

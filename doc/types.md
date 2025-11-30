@@ -69,6 +69,8 @@ A unique identifier, cannot be stored
 
 #### Coroutine
 
+### Niladic[Return Type]
+
 ### Monadic[Return Type; Right Type]
 
 ### Dyadic[Return Type; Left Type; Right Type]

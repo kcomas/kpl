@@ -6,19 +6,19 @@ Node :: Shared[Option[Struct { Node`prev; Node`next; I64`value }]]
 List :: Struct { Node`head; Node`tail }
 
 list_new\export :: {
-    List { `head { None }; `tail { None } }
+    List { `head { ' }; `tail { ' } }
 }
 
 list_push\export :: { List`list; I64`value
     list`tail ? {
         list`tail :: list`tail`next :: Node {
-            `prev { list`tail }
-            `next { None }
+            `prev { ' list`tail  }
+            `next { ' }
             `value { value }
         }
         list`head :: list`tail :: Node {
-            `prev { None }
-            `next { None }
+            `prev { ' }
+            `next { ' }
             `value { value }
         }
     }
@@ -28,22 +28,22 @@ list_pop\export :: { List`list
     list`tail # {
         node`some {
             list`tail :: list`tail`prev
-            Option { node`value }
+            ' node`value
         }
-        `none None
+        `none '
     }
 }
 
 list_push_front\export :: { List`list; I64`value
-    list`head ? {
+    list`head ' {
         list`head :: Node {
-            `prev { None }
-            `next { head }
+            `prev { ' }
+            `next { ' head }
             `value { value }
         }
         list`head :: list`tail :: Node {
-            `prev { None }
-            `next { None }
+            `prev { ' }
+            `next { ' }
             `value { value }
         }
     }
@@ -53,16 +53,18 @@ list_pop_front\export :: { List`list
     list`head # {
         node`some {
             list`head :: list`head`next
-            Option { node`value }
+            ' node`value
         }
-        `none None
+        `none '
     }
 }
 
-list_each\export :: { List`list; Fn[Void] { I64`value }`fn
+list_each\export :: { List`list; Fn[Result[Void]] { I64`value; U64`idx }`fn
     head :: list`head
+    idx :: U64 $ 0
     head @ {
-        fn(head`value)
+        fn(head`value; idx)
         head :: head`next
+        counter +: 1
     }
 }

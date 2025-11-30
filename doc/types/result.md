@@ -3,7 +3,9 @@
 
 Implicit error handling
 
-128bit value/error pair, can only be checked not assigned
+128bit value/error pair, can only be checked
+
+Not assignable, only returnable
 
 Automatically returns when an error occurs that is not checked
 
@@ -16,16 +18,16 @@ var :: operation # {
 }
 ```
 
-## Checking '
+## Checking ^
 
 ```
-var :: ERROR_DATA ' operation
+var :: ERROR_DATA ^ operation
 ```
 
 Returns the ERROR_DATA with the error if there is an error
 
 ## Returning
 
-### $ Value
+### ^ Value
 
-### ' Error
+### Error ^
