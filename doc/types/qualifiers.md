@@ -11,13 +11,9 @@ Anything within the container cannot be modified
 
 Reference, cannot be assigned
 
-### Shared
+### Shared[Type]
 
-Reference counted
-
-#### Owned[Type]
-
-#### Weak[Type]
+Shareable reference
 
 ### Namespace[Type]
 

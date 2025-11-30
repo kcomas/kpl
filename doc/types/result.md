@@ -1,5 +1,5 @@
 
-# Result
+# Result[Type]
 
 Implicit error handling
 
@@ -23,3 +23,9 @@ var :: ERROR_DATA ' operation
 ```
 
 Returns the ERROR_DATA with the error if there is an error
+
+## Returning
+
+### $ Value
+
+### ' Error

@@ -61,7 +61,7 @@ A unique identifier, cannot be stored
 
 #### [Result](./types/result.md)
 
-#### Option
+#### [Option](./types/option.md)
 
 #### Closure
 

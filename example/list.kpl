@@ -1,21 +1,68 @@
 
 // Double linked list example
 
-Node :: Shared[Option[Struct { Weak[Node]`prev; Owned[Node]`next; I64`value }]]
+Node :: Shared[Option[Struct { Node`prev; Node`next; I64`value }]]
 
-head :: tail :: Node { `none }
+List :: Struct { Node`head; Node`tail }
 
-list_push :: { I64`value
-    head ? {
-        head :: tail :: Node {
-            `prev { `none }
-            `next { `none }
+list_new\export :: {
+    List { `head { None }; `tail { None } }
+}
+
+list_push\export :: { List`list; I64`value
+    list`tail ? {
+        list`tail :: list`tail`next :: Node {
+            `prev { list`tail }
+            `next { None }
             `value { value }
         }
-        tail :: tail`next :: Node {
-            `prev { tail }
-            `next { `none }
+        list`head :: list`tail :: Node {
+            `prev { None }
+            `next { None }
             `value { value }
         }
+    }
+}
+
+list_pop\export :: { List`list
+    list`tail # {
+        node`some {
+            list`tail :: list`tail`prev
+            Option { node`value }
+        }
+        `none None
+    }
+}
+
+list_push_front\export :: { List`list; I64`value
+    list`head ? {
+        list`head :: Node {
+            `prev { None }
+            `next { head }
+            `value { value }
+        }
+        list`head :: list`tail :: Node {
+            `prev { None }
+            `next { None }
+            `value { value }
+        }
+    }
+}
+
+list_pop_front\export :: { List`list
+    list`head # {
+        node`some {
+            list`head :: list`head`next
+            Option { node`value }
+        }
+        `none None
+    }
+}
+
+list_each\export :: { List`list; Fn[Void] { I64`value }`fn
+    head :: list`head
+    head @ {
+        fn(head`value)
+        head :: head`next
     }
 }

@@ -1,5 +1,4 @@
 
-
 // Load Fibonacci Function and map the values into an array
 
 { fib; print_fib } :: "./fib.kpl"\import
