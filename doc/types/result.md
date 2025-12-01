@@ -9,6 +9,14 @@ Not assignable, only returnable
 
 Automatically returns when an error occurs that is not checked
 
+## Assigning
+
+```
+var :: result
+```
+
+Assigned the value to the var, returns if error
+
 ## Matching
 
 ```

@@ -12,14 +12,14 @@ list_new\export :: {
 list_push\export :: { List`list; I64`value
     list`tail ? {
         list`tail :: list`tail`next :: Node {
-            `prev { ' list`tail  }
-            `next { ' }
-            `value { value }
+            `prev $ list`tail
+            `next $ '
+            `value $ value
         }
         list`head :: list`tail :: Node {
-            `prev { ' }
-            `next { ' }
-            `value { value }
+            `prev $ '
+            `next $ '
+            `value $ value
         }
     }
 }
@@ -30,21 +30,21 @@ list_pop\export :: { List`list
             list`tail :: list`tail`prev
             ' node`value
         }
-        `none '
+        `none { ' }
     }
 }
 
 list_push_front\export :: { List`list; I64`value
-    list`head ' {
+    list`head ? {
         list`head :: Node {
-            `prev { ' }
-            `next { ' head }
-            `value { value }
+            `prev $ '
+            `next $ head
+            `value $ value
         }
         list`head :: list`tail :: Node {
-            `prev { ' }
-            `next { ' }
-            `value { value }
+            `prev $ '
+            `next $ '
+            `value $ value
         }
     }
 }
@@ -55,11 +55,11 @@ list_pop_front\export :: { List`list
             list`head :: list`head`next
             ' node`value
         }
-        `none '
+        `none { ' }
     }
 }
 
-list_each\export :: { List`list; Fn[Result[Void]] { I64`value; U64`idx }`fn
+list_each\export :: { List`list; Fn[Void] { I64`value; U64`idx }`fn
     head :: list`head
     idx :: U64 $ 0
     head @ {

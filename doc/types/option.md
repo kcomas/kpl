@@ -8,19 +8,24 @@ May have value
 ### Some ' Value
 
 ```
-x :: ^ 123
+x :: ' 123
 x\log // Option { 123 }
 ```
 
 ### None '
 
 ```
-x :: ^
+x :: '
 x\log // Option
 ```
 
 ## Matching
 
-### \`some
+```
+var :: option # {
+    var_some`some { lambda }
+    `none { lambda }
+}
+```
 
-### \`none
+## Checking ?
