@@ -49,7 +49,7 @@ A unique identifier, cannot be stored
 
 #### Socket
 
-### Array[Inner Type] { Length }
+### Array[Inner Type; Length]
 
 #### Array
 
@@ -75,7 +75,7 @@ A unique identifier, cannot be stored
 
 ### Dyadic[Return Type; Left Type; Right Type]
 
-### Enum[Type] { \`Symbol { Value } }
+### Enum[Type] { \`Symbol : Value }
 
 #### Enum
 

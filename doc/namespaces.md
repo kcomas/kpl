@@ -42,7 +42,7 @@ fn(...)
 #### args
 
 ```
-.sys.args :: Namespace[Const[Arary[String] { determined at runtime }]]
+.sys.args :: Namespace[Const[Arary[String;determined at runtime]]]
 argv0 :: .sys.args`0 // Const[String]
 ```
 
@@ -51,7 +51,7 @@ argv0 :: .sys.args`0 // Const[String]
 #### Console
 
 ```
-.io.Console :: Enum[I32] { `stdin { 0 }; `stdout { 1 }; `stderr { 2 } }
+.io.Console :: Enum[I32] { `stdin $ 0; `stdout $ 1; `stderr $ 2 }
 
 ```
 

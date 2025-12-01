@@ -1,10 +1,10 @@
 
 // Load Fibonacci Function and map the values into an array
 
-{ fib; print_fib } :: "./fib.kpl"\import
+{ fib; print_fib } : "./fib.kpl"\import
 
-total :: Const[U64] $ 31
+total : Const[U64] $ 31
 
-values :: { I64`_; U64`idx; fib(I64 $ idx) } @ Array[I64] { total }
+values : { I64`_; U64`idx; fib(I64 $ idx) } @ Array[I64] { total }
 
 values @ { I64`n; U64`idx; print_fib(idx; n) }

@@ -1,70 +1,70 @@
 
 // Double linked list example
 
-Node :: Shared[Option[Struct { Node`prev; Node`next; I64`value }]]
+Node : Shared[Option[Struct { Node`prev; Node`next; I64`value }]]
 
-List :: Struct { Node`head; Node`tail }
+List : Struct { Node`head; Node`tail }
 
-list_new\export :: {
+list_new\export : {
     List { `head { ' }; `tail { ' } }
 }
 
-list_push\export :: { List`list; I64`value
+list_push\export : { List`list; I64`value
     list`tail ? {
-        list`tail :: list`tail`next :: Node {
-            `prev $ list`tail
-            `next $ '
-            `value $ value
+        list`tail : list`tail`next : Node {
+            `prev : list`tail
+            `next : '
+            `value : value
         }
-        list`head :: list`tail :: Node {
-            `prev $ '
-            `next $ '
-            `value $ value
+        list`head : list`tail : Node {
+            `prev : '
+            `next : '
+            `value : value
         }
     }
 }
 
-list_pop\export :: { List`list
+list_pop\export : { List`list
     list`tail # {
         node`some {
-            list`tail :: list`tail`prev
+            list`tail : list`tail`prev
             ' node`value
         }
         `none { ' }
     }
 }
 
-list_push_front\export :: { List`list; I64`value
+list_push_front\export : { List`list; I64`value
     list`head ? {
-        list`head :: Node {
-            `prev $ '
-            `next $ head
-            `value $ value
+        list`head : Node {
+            `prev : '
+            `next : head
+            `value : value
         }
-        list`head :: list`tail :: Node {
-            `prev $ '
-            `next $ '
-            `value $ value
+        list`head : list`tail : Node {
+            `prev : '
+            `next : '
+            `value : value
         }
     }
 }
 
-list_pop_front\export :: { List`list
+list_pop_front\export : { List`list
     list`head # {
         node`some {
-            list`head :: list`head`next
+            list`head : list`head`next
             ' node`value
         }
         `none { ' }
     }
 }
 
-list_each\export :: { List`list; Fn[Void] { I64`value; U64`idx }`fn
-    head :: list`head
-    idx :: U64 $ 0
+list_each\export : { List`list; Fn[Void] { I64`value; U64`idx }`fn
+    head : list`head
+    idx : U64 $ 0
     head @ {
         fn(head`value; idx)
-        head :: head`next
+        head : head`next
         counter +: 1
     }
 }

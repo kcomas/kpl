@@ -1,14 +1,14 @@
 
 // Use linked list functions
 
-list_fns :: "./list.kpl"\load
+list_fns : "./list.kpl"\load
 
-list :: list_fns.list_new()
+list : list_fns.list_new()
 
-{ counter :: 1; counter <= 10; counter +: 1 } @ list_fns.list_push(list; counter)
+{ counter : 1; counter <= 10; counter +: 1 } @ list_fns.list_push(list; counter)
 
 list_fns.list_each(list; { I64`value; U64`idx
-    { clear; blue; green; bold } :: .sys.colors.strings
+    { clear; blue; green; bold } : .sys.colors.strings
     io.print(String {
         blue
         "idx: "

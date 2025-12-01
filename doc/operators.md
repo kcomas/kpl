@@ -3,24 +3,26 @@
 
 ## Variables
 
-### :: Define
+### : Define/Assign
 
-Define a new var and set its value
-
-### : Assign
-
-Update a value
+Create and or update a vars value
 
 ```
-defined_var : statement
+var : statement
 
-defined_var`symbol : statement
+var`symbol : statement
 
-defined_var(accessor) : statement
+var(accessor) : statement
 ```
+
+### :: Shadow
+
+Create a var with the same name as one in the parent scope
 
 ## [Bitwise](./operators/bitwise.md)
 
 ## [Arithmetic](./operators/arithmetic.md)
 
 ## [Logic](./operators/logic.md)
+
+## [Casting](./operators/casting.md)

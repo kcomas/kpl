@@ -1,0 +1,6 @@
+
+# Casting $
+
+```
+var : TYPE $ data
+```
