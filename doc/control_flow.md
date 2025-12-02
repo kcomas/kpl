@@ -28,6 +28,10 @@ condition @ statement or { lambda }
 loopable @ { each }
 ```
 
+### \break
+
+### \continue
+
 ## Match
 
 ```

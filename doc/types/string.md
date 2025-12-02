@@ -16,9 +16,16 @@ Sequence of utf8 characters
 value : "asdf"
 ```
 
-### Nth ()
+## String { string1; string2; ... }
 
-### Concatenate ,
+Creates a new string from a list of strings
 
-### Iterate @
+## Nth ()
 
+## Concatenate ,
+
+## Concatenate Self ,:
+
+## Split ~
+
+## Iterate @

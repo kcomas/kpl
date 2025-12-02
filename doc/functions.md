@@ -5,7 +5,7 @@
 
 ### Implicit return
 
-### Keyword return
+### \return
 
 ### Result ^
 
@@ -50,3 +50,5 @@ var :: { Type`arg; ... body }
 ```
 
 ## Coroutine
+
+### \yield

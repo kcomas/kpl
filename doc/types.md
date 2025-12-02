@@ -69,15 +69,11 @@ See namespaces
 
 #### Thread
 
-### Niladic[Return Type]
-
-### Monadic[Return Type; Right Type]
-
-### Dyadic[Return Type; Left Type; Right Type]
+### Op[Return Type; Left Type; Right Type]
 
 ### Enum[Type] { \`Symbol : Value }
 
-#### Enum
+#### [Enum](./types/enum.md)
 
 ### Struct {Type\`Symbol...}
 

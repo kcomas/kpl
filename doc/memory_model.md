@@ -1,30 +1,34 @@
 
 # Memory Model
 
-## Assigning
+## Functions
 
-### Functions
+Assigned by label, passed by pointer
 
-### Value
+## Value
 
-### Move
+Assigned by value, pass by value
 
-### Shared
+### Value Types
 
-### Mutex
+## Move
 
-## Passing
+Only vars can be moved, once movable type is added to a container, it cannot be moved out
 
-### Functions
+Pass by reference
 
-### Value
+### Move Types
 
-### Move
+## Shared
 
-### Reference
+Assign and pass by reference cannot be passed into threads
 
-### Shared
+## Mutex
 
-### Mutex
+Assign and pass by reference, can be passed into threads
 
 ## C Types
+
+### Function
+
+Assigned and passed by pointer

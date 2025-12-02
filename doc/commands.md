@@ -7,6 +7,10 @@ Runtime Modifiers
 var\command
 ```
 
+## \is_main
+
+Is this file the main file
+
 ## \export
 
 Export from file
