@@ -17,4 +17,6 @@
 
 ## [Commands](./commands.md)
 
+## [Memory Model](./memory_model.md)
+
 ## REPL

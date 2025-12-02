@@ -19,4 +19,12 @@ Load from other files
 
 Send information
 
+## \char
+
+Specify a char before code execution
+
+```
+char : "a"\char
+```
+
 ## \debug

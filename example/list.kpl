@@ -1,12 +1,12 @@
 
 // Double linked list example
 
-Node : Shared[Option[Struct { Node`prev; Node`next; I64`value }]]
+Node : Option[Shared[Struct { Node`prev; Node`next; I64`value }]]
 
 List : Struct { Node`head; Node`tail }
 
 list_new\export : {
-    List { `head { ' }; `tail { ' } }
+    List { `head : '; `tail : ' }
 }
 
 list_push\export : { List`list; I64`value
@@ -27,6 +27,7 @@ list_push\export : { List`list; I64`value
 list_pop\export : { List`list
     list`tail # {
         node`some {
+            list`tail = list`head ? list`head : '
             list`tail : list`tail`prev
             ' node`value
         }
@@ -52,6 +53,7 @@ list_push_front\export : { List`list; I64`value
 list_pop_front\export : { List`list
     list`head # {
         node`some {
+            list`head = list`tail ? list`tail : '
             list`head : list`head`next
             ' node`value
         }

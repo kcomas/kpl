@@ -9,7 +9,7 @@ list : list_fns.list_new()
 
 list_fns.list_each(list; { I64`value; U64`idx
     { clear; blue; green; bold } : .sys.colors.strings
-    io.print(String {
+    .io.print(String {
         blue
         "idx: "
         bold

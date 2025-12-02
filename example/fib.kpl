@@ -27,13 +27,14 @@ print_fib : Fn { U64`idx; I64`n
         clear
         "\n"
     })
+
 }
 
 print_fib\export
 
 \is_main ? {
-    usage : "Usage {.sys.args`0} ./{.sys.args`1} nth_number_to_calculate"
+    usage : String { "Usage "; .sys.args`0; " ./"; .sys.args`1; " nth_number_to_calculate\n" }
     arg :  usage ^ .sys.args`2
-    n : String { "Invalid number got: {arg}\n"; usage } ^ U64 $ arg
+    n : String { "Invalid number got: "; arg; "\n"; usage } ^ U64 $ arg
     print_fib(n; fib(n))
 }

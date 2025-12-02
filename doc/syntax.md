@@ -23,6 +23,8 @@ Types start with an uppercase letter
 
 Symbols start with \`
 
+_ denotes the variable is ignored
+
 ## Operators
 
 No Operator Precedence

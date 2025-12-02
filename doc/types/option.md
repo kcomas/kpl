@@ -15,8 +15,8 @@ x\log // Option[I64] 123
 ### None '
 
 ```
-x :: '
-x\log // Option
+x :: ' I64
+x\log // Option[I64]
 ```
 
 ## Matching

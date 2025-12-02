@@ -35,13 +35,15 @@ A unique identifier, cannot be stored
 
 #### F64
 
-#### Char
+#### [Char](./types/string.md)
 
-#### String
+#### [String](./types/string.md)
 
-#### Regex
+#### [Regex](./types/regex.md)
 
 #### Base
+
+See namespaces
 
 #### Error
 
@@ -66,8 +68,6 @@ A unique identifier, cannot be stored
 #### Closure
 
 #### Thread
-
-#### Coroutine
 
 ### Niladic[Return Type]
 
@@ -94,6 +94,8 @@ A unique identifier, cannot be stored
 ### Fn[Return Type] {Type\`Symbol...}
 
 #### Fn
+
+#### Coroutine
 
 ### Lambda[Return Type] {Type\`Arg Symbol...} {Type\`Scope Symbol...}
 
