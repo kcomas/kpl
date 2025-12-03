@@ -23,12 +23,16 @@ Load from other files
 
 Send information
 
-## \char
-
-Specify a char before code execution
-
-```
-char : "a"\char
-```
-
 ## \debug
+
+Start a REPL debugger
+
+## Documented Elsewhere
+
+### \char
+
+### \break
+
+### \continue
+
+### \bitmask

@@ -36,6 +36,6 @@ Returns the ERROR_DATA with the error if there is an error
 
 ## Returning
 
-### ^ Value
+### \value
 
-### Error ^
+### \error

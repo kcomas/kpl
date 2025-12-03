@@ -7,7 +7,9 @@
 
 ### \return
 
-### Result ^
+### \value
+
+### \error
 
 ## Default Values
 

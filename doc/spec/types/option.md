@@ -33,3 +33,5 @@ var :: option # {
 ## Accessing
 
 Options can be directly accessed according to their inner type, if the option is none an error is returned
+
+## Swapping ~

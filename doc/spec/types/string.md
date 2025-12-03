@@ -26,6 +26,6 @@ Creates a new string from a list of strings
 
 ## Concatenate Self ,:
 
-## Split ~
+## Split/Join ~
 
 ## Iterate @

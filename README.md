@@ -13,4 +13,4 @@
 
 ## Documentation
 
-### [Specification](./doc/spec.md)
+### [Specification](./doc/spec/spec.md)
