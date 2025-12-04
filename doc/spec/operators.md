@@ -26,3 +26,5 @@ Create a var with the same name as one in the parent scope
 ## [Logic](./operators/logic.md)
 
 ## [Casting](./operators/casting.md)
+
+## [Swapping](./operators/swapping.md)

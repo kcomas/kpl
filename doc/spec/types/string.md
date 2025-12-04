@@ -20,12 +20,16 @@ value : "asdf"
 
 Creates a new string from a list of strings
 
+## Length ?
+
 ## Nth ()
 
 ## Concatenate ,
 
-## Concatenate Self ,:
+## Append |
 
-## Split/Join ~
+## Split %
 
 ## Iterate @
+
+## Match \#

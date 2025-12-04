@@ -12,14 +12,12 @@ Regex { flags; "subsitition"; "pattern" }
 
 flags ~ "pattern"
 
-falgs ~ "subsitition" ~ "pattern"
+flags ~ "subsitition" ~ "pattern"
 ```
 
 ## Flags
 
-```
-Enum[U8] { `invalid : 0; `d : 1 << 0; `g : 1 << 1; `i : 1 << 2; `m : 1 << 3; `s : 1 << 4 }
-```
+See .regex.Flags
 
 ### d
 
@@ -40,4 +38,3 @@ Make ^ $ match line start and end
 ### s
 
 . matches newline
-

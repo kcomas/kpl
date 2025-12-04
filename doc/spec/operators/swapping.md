@@ -1,0 +1,6 @@
+
+# Swapping ~
+
+```
+var ~ var
+```

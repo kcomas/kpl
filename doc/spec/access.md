@@ -16,16 +16,16 @@ Checked during code execution
 ### Static access
 
 ```
-string_array :: Array { "this"; "is"; "an"; "array" } // Array[String]
-var :: string_array`1 // Ref[String]
+string_array : Array { "this"; "is"; "an"; "array" } // Array[String]
+var : string_array`1 // Ref[String]
 ```
 
 ### Dynamic access
 
 ```
-string_array :: Array { "this"; "is"; "an"; "array" } // Array[String]
-n :: 1
-var :: "Bad Index" ' string_array(n) // Ref[String]
+string_array : Array { "this"; "is"; "an"; "array" } // Array[String]
+n : 1
+var : "Bad Index" ^ string_array(n) // Ref[String]
 ```
 
 ## Struct
@@ -33,7 +33,7 @@ var :: "Bad Index" ' string_array(n) // Ref[String]
 ### Static access only
 
 ```
-struct :: Struct { I64`a { 1 }; U64`b { 2 } }
+struct : Struct { I64`a { 1 }; U64`b { 2 } }
 struct`a // I64
 ```
 
@@ -42,11 +42,22 @@ struct`a // I64
 ### Dynamic access only
 
 ```
-num_vec :: Vector[I64] { 1; 2; 3 }
-var :: "Bad Index" ' num_vec`0 // I64
+num_vec : Vector[I64] { 1; 2; 3 }
+var : "Bad Index" ^ num_vec`0 // I64
 ```
 
 ```
-num_vec :: Vector[I64] { 1; 2; 3 }
-n :: 1
-var :: "bad Index" ' num_vec(n) // I64
+num_vec : Vector[I64] { 1; 2; 3 }
+n : 1
+var : "bad Index" ^ num_vec(n) // I64
+```
+
+## Dynamic Matching Access
+
+```
+vec : Vector[I64] { 1; 2; 3 }
+vec`1 # { // vec(1)
+    value`some { lambda }
+    `none { lambda }
+}
+```

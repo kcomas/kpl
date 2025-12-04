@@ -13,7 +13,7 @@ fib\export
 
 print_fib : Fn { U64`idx; I64`n
     { clear; blue; magenta; green } : .sys.colors.strings
-    .io.stdout.print(String {
+    .io.print(String {
         blue
         "fib"
         clear
@@ -35,6 +35,6 @@ print_fib\export
 \is_main ? {
     usage : String { "Usage "; .sys.args`0; " ./"; .sys.args`1; " nth_number_to_calculate\n" }
     arg : usage ^ .sys.args`2
-    n : String { "Invalid number got: "; arg; "\n"; usage } ^ U64 $ arg
+    n : String { "Invalid number got: "; arg; "\n"; usage } ^ I64 $ arg
     print_fib(n; fib(n))
 }

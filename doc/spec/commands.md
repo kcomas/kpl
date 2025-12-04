@@ -36,3 +36,11 @@ Start a REPL debugger
 ### \continue
 
 ### \bitmask
+
+### \return
+
+### \yield
+
+### \value
+
+### \error

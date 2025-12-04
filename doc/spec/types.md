@@ -15,6 +15,8 @@ A unique identifier, cannot be stored
 
 #### Bool
 
+true, false, TRUE, FALSE
+
 #### U8
 
 #### U16
@@ -53,21 +55,21 @@ See namespaces
 
 ### Array[Inner Type; Length]
 
-#### Array
+#### [Array](./types/array.md)
 
 ### Vector[Inner Type]
 
-#### Vector
+#### [Vector](./types/vector.md)
 
-#### Set
+#### [Set](./types/set.md)
 
 #### [Result](./types/result.md)
 
 #### [Option](./types/option.md)
 
-#### Closure
+#### [Closure](./functions.md)
 
-#### Thread
+#### [Thread](./threading.md)
 
 ### Op[Return Type; Left Type; Right Type]
 
@@ -77,29 +79,29 @@ See namespaces
 
 ### Struct {Type\`Symbol...}
 
-#### Struct
+#### [Struct](./types/struct.md)
 
 #### Table
 
-#### Union
+#### [Union](./types/union.md)
 
 ### Hash[Key Type; Value Type]
 
-#### Hash
+#### [Hash](./types/hash.md)
 
 ### Fn[Return Type] {Type\`Symbol...}
 
-#### Fn
+#### [Fn](./functions.md)
 
-#### Coroutine
+#### [Coroutine](./functions.md)
 
 ### Lambda[Return Type] {Type\`Arg Symbol...} {Type\`Scope Symbol...}
 
-#### Lambda
+#### [Lambda](./functions.md)
 
 ### Overload { Fn1; Fn2; ...}
 
-#### Overload
+#### [Overload](./functions.md)
 
 ### C[Type]
 

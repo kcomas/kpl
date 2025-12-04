@@ -19,4 +19,6 @@
 
 ## [Memory Model](./memory_model.md)
 
+## [Threading](./threading.md)
+
 ## REPL

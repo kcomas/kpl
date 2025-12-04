@@ -13,7 +13,9 @@ Assigned by value, pass by value
 
 ## Move
 
-Only vars can be moved, once movable type is added to a container, it cannot be moved out
+Only vars can be moved
+
+Once movable type is added to a container, it cannot be moved out, but it can be swapped
 
 Pass by reference
 
