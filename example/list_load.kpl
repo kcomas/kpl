@@ -8,8 +8,8 @@ list : list_fns.list_new()
 { counter : 1; counter <= 10; counter +: 1 } @ list_fns.list_push(list; counter)
 
 list_fns.list_each(list; { I64`value; U64`idx
-    { clear; blue; green; bold } : .sys.colors.strings
-    .io.print(String {
+    { clear; blue; green; bold } : .io.colors.strings
+    .io.stdout << String {
         blue
         "idx: "
         bold
@@ -21,5 +21,5 @@ list_fns.list_each(list; { I64`value; U64`idx
         String $ value
         clear
         "\n"
-    })
+    }
 })

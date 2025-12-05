@@ -61,3 +61,5 @@ vec`1 # { // vec(1)
     `none { lambda }
 }
 ```
+
+Matching returns an Option[Ref[Type]]

@@ -1,6 +1,10 @@
 
 # Memory Model
 
+All memory is zeroed on initialization
+
+Memory is freed when values go out of scope
+
 ## Functions
 
 Assigned by label, passed by pointer

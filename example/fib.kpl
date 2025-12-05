@@ -12,8 +12,8 @@ fib : Fn[I64] { I64`n
 fib\export
 
 print_fib : Fn { U64`idx; I64`n
-    { clear; blue; magenta; green } : .sys.colors.strings
-    .io.print(String {
+    { clear; blue; magenta; green } : .io.colors.strings
+    .io.stdout << String {
         blue
         "fib"
         clear
@@ -26,7 +26,7 @@ print_fib : Fn { U64`idx; I64`n
         String $ fib(n)
         clear
         "\n"
-    })
+    }
 
 }
 
