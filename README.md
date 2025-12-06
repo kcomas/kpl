@@ -1,5 +1,5 @@
 
-# KPL (Kevin's Programming Langauge)
+# KPL (Kevin's Programming Language)
 
 ## Work in Progress
 
@@ -16,3 +16,5 @@
 ### [Specification](./doc/README.md)
 
 ### [Implementation](./src/README.md)
+
+### [Testing](./test/README.md)

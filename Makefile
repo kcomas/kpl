@@ -1,0 +1,2 @@
+
+MAKEFLAGS := -j$(shell nproc)
