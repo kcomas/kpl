@@ -13,6 +13,6 @@
 
 ## Documentation
 
-### [Specification](./doc/spec/spec.md)
+### [Specification](./doc/README.md)
 
-### [Implementation](./doc/impl/impl.md)
+### [Implementation](./src/README.md)

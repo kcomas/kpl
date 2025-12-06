@@ -15,7 +15,7 @@ var\export
 
 File names are relative to the importing file
 
-Importing can only be done at the top scope
+Imports are done once at file load, importing in a function does not import again
 
 ### Base
 

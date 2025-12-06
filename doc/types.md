@@ -15,8 +15,6 @@ A unique identifier, cannot be stored
 
 #### Bool
 
-true, false, TRUE, FALSE
-
 #### U8
 
 #### U16

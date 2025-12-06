@@ -25,6 +25,8 @@ Symbols start with \`
 
 _ denotes the variable is ignored
 
+No keywords, use commands \name
+
 ## Operators
 
 No Operator Precedence
