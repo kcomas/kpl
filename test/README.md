@@ -3,7 +3,9 @@
 
 ## Directory Structure
 
-### Test
+### Example
+
+## test.c/test.h
 
 ## main.c
 

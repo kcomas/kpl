@@ -27,4 +27,4 @@
 
 ## [C Syntax Guide](./c_syntax.md)
 
-## [Building](./building.md)
+## [Buildings](./building.md)

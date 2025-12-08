@@ -6,7 +6,7 @@ Functions can be turned into threads
 ## Starting *
 
 ```
-thread : fn * args
+thread : args * fn
 ```
 
 Args is moved into thread an cannot be accessed until joining, unless it is of type Mutex
