@@ -17,4 +17,6 @@
 
 ### [Implementation](./src/README.md)
 
+### [Building](./main/README.md)
+
 ### [Testing](./test/README.md)

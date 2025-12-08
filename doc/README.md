@@ -24,3 +24,7 @@
 ## [File System](./file_system.md)
 
 ## REPL
+
+## [C Syntax Guide](./c_syntax.md)
+
+## [Building](./building.md)
