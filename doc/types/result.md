@@ -21,8 +21,8 @@ Assigned the value to the var, returns if error
 
 ```
 var :: operation # {
-    var_value`value { lamba }
-    var_error`error { lambda }
+    { lamba }`value
+    { lambda }`error
 }
 ```
 

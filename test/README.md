@@ -5,8 +5,10 @@
 
 ### Example
 
-## test.c/test.h
+## test.h
 
-## main.c
+Only file tests include
+
+## test.c
 
 Testing entry point

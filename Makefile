@@ -15,7 +15,7 @@ OO := -g -Og
 FFLAGS := -fno-omit-frame-pointer -fhardened
 MFLAGS := -mincoming-stack-boundary=3
 WFLAGS := -Wall -Wextra -Wstack-protector
-CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS) -pthread -lm
+CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 CCOBJ = $(CC) -o $@ $^ $(CFLAGS)
 
 OBJECTS := $(patsubst %.c,%.o,$(wildcard ./src/**/*.c))
@@ -35,7 +35,7 @@ endif
 
 tests: FFLAGS += $(FSAN)
 tests: WFLAGS += -Werror
-tests: $(OBJECTS) $(TEST_OBJECTS) ./test/main.o
+tests: $(OBJECTS) $(TEST_OBJECTS) ./test/test.o
 > $(CCOBJ)
 
 clean:

@@ -36,7 +36,7 @@ loopable @ { each }
 
 ```
 var :: matchable # {
-    var`symbol { lambda }
+    { TYPE`var lambda }`symbol
     ...
 }
 ```

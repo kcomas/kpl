@@ -39,8 +39,8 @@ Application entry point
 
 Lib -> X64
 Lib -> Run
+Lib -> Import
 Lib Run -> Namespace
-Namespace -> Import
 Namespace -> Type
 Type X64 -> Ir
 Type -> Ast

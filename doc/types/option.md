@@ -23,8 +23,8 @@ x\log // Option[I64]
 
 ```
 var :: option # {
-    var_some`some { lambda }
-    `none { lambda }
+    { lambda }`some
+    { lambda }`none
 }
 ```
 

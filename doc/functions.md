@@ -51,6 +51,15 @@ var : Lambda[Return Type] { Type`arg; ... body }
 var : { Type`arg; ... body }
 ```
 
+### Argument Inference
+
+Lambdas passed as functions can infer their args
+
+```
+map_example : { `x; x + 1 }  @ Array { 1; 2; 3}
+map_example\log // Array[I64] { 2 3 4 }
+```
+
 ### Closure
 
 ## Coroutine

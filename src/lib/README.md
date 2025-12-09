@@ -5,20 +5,22 @@ A single NAME.c and NAME.h file pair of utilities
 
 ## lib.h
 
-## def.c/def.h
+## def.[ch]
 
 Application wide definitions and standard lib imports
 
-## print.c/print.h
+## print.[ch]
 
 Standard lib print wrapper for pretty printing
 
-## memory.c/memory.h
+## memory.[ch]
 
 Memory pool utility
 
-## table.c/table.h
+## table.[ch]
 
-## thread.c/thread.h
+Hash table
+
+## thread.[ch]
 
 Thread task queue
