@@ -23,13 +23,13 @@ Each directory has a directory_name.h file as a single header for all of it's pa
 
 ### Gen
 
-### X64
+### [X64](./x64/README.md)
 
 ### [Run](./run/README.md)
 
 ### [Lib](./lib/README.md)
 
-### Core
+### [Core](./core/README.md)
 
 ## main.c
 

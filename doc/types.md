@@ -11,8 +11,6 @@ A unique identifier, cannot be stored
 
 ### Scalar
 
-#### Auto
-
 #### Void
 
 #### Bool

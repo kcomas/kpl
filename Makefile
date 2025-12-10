@@ -18,14 +18,16 @@ WFLAGS := -Wall -Wextra -Wstack-protector
 CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 CCOBJ = $(CC) -o $@ $^ $(CFLAGS)
 
-OBJECTS := $(patsubst %.c,%.o,$(wildcard ./src/**/*.c))
+SOURCES := $(wildcard ./src/**/*.c)
+OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
 
 kpl: OO := -O2
 kpl: WFLAGS += -Werror
-kpl: $(OBJECTS) ./src/main.o
+kpl: $(OBJECTS) ./src/main.o clean
 > $(CCOBJ)
 
-TEST_OBJECTS := $(patsubst %.c,%.o,$(wildcard ./test/**/*.c))
+TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c)
+TEST_OBJECTS := $(patsubst %.c,%.o,$(TEST_SOURCES))
 
 FSAN := -fsanitize=address,leak,undefined
 
@@ -35,12 +37,12 @@ endif
 
 tests: FFLAGS += $(FSAN)
 tests: WFLAGS += -Werror
-tests: $(OBJECTS) $(TEST_OBJECTS) ./test/test.o
+tests: $(OBJECTS) $(TEST_OBJECTS)
 > $(CCOBJ)
 
 clean:
 > find \
 -not -path "./.git/*" \
 -type f \
--not -regex  "^./\(LICENSE\|\|\.gitignore\|Makefile\|.*\.\(md\|c\|kpl\)\)$$" \
+-not -regex  "^./\(LICENSE\|\|\.gitignore\|Makefile\|.*\.\(md\|c\|h\|kpl\)\)$$" \
 -exec rm -v {} \;

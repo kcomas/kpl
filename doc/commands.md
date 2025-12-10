@@ -27,6 +27,8 @@ Send information
 
 Start a REPL debugger
 
+## \disassemble
+
 ## Documented Elsewhere
 
 ### \char

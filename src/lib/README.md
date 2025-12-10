@@ -1,7 +1,7 @@
 
 # Lib
 
-A single NAME.c and NAME.h file pair of utilities
+Utilities
 
 ## lib.h
 
@@ -9,17 +9,17 @@ A single NAME.c and NAME.h file pair of utilities
 
 Application wide definitions and standard lib imports
 
-## print.[ch]
+## color.h
 
-Standard lib print wrapper for pretty printing
+Helpers for pretty printing
 
-## memory.[ch]
+## pool.[ch]
 
 Memory pool utility
 
-## table.[ch]
+## trace.[ch]
 
-Hash table
+Tracing Garbage Collector
 
 ## thread.[ch]
 

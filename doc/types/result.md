@@ -26,13 +26,20 @@ var :: operation # {
 }
 ```
 
-## Checking ^
+## Unwrapping  ^
 
 ```
 var :: ERROR_DATA ^ operation
 ```
 
 Returns the ERROR_DATA with the error if there is an error
+
+## Checking ?
+
+```
+result ? { Error`error lambda }
+value : result
+```
 
 ## Returning
 
