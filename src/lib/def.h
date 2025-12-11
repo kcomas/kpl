@@ -15,6 +15,8 @@
 
 #define DEF_EXIT_ERROR 1
 
+#define DEF_U64_MASK(SHIFT) ((uint64_t) 1 << (SHIFT))
+
 #define DEF_STATUS(NAME) DEF_STATUS_##NAME
 
 typedef enum [[gnu::packed]] {

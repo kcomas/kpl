@@ -41,6 +41,10 @@ void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts opt
     fprintf(file, COLOR(GREEN) "%d" COLOR(RESET) ":", er->line);
     if (er->msg)
         fprintf(file, COLOR(LIGHT_RED) "%s" COLOR(RESET), er->msg);
+    if (er->print_fn)
+        er->print_fn(er->data, file, idnt, er->data_print_opts);
+    if (er->next)
+        error_print(er->next, file, idnt, opts);
     if (opts & ERROR_PRINT(NL_END))
         fprintf(file, "\n");
 }

@@ -10,22 +10,44 @@ void test_add(const char *name, test_fn fn) {
         printf(COLOR2(BOLD, RED) "Max Test Count Reached Increase TEST_MAX_COUNT\n" COLOR(RESET));
         exit(DEF_EXIT_ERROR);
     }
-    test_array[test_len++] = (test) { .item = { .name = name, .fn = fn } };
+    test_array[test_len++] = (test) { .name = name, .run = { .fn = fn } };
 }
 
-int main(void) {
+static bool can_run_test(int argc, char *argv[], uint64_t *argv_mask, const char *name) {
+    if (argc == 1)
+        return true;
+    if (!*argv_mask)
+        return false;
+    for (int mask_idx = 1; mask_idx < argc; mask_idx++) {
+        if (!(*argv_mask & DEF_U64_MASK(mask_idx - 1)))
+            continue;
+        if (strcmp(argv[mask_idx], name) == 0) {
+            *argv_mask ^= DEF_U64_MASK(mask_idx - 1);
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(int argc, char *argv[]) {
+    uint64_t argv_mask = 0;
     size_t pass_count = 0, fail_count = 0;
-    const char *name;
+    test_fn *fn;
+    for (int mask_idx = 1; mask_idx < argc; mask_idx++)
+        argv_mask |= DEF_U64_MASK(mask_idx - 1);
     for (size_t test_idx = 0; test_idx < test_len; test_idx++) {
-        name = test_array[test_idx].item.name;
-        printf("TEST %s\n", name);
-        if ((test_array[test_idx].er = test_array[test_idx].item.fn())) {
-            error_print(test_array[test_idx].er, stdout, 0, ERROR_PRINT(NL_END));
-            printf(COLOR(RED) "FAIL %s\n" COLOR(RESET), name);
+        fn = test_array[test_idx].run.fn;
+        test_array[test_idx].run.er = NULL;
+        if (!can_run_test(argc, argv, &argv_mask, test_array[test_idx].name))
+            continue;
+        printf("TEST %s\n", test_array[test_idx].name);
+        fn(&test_array[test_idx]);
+        if (test_array[test_idx].run.er) {
+            error_print(test_array[test_idx].run.er, stdout, 0, ERROR_PRINT(NL_END));
+            printf(COLOR(RED) "FAIL %s\n" COLOR(RESET), test_array[test_idx].name);
             fail_count++;
         } else {
-            printf(COLOR(GREEN) "PASS %s\n" COLOR(RESET), name);
-            test_array[test_idx].er = NULL;
+            printf(COLOR(GREEN) "PASS %s\n" COLOR(RESET), test_array[test_idx].name);
             pass_count++;
         }
     }
@@ -34,11 +56,11 @@ int main(void) {
     else
         printf(COLOR2(BOLD, LIGHT_GREEN) "PASS " COLOR(RESET));
     printf(COLOR(GREEN) "%lu " COLOR(RED) "%lu" COLOR(RESET) "\n", pass_count, fail_count);
-    for (size_t test_idx = 0; test_idx < test_len; test_idx++) {
-        if (test_array[test_idx].er) {
-            error_print(test_array[test_idx].er, stdout, 0, ERROR_PRINT(NL_END));
-            error_free(test_array[test_idx].er);
+    for (size_t test_idx = 0; test_idx < test_len; test_idx++)
+        if (test_array[test_idx].run.er) {
+            printf("%s ", test_array[test_idx].name);
+            error_print(test_array[test_idx].run.er, stdout, 0, ERROR_PRINT(NL_END));
+            error_free(test_array[test_idx].run.er);
         }
-    }
     return fail_count ? DEF_EXIT_ERROR : 0;
 }
