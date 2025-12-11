@@ -13,14 +13,14 @@ Application wide definitions and standard lib imports
 
 Helpers for pretty printing
 
-## pool.[ch]
+## mem.[ch]
 
 Memory pool utility
 
-## trace.[ch]
+## gc.[ch]
 
 Tracing Garbage Collector
 
-## thread.[ch]
+## task.[ch]
 
 Thread task queue

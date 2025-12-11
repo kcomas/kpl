@@ -1,6 +1,7 @@
 
 #pragma once
 
+#ifndef COLOR_OFF
 #define COLOR(A) "\e[" A "m"
 #define COLOR2(A, B) "\e[" A ";" B "m"
 #define COLOR3(A, B, C) "\e[" A ";" B ";" C "m"
@@ -52,3 +53,56 @@
 #define BG_LIGHT_MAGENTA    "105"
 #define BG_LIGHT_CYAN       "106"
 #define BG_WHITE            "107"
+#else
+#define COLOR(A) A
+#define COLOR2(A, B) A B
+#define COLOR3(A, B, C) A B C
+#define COLOR4(A, B, C, D) A B C D
+
+#define RESET               ""
+#define BOLD                ""
+#define DIM                 ""
+#define UNDERLINE           ""
+#define BLINK               ""
+#define REVERSE             ""
+#define HIDDEN              ""
+#define RESET_BOLD          ""
+#define RESET_DIM           ""
+#define RESET_UNDERLINE     ""
+#define RESET_BLINK         ""
+#define RESET_REVERSE       ""
+#define RESET_HIDDEN        ""
+#define BLACK               ""
+#define RED                 ""
+#define GREEN               ""
+#define YELLOW              ""
+#define BLUE                ""
+#define MAGENTA             ""
+#define CYAN                ""
+#define LIGHT_GREY          ""
+#define DEFAULT             ""
+#define BG_BLACK            ""
+#define BG_RED              ""
+#define BG_GREEN            ""
+#define BG_YELLOW           ""
+#define BG_BLUE             ""
+#define BG_MAGENTA          ""
+#define BG_CYAN             ""
+#define BG_LIGHT_GREY       ""
+#define DARK_GREY           ""
+#define LIGHT_RED           ""
+#define LIGHT_GREEN         ""
+#define LIGHT_YELLOW        ""
+#define LIGHT_BLUE          ""
+#define LIGHT_MAGENTA       ""
+#define LIGHT_CYAN          ""
+#define WHITE               ""
+#define BG_DARK_GREY        ""
+#define BG_LIGHT_RED        ""
+#define BG_LIGHT_GREEN      ""
+#define BG_LIGHT_YELLOW     ""
+#define BG_LIGHT_BLUE       ""
+#define BG_LIGHT_MAGENTA    ""
+#define BG_LIGHT_CYAN       ""
+#define BG_WHITE            ""
+#endif

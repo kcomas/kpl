@@ -6,10 +6,62 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <ctype.h>
+#include <stdatomic.h>
+#include <threads.h>
 
-#define DEF_STATUS(N) DEF_STATUS_##N
+#define DEF_EXIT_ERROR 1
+
+#define DEF_STATUS(NAME) DEF_STATUS_##NAME
 
 typedef enum [[gnu::packed]] {
     DEF_STATUS(OK),
     DEF_STATUS(ERROR)
 } def_status;
+
+typedef union {
+    bool b;
+    uint8_t u8;
+    uint16_t u16;
+    uint32_t u32;
+    uint64_t u64;
+    int8_t i8;
+    int16_t i16;
+    int32_t i32;
+    int64_t i64;
+    float f32;
+    double f64;
+    void *ptr;
+} def_data;
+
+#define DEF(_) ((def_data) { .u64 = 0 })
+#define DEF_B(VALUE) ((def_data) { .b = VALUE })
+#define DEF_U8(VALUE) ((def_data) { .u8 = VALUE })
+#define DEF_U16(VALUE) ((def_data) { .u16 = VALUE })
+#define DEF_U32(VALUE) ((def_data) { .u32 = VALUE })
+#define DEF_U64(VALUE) ((def_data) { .u64 = VALUE })
+#define DEF_I8(VALUE) ((def_data) { .i8 = VALUE })
+#define DEF_I16(VALUE) ((def_data) { .i16 = VALUE })
+#define DEF_I32(VALUE) ((def_data) { .i32 = VALUE })
+#define DEF_I64(VALUE) ((def_data) { .i64 = VALUE })
+#define DEF_F32(VALUE) ((def_data) { .f32 = VALUE })
+#define DEF_F64(VALUE) ((def_data) { .f64 = VALUE })
+
+extern def_data def_unused;
+
+typedef size_t def_hash_fn(const def_data data);
+
+typedef ssize_t def_cmp_fn(const def_data data_a, const def_data data_b);
+
+typedef bool def_eq_fn(const def_data data_a, const def_data data_b);
+
+typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t opts);
+
+typedef void def_free_fn(void *data);
+
+#define DEF_CONSTRUCTOR_MEM 110
+
+#define DEF_DESTRUCTOR_MEM 110

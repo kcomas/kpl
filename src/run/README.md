@@ -3,9 +3,11 @@
 
 Runtime data types and functions for those types
 
-Each data type associated with a struct has a print function pointer and a destructor function pointer
-
 ## run.h
+
+## header.h
+
+Each data type associated with a struct has a print function pointer and a destructor function pointer
 
 ## i64.[ch]
 

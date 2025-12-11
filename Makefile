@@ -21,9 +21,17 @@ CCOBJ = $(CC) -o $@ $^ $(CFLAGS)
 SOURCES := $(wildcard ./src/**/*.c)
 OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
 
+ifdef COLOR_OFF
+FLAGS += -DCOLOR_OFF
+endif
+
+ifdef MEM_POOL_OFF
+FLAGS += -DMEM_POOL_OFF
+endif
+
 kpl: OO := -O2
 kpl: WFLAGS += -Werror
-kpl: $(OBJECTS) ./src/main.o clean
+kpl: $(OBJECTS) ./src/main.o
 > $(CCOBJ)
 
 TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c)
@@ -35,8 +43,11 @@ ifdef TEST_THREAD
 FSAN := -fsanitize=thread
 endif
 
+ifdef TEST_MAX_COUNT
+FLAGS += -DTEST_MAX_COUNT=$(TEST_MAX_COUNT)
+endif
+
 tests: FFLAGS += $(FSAN)
-tests: WFLAGS += -Werror
 tests: $(OBJECTS) $(TEST_OBJECTS)
 > $(CCOBJ)
 
