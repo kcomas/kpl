@@ -29,10 +29,16 @@ static bool can_run_test(int argc, char *argv[], uint64_t *argv_mask, const char
     return false;
 }
 
+#define MAX_NAMED_TESTS 64
+
 int main(int argc, char *argv[]) {
     uint64_t argv_mask = 0;
     size_t pass_count = 0, fail_count = 0;
     test_fn *fn;
+    if (argc > MAX_NAMED_TESTS + 1) {
+        printf(COLOR2(BOLD, RED) "Max Number Of Named Tests Reached, Max Is %d\n" COLOR(RESET), MAX_NAMED_TESTS);
+        return DEF_EXIT_ERROR;
+    }
     for (int mask_idx = 1; mask_idx < argc; mask_idx++)
         argv_mask |= DEF_U64_MASK(mask_idx - 1);
     for (size_t test_idx = 0; test_idx < test_len; test_idx++) {
