@@ -31,7 +31,7 @@ var.fn(...)
 Names can be moved out of a base into the scope
 
 ```
-{ fn } : "./file"\import
+[ fn ] : "./file"\import
 fn(...)
 ```
 

@@ -13,16 +13,20 @@ void test_add(const char *name, test_fn fn) {
     test_array[test_len++] = (test) { .name = name, .run = { .fn = fn } };
 }
 
-static bool can_run_test(int argc, char *argv[], uint64_t *argv_mask, const char *name) {
+#define ARGC_SKIP 1
+
+static uint64_t argv_mask = 0;
+
+static bool can_run_test(int argc, char *argv[], const char *name) {
     if (argc == 1)
         return true;
-    if (!*argv_mask)
+    if (!argv_mask)
         return false;
     for (int mask_idx = 1; mask_idx < argc; mask_idx++) {
-        if (!(*argv_mask & DEF_U64_MASK(mask_idx - 1)))
+        if (!(argv_mask & DEF_U64_MASK(mask_idx - ARGC_SKIP)))
             continue;
-        if (strcmp(argv[mask_idx], name) == 0) {
-            *argv_mask ^= DEF_U64_MASK(mask_idx - 1);
+        if (!strcmp(argv[mask_idx], name)) {
+            argv_mask ^= DEF_U64_MASK(mask_idx - ARGC_SKIP);
             return true;
         }
     }
@@ -32,19 +36,17 @@ static bool can_run_test(int argc, char *argv[], uint64_t *argv_mask, const char
 #define MAX_NAMED_TESTS 64
 
 int main(int argc, char *argv[]) {
-    uint64_t argv_mask = 0;
-    size_t pass_count = 0, fail_count = 0;
-    test_fn *fn;
     if (argc > MAX_NAMED_TESTS + 1) {
         printf(COLOR2(BOLD, RED) "Max Number Of Named Tests Reached, Max Is %d\n" COLOR(RESET), MAX_NAMED_TESTS);
         return DEF_EXIT_ERROR;
     }
     for (int mask_idx = 1; mask_idx < argc; mask_idx++)
-        argv_mask |= DEF_U64_MASK(mask_idx - 1);
+        argv_mask |= DEF_U64_MASK(mask_idx - ARGC_SKIP);
+    size_t pass_count = 0, fail_count = 0;
     for (size_t test_idx = 0; test_idx < test_len; test_idx++) {
-        fn = test_array[test_idx].run.fn;
+        test_fn *fn = test_array[test_idx].run.fn;
         test_array[test_idx].run.er = NULL;
-        if (!can_run_test(argc, argv, &argv_mask, test_array[test_idx].name))
+        if (!can_run_test(argc, argv, test_array[test_idx].name))
             continue;
         printf("TEST %s\n", test_array[test_idx].name);
         fn(&test_array[test_idx]);

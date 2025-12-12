@@ -3,6 +3,11 @@
 
 ## Usage
 
+```
+make tests
+./tests
+```
+
 Each test function is defined by a TEST macro
 
 ```
@@ -24,6 +29,10 @@ Each test name must be unique
 Tests names can be passed to the test exec and only those tests will run
 
 Up to 64 names can be passed
+
+```
+tests mem_pooling # Only runs this test
+```
 
 ## Directory Structure
 

@@ -11,6 +11,14 @@
 MEM_MEM(cpy, const void *)
 MEM_MEM(set, uint8_t)
 
+void mem_list_remove(void *header) {
+   mem_obj *obj = header;
+   if (obj->prev)
+        obj->prev->next = obj->next;
+   if (obj->next)
+       obj->next->prev = obj->prev;
+}
+
 #ifndef MEM_POOL_OFF
 void mem_pool_init(mem_pool *pool) {
     mtx_init(&pool->mutex, mtx_plain);
@@ -32,10 +40,7 @@ void *mem_alloc(mem_pool *pool, size_t new_size) {
     for (head = pool->root; head; head = head->next) {
         if (head->obj_size < new_size)
             continue;
-        if (head->prev)
-            head->prev->next = head->next;
-        if (head->next)
-            head->next->prev = head->prev;
+        mem_list_remove(head);
         if (head == pool->root) {
             pool->root = pool->root->next;
             if (pool->root) {

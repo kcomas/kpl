@@ -1,5 +1,5 @@
 
-# Hash
+# Map
 
 Map of keys of a type to values of a type
 

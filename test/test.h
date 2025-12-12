@@ -5,7 +5,7 @@
 
 typedef struct _test test;
 
-typedef void test_fn(test *_t);
+typedef void test_fn(test *_test);
 
 #ifndef TEST_MAX_COUNT
 #define TEST_MAX_COUNT 1000
@@ -21,7 +21,7 @@ typedef struct _test {
 
 void test_add(const char *name, test_fn *fn);
 
-#define _TEST_FN(NAME) static void test_##NAME([[maybe_unused]] test *_t)
+#define _TEST_FN(NAME) static void test_##NAME([[maybe_unused]] test *_test)
 
 #define TEST(NAME) _TEST_FN(NAME); \
 [[gnu::constructor]] static void _test_##NAME(void) { \
@@ -29,7 +29,7 @@ void test_add(const char *name, test_fn *fn);
 } \
 _TEST_FN(NAME)
 
-#define _FAIL(MSG) _t->run.er = ERROR_INIT(NULL, 0, NULL, DEF(_), MSG); return
+#define _FAIL(MSG) _test->run.er = ERROR_INIT(NULL, 0, NULL, DEF(_), MSG); return
 
 #define ASSERT(STMT, MSG) do { \
     if (!(STMT)) { \

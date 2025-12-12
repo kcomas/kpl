@@ -1,7 +1,7 @@
 
 # KPL (Kevin's Programming Language)
 
-## Work in Progress
+### ***Work In Progress***
 
 ## Requirements
 
@@ -11,12 +11,17 @@
 
 ### GNU Make
 
+## Using
+
+```
+git clone https://github.com/kcomas/kpl.git
+# TODO
+```
+
 ## Documentation
 
 ### [Specification](./doc/README.md)
 
 ### [Implementation](./src/README.md)
-
-### [Building](./main/README.md)
 
 ### [Testing](./test/README.md)

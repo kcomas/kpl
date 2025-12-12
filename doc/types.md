@@ -79,13 +79,11 @@ See namespaces
 
 #### [Struct](./types/struct.md)
 
-#### Table
-
 #### [Union](./types/union.md)
 
-### Hash[Key Type; Value Type]
+### Map[Key Type; Value Type]
 
-#### [Hash](./types/hash.md)
+#### [Map](./types/map.md)
 
 ### Fn[Return Type] {Type\`Symbol...}
 

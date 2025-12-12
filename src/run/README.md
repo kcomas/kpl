@@ -7,7 +7,7 @@ Runtime data types and functions for those types
 
 ## header.h
 
-Each data type associated with a struct has a print function pointer and a destructor function pointer
+Each data type associated with a struct has a print function pointer with its print options and a destructor function pointer
 
 ## i64.[ch]
 
@@ -15,6 +15,10 @@ Each data type associated with a struct has a print function pointer and a destr
 
 ## f64.[ch]
 
-## hash.[ch]
+## map.[ch]
+
+Ordered hash map
 
 ## error.[ch]
+
+Container for errors

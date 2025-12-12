@@ -3,7 +3,7 @@
 
 #include "./def.h"
 
-#define MEM_HEADER(STRUCT_NAME) size_t obj_size; struct STRUCT_NAME *prev, *next;
+#define MEM_HEADER(STRUCT_NAME) struct STRUCT_NAME *prev, *next; uint32_t obj_size;
 
 typedef struct _mem_obj {
     MEM_HEADER(_mem_obj);
@@ -18,6 +18,8 @@ typedef struct {
 void *mem_memcpy(void *dest, const void *src, size_t size);
 
 void *mem_memset(void *dest, uint8_t value, size_t size);
+
+void mem_list_remove(void *header);
 
 #ifndef MEM_POOL_OFF
 #define MEM_POOL(POOL_NAME) mem_pool POOL_NAME = (mem_pool) {}; \

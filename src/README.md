@@ -11,9 +11,11 @@ Each directory has a directory_name.h file as a single header for all of it's pa
 
 ### Ast
 
+### Parser
+
 ### Import
 
-### Parser
+### Fold
 
 ### Check
 
@@ -39,14 +41,15 @@ Application entry point
 
 Lib -> X64
 Lib -> Run
-Lib -> Import
 Lib Run -> Namespace
 Namespace -> Type
 Type X64 -> Ir
 Type -> Ast
-Ast Ir -> Gen
-Gen -> Eval
-Eval -> Check
-Check -> Parser
-Import Parser -> Core
+Ast -> Parser
+Parser -> Import
+Import -> Fold
+Fold -> Check
+Check -> Eval
+Eval Ir -> Gen
+Gen -> Core
 Core -> main.c

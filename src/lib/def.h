@@ -67,3 +67,5 @@ typedef void def_free_fn(void *data);
 #define DEF_CONSTRUCTOR_MEM 110
 
 #define DEF_DESTRUCTOR_MEM 110
+
+size_t def_hash64shift(size_t key);
