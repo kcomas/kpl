@@ -142,7 +142,10 @@ void map_print(const map *ma, FILE *file, size_t idnt, map_print_opts opts) {
     if (!ma->print_fn)
         return;
     for (map_bucket *head = ma->head; head; head = head->next)
-        ma->print_fn(head->data, file, idnt, ma->print_opts);
+        if (head == ma->head && (opts & MAP_PRINT(NO_FIRST_IDNT)))
+            ma->print_fn(head->data, file, 0, ma->print_opts);
+        else
+            ma->print_fn(head->data, file, idnt, ma->print_opts);
     if (opts & MAP_PRINT(NL_END))
         fprintf(file, "\n");
 }
