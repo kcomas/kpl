@@ -52,8 +52,8 @@ If interrupted by signal returns error
 
 ```
 .sys.sleep : Namespace[Overload {
-    C[Fn[Result<Void>] { U64`seconds }
-    C[Fn[Result<Void>] { U64`seconds; U64`nano_seconds }
+    Fn[Result<Void>] { U64`seconds }
+    Fn[Result<Void>] { U64`seconds; U64`nano_seconds }
 }]]
 ```
 
@@ -100,8 +100,8 @@ Color strings for terminal printing
 
 ```
 .math.ceil : Namespace[Overload {
-    C[Fn[I32] { F32`number }]
-    C[Fn[I64] { F64`number }]
+    Fn[I32] { F32`number }
+    Fn[I64] { F64`number }
 }]
 ```
 
@@ -109,8 +109,8 @@ Color strings for terminal printing
 
 ```
 .math.floor : Namespace[Overload {
-    C[Fn[I32] { F32`number }]
-    C[Fn[I64] { F64`number }]
+    Fn[I32] { F32`number }
+    Fn[I64] { F64`number }
 }]
 ```
 
@@ -120,8 +120,8 @@ Natural logarithm
 
 ```
 .math.log : Namespace[Overload {
-    C[Fn[Result[F32]] { F32`number }]
-    C[Fn[Result[F64]] { F64`number }]
+    Fn[Result[F32]] { F32`number }
+    Fn[Result[F64]] { F64`number }
 }]
 ```
 

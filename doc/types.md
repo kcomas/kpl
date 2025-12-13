@@ -41,9 +41,7 @@ A unique identifier, cannot be stored
 
 #### [Regex](./types/regex.md)
 
-#### Base
-
-See namespaces
+#### [Namespace](./namespaces.md)
 
 #### Error
 
@@ -91,7 +89,7 @@ See namespaces
 
 #### [Coroutine](./functions.md)
 
-### Lambda[Return Type] {Type\`Arg Symbol...} {Type\`Scope Symbol...}
+### Lambda[Return Type] {Type\`Arg_Symbol...} {Type\`Scope_Symbol...}
 
 #### [Lambda](./functions.md)
 
@@ -99,17 +97,19 @@ See namespaces
 
 #### [Overload](./functions.md)
 
-### C[Type]
+### [Tag { Type\`Symbol : Data }](./types/tag.md)
 
-## [Tag](./types/tag.md)
-
-## [Qualifiers](./types/qualifiers.md)
-
-## Aliases
+### Alias[Type]
 
 A user defined type
 
 ```
-Array_i64_len_3 :: Array[I64; 3]
+Array_i64_len_3 : Array[I64; 3]
 x :: Array_i64_len_3 { 1; 2; 3 }
 ```
+
+### Var[Type]
+
+### Arg[Type]
+
+## [Qualifiers](./types/qualifiers.md)

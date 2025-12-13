@@ -41,10 +41,10 @@ Application entry point
 
 Lib -> X64
 Lib -> Run
-Lib Run -> Namespace
-Namespace -> Type
+Lib Run -> Type
+Type -> Namespace
 Type X64 -> Ir
-Type -> Ast
+Namespace -> Ast
 Ast -> Parser
 Parser -> Import
 Import -> Fold

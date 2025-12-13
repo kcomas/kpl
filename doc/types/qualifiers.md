@@ -1,7 +1,7 @@
 
 # Qualifiers
 
-Type modifications
+Type modifications, only one can be applied
 
 ### Const[Type]
 

@@ -1,7 +1,7 @@
 
 // Fibonacci example
 
-fib : Fn[I64] { I64`n
+fib\export : Fn[I64] { I64`n
     ? {
         n < 1 ? 0
         n <= 2 ? 1
@@ -9,9 +9,7 @@ fib : Fn[I64] { I64`n
     }
 }
 
-fib\export
-
-print_fib : Fn { U64`idx; I64`n
+print_fib\export : Fn { U64`idx; I64`n
     [ clear; blue; magenta; green ] : .io.colors.strings
     .io.stdout << String {
         blue
@@ -29,8 +27,6 @@ print_fib : Fn { U64`idx; I64`n
     }
 
 }
-
-print_fib\export
 
 \is_main ? {
     usage : String { "Usage "; .sys.args`0; " ./"; .sys.args`1; " nth_number_to_calculate\n" }

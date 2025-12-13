@@ -17,9 +17,13 @@ Helpers for pretty printing
 
 Memory pool utility
 
-## gc.[ch]
+## count.[ch]
 
-Tracing Garbage Collector
+Reference counting container
+
+## trace.[ch]
+
+Tracing garbage collector
 
 ## task.[ch]
 

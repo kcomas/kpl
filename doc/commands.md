@@ -29,6 +29,10 @@ Start a REPL debugger
 
 ## \disassemble
 
+## \type
+
+## \return_type
+
 ## Documented Elsewhere
 
 ### \char
