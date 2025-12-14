@@ -29,7 +29,7 @@ void test_add(const char *name, test_fn *fn);
 } \
 _TEST_FN(NAME)
 
-#define _FAIL(MSG) _test->run.er = ERROR_INIT(NULL, 0, NULL, DEF(_), MSG); return
+#define _FAIL(MSG) _test->run.er = ERROR_INIT(0, &def_unused_fn_table, DEF(_), MSG); return
 
 #define ASSERT(STMT, MSG) do { \
     if (!(STMT)) { \

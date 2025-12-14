@@ -12,11 +12,11 @@ typedef struct _error {
 
 #define ERROR_PRINT(NAME) ERROR_PRINT_##NAME
 
-error *_error_init(def_print_fn print_fn, uint32_t print_opts, def_free_fn free_fn, def_data data,
+error *_error_init(uint32_t print_opts, def_fn_table *fn_table, def_data data,
     const char *msg, const char *file, const char *function, int32_t line);
 
-#define ERROR_INIT(PRINT_FN, DATA_PRINT_OPTS, FREE_FN, DATA, MSG) \
-    _error_init(PRINT_FN, DATA_PRINT_OPTS, FREE_FN, DATA, MSG, __FILE__, __FUNCTION__, __LINE__)
+#define ERROR_INIT(PRINT_OPTS, FN_TABLE, DATA, MSG) \
+    _error_init(PRINT_OPTS, FN_TABLE, DATA, MSG, __FILE__, __FUNCTION__, __LINE__)
 
 void error_free(error *er);
 

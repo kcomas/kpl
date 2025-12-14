@@ -3,12 +3,11 @@
 
 MEM_POOL(error_pool)
 
-error *_error_init(def_print_fn print_fn, uint32_t print_opts, def_free_fn free_fn, def_data data,
+error *_error_init(uint32_t print_opts, def_fn_table *fn_table, def_data data,
     const char *msg, const char *file, const char *function, int32_t line) {
     error *er = mem_alloc(&error_pool, sizeof(error));
-    er->print_fn = print_fn;
     er->print_opts = print_opts;
-    er->free_fn = free_fn;
+    er->fn_table = fn_table;
     er->data = data;
     er->msg = msg;
     er->file = file;
@@ -21,8 +20,8 @@ void error_free(error *er) {
     while (er) {
         error *tmp = er;
         er = er->next;
-        if (tmp->free_fn && tmp->data.ptr)
-            tmp->free_fn(tmp->data.ptr);
+        if (tmp->fn_table->free_fn && tmp->data.ptr)
+            tmp->fn_table->free_fn(tmp->data.ptr);
         mem_free(&error_pool, tmp);
     }
 }
@@ -40,8 +39,8 @@ void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts opt
     fprintf(file, COLOR(GREEN) "%d" COLOR(RESET) ":", er->line);
     if (er->msg)
         fprintf(file, COLOR(LIGHT_RED) "%s" COLOR(RESET), er->msg);
-    if (er->print_fn)
-        er->print_fn(er->data, file, idnt, er->print_opts);
+    if (er->fn_table->print_fn)
+        er->fn_table->print_fn(er->data, file, idnt, er->print_opts);
     if (er->next)
         error_print(er->next, file, idnt, opts);
     if (opts & ERROR_PRINT(NL_END))

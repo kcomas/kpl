@@ -9,7 +9,9 @@
 
 ### Or |
 
-### Equal =
+### Shallow Equal =
+
+### Deep Equal ==
 
 ### Not Equal !=
 

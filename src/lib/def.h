@@ -60,9 +60,27 @@ typedef ssize_t def_cmp_fn(const def_data data_a, const def_data data_b);
 
 typedef bool def_eq_fn(const def_data data_a, const def_data data_b);
 
+typedef def_data def_copy_fn(const def_data data);
+
+typedef struct _ser_buffer ser_buffer;
+
+typedef ser_buffer *def_serialize_fn(const def_data data);
+
 typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t opts);
 
 typedef void def_free_fn(void *data);
+
+typedef struct {
+    def_hash_fn *hash_fn;
+    def_cmp_fn *cmp_fn;
+    def_eq_fn *eq_fn;
+    def_copy_fn *copy_fn;
+    def_serialize_fn *serialize_fn;
+    def_print_fn *print_fn;
+    def_free_fn *free_fn;
+} def_fn_table;
+
+extern def_fn_table def_unused_fn_table;
 
 #define DEF_CONSTRUCTOR_MEM 110
 

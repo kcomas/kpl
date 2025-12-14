@@ -41,7 +41,7 @@ A unique identifier, cannot be stored
 
 #### [Regex](./types/regex.md)
 
-#### [Namespace](./namespaces.md)
+#### [Base](./namespaces.md)
 
 #### Error
 

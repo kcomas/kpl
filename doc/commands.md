@@ -33,6 +33,8 @@ Start a REPL debugger
 
 ## \return_type
 
+## \copy
+
 ## Documented Elsewhere
 
 ### \char
