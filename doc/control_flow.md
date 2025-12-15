@@ -4,39 +4,45 @@
 ## If
 
 ```
-condition ? statement or { lambda }
+condition or { lambda }  ? statement or { lambda }
 
-var :: condition ? {
+var :: condition or { lambda } ? (
     statement or { lambda } then
     statement or { lambda } else
-}
+)
 
-var :: ? {
-    condition ? statement or { lambda } then
+var :: ? (
+    condition or { lambda } ? statement or { lambda } then
     ...
     statement or { lambda } else
-}
+)
 ```
 
 ## Loop
 
+### Labels
+
+{}\`symbol can be used as a label to name the loop in the scope
+
 ```
-condition @ statement or { lambda }
+condition or { lambda } @ statement or { lambda } or { lamba }`label
 
-{ variable; condition; each } @ statement or { lambda }
-
-loopable @ { each }
+loopable @ statment or { lambda } or { lambda }`label
 ```
 
 ### \break
 
+#### \`label\break
+
 ### \continue
+
+#### \`label\continue
 
 ## Match
 
 ```
-var :: matchable # {
+var :: matchable # (
     { TYPE`var lambda }`symbol
     ...
-}
+)
 ```

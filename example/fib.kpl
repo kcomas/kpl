@@ -2,16 +2,16 @@
 // Fibonacci example
 
 fib\export : Fn[I64] { I64`n
-    ? {
+    ? (
         n < 1 ? 0
         n <= 2 ? 1
         fib(n - 1) + fib(n - 2)
-    }
+    )
 }
 
 print_fib\export : Fn { U64`idx; I64`n
-    [ clear; blue; magenta; green ] : .io.colors.strings
-    .io.stdout << String {
+    .io.colors.strings [ reset; blue; magenta; green ]
+    .io.stdout << String (
         blue
         "fib"
         clear
@@ -22,15 +22,15 @@ print_fib\export : Fn { U64`idx; I64`n
         ") = "
         green
         String $ fib(n)
-        clear
+        reset
         "\n"
-    }
+    )
 
 }
 
 \is_main ? {
-    usage : String { "Usage "; .sys.args`0; " ./"; .sys.args`1; " nth_number_to_calculate\n" }
+    usage : String ( "Usage "; .sys.args`0; " ./"; .sys.args`1; " nth_number_to_calculate\n" )
     arg : usage ^ .sys.args`2
-    n : String { "Invalid number got: "; arg; "\n"; usage } ^ I64 $ arg
+    n : String ( "Invalid number got: "; arg; "\n"; usage ) ^ I64 $ arg
     print_fib(n; fib(n))
 }

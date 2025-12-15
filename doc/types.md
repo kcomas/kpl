@@ -1,6 +1,10 @@
 
 # Types
 
+## Type Declaration Type[...]
+
+## Type Definition Type(...)
+
 ## Classes
 
 How a type is stored internally
@@ -69,11 +73,11 @@ A unique identifier, cannot be stored
 
 ### Op[Return Type; Left Type; Right Type]
 
-### Enum[Type] { \`Symbol : Value }
+### Enum[Type; \`Symbol : Value]
 
 #### [Enum](./types/enum.md)
 
-### Struct {Type\`Symbol...}
+### Struct[Type\`Symbol...]
 
 #### [Struct](./types/struct.md)
 
@@ -83,33 +87,33 @@ A unique identifier, cannot be stored
 
 #### [Map](./types/map.md)
 
-### Fn[Return Type] {Type\`Symbol...}
+### Fn[Return Type; Type\`Symbol...]
 
 #### [Fn](./functions.md)
 
 #### [Coroutine](./functions.md)
 
-### Lambda[Return Type] {Type\`Arg_Symbol...} {Type\`Scope_Symbol...}
+### Lambda[Return Type] [Type\`Arg_Symbol...] [Type\`Scope_Symbol...]
 
 #### [Lambda](./functions.md)
 
-### Overload { Fn1; Fn2; ...}
+### Overload[Fn1; Fn2; ...]
 
 #### [Overload](./functions.md)
 
-### [Tag { Type\`Symbol : Data }](./types/tag.md)
+### [Tag Type\`Symbol : Data](./types/tag.md)
 
-### Alias[Type]
+#### Tag[Type]
+
+#### Alias[Type]
 
 A user defined type
 
 ```
 Array_i64_len_3 : Array[I64; 3]
-x :: Array_i64_len_3 { 1; 2; 3 }
+x :: Array_i64_len_3 ( 1; 2; 3 )
 ```
 
-### Var[Type]
-
-### Arg[Type]
+#### Var[Type]
 
 ## [Qualifiers](./types/qualifiers.md)

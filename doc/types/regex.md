@@ -6,14 +6,16 @@ PCRE Regular Expressions
 ## Creating
 
 ```
-Regex { flags; "subsitition"; "pattern" }
-
-~ "pattern"
-
-flags ~ "pattern"
-
-flags ~ "subsitition" ~ "pattern"
+Regex ( "pattern"; "subsitition"; flags )
 ```
+
+## Using
+
+String ~ "pattern"
+
+String ~ Regex ( "pattern"; flags )
+
+String ~ Regex ( "pattern"; "subsitition"; flags )
 
 ## Flags
 

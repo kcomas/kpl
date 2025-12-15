@@ -36,7 +36,7 @@ Recursive functions cannot be inferred and must have the return type
 Chooses function based on args
 
 ```
-var : Overload { Fn[Type] { Body }; Fn[Type] { body } ... }
+var : Overload [ Fn[Type] { lambda }; Fn[Type] { lambda }; ... ]
 ```
 
 ## Lambda
@@ -59,6 +59,14 @@ Lambdas passed as functions can infer their args
 map_example : { `x; x + 1 }  @ Array { 1; 2; 3}
 map_example\log // Array[I64] { 2 3 4 }
 ```
+
+### Tagged Lambda
+
+```
+{ lambda }`symbol }
+```
+
+The label is used for matching and named loops
 
 ### Closure
 

@@ -25,4 +25,4 @@
 
 ## Other
 
-### Compare <=> Enum[I32] { \`equal { 0 }; \`left { -1 }; \`right { 1 } }
+### Compare <=> Enum[I32] ( \`equal : 0 ; \`left : -1 ; \`right : 1 )

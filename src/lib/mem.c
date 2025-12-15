@@ -19,6 +19,14 @@ void mem_list_remove(void *header) {
        obj->next->prev = obj->prev;
 }
 
+static void *mem_malloc(size_t new_size) {
+    if (new_size < sizeof(mem_obj))
+        new_size += sizeof(mem_obj);
+    mem_obj *obj = malloc(new_size);
+    obj->prev = obj->next = NULL;
+    return obj;
+}
+
 #ifndef MEM_POOL_OFF
 void mem_pool_init(mem_pool *pool) {
     mtx_init(&pool->mutex, mtx_plain);
@@ -53,13 +61,11 @@ void *mem_alloc(mem_pool *pool, size_t new_size) {
     }
     mtx_unlock(&pool->mutex);
     if (!head) {
-        if (new_size < sizeof(mem_obj))
-            new_size += sizeof(mem_obj);
-        head = malloc(new_size);
+        head = mem_malloc(new_size);
         head->obj_size = new_size;
         pool->allocs++;
-    }
-    head->prev = head->next = NULL;
+    } else
+        head->prev = head->next = NULL;
     return head;
 }
 
@@ -77,11 +83,11 @@ void mem_free(mem_pool *pool, void *data) {
 #else
 void *mem_alloc(mem_pool *pool, size_t new_size) {
     (void) pool;
-    return malloc(new_size);
+    return mem_malloc(new_size);
 }
 
 void mem_free(mem_pool *pool, void *data) {
-    (void) pool
+    (void) pool;
     free(data);
 }
 #endif

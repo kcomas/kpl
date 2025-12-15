@@ -9,6 +9,8 @@ bool i64_eq(const def_data data_a, const def_data data_b);
 
 def_data i64_copy_fn(const def_data data);
 
+ser_buffer *i64_serialize_fn(const def_data data);
+
 #define I64_PRINT(NAME) I64_PRINT_##NAME
 
 typedef enum [[gnu::packed]] {

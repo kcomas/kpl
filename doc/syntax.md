@@ -45,17 +45,14 @@ Reads until end of statement
 
 `7 = *(3; 2) + 1`
 
-`7 = { 3 * 2 } + 1`
-
-
 ```
 // invalid
 1 +
     2
 // valid
-1 + {
+1 + (
     2
-}
+)
 ```
 
 ## Statements
@@ -65,30 +62,34 @@ Reads until end of statement
 ## Lists
 
 ```
-Array { 1; 2; 3 }
-Array {
+Array ( 1; 2; 3 )
+Array (
     1
     2
     3
-}
-Array { 1
+)
+Array ( 1
     2
-3 }
+3 )
 ```
 
-#### {} List of Statements
+#### {} List of Statements, Lambda
 
-By default statements from left to right "returning" the value from the last statement
+Statements from left to right "returning" the value from the last statement
 
-Types and operators change statement behavior
+Has Scope
 
-#### () List of Arguments
+#### () List of Arguments, Application
 
-Apply list of statements to a target
+Apply list of arguments to a target
 
-#### [] List of Types
+Does not have scope
 
-For type definitions
+#### [] List of Definitions
+
+For creating type definitions and destructuring
+
+Does not have scope, can modify the current scope
 
 ## Grammar
 
