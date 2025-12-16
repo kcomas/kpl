@@ -18,7 +18,7 @@ WFLAGS := -Wall -Wextra -Wstack-protector
 CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
 CCOBJ = $(CC) -o $@ $^ $(CFLAGS)
 
-SOURCES := $(wildcard ./src/**/*.c)
+SOURCES := $(wildcard ./src/**/*.c) $(wildcard ./src/**/**/*.c)
 OBJECTS := $(patsubst %.c,%.o,$(SOURCES))
 
 ifdef COLOR_OFF
