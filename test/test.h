@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../src/run/run.h"
+#include "../src/type/type.h"
 
 typedef struct _test test;
 

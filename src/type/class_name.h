@@ -12,7 +12,6 @@ typedef enum [[gnu::packed]] {
     TYPE_CLASS(STRUCT),
     TYPE_CLASS(MAP),
     TYPE_CLASS(FN),
-    TYPE_CLASS(LAMBDA),
     TYPE_CLASS(OVERLOAD),
     TYPE_CLASS(TAG),
     TYPE_CLASS(_)
@@ -62,7 +61,6 @@ typedef enum [[gnu::packed]] {
     // FN
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
-    // LAMBDA
     TYPE_NAME(LAMBDA),
     // OVERLOAD
     TYPE_NAME(OVERLOAD),

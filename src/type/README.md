@@ -7,9 +7,9 @@ Internal flags that change the type behavior
 
 ### TRACING_GC
 
-### VAR_VALUE
-
 ### VAR_MOVED
+
+Once set var cannot be used
 
 ### VAR_ARG
 

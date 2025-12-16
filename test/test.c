@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     size_t pass_count = 0, fail_count = 0;
     for (size_t test_idx = 0; test_idx < test_len; test_idx++) {
         test_fn *fn = test_array[test_idx].run.fn;
-        test_array[test_idx].run.er = NULL;
+        test_array[test_idx].run.er = NULL; // must loop though all to null er
         if (!can_run_test(argc, argv, test_array[test_idx].name))
             continue;
         printf("TEST %s\n", test_array[test_idx].name);

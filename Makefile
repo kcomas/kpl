@@ -34,7 +34,7 @@ kpl: WFLAGS += -Werror
 kpl: $(OBJECTS) ./src/main.o
 > $(CCOBJ)
 
-TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c)
+TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c) $(wildcard ./test/**/**/*.c)
 TEST_OBJECTS := $(patsubst %.c,%.o,$(TEST_SOURCES))
 
 FSAN := -fsanitize=address,leak,undefined

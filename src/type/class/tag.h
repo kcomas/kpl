@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../run/run.h"
+#include "../header.h"
 
 // Stores A-Za-z0-9_ (0 - 63) values in 6 bits each
 // as c str symbol(without `) + null term
@@ -22,17 +22,18 @@
 
 #define TYPE_SYMBOL_C_STR_SIZE (TYPE_SYMBOL_LEN + TYPE_SYMBOL_PAD_STR)
 
-typedef struct _type type;
-
 typedef struct _type_tag {
-    MEM_HEADER(_type_tag);
-    type *inner_type;
-    def_fn_table *fn_table;
+    RUN_HEADER(_type_tag);
     def_data data;
-    size_t id;
+    type *inner_type;
+    ssize_t stk_reg_id; // -1 not used
     uint64_t symbol[TYPE_SYMBOL_PARTS];
 } type_tag;
 
-def_status type_tag_symbol_from_c_str(type_tag *tag, const char *c_str);
+type_tag *type_tag_init(type *inner_type, uint32_t print_opts, def_fn_table *fn_table, def_data data);
 
-def_status type_tag_symbol_to_c_str(const type_tag *tag, char c_str[TYPE_SYMBOL_C_STR_SIZE]);
+void type_tag_free(type_tag *tag);
+
+def_status type_tag_symbol_from_c_str_slice(type_tag *tag, const char *c_str, size_t str_len);
+
+def_status type_tag_symbol_to_byte_array(const type_tag *tag, uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE]);

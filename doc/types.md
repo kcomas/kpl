@@ -93,8 +93,6 @@ A unique identifier, cannot be stored
 
 #### [Coroutine](./functions.md)
 
-### Lambda[Return Type] [Type\`Arg_Symbol...] [Type\`Scope_Symbol...]
-
 #### [Lambda](./functions.md)
 
 ### Overload[Fn1; Fn2; ...]

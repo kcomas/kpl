@@ -85,7 +85,7 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(MAP, MAP),
     CLASS_NAME(FN, FN),
     CLASS_NAME(FN, COROUTINE),
-    CLASS_NAME(LAMBDA, LAMBDA),
+    CLASS_NAME(FN, LAMBDA),
     CLASS_NAME(OVERLOAD, OVERLOAD),
     CLASS_NAME(TAG, TAG),
     CLASS_NAME(TAG, ALIAS),
