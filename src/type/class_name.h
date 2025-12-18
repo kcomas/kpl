@@ -5,14 +5,10 @@
 
 typedef enum [[gnu::packed]] {
     TYPE_CLASS(SCALAR),
-    TYPE_CLASS(ARRAY),
+    TYPE_CLASS(FIXED),
     TYPE_CLASS(VECTOR),
-    TYPE_CLASS(OP),
-    TYPE_CLASS(ENUM),
-    TYPE_CLASS(STRUCT),
-    TYPE_CLASS(MAP),
-    TYPE_CLASS(FN),
-    TYPE_CLASS(OVERLOAD),
+    TYPE_CLASS(LIST),
+    TYPE_CLASS(TABLE),
     TYPE_CLASS(TAG),
     TYPE_CLASS(_)
 } type_class;
@@ -40,8 +36,9 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(ERROR),
     TYPE_NAME(FD),
     TYPE_NAME(SOCKET),
-    // ARRAY
+    // SIZE
     TYPE_NAME(ARRAY),
+    TYPE_NAME(TMP),
     // VECTOR
     TYPE_NAME(VECTOR),
     TYPE_NAME(SET),
@@ -49,25 +46,23 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(OPTION),
     TYPE_NAME(CLOSURE),
     TYPE_NAME(THREAD),
-    // OP
+    // LIST
     TYPE_NAME(OP),
+    TYPE_NAME(MAP),
+    TYPE_NAME(OVERLOAD),
     // ENUM
     TYPE_NAME(ENUM),
-    // STRUCT
+    // TABLE
     TYPE_NAME(STRUCT),
     TYPE_NAME(UNION),
-    // MAP
-    TYPE_NAME(MAP),
-    // FN
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
     TYPE_NAME(LAMBDA),
-    // OVERLOAD
-    TYPE_NAME(OVERLOAD),
     // TAG
     TYPE_NAME(TAG),
     TYPE_NAME(ALIAS),
     TYPE_NAME(VAR),
+    TYPE_NAME(ARG),
     TYPE_NAME(_)
 } type_name;
 

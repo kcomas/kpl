@@ -53,9 +53,11 @@ A unique identifier, cannot be stored
 
 #### Socket
 
-### Array[Inner Type; Length]
+### Fixed[Inner Type; Length]
 
 #### [Array](./types/array.md)
+
+### Tmp
 
 ### Vector[Inner Type]
 
@@ -71,23 +73,21 @@ A unique identifier, cannot be stored
 
 #### [Thread](./threading.md)
 
-### Op[Return Type; Left Type; Right Type]
+### List[Type; Type; ...]
 
-### Enum[Type; \`Symbol : Value]
+#### Op
+
+#### [Map](./types/map.md)
+
+#### [Overload](./functions.md)
+
+### Table[Type; Type\`Symbol : Value; ...]
 
 #### [Enum](./types/enum.md)
-
-### Struct[Type\`Symbol...]
 
 #### [Struct](./types/struct.md)
 
 #### [Union](./types/union.md)
-
-### Map[Key Type; Value Type]
-
-#### [Map](./types/map.md)
-
-### Fn[Return Type; Type\`Symbol...]
 
 #### [Fn](./functions.md)
 
@@ -95,15 +95,11 @@ A unique identifier, cannot be stored
 
 #### [Lambda](./functions.md)
 
-### Overload[Fn1; Fn2; ...]
-
-#### [Overload](./functions.md)
-
 ### [Tag Type\`Symbol : Data](./types/tag.md)
 
 #### Tag[Type]
 
-#### Alias[Type]
+#### Alias
 
 A user defined type
 
@@ -112,6 +108,8 @@ Array_i64_len_3 : Array[I64; 3]
 x :: Array_i64_len_3 ( 1; 2; 3 )
 ```
 
-#### Var[Type]
+#### Var
+
+#### Arg
 
 ## [Qualifiers](./types/qualifiers.md)

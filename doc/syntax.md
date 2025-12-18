@@ -81,7 +81,7 @@ Has Scope
 
 #### () List of Arguments, Application
 
-Apply list of arguments to a target
+Apply list of arguments to a target, cannot modify current scope
 
 Does not have scope
 

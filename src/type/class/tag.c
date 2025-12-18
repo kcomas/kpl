@@ -95,3 +95,16 @@ def_status type_tag_symbol_to_byte_array(const type_tag *tag, uint8_t buffer[TYP
     }
     return DEF_STATUS(OK);
 }
+
+void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts) {
+    fprintf(file, "%*s", idnt, "");
+    if (tag->inner_type)
+        type_print(tag->inner_type, file, 0, opts);
+    uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE] = {};
+    if (type_tag_symbol_to_byte_array(tag, buffer) == DEF_STATUS(OK))
+        printf(COLOR(CYAN) "`%s" COLOR(RESET), buffer);
+    if (tag->fn_table->print_fn)
+        tag->fn_table->print_fn(tag->data, file, 1, tag->print_opts);
+    if (opts & TYPE_PRINT(CLASS_NL_END))
+        fprintf(file, "\n");
+}

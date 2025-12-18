@@ -37,3 +37,5 @@ void type_tag_free(type_tag *tag);
 def_status type_tag_symbol_from_c_str_slice(type_tag *tag, const char *c_str, size_t str_len);
 
 def_status type_tag_symbol_to_byte_array(const type_tag *tag, uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE]);
+
+void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts);

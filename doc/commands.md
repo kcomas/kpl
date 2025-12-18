@@ -7,9 +7,9 @@ Runtime Modifiers
 var\command
 ```
 
-## \is_main
+## { lambda }\is_main
 
-Is this file the main file
+Run lambda if this file is not imported
 
 ## \export
 

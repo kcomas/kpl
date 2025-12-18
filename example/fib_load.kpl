@@ -5,6 +5,6 @@
 
 total : Const[U64] $ 31
 
-values : { I64`_; U64`idx; fib(I64 $ idx) } @ Array[I64;total] ()
+values : { I64`_; U64`idx; fib(I64 $ idx) } @ Array[I64; total] ()
 
 values @ { I64`n; U64`idx; print_fib(idx; n) }

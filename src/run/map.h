@@ -47,7 +47,8 @@ def_status map_action(map **ma, map_mode mode, def_data search, def_data *found)
 
 typedef enum [[gnu::packed]] {
     MAP_PRINT(NL_END)           = 1 << 0,
-    MAP_PRINT(NO_FIRST_IDNT)    = 1 << 1
+    MAP_PRINT(NO_FIRST_IDNT)    = 1 << 1,
+    MAP_PRINT(SEMI_SPACER)      = 1 << 2
 } map_print_opts;
 
-void map_print(const map *ma, FILE *file, size_t idnt, map_print_opts opts);
+void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts opts);
