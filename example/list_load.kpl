@@ -5,7 +5,7 @@ list_fns : "./list.kpl"\load
 
 list : list_fns.list_new()
 
-(counter : 1; counter <= 10; counter +: 1) @ list_fns.list_push(list; counter)
+1 .. 10 @ { `counter; list_fns.list_push(list; counter) }
 
 list_fns.list_each(list; { I64`value; U64`idx
     .io.colors.strings [ reset; blue; green; bold ]

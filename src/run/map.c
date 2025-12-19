@@ -133,9 +133,31 @@ def_status map_action(map **ma, map_mode mode, def_data search, def_data *found)
     return DEF_STATUS(ERROR);
 }
 
+size_t map_hash(const map *ma) {
+    size_t hash = ma->used;
+    if (!ma)
+        return 0;
+    for (const map_bucket *bucket = ma->head; bucket; bucket = bucket->next)
+        hash += ma->fn_table->hash_fn(bucket->data);
+    return hash;
+}
+
+bool map_eq(const map *ma_a, const map *ma_b) {
+    if (ma_a == ma_b)
+        return true;
+    if (!ma_a || !ma_b || ma_a->used != ma_b->used)
+        return false;
+    const map_bucket *bucket_a = ma_a->head, *bucket_b = ma_b->head;
+    while (bucket_a && bucket_b) {
+        if (!ma_a->fn_table->eq_fn(bucket_a->data, bucket_b->data))
+            return false;
+        bucket_a = bucket_a->next;
+        bucket_b = bucket_b->next;
+    }
+    return !bucket_a && !bucket_b;
+}
+
 void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts opts) {
-    if (!ma->fn_table->print_fn)
-        return;
     for (map_bucket *head = ma->head; head; head = head->next) {
         if (head == ma->head && (opts & MAP_PRINT(NO_FIRST_IDNT)))
             ma->fn_table->print_fn(head->data, file, 0, ma->print_opts);

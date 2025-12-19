@@ -3,13 +3,28 @@
 
 def_data def_unused = DEF(_);
 
+static size_t def_unused_hash_fn(const def_data data) {
+    return (size_t) data.u64;
+}
+
+static bool def_unused_eq_fn(const def_data data_a, const def_data data_b) {
+    return data_a.u64 == data_b.u64;
+}
+
+static void def_unused_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t opts) {
+    (void) data;
+    (void) file;
+    (void) idnt;
+    (void) opts;
+}
+
 def_fn_table def_unused_fn_table = {
-    .hash_fn = NULL,
+    .hash_fn = def_unused_hash_fn,
     .cmp_fn = NULL,
-    .eq_fn = NULL,
+    .eq_fn = def_unused_eq_fn,
     .copy_fn = NULL,
     .serialize_fn = NULL,
-    .print_fn = NULL,
+    .print_fn = def_unused_print_fn,
     .free_fn = NULL
 };
 

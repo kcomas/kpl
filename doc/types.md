@@ -85,6 +85,8 @@ A unique identifier, cannot be stored
 
 #### [Enum](./types/enum.md)
 
+#### Range
+
 #### [Struct](./types/struct.md)
 
 #### [Union](./types/union.md)

@@ -51,6 +51,7 @@ typedef union {
 #define DEF_I64(VALUE) ((def_data) { .i64 = VALUE })
 #define DEF_F32(VALUE) ((def_data) { .f32 = VALUE })
 #define DEF_F64(VALUE) ((def_data) { .f64 = VALUE })
+#define DEF_PTR(VALUE) ((def_data) { .ptr = (void*) VALUE })
 
 extern def_data def_unused;
 

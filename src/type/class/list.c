@@ -44,11 +44,31 @@ void type_list_add(type_list *list, type *inner_type) {
     list->len++;
 }
 
+size_t type_list_hash(const type_list *list) {
+    size_t hash = list->len;
+    for (const type_list_item *head = list->head; head; head = head->next)
+        hash += type_hash(head->inner_type);
+    return hash;
+}
+
+bool type_list_eq(const type_list *list_a, const type_list *list_b) {
+    if (list_a == list_b)
+        return true;
+    if (!list_a || !list_b || list_a->len != list_b->len)
+        return false;
+    const type_list_item *head_a = list_a->head, *head_b = list_b->head;
+    while (head_a && head_b) {
+        if (!type_eq(head_a->inner_type, head_b->inner_type))
+            return false;
+    }
+    return !head_a && !head_b;
+}
+
 void type_list_print(const type_list *list, FILE *file, uint32_t idnt, type_print_opts opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     for (type_list_item *head = list->head; head; head = head->next) {
-        type_print(head->inner_type, file, 0, opts);
+        type_print(head->inner_type, file, 0, TYPE_PRINT(_));
         if (head->next)
             fprintf(file, COLOR(DARK_GREY) "; " COLOR(RESET));
     }

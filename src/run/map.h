@@ -43,6 +43,10 @@ typedef enum [[gnu::packed]] {
 
 def_status map_action(map **ma, map_mode mode, def_data search, def_data *found);
 
+size_t map_hash(const map *ma);
+
+bool map_eq(const map *ma_a, const map *ma_b);
+
 #define MAP_PRINT(NAME) MAP_PRINT_##NAME
 
 typedef enum [[gnu::packed]] {

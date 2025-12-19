@@ -28,8 +28,12 @@ const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 
 #define TYPE_FLAG_TRACING_GC TYPE_FLAG(A)
 
+#define TYPE_FLAG_TMP_REGISTER TYPE_FLAG(C)
+
 #define TYPE_FLAG_VAR_MOVED TYPE_FLAG(A)
 
-#define TYPE_FLAG_VAR_REGISTER TYPE_FLAG(B)
+#define TYPE_FLAG_VAR_REGISTER TYPE_FLAG(C)
+
+#define TYPE_FLAG_ARG_REGISTER TYPE_FLAG(C)
 
 #define TYPE_FLAG_FN_ADDRESS TYPE_FLAG(A)

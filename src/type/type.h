@@ -18,6 +18,8 @@ typedef union {
 
 #define TYPE_CLASS_UNION_INNER(TYPE) (type_class_union) { .inner_type = TYPE }
 
+#define TYPE_CLASS_UNION_TAG(TAG) (type_class_union) { .tag = TAG }
+
 typedef struct _type {
     MEM_HEADER(_type);
     uint16_t ref_count;
@@ -28,12 +30,4 @@ typedef struct _type {
 
 type *type_init(type_name name, type_qualifier_flags qualifier_flags, type_class_union class_union);
 
-// type_free in ./header.h
-
-size_t type_hash(const type *ty);
-
-bool type_eq(const type *ty_a, const type *ty_b);
-
-type *type_copy(type *ty);
-
-// type_print in ./header.h
+// type_free, type_hash, type_eq, type_copy, type_print in ./header.h

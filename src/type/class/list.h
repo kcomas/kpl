@@ -20,4 +20,8 @@ void type_list_free(type_list *list);
 
 void type_list_add(type_list *list, type *inner_type);
 
+size_t type_list_hash(const type_list *list);
+
+bool type_list_eq(const type_list *list_a, const type_list *list_b);
+
 void type_list_print(const type_list *list, FILE *file, uint32_t idnt, type_print_opts opts);

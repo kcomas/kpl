@@ -38,4 +38,8 @@ def_status type_tag_symbol_from_c_str_slice(type_tag *tag, const char *c_str, si
 
 def_status type_tag_symbol_to_byte_array(const type_tag *tag, uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE]);
 
+size_t type_tag_hash(const type_tag *tag);
+
+bool type_tag_eq(const type_tag *tag_a, const type_tag *tag_b);
+
 void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts);

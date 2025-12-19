@@ -96,15 +96,34 @@ def_status type_tag_symbol_to_byte_array(const type_tag *tag, uint8_t buffer[TYP
     return DEF_STATUS(OK);
 }
 
+size_t type_tag_hash(const type_tag *tag) {
+    size_t hash = tag->fn_table->hash_fn(tag->data) + type_hash(tag->inner_type);
+    for (size_t part_idx = 0; part_idx < TYPE_SYMBOL_PARTS; part_idx++)
+        hash += def_hash64shift(tag->symbol[part_idx]);
+    return hash;
+}
+
+bool type_tag_eq(const type_tag *tag_a, const type_tag *tag_b) {
+    if (tag_a == tag_b)
+        return true;
+    if (!tag_a || !tag_b)
+        return false;
+    for (size_t part_idx = 0; part_idx < TYPE_SYMBOL_PARTS; part_idx++)
+        if (tag_a->symbol[part_idx] != tag_b->symbol[part_idx])
+            return false;
+    return tag_a->fn_table->eq_fn(tag_a->data, tag_b->data) && type_eq(tag_a->inner_type, tag_b->inner_type);
+}
+
 void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts) {
     fprintf(file, "%*s", idnt, "");
+    fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (tag->inner_type)
-        type_print(tag->inner_type, file, 0, opts);
+        type_print(tag->inner_type, file, 0, TYPE_PRINT(_));
     uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE] = {};
     if (type_tag_symbol_to_byte_array(tag, buffer) == DEF_STATUS(OK))
         printf(COLOR(CYAN) "`%s" COLOR(RESET), buffer);
-    if (tag->fn_table->print_fn)
-        tag->fn_table->print_fn(tag->data, file, 1, tag->print_opts);
+    tag->fn_table->print_fn(tag->data, file, 1, tag->print_opts);
+    fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
     if (opts & TYPE_PRINT(CLASS_NL_END))
         fprintf(file, "\n");
 }

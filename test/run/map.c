@@ -23,3 +23,20 @@ TEST(map_i64) {
     ASSERT(ma->tail->data.i64 == MAP_I64_UPSERT_COUNT - 1, "invalid tail value");
     map_free(ma);
 }
+
+TEST(map_i64_eq) {
+    map *a = map_init(0, 0, &i64_fn_table), *b = map_init(0, 0, &i64_fn_table), *c = map_init(0, 0, &i64_fn_table);
+    for (size_t idx = 0; idx < MAP_I64_INSERT_COUNT; idx++) {
+        ASSERT(map_action(&a, MAP_MODE(INSERT), DEF_I64(idx), &def_unused) == DEF_STATUS(OK),
+            "invalid map insert");
+        ASSERT(map_action(&b, MAP_MODE(INSERT), DEF_I64(idx), &def_unused) == DEF_STATUS(OK),
+            "invalid map insert");
+        ASSERT(map_action(&c, MAP_MODE(INSERT), DEF_I64(idx * 2), &def_unused) == DEF_STATUS(OK),
+            "invalid map insert");
+    }
+    ASSERT(map_eq(a, a) && map_eq(a, b), "should be equal");
+    ASSERT(!map_eq(a, c) && !map_eq(b, c), "should be not equal");
+    map_free(a);
+    map_free(b);
+    map_free(c);
+}

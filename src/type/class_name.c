@@ -22,6 +22,7 @@ static const char *name_str_array[] = {
     "FD",
     "SOCKET",
     "ARRAY",
+    "TMP",
     "VECTOR",
     "SET",
     "RESULT",
@@ -29,17 +30,18 @@ static const char *name_str_array[] = {
     "CLOSURE",
     "THREAD",
     "OP",
+    "MAP",
+    "OVERLOAD",
     "ENUM",
     "STRUCT",
     "UNION",
-    "MAP",
     "FN",
     "COROUTINE",
     "LAMBDA",
-    "OVERLOAD",
     "TAG",
     "ALIAS",
     "VAR",
+    "ARG",
     "_"
 };
 
