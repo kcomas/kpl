@@ -28,9 +28,35 @@ void string_free(string *st) {
     mem_free(&string_pool, st);
 }
 
+size_t string_hash(const string *st) {
+    size_t hash = 5831;
+    const char *data = st->data;
+    while (*data)
+        hash = ((hash << 5) + hash) + *data++;
+    return hash;
+}
+
+bool string_eq(const string *st_a, const string *st_b) {
+    if (st_a == st_b)
+        return true;
+    if (!st_a || !st_b || st_a->len != st_b->len)
+        return false;
+    return !strcmp(st_a->data, st_b->data);
+}
+
 void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts opts) {
     fprintf(file, "%*s", idnt, "");
-    fprintf(file, COLOR(LIGHT_GREEN) "%s" COLOR(RESET), st->data);
+    fprintf(file, COLOR(GREEN) "\"%s\"" COLOR(RESET), st->data);
     if (opts & STRING_PRINT(NL_END))
         fprintf(file, "\n");
 }
+
+def_fn_table string_fn_table = {
+    .hash_fn = (void*) string_hash,
+    .cmp_fn = NULL,
+    .eq_fn = (void*) string_eq,
+    .copy_fn = NULL,
+    .serialize_fn = NULL,
+    .print_fn = (void*) string_print,
+    .free_fn = (void*) string_free
+};

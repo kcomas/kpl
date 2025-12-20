@@ -21,9 +21,15 @@ void string_free(string *st);
 
 #define STRING_PRINT(NAME) STRING_PRINT_##NAME
 
+size_t string_hash(const string *st);
+
+bool string_eq(const string *st_a, const string *st_b);
+
 typedef enum [[gnu::packed]] {
     STRING_PRINT(NL_END)    = 1 << 0,
     STRING_PRINT(_)         = 0
 } string_print_opts;
 
 void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts opts);
+
+extern def_fn_table string_fn_table;

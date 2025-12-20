@@ -11,7 +11,14 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <stdatomic.h>
+#include <limits.h>
 #include <threads.h>
+#include <errno.h>
+#include <libgen.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define DEF_EXIT_ERROR 1
 

@@ -28,6 +28,7 @@ void i64_print(const def_data data, FILE *file, int32_t idnt, uint32_t opts) {
 
 def_fn_table i64_fn_table = {
     .hash_fn = i64_hash,
+    .cmp_fn = NULL,
     .eq_fn = i64_eq,
     .copy_fn = i64_copy_fn,
     .serialize_fn = i64_serialize_fn,
