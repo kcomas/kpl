@@ -13,13 +13,13 @@ Each directory has a directory_name.h file as a single header for all of it's pa
 
 ### Parser
 
-### Import
-
 ### Fold
 
 ### Check
 
 ### Eval
+
+### Repl
 
 ### Ir
 
@@ -33,6 +33,8 @@ Each directory has a directory_name.h file as a single header for all of it's pa
 
 ### [Core](./core/README.md)
 
+### Repl
+
 ## main.c
 
 Application entry point
@@ -41,15 +43,16 @@ Application entry point
 
 Lib -> X64
 Lib -> Run
-Lib Run -> Type
+Run -> Type
 Type -> Namespace
-Type X64 -> Ir
+Namespace X64 -> Ir
 Namespace -> Ast
 Ast -> Parser
-Parser -> Import
-Import -> Fold
+Parser -> Fold
 Fold -> Check
 Check -> Eval
+Eval -> Repl
 Eval Ir -> Gen
 Gen -> Core
-Core -> main.c
+Core -> Repl
+Repl -> main.c

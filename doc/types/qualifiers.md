@@ -1,7 +1,7 @@
 
 # Qualifiers
 
-Type modifications, only one can be applied
+Type modifications
 
 ### Const[Type]
 
@@ -17,7 +17,7 @@ Reference counting, self referential types use tracing garbage collection, canno
 
 ### Namespace[Type]
 
-Global
+Changes scoping rules, non functions within this must be const, shared or mutex
 
 ### Mutex[Type]
 

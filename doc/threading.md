@@ -17,6 +17,12 @@ Args is moved into thread an cannot be accessed until joining, unless it is of t
 result : & thread
 ```
 
+## Callback
+
+```
+thread & Fn or Closure
+```
+
 ## \`args
 
 Once the thread is completed the args passed into the thread can be access on the thread via symbol

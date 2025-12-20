@@ -15,10 +15,14 @@ static void map_bucket_free(map_bucket *bucket) {
 
 MEM_POOL(map_pool);
 
-map *map_init(size_t size, uint32_t print_opts, def_fn_table *fn_table) {
+constexpr uint32_t map_max_size = UINT32_MAX - sizeof(map);
+
+map *map_init(uint32_t size, uint32_t print_opts, def_fn_table *fn_table) {
     if (size < MAP_MIN_SIZE)
         size = MAP_MIN_SIZE;
-    map *ma = mem_alloc(&map_pool, sizeof(map) + sizeof(map_bucket) * size);
+    if (size * sizeof(map_bucket*) > map_max_size)
+        return NULL;
+    map *ma = mem_alloc(&map_pool, sizeof(map) + sizeof(map_bucket*) * size);
     ma->size = size;
     ma->used = 0;
     ma->print_opts = print_opts;
@@ -29,7 +33,7 @@ map *map_init(size_t size, uint32_t print_opts, def_fn_table *fn_table) {
 }
 
 void map_free(map *ma) {
-    for (size_t bucket_idx = 0; bucket_idx < ma->size; bucket_idx++) {
+    for (uint32_t bucket_idx = 0; bucket_idx < ma->size; bucket_idx++) {
         if (!ma->buckets[bucket_idx])
             continue;
         if (ma->fn_table->free_fn && ma->buckets[bucket_idx]->data.ptr)
@@ -40,7 +44,7 @@ void map_free(map *ma) {
 }
 
 static map_bucket **map_search(map *ma, def_data search) {
-    size_t hash = ma->fn_table->hash_fn(search) % ma->size, max_search_count = ma->size * MAP_MAX_SEARCH_PERCENT;
+    uint32_t hash = ma->fn_table->hash_fn(search) % ma->size, max_search_count = ma->size * MAP_MAX_SEARCH_PERCENT;
     while (max_search_count) {
         if (!ma->buckets[hash] || ma->fn_table->eq_fn(search, ma->buckets[hash]->data))
             return &ma->buckets[hash];
@@ -50,13 +54,19 @@ static map_bucket **map_search(map *ma, def_data search) {
     return NULL;
 }
 
+constexpr const uint32_t map_max_size_check = UINT32_MAX / MAP_RESIZE_MUL;
+
 static def_status map_resize(map **ma) {
+    if (map_max_size_check <= (*ma)->size)
+        return DEF_STATUS(ERROR);
     map *new_ma = map_init((*ma)->size * MAP_RESIZE_MUL, (*ma)->print_opts, (*ma)->fn_table);
+    if (!new_ma)
+        return DEF_STATUS(ERROR);
     new_ma->used = (*ma)->used;
     new_ma->head = (*ma)->head;
     new_ma->tail = (*ma)->tail;
     for (map_bucket *head = new_ma->head; head; head = head->next) {
-        size_t hash = new_ma->fn_table->hash_fn(head->data) % new_ma->size,
+        uint32_t hash = new_ma->fn_table->hash_fn(head->data) % new_ma->size,
             max_search_count = new_ma->size * MAP_MAX_SEARCH_PERCENT;
         while (max_search_count) {
             if (!new_ma->buckets[hash]) {

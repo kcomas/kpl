@@ -22,3 +22,7 @@ Ordered hash map
 ## error.[ch]
 
 Container for errors
+
+## string.[ch]
+
+Utf8 string container

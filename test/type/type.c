@@ -1,12 +1,12 @@
 
 #include "../test.h"
 
-#define TYPE_STRUCT_EXPECTED_SIZE (8 + 8 + 4 + 2 + 1 + 1 + 8)
+constexpr size_t type_struct_expected_size = 8 + 8 + 4 + 2 + 1 + 1 + 8;
 
 TEST(type_struct_size) {
     size_t size = sizeof(type);
     printf("type struct size: " COLOR(BOLD) "%lu\n" COLOR(RESET), size);
-    ASSERT(sizeof(type) == TYPE_STRUCT_EXPECTED_SIZE, "invalid type struct size");
+    ASSERT(sizeof(type) == type_struct_expected_size, "invalid type struct size");
 }
 
 TEST(type_scalar) {

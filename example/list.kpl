@@ -70,6 +70,6 @@ list_each\export : Fn { List`list; Fn[Void; I64`value; U64`idx]`fn
     head @ {
         fn(head`value; idx)
         head : head`next
-        counter +: 1
+        idx +: 1
     }
 }

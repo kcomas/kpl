@@ -45,8 +45,6 @@ A unique identifier, cannot be stored
 
 #### [Regex](./types/regex.md)
 
-#### [Base](./namespaces.md)
-
 #### Error
 
 #### [Fd](./file_system.md)
@@ -92,6 +90,8 @@ A unique identifier, cannot be stored
 #### [Union](./types/union.md)
 
 #### [Fn](./functions.md)
+
+#### [Base](./namespaces.md)
 
 #### [Coroutine](./functions.md)
 

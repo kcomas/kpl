@@ -10,7 +10,7 @@ fib\export : Fn[I64] { I64`n
 }
 
 print_fib\export : Fn { U64`idx; I64`n
-    .io.colors.strings [ reset; blue; magenta; green ]
+    .io.colors.strings [ `reset; `blue; `magenta; `green ]
     .io.stdout << String (
         blue
         "fib"

@@ -11,7 +11,7 @@ typedef struct _map_bucket {
 
 typedef struct _map {
     RUN_HEADER(_map);
-    size_t size, used;
+    uint32_t used, size;
     map_bucket *head, *tail;
     map_bucket *buckets[];
 } map;
@@ -20,7 +20,7 @@ typedef struct _map {
 #define MAP_MIN_SIZE 10
 #endif
 
-map *map_init(size_t size, uint32_t print_opts, def_fn_table *fn_table);
+map *map_init(uint32_t size, uint32_t print_opts, def_fn_table *fn_table);
 
 void map_free(map *ma);
 

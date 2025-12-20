@@ -121,7 +121,7 @@ void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_op
         type_print(tag->inner_type, file, 0, TYPE_PRINT(_));
     uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE] = {};
     if (type_tag_symbol_to_byte_array(tag, buffer) == DEF_STATUS(OK))
-        printf(COLOR(CYAN) "`%s" COLOR(RESET), buffer);
+        printf(COLOR2(BOLD, CYAN) "`%s" COLOR(RESET), buffer);
     tag->fn_table->print_fn(tag->data, file, 1, tag->print_opts);
     fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
     if (opts & TYPE_PRINT(CLASS_NL_END))

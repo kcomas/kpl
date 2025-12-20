@@ -32,7 +32,6 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(CHAR),
     TYPE_NAME(STRING),
     TYPE_NAME(REGEX),
-    TYPE_NAME(BASE),
     TYPE_NAME(ERROR),
     TYPE_NAME(FD),
     TYPE_NAME(SOCKET),
@@ -50,11 +49,11 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(OP),
     TYPE_NAME(MAP),
     TYPE_NAME(OVERLOAD),
-    // ENUM
-    TYPE_NAME(ENUM),
     // TABLE
+    TYPE_NAME(ENUM),
     TYPE_NAME(STRUCT),
     TYPE_NAME(UNION),
+    TYPE_NAME(BASE),
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
     TYPE_NAME(LAMBDA),

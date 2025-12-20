@@ -42,7 +42,7 @@ size_t type_hash(const type *ty) {
     size_t hash = 0;
     if (!ty)
         return hash;
-    hash += ty->name << type_name_get_class(ty->name);
+    hash += ty->name;
     switch (type_name_get_class(ty->name)) {
         case TYPE_CLASS(SCALAR):
         case TYPE_CLASS(_):
@@ -63,7 +63,7 @@ size_t type_hash(const type *ty) {
             hash += type_tag_hash(ty->class_union.tag);
             break;
     }
-    return hash;
+    return hash << type_name_get_class(ty->name);
 }
 
 bool type_eq(const type *ty_a, const type *ty_b) {
