@@ -23,6 +23,8 @@ void string_free(string *st);
 
 size_t string_hash(const string *st);
 
+ssize_t string_cmp(const string *st_a, const string *st_b);
+
 bool string_eq(const string *st_a, const string *st_b);
 
 typedef enum [[gnu::packed]] {

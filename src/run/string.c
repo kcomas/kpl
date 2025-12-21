@@ -36,6 +36,10 @@ size_t string_hash(const string *st) {
     return hash;
 }
 
+ssize_t string_cmp(const string *st_a, const string *st_b) {
+    return strcmp(st_a->data,  st_b->data);
+}
+
 bool string_eq(const string *st_a, const string *st_b) {
     if (st_a == st_b)
         return true;
@@ -53,7 +57,7 @@ void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts 
 
 def_fn_table string_fn_table = {
     .hash_fn = (void*) string_hash,
-    .cmp_fn = NULL,
+    .cmp_fn = (void*) string_cmp,
     .eq_fn = (void*) string_eq,
     .copy_fn = NULL,
     .serialize_fn = NULL,
