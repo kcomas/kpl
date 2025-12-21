@@ -49,6 +49,8 @@ bool string_eq(const string *st_a, const string *st_b) {
 }
 
 void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts opts) {
+    if (opts & STRING_PRINT(NL_START))
+        fprintf(file, "\n");
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(GREEN) "\"%s\"" COLOR(RESET), st->data);
     if (opts & STRING_PRINT(NL_END))

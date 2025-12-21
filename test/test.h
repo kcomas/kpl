@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../src/namespace/namespace.h"
+#include "../src/core/core.h"
 
 typedef struct _test test;
 
