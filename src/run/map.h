@@ -52,7 +52,8 @@ bool map_eq(const map *ma_a, const map *ma_b);
 typedef enum [[gnu::packed]] {
     MAP_PRINT(NL_END)           = 1 << 0,
     MAP_PRINT(NO_FIRST_IDNT)    = 1 << 1,
-    MAP_PRINT(SEMI_SPACER)      = 1 << 2
+    MAP_PRINT(SEMI_SPACER)      = 1 << 2,
+    MAP_PRINT(_)                = 0
 } map_print_opts;
 
 void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts opts);

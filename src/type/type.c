@@ -26,7 +26,7 @@ void type_free(type *ty) {
             type_free(ty->class_union.inner_type);
             break;
         case TYPE_CLASS(LIST):
-            type_list_free(ty->class_union.list);
+            type_list_free(ty->class_union.li);
             break;
         case TYPE_CLASS(TABLE):
             type_table_free(ty->class_union.table);
@@ -54,7 +54,7 @@ size_t type_hash(const type *ty) {
             hash += type_fixed_hash(ty->class_union.fixed);
             break;
         case TYPE_CLASS(LIST):
-            hash += type_list_hash(ty->class_union.list);
+            hash += type_list_hash(ty->class_union.li);
             break;
         case TYPE_CLASS(TABLE):
             hash += type_table_hash(ty->class_union.table);
@@ -81,7 +81,7 @@ bool type_eq(const type *ty_a, const type *ty_b) {
         case TYPE_CLASS(FIXED):
             return type_fixed_eq(ty_a->class_union.fixed, ty_b->class_union.fixed);
         case TYPE_CLASS(LIST):
-            return type_list_eq(ty_a->class_union.list, ty_b->class_union.list);
+            return type_list_eq(ty_a->class_union.li, ty_b->class_union.li);
         case TYPE_CLASS(TABLE):
             return type_table_eq(ty_a->class_union.table, ty_b->class_union.table);
         case TYPE_CLASS(TAG):
@@ -119,7 +119,7 @@ void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts opts) 
             fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
             break;
         case TYPE_CLASS(LIST):
-            type_list_print(ty->class_union.list, file, 0, opts);
+            type_list_print(ty->class_union.li, file, 0, opts);
             break;
         case TYPE_CLASS(TABLE):
             type_table_print(ty->class_union.table, file, 0, opts);

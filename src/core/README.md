@@ -3,10 +3,6 @@
 
 Load and run imports
 
-## Import Queue
-
-Files waiting to be queued
-
 ## File Queue
 
-Has import dependencies
+Each import must resolve dependencies before running

@@ -63,6 +63,8 @@ A unique identifier, cannot be stored
 
 #### [Set](./types/set.md)
 
+#### [Queue]
+
 #### [Result](./types/result.md)
 
 #### [Option](./types/option.md)

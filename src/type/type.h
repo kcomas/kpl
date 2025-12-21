@@ -9,7 +9,7 @@
 typedef union {
     type *inner_type;
     type_fixed *fixed;
-    type_list *list;
+    list *li;
     type_table *table;
     type_tag *tag;
 } type_class_union;
