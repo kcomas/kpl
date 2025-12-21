@@ -7,18 +7,19 @@
 
 typedef enum [[gnu::packed]] {
     QUEUE_ITEM_STATE(INIT),
-    QUEUE_ITEM_STATE(DEPS_FOUND),
+    QUEUE_ITEM_STATE(LOAD_DEPS),
+    QUEUE_ITEM_STATE(READY),
     QUEUE_ITEM_STATE(RUNNING),
     QUEUE_ITEM_STATE(DONE)
-} queue_item_state;
+} core_queue_item_state;
 
-typedef struct _queue_item {
-    MEM_HEADER(_queue_item);
+typedef struct _core_queue_item {
+    MEM_HEADER(_core_queue_item);
     uint16_t dependencies;
-    queue_item_state state;
+    core_queue_item_state state;
     list *parents; // weak ref queue item
     string *filename, *filedata;
-} queue_item;
+} core_queue_item;
 
 #define QUEUE_ITEM_PRINT(NAME) QUEUE_ITEM_PRINT_##NAME
 
@@ -27,10 +28,18 @@ typedef enum [[gnu::packed]] {
     QUEUE_ITEM_PRINT(FILEDATA)          = 1 << 1,
     QUEUE_ITEM_PRINT(DEPENDENCIES)      = 1 << 2,
     QUEUE_ITEM_PRINT(_)                 = 0
-} queue_item_print_opts;
+} core_queue_item_print_opts;
 
-void queue_item_add_parent(queue_item *restrict dependent, queue_item *restrict parent);
+void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent);
 
-map *queue_init(queue_item_print_opts opts);
+typedef struct {
+    map *ma;
+    mtx_t mutex;
+} core_queue;
 
-queue_item *queue_add(map **queue, const char *resolvepath, const char *filepath);
+void core_queue_init(core_queue *queue, core_queue_item_print_opts opts);
+
+void core_queue_free(core_queue *queue);
+
+// null for error
+core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, const char *filepath);
