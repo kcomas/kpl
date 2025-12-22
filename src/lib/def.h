@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include <stdatomic.h>
 #include <limits.h>
-#include <pthread.h> // change when TSAN supports c11 threads
+#include <pthread.h>
 #include <semaphore.h>
 #include <errno.h>
 #include <libgen.h>
