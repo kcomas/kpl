@@ -6,3 +6,5 @@
 #include "./map.h"
 #include "./string.h"
 #include "./list.h"
+#include "./task.h"
+#include "./result.h"

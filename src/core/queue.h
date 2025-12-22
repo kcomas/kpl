@@ -7,7 +7,7 @@
 
 typedef enum [[gnu::packed]] {
     QUEUE_ITEM_STATE(INIT),
-    QUEUE_ITEM_STATE(LOAD_DEPS),
+    QUEUE_ITEM_STATE(LOADING),
     QUEUE_ITEM_STATE(READY),
     QUEUE_ITEM_STATE(RUNNING),
     QUEUE_ITEM_STATE(DONE)
@@ -30,11 +30,14 @@ typedef enum [[gnu::packed]] {
     QUEUE_ITEM_PRINT(_)                 = 0
 } core_queue_item_print_opts;
 
-void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent);
+def_status core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent);
 
 typedef struct {
+    struct {
+        atomic_uint_least16_t init, loading, ready, running;
+    } state_count;
     map *ma;
-    mtx_t mutex;
+    pthread_mutex_t mutex;
 } core_queue;
 
 void core_queue_init(core_queue *queue, core_queue_item_print_opts opts);

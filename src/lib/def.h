@@ -12,7 +12,8 @@
 #include <ctype.h>
 #include <stdatomic.h>
 #include <limits.h>
-#include <threads.h>
+#include <pthread.h> // change when TSAN supports c11 threads
+#include <semaphore.h>
 #include <errno.h>
 #include <libgen.h>
 #include <fcntl.h>
@@ -90,8 +91,10 @@ typedef struct {
 
 extern def_fn_table def_unused_fn_table;
 
-#define DEF_CONSTRUCTOR_MEM 110
+#define DEF_CONSTRUCTOR_TASK 110
+#define DEF_CONSTRUCTOR_MEM 111
 
+#define DEF_DESTRUCTOR_TASK 111
 #define DEF_DESTRUCTOR_MEM 110
 
 size_t def_hash64shift(size_t key);

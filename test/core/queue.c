@@ -9,9 +9,11 @@ TEST(core_queue_print) {
     ASSERT(fib_load, "should not be null");
     core_queue_item *fib = core_queue_add(&queue, fib_load->filename->data, "./fib.kpl");
     ASSERT(fib, "should not be null");
-    core_queue_item_add_parent(fib, fib_load);
+    ASSERT(core_queue_item_add_parent(fib, fib_load) == DEF_STATUS(OK), "should add parent");
     core_queue_item *fib2 = core_queue_add(&queue, fib_load->filename->data, "./fib.kpl");
     ASSERT(fib == fib2, "should be same ptr");
+    ASSERT(core_queue_item_add_parent(fib2, fib_load) == DEF_STATUS(ERROR), "should not add parent");
+    ASSERT(queue.state_count.init == 2, "should be two files queued");
     map_print(queue.ma, stdout, 0, MAP_PRINT(_));
     core_queue_free(&queue);
 }

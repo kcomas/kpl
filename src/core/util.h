@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../type/type.h"
+#include "../namespace/namespace.h"
 
 string *core_util_file_abs_path(const char *resolvepath, const char *filepath); // null for error
 

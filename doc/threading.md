@@ -14,13 +14,7 @@ Args is moved into thread an cannot be accessed until joining, unless it is of t
 ## Joining &
 
 ```
-result : & thread
-```
-
-## Callback
-
-```
-thread & Fn or Closure
+value : "Error" ^ & thread
 ```
 
 ## \`args

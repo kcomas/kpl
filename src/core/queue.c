@@ -23,11 +23,24 @@ static void core_queue_item_free(void *data) {
     mem_free(&core_queue_item_pool, item);
 }
 
-void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
-    if (!dependent->parents)
+def_status core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
+    if (!dependent->parents) {
         dependent->parents = list_init(0, &def_unused_fn_table);
+        list_add_back(dependent->parents, DEF_PTR(parent));
+        parent->dependencies++;
+        return DEF_STATUS(OK);
+    }
+    list_item *head = dependent->parents->head;
+    while (head) {
+        if (head->data.ptr == parent)
+            break;
+        head = head->next;
+    }
+    if (head)
+        return DEF_STATUS(ERROR);
     list_add_back(dependent->parents, DEF_PTR(parent));
     parent->dependencies++;
+    return DEF_STATUS(OK);
 }
 
 static size_t core_queue_item_hash(const def_data data) {
@@ -66,17 +79,19 @@ def_fn_table core_queue_item_fn_table = {
 };
 
 void core_queue_init(core_queue *queue, core_queue_item_print_opts opts) {
-    mtx_init(&queue->mutex, mtx_plain);
+    queue->state_count.init = queue->state_count.loading = 0;
+    queue->state_count.ready = queue->state_count.running = 0;
     queue->ma = map_init(0, opts, &core_queue_item_fn_table);
+    pthread_mutex_init(&queue->mutex, NULL);
 }
 
 void core_queue_free(core_queue *queue) {
-    mtx_destroy(&queue->mutex);
     map_free(queue->ma);
+    pthread_mutex_destroy(&queue->mutex);
 }
 
 core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, const char *filepath) {
-    mtx_lock(&queue->mutex);
+    pthread_mutex_lock(&queue->mutex);
     string *filename = core_util_file_abs_path(resolvepath, filepath);
     if (!filename)
         return NULL;
@@ -84,15 +99,16 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
     core_queue_item find = { .filename = filename };
     if (map_action(&queue->ma, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
         string_free(filename);
-        mtx_unlock(&queue->mutex);
+        pthread_mutex_unlock(&queue->mutex);
         return found.ptr;
     }
     core_queue_item *insert = core_queue_item_init(filename);
     if (map_action(&queue->ma, MAP_MODE(INSERT), DEF_PTR(insert), &def_unused) != DEF_STATUS(OK)) {
         core_queue_item_free(insert);
-        mtx_unlock(&queue->mutex);
+        pthread_mutex_unlock(&queue->mutex);
         return NULL;
     }
-    mtx_unlock(&queue->mutex);
+    pthread_mutex_unlock(&queue->mutex);
+    queue->state_count.init++;
     return insert;
 }

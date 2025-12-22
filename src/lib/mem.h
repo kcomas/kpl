@@ -12,7 +12,7 @@ typedef struct _mem_obj {
 typedef struct {
     atomic_size_t allocs;
     mem_obj *root;
-    mtx_t mutex;
+    pthread_mutex_t mutex;
 } mem_pool;
 
 void *mem_memcpy(void *dest, const void *src, size_t size);

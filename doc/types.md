@@ -71,7 +71,7 @@ A unique identifier, cannot be stored
 
 #### [Closure](./functions.md)
 
-#### [Thread](./threading.md)
+#### [Task](./threading.md)
 
 ### List[Type; Type; ...]
 

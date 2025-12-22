@@ -12,7 +12,7 @@ Automatically returns when an error occurs that is not checked
 ## Assigning
 
 ```
-var :: result
+var : result
 ```
 
 Assigned the value to the var, returns if error
@@ -20,7 +20,7 @@ Assigned the value to the var, returns if error
 ## Matching
 
 ```
-var :: operation # {
+var : operation # {
     { lamba }`value
     { lambda }`error
 }
@@ -29,17 +29,10 @@ var :: operation # {
 ## Unwrapping  ^
 
 ```
-var :: ERROR_DATA ^ operation
+var : ERROR_DATA ^ operation
 ```
 
 Returns the ERROR_DATA with the error if there is an error
-
-## Checking ?
-
-```
-result ? { Error`error lambda }
-value : result
-```
 
 ## Returning
 

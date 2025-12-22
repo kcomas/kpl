@@ -29,7 +29,7 @@ static void *mem_malloc(size_t new_size) {
 
 #ifndef MEM_POOL_OFF
 void mem_pool_init(mem_pool *pool) {
-    mtx_init(&pool->mutex, mtx_plain);
+    pthread_mutex_init(&pool->mutex, NULL);
 }
 
 void mem_pool_free(mem_pool *pool) {
@@ -39,12 +39,12 @@ void mem_pool_free(mem_pool *pool) {
         head = head->next;
         free(tmp);
     }
-    mtx_destroy(&pool->mutex);
+    pthread_mutex_destroy(&pool->mutex);
 }
 
 void *mem_alloc(mem_pool *pool, size_t new_size) {
     mem_obj *head;
-    mtx_lock(&pool->mutex);
+    pthread_mutex_lock(&pool->mutex);
     for (head = pool->root; head; head = head->next) {
         if (head->obj_size < new_size)
             continue;
@@ -59,7 +59,7 @@ void *mem_alloc(mem_pool *pool, size_t new_size) {
         }
         break;
     }
-    mtx_unlock(&pool->mutex);
+    pthread_mutex_unlock(&pool->mutex);
     if (!head) {
         head = mem_malloc(new_size);
         head->obj_size = new_size;
@@ -70,7 +70,7 @@ void *mem_alloc(mem_pool *pool, size_t new_size) {
 }
 
 void mem_free(mem_pool *pool, void *data) {
-    mtx_lock(&pool->mutex);
+    pthread_mutex_lock(&pool->mutex);
     mem_obj *obj = data;
     obj->prev = obj->next = NULL;
     if (pool->root) {
@@ -78,7 +78,7 @@ void mem_free(mem_pool *pool, void *data) {
         pool->root->prev = obj;
     }
     pool->root = obj;
-    mtx_unlock(&pool->mutex);
+    pthread_mutex_unlock(&pool->mutex);
 }
 #else
 void *mem_alloc(mem_pool *pool, size_t new_size) {
