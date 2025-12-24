@@ -6,7 +6,7 @@ Functions can be turned into threads
 ## Starting *
 
 ```
-thread : args * fn
+thread : args & fn
 ```
 
 Args is moved into thread an cannot be accessed until joining, unless it is of type Mutex
@@ -17,15 +17,13 @@ Args is moved into thread an cannot be accessed until joining, unless it is of t
 value : "Error" ^ & thread
 ```
 
-## \`args
+## Detaching &
 
-Once the thread is completed the args passed into the thread can be access on the thread via symbol
+When the thread is not assigned it starts in a detached state
 
-Access args returns an Option[Ref[Type]]
-
-## \`status
-
-.thread.Status
+```
+args & fn
+```
 
 ## Mutexes
 

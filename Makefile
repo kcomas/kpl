@@ -37,7 +37,9 @@ kpl: $(OBJECTS) ./src/main.o
 TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c) $(wildcard ./test/**/**/*.c)
 TEST_OBJECTS := $(patsubst %.c,%.o,$(TEST_SOURCES))
 
+ifndef FSAN_OFF
 FSAN := -fsanitize=address,leak,undefined
+endif
 
 ifdef TEST_THREAD
 FSAN := -fsanitize=thread

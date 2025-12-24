@@ -3,11 +3,12 @@
 
 MEM_POOL(core_queue_item_pool);
 
-static core_queue_item *core_queue_item_init(string *filename) {
+static core_queue_item *core_queue_item_init(core_queue *queue, string *filename) {
     core_queue_item *item = mem_alloc(&core_queue_item_pool, sizeof(core_queue_item));
     item->state = QUEUE_ITEM_STATE(INIT);
     item->dependencies = 0;
     item->parents = NULL;
+    item->queue = queue;
     item->filename = filename;
     item->filedata = NULL;
     return item;
@@ -23,12 +24,12 @@ static void core_queue_item_free(void *data) {
     mem_free(&core_queue_item_pool, item);
 }
 
-def_status core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
+void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
     if (!dependent->parents) {
         dependent->parents = list_init(0, &def_unused_fn_table);
         list_add_back(dependent->parents, DEF_PTR(parent));
         parent->dependencies++;
-        return DEF_STATUS(OK);
+        return;
     }
     list_item *head = dependent->parents->head;
     while (head) {
@@ -37,10 +38,10 @@ def_status core_queue_item_add_parent(core_queue_item *restrict dependent, core_
         head = head->next;
     }
     if (head)
-        return DEF_STATUS(ERROR);
+        return;
     list_add_back(dependent->parents, DEF_PTR(parent));
     parent->dependencies++;
-    return DEF_STATUS(OK);
+    return;
 }
 
 static size_t core_queue_item_hash(const def_data data) {
@@ -68,7 +69,7 @@ static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt,
         fprintf(file, "\n");
 }
 
-def_fn_table core_queue_item_fn_table = {
+static def_fn_table core_queue_item_fn_table = {
     .hash_fn = core_queue_item_hash,
     .cmp_fn = NULL,
     .eq_fn = core_queue_item_eq,
@@ -78,16 +79,36 @@ def_fn_table core_queue_item_fn_table = {
     .free_fn = core_queue_item_free
 };
 
+static def_fn_table core_queue_item_error_fn_table = {
+    .hash_fn = NULL,
+    .cmp_fn = NULL,
+    .eq_fn = NULL,
+    .copy_fn = NULL,
+    .serialize_fn = NULL,
+    .print_fn = core_queue_item_print,
+    .free_fn = NULL
+};
+
+error *core_queue_item_error(core_queue_item *item, const char *msg) {
+    return ERROR_INIT(item->queue->ma->print_opts ^ QUEUE_ITEM_PRINT(NL_END),
+        &core_queue_item_error_fn_table, DEF_PTR(item), msg);
+}
+
 void core_queue_init(core_queue *queue, core_queue_item_print_opts opts) {
-    queue->state_count.init = queue->state_count.loading = 0;
-    queue->state_count.ready = queue->state_count.running = 0;
+    queue->state_count.init = queue->state_count.dependencies = 0;
+    queue->state_count.running = queue->state_count.done = 0;
     queue->ma = map_init(0, opts, &core_queue_item_fn_table);
+    queue->er = NULL;
     pthread_mutex_init(&queue->mutex, NULL);
+    sem_init(&queue->sem, 0, 0);
 }
 
 void core_queue_free(core_queue *queue) {
     map_free(queue->ma);
+    if (queue->er)
+        error_free(queue->er);
     pthread_mutex_destroy(&queue->mutex);
+    sem_destroy(&queue->sem);
 }
 
 core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, const char *filepath) {
@@ -102,7 +123,7 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
         pthread_mutex_unlock(&queue->mutex);
         return found.ptr;
     }
-    core_queue_item *insert = core_queue_item_init(filename);
+    core_queue_item *insert = core_queue_item_init(queue, filename);
     if (map_action(&queue->ma, MAP_MODE(INSERT), DEF_PTR(insert), &def_unused) != DEF_STATUS(OK)) {
         core_queue_item_free(insert);
         pthread_mutex_unlock(&queue->mutex);

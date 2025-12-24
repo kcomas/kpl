@@ -91,10 +91,10 @@ typedef struct {
 
 extern def_fn_table def_unused_fn_table;
 
-#define DEF_CONSTRUCTOR_TASK 110
-#define DEF_CONSTRUCTOR_MEM 111
+#define DEF_CONSTRUCTOR_MEM 110
+#define DEF_CONSTRUCTOR_TASK 111
 
-#define DEF_DESTRUCTOR_TASK 111
 #define DEF_DESTRUCTOR_MEM 110
+#define DEF_DESTRUCTOR_TASK 111
 
 size_t def_hash64shift(size_t key);

@@ -30,10 +30,6 @@ static task *task_queue_next(void) {
     return ta;
 }
 
-static pthread_mutex_t task_queue_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-static pthread_cond_t task_queue_cond = PTHREAD_COND_INITIALIZER;
-
 static void task_delete(task *ta) {
     if (ta->fn_table->free_fn && ta->data.ptr)
         ta->fn_table->free_fn(ta->data.ptr);
@@ -42,6 +38,10 @@ static void task_delete(task *ta) {
     sem_destroy(&ta->sem);
     mem_free(&task_pool, ta);
 }
+
+static pthread_mutex_t task_queue_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static pthread_cond_t task_queue_cond = PTHREAD_COND_INITIALIZER;
 
 static void *thread_runner(void *arg) {
     size_t thread_idx = (size_t) arg;
@@ -57,11 +57,10 @@ static void *thread_runner(void *arg) {
             pthread_mutex_unlock(&task_queue_mutex);
         ta->er = ta->fn(ta->data);
         sem_post(&ta->sem);
-        if (ta->status != TASK_STATUS(DETEACHED)) {
-            ta->status = TASK_STATUS(DONE);
-            continue;
-        }
-        task_delete(ta);
+        int sem_value;
+        sem_getvalue(&ta->sem, &sem_value);
+        if (sem_value > 1)
+            task_delete(ta);
     }
     return NULL;
 }
@@ -89,15 +88,14 @@ static void *thread_runner(void *arg) {
     pthread_mutex_destroy(&task_queue_mutex);
 }
 
-task *task_init(uint32_t print_opts, def_fn_table *fn_table, def_data data, task_fn fn) {
+static task *_task_init(uint32_t print_opts, def_fn_table *fn_table, def_data data, task_fn fn, int sem_value) {
     task *ta = mem_alloc(&task_pool, sizeof(task));
     ta->print_opts = print_opts;
     ta->fn_table = fn_table;
     ta->data = data;
     ta->fn = fn;
     ta->er = NULL;
-    ta->status = TASK_STATUS(RUN);
-    sem_init(&ta->sem, 0, 0);
+    sem_init(&ta->sem, 0, sem_value);
     pthread_mutex_lock(&task_queue_mutex);
     task_queue_add(ta);
     pthread_mutex_unlock(&task_queue_mutex);
@@ -105,15 +103,24 @@ task *task_init(uint32_t print_opts, def_fn_table *fn_table, def_data data, task
     return ta;
 }
 
+task *task_init(uint32_t print_opts, def_fn_table *fn_table, def_data data, task_fn fn) {
+    return _task_init(print_opts, fn_table, data, fn, 0);
+}
+
+task *task_init_detached(uint32_t print_opts, def_fn_table *fn_table, def_data data, task_fn fn) {
+    return _task_init(print_opts, fn_table, data, fn, 1);
+}
+
 void task_free(task *ta) {
-    if (ta->status == TASK_STATUS(DONE)) {
-        task_delete(ta);
+    if (!ta)
         return;
-    }
-    ta->status = TASK_STATUS(DETEACHED);
+    sem_wait(&ta->sem);
+    task_delete(ta);
 }
 
 result task_join(task *ta) {
+    if (!ta)
+        return result_error(ERROR_INIT(0, &def_unused_fn_table, DEF(_), "THREAD ALREADY JOINED"));
     sem_wait(&ta->sem);
     result re;
     if (ta->er) {

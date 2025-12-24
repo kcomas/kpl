@@ -1,10 +1,6 @@
 
 #include "./result.h"
 
-result result_value(def_data value) {
-    return (result) { .value = value, .er = NULL };
-}
+extern inline result result_value(def_data value);
 
-result result_error(error *er) {
-    return (result) { .value = DEF(_), .er = er };
-}
+extern inline result result_error(error *er);

@@ -8,6 +8,10 @@ typedef struct {
     error *er;
 } result;
 
-result result_value(def_data value);
+inline result result_value(def_data value) {
+    return (result) { .value = value, .er = NULL };
+}
 
-result result_error(error *er);
+inline result result_error(error *er) {
+    return (result) { .value = DEF(_), .er = er };
+}

@@ -37,5 +37,3 @@ const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 #define TYPE_FLAG_ARG_REGISTER TYPE_FLAG(B)
 
 #define TYPE_FLAG_FN_ADDRESS TYPE_FLAG(A)
-
-#define TYPE_FLAG_THREAD_JOINABLE TYPE_FLAG(A)
