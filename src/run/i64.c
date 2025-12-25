@@ -19,10 +19,10 @@ ser_buffer *i64_serialize_fn(const def_data data) {
     return buffer;
 }
 
-void i64_print(const def_data data, FILE *file, int32_t idnt, uint32_t opts) {
+void i64_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     fprintf(file, "%*s", idnt, "");
     printf(COLOR(MAGENTA) "%ld" COLOR(RESET), data.i64);
-    if (opts & I64_PRINT(NL_END))
+    if (print_opts & I64_PRINT(NL_END))
         fprintf(file, "\n");
 }
 

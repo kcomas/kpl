@@ -48,12 +48,19 @@ bool string_eq(const string *st_a, const string *st_b) {
     return !strcmp(st_a->data, st_b->data);
 }
 
-void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts opts) {
-    if (opts & STRING_PRINT(NL_START))
+string *string_copy(const string *st) {
+    string *st_copy = string_init(st->len);
+    st_copy->len = st->len;
+    memcpy(st_copy->data, st->data, st->len);
+    return st_copy;
+}
+
+void string_print(const string *st, FILE *file, int32_t idnt, string_print_opts print_opts) {
+    if (print_opts & STRING_PRINT(NL_START))
         fprintf(file, "\n");
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(GREEN) "\"%s\"" COLOR(RESET), st->data);
-    if (opts & STRING_PRINT(NL_END))
+    if (print_opts & STRING_PRINT(NL_END))
         fprintf(file, "\n");
 }
 
@@ -61,7 +68,7 @@ def_fn_table string_fn_table = {
     .hash_fn = (void*) string_hash,
     .cmp_fn = (void*) string_cmp,
     .eq_fn = (void*) string_eq,
-    .copy_fn = NULL,
+    .copy_fn = (void*) string_copy,
     .serialize_fn = NULL,
     .print_fn = (void*) string_print,
     .free_fn = (void*) string_free

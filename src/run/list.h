@@ -32,4 +32,4 @@ typedef enum [[gnu::packed]] {
     LIST_PRINT(_)               = 0
 } list_print_opts;
 
-void list_print(const list *li, FILE *file, int32_t idnt, list_print_opts opts);
+void list_print(const list *li, FILE *file, int32_t idnt, list_print_opts print_opts);

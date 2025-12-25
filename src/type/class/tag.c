@@ -114,7 +114,7 @@ bool type_tag_eq(const type_tag *tag_a, const type_tag *tag_b) {
     return tag_a->fn_table->eq_fn(tag_a->data, tag_b->data) && type_eq(tag_a->inner_type, tag_b->inner_type);
 }
 
-void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts) {
+void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (tag->inner_type)
@@ -124,6 +124,6 @@ void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_op
         printf(COLOR2(BOLD, CYAN) "`%s" COLOR(RESET), buffer);
     tag->fn_table->print_fn(tag->data, file, 1, tag->print_opts);
     fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
-    if (opts & TYPE_PRINT(CLASS_NL_END))
+    if (print_opts & TYPE_PRINT(CLASS_NL_END))
         fprintf(file, "\n");
 }

@@ -64,15 +64,15 @@ bool list_eq(const list *li_a, const list *li_b) {
     return !head_a && !head_b;
 }
 
-void list_print(const list *li, FILE *file, int32_t idnt, list_print_opts opts) {
+void list_print(const list *li, FILE *file, int32_t idnt, list_print_opts print_opts) {
     for (list_item *head = li->head; head; head = head->next) {
-        if (head == li->head && (opts & LIST_PRINT(NO_FIRST_IDNT)))
+        if (head == li->head && (print_opts & LIST_PRINT(NO_FIRST_IDNT)))
             li->fn_table->print_fn(head->data, file, 0, li->print_opts);
         else
             li->fn_table->print_fn(head->data, file, idnt, li->print_opts);
-        if ((opts & LIST_PRINT(SEMI_SPACER)) && head->next)
+        if ((print_opts & LIST_PRINT(SEMI_SPACER)) && head->next)
             fprintf(file, COLOR(DARK_GREY) ";" COLOR(RESET));
     }
-    if (opts & LIST_PRINT(NL_END))
+    if (print_opts & LIST_PRINT(NL_END))
         fprintf(file, "\n");
 }

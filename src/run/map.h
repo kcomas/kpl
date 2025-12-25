@@ -56,4 +56,4 @@ typedef enum [[gnu::packed]] {
     MAP_PRINT(_)                = 0
 } map_print_opts;
 
-void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts opts);
+void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts print_opts);

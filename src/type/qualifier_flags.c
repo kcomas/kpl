@@ -9,12 +9,10 @@ const char *type_qualifier_str(type_qualifier_flags qualifier_flags) {
             return "REF";
         case TYPE_QUALIFIER(SHARED):
             return "SHARED";
-        case TYPE_QUALIFIER(NAMESPACE):
-            return "NAMESPACE";
         case TYPE_QUALIFIER(MUTEX):
             return "MUTEX";
         default:
             break;
     }
-    return "INVALID TYPE QUALIFIER";
+    return NULL;
 }

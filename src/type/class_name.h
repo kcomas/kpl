@@ -10,6 +10,7 @@ typedef enum [[gnu::packed]] {
     TYPE_CLASS(LIST),
     TYPE_CLASS(TABLE),
     TYPE_CLASS(TAG),
+    TYPE_CLASS(BASE),
     TYPE_CLASS(_)
 } type_class;
 
@@ -53,7 +54,6 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(ENUM),
     TYPE_NAME(STRUCT),
     TYPE_NAME(UNION),
-    TYPE_NAME(BASE),
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
     TYPE_NAME(LAMBDA),
@@ -62,6 +62,8 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(ALIAS),
     TYPE_NAME(VAR),
     TYPE_NAME(ARG),
+    // BASE
+    TYPE_NAME(BASE),
     TYPE_NAME(_)
 } type_name;
 

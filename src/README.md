@@ -7,7 +7,7 @@ Each directory has a directory_name.h file as a single header for all of it's pa
 
 ### Namespace
 
-### Type
+### [Type](./type/READEME.md)
 
 ### Ast
 

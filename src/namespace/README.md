@@ -17,6 +17,3 @@ Lock for access
 
 ### Type
 
-## util.[ch]
-
-File utilities, read file to string, get abs path etc

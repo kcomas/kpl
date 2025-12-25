@@ -75,7 +75,7 @@ typedef struct _ser_buffer ser_buffer;
 
 typedef ser_buffer *def_serialize_fn(const def_data data);
 
-typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t opts);
+typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts);
 
 typedef void def_free_fn(void *data);
 
@@ -93,8 +93,10 @@ extern def_fn_table def_unused_fn_table;
 
 #define DEF_CONSTRUCTOR_MEM 110
 #define DEF_CONSTRUCTOR_TASK 111
+#define DEF_CONSTRUCTOR_BASE 112
 
 #define DEF_DESTRUCTOR_MEM 110
 #define DEF_DESTRUCTOR_TASK 111
+#define DEF_DESTRUCTOR_BASE 112
 
 size_t def_hash64shift(size_t key);

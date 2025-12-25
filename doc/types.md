@@ -93,8 +93,6 @@ A unique identifier, cannot be stored
 
 #### [Fn](./functions.md)
 
-#### [Base](./namespaces.md)
-
 #### [Coroutine](./functions.md)
 
 #### [Lambda](./functions.md)
@@ -115,5 +113,7 @@ x :: Array_i64_len_3 ( 1; 2; 3 )
 #### Var
 
 #### Arg
+
+### [Base](./namespaces.md)
 
 ## [Qualifiers](./types/qualifiers.md)

@@ -42,4 +42,4 @@ size_t type_tag_hash(const type_tag *tag);
 
 bool type_tag_eq(const type_tag *tag_a, const type_tag *tag_b);
 
-void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts opts);
+void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts print_opts);

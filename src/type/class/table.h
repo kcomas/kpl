@@ -2,7 +2,6 @@
 #pragma once
 
 #include "../header.h"
-#include "./tag.h"
 
 typedef struct _type_table {
     MEM_HEADER(_type_table);
@@ -21,4 +20,4 @@ size_t type_table_hash(const type_table *table);
 
 bool type_table_eq(const type_table *table_a, const type_table *table_b);
 
-void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_print_opts opts);
+void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_print_opts print_opts);

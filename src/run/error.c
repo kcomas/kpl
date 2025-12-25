@@ -32,7 +32,7 @@ void error_stack_add(error *restrict er, error *restrict next) {
     er->next = next;
 }
 
-void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts opts) {
+void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(MAGENTA) "%s" COLOR(RESET) ":", er->file);
     fprintf(file, COLOR(CYAN) "%s" COLOR(RESET) ":", er->function);
@@ -42,7 +42,7 @@ void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts opt
     if (er->fn_table->print_fn)
         er->fn_table->print_fn(er->data, file, idnt, er->print_opts);
     if (er->next)
-        error_print(er->next, file, idnt, opts);
-    if (opts & ERROR_PRINT(NL_END))
+        error_print(er->next, file, idnt, print_opts);
+    if (print_opts & ERROR_PRINT(NL_END))
         fprintf(file, "\n");
 }

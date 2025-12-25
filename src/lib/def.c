@@ -11,11 +11,11 @@ static bool def_unused_eq_fn(const def_data data_a, const def_data data_b) {
     return data_a.u64 == data_b.u64;
 }
 
-static void def_unused_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t opts) {
+static void def_unused_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     (void) data;
     (void) file;
     (void) idnt;
-    (void) opts;
+    (void) print_opts;
 }
 
 def_fn_table def_unused_fn_table = {

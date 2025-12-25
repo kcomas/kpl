@@ -5,6 +5,7 @@
 #include "./class/fixed.h"
 #include "./class/list.h"
 #include "./class/table.h"
+#include "./class/base.h"
 
 typedef union {
     type *inner_type;
@@ -12,11 +13,14 @@ typedef union {
     list *li;
     type_table *table;
     type_tag *tag;
+    type_base *base;
 } type_class_union;
 
 #define TYPE_CLASS_UNION_EMPTY (type_class_union) { .inner_type = NULL }
 
 #define TYPE_CLASS_UNION_INNER(TYPE) (type_class_union) { .inner_type = TYPE }
+
+#define TYPE_CLASS_UNION_TABLE(TYPE) (type_class_union) { .table = TYPE }
 
 #define TYPE_CLASS_UNION_TAG(TAG) (type_class_union) { .tag = TAG }
 

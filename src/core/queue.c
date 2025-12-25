@@ -54,18 +54,18 @@ static bool core_queue_item_eq(const def_data data_a, const def_data data_b) {
     return string_eq(item_a->filename, item_b->filename);
 }
 
-static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint32_t opts) {
+static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     core_queue_item *item = data.ptr;
     fprintf(file, "%*s", idnt, "");
     string_print(item->filename, file, idnt, 0);
     fprintf(file, COLOR2(BOLD, MAGENTA) " %d" COLOR(RESET), item->dependencies);
-    if (opts & QUEUE_ITEM_PRINT(DEPENDENCIES) && item->parents) {
+    if (print_opts & QUEUE_ITEM_PRINT(DEPENDENCIES) && item->parents) {
         fprintf(file, COLOR2(BOLD, WHITE) " [" COLOR(RESET));
         for (list_item *head = item->parents->head; head; head = head->next)
             string_print(((core_queue_item*) head->data.ptr)->filename, file, idnt + 1, STRING_PRINT(NL_START));
         fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
     }
-    if (opts & QUEUE_ITEM_PRINT(NL_END))
+    if (print_opts & QUEUE_ITEM_PRINT(NL_END))
         fprintf(file, "\n");
 }
 
@@ -94,10 +94,10 @@ error *core_queue_item_error(core_queue_item *item, const char *msg) {
         &core_queue_item_error_fn_table, DEF_PTR(item), msg);
 }
 
-void core_queue_init(core_queue *queue, core_queue_item_print_opts opts) {
+void core_queue_init(core_queue *queue, core_queue_item_print_opts print_opts) {
     queue->state_count.init = queue->state_count.dependencies = 0;
     queue->state_count.running = queue->state_count.done = 0;
-    queue->ma = map_init(0, opts, &core_queue_item_fn_table);
+    queue->ma = map_init(0, print_opts, &core_queue_item_fn_table);
     queue->er = NULL;
     pthread_mutex_init(&queue->mutex, NULL);
     sem_init(&queue->sem, 0, 0);

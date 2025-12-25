@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "../run/run.h"
 #include "./qualifier_flags.h"
 #include "./class_name.h"
 
@@ -23,6 +22,6 @@ typedef enum [[gnu::packed]] {
     TYPE_PRINT(_)              = 0
 } type_print_opts;
 
-void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts opts);
+void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts print_opts);
 
 extern def_fn_table type_fn_table;

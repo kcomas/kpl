@@ -17,4 +17,4 @@ size_t type_fixed_hash(const type_fixed *fixed);
 
 bool type_fixed_eq(const type_fixed *fixed_a, const type_fixed *fixed_b);
 
-void type_fixed_print(const type_fixed *fixed, FILE *file, uint32_t idnt, type_print_opts opts);
+void type_fixed_print(const type_fixed *fixed, FILE *file, uint32_t idnt, type_print_opts print_opts);

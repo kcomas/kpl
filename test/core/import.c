@@ -9,11 +9,8 @@ TEST(core_import) {
     core_import_before(fib_load);
     ASSERT(fib_load->dependencies == 1, "item deps should been 1 for lock");
     error *er = core_import(fib_load);
-    if (er) {
+    if (er)
         error_print(er, stdout, 0, ERROR_PRINT(NL_END));
-        core_queue_free(&queue);
-        error_free(er);
-    }
     ASSERT(!er, "import should not error");
     ASSERT(fib_load->dependencies == 1, "item deps should been 1 for new dependencies");
     ASSERT(queue.state_count.init == 1 && queue.state_count.dependencies == 1, "dependencies should be added");

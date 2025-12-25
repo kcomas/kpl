@@ -28,13 +28,13 @@ size_t type_table_hash(const type_table *table) {
 
 bool type_table_eq(const type_table *table_a, const type_table *table_b) {
     if (table_a == table_b)
-        return false;
+        return true;
     if (!table_a || !table_b)
         return false;
     return type_eq(table_a->inner_type, table_b->inner_type) && map_eq(table_a->type_map, table_b->type_map);
 }
 
-void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_print_opts opts) {
+void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (table->inner_type) {
@@ -44,6 +44,6 @@ void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_pr
     }
     map_print(table->type_map, file, 1, MAP_PRINT(NO_FIRST_IDNT) | MAP_PRINT(SEMI_SPACER));
     fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
-    if (opts & TYPE_PRINT(CLASS_NL_END))
+    if (print_opts & TYPE_PRINT(CLASS_NL_END))
         fprintf(file, "\n");
 }

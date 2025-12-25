@@ -21,12 +21,12 @@ bool type_list_eq(const list *li_a, const list *li_b) {
     return list_eq(li_a, li_b);
 }
 
-void type_list_print(const list *li, FILE *file, uint32_t idnt, type_print_opts opts) {
+void type_list_print(const list *li, FILE *file, uint32_t idnt, type_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     list_print(li, file, 1, LIST_PRINT(NO_FIRST_IDNT) | LIST_PRINT(SEMI_SPACER));
     fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
-    if (opts & TYPE_PRINT(CLASS_NL_END))
+    if (print_opts & TYPE_PRINT(CLASS_NL_END))
         fprintf(file, "\n");
 
 }

@@ -46,7 +46,7 @@ typedef struct _core_queue {
     sem_t sem;
 } core_queue;
 
-void core_queue_init(core_queue *queue, core_queue_item_print_opts opts);
+void core_queue_init(core_queue *queue, core_queue_item_print_opts print_opts);
 
 void core_queue_free(core_queue *queue);
 

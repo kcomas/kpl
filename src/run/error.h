@@ -26,4 +26,4 @@ typedef enum [[gnu::packed]] {
     ERROR_PRINT(NL_END)     = 1 << 0
 } error_print_opts;
 
-void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts opts);
+void error_print(const error *er, FILE *file, int32_t idnt, error_print_opts print_opts);

@@ -47,7 +47,7 @@ scope_name(...)
 #### args
 
 ```
-.sys.args : Namespace[Const[Arary[String;determined at runtime]]]
+.sys.args : Const[Arary[String;determined at runtime]]
 argv0 : .sys.args`0 // Const[String]
 ```
 
@@ -56,10 +56,10 @@ argv0 : .sys.args`0 // Const[String]
 If interrupted by signal returns error
 
 ```
-.sys.sleep : Namespace[Overload (
-    Fn[Result<Void>] ( U64`seconds )
-    Fn[Result<Void>] ( U64`seconds; U64`nano_seconds )
-)]
+.sys.sleep : Overload[
+    Fn[Result<Void>; U64`seconds]
+    Fn[Result<Void>; U64`seconds; U64`nano_seconds]
+]
 ```
 
 #### run
@@ -69,26 +69,26 @@ If interrupted by signal returns error
 #### Console
 
 ```
-.io.Console : Namespace|Const[Enum[I32] ( `stdin $ 0; `stdout $ 1; `stderr $ 2 )]
+.io.Console : Enum[I32; `stdin $ 0; `stdout $ 1; `stderr $ 2]
 
 ```
 
 #### stdin
 
 ```
-.io.stdin : Namespace|Const[FD $ 0]
+.io.stdin : Const[FD $ 0]
 ```
 
 #### stdout
 
 ```
-.io.stdout : Namespace|Const[FD $ 1]
+.io.stdout : Const[FD $ 1]
 ```
 
 #### stderr
 
 ```
-.io.stderr : Namespace|Const[FD $ 2]
+.io.stderr : Const[FD $ 2]
 ```
 
 #### colors.codes
@@ -104,19 +104,19 @@ Color strings for terminal printing
 #### ceil
 
 ```
-.math.ceil : Namespace[Overload (
+.math.ceil : Overload[
     Fn[I32; F32`number]
     Fn[I64; F64`number]
-)]
+]
 ```
 
 #### floor
 
 ```
-.math.floor : Namespace[Overload (
+.math.floor : Overload[
     Fn[I32; F32`number]
     Fn[I64; F64`number]
-)]
+]
 ```
 
 #### log
@@ -124,10 +124,10 @@ Color strings for terminal printing
 Natural logarithm
 
 ```
-.math.log : Namespace[Overload (
+.math.log : Overload (
     Fn[Result[F32]; F32`number]
     Fn[Result[F64]; F64`number]
-)]
+]
 ```
 
 ### regex
@@ -135,9 +135,7 @@ Natural logarithm
 #### Flags
 
 ```
-.regex.Flags : Namespace|Const[
-    Enum[U8; `invalid : 0; `d : 1 << 0; `g : 1 << 1; `i : 1 << 2; `m : 1 << 3; `s : 1 << 4]]
-]
+.regex.Flags : Enum[U8; `invalid : 0; `d : 1 << 0; `g : 1 << 1; `i : 1 << 2; `m : 1 << 3; `s : 1 << 4]]
 ```
 
 ### thread
@@ -145,7 +143,5 @@ Natural logarithm
 #### Status
 
 ```
-.thread.Status : Namespace|Const[
-    Enum[U8; `invalid : 0; `running : 1 << 0; `done : 1 << 1; `error : 1 << 2]]
-]
+.thread.Status : Enum[U8; `invalid : 0; `running : 1 << 0; `done : 1 << 1; `error : 1 << 2]]
 ```

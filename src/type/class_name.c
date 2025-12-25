@@ -34,7 +34,6 @@ static const char *name_str_array[] = {
     "ENUM",
     "STRUCT",
     "UNION",
-    "BASE",
     "FN",
     "COROUTINE",
     "LAMBDA",
@@ -42,6 +41,7 @@ static const char *name_str_array[] = {
     "ALIAS",
     "VAR",
     "ARG",
+    "BASE",
     "_"
 };
 
@@ -86,14 +86,14 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(TABLE, ENUM),
     CLASS_NAME(TABLE, STRUCT),
     CLASS_NAME(TABLE, UNION),
-    CLASS_NAME(TABLE, BASE),
     CLASS_NAME(TABLE, FN),
     CLASS_NAME(TABLE, COROUTINE),
     CLASS_NAME(TABLE, LAMBDA),
     CLASS_NAME(TAG, TAG),
     CLASS_NAME(TAG, ALIAS),
     CLASS_NAME(TAG, VAR),
-    CLASS_NAME(TAG, ARG)
+    CLASS_NAME(TAG, ARG),
+    CLASS_NAME(BASE, BASE),
 };
 
 type_class type_name_get_class(type_name name) {

@@ -20,6 +20,8 @@ static error *import_string_slice(core_queue_item *parent, uint32_t start_idx, u
 
 static const char *import_match = "\\import";
 
+static const uint32_t import_match_len = 8;
+
 static const uint32_t min_import_len = 2;
 
 error *core_import(core_queue_item *parent) {
@@ -37,7 +39,7 @@ error *core_import(core_queue_item *parent) {
             filedata_idx++;
             continue;
         }
-        uint32_t start_idx = 0, end_idx = filedata_idx;
+        uint32_t start_idx = 0, end_idx = filedata_idx - import_match_len;
         while (parent->filedata->data[end_idx] == ' ')
             end_idx--;
         while (parent->filedata->data[end_idx] != '"')
