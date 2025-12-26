@@ -7,7 +7,7 @@ static test test_array[TEST_MAX_COUNT] = {};
 
 void test_add(const char *name, test_fn fn) {
     if (test_len == TEST_MAX_COUNT) {
-        printf(COLOR2(BOLD, RED) "Max Test Count Reached Increase TEST_MAX_COUNT\n" COLOR(RESET));
+        printf(COLOR2(BOLD, RED) "Max Test Count Reached Increase TEST_MAX_COUNT, Exiting\n" COLOR(RESET));
         exit(DEF_EXIT_ERROR);
     }
     test_array[test_len++] = (test) { .name = name, .run = { .fn = fn } };

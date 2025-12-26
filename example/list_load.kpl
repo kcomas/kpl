@@ -3,13 +3,13 @@
 
 list_fns : "./list.kpl"\load
 
-list : list_fns.list_new()
+list : list_fns`list_new()
 
-1 .. 10 @ { `counter; list_fns.list_push(list; counter) }
+1 .. 10 @ { `counter; list_fns`list_push(list; counter) }
 
-list_fns.list_each(list; { I64`value; U64`idx
+list_fns`list_each(list; { I64`value; U64`idx
     .io.colors.strings [ `reset; `blue; `green; `bold ]
-    .io.stdout << String (
+    .io`stdout << String (
         blue
         "idx: "
         bold

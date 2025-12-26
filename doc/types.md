@@ -97,9 +97,13 @@ A unique identifier, cannot be stored
 
 #### [Lambda](./functions.md)
 
-### [Tag Type\`Symbol : Data](./types/tag.md)
+### [Tag Type\`Symbol Data](./types/tag.md)
 
 #### Tag[Type]
+
+#### Tag
+
+Unresolved Name, values are copied out
 
 #### Alias
 

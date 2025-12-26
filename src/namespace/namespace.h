@@ -1,4 +1,4 @@
 
 #pragma once
 
-#include "../type/type.h"
+#include "./std.h"

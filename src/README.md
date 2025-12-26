@@ -45,8 +45,9 @@ Lib -> X64
 Lib -> Run
 Run -> Type
 Type -> Namespace
-Namespace X64 -> Ir
+Type -> X64
 Namespace -> Ast
+Ast X64 -> Ir
 Ast -> Parser
 Parser -> Fold
 Fold -> Check

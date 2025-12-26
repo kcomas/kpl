@@ -20,9 +20,15 @@ typedef union {
 
 #define TYPE_CLASS_UNION_INNER(TYPE) (type_class_union) { .inner_type = TYPE }
 
+#define TYPE_CLASS_UNION_FIXED(TYPE) (type_class_union) { .fixed = TYPE }
+
+#define TYPE_CLASS_UNION_LIST(TYPE) (type_class_union) { .li = TYPE }
+
 #define TYPE_CLASS_UNION_TABLE(TYPE) (type_class_union) { .table = TYPE }
 
-#define TYPE_CLASS_UNION_TAG(TAG) (type_class_union) { .tag = TAG }
+#define TYPE_CLASS_UNION_TAG(TYPE) (type_class_union) { .tag = TYPE }
+
+#define TYPE_CLASS_UNION_BASE(TYPE) (type_class_union) { .base = TYPE }
 
 typedef struct _type {
     MEM_HEADER(_type);

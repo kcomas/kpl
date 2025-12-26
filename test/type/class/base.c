@@ -10,7 +10,7 @@ TEST(type_base) {
         ASSERT(type_tag_symbol_from_c_str_slice(tag, names[name_idx], strlen(names[name_idx])) == DEF_STATUS(OK),
             "invalid symbol");
         // TODO
-        ASSERT(type_base_add(base, type_init(TYPE_NAME(VAR), TYPE_QUALIFIER_FLAG(_),
+        ASSERT(type_base_add(base, type_init(TYPE_NAME(TAG), TYPE_QUALIFIER_FLAG(_),
             TYPE_CLASS_UNION_TAG(tag))) == DEF_STATUS(OK), "invalid base add");
     }
     type_base_print(base, stdout, 0, TYPE_PRINT(CLASS_NL_END));

@@ -5,9 +5,13 @@
 
 ### Std
 
-C functions for runtime, cannot be modified once core starts
+C functions and data for runtime, cannot be modified once core starts
 
 No lock for access
+
+#### Function Array
+
+Used for registering C code
 
 ### Import
 

@@ -32,7 +32,8 @@ bool type_base_eq(const type_base *base_a, const type_base *base_b) {
 void type_base_print(const type_base *base, FILE *file, int32_t idnt, type_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
-    string_print(base->key, file, 0, STRING_PRINT(_));
+    if (base->key)
+        string_print(base->key, file, 0, STRING_PRINT(_));
     if (base->type_map->used)
         fprintf(file, COLOR(DARK_GREY) "; " COLOR(RESET));
     map_print(base->type_map, file, 1, MAP_PRINT(NO_FIRST_IDNT) | MAP_PRINT(SEMI_SPACER));
