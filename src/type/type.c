@@ -150,10 +150,10 @@ void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts print_
 
 def_fn_table type_fn_table = {
     .hash_fn = (void*) type_hash,
-    .cmp_fn = NULL,
+    .cmp_fn = nullptr,
     .eq_fn = (void*) type_eq,
     .copy_fn = (void*) type_copy,
-    .serialize_fn = NULL,
+    .serialize_fn = nullptr,
     .print_fn = (void*) type_print,
     .free_fn = (void*) type_free
 };

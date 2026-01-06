@@ -19,7 +19,7 @@ list *list_init(uint32_t print_opts, def_fn_table *fn_table) {
     list *li = mem_alloc(&list_pool, sizeof(list));
     li->print_opts = print_opts;
     li->fn_table = fn_table;
-    li->head = li->tail = NULL;
+    li->head = li->tail = nullptr;
     return li;
 }
 

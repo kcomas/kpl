@@ -25,7 +25,7 @@ inline type *namespace_tag(type_name name, type *inner_type, const char *symbol,
     type_tag *tag = type_tag_init(inner_type, print_opts, fn_table, data);
     if (type_tag_symbol_from_c_str_slice(tag, symbol, strlen(symbol)) != DEF_STATUS(OK)) {
         type_tag_free(tag);
-        return NULL;
+        return nullptr;
     }
     return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_TAG(tag));
 }

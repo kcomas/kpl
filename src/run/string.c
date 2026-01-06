@@ -9,7 +9,7 @@ string *string_init(uint32_t size) {
     if (size < STRING_MIN_SIZE)
         size = STRING_MIN_SIZE;
     if (size > string_max_size)
-        return NULL;
+        return nullptr;
     string *st = mem_alloc(&string_pool, sizeof(string) + size * sizeof(char) + sizeof(char));
     st->len = 0;
     memset(st->data, '\0', size * sizeof(char) + sizeof(char));
@@ -69,7 +69,7 @@ def_fn_table string_fn_table = {
     .cmp_fn = (void*) string_cmp,
     .eq_fn = (void*) string_eq,
     .copy_fn = (void*) string_copy,
-    .serialize_fn = NULL,
+    .serialize_fn = nullptr,
     .print_fn = (void*) string_print,
     .free_fn = (void*) string_free
 };

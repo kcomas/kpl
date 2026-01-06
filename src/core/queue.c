@@ -7,10 +7,10 @@ static core_queue_item *core_queue_item_init(core_queue *queue, string *filename
     core_queue_item *item = mem_alloc(&core_queue_item_pool, sizeof(core_queue_item));
     item->state = QUEUE_ITEM_STATE(INIT);
     item->dependencies = 0;
-    item->parents = NULL;
+    item->parents = nullptr;
     item->queue = queue;
     item->filename = filename;
-    item->filedata = NULL;
+    item->filedata = nullptr;
     return item;
 }
 
@@ -71,22 +71,22 @@ static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt,
 
 static def_fn_table core_queue_item_fn_table = {
     .hash_fn = core_queue_item_hash,
-    .cmp_fn = NULL,
+    .cmp_fn = nullptr,
     .eq_fn = core_queue_item_eq,
-    .copy_fn = NULL,
-    .serialize_fn = NULL,
+    .copy_fn = nullptr,
+    .serialize_fn = nullptr,
     .print_fn = core_queue_item_print,
     .free_fn = core_queue_item_free
 };
 
 static def_fn_table core_queue_item_error_fn_table = {
-    .hash_fn = NULL,
-    .cmp_fn = NULL,
-    .eq_fn = NULL,
-    .copy_fn = NULL,
-    .serialize_fn = NULL,
+    .hash_fn = nullptr,
+    .cmp_fn = nullptr,
+    .eq_fn = nullptr,
+    .copy_fn = nullptr,
+    .serialize_fn = nullptr,
     .print_fn = core_queue_item_print,
-    .free_fn = NULL
+    .free_fn = nullptr
 };
 
 error *core_queue_item_error(core_queue_item *item, const char *msg) {
@@ -98,8 +98,8 @@ void core_queue_init(core_queue *queue, core_queue_item_print_opts print_opts) {
     queue->state_count.init = queue->state_count.dependencies = 0;
     queue->state_count.running = queue->state_count.done = 0;
     queue->ma = map_init(0, print_opts, &core_queue_item_fn_table);
-    queue->er = NULL;
-    pthread_mutex_init(&queue->mutex, NULL);
+    queue->er = nullptr;
+    pthread_mutex_init(&queue->mutex, nullptr);
     sem_init(&queue->sem, 0, 0);
 }
 
@@ -115,7 +115,7 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
     pthread_mutex_lock(&queue->mutex);
     string *filename = core_util_file_abs_path(resolvepath, filepath);
     if (!filename)
-        return NULL;
+        return nullptr;
     def_data found;
     core_queue_item find = { .filename = filename };
     if (map_action(&queue->ma, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
@@ -127,7 +127,7 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
     if (map_action(&queue->ma, MAP_MODE(INSERT), DEF_PTR(insert), &def_unused) != DEF_STATUS(OK)) {
         core_queue_item_free(insert);
         pthread_mutex_unlock(&queue->mutex);
-        return NULL;
+        return nullptr;
     }
     pthread_mutex_unlock(&queue->mutex);
     queue->state_count.init++;

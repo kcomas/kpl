@@ -15,7 +15,7 @@ static error *import_string_slice(core_queue_item *parent, uint32_t start_idx, u
     if (!dependent)
         return core_queue_item_error(parent, "Import Add Failed");
     core_queue_item_add_parent(dependent, parent);
-    return NULL;
+    return nullptr;
 }
 
 static const char *import_match = "\\import";
@@ -61,5 +61,5 @@ error *core_import(core_queue_item *parent) {
             return er;
     }
     parent->dependencies--;
-    return NULL;
+    return nullptr;
 }

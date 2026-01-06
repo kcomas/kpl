@@ -14,5 +14,5 @@ const char *type_qualifier_str(type_qualifier_flags qualifier_flags) {
         default:
             break;
     }
-    return NULL;
+    return nullptr;
 }

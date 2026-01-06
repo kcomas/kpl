@@ -7,7 +7,7 @@ static atomic_bool running = true;
 
 static pthread_t threads[THREADS] = {};
 
-static task *task_queue_head = NULL, *task_queue_tail = NULL;
+static task *task_queue_head = nullptr, *task_queue_tail = nullptr;
 
 static void task_queue_add(task *ta) {
     if (task_queue_tail) {
@@ -19,14 +19,14 @@ static void task_queue_add(task *ta) {
 
 static task *task_queue_next(void) {
     if (!task_queue_head)
-        return NULL;
+        return nullptr;
     task *ta = task_queue_head;
     if (task_queue_head != task_queue_tail) {
         task_queue_head = task_queue_head->next;
-        task_queue_head->prev = NULL;
+        task_queue_head->prev = nullptr;
     } else
-        task_queue_head = task_queue_tail = NULL;
-    ta->prev = ta->next = NULL;
+        task_queue_head = task_queue_tail = nullptr;
+    ta->prev = ta->next = nullptr;
     return ta;
 }
 
@@ -62,12 +62,12 @@ static void *thread_runner(void *arg) {
         if (sem_value > 1)
             task_delete(ta);
     }
-    return NULL;
+    return nullptr;
 }
 
 [[gnu::constructor(DEF_CONSTRUCTOR_TASK)]] static void task_constructor(void) {
     for (size_t thread_idx = 0; thread_idx < THREADS; thread_idx++)
-        if (pthread_create(&threads[thread_idx], NULL, thread_runner, (void*) thread_idx) != 0) {
+        if (pthread_create(&threads[thread_idx], nullptr, thread_runner, (void*) thread_idx) != 0) {
             printf(COLOR2(BOLD, RED) "Failed To Create Thread Exiting" COLOR(RESET));
             exit(DEF_EXIT_ERROR);
         }
@@ -78,7 +78,7 @@ static void *thread_runner(void *arg) {
     for (size_t thread_idx = 0; thread_idx < THREADS; thread_idx++)
         pthread_cond_signal(&task_queue_cond);
     for (size_t thread_idx = 0; thread_idx < THREADS; thread_idx++)
-        pthread_join(threads[thread_idx], NULL);
+        pthread_join(threads[thread_idx], nullptr);
     while (task_queue_head) {
         task *tmp = task_queue_head;
         task_queue_head = task_queue_head->next;
@@ -94,7 +94,7 @@ static task *_task_init(uint32_t print_opts, def_fn_table *fn_table, def_data da
     ta->fn_table = fn_table;
     ta->data = data;
     ta->fn = fn;
-    ta->er = NULL;
+    ta->er = nullptr;
     sem_init(&ta->sem, 0, sem_value);
     pthread_mutex_lock(&task_queue_mutex);
     task_queue_add(ta);
@@ -125,7 +125,7 @@ result task_join(task *ta) {
     result re;
     if (ta->er) {
         re = result_error(ta->er);
-        ta->er = NULL;
+        ta->er = nullptr;
     } else {
         re = result_value(ta->data);
         ta->data = DEF(_);

@@ -41,6 +41,7 @@ Application entry point
 
 ## Dependency Graph
 
+```
 Lib -> X64
 Lib -> Run
 Run -> Type
@@ -57,3 +58,4 @@ Eval Ir -> Gen
 Gen -> Core
 Core -> Repl
 Repl -> main.c
+```

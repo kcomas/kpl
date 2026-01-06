@@ -6,7 +6,7 @@ atomic_size_t counter = 0;
 error *task_counter_fn(def_data data) {
     (void) data;
     counter++;
-    return NULL;
+    return nullptr;
 }
 
 #define TEST_THREADS THREADS

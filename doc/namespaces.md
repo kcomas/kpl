@@ -137,11 +137,3 @@ Natural logarithm
 ```
 .regex.Flags : Enum[U8; `invalid : 0; `d : 1 << 0; `g : 1 << 1; `i : 1 << 2; `m : 1 << 3; `s : 1 << 4]]
 ```
-
-### thread
-
-#### Status
-
-```
-.thread.Status : Enum[U8; `invalid : 0; `running : 1 << 0; `done : 1 << 1; `error : 1 << 2]]
-```

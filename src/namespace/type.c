@@ -27,7 +27,7 @@ type *namespace_table(type_name name, type *inner_type, ...) {
         if (type_table_add(table, ty) != DEF_STATUS(OK)) {
             va_end(args);
             type_table_free(table);
-            return NULL;
+            return nullptr;
         }
     va_end(args);
     return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_TABLE(table));

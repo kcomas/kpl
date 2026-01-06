@@ -14,10 +14,10 @@ static int32_t namespace_std_register_fn(void *fn) {
     return std_fns_len++;
 }
 
-static type_base *std = NULL;
+static type_base *std = nullptr;
 
 [[gnu::constructor(DEF_CONSTRUCTOR_STD)]] static void namespace_std_constructor(void) {
-    std = type_base_init(NULL);
+    std = type_base_init(nullptr);
 }
 
 [[gnu::destructor(DEF_DESTRUCTOR_STD)]] static void namespace_std_destructor(void) {
@@ -72,9 +72,20 @@ void namespace_std_add_fn(type *ty, void *fn, ...) {
         exit(DEF_EXIT_ERROR);
     }
     ty->class_union.table->fn_idx = namespace_std_register_fn(fn);
+    ty->qualifier_flags |= TYPE_FLAG(C_CODE);
     va_list args;
     va_start(args, fn);
     return _namespace_std_add(ty, args);
+}
+
+void *namespace_std_get_fn(type *ty) {
+    if (ty->name != TYPE_NAME(FN)) {
+        printf(COLOR2(BOLD, RED) "Invalid Function Type, Exiting\n" COLOR(RESET));
+        exit(DEF_EXIT_ERROR);
+    }
+    if (ty->class_union.table->fn_idx < 0 || ty->class_union.table->fn_idx >= std_fns_len)
+        return nullptr;
+    return std_fns[ty->class_union.table->fn_idx];
 }
 
 void namespace_std_print(FILE *file, int32_t idnt, uint32_t print_opts) {

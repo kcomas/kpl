@@ -9,7 +9,7 @@ string *core_util_file_abs_path(const char *resolvepath, const char *filepath) {
             strncpy(path, resolvepath, PATH_MAX - sizeof(char));
             dirname(path);
         } else if (!getcwd(path, PATH_MAX))
-            return NULL;
+            return nullptr;
         path_len = strlen(path);
         path[path_len++] = '/';
     }
@@ -17,7 +17,7 @@ string *core_util_file_abs_path(const char *resolvepath, const char *filepath) {
     string *st = string_init(strlen(path));
     if (!realpath(path, st->data)) {
         string_free(st);
-        return NULL;
+        return nullptr;
     }
     st->len = strlen(st->data);
     return st;
@@ -26,18 +26,18 @@ string *core_util_file_abs_path(const char *resolvepath, const char *filepath) {
 string *core_util_file_read_string(const char *filepath) {
     int fd = open(filepath, O_RDONLY);
     if (fd == -1)
-        return NULL;
+        return nullptr;
     struct statx stx_buf;
-    if (statx(fd, NULL, AT_EMPTY_PATH, STATX_SIZE, &stx_buf) == -1) {
+    if (statx(fd, nullptr, AT_EMPTY_PATH, STATX_SIZE, &stx_buf) == -1) {
         close(fd);
-        return NULL;
+        return nullptr;
     }
     string *st = string_init(stx_buf.stx_size);
     st->len = stx_buf.stx_size;
     if (read(fd, st->data, stx_buf.stx_size) != (ssize_t) stx_buf.stx_size) {
         close(fd);
         string_free(st);
-        return NULL;
+        return nullptr;
     }
     close(fd);
     return st;

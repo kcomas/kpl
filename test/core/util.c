@@ -2,7 +2,7 @@
 #include "../test.h"
 
 TEST(core_absolute_file_path) {
-    string *path_a = core_util_file_abs_path(NULL, "./src/README.md");
+    string *path_a = core_util_file_abs_path(nullptr, "./src/README.md");
     ASSERT(path_a && path_a->data, "invalid core_util_file_abs_path");
     string_print(path_a, stdout, 0, STRING_PRINT(NL_END));
     string *path_b = core_util_file_abs_path(path_a->data, "../README.md");

@@ -13,4 +13,6 @@ void namespace_std_add(type *ty, ...);
 
 void namespace_std_add_fn(type *ty, void *fn, ...);
 
+void *namespace_std_get_fn(type *ty);
+
 void namespace_std_print(FILE *file, int32_t idnt, uint32_t print_opts);

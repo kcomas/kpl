@@ -9,7 +9,7 @@ typedef struct {
 } result;
 
 inline result result_value(def_data value) {
-    return (result) { .value = value, .er = NULL };
+    return (result) { .value = value, .er = nullptr };
 }
 
 inline result result_error(error *er) {

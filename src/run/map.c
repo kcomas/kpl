@@ -21,13 +21,13 @@ map *map_init(uint32_t size, uint32_t print_opts, def_fn_table *fn_table) {
     if (size < MAP_MIN_SIZE)
         size = MAP_MIN_SIZE;
     if (size * sizeof(map_bucket*) > map_max_size)
-        return NULL;
+        return nullptr;
     map *ma = mem_alloc(&map_pool, sizeof(map) + sizeof(map_bucket*) * size);
     ma->size = size;
     ma->used = 0;
     ma->print_opts = print_opts;
     ma->fn_table = fn_table;
-    ma->head = ma->tail = NULL;
+    ma->head = ma->tail = nullptr;
     memset(ma->buckets, 0, sizeof(map_bucket*) * size);
     return ma;
 }
@@ -51,7 +51,7 @@ static map_bucket **map_search(map *ma, def_data search) {
         hash = (hash + 1) % ma->size;
         max_search_count--;
     }
-    return NULL;
+    return nullptr;
 }
 
 constexpr const uint32_t map_max_size_check = UINT32_MAX / MAP_RESIZE_MUL;
@@ -87,11 +87,11 @@ static def_status map_resize(map **ma) {
 }
 
 static map_bucket **map_search_resize(map **ma, def_data search) {
-    map_bucket **bucket = NULL;
+    map_bucket **bucket = nullptr;
     if ((bucket = map_search(*ma, search)))
         return bucket;
     if (map_resize(ma) != DEF_STATUS(OK))
-        return NULL;
+        return nullptr;
     return map_search(*ma, search);
 }
 
@@ -134,7 +134,7 @@ def_status map_action(map **ma, map_mode mode, def_data search, def_data *found)
             *found = (*bucket)->data;
             mem_list_remove(*bucket);
             map_bucket_free(*bucket);
-            *bucket = NULL;
+            *bucket = nullptr;
             (*ma)->used--;
             return DEF_STATUS(OK);
         default:

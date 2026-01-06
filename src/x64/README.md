@@ -1,16 +1,32 @@
 
 # X64
 
-x86-64 assembler/disassembler
-
-## Queue
-
-### Label Queue
-
-### Data Queue
+X86-64 Assembler/Disassembler
 
 ## Limitations
 
-No Segment Registers
+No access to segment registers
 
 No X87 Support
+
+## Required Implicit Registers
+
+Instructions that implicitly modify a register require the register as an argument
+
+```
+# GAS Example
+imul %rdi -> imul %rax, %rdi
+leave -> leave %rbp
+```
+
+## Dependency Graph
+
+```
+def -> inst
+inst -> table
+table -> query
+query -> mem
+mem -> queue
+queue -> asm, dis
+asm, dis -> x64
+```

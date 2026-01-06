@@ -1,0 +1,798 @@
+
+#include "./inst.h"
+
+static constexpr uint32_t r8 = X64_OP(R8);
+
+static constexpr uint32_t r16 = X64_OP(R16);
+
+static constexpr uint32_t r32 = X64_OP(R32);
+
+static constexpr uint32_t r64 = X64_OP(R64);
+
+static constexpr uint32_t xmm = X64_OP(XMM);
+
+static constexpr uint32_t mm = X64_OP(MM);
+
+static constexpr uint32_t r163264 = r16 | r32 | r64;
+
+static constexpr uint32_t rax = X64_OP_REG(0);
+
+static constexpr uint32_t rcx = X64_OP_REG(1);
+
+static constexpr uint32_t rdx = X64_OP_REG(2);
+
+static constexpr uint32_t rbx = X64_OP_REG(3);
+
+static constexpr uint32_t rsp = X64_OP_REG(4);
+
+static constexpr uint32_t rbp = X64_OP_REG(5);
+
+static constexpr uint32_t rsi = X64_OP_REG(6);
+
+static constexpr uint32_t rdi = X64_OP_REG(7);
+
+static constexpr uint32_t xmm0 = xmm | X64_OP_REG(0);
+
+static constexpr uint32_t m8 = X64_OP(M8);
+
+static constexpr uint32_t m16 = X64_OP(M16);
+
+static constexpr uint32_t m32 = X64_OP(M32);
+
+static constexpr uint32_t m64 = X64_OP(M64);
+
+static constexpr uint32_t m128 = X64_OP(M128);
+
+static constexpr uint32_t m163264 = m16 | m32 | m64;
+
+static constexpr uint32_t rm8 = r8 | m8;
+
+static constexpr uint32_t rm163264 = r163264 | m163264;
+
+static constexpr uint32_t i8 = X64_OP(I8);
+
+static constexpr uint32_t i16 = X64_OP(I16);
+
+static constexpr uint32_t i32 = X64_OP(I32);
+
+static constexpr uint32_t i64 = X64_OP(I64);
+
+static constexpr uint32_t i1632 = i16 | i32;
+
+static constexpr uint32_t rel8 = X64_OP(REL8);
+
+static constexpr uint32_t rel32 = X64_OP(REL32);
+
+static constexpr uint16_t lock = X64_PFX(LOCK);
+
+static constexpr uint16_t rep = X64_PFX(REP) | X64_PFX(REPZ);
+
+static constexpr uint16_t f0 = X64_FLAG(0F);
+
+static constexpr uint16_t plusr = X64_FLAG(PLUSR);
+
+static constexpr uint16_t opcode = X64_FLAG(OPCODE);
+
+static constexpr uint16_t modrrm = X64_FLAG(MODRRM);
+
+static constexpr uint16_t f0modrrm = f0 | modrrm;
+
+static constexpr uint16_t f0opcode = f0 | opcode;
+
+#define GROUP_A(PO, LOCK, NAME) \
+    { .po = PO, .flags = modrrm | LOCK, .mne = X64_MNE_INST(NAME), .op = { rm8, r8 } }, \
+    { .po = PO + 1, .flags = modrrm | LOCK, .mne = X64_MNE_INST(NAME), .op = { rm163264, r163264 } }, \
+    { .po = PO + 2, .flags = modrrm, .mne = X64_MNE_INST(NAME), .op = { r8, rm8 } }, \
+    { .po = PO + 3, .flags = modrrm, .mne = X64_MNE_INST(NAME), .op = { r163264, rm163264 } }, \
+    { .po = PO + 4, .mne = X64_MNE_INST(NAME), .op = { r8 | rax, i8 } }, \
+    { .po = PO + 5, .mne = X64_MNE_INST(NAME), .op = { r163264 | rax, i1632 } }
+
+#define GROUP_B(PO, OP1, OP2) \
+    { .po = PO, .o = 0, .flags = lock | opcode, .mne = X64_MNE_INST(ADD), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 1, .flags = lock | opcode, .mne = X64_MNE_INST(OR), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 2, .flags = lock | opcode, .mne = X64_MNE_INST(ADC), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 3, .flags = lock | opcode, .mne = X64_MNE_INST(SBB), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 4, .flags = lock | opcode, .mne = X64_MNE_INST(AND), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 5, .flags = lock | opcode, .mne = X64_MNE_INST(SUB), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 6, .flags = lock | opcode, .mne = X64_MNE_INST(XOR), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 7, .flags = opcode, .mne = X64_MNE_INST(CMP), .op = { OP1, OP2 } }
+
+#define GROUP_C(PO, OP1, OP2) \
+    { .po = PO, .o = 0, .flags = opcode, .mne = X64_MNE_INST(ROL), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 1, .flags = opcode, .mne = X64_MNE_INST(ROR), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 2, .flags = opcode, .mne = X64_MNE_INST(RCL), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 3, .flags = opcode, .mne = X64_MNE_INST(RCR), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 4, .flags = opcode, .mne = X64_MNE_INST(SHL), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 5, .flags = opcode, .mne = X64_MNE_INST(SHR), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 6, .flags = opcode, .mne = X64_MNE_INST(SAL), .op = { OP1, OP2 } }, \
+    { .po = PO, .o = 7, .flags = opcode, .mne = X64_MNE_INST(SAR), .op = { OP1, OP2 } }
+
+#define GROUP_D(PO, NAME) \
+    { .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { mm, mm | m64 } }, \
+    { .pf = 0x66, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
+
+#define PLUSR(PO, FLAGS, OP1, OP2, NAME) \
+    { .po = PO, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rax, OP2 } }, \
+    { .po = PO + 1, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rcx, OP2 } }, \
+    { .po = PO + 2, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rdx, OP2 } }, \
+    { .po = PO + 3, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rbx, OP2 } }, \
+    { .po = PO + 4, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rsp, OP2 } }, \
+    { .po = PO + 5, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rbp, OP2 } }, \
+    { .po = PO + 6, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rsi, OP2 } }, \
+    { .po = PO + 7, .flags = plusr | FLAGS, .mne = X64_MNE_INST(NAME), .op = { OP1 | rdi, OP2 } }
+
+#define JMP8(PO, NAME) { .po = PO, .mne = X64_MNE_INST(NAME), .op = { rel8 } }
+
+#define JMP32(PO, NAME) { .po = PO, .flags = f0, .mne = X64_MNE_INST(NAME), .op = { rel32 } }
+
+#define CMOV(PO, NAME) { .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { r163264, rm163264 } }
+
+#define SET(PO, NAME) { .po = PO, .o = 0, .flags = f0opcode, .mne = X64_MNE_INST(NAME), .op = { rm8 } }
+
+#define INVALID(PO) { .po = PO, .flags = X64_FLAG(INVALID), .mne = X64_MNE(INVALID) }
+
+#define INVALID_0F(PO) { .po = PO, .flags = X64_FLAG(INVALID) | X64_FLAG(0F), .mne = X64_MNE(INVALID) }
+
+#define PREFIX(PO, NAME) { .po = PO, .flags = X64_FLAG(PREFIX), .mne = X64_MNE_PFX(NAME) }
+
+#define REX(PO, NAME) { .po = PO, .flags = X64_FLAG(REX), .mne = X64_MNE_REX(NAME) }
+
+#define PS(PO, NAME) { .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
+
+#define SS(PO, NAME) { .pf = 0xF3, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m32 } }
+
+#define PD(PO, NAME) { .pf = 0x66, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
+
+#define SD(PO, NAME) { .pf = 0xF2, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m64 } }
+
+const x64_inst x64_inst_table[] = {
+    GROUP_A(0x00, lock, ADD),
+    INVALID(0x06),
+    INVALID(0x07),
+    GROUP_A(0x08, lock, OR),
+    INVALID(0x0E),
+    { .po = 0x0F, .flags = X64_FLAG(0F), .mne = X64_MNE(0F) },
+    GROUP_A(0x10, lock, ADC),
+    INVALID(0x16),
+    INVALID(0x17),
+    GROUP_A(0x18, lock, SBB),
+    INVALID(0x1E),
+    INVALID(0xF1),
+    GROUP_A(0x20, lock, AND),
+    PREFIX(0x26, 64NULL),
+    INVALID(0x27),
+    GROUP_A(0x28, lock, SUB),
+    PREFIX(0x2E, 64NULL),
+    INVALID(0x2F),
+    GROUP_A(0x30, lock, XOR),
+    PREFIX(0x36, 64NULL),
+    INVALID(0x37),
+    GROUP_A(0x38, 0, CMP),
+    PREFIX(0x3E, 64NULL),
+    INVALID(0x3F),
+    REX(0x40, REX),
+    REX(0x41, REX_B),
+    REX(0x42, REX_X),
+    REX(0x43, REX_XB),
+    REX(0x44, REX_R),
+    REX(0x45, REX_RB),
+    REX(0x46, REX_RX),
+    REX(0x47, REX_RXB),
+    REX(0x48, REX_W),
+    REX(0x49, REX_WB),
+    REX(0x4A, REX_WX),
+    REX(0x4B, REX_WXB),
+    REX(0x4C, REX_WR),
+    REX(0x4D, REX_WRB),
+    REX(0x4E, REX_WRX),
+    REX(0x4F, REX_WRXB),
+    PLUSR(0x50, 0, r64, 0, PUSH),
+    PLUSR(0x58, 0, r64, 0, POP),
+    INVALID(0x60),
+    INVALID(0x61),
+    INVALID(0x62),
+    { .po = 0x63, .flags = modrrm, .mne = X64_MNE_INST(MOVSXD), .op = { r32 | r64, r32 | m32 } },
+    INVALID(0x64),
+    INVALID(0x65),
+    PREFIX(0x66, OPERAND_SIZE),
+    INVALID(0x67),
+    { .po = 0x68, .mne = X64_MNE_INST(PUSH), .op = { i1632 } },
+    { .po = 0x69, .flags = modrrm, .mne = X64_MNE_INST(IMUL), .op = { r163264, rm163264, i1632 } },
+    { .po = 0x6A, .mne = X64_MNE_INST(PUSH), .op = { i8 } },
+    { .po = 0x6B, .flags = modrrm, .mne = X64_MNE_INST(IMUL), .op = { r163264, rm163264, i8 } },
+    { .po = 0x6C, .flags = rep, .mne = X64_MNE_INST(INS), .op = { m8 | rdi, r8 | rdx } },
+    { .po = 0x6D, .flags = rep, .mne = X64_MNE_INST(INS), .op = { m16 | m32 | rdi, r16 | r32 | rdx } },
+    { .po = 0x6E, .flags = rep, .mne = X64_MNE_INST(OUTS), .op = { r8 | rdx, m8 | rdi } },
+    { .po = 0x6F, .flags = rep, .mne = X64_MNE_INST(OUTS), .op = { r16 | r32 | rdx, m16 | m32 | rdi } },
+    JMP8(0x70, JO),
+    JMP8(0x71, JNO),
+    JMP8(0x72, JB),
+    JMP8(0x72, JNAE),
+    JMP8(0x72, JC),
+    JMP8(0x73, JNB),
+    JMP8(0x73, JAE),
+    JMP8(0x73, JNC),
+    JMP8(0x74, JZ),
+    JMP8(0x74, JE),
+    JMP8(0x75, JNZ),
+    JMP8(0x75, JNE),
+    JMP8(0x76, JBE),
+    JMP8(0x76, JNA),
+    JMP8(0x77, JNBE),
+    JMP8(0x77, JA),
+    JMP8(0x78, JS),
+    JMP8(0x79, JNS),
+    JMP8(0x7A, JP),
+    JMP8(0x7A, JPE),
+    JMP8(0x7B, JNP),
+    JMP8(0x7B, JPO),
+    JMP8(0x7C, JL),
+    JMP8(0x7C, JNGE),
+    JMP8(0x7D, JNL),
+    JMP8(0x7D, JGE),
+    JMP8(0x7E, JLE),
+    JMP8(0x7E, JNG),
+    JMP8(0x7F, JNLE),
+    JMP8(0x7F, JG),
+    GROUP_B(0x80, rm8, i8),
+    GROUP_B(0x81, rm163264, i1632),
+    INVALID(0x82),
+    GROUP_B(0x83, r163264, i8),
+    { .po = 0x84, .flags = modrrm, .mne = X64_MNE_INST(TEST), .op = { rm8, r8 } },
+    { .po = 0x85, .flags = modrrm, .mne = X64_MNE_INST(TEST), .op = { rm163264, r163264 } },
+    { .po = 0x86, .flags = modrrm | lock, .mne = X64_MNE_INST(XCHG), .op = { r8, rm8 } },
+    { .po = 0x87, .flags = modrrm | lock, .mne = X64_MNE_INST(XCHG), .op = { r163264, rm163264 } },
+    { .po = 0x88, .flags = modrrm, .mne = X64_MNE_INST(MOV), .op = { rm8, r8 } },
+    { .po = 0x89, .flags = modrrm, .mne = X64_MNE_INST(MOV), .op = { rm163264, r163264 } },
+    { .po = 0x8A, .flags = modrrm, .mne = X64_MNE_INST(MOV), .op = { r8, rm8 } },
+    { .po = 0x8B, .flags = modrrm, .mne = X64_MNE_INST(MOV), .op = { r163264, rm163264 } },
+    INVALID(0x8C),
+    { .po = 0x8D, .flags = modrrm, .mne = X64_MNE_INST(LEA), .op = { r163264, m8 | m163264 } },
+    INVALID(0x8E),
+    { .po = 0x8F, .o = 0, .flags = opcode, .mne = X64_MNE_INST(POP), .op = { r64 | m64 } },
+    { .po = 0x90, .mne = X64_MNE_INST(NOP) },
+    { .pf = 0xF3, .po = 0x90, .mne = X64_MNE_INST(PAUSE) },
+    PLUSR(0x90, 0, r163264, r163264 | rax, XCHG),
+    { .po = 0x98, .mne = X64_MNE_INST(CBW), .op = { r16 | rax, r8 | rax } },
+    { .po = 0x98, .mne = X64_MNE_INST(CWDE), .op = { r32 | rax, r16 | rax } },
+    { .po = 0x98, .mne = X64_MNE_INST(CDQE), .op = { r64 | rax, r32 | rax } },
+    { .po = 0x99, .mne = X64_MNE_INST(CWD), .op = { r16 | rdx, r16 | rax } },
+    { .po = 0x99, .mne = X64_MNE_INST(CDQ), .op = { r32 | rdx, r32 | rax } },
+    { .po = 0x99, .mne = X64_MNE_INST(CQO), .op = { r64 | rdx, r64 | rax } },
+    INVALID(0x9A),
+    PREFIX(0x9B, WAIT),
+    { .po = 0x9C, .mne = X64_MNE_INST(PUSHF) },
+    { .po = 0x9D, .mne = X64_MNE_INST(POPF) },
+    INVALID(0x9E),
+    INVALID(0x9F),
+    INVALID(0xA0),
+    INVALID(0xA1),
+    INVALID(0xA2),
+    INVALID(0xA3),
+    { .po = 0xA4, .flags = rep, .mne = X64_MNE_INST(MOVS), .op = { m8 | rdi, m8 | rsi } },
+    { .po = 0xA5, .flags = rep, .mne = X64_MNE_INST(MOVS), .op = { m163264 | rdi, m163264 | rsi } },
+    { .po = 0xA6, .flags = rep, .mne = X64_MNE_INST(CMPS), .op = { m8 | rdi, m8 | rsi } },
+    { .po = 0xA7, .flags = rep, .mne = X64_MNE_INST(CMPS), .op = { m163264 | rdi, m163264 | rsi } },
+    { .po = 0xA8, .mne = X64_MNE_INST(TEST), .op = { r8 | rax, i8 } },
+    { .po = 0xA9, .mne = X64_MNE_INST(TEST), .op = { r16 | r32 | rax, i1632 } },
+    { .po = 0xAA, .mne = X64_MNE_INST(STOS), .op = { m8 | rdi, r8 | rax } },
+    { .po = 0xAB, .mne = X64_MNE_INST(STOS), .op = { m163264 | rdi, r163264 | rax } },
+    { .po = 0xAC, .mne = X64_MNE_INST(LODS), .op = { r8 | rax, m8 | rsi } },
+    { .po = 0xAD, .mne = X64_MNE_INST(LODS), .op = { r163264 | rax, m163264 | rsi } },
+    { .po = 0xAE, .mne = X64_MNE_INST(SCAS), .op = { m8 | rdi, r8 | rax } },
+    { .po = 0xAF, .mne = X64_MNE_INST(SCAS), .op = { m163264 | rdi, r163264 | rax } },
+    PLUSR(0xB0, 0, r8, i8, MOV),
+    PLUSR(0xB8, 0, r163264, i1632 | i64, MOV),
+    GROUP_C(0xC0, rm8, i8),
+    GROUP_C(0xC1, rm163264, i8),
+    { .po = 0xC2, .mne = X64_MNE_INST(RET), .op = { i16 } },
+    { .po = 0xC3, .mne = X64_MNE_INST(RET) },
+    INVALID(0xC4),
+    INVALID(0xC5),
+    { .po = 0xC6, .o = 0, .flags = opcode, .mne = X64_MNE_INST(MOV), .op = { rm8, i8 } },
+    { .po = 0xC7, .o = 0, .flags = opcode, .mne = X64_MNE_INST(MOV), .op = { rm163264, i1632 } },
+    { .po = 0xC8, .mne = X64_MNE_INST(ENTER), .op = { r64 | rbp, i16, i8 } },
+    { .po = 0xC9, .mne = X64_MNE_INST(LEAVE), .op = { r64 | rbp } },
+    { .po = 0xCA, .mne = X64_MNE_INST(RETF), .op = { i16 } },
+    { .po = 0xCB, .mne = X64_MNE_INST(RETF) },
+    { .po = 0xCC, .mne = X64_MNE_INST(INT3) },
+    { .po = 0xCD, .mne = X64_MNE_INST(INT), .op = { i8 } },
+    INVALID(0xCE),
+    INVALID(0xCF),
+    GROUP_C(0xD0, rm8, 0),
+    GROUP_C(0xD1, rm163264, 0),
+    GROUP_C(0xD2, rm8, r8 | rcx),
+    GROUP_C(0xD3, rm163264, r8 | rcx),
+    INVALID(0xD4),
+    INVALID(0xD5),
+    INVALID(0xD6),
+    INVALID(0xD7),
+    INVALID(0xD8),
+    INVALID(0xD9),
+    INVALID(0xDA),
+    INVALID(0xDB),
+    INVALID(0xDC),
+    INVALID(0xDD),
+    INVALID(0xDE),
+    INVALID(0xDF),
+    { .po = 0xE0, .mne = X64_MNE_INST(LOOPNZ), .op = { r8 | r163264 | rcx, rel8 } },
+    { .po = 0xE0, .mne = X64_MNE_INST(LOOPNE), .op = { r8 | r163264 | rcx, rel8 } },
+    { .po = 0xE1, .mne = X64_MNE_INST(LOOPZ), .op = { r8 | r163264 | rcx, rel8 } },
+    { .po = 0xE1, .mne = X64_MNE_INST(LOOPE), .op = { r8 | r163264 | rcx, rel8 } },
+    { .po = 0xE2, .mne = X64_MNE_INST(LOOP), .op = { r8 | r163264 | rcx, rel8 } },
+    { .po = 0xE3, .mne = X64_MNE_INST(JECXZ), .op = { rel8, r32 | rcx } },
+    { .po = 0xE3, .mne = X64_MNE_INST(JRCXZ), .op = { rel8, r64 | rcx } },
+    { .po = 0xE4, .mne = X64_MNE_INST(IN), .op = { r8 | rax, i8 } },
+    { .po = 0xE5, .mne = X64_MNE_INST(IN), .op = { r32 | rax, i8 } },
+    { .po = 0xE6, .mne = X64_MNE_INST(OUT), .op = { i8, r8 | rax } },
+    { .po = 0xE7, .mne = X64_MNE_INST(OUT), .op = { i8, r32 | rax } },
+    { .po = 0xE8, .mne = X64_MNE_INST(CALL), .op = { rel32 } },
+    { .po = 0xE9, .mne = X64_MNE_INST(JMP), .op = { rel32 } },
+    INVALID(0xEA),
+    { .po = 0xEB, .mne = X64_MNE_INST(JMP), .op = { rel8 } },
+    { .po = 0xEC, .mne = X64_MNE_INST(IN), .op = { r8 | rax, r8 | rdx } },
+    { .po = 0xED, .mne = X64_MNE_INST(IN), .op = { r32 | rax, r16 | rdx } },
+    { .po = 0xEE, .mne = X64_MNE_INST(OUT), .op = { r16 | rdx, r8 | rax } },
+    { .po = 0xEF, .mne = X64_MNE_INST(OUT), .op = { r16 | rdx, r32 | rax } },
+    PREFIX(0xF0, LOCK),
+    { .po = 0xF1, .mne = X64_MNE_INST(INT1) },
+    PREFIX(0xF2, REPNZ),
+    PREFIX(0xF2, REPNE),
+    PREFIX(0xF2, REP),
+    PREFIX(0xF3, REPZ),
+    PREFIX(0xF3, REPE),
+    { .po = 0xF4, .mne = X64_MNE_INST(HLT) },
+    { .po = 0xF5, .mne = X64_MNE_INST(CMC) },
+    { .po = 0xF6, .o = 0, .flags = opcode, .mne = X64_MNE_INST(TEST), .op = { rm8, i8 } },
+    { .po = 0xF6, .o = 1, .flags = opcode, .mne = X64_MNE_INST(TEST), .op = { rm8, i8 } },
+    { .po = 0xF6, .o = 2, .flags = opcode | lock, .mne = X64_MNE_INST(NOT), .op = { rm8 } },
+    { .po = 0xF6, .o = 3, .flags = opcode | lock, .mne = X64_MNE_INST(NEG), .op = { rm8 } },
+    { .po = 0xF6, .o = 4, .flags = opcode, .mne = X64_MNE_INST(MUL), .op = { r16 | rax, rm8 } },
+    { .po = 0xF6, .o = 5, .flags = opcode, .mne = X64_MNE_INST(IMUL), .op = { r16 | rax, rm8 } },
+    { .po = 0xF6, .o = 6, .flags = opcode, .mne = X64_MNE_INST(DIV), .op = { r16 | rax, rm8 } },
+    { .po = 0xF6, .o = 7, .flags = opcode, .mne = X64_MNE_INST(IDIV), .op = { r16 | rax, rm8 } },
+    { .po = 0xF7, .o = 0, .flags = opcode, .mne = X64_MNE_INST(TEST), .op = { r163264, i1632 } },
+    { .po = 0xF7, .o = 1, .flags = opcode, .mne = X64_MNE_INST(TEST), .op = { r163264, i1632 } },
+    { .po = 0xF7, .o = 2, .flags = opcode | lock, .mne = X64_MNE_INST(NOT), .op = { rm163264 } },
+    { .po = 0xF7, .o = 3, .flags = opcode | lock, .mne = X64_MNE_INST(NEG), .op = { rm163264 } },
+    {
+        .po = 0xF7, .o = 4, .flags = opcode, .mne = X64_MNE_INST(MUL),
+        .op = { r163264 | rdx, r163264 | rax, rm163264 }
+    },
+    {
+        .po = 0xF7, .o = 5, .flags = opcode, .mne = X64_MNE_INST(IMUL),
+        .op = { r163264 | rdx, r163264 | rax, rm163264 }
+    },
+    {
+        .po = 0xF7, .o = 6, .flags = opcode, .mne = X64_MNE_INST(DIV),
+        .op = { r163264 | rdx, r163264 | rax, rm163264 }
+    },
+    {
+        .po = 0xF7, .o = 7, .flags = opcode, .mne = X64_MNE_INST(IDIV),
+        .op = { r163264 | rdx, r163264 | rax, rm163264 }
+    },
+    { .po = 0xF8, .mne = X64_MNE_INST(CLC) },
+    { .po = 0xF9, .mne = X64_MNE_INST(STC) },
+    { .po = 0xFA, .mne = X64_MNE_INST(CLI) },
+    { .po = 0xFB, .mne = X64_MNE_INST(STI) },
+    { .po = 0xFC, .mne = X64_MNE_INST(CLD) },
+    { .po = 0xFD, .mne = X64_MNE_INST(STD) },
+    { .po = 0xFE, .o = 0, .flags = opcode | lock, .mne = X64_MNE_INST(INC), .op = { rm8 } },
+    { .po = 0xFE, .o = 1, .flags = opcode | lock, .mne = X64_MNE_INST(DEC), .op = { rm8 } },
+    { .po = 0xFF, .o = 0, .flags = opcode | lock, .mne = X64_MNE_INST(INC), .op = { rm163264 } },
+    { .po = 0xFF, .o = 1, .flags = opcode | lock, .mne = X64_MNE_INST(DEC), .op = { rm163264 } },
+    { .po = 0xFF, .o = 2, .flags = opcode, .mne = X64_MNE_INST(CALL), .op = { r64 | m64 } },
+    { .po = 0xFF, .o = 4, .flags = opcode, .mne = X64_MNE_INST(JMP), .op = { r64 | m64 } },
+    { .po = 0xFF, .o = 6, .flags = opcode, .mne = X64_MNE_INST(PUSH), .op = { r64 | m64 } },
+    INVALID_0F(0x00),
+    INVALID_0F(0x01),
+    INVALID_0F(0x02),
+    INVALID_0F(0x03),
+    INVALID_0F(0x05),
+    INVALID_0F(0x06),
+    INVALID_0F(0x07),
+    INVALID_0F(0x08),
+    INVALID_0F(0x09),
+    INVALID_0F(0x0B),
+    INVALID_0F(0x0D),
+    { .po = 0x10, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVUPS), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF3, .po = 0x10, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSS), .op = { xmm, xmm | m32 } },
+    { .pf = 0x66, .po = 0x10, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVUPD), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0x10, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSD), .op = { xmm, xmm | m64 } },
+    { .po = 0x11, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVUPS), .op = { xmm | m128, xmm } },
+    { .pf = 0xF3, .po = 0x11, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSS), .op = { xmm | m32, xmm } },
+    { .pf = 0x66, .po = 0x11, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVUPD), .op = { xmm | m128, xmm } },
+    { .pf = 0xF2, .po = 0x11, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSD), .op = { xmm | m64, xmm } },
+    { .po = 0x12, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVHLPS), .op = { xmm, xmm } },
+    { .po = 0x12, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVLPS), .op = { xmm, m64 } },
+    { .pf = 0x66, .po = 0x12, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVLPD), .op = { xmm, m64 } },
+    { .pf = 0xF2, .po = 0x12, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVDDUP), .op = { xmm, xmm | m64 } },
+    { .pf = 0xF3, .po = 0x12, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSLDUP), .op = { xmm, xmm | m64 } },
+    { .po = 0x13, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVLPS), .op = { m64, xmm } },
+    { .pf = 0x66, .po = 0x13, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVLPD), .op = { m64, xmm } },
+    { .po = 0x14, .flags = f0 | modrrm, .mne = X64_MNE_INST(UNPCKLPS), .op = { xmm, xmm | m64 } },
+    { .pf = 0x66, .po = 0x14, .flags = f0 | modrrm, .mne = X64_MNE_INST(UNPCKLPD), .op = { xmm, xmm | m128 } },
+    { .po = 0x15, .flags = f0 | modrrm, .mne = X64_MNE_INST(UNPCKHPS), .op = { xmm, xmm | m64 } },
+    { .pf = 0x66, .po = 0x15, .flags = f0 | modrrm, .mne = X64_MNE_INST(UNPCKHPD), .op = { xmm, xmm | m128 } },
+    { .po = 0x16, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVLHPS), .op = { xmm, xmm } },
+    { .po = 0x16, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVHPS), .op = { xmm, m64 } },
+    { .pf = 0x66, .po = 0x16, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVHPD), .op = { xmm, m64 } },
+    { .pf = 0xF3, .po = 0x16, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVSHDUP), .op = { xmm, xmm | m64 } },
+    { .po = 0x17, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVHPS), .op = { m64, xmm } },
+    { .pf = 0x66, .po = 0x17, .flags = f0 | modrrm, .mne = X64_MNE_INST(MOVHPD), .op = { m64, xmm } },
+    INVALID_0F(0x18),
+    INVALID_0F(0x19),
+    INVALID_0F(0x1A),
+    INVALID_0F(0x1B),
+    INVALID_0F(0x1C),
+    INVALID_0F(0x1D),
+    INVALID_0F(0x1E),
+    INVALID_0F(0x1F),
+    INVALID_0F(0x20),
+    INVALID_0F(0x21),
+    INVALID_0F(0x22),
+    INVALID_0F(0x23),
+    { .po = 0x28, .flags = f0modrrm, .mne = X64_MNE_INST(MOVAPS), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x28, .flags = f0modrrm, .mne = X64_MNE_INST(MOVAPD), .op = { xmm, xmm | m128 } },
+    { .po = 0x29, .flags = f0modrrm, .mne = X64_MNE_INST(MOVAPS), .op = { xmm | m128, xmm } },
+    { .pf = 0x66, .po = 0x29, .flags = f0modrrm, .mne = X64_MNE_INST(MOVAPD), .op = { xmm | m128, m128 } },
+    { .po = 0x2A, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPI2PS), .op = { xmm, mm | m64 } },
+    { .pf = 0xF3, .po = 0x2A, .flags = f0modrrm, .mne = X64_MNE_INST(CVTSI2SS), .op = { xmm, r32 | r64 | m32 | m64 } },
+    { .pf = 0x66, .po = 0x2A, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPI2PD), .op = { xmm, mm | m64 } },
+    { .pf = 0xF2, .po = 0x2A, .flags = f0modrrm, .mne = X64_MNE_INST(CVTSI2SD), .op = { xmm, r32 | r64 | m32 | m64 } },
+    { .po = 0x2B, .flags = f0modrrm, .mne = X64_MNE_INST(MOVNTPS), .op = { m128, xmm } },
+    { .pf = 0x66, .po = 0x2B, .flags = f0modrrm, .mne = X64_MNE_INST(MOVNTPD), .op = { m128, xmm } },
+    { .po = 0x2C, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTPS2PI), .op = { mm, xmm | m64 } },
+    { .pf = 0xF3, .po = 0x2C, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTSS2SI), .op = { r32 | r64, xmm | m32 } },
+    { .pf = 0x66, .po = 0x2C, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTPD2PI), .op = { mm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0x2C, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTSD2SI), .op = { r32 | r64, xmm | m64 } },
+    { .po = 0x2D, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPS2PI), .op = { mm, xmm | m64 } },
+    { .pf = 0xF3, .po = 0x2D, .flags = f0modrrm, .mne = X64_MNE_INST(CVTSS2SI), .op = { r32 | r64, xmm | m32 } },
+    { .pf = 0x66, .po = 0x2D, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPD2PI), .op = { mm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0x2D, .flags = f0modrrm, .mne = X64_MNE_INST(CVTSD2SI), .op = { r32 | r64, xmm | m64 } },
+    { .po = 0x2E, .flags = f0modrrm, .mne = X64_MNE_INST(UCOMISS), .op = { xmm, xmm | m32 } },
+    { .pf = 0x66, .po = 0x2E, .flags = f0modrrm, .mne = X64_MNE_INST(UCOMISD), .op = { xmm, xmm | m64 } },
+    { .po = 0x2F, .flags = f0modrrm, .mne = X64_MNE_INST(COMISS), .op = { xmm, xmm | m32 } },
+    { .pf = 0x66, .po = 0x2F, .flags = f0modrrm, .mne = X64_MNE_INST(COMISD), .op = { xmm, xmm | m64 } },
+    INVALID_0F(0x30),
+    INVALID_0F(0x31),
+    INVALID_0F(0x32),
+    INVALID_0F(0x33),
+    INVALID_0F(0x34),
+    INVALID_0F(0x35),
+    INVALID_0F(0x36),
+    INVALID_0F(0x37),
+    { .po = 0x38, .so = 0xF0, .flags = f0modrrm, .mne = X64_MNE_INST(MOVBE), .op = { r163264, m163264 } },
+    { .pf = 0xF2, .po = 0x38, .so = 0xF0, .flags = f0modrrm, .mne = X64_MNE_INST(CRC32), .op = { r32 | r64, rm8 } },
+    { .po = 0x38, .so = 0xF1, .flags = f0modrrm, .mne = X64_MNE_INST(MOVBE), .op = { m163264, r163264 } },
+    { .pf = 0xF2, .po = 0x38, .so = 0xF1, .flags = f0modrrm, .mne = X64_MNE_INST(CRC32), .op = { r32 | r64, rm163264 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x08, .flags = f0modrrm, .mne = X64_MNE_INST(ROUNDPS), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x09, .flags = f0modrrm, .mne = X64_MNE_INST(ROUNDPD), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0A, .flags = f0modrrm, .mne = X64_MNE_INST(ROUNDSS), .op = { xmm, xmm | m32, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0B, .flags = f0modrrm, .mne = X64_MNE_INST(ROUNDSD), .op = { xmm, xmm | m64, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0C, .flags = f0modrrm, .mne = X64_MNE_INST(BLENDPS), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0D, .flags = f0modrrm, .mne = X64_MNE_INST(BLENDPD), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0E, .flags = f0modrrm, .mne = X64_MNE_INST(PBLENDW), .op = { xmm, xmm | m128, i8 } },
+    { .po = 0x3A, .so = 0x0F, .flags = f0modrrm, .mne = X64_MNE_INST(PALIGNR), .op = { mm, mm | m64 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x0F, .flags = f0modrrm, .mne = X64_MNE_INST(PALIGNR), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x14, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRB), .op = { m8 | r32 | r64, xmm, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x15, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRW), .op = { m16 | r32 | r64, xmm, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x16, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRD), .op = { r32 | m32, xmm, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x16, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRQ), .op = { r64 | m64, xmm, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x17, .flags = f0modrrm, .mne = X64_MNE_INST(EXTRACTPS), .op = { r32 | m32, xmm, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x20, .flags = f0modrrm, .mne = X64_MNE_INST(PINSRB), .op = { xmm, m8 | r32 | r64, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x21, .flags = f0modrrm, .mne = X64_MNE_INST(INSERTPS), .op = { xmm, xmm | m32, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x22, .flags = f0modrrm, .mne = X64_MNE_INST(PINSRD), .op = { xmm, r32 | m32, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x22, .flags = f0modrrm, .mne = X64_MNE_INST(PINSRQ), .op = { xmm, r64 | m64, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x40, .flags = f0modrrm, .mne = X64_MNE_INST(DPPS), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x41, .flags = f0modrrm, .mne = X64_MNE_INST(DPPD), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x42, .flags = f0modrrm, .mne = X64_MNE_INST(MPSADBW), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x60, .flags = f0modrrm, .mne = X64_MNE_INST(PCMPESTRM), .op = { xmm0, xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x61, .flags = f0modrrm, .mne = X64_MNE_INST(PCMPESTRI), .op = { r64 | rcx, xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x63, .flags = f0modrrm, .mne = X64_MNE_INST(PCMPISTRM), .op = { xmm0, xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x3A, .so = 0x63, .flags = f0modrrm, .mne = X64_MNE_INST(PCMPISTRI), .op = { r64 | rcx, xmm, xmm | m128, i8 } },
+ 	CMOV(0x40, CMOVO),
+	CMOV(0x41, CMOVNO),
+	CMOV(0x42, CMOVB),
+    CMOV(0x42, CMOVNAE),
+    CMOV(0x42, CMOVC),
+	CMOV(0x43, CMOVNB),
+    CMOV(0x43, CMOVAE),
+    CMOV(0x43, CMOVNC),
+	CMOV(0x44, CMOVZ),
+    CMOV(0x44, CMOVE),
+	CMOV(0x45, CMOVNZ),
+    CMOV(0x45, CMOVNE),
+	CMOV(0x46, CMOVBE),
+    CMOV(0x46, CMOVNA),
+	CMOV(0x47, CMOVNBE),
+    CMOV(0x47, CMOVA),
+	CMOV(0x48, CMOVS),
+	CMOV(0x49, CMOVNS),
+	CMOV(0x4A, CMOVP),
+    CMOV(0x4A, CMOVPE),
+	CMOV(0x4B, CMOVNP),
+    CMOV(0x4B, CMOVPO),
+	CMOV(0x4C, CMOVL),
+    CMOV(0x4C, CMOVNGE),
+	CMOV(0x4D, CMOVNL),
+    CMOV(0x4D, CMOVGE),
+	CMOV(0x4E, CMOVLE),
+    CMOV(0x4E, CMOVNG),
+	CMOV(0x4F, CMOVNLE),
+    CMOV(0x4F, CMOVG),
+    { .po = 0x50, .flags = f0modrrm, .mne = X64_MNE_INST(MOVMSKPS), .op = { r32 | r64, xmm } },
+    { .pf = 0x66, .po = 0x50, .flags = f0modrrm, .mne = X64_MNE_INST(MOVMSKPD), .op = { r32 | r64, xmm } },
+    PS(0x51, SQRTPS),
+    SS(0x51, SQRTSS),
+    PD(0x51, SQRTPD),
+    SD(0x51, SQRTSD),
+    PS(0x52, RSQRTPS),
+    SS(0x52, RSQRTSS),
+    PS(0x53, RCPPS),
+    SS(0x53, RCPSS),
+    PS(0x53, ANDPS),
+    PD(0x54, ANDPD),
+    PS(0x55, ANDNPS),
+    PD(0x55, ANDNPD),
+    PS(0x56, ORPS),
+    PD(0x56, ORPD),
+    PS(0x57, XORPS),
+    PD(0x57, XORPD),
+    PS(0x58, ADDPS),
+    SS(0x58, ADDSS),
+    PD(0x58, ADDPD),
+    SD(0x58, ADDSD),
+    PS(0x59, MULPS),
+    SS(0x59, MULSS),
+    PD(0x59, MULPD),
+    SD(0x59, MULSD),
+    PS(0x5A, CVTPS2PD),
+    PD(0x5A, CVTPD2PS),
+    SS(0x5A, CVTSS2SD),
+    SD(0x5A, CVTSD2SS),
+    { .po = 0x5B, .flags = f0modrrm, .mne = X64_MNE_INST(CVTDQ2PS), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x5B, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPS2DQ), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF3, .po = 0x5B, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTPS2DQ), .op = { xmm, xmm | m128 } },
+    PS(0x5C, SUBPS),
+    SS(0x5C, SUBSS),
+    PD(0x5C, SUBPD),
+    SD(0x5C, SUBSD),
+    PS(0x5D, MINPS),
+    SS(0x5D, MINSS),
+    PD(0x5D, MINPD),
+    SD(0x5D, MINSD),
+    PS(0x5E, DIVPS),
+    SS(0x5E, DIVSS),
+    PD(0x5E, DIVPD),
+    SD(0x5E, DIVSD),
+    PS(0x5F, MAXPS),
+    SS(0x5F, MAXSS),
+    PD(0x5F, MAXPD),
+    SD(0x5F, MAXSD),
+    GROUP_D(0x60, PUNPCKLBW),
+    GROUP_D(0x61, PUNPCKLWD),
+    GROUP_D(0x62, PUNPCKLDQ),
+    GROUP_D(0x63, PACKSSWB),
+    GROUP_D(0x64, PCMPGTB),
+    GROUP_D(0x65, PCMPGTW),
+    GROUP_D(0x66, PCMPGTD),
+    GROUP_D(0x67, PACKUSWB),
+    GROUP_D(0x68, PUNPCKHBW),
+    GROUP_D(0x69, PUNPCKHWD),
+    GROUP_D(0x6A, PUNPCKHDQ),
+    GROUP_D(0x6B, PACKSSDW),
+    { .pf = 0x66, .po = 0x6C, .flags = f0modrrm, .mne = X64_MNE_INST(PUNPCKLQDQ), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x6D, .flags = f0modrrm, .mne = X64_MNE_INST(PUNPCKHQDQ), .op = { xmm, xmm | m128 } },
+    { .po = 0x6E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVD), .op = { mm, r32 | m32 } },
+    { .po = 0x6E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { mm, r64 | m64 } },
+    { .pf = 0x66, .po = 0x6E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVD), .op = { xmm, r32 | m32 } },
+    { .pf = 0x66, .po = 0x6E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { xmm, r64 | m64 } },
+    { .po = 0x6F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { mm, mm | m64 } },
+    { .pf = 0x66, .po = 0x6F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVDQA), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF3, .po = 0x6F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVDQU), .op = { xmm, xmm | m128 } },
+    { .po = 0x70, .flags = f0modrrm, .mne = X64_MNE_INST(PSHUFW), .op = { mm, mm | m64, i8 } },
+    { .pf = 0xF2, .po = 0x70, .flags = f0modrrm, .mne = X64_MNE_INST(PSHUFLW), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0xF3, .po = 0x70, .flags = f0modrrm, .mne = X64_MNE_INST(PSHUFHW), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0x70, .flags = f0modrrm, .mne = X64_MNE_INST(PSHUFD), .op = { xmm, xmm | m128, i8 } },
+    { .po = 0x71, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLW), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x71, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLW), .op = { xmm, i8 } },
+    { .po = 0x71, .o = 4, .flags = f0opcode, .mne = X64_MNE_INST(PSRAW), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x71, .o = 4, .flags = f0opcode, .mne = X64_MNE_INST(PSRAW), .op = { xmm, i8 } },
+    { .po = 0x71, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLW), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x71, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLW), .op = { xmm, i8 } },
+    { .po = 0x72, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLD), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x72, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLD), .op = { xmm, i8 } },
+    { .po = 0x72, .o = 4, .flags = f0opcode, .mne = X64_MNE_INST(PSRAD), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x72, .o = 4, .flags = f0opcode, .mne = X64_MNE_INST(PSRAD), .op = { xmm, i8 } },
+    { .po = 0x72, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLD), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x72, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLD), .op = { xmm, i8 } },
+    { .po = 0x73, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLQ), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x73, .o = 2, .flags = f0opcode, .mne = X64_MNE_INST(PSRLQ), .op = { xmm, i8 } },
+    { .pf = 0x66, .po = 0x73, .o = 3, .flags = f0opcode, .mne = X64_MNE_INST(PSRLDQ), .op = { xmm, i8 } },
+    { .po = 0x73, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLQ), .op = { mm, i8 } },
+    { .pf = 0x66, .po = 0x73, .o = 6, .flags = f0opcode, .mne = X64_MNE_INST(PSLLQ), .op = { xmm, i8 } },
+    { .pf = 0x66, .po = 0x73, .o = 7, .flags = f0opcode, .mne = X64_MNE_INST(PSLLDQ), .op = { xmm, i8 } },
+    GROUP_D(0x74, PCMPEQB),
+    GROUP_D(0x75, PCMPEQW),
+    GROUP_D(0x76, PCMPEQD),
+    { .po = 0x77, .flags = f0, .mne = X64_MNE_INST(EMMS) },
+    INVALID_0F(0x78),
+    INVALID_0F(0x79),
+    { .pf = 0x66, .po = 0x7C, .flags = f0modrrm, .mne = X64_MNE_INST(HADDPD), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0x7C, .flags = f0modrrm, .mne = X64_MNE_INST(HADDPS), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0x7D, .flags = f0modrrm, .mne = X64_MNE_INST(HSUBPD), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0x7D, .flags = f0modrrm, .mne = X64_MNE_INST(HSUBPS), .op = { xmm, xmm | m128 } },
+    { .po = 0x7E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVD), .op = { r32 | m32, mm } },
+    { .po = 0x7E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { r64 | m64, mm } },
+    { .pf = 0x66, .po = 0x7E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVD), .op = { r32 | m32, xmm } },
+    { .pf = 0x66, .po = 0x7E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { r64 | m64, xmm } },
+    { .pf = 0xF3, .po = 0x7E, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { xmm, xmm | m64 } },
+    { .po = 0x7F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { mm | m64, mm } },
+    { .pf = 0x66, .po = 0x7F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVDQA), .op = { xmm | m128, xmm } },
+    { .pf = 0xF3, .po = 0x7F, .flags = f0modrrm, .mne = X64_MNE_INST(MOVDQU), .op = { xmm | m128, xmm } },
+    JMP32(0x80, JO),
+    JMP32(0x81, JNO),
+    JMP32(0x82, JB),
+    JMP32(0x82, JNAE),
+    JMP32(0x82, JC),
+    JMP32(0x83, JNB),
+    JMP32(0x83, JAE),
+    JMP32(0x83, JNC),
+    JMP32(0x84, JZ),
+    JMP32(0x84, JE),
+    JMP32(0x85, JNZ),
+    JMP32(0x85, JNE),
+    JMP32(0x86, JBE),
+    JMP32(0x86, JNA),
+    JMP32(0x87, JNBE),
+    JMP32(0x87, JA),
+    JMP32(0x88, JS),
+    JMP32(0x89, JNS),
+    JMP32(0x8A, JP),
+    JMP32(0x8A, JPE),
+    JMP32(0x8B, JNP),
+    JMP32(0x8B, JPO),
+    JMP32(0x8C, JL),
+    JMP32(0x8C, JNGE),
+    JMP32(0x8D, JNL),
+    JMP32(0x8D, JGE),
+    JMP32(0x8E, JLE),
+    JMP32(0x8E, JNG),
+    JMP32(0x8F, JNLE),
+    JMP32(0x8F, JG),
+    SET(0x90, SETO),
+    SET(0x91, SETNO),
+    SET(0x92, SETB),
+    SET(0x92, SETNAE),
+    SET(0x92, SETC),
+    SET(0x93, SETNB),
+    SET(0x93, SETAE),
+    SET(0x93, SETNC),
+    SET(0x94, SETZ),
+    SET(0x94, SETE),
+    SET(0x95, SETNZ),
+    SET(0x95, SETNE),
+    SET(0x96, SETBE),
+    SET(0x96, SETNA),
+    SET(0x97, SETNBE),
+    SET(0x97, SETA),
+    SET(0x98, SETS),
+    SET(0x99, SETNS),
+    SET(0x9A, SETP),
+    SET(0x9A, SETPE),
+    SET(0x9B, SETNP),
+    SET(0x9B, SETPO),
+    SET(0x9C, SETL),
+    SET(0x9C, SETNGE),
+    SET(0x9D, SETNL),
+    SET(0x9D, SETGE),
+    SET(0x9E, SETLE),
+    SET(0x9E, SETNG),
+    SET(0x9F, SETNLE),
+    SET(0x9F, SETG),
+    INVALID_0F(0xA0),
+    INVALID_0F(0xA1),
+    INVALID_0F(0xA2),
+    { .po = 0xA3, .flags = f0modrrm, .mne = X64_MNE_INST(BT), .op = { rm163264, r163264 } },
+    { .po = 0xA4, .flags = f0modrrm, .mne = X64_MNE_INST(SHLD), .op = { rm163264, r163264, i8 } },
+    { .po = 0xA5, .flags = f0modrrm, .mne = X64_MNE_INST(SHLD), .op = { rm163264, r163264, r8 | rcx } },
+    INVALID_0F(0xA8),
+    INVALID_0F(0xA9),
+    INVALID_0F(0xAA),
+    { .po = 0xAB, .flags = f0modrrm | lock, .mne = X64_MNE_INST(BTS), .op = { rm163264, r163264 } },
+    { .po = 0xAC, .flags = f0modrrm, .mne = X64_MNE_INST(SHRD), .op = { rm163264, r163264, i8 } },
+    { .po = 0xAD, .flags = f0modrrm, .mne = X64_MNE_INST(SHRD), .op = { rm163264, r163264, r8 | rcx } },
+    INVALID_0F(0xAE),
+    { .po = 0xAF, .flags = f0modrrm, .mne = X64_MNE_INST(IMUL), .op = { r163264, rm163264 } },
+    { .po = 0xB0, .flags = f0modrrm | lock, .mne = X64_MNE_INST(CMPXCHG), .op = { rm8, r8 | rax, r8 } },
+    { .po = 0xB1, .flags = f0modrrm | lock, .mne = X64_MNE_INST(CMPXCHG), .op = { rm163264, r16 | r32 | r64 | rax, r163264 } },
+    INVALID_0F(0xB2),
+    { .po = 0xB3, .flags = f0modrrm | lock, .mne = X64_MNE_INST(BTR), .op = { rm163264, r163264 } },
+    INVALID_0F(0xB4),
+    INVALID_0F(0xB5),
+    { .po = 0xB6, .flags = f0modrrm, .mne = X64_MNE_INST(MOVZX), .op = { r163264, rm8 } },
+    { .po = 0xB7, .flags = f0modrrm, .mne = X64_MNE_INST(MOVZX), .op = { r163264, r16 | m16 } },
+    { .pf = 0xF3, .po = 0xB8, .flags = f0modrrm, .mne = X64_MNE_INST(POPCNT), .op = { r163264, rm163264 } },
+    INVALID_0F(0xB9),
+    { .po = 0xBA, .o = 4, .flags = f0opcode, .mne = X64_MNE_INST(BT), .op = { rm163264, i8 } },
+    { .po = 0xBA, .o = 5, .flags = f0opcode | lock, .mne = X64_MNE_INST(BTS), .op = { rm163264, i8 } },
+    { .po = 0xBA, .o = 6, .flags = f0opcode | lock, .mne = X64_MNE_INST(BTR), .op = { rm163264, i8 } },
+    { .po = 0xBA, .o = 7, .flags = f0opcode | lock, .mne = X64_MNE_INST(BTC), .op = { rm163264, i8 } },
+    { .po = 0xBB, .flags = f0modrrm | lock, .mne = X64_MNE_INST(BTC), .op = { rm163264, r163264 } },
+    { .po = 0xBC, .flags = f0modrrm, .mne = X64_MNE_INST(BSE), .op = { r163264, rm163264 } },
+    { .po = 0xBD, .flags = f0modrrm, .mne = X64_MNE_INST(BSR), .op = { r163264, rm163264 } },
+    { .po = 0xBE, .flags = f0modrrm, .mne = X64_MNE_INST(MOVSX), .op = { r163264, rm8 } },
+    { .po = 0xBF, .flags = f0modrrm, .mne = X64_MNE_INST(MOVSX), .op = { r163264, r16 | m16 } },
+    { .po = 0xC0, .flags = f0modrrm | lock, .mne = X64_MNE_INST(XADD), .op = { rm8, r8 } },
+    { .po = 0xC1, .flags = f0modrrm | lock, .mne = X64_MNE_INST(XADD), .op = { rm163264, r163264 } },
+    { .po = 0xC2, .flags = f0modrrm, .mne = X64_MNE_INST(CMPPS), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0xF3, .po = 0xC2, .flags = f0modrrm, .mne = X64_MNE_INST(CMPSS), .op = { xmm, xmm | m32, i8 } },
+    { .pf = 0x66, .po = 0xC2, .flags = f0modrrm, .mne = X64_MNE_INST(CMPPD), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0xF2, .po = 0xC2, .flags = f0modrrm, .mne = X64_MNE_INST(CMPSD), .op = { xmm, xmm | m64, i8 } },
+    { .po = 0xC3, .flags = f0modrrm, .mne = X64_MNE_INST(MOVNTI), .op = { m32 | m64, r32 | r64 } },
+    { .po = 0xC4, .flags = f0modrrm, .mne = X64_MNE_INST(PINSRW), .op = { mm, m16 | r32 | r64, i8 } },
+    { .pf = 0x66, .po = 0xC4, .flags = f0modrrm, .mne = X64_MNE_INST(PINSRW), .op = { xmm, m16 | r32 | r64, i8 } },
+    { .po = 0xC5, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRW), .op = { r32 | r64, mm, i8 } },
+    { .pf = 0x66, .po = 0xC5, .flags = f0modrrm, .mne = X64_MNE_INST(PEXTRW), .op = { r32 | r64, xmm, i8 } },
+    { .po = 0xC6, .flags = f0modrrm, .mne = X64_MNE_INST(SHUFPS), .op = { xmm, xmm | m128, i8 } },
+    { .pf = 0x66, .po = 0xC6, .flags = f0modrrm, .mne = X64_MNE_INST(SHUFPD), .op = { xmm, xmm | m128, i8 } },
+    { .po = 0xC7, .o = 1, .flags = f0opcode | lock, .mne = X64_MNE_INST(CMPXCHG8B), .op = { m64, r32 | rax, r32 | rdx } },
+    { .po = 0xC7, .o = 1, .flags = f0opcode | lock, .mne = X64_MNE_INST(CMPXCHG16B), .op = { m128, r64 | rax, r64 |rdx } },
+    PLUSR(0xC8, f0, r163264, 0, BSWAP),
+    { .pf = 0x66, .po = 0xD0, .flags = f0modrrm, .mne = X64_MNE_INST(ADDSUBPD), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF2, .po = 0xD0, .flags = f0modrrm, .mne = X64_MNE_INST(ADDSUBPS), .op = { xmm, xmm | m128 } },
+    GROUP_D(0xD1, PSRLW),
+    GROUP_D(0xD2, PSRLD),
+    GROUP_D(0xD3, PSRLQ),
+    GROUP_D(0xD4, PADDQ),
+    GROUP_D(0xD5, PMULLW),
+    { .pf = 0x66, .po = 0xD6, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ), .op = { xmm | m64, xmm } },
+    { .pf = 0xF3, .po = 0xD6, .flags = f0modrrm, .mne = X64_MNE_INST(MOVQ2DQ), .op = { xmm, mm } },
+    { .pf = 0xF2, .po = 0xD6, .flags = f0modrrm, .mne = X64_MNE_INST(MOVDQ2Q), .op = { mm, xmm } },
+    { .po = 0xD7, .flags = f0modrrm, .mne = X64_MNE_INST(PMOVMSKB), .op = { r32 | r64, mm } },
+    { .pf = 0x66, .po = 0xD7, .flags = f0modrrm, .mne = X64_MNE_INST(PMOVMSKB), .op = { r32 | r64, xmm } },
+    GROUP_D(0xD8, PSUBUSB),
+    GROUP_D(0xD9, PSUBUSW),
+    GROUP_D(0xDA, PMINUB),
+    GROUP_D(0xDB, PAND),
+    GROUP_D(0xDC, PADDUSB),
+    GROUP_D(0xDD, PADDUSW),
+    GROUP_D(0xDE, PMAXUB),
+    GROUP_D(0xDF, PANDN),
+    GROUP_D(0xE0, PAVGB),
+    GROUP_D(0xE1, PSRAW),
+    GROUP_D(0xE2, PSRAD),
+    GROUP_D(0xE3, PAVGW),
+    GROUP_D(0xE4, PMULHUW),
+    GROUP_D(0xE5, PMULHW),
+    { .pf = 0xF2, .po = 0xE6, .flags = f0modrrm, .mne = X64_MNE_INST(CVTPD2DQ), .op = { xmm, xmm | m128 } },
+    { .pf = 0x66, .po = 0xE6, .flags = f0modrrm, .mne = X64_MNE_INST(CVTTPD2DQ), .op = { xmm, xmm | m128 } },
+    { .pf = 0xF3, .po = 0xE6, .flags = f0modrrm, .mne = X64_MNE_INST(CVTDQ2PD), .op = { xmm, xmm | m128 } },
+    { .po = 0xE7, .flags = f0modrrm, .mne = X64_MNE_INST(MOVNTQ), .op = { m64, mm } },
+    { .pf = 0x66, .po = 0xE7, .flags = f0modrrm, .mne = X64_MNE_INST(MOVNTDQ), .op = { m128, xmm } },
+    GROUP_D(0xE8, PSUBSB),
+    GROUP_D(0xE9, PSUBSW),
+    GROUP_D(0xEA, PMINSW),
+    GROUP_D(0xEB, POR),
+    GROUP_D(0xEC, PADDSB),
+    GROUP_D(0xED, PADDSW),
+    GROUP_D(0xEE, PMAXSW),
+    GROUP_D(0xEF, PXOR),
+    { .pf = 0xF2, .po = 0xF0, .flags = f0modrrm, .mne = X64_MNE_INST(LDDQU), .op = { xmm, m128 } },
+    GROUP_D(0xF1, PSLLW),
+    GROUP_D(0xF2, PSLLD),
+    GROUP_D(0xF3, PSLLQ),
+    GROUP_D(0xF4, PMULUDQ),
+    GROUP_D(0xF5, PMADDWD),
+    GROUP_D(0xF6, PSADBW),
+    { .po = 0xF7, .flags = f0modrrm, .mne = X64_MNE_INST(MASKMOVQ), .op = { m64, mm, mm } },
+    { .pf = 0x66, .po = 0xF7, .flags = f0modrrm, .mne = X64_MNE_INST(MASKMOVDQU), .op = { m128, xmm, xmm } },
+    GROUP_D(0xF8, PSUBB),
+    GROUP_D(0xF9, PSUBW),
+    GROUP_D(0xFA, PSUBD),
+    GROUP_D(0xFB, PSUBQ),
+    GROUP_D(0xFC, PADDB),
+    GROUP_D(0xFD, PADDW),
+    GROUP_D(0xFE, PADDD)
+};

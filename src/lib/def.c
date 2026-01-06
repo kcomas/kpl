@@ -20,12 +20,12 @@ static void def_unused_print_fn(const def_data data, FILE *file, int32_t idnt, u
 
 def_fn_table def_unused_fn_table = {
     .hash_fn = def_unused_hash_fn,
-    .cmp_fn = NULL,
+    .cmp_fn = nullptr,
     .eq_fn = def_unused_eq_fn,
-    .copy_fn = NULL,
-    .serialize_fn = NULL,
+    .copy_fn = nullptr,
+    .serialize_fn = nullptr,
     .print_fn = def_unused_print_fn,
-    .free_fn = NULL
+    .free_fn = nullptr
 };
 
 size_t def_hash64shift(size_t key) {

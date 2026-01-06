@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 
 #define DEF_EXIT_ERROR 1
 
@@ -94,9 +95,11 @@ extern def_fn_table def_unused_fn_table;
 #define DEF_CONSTRUCTOR_MEM 110
 #define DEF_CONSTRUCTOR_TASK 111
 #define DEF_CONSTRUCTOR_STD 112
+#define DEF_CONSTRUCTOR_X64 113
 
 #define DEF_DESTRUCTOR_MEM 110
 #define DEF_DESTRUCTOR_TASK 111
 #define DEF_DESTRUCTOR_STD 112
+#define DEF_DESTRUCTOR_X64 113
 
 size_t def_hash64shift(size_t key);

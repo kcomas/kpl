@@ -16,7 +16,7 @@ typedef union {
     type_base *base;
 } type_class_union;
 
-#define TYPE_CLASS_UNION_EMPTY (type_class_union) { .inner_type = NULL }
+#define TYPE_CLASS_UNION_EMPTY (type_class_union) { .inner_type = nullptr }
 
 #define TYPE_CLASS_UNION_INNER(TYPE) (type_class_union) { .inner_type = TYPE }
 
