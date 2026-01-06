@@ -46,6 +46,7 @@ const char *reg_strs[] = {
     "MM5",
     "MM6",
     "MM7",
+    "RIP",
     "_"
 };
 

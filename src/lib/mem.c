@@ -29,6 +29,7 @@ static void *mem_malloc(size_t new_size) {
 
 #ifndef MEM_POOL_OFF
 void mem_pool_init(mem_pool *pool) {
+    pool->allocs = 0;
     pthread_mutex_init(&pool->mutex, nullptr);
 }
 

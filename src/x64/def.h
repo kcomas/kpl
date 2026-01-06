@@ -46,6 +46,7 @@ typedef enum [[gnu::packed]] {
     X64_REG(MM5),
     X64_REG(MM6),
     X64_REG(MM7),
+    X64_REG(RIP),
     X64_REG(_)
 } x64_reg;
 
