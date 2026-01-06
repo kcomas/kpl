@@ -24,9 +24,9 @@ leave -> leave %rbp
 ```
 def -> inst
 inst -> table
-table -> query
-query -> mem
+table -> mem
 mem -> queue
-queue -> asm, dis
-asm, dis -> x64
+queue -> asm
+asm -> dis
+dis -> x64
 ```

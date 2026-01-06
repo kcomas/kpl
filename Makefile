@@ -34,6 +34,13 @@ kpl: WFLAGS += -Werror
 kpl: $(OBJECTS) ./src/main.o
 > $(CCOBJ)
 
+x64_gen_table: OO := -O2
+x64_gen_table: WFLAGS += -Werror
+x64_gen_table: $(OBJECTS) ./src/x64_gen_table.o
+> $(CCOBJ)
+> ./$@ > ./src/x64/table.c
+> rm -v ./$@
+
 TEST_SOURCES := $(wildcard ./test/*.c) $(wildcard ./test/**/*.c) $(wildcard ./test/**/**/*.c)
 TEST_OBJECTS := $(patsubst %.c,%.o,$(TEST_SOURCES))
 

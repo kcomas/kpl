@@ -1,4 +1,5 @@
 kpl
+x64_gen_table
 tests
 *_test
 src/**/*.o

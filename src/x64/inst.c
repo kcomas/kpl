@@ -794,5 +794,6 @@ const x64_inst x64_inst_table[] = {
     GROUP_D(0xFB, PSUBQ),
     GROUP_D(0xFC, PADDB),
     GROUP_D(0xFD, PADDW),
-    GROUP_D(0xFE, PADDD)
+    GROUP_D(0xFE, PADDD),
+    { .flags = X64_FLAG(END) }
 };

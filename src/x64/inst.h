@@ -62,6 +62,7 @@ typedef enum [[gnu::packed]] {
     X64_FLAG(OPCODE)    = 1 << 7,
     X64_FLAG(MODRRM)    = 1 << 8,
     X64_FLAG(INVALID)   = 1 << 9,
+    X64_FLAG(END)       = 1 << 10,
     X64_PFX_FLAG(_)     = 0
 } x64_pfx_flag;
 
