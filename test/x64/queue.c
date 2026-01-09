@@ -19,3 +19,13 @@ TEST(x64_asm_queue) {
     ASSERT(queue->used == 2, "invalid number of entries");
     map_free(queue);
 }
+
+TEST(x64_dis_queue) {
+    map *queue = x64_queue_dis_init();
+    ASSERT(x64_queue_add(&queue, 10, 1, 20, X64_OP(REL8)) == DEF_STATUS(OK), "invalid queue add");
+    ASSERT(x64_queue_add(&queue, 10, 2, 30, X64_OP(REL8)) == DEF_STATUS(OK), "invalid queue add");
+    ASSERT(x64_queue_add(&queue, 10, 3, 40, X64_OP(REL8)) == DEF_STATUS(OK), "invalid queue add");
+    map_print(queue, stdout, 0, MAP_PRINT(_));
+    ASSERT(queue->used == 1, "invalid number of entries");
+    map_free(queue);
+}

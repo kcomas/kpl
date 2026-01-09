@@ -24,7 +24,7 @@ static void x64_queue_resolve_item_print(const def_data data, FILE *file, int32_
     x64_queue_resolve_item item = x64_queue_resolve_item_decode(data);
     fprintf(file, "%*s", idnt, "");
     fprintf(file, "{ " COLOR(BOLD) "%d" COLOR(RESET), item.byte_idx);
-    for (uint32_t bit_idx = 0; bit_idx < X64_OP_REG_MAX_BIT; bit_idx++)
+    for (uint32_t bit_idx = 0; bit_idx <= X64_OP_REG_MAX_BIT; bit_idx++)
         if (item.op_size & (1 << bit_idx)) {
             fprintf(file, COLOR2(BOLD, YELLOW) " %s" COLOR(RESET), x64_op_reg_str(bit_idx));
             break;
