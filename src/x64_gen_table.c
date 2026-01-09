@@ -1,7 +1,7 @@
 
 #include "./core/core.h"
 
-static int16_t inst_idx_array[X64_MAX_OPCODE_COUNT];
+static int16_t inst_idx_array[X64_MAX_OPCODE_COUNT] = {};
 
 static void inst_idx_array_reset(void) {
     for (int16_t array_idx = 0; array_idx < X64_MAX_OPCODE_COUNT; array_idx++)

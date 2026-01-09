@@ -1,4 +1,2 @@
 
-#pragma once
-
 #include "./dis.h"

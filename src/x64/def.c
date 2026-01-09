@@ -1,6 +1,69 @@
 
 #include "def.h"
 
+static const char *op_reg_strs[] = {
+    "R8",
+    "R16",
+    "R32",
+    "R64",
+    "XMM",
+    "MM",
+    "M8",
+    "M16",
+    "M32",
+    "M64",
+    "M128",
+    "DSP8",
+    "DSP32",
+    "I8",
+    "I16",
+    "I32",
+    "I64",
+    "SCALE1",
+    "SCALE2",
+    "SCALE4",
+    "SCALE8",
+    "REL8",
+    "REL32",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+};
+
+const char *x64_op_reg_str(uint32_t bit_idx) {
+    if (bit_idx > X64_OP_REG_MAX_BIT)
+        return "X64 INVALID OP REG";
+    return op_reg_strs[bit_idx];
+}
+
+static const char *pfx_flag_strs[] = {
+    "LOCK",
+    "REP",
+    "REPNZ",
+    "REPNE",
+    "REPZ",
+    "REPE",
+    "PREFIX",
+    "REX",
+    "0F",
+    "PLUSR",
+    "OPCODE",
+    "MODRRM",
+    "INVALID",
+    "END",
+};
+
+const char *x64_pfx_flag_str(uint16_t bit_idx) {
+    if (bit_idx > X64_PFX_FLAG_MAX_BIT)
+        return "X64 INVALID PREFIX FLAG";
+    return pfx_flag_strs[bit_idx];
+}
+
 extern inline int8_t x64_reg_id(x64_reg reg);
 
 extern inline bool x64_reg_is_upper(x64_reg reg);

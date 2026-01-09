@@ -65,7 +65,7 @@ static constexpr uint32_t rel32 = X64_OP(REL32);
 
 static constexpr uint16_t lock = X64_PFX(LOCK);
 
-static constexpr uint16_t rep = X64_PFX(REP) | X64_PFX(REPZ);
+static constexpr uint16_t rep = X64_PFX(REP) | X64_PFX(REPNZ) | X64_PFX(REPNE) | X64_PFX(REPZ) | X64_PFX(REPE);
 
 static constexpr uint16_t f0 = X64_FLAG(0F);
 

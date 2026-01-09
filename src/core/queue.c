@@ -112,10 +112,10 @@ void core_queue_free(core_queue *queue) {
 }
 
 core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, const char *filepath) {
-    pthread_mutex_lock(&queue->mutex);
     string *filename = core_util_file_abs_path(resolvepath, filepath);
     if (!filename)
         return nullptr;
+    pthread_mutex_lock(&queue->mutex);
     def_data found;
     core_queue_item find = { .filename = filename };
     if (map_action(&queue->ma, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
