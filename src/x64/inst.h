@@ -13,3 +13,12 @@ typedef struct {
 } x64_inst;
 
 extern const x64_inst x64_inst_table[];
+
+#define X64_INST_PRINT(NAME) X64_INST_PRINT_##NAME
+
+typedef enum [[gnu::packed]] {
+    X64_INST_PRINT(NL_END)  = 1 << 0,
+    X64_INST_PRINT(_)       = 0
+} x64_inst_print_opts;
+
+void x64_inst_print(const x64_inst *inst, FILE *file, int32_t idnt, x64_inst_print_opts print_opts);

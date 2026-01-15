@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/mman.h>
+#include "./color.h"
 
 #define DEF_EXIT_ERROR 1
 
@@ -103,3 +104,7 @@ extern def_fn_table def_unused_fn_table;
 #define DEF_DESTRUCTOR_X64 113
 
 size_t def_hash64shift(size_t key);
+
+typedef const char *def_bit_str_fn(int32_t bit_idx);
+
+void def_mask_print(uint64_t mask, int32_t max_bit, const char *color_str, def_bit_str_fn str_fn, FILE *file);

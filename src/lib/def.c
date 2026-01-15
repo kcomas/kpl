@@ -38,3 +38,15 @@ size_t def_hash64shift(size_t key) {
     key += (key << 31);
     return key;
 }
+
+void def_mask_print(uint64_t mask, int32_t max_bit, const char *color_str, def_bit_str_fn str_fn, FILE *file) {
+    bool print_prev = false;
+    for (int32_t bit_idx = 0; bit_idx <= max_bit; bit_idx++) {
+        if (!(mask & (1L << bit_idx)))
+            continue;
+        if (print_prev)
+            fprintf(file, "| ");
+        print_prev = true;
+        fprintf(file, "%s%s " COLOR(RESET), color_str, str_fn(bit_idx));
+    }
+}

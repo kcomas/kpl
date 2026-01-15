@@ -32,10 +32,10 @@ static const char *op_reg_strs[] = {
     "4",
     "5",
     "6",
-    "7",
+    "7"
 };
 
-const char *x64_op_reg_str(uint32_t bit_idx) {
+const char *x64_op_reg_str(int32_t bit_idx) {
     if (bit_idx > X64_OP_REG_MAX_BIT)
         return "X64 INVALID OP REG";
     return op_reg_strs[bit_idx];
@@ -48,6 +48,7 @@ static const char *pfx_flag_strs[] = {
     "REPNE",
     "REPZ",
     "REPE",
+    "OPERNAD",
     "PREFIX",
     "REX",
     "0F",
@@ -55,10 +56,11 @@ static const char *pfx_flag_strs[] = {
     "OPCODE",
     "MODRRM",
     "INVALID",
-    "END",
+    "DISASSEMBLER",
+    "END"
 };
 
-const char *x64_pfx_flag_str(uint16_t bit_idx) {
+const char *x64_pfx_flag_str(int32_t bit_idx) {
     if (bit_idx > X64_PFX_FLAG_MAX_BIT)
         return "X64 INVALID PREFIX FLAG";
     return pfx_flag_strs[bit_idx];

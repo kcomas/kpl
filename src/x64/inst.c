@@ -294,7 +294,7 @@ const x64_inst x64_inst_table[] = {
     { .po = 0xC8, .mne = X64_MNE_INST(ENTER), .op = { r64 | rbp, i16, i8 } },
     { .po = 0xC9, .mne = X64_MNE_INST(LEAVE), .op = { r64 | rbp } },
     { .po = 0xCA, .mne = X64_MNE_INST(RETF), .op = { i16 } },
-    { .po = 0xCB, .mne = X64_MNE_INST(RETF) },
+    { .po = 0xCB, .flags = X64_FLAG(DISASSEMBLER), .mne = X64_MNE_INST(RETF) },
     { .po = 0xCC, .mne = X64_MNE_INST(INT3) },
     { .po = 0xCD, .mne = X64_MNE_INST(INT), .op = { i8 } },
     INVALID(0xCE),
@@ -797,3 +797,27 @@ const x64_inst x64_inst_table[] = {
     GROUP_D(0xFE, PADDD),
     { .flags = X64_FLAG(END) }
 };
+
+void x64_inst_print(const x64_inst *inst, FILE *file, int32_t idnt, x64_inst_print_opts print_opts) {
+    fprintf(file, "%*s", idnt, "");
+    fprintf(file, COLOR(LIGHT_BLUE) "%s " COLOR(RESET), x64_mne_str(inst->mne));
+    def_mask_print(inst->flags, X64_PFX_FLAG_MAX_BIT, COLOR(LIGHT_GREEN), x64_pfx_flag_str, file);
+    for (int8_t op_idx = 0; op_idx < X64_OP_SIZE; op_idx++) {
+        if (!inst->op[op_idx])
+            break;
+        fprintf(file, "[ ");
+        def_mask_print(inst->op[op_idx], X64_OP_REG_MAX_BIT, COLOR(LIGHT_RED), x64_op_reg_str, file);
+        fprintf(file, "] ");
+    }
+    if (inst->pf)
+        fprintf(file, COLOR(BOLD) "0x%x " COLOR(RESET), inst->pf);
+    if (inst->flags & X64_FLAG(0F))
+        fprintf(file, COLOR(BOLD) "0x0F " COLOR(RESET));
+    fprintf(file, COLOR(BOLD) "0x%x " COLOR(RESET), inst->po);
+    if (inst->so)
+        fprintf(file, COLOR(BOLD) "0x%x " COLOR(RESET), inst->so);
+    if (inst->flags & X64_FLAG(OPCODE))
+        fprintf(file, COLOR(BOLD) "%u" COLOR(RESET), inst->o);
+    if (print_opts & X64_INST_PRINT(NL_END))
+        fprintf(file, "\n");
+}

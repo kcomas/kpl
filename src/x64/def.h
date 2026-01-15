@@ -40,12 +40,13 @@ typedef enum [[gnu::packed]] {
     X64_OP_REG(6)   = 1 << 29,
     X64_OP_REG(7)   = 1 << 30,
     X64_LABEL       = UINT32_MAX,
-    X64_OP_REG(_)   = 0
+    X64_OP_REG(_)   = 0,
+    X64_END         = 0
 } x64_op_reg;
 
 #define X64_OP_REG_MAX_BIT 30
 
-const char *x64_op_reg_str(uint32_t bit_idx);
+const char *x64_op_reg_str(int32_t bit_idx);
 
 #define X64_PFX(NAME) X64_PFX_##NAME
 
@@ -54,26 +55,28 @@ const char *x64_op_reg_str(uint32_t bit_idx);
 #define X64_PFX_FLAG(NAME) X64_PFX_FLAG_##NAME
 
 typedef enum [[gnu::packed]] {
-    X64_PFX(LOCK)       = 1 << 0,
-    X64_PFX(REP)        = 1 << 1,
-    X64_PFX(REPNZ)      = 1 << 2,
-    X64_PFX(REPNE)      = 1 << 3,
-    X64_PFX(REPZ)       = 1 << 4,
-    X64_PFX(REPE)       = 1 << 5,
-    X64_FLAG(PREFIX)    = 1 << 6,
-    X64_FLAG(REX)       = 1 << 7,
-    X64_FLAG(0F)        = 1 << 8,
-    X64_FLAG(PLUSR)     = 1 << 9,
-    X64_FLAG(OPCODE)    = 1 << 10,
-    X64_FLAG(MODRRM)    = 1 << 11,
-    X64_FLAG(INVALID)   = 1 << 12,
-    X64_FLAG(END)       = 1 << 13,
-    X64_PFX_FLAG(_)     = 0
+    X64_PFX(LOCK)           = 1 << 0,
+    X64_PFX(REP)            = 1 << 1,
+    X64_PFX(REPNZ)          = 1 << 2,
+    X64_PFX(REPNE)          = 1 << 3,
+    X64_PFX(REPZ)           = 1 << 4,
+    X64_PFX(REPE)           = 1 << 5,
+    X64_PFX(OPERNAD)        = 1 << 6,
+    X64_FLAG(PREFIX)        = 1 << 7,
+    X64_FLAG(REX)           = 1 << 8,
+    X64_FLAG(0F)            = 1 << 9,
+    X64_FLAG(PLUSR)         = 1 << 10,
+    X64_FLAG(OPCODE)        = 1 << 11,
+    X64_FLAG(MODRRM)        = 1 << 12,
+    X64_FLAG(INVALID)       = 1 << 13,
+    X64_FLAG(DISASSEMBLER)  = 1 << 14,
+    X64_FLAG(END)           = 1 << 15,
+    X64_PFX_FLAG(_)         = 0
 } x64_pfx_flag;
 
-#define X64_PFX_FLAG_MAX_BIT 13
+#define X64_PFX_FLAG_MAX_BIT 15
 
-const char *x64_pfx_flag_str(uint16_t bit_idx);
+const char *x64_pfx_flag_str(int32_t bit_idx);
 
 #define X64_REG(NAME) X64_REG_##NAME
 

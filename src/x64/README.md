@@ -19,6 +19,8 @@ imul %rdi -> imul %rax, %rdi
 leave -> leave %rbp
 ```
 
+## Operation
+
 ## Dependency Graph
 
 ```
@@ -26,7 +28,9 @@ def -> inst
 inst -> table
 table -> mem
 mem -> queue
-queue -> asm
+queue -> state
+state -> query
+query -> asm
 asm -> dis
 dis -> x64
 ```

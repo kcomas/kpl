@@ -1,16 +1,18 @@
 
 #include "./mem.h"
 
-uint8_t *x64_mem = NULL;
+uint8_t *x64_mem = nullptr;
 
-static atomic_size_t x64_mem_len = 0;
+static atomic_int_fast32_t x64_mem_len = 0;
+
+#define X64_MEM_SIZE (X64_MEM_PAGES * getpagesize())
 
 void x64_mem_reset(void) {
     x64_mem_len = 0;
 }
 
 [[gnu::constructor(DEF_CONSTRUCTOR_X64)]] static void x64_mem_constructor(void) {
-    x64_mem = mmap(NULL, X64_MEM_SIZE, PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    x64_mem = mmap(nullptr, X64_MEM_SIZE, PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 }
 
 [[gnu::destructor(DEF_DESTRUCTOR_X64)]] static void x64_mem_destructor(void) {
@@ -25,13 +27,15 @@ void x64_mem_lock(size_t start_idx) {
     mprotect(x64_mem + start_idx, getpagesize(), PROT_READ | PROT_EXEC);
 }
 
-size_t x64_mem_get_page_start(void) {
+int32_t x64_mem_get_page_start(void) {
+    if (x64_mem_len == X64_MEM_SIZE)
+        return -1;
     return atomic_fetch_add(&x64_mem_len, getpagesize());
 }
 
-def_status x64_mem_write_byte(size_t *pos, uint8_t byte) {
-    if (*pos != 0 && *pos % getpagesize() == 0)
+def_status x64_mem_write_byte(int32_t *byte_pos, uint8_t byte) {
+    if (*byte_pos != 0 && *byte_pos % getpagesize() == 0)
         return DEF_STATUS(ERROR);
-    x64_mem[(*pos)++] = byte;
+    x64_mem[(*byte_pos)++] = byte;
     return DEF_STATUS(OK);
 }

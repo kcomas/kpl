@@ -55,7 +55,8 @@ Fold -> Check
 Check -> Eval
 Eval -> Repl
 Eval Ir -> Gen
-Gen -> Core
+Gen -> Opt
+Opt -> Core
 Core -> Repl
 Repl -> main.c
 ```
