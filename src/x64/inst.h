@@ -21,4 +21,6 @@ typedef enum [[gnu::packed]] {
     X64_INST_PRINT(_)       = 0
 } x64_inst_print_opts;
 
+void x64_inst_print_bytes(const x64_inst *inst, FILE *file);
+
 void x64_inst_print(const x64_inst *inst, FILE *file, int32_t idnt, x64_inst_print_opts print_opts);

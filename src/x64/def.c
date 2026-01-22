@@ -1,6 +1,46 @@
 
 #include "def.h"
 
+extern inline int32_t x64_op_label_mask(void);
+
+extern inline int32_t x64_op_reg_mask(void);
+
+uint8_t x64_op_byte_size(x64_op_reg op) {
+    switch (op) {
+        case X64_OP(DSP8):
+        case X64_OP(REL8):
+        case X64_OP(I8):
+            return 1;
+        case X64_OP(DSP32):
+        case X64_OP(REL32):
+        case X64_OP(I32):
+            return 4;
+        case X64_OP(I16):
+            return 2;
+        case X64_OP(I64):
+            return 8;
+        default:
+            break;
+    }
+    return 0;
+}
+
+int8_t x64_op_scale_bits(x64_op_reg op) {
+    switch (op) {
+        case X64_OP(SCALE1):
+            return 0;
+        case X64_OP(SCALE2):
+            return 1 << 0;
+        case X64_OP(SCALE4):
+            return 1 << 1;
+        case X64_OP(SCALE8):
+            return 1 << 1 | 1 << 0;
+        default:
+            break;
+    }
+    return -1;
+}
+
 static const char *op_reg_strs[] = {
     "R8",
     "R16",
@@ -69,6 +109,12 @@ const char *x64_pfx_flag_str(int32_t bit_idx) {
 extern inline int8_t x64_reg_id(x64_reg reg);
 
 extern inline bool x64_reg_is_upper(x64_reg reg);
+
+extern inline bool x64_reg_is_general(x64_reg reg);
+
+extern inline bool x64_reg_is_xmm(x64_reg reg);
+
+extern inline bool x64_reg_is_mm(x64_reg reg);
 
 const char *reg_strs[] = {
     "RAX",

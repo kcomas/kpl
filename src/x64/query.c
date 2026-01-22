@@ -9,7 +9,9 @@ static bool x64_mne_match_by_op(const x64_inst *inst, x64_op_reg op[X64_OP_SIZE]
             return false;
         if (!(inst->op[op_idx] & op[op_idx]))
             return false;
-        // TODO check reg mask
+        uint32_t reg_mask = x64_op_reg_mask() & inst->op[op_idx];
+        if (reg_mask && !(reg_mask & op[op_idx]))
+            return false;
     }
     return true;
 }
@@ -20,14 +22,13 @@ def_status x64_mne_query(x64_mne mne, x64_op *op) {
     const int16_t *inst_idx_array = x64_mne_table[mne];
     while (*inst_idx_array != -1) {
         const x64_inst *inst = &x64_inst_table[*inst_idx_array];
-        if (x64_mne_match_by_op(inst, op->op)) {
-            if (!op->inst)
-                op->inst = inst;
-            else {
-                // TODO pick smallest
-            }
-        }
         inst_idx_array++;
+        if (inst->flags && op->pfx_flag && !(inst->flags & op->pfx_flag))
+            continue;
+        if (x64_mne_match_by_op(inst, op->op)) {
+            op->inst = inst;
+            break;
+        }
     }
     return op->inst ? DEF_STATUS(OK) : DEF_STATUS(ERROR);
 }

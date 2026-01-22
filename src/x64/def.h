@@ -44,6 +44,19 @@ typedef enum [[gnu::packed]] {
     X64_END         = 0
 } x64_op_reg;
 
+inline int32_t x64_op_label_mask(void) {
+    return X64_OP(DSP8) | X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
+}
+
+inline int32_t x64_op_reg_mask(void) {
+    return X64_OP_REG(1) | X64_OP_REG(2) | X64_OP_REG(3) | X64_OP_REG(4) | X64_OP_REG(5) |
+        X64_OP_REG(6) | X64_OP_REG(7);
+}
+
+uint8_t x64_op_byte_size(x64_op_reg op);
+
+int8_t x64_op_scale_bits(x64_op_reg op);
+
 #define X64_OP_REG_MAX_BIT 30
 
 const char *x64_op_reg_str(int32_t bit_idx);
@@ -126,11 +139,23 @@ typedef enum [[gnu::packed]] {
 } x64_reg;
 
 inline int8_t x64_reg_id(x64_reg reg) {
-    return reg & 7;
+    return reg == X64_REG(RIP) ? 5 : reg & 7;
 }
 
 inline bool x64_reg_is_upper(x64_reg reg) {
     return (reg >= X64_REG(R8) && reg <= X64_REG(R15)) || (reg >= X64_REG(XMM8) && reg <= X64_REG(XMM15));
+}
+
+inline bool x64_reg_is_general(x64_reg reg) {
+    return reg <= X64_REG(R15) || reg == X64_REG(RIP);
+}
+
+inline bool x64_reg_is_xmm(x64_reg reg) {
+    return reg >= X64_REG(XMM0) && reg <= X64_REG(XMM15);
+}
+
+inline bool x64_reg_is_mm(x64_reg reg) {
+    return reg >= X64_REG(MM0) && reg <= X64_REG(MM7);
 }
 
 const char *x64_reg_str(x64_reg reg);

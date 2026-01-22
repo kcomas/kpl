@@ -18,6 +18,7 @@ void x64_state_free(x64_state *state);
 
 typedef enum [[gnu::packed]] {
     X64_STATE_PRINT(NL_END)     = 1 << 0,
+    X64_STATE_PRINT(BYTES)      = 1 << 1,
     X64_STATE_PRINT(_)          = 0
 } x64_state_print_opts;
 
@@ -25,9 +26,10 @@ void x64_state_print(const x64_state *state, FILE *file, int32_t idnt, x64_state
 
 typedef struct {
     int8_t rex, r, rm, scale, index; // -1 not used
-    uint8_t dsp_byte_size, imm_byte_size; // 0 not used
+    uint8_t dsp_byte_size, rel_byte_size, imm_byte_size, op_len; // 0 not used
+    int8_t reg[X64_OP_SIZE]; // -1 not used
     x64_pfx_flag pfx_flag;
-    int32_t dsp;
+    int32_t dsp, rel;
     int32_t start_byte, end_byte; // -1 not used
     x64_op_reg op[X64_OP_SIZE];
     ssize_t label; // -1 not used
@@ -39,9 +41,10 @@ typedef struct {
 inline x64_op x64_op_init(void) {
     return (x64_op) {
         .rex = -1, .r = -1, .rm = -1, .scale = -1, .index = -1,
-        .dsp_byte_size = 0, .imm_byte_size = 0,
+        .dsp_byte_size = 0, .rel_byte_size = 0, .imm_byte_size = 0, .op_len = 0,
+        .reg = { -1, -1, -1, -1 },
         .pfx_flag = X64_PFX_FLAG(_),
-        .dsp = 0,
+        .dsp = 0, .rel = 0,
         .start_byte = -1, .end_byte = -1,
         .op = { X64_OP_REG(_), X64_OP_REG(_), X64_OP_REG(_), X64_OP_REG(_) },
         .label = -1,
@@ -53,12 +56,14 @@ inline x64_op x64_op_init(void) {
 
 inline void x64_op_reset(x64_op *op) {
     op->rex = op->r = op->rm = op->scale = op->index = -1;
-    op->dsp_byte_size = op->imm_byte_size = 0;
+    op->dsp_byte_size = op->rel_byte_size = op->imm_byte_size = op->op_len = 0;
     op->pfx_flag = X64_PFX_FLAG(_);
-    op->dsp = 0;
+    op->dsp = op->rel = 0;
     op->start_byte = op->end_byte = -1;
-    for (uint8_t op_idx = 0; op_idx < X64_OP_SIZE; op_idx++)
+    for (uint8_t op_idx = 0; op_idx < X64_OP_SIZE; op_idx++) {
+        op->reg[op_idx] = -1;
         op->op[op_idx] = X64_OP_REG(_);
+    }
     op->label = -1;
     op->imm = DEF(_);
     op->inst = nullptr;
@@ -68,6 +73,7 @@ inline void x64_op_reset(x64_op *op) {
 
 typedef enum [[gnu::packed]] {
     X64_OP_PRINT(NL_END)    = 1 << 0,
+    X64_OP_PRINT(ASSEMBLE)  = 1 << 1,
     X64_OP_PRINT(_)         = 0
 } x64_op_print_opts;
 

@@ -19,7 +19,7 @@ inline error *x64_asm_pfx(x64_state *state, x64_pfx_flag pfx, x64_mne mne, ...) 
     return _x64_asm(state, pfx, mne, args);
 }
 
-error *x64_asm_text_end(x64_state *state);
+error *x64_asm_text_end(x64_state *state);  // DISASSEMBLER Flag
 
 error *x64_asm_data(x64_state *state, ssize_t label, size_t data_size, def_data data);
 
