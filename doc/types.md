@@ -105,6 +105,8 @@ A unique identifier, cannot be stored
 
 Unresolved Name, values are copied out
 
+#### Value
+
 #### Alias
 
 A user defined type

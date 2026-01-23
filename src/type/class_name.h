@@ -59,6 +59,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(LAMBDA),
     // TAG
     TYPE_NAME(TAG),
+    TYPE_NAME(VALUE),
     TYPE_NAME(ALIAS),
     TYPE_NAME(VAR),
     TYPE_NAME(ARG),

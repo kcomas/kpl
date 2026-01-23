@@ -25,8 +25,8 @@ typedef enum [[gnu::packed]] {
 void x64_state_print(const x64_state *state, FILE *file, int32_t idnt, x64_state_print_opts print_opts);
 
 typedef struct {
-    int8_t rex, r, rm, scale, index; // -1 not used
-    uint8_t dsp_byte_size, rel_byte_size, imm_byte_size, op_len; // 0 not used
+    int8_t mod, r, rm, scale, index, base, label_op; // -1 not used
+    uint8_t rex, dsp_byte_size, rel_byte_size, imm_byte_size, op_len; // 0 not used
     int8_t reg[X64_OP_SIZE]; // -1 not used
     x64_pfx_flag pfx_flag;
     int32_t dsp, rel;
@@ -40,8 +40,8 @@ typedef struct {
 
 inline x64_op x64_op_init(void) {
     return (x64_op) {
-        .rex = -1, .r = -1, .rm = -1, .scale = -1, .index = -1,
-        .dsp_byte_size = 0, .rel_byte_size = 0, .imm_byte_size = 0, .op_len = 0,
+        .mod = -1, .r = -1, .rm = -1, .scale = -1, .index = -1, .base = -1, .label_op = -1,
+        .rex = 0, .dsp_byte_size = 0, .rel_byte_size = 0, .imm_byte_size = 0, .op_len = 0,
         .reg = { -1, -1, -1, -1 },
         .pfx_flag = X64_PFX_FLAG(_),
         .dsp = 0, .rel = 0,
@@ -55,8 +55,8 @@ inline x64_op x64_op_init(void) {
 }
 
 inline void x64_op_reset(x64_op *op) {
-    op->rex = op->r = op->rm = op->scale = op->index = -1;
-    op->dsp_byte_size = op->rel_byte_size = op->imm_byte_size = op->op_len = 0;
+    op->mod = op->r = op->rm = op->scale = op->index = op->base = op->label_op = -1;
+    op->rex = op->dsp_byte_size = op->rel_byte_size = op->imm_byte_size = op->op_len = 0;
     op->pfx_flag = X64_PFX_FLAG(_);
     op->dsp = op->rel = 0;
     op->start_byte = op->end_byte = -1;
@@ -72,9 +72,10 @@ inline void x64_op_reset(x64_op *op) {
 #define X64_OP_PRINT(NAME) X64_OP_PRINT_##NAME
 
 typedef enum [[gnu::packed]] {
-    X64_OP_PRINT(NL_END)    = 1 << 0,
-    X64_OP_PRINT(ASSEMBLE)  = 1 << 1,
-    X64_OP_PRINT(_)         = 0
+    X64_OP_PRINT(NL_END)        = 1 << 0,
+    X64_OP_PRINT(ASSEMBLE)      = 1 << 1,
+    X64_OP_PRINT(DEBUG)         = 1 << 2,
+    X64_OP_PRINT(_)             = 0
 } x64_op_print_opts;
 
 void x64_op_print(const x64_op *op, FILE *file, int32_t idnt, x64_op_print_opts print_opts);

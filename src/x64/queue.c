@@ -130,6 +130,7 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
         x64_queue_item_free(item);
         return DEF_STATUS(ERROR);
     }
-    list_add_back(item->resolves, x64_queue_resolve_item_encode(resolve_byte_idx, op_size));
+    if (resolve_byte_idx != -1)
+        list_add_back(item->resolves, x64_queue_resolve_item_encode(resolve_byte_idx, op_size));
     return DEF_STATUS(OK);
 }

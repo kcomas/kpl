@@ -9,7 +9,7 @@ static bool x64_mne_match_by_op(const x64_inst *inst, x64_op_reg op[X64_OP_SIZE]
             return false;
         if (!(inst->op[op_idx] & op[op_idx]))
             return false;
-        uint32_t reg_mask = x64_op_reg_mask() & inst->op[op_idx];
+        uint32_t reg_mask = x64_op_reg_id_mask() & inst->op[op_idx];
         if (reg_mask && !(reg_mask & op[op_idx]))
             return false;
     }

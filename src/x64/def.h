@@ -44,18 +44,36 @@ typedef enum [[gnu::packed]] {
     X64_END         = 0
 } x64_op_reg;
 
-inline int32_t x64_op_label_mask(void) {
-    return X64_OP(DSP8) | X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
+inline int32_t x64_op_reg_mask(void) {
+    return X64_OP(R8) | X64_OP(R16) | X64_OP(R32) | X64_OP(R64) | X64_OP(XMM) | X64_OP(MM);
 }
 
-inline int32_t x64_op_reg_mask(void) {
+inline int32_t x64_op_mem_mask(void) {
+    return X64_OP(M8) | X64_OP(M16) | X64_OP(M32) | X64_OP(M64) | X64_OP(M128);
+}
+
+inline int32_t x64_op_imm_mask(void) {
+    return X64_OP(I8) | X64_OP(I16) | X64_OP(I32) | X64_OP(I64);
+}
+
+inline int32_t x64_op_rel_mask(void) {
+    return X64_OP(REL8) | X64_OP(REL32);
+}
+
+inline int32_t x64_op_reg_id_mask(void) {
     return X64_OP_REG(1) | X64_OP_REG(2) | X64_OP_REG(3) | X64_OP_REG(4) | X64_OP_REG(5) |
         X64_OP_REG(6) | X64_OP_REG(7);
+}
+
+inline int32_t x64_op_label_mask(void) {
+    return X64_OP(DSP8) | X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
 }
 
 uint8_t x64_op_byte_size(x64_op_reg op);
 
 int8_t x64_op_scale_bits(x64_op_reg op);
+
+uint8_t x64_scale_bits_to_size(int8_t bits);
 
 #define X64_OP_REG_MAX_BIT 30
 
@@ -157,6 +175,27 @@ inline bool x64_reg_is_xmm(x64_reg reg) {
 inline bool x64_reg_is_mm(x64_reg reg) {
     return reg >= X64_REG(MM0) && reg <= X64_REG(MM7);
 }
+
+#define X64_REX(NAME) X64_REX_##NAME
+
+typedef enum [[gnu::packed]] {
+    X64_REX(B)      = 1 << 0,
+    X64_REX(X)      = 1 << 1,
+    X64_REX(R)      = 1 << 2,
+    X64_REX(W)      = 1 << 3,
+    X64_REX(REX)    = 0
+} x64_rex;
+
+#define X64_MODSIB(NAME) X64_MODSIB_##NAME
+
+typedef enum [[gnu::packed]] {
+    X64_MODSIB(00)  = 0,
+    X64_MODSIB(01)  = 1 << 0,
+    X64_MODSIB(10)  = 1 << 1,
+    X64_MODSIB(11)  = 1 << 1 | 1 << 0
+} x64_modsib;
+
+#define X64_SIB 5
 
 const char *x64_reg_str(x64_reg reg);
 

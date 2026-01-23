@@ -1,22 +1,36 @@
 
 #include "def.h"
 
-extern inline int32_t x64_op_label_mask(void);
-
 extern inline int32_t x64_op_reg_mask(void);
+
+extern inline int32_t x64_op_mem_mask(void);
+
+extern inline int32_t x64_op_imm_mask(void);
+
+extern inline int32_t x64_op_reg_id_mask(void);
+
+extern inline int32_t x64_op_label_mask(void);
 
 uint8_t x64_op_byte_size(x64_op_reg op) {
     switch (op) {
+        case X64_OP(R8):
+        case X64_OP(M8):
         case X64_OP(DSP8):
         case X64_OP(REL8):
         case X64_OP(I8):
             return 1;
+        case X64_OP(R32):
+        case X64_OP(M32):
         case X64_OP(DSP32):
         case X64_OP(REL32):
         case X64_OP(I32):
             return 4;
+        case X64_OP(R16):
+        case X64_OP(M16):
         case X64_OP(I16):
             return 2;
+        case X64_OP(R64):
+        case X64_OP(M64):
         case X64_OP(I64):
             return 8;
         default:
@@ -28,17 +42,33 @@ uint8_t x64_op_byte_size(x64_op_reg op) {
 int8_t x64_op_scale_bits(x64_op_reg op) {
     switch (op) {
         case X64_OP(SCALE1):
-            return 0;
+            return X64_MODSIB(00);
         case X64_OP(SCALE2):
-            return 1 << 0;
+            return X64_MODSIB(01);
         case X64_OP(SCALE4):
-            return 1 << 1;
+            return X64_MODSIB(10);
         case X64_OP(SCALE8):
-            return 1 << 1 | 1 << 0;
+            return X64_MODSIB(11);
         default:
             break;
     }
     return -1;
+}
+
+uint8_t x64_scale_bits_to_size(int8_t bits) {
+    switch (bits) {
+        case X64_MODSIB(00):
+            return 1;
+        case X64_MODSIB(01):
+            return 2;
+        case X64_MODSIB(10):
+            return 4;
+        case X64_MODSIB(11):
+            return 8;
+        default:
+            break;
+    }
+    return 0;
 }
 
 static const char *op_reg_strs[] = {

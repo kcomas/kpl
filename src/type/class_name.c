@@ -38,6 +38,7 @@ static const char *name_str_array[] = {
     "COROUTINE",
     "LAMBDA",
     "TAG",
+    "VALUE",
     "ALIAS",
     "VAR",
     "ARG",
@@ -90,10 +91,11 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(TABLE, COROUTINE),
     CLASS_NAME(TABLE, LAMBDA),
     CLASS_NAME(TAG, TAG),
+    CLASS_NAME(TAG, VALUE),
     CLASS_NAME(TAG, ALIAS),
     CLASS_NAME(TAG, VAR),
     CLASS_NAME(TAG, ARG),
-    CLASS_NAME(BASE, BASE),
+    CLASS_NAME(BASE, BASE)
 };
 
 type_class type_name_get_class(type_name name) {
