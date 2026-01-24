@@ -27,4 +27,4 @@ error *x64_asm_c_str(x64_state *state, ssize_t label, const char *c_str);
 
 error *x64_asm_buffer(x64_state *state, ssize_t label, ser_buffer *buffer);
 
-void x64_asm_data_end(x64_state *state);
+error *x64_asm_data_end(x64_state *state);

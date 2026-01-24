@@ -176,8 +176,10 @@ static error *x64_asm_write_text_bytes(x64_state *state, const x64_op *op) {
         return er;
     if ((er = x64_write_byte_array_error(state, op->imm_byte_size, op->imm)))
         return er;
-    // TODO label
-    return nullptr;
+    if (op->label == -1 || x64_queue_add(&state->queue, -1, op->label, state->byte_pos, op->label_size) ==
+        DEF_STATUS(OK))
+        return nullptr;
+    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm label reference failure");
 }
 
 static error *x64_asm_va_error(va_list args, const char *msg) {
@@ -309,13 +311,15 @@ extern inline error *x64_asm(x64_state *state, x64_mne mne, ...);
 extern inline error *x64_asm_pfx(x64_state *state, x64_pfx_flag pfx, x64_mne mne, ...);
 
 error *x64_asm_text_end(x64_state *state) {
-    error *er = x64_write_byte_error(state, X64_DISASSEMBLER);
+    error *er = x64_write_byte_error(state, X64_DISASSEMBLER_BYTE);
     if (er)
         return er;
     state->data_pos = state->byte_pos + sizeof(int32_t);
     return nullptr;
 }
 
-void x64_asm_data_end(x64_state *state) {
+error *x64_asm_data_end(x64_state *state) {
     memcpy(x64_mem + state->byte_pos, &state->data_size, sizeof(int32_t));
+    // TODO resolve labels
+    return nullptr;
 }

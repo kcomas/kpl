@@ -22,8 +22,9 @@ TEST(mov_add_ret) {
     er = x64_asm(&state, X64_MNE_INST(RET), X64_END);
     ASSERT(asm_check_error(&state, er), "x64 invalid ret");
     er = x64_asm_text_end(&state);
-    ASSERT(asm_check_error(&state, er), "x64 invalid text_end");
-    x64_asm_data_end(&state);
+    ASSERT(asm_check_error(&state, er), "x64 invalid text end");
+    er = x64_asm_data_end(&state);
+    ASSERT(asm_check_error(&state, er), "x64 invalid data end");
     x64_state_lock_mem(&state);
     x64_state_print(&state, stdout, 0, X64_STATE_PRINT(NL_END) | X64_STATE_PRINT(BYTES));
     // TODO check bytes written

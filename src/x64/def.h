@@ -113,7 +113,7 @@ uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx);
 
 const char *x64_pfx_flag_str(int32_t bit_idx);
 
-#define X64_DISASSEMBLER 0x61
+#define X64_DISASSEMBLER_BYTE 0x61
 
 #define X64_REG(NAME) X64_REG_##NAME
 
