@@ -130,6 +130,25 @@ static const char *pfx_flag_strs[] = {
     "END"
 };
 
+uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx) {
+    switch (1 << bit_idx) {
+        case X64_PFX(LOCK):
+            return 0xF0;
+        case X64_PFX(REP):
+        case X64_PFX(REPNZ):
+        case X64_PFX(REPNE):
+            return 0xF2;
+        case X64_PFX(REPZ):
+        case X64_PFX(REPE):
+            return 0xF3;
+        case X64_PFX(OPERAND):
+            return 0x66;
+        default:
+            break;
+    }
+    return 0;
+}
+
 const char *x64_pfx_flag_str(int32_t bit_idx) {
     if (bit_idx > X64_PFX_FLAG_MAX_BIT)
         return "X64 INVALID PREFIX FLAG";

@@ -23,7 +23,7 @@ def_status x64_mne_query(x64_mne mne, x64_op *op) {
     while (*inst_idx_array != -1) {
         const x64_inst *inst = &x64_inst_table[*inst_idx_array];
         inst_idx_array++;
-        if (inst->flags && op->pfx_flag && !(inst->flags & op->pfx_flag))
+        if (inst->flags && op->pfx && !(inst->flags & op->pfx))
             continue;
         if (x64_mne_match_by_op(inst, op->op)) {
             op->inst = inst;

@@ -34,3 +34,10 @@ query -> asm
 asm -> dis
 dis -> x64
 ```
+
+## Jit Code Layout
+
+Text
+Disassembler Byte
+Signed 32bit data size
+Data

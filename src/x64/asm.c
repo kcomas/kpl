@@ -45,7 +45,7 @@ static def_status x64_asm_prep(x64_op *op) {
                 x64_asm_rex(op, X64_REX(REX));
                 break;
             case X64_OP(M16):
-                op->pfx_flag |= X64_PFX(OPERNAD);
+                op->pfx |= X64_PFX(OPERAND);
                 break;
             case X64_OP(M64):
                 x64_asm_rex(op, X64_REX(W));
@@ -84,7 +84,7 @@ static def_status x64_asm_prep(x64_op *op) {
                 x64_asm_rex(op, X64_REX(REX));
                 break;
             case X64_OP(R16):
-                op->pfx_flag |= X64_PFX(OPERNAD);
+                op->pfx |= X64_PFX(OPERAND);
                 break;
             case X64_OP(R64):
                 x64_asm_rex(op, X64_REX(W));
@@ -96,6 +96,12 @@ static def_status x64_asm_prep(x64_op *op) {
             default:
                 return DEF_STATUS(ERROR);
         }
+        int32_t reg_id_mask = op->op[op_idx] & x64_op_reg_id_mask();
+        if (reg_id_mask) {
+            if (reg_id_mask != x64_reg_id(op->reg[op_idx]))
+                return DEF_STATUS(ERROR);
+            continue;
+        }
         if (op->rm == -1)
             op->rm = op->reg[op_idx];
         else {
@@ -105,6 +111,11 @@ static def_status x64_asm_prep(x64_op *op) {
     }
     if (op->rm != -1 && op->mod == -1)
         op->mod = X64_MODSIB(11);
+    if (op->mod != -1 && op->r == -1) {
+        if (!(op->inst->flags & X64_FLAG(OPCODE)))
+            return DEF_STATUS(ERROR);
+        op->r = op->inst->o;
+    }
     if (op->scale != -1 || x64_reg_id(op->rm) == X64_SIB) {
         if (op->scale != -1)
             op->base = op->rm;
@@ -121,8 +132,52 @@ static def_status x64_asm_prep(x64_op *op) {
     return DEF_STATUS(OK);
 }
 
+static error *x64_write_byte_error(x64_state *state, uint8_t byte) {
+    if (x64_mem_write_byte(&state->byte_pos, byte) == DEF_STATUS(OK))
+        return nullptr;
+    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm mem write byte failed");
+}
+
+static error *x64_write_byte_array_error(x64_state *state, uint8_t byte_size, def_data bytes) {
+    if (!byte_size)
+        return nullptr;
+    uint8_t byte_array[sizeof(def_data)] = {};
+    memcpy(byte_array, &bytes.u64, byte_size);
+    for (uint8_t byte_idx = 0; byte_idx < byte_size; byte_idx++)
+        if (x64_mem_write_byte(&state->byte_pos, byte_array[byte_idx]) != DEF_STATUS(OK))
+            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm mem write bytes failed");
+    return nullptr;
+}
+
 static error *x64_asm_write_text_bytes(x64_state *state, const x64_op *op) {
-    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "TODO");
+    error *er = nullptr;
+    for (int8_t pfx_bit_idx = 0; pfx_bit_idx <= X64_PFX_MAX_BIT; pfx_bit_idx++) {
+        if (op->pfx & (1 << pfx_bit_idx))
+            if ((er = x64_write_byte_error(state, x64_pfx_byte_by_bit_idx(pfx_bit_idx))))
+                return er;
+    }
+    if (op->inst->pf && (er = x64_write_byte_error(state, op->inst->pf)))
+        return er;
+    if (op->rex && (er = x64_write_byte_error(state, op->rex)))
+        return er;
+    if ((op->inst->flags & X64_FLAG(0F)) && (er = x64_write_byte_error(state, 0x0F)))
+        return er;
+    if ((er = x64_write_byte_error(state, op->inst->po)))
+        return er;
+    if (op->inst->so && (er = x64_write_byte_error(state, op->inst->so)))
+        return er;
+    if (op->mod != -1 && (er = x64_write_byte_error(state, op->mod << 6 | op->r << 3 | op->rm)))
+        return er;
+    if (op->scale != -1 && (er = x64_write_byte_error(state, op->scale << 6 | op->index << 3 | op->base)))
+        return er;
+    if ((er = x64_write_byte_array_error(state, op->dsp_byte_size, DEF_I32(op->dsp))))
+        return er;
+    if ((er = x64_write_byte_array_error(state, op->rel_byte_size, DEF_I32(op->rel))))
+        return er;
+    if ((er = x64_write_byte_array_error(state, op->imm_byte_size, op->imm)))
+        return er;
+    // TODO label
+    return nullptr;
 }
 
 static error *x64_asm_va_error(va_list args, const char *msg) {
@@ -133,7 +188,7 @@ static error *x64_asm_va_error(va_list args, const char *msg) {
 error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
     x64_reg reg;
     x64_op op = x64_op_init();
-    op.pfx_flag = pfx;
+    op.pfx = pfx;
     for (;;) {
         if (op.op_len == X64_OP_SIZE)
             return x64_asm_va_error(args, "x64 too many ops");
@@ -210,7 +265,19 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
                  next_op = va_arg(args, x64_op_reg);
                  if (!(next_op & x64_op_label_mask()))
                     return x64_asm_va_error(args, "x64 invalid label type");
-                 op.label_op = op.op_len;
+                 op.label_size = x64_op_to_queue_size(next_op);
+                 switch (next_op) {
+                    case X64_OP(DSP8):
+                    case X64_OP(DSP32):
+                        op.dsp_byte_size = x64_op_byte_size(next_op);
+                        break;
+                    case X64_OP(REL8):
+                    case X64_OP(REL32):
+                        op.rel_byte_size = x64_op_byte_size(next_op);
+                        break;
+                    default:
+                        break;
+                 }
                  op.op[op.op_len++] = next_op;
                  op.label = va_arg(args, ssize_t);
                  break;
@@ -225,8 +292,9 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
     if (x64_asm_prep(&op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 invalid setup");
     x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
-    if (state->next_label) {
-        if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, -1, X64_OP_REG(_)) != DEF_STATUS(OK))
+    if (state->next_label != -1) {
+        if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, -1,
+            X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
             return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 label add failure");
         if (state->next_fn)
             state->next_fn->fn_idx = state->byte_pos;
@@ -241,5 +309,13 @@ extern inline error *x64_asm(x64_state *state, x64_mne mne, ...);
 extern inline error *x64_asm_pfx(x64_state *state, x64_pfx_flag pfx, x64_mne mne, ...);
 
 error *x64_asm_text_end(x64_state *state) {
-    return x64_asm(state, X64_MNE_INST(RETF), X64_END);
+    error *er = x64_write_byte_error(state, X64_DISASSEMBLER);
+    if (er)
+        return er;
+    state->data_pos = state->byte_pos + sizeof(int32_t);
+    return nullptr;
+}
+
+void x64_asm_data_end(x64_state *state) {
+    memcpy(x64_mem + state->byte_pos, &state->data_size, sizeof(int32_t));
 }

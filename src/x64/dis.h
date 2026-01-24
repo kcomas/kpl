@@ -3,9 +3,9 @@
 
 #include "./asm.h"
 
-error *x64_dis_start(x64_op *op, int32_t byte_idx);
+error *x64_dis_start(x64_state *state, int32_t byte_idx);
 
-error *x64_dis_next(x64_op *op);
+error *x64_dis_next(x64_state *state, x64_op *op);
 
 #define X64_DIS_PRINT(NAME) X64_DIS_PRINT_##NAME
 

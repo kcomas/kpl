@@ -3,12 +3,22 @@
 
 #include "./mem.h"
 
+#define X64_QUEUE_SIZE(NAME) X64_QUEUE_SIZE_##NAME
+
+typedef enum [[gnu::packed]] {
+    X64_QUEUE_SIZE(8)   = 1,
+    X64_QUEUE_SIZE(32)  = 4,
+    X64_QUEUE_SIZE(_)   = 0
+} x64_queue_size;
+
+x64_queue_size x64_op_to_queue_size(x64_op_reg op);
+
 typedef struct {
     int32_t byte_idx;
-    x64_op_reg op_size;
+    x64_queue_size byte_size;
 } x64_queue_resolve_item;
 
-def_data x64_queue_resolve_item_encode(int32_t byte_idx, x64_op_reg op_size);
+def_data x64_queue_resolve_item_encode(int32_t byte_idx, x64_queue_size byte_size);
 
 x64_queue_resolve_item x64_queue_resolve_item_decode(def_data data);
 
@@ -31,4 +41,4 @@ map *x64_queue_asm_init(void);
 map *x64_queue_dis_init(void);
 
 def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t resolve_byte_idx,
-    x64_op_reg op_size);
+    x64_queue_size byte_size);

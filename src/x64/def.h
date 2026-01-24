@@ -92,7 +92,7 @@ typedef enum [[gnu::packed]] {
     X64_PFX(REPNE)          = 1 << 3,
     X64_PFX(REPZ)           = 1 << 4,
     X64_PFX(REPE)           = 1 << 5,
-    X64_PFX(OPERNAD)        = 1 << 6,
+    X64_PFX(OPERAND)        = 1 << 6,
     X64_FLAG(PREFIX)        = 1 << 7,
     X64_FLAG(REX)           = 1 << 8,
     X64_FLAG(0F)            = 1 << 9,
@@ -105,9 +105,15 @@ typedef enum [[gnu::packed]] {
     X64_PFX_FLAG(_)         = 0
 } x64_pfx_flag;
 
+#define X64_PFX_MAX_BIT 6
+
+uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx);
+
 #define X64_PFX_FLAG_MAX_BIT 15
 
 const char *x64_pfx_flag_str(int32_t bit_idx);
+
+#define X64_DISASSEMBLER 0x61
 
 #define X64_REG(NAME) X64_REG_##NAME
 
@@ -118,8 +124,8 @@ typedef enum [[gnu::packed]] {
     X64_REG(RBX),
     X64_REG(RSP),
     X64_REG(RBP),
-    X64_REG(RDI),
     X64_REG(RSI),
+    X64_REG(RDI),
     X64_REG(R8),
     X64_REG(R9),
     X64_REG(R10),

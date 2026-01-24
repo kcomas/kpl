@@ -77,7 +77,7 @@ typedef struct _ser_buffer ser_buffer;
 
 typedef ser_buffer *def_serialize_fn(const def_data data);
 
-typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts);
+typedef void def_print_fn(const def_data data, FILE *file, int32_t idnt, uint64_t print_opts);
 
 typedef void def_free_fn(void *data);
 
