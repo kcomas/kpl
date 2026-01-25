@@ -9,6 +9,30 @@ extern inline int32_t x64_op_imm_mask(void);
 
 extern inline int32_t x64_op_reg_id_mask(void);
 
+int8_t x64_reg_id_mask_id(x64_op_reg reg) {
+    switch (reg) {
+        case X64_OP_REG(0):
+            return 0;
+        case X64_OP_REG(1):
+            return 1;
+        case X64_OP_REG(2):
+            return 2;
+        case X64_OP_REG(3):
+            return 3;
+        case X64_OP_REG(4):
+            return 4;
+        case X64_OP_REG(5):
+            return 5;
+        case X64_OP_REG(6):
+            return 6;
+        case X64_OP_REG(7):
+            return 7;
+        default:
+            break;
+    }
+    return -1;
+}
+
 extern inline int32_t x64_op_label_mask(void);
 
 uint8_t x64_op_byte_size(x64_op_reg op) {
@@ -111,6 +135,47 @@ const char *x64_op_reg_str(int32_t bit_idx) {
     return op_reg_strs[bit_idx];
 }
 
+extern inline int16_t x64_pfx_mask(void);
+
+extern inline int16_t x64_flag_mask(void);
+
+x64_pfx_flag x64_byte_to_pfx(uint8_t byte) {
+    switch (byte) {
+        case 0x66:
+            return X64_PFX(OPERAND);
+        case 0xF0:
+            return X64_PFX(LOCK);
+        case 0xF2:
+            return X64_PFX(REP);
+        case 0xF3:
+            return X64_PFX(REPE);
+        default:
+            break;
+    }
+    return 0;
+}
+
+uint8_t x64_pfx_to_byte(x64_pfx_flag pfx) {
+    switch (pfx) {
+        case X64_PFX(LOCK):
+            return 0xF0;
+        case X64_PFX(REP):
+        case X64_PFX(REPNZ):
+        case X64_PFX(REPNE):
+            return 0xF2;
+        case X64_PFX(REPZ):
+        case X64_PFX(REPE):
+            return 0xF3;
+        case X64_PFX(OPERAND):
+            return 0x66;
+        default:
+            break;
+    }
+    return 0;
+}
+
+extern inline uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx);
+
 static const char *pfx_flag_strs[] = {
     "LOCK",
     "REP",
@@ -129,25 +194,6 @@ static const char *pfx_flag_strs[] = {
     "DISASSEMBLER",
     "END"
 };
-
-uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx) {
-    switch (1 << bit_idx) {
-        case X64_PFX(LOCK):
-            return 0xF0;
-        case X64_PFX(REP):
-        case X64_PFX(REPNZ):
-        case X64_PFX(REPNE):
-            return 0xF2;
-        case X64_PFX(REPZ):
-        case X64_PFX(REPE):
-            return 0xF3;
-        case X64_PFX(OPERAND):
-            return 0x66;
-        default:
-            break;
-    }
-    return 0;
-}
 
 const char *x64_pfx_flag_str(int32_t bit_idx) {
     if (bit_idx > X64_PFX_FLAG_MAX_BIT)

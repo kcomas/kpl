@@ -1,17 +1,18 @@
 
-#include "../test.h"
+#include "./helper.h"
 
-static bool asm_check_error(x64_state *state, error *er) {
-    if (!er)
-        return true;
-    error_print(er, stdout, 0, ERROR_PRINT(NL_END));
-    error_free(er);
-    x64_state_free(state);
-    return false;
+static bool asm_check_bytes(x64_state *state, const uint8_t check_bytes[]) {
+    int32_t check_idx = 0;
+    for (int32_t byte_idx = state->byte_start; byte_idx < state->byte_pos; byte_idx++)
+        if (x64_mem[byte_idx] != check_bytes[check_idx++])
+            return false;
+    return true;
 }
 
-TEST(mov_add_ret) {
+TEST(x64_asm_mov_add_ret) {
     x64_state state;
+    const uint8_t byte_check_array[] = { 0x48, 0x89, 0xF8, 0x48, 0x01, 0xF0, 0xC3, 0x61 };
+    x64_mem_reset();
     x64_state_init(&state, x64_mem_get_page_start(), x64_queue_asm_init());
     error *er;
     x64_state_unlock_mem(&state);
@@ -27,8 +28,7 @@ TEST(mov_add_ret) {
     ASSERT(asm_check_error(&state, er), "x64 invalid data end");
     x64_state_lock_mem(&state);
     x64_state_print(&state, stdout, 0, X64_STATE_PRINT(NL_END) | X64_STATE_PRINT(BYTES));
-    // TODO check bytes written
-    // 0x48, 0x89, 0xF8, 0x48, 0x01, 0xF0, 0xC3, 0xCB
+    ASSERT(asm_check_bytes(&state, byte_check_array), "x64 invalid written bytes");
     int64_t a = 5, b = 6;
     int64_t c = ((int64_t(*)(int64_t, int64_t)) &x64_mem[state.byte_start])(a, b);
     printf("%ld + %ld = %ld\n", a, b, c);

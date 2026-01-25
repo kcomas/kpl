@@ -15,9 +15,11 @@ Instructions that implicitly modify a register require the register as an argume
 
 ```
 # GAS Example
-imul %rdi -> imul %rax, %rdi
+imul %rdi -> imul %rdi, %rdx, %rax
 leave -> leave %rbp
 ```
+
+For the order of implicit registers see [X64 Reference](http://ref.x86asm.net/coder64.html)
 
 ## Operation
 
@@ -37,7 +39,9 @@ dis -> x64
 
 ## Jit Code Layout
 
+```
 Text
 Disassembler Byte
 Signed 32bit data size
 Data
+```

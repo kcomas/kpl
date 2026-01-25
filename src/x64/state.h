@@ -33,6 +33,7 @@ typedef struct {
     int8_t mod, r, rm, scale, index, base; // -1 not used
     uint8_t rex, dsp_byte_size, rel_byte_size, imm_byte_size, op_len; // 0 not used
     int8_t reg[X64_OP_SIZE]; // -1 not used
+    int16_t po, maybe_so; // -1 not used
     x64_pfx_flag pfx;
     int32_t dsp, rel;
     int32_t start_byte, end_byte; // -1 not used
@@ -48,6 +49,7 @@ inline x64_op x64_op_init(void) {
         .mod = -1, .r = -1, .rm = -1, .scale = -1, .index = -1, .base = -1,
         .rex = 0, .dsp_byte_size = 0, .rel_byte_size = 0, .imm_byte_size = 0, .op_len = 0,
         .reg = { -1, -1, -1, -1 },
+        .po = -1, .maybe_so = -1,
         .pfx = X64_PFX_FLAG(_),
         .dsp = 0, .rel = 0,
         .start_byte = -1, .end_byte = -1,
@@ -62,6 +64,7 @@ inline void x64_op_reset(x64_op *op) {
     op->label_size = X64_QUEUE_SIZE(_);
     op->mod = op->r = op->rm = op->scale = op->index = op->base = -1;
     op->rex = op->dsp_byte_size = op->rel_byte_size = op->imm_byte_size = op->op_len = 0;
+    op->po = op->maybe_so = -1;
     op->pfx = X64_PFX_FLAG(_);
     op->dsp = op->rel = 0;
     op->start_byte = op->end_byte = -1;

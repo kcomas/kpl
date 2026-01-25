@@ -65,6 +65,8 @@ inline int32_t x64_op_reg_id_mask(void) {
         X64_OP_REG(6) | X64_OP_REG(7);
 }
 
+int8_t x64_reg_id_mask_id(x64_op_reg reg);
+
 inline int32_t x64_op_label_mask(void) {
     return X64_OP(DSP8) | X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
 }
@@ -105,9 +107,25 @@ typedef enum [[gnu::packed]] {
     X64_PFX_FLAG(_)         = 0
 } x64_pfx_flag;
 
+inline int16_t x64_pfx_mask(void) {
+    return X64_PFX(LOCK) | X64_PFX(REP) | X64_PFX(REPNZ) | X64_PFX(REPNE) | X64_PFX(REPZ)
+        | X64_PFX(REPE) | X64_PFX(OPERAND);
+}
+
+inline int16_t x64_flag_mask(void) {
+    return X64_FLAG(PREFIX) | X64_FLAG(REX) | X64_FLAG(0F) | X64_FLAG(PLUSR) | X64_FLAG(OPCODE)
+        | X64_FLAG(MODRRM) | X64_FLAG(INVALID) | X64_FLAG(DISASSEMBLER) | X64_FLAG(END);
+}
+
 #define X64_PFX_MAX_BIT 6
 
-uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx);
+x64_pfx_flag x64_byte_to_pfx(uint8_t byte);
+
+uint8_t x64_pfx_to_byte(x64_pfx_flag pfx);
+
+inline uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx) {
+    return x64_pfx_to_byte(1 << bit_idx);
+}
 
 #define X64_PFX_FLAG_MAX_BIT 15
 
