@@ -42,20 +42,24 @@ uint8_t x64_op_byte_size(x64_op_reg op) {
         case X64_OP(DSP8):
         case X64_OP(REL8):
         case X64_OP(I8):
+        case X64_OP(SCALE1):
             return 1;
         case X64_OP(R32):
         case X64_OP(M32):
         case X64_OP(DSP32):
         case X64_OP(REL32):
         case X64_OP(I32):
+        case X64_OP(SCALE4):
             return 4;
         case X64_OP(R16):
         case X64_OP(M16):
         case X64_OP(I16):
+        case X64_OP(SCALE2):
             return 2;
         case X64_OP(R64):
         case X64_OP(M64):
         case X64_OP(I64):
+        case X64_OP(SCALE8):
             return 8;
         default:
             break;
@@ -133,6 +137,36 @@ const char *x64_op_reg_str(int32_t bit_idx) {
     if (bit_idx > X64_OP_REG_MAX_BIT)
         return "X64 INVALID OP REG";
     return op_reg_strs[bit_idx];
+}
+
+const char *x64_op_reg_str_by_mask(x64_op_reg op) {
+    switch (op) {
+        case X64_OP(R8):
+            return op_reg_strs[0];
+        case X64_OP(R16):
+            return op_reg_strs[1];
+        case X64_OP(R32):
+            return op_reg_strs[2];
+        case X64_OP(R64):
+            return op_reg_strs[3];
+        case X64_OP(XMM):
+            return op_reg_strs[4];
+        case X64_OP(MM):
+            return op_reg_strs[5];
+        case X64_OP(M8):
+            return op_reg_strs[6];
+        case X64_OP(M16):
+            return op_reg_strs[7];
+        case X64_OP(M32):
+            return op_reg_strs[8];
+        case X64_OP(M64):
+            return op_reg_strs[9];
+        case X64_OP(M128):
+            return op_reg_strs[10];
+        default:
+            break;
+    }
+    return "X64 OP REG INVALID MASK";
 }
 
 extern inline int16_t x64_pfx_mask(void);
@@ -218,8 +252,8 @@ const char *reg_strs[] = {
     "RBX",
     "RSP",
     "RBP",
-    "RDI",
     "RSI",
+    "RDI",
     "R8",
     "R9",
     "R10",

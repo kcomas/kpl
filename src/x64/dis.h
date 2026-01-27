@@ -8,6 +8,7 @@ error *x64_dis_next(x64_state *state, x64_op *op);
 #define X64_DIS_PRINT(NAME) X64_DIS_PRINT_##NAME
 
 typedef enum [[gnu::packed]] {
+    X64_DIS_PRINT(STATE)    = 1 << 0,
     X64_DIS_PRINT(_)        = 0
 } x64_dis_print_opts;
 

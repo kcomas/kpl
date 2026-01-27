@@ -170,8 +170,31 @@ error *x64_dis_next(x64_state *state, x64_op *op) {
 }
 
 void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opts print_opts) {
-    (void) byte_idx;
-    (void) file;
-    (void) idnt;
-    (void) print_opts;
+    x64_op op = x64_op_init();
+    x64_state state;
+    error *er = nullptr;
+    x64_state_init(&state, byte_idx, x64_queue_dis_init());
+    while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
+        x64_op_reset(&op);
+        er = x64_dis_next(&state, &op);
+    }
+    op = x64_op_init();
+    state.byte_pos = state.byte_start;
+    while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
+        x64_op_reset(&op);
+        er = x64_dis_next(&state, &op);
+        // TODO label
+        if (!(op.inst->flags & X64_FLAG(DISASSEMBLER)))
+            x64_op_print(&op, file, idnt, X64_OP_PRINT(NL_END));
+    }
+    if (print_opts & X64_DIS_PRINT(STATE)) {
+        memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));
+        state.data_pos = state.byte_pos + sizeof(int32_t);
+        x64_state_print(&state, file, idnt, X64_STATE_PRINT(NL_END));
+    }
+    if (er) {
+        error_print(er, file, idnt, ERROR_PRINT(NL_END));
+        error_free(er);
+    }
+    x64_state_free(&state);
 }

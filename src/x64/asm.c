@@ -149,7 +149,7 @@ static error *x64_write_byte_array_error(x64_state *state, uint8_t byte_size, de
     return nullptr;
 }
 
-static error *x64_asm_write_text_bytes(x64_state *state, const x64_op *op) {
+static error *x64_asm_write_text_bytes(x64_state *state, x64_op *op) {
     error *er = nullptr;
     for (int8_t pfx_bit_idx = 0; pfx_bit_idx <= X64_PFX_MAX_BIT; pfx_bit_idx++) {
         if (op->pfx & (1 << pfx_bit_idx))
@@ -177,6 +177,8 @@ static error *x64_asm_write_text_bytes(x64_state *state, const x64_op *op) {
         return er;
     if ((er = x64_write_byte_array_error(state, op->dsp_byte_size, DEF_I32(op->dsp))))
         return er;
+    if (op->rel_byte_size)
+        op->rel -= state->byte_pos;
     if ((er = x64_write_byte_array_error(state, op->rel_byte_size, DEF_I32(op->rel))))
         return er;
     if ((er = x64_write_byte_array_error(state, op->imm_byte_size, op->imm)))

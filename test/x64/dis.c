@@ -18,6 +18,6 @@ TEST(x64_dis_mov_add_ret) {
         x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
         ASSERT(op.inst->mne == mne_array[inst_idx], "x64 invalid dis mne");
     }
-    x64_dis_print(byte_idx, stdout, 0, X64_DIS_PRINT(_));
+    x64_dis_print(byte_idx, stdout, 0, X64_DIS_PRINT(STATE));
     x64_state_free(&state);
 }

@@ -81,6 +81,8 @@ uint8_t x64_scale_bits_to_size(int8_t bits);
 
 const char *x64_op_reg_str(int32_t bit_idx);
 
+const char *x64_op_reg_str_by_mask(x64_op_reg op);
+
 #define X64_PFX(NAME) X64_PFX_##NAME
 
 #define X64_FLAG(NAME) X64_FLAG_##NAME
