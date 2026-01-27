@@ -14,24 +14,18 @@ typedef enum [[gnu::packed]] {
     TYPE_QUALIFIER(REF)         = 1 << 1,
     TYPE_QUALIFIER(SHARED)      = 1 << 2,
     TYPE_QUALIFIER(MUTEX)       = 1 << 3,
-    TYPE_FLAG(A)                = 1 << 4,
-    TYPE_FLAG(B)                = 1 << 5,
-    TYPE_FLAG(C)                = 1 << 6,
-    TYPE_FLAG(D)                = 1 << 7,
+    TYPE_FLAG(TRACING_GC)       = 1 << 4,
+    TYPE_FLAG(MOVED)            = 1 << 5,
+    TYPE_FLAG(REGISTER)         = 1 << 6,
+    TYPE_FLAG(C_CODE)           = 1 << 7,
     TYPE_QUALIFIER_FLAG(_)      = 0,
 } type_qualifier_flags;
-
-const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 
 #define TYPE_QUALIFIER_MASK (TYPE_QUALIFIER(CONST) | TYPE_QUALIFIER(REF) | \
     TYPE_QUALIFIER(SHARED) | TYPE_QUALIFIER(MUTEX))
 
-#define TYPE_FLAG_MASK (TYPE_FLAG(A) | TYPE_FLAG(B) | TYPE_FLAG(C) | TYPE_FLAG(D))
+const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 
-typedef enum [[gnu::packed]] {
-    TYPE_FLAG(TRACING_GC)   = TYPE_FLAG(A),
-    TYPE_FLAG(MOVED)        = TYPE_FLAG(A),
-    TYPE_FLAG(REGISTER)     = TYPE_FLAG(B),
-    TYPE_FLAG(NO_CLOSE)     = TYPE_FLAG(A),
-    TYPE_FLAG(C_CODE)       = TYPE_FLAG(A)
-} type_flags;
+#define TYPE_FLAG_MASK (TYPE_FLAG(TRACING_GC) | TYPE_FLAG(MOVED) | TYPE_FLAG(REGISTER) | TYPE_FLAG(C_CODE))
+
+const char *type_flag_str(type_qualifier_flags qualifier_flags);

@@ -33,10 +33,25 @@ def_status x64_mne_query(x64_mne mne, x64_op *op) {
     return op->inst ? DEF_STATUS(OK) : DEF_STATUS(ERROR);
 }
 
+static bool x64_opcode_match_opcode(const x64_inst *inst, const x64_op *op, uint8_t next_idx) {
+    if (!(inst->flags & X64_FLAG(OPCODE)))
+        return true;
+    if (op->next[next_idx] == -1)
+        return false;
+    return (~(1 << 7 | 1 << 6) & op->next[next_idx]) >> 3 == inst->o;
+}
+
 static bool x64_opcode_match_by_op(const x64_inst *inst, const x64_op *op) {
     if ((inst->flags & x64_pfx_mask()) && (op->pfx & x64_pfx_mask()) && !(inst->flags & op->pfx))
         return false;
-    if (inst->so && inst->so != op->maybe_so)
+    if (inst->so) {
+        if (inst->so != op->next[0])
+            return false;
+        if (!x64_opcode_match_opcode(inst, op, 0))
+            return false;
+    } else if (!x64_opcode_match_opcode(inst, op, 1))
+        return false;
+    if (inst->so && inst->so != op->next[0])
         return false;
     if (!inst->pf && !(op->pfx & ~(X64_PFX(LOCK) | x64_flag_mask())))
         return true;

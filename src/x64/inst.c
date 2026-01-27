@@ -139,11 +139,14 @@ static constexpr uint16_t f0opcode = f0 | opcode;
 
 #define PS(PO, NAME) { .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
 
-#define SS(PO, NAME) { .pf = 0xF3, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m32 } }
+#define SS(PO, NAME) \
+    { .pf = 0xF3, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m32 } }
 
-#define PD(PO, NAME) { .pf = 0x66, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
+#define PD(PO, NAME) \
+    { .pf = 0x66, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m128 } }
 
-#define SD(PO, NAME) { .pf = 0xF2, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m64 } }
+#define SD(PO, NAME) \
+    { .pf = 0xF2, .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { xmm, xmm | m64 } }
 
 const x64_inst x64_inst_table[] = {
     GROUP_A(0x00, lock, ADD),
@@ -799,13 +802,14 @@ const x64_inst x64_inst_table[] = {
 };
 
 void x64_inst_print_bytes(const x64_inst *inst, FILE *file) {
+    fprintf(file, COLOR(YELLOW) "opcode: " COLOR(RESET));
     if (inst->pf)
-        fprintf(file, "0x%X ", inst->pf);
+        fprintf(file, "0x%02X ", inst->pf);
     if (inst->flags & X64_FLAG(0F))
         fprintf(file, "0x0F ");
-    fprintf(file, "0x%X ", inst->po);
+    fprintf(file, "0x%02X ", inst->po);
     if (inst->so)
-        fprintf(file, "0x%X ", inst->so);
+        fprintf(file, "0x%02X ", inst->so);
     if (inst->flags & X64_FLAG(OPCODE))
         fprintf(file, "%u", inst->o);
 }

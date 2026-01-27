@@ -119,7 +119,7 @@ inline int16_t x64_flag_mask(void) {
 
 #define X64_PFX_MAX_BIT 6
 
-x64_pfx_flag x64_byte_to_pfx(uint8_t byte);
+x64_pfx_flag x64_pfx_byte_to_pfx_flag(uint8_t byte);
 
 uint8_t x64_pfx_to_byte(x64_pfx_flag pfx);
 
@@ -180,6 +180,8 @@ typedef enum [[gnu::packed]] {
     X64_REG(_)
 } x64_reg;
 
+#define X64_REG_MAX_ID 7
+
 inline int8_t x64_reg_id(x64_reg reg) {
     return reg == X64_REG(RIP) ? 5 : reg & 7;
 }
@@ -219,7 +221,7 @@ typedef enum [[gnu::packed]] {
     X64_MODSIB(11)  = 1 << 1 | 1 << 0
 } x64_modsib;
 
-#define X64_SIB 5
+#define X64_SIB 4
 
 const char *x64_reg_str(x64_reg reg);
 

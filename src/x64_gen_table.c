@@ -36,7 +36,8 @@ int main(void) {
         inst_idx_array_reset();
         int16_t inst_idx = 0, array_idx = 0;
         while (!(x64_inst_table[inst_idx].flags & X64_FLAG(END))) {
-            if (x64_inst_table[inst_idx].mne == X64_MNE(INVALID)) {
+            if (x64_inst_table[inst_idx].mne == X64_MNE(INVALID) &&
+                    !(x64_inst_table[inst_idx].flags & X64_FLAG(DISASSEMBLER))) {
                 inst_idx++;
                 continue;
             }
@@ -49,7 +50,7 @@ int main(void) {
             }
             inst_idx++;
         }
-        printf("    [0x%X] = (int16_t[]) { ", opcode_idx);
+        printf("    [0x%02X] = (int16_t[]) { ", opcode_idx);
         inst_idx_array_print();
     }
     printf("};\n");

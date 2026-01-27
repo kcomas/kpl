@@ -162,6 +162,11 @@ static error *x64_asm_write_text_bytes(x64_state *state, const x64_op *op) {
         return er;
     if ((op->inst->flags & X64_FLAG(0F)) && (er = x64_write_byte_error(state, 0x0F)))
         return er;
+    if (op->inst->flags & X64_FLAG(PLUSR)) {
+        if ((er = x64_write_byte_error(state, op->inst->po + op->rm)))
+            return er;
+        return nullptr;
+    }
     if ((er = x64_write_byte_error(state, op->inst->po)))
         return er;
     if (op->inst->so && (er = x64_write_byte_error(state, op->inst->so)))
@@ -290,10 +295,10 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
     va_end(args);
     if (x64_mne_query(mne, &op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 no op found");
-    x64_op_print(&op, stdout, 0, X64_OP_PRINT(ASSEMBLE) | X64_OP_PRINT(NL_END));
+    // x64_op_print(&op, stdout, 0, X64_OP_PRINT(ASSEMBLE) | X64_OP_PRINT(NL_END));
     if (x64_asm_prep(&op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 invalid setup");
-    x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
+    // x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
     if (state->next_label != -1) {
         if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, -1,
             X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))

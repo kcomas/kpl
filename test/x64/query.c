@@ -21,7 +21,7 @@ TEST(inst_mne_query) {
 
 TEST(inst_opcode_query) {
     x64_op op = x64_op_init();
-    op.pfx = x64_byte_to_pfx(0xF3) | X64_FLAG(0F);
+    op.pfx = x64_pfx_byte_to_pfx_flag(0xF3) | X64_FLAG(0F);
     op.po = 0x59;
     op.mod = X64_MODSIB(11);
     op.r = 0;

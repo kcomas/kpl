@@ -7,11 +7,11 @@ Files are closed when they go out of scope
 open_file : Fd $ "filename"
 ```
 
-## << Read/Send
+## <& Read/Write
 
 ```
-buffer << Fd $ "filename"
+buffer <& Fd $ "filename"
 buffer/log // Vector[U8]
-string << String $ << Fd $ "filename"
-$(Fd; "another file") << "Hello World\n"
+string <& String $ <& Fd $ "filename"
+$(Fd; "another_file") <& "Hello World\n"
 ```

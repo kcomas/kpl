@@ -32,10 +32,10 @@ typedef union {
 
 typedef struct _type {
     MEM_HEADER(_type);
-    uint16_t ref_count;
+    int32_t ref_count;
+    type_class_union class_union;
     type_name name;
     type_qualifier_flags qualifier_flags;
-    type_class_union class_union;
 } type;
 
 type *type_init(type_name name, type_qualifier_flags qualifier_flags, type_class_union class_union);

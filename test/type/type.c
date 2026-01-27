@@ -1,7 +1,7 @@
 
 #include "../test.h"
 
-constexpr size_t type_struct_expected_size = 8 + 8 + 4 + 2 + 1 + 1 + 8;
+constexpr size_t type_struct_expected_size = 40;
 
 TEST(type_struct_size) {
     size_t size = sizeof(type);

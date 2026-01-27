@@ -28,7 +28,7 @@ void x64_state_print(const x64_state *state, FILE *file, int32_t idnt, x64_state
     if (print_opts & X64_STATE_PRINT(BYTES)) {
         fprintf(file, ", Bytes: ");
         for (int32_t byte_idx = state->byte_start; byte_idx < state->byte_pos; byte_idx++)
-            fprintf(file, "0x%X ", x64_mem[byte_idx]);
+            fprintf(file, "0x%02X ", x64_mem[byte_idx]);
     }
     fprintf(file, "\nData Pos: " COLOR(BOLD) "%d" COLOR(RESET) ", Size: " COLOR(BOLD) "%d" COLOR(RESET),
         state->data_pos, state->data_size);
@@ -64,7 +64,7 @@ static void x64_op_print_asm(const x64_op *op, FILE *file, int32_t idnt, x64_op_
                 fprintf(file, "+" COLOR(LIGHT_CYAN) "%s*%u" COLOR(RESET),
                     x64_reg_str(op->index), x64_scale_bits_to_size(op->scale));
             if (op->dsp_byte_size)
-                fprintf(file, "+" COLOR(GREEN) "0x%X" COLOR(RESET), op->dsp);
+                fprintf(file, "+" COLOR(GREEN) "0x%02X" COLOR(RESET), op->dsp);
             fprintf(file, " ");
             continue;
         }
@@ -73,7 +73,7 @@ static void x64_op_print_asm(const x64_op *op, FILE *file, int32_t idnt, x64_op_
             continue;
         }
         if (op->op[op_idx] & x64_op_rel_mask())
-            fprintf(file, COLOR(BOLD) "0x%X " COLOR(RESET), op->rel);
+            fprintf(file, COLOR(BOLD) "0x%02X " COLOR(RESET), op->rel);
     }
     if (op->label != -1)
         fprintf(file, COLOR(LIGHT_YELLOW) "L%ld " COLOR(RESET), op->label);
@@ -90,16 +90,19 @@ static void x64_op_debug_field_print(const char *name, FILE *file) {
 static void x64_op_print_debug(const x64_op *op, FILE *file, int32_t idnt, x64_op_print_opts print_opts) {
     if (op->po != -1) {
         x64_op_debug_field_print("po", file);
-        fprintf(file, "%X ", op->po);
+        fprintf(file, "%02X ", op->po);
     }
-    if (op->maybe_so != -1) {
-        x64_op_debug_field_print("maybe_so", file);
-        fprintf(file, "%X? ", op->maybe_so);
+    if (op->next[0] != -1) {
+        x64_op_debug_field_print("next", file);
+        fprintf(file, "%02X?", op->next[0]);
+        if (op->next[1] != -1)
+            fprintf(file, ",%02X?", op->next[1]);
+        fprintf(file, " ");
     }
     x64_op_print_header(op, file, idnt);
     if (op->rex) {
         x64_op_debug_field_print("rex", file);
-        fprintf(file, "0x%X ", op->rex);
+        fprintf(file, "0x%02X ", op->rex);
     }
     if (op->mod != -1) {
         x64_op_debug_field_print("mod", file);
@@ -119,11 +122,11 @@ static void x64_op_print_debug(const x64_op *op, FILE *file, int32_t idnt, x64_o
     }
     if (op->dsp_byte_size) {
         x64_op_debug_field_print("dsp", file);
-        fprintf(file, "0x%X ", op->dsp);
+        fprintf(file, "0x%02X ", op->dsp);
     }
     if (op->rel_byte_size) {
         x64_op_debug_field_print("rel", file);
-        fprintf(file, "0x%X ", op->rel);
+        fprintf(file, "0x%02X ", op->rel);
     }
     if (op->imm_byte_size) {
         x64_op_debug_field_print("imm", file);
@@ -131,6 +134,8 @@ static void x64_op_print_debug(const x64_op *op, FILE *file, int32_t idnt, x64_o
     }
     if (op->label != -1)
         fprintf(file, COLOR(LIGHT_YELLOW) "L%ld " COLOR(RESET), op->label);
+    if (op->byte_start != -1)
+        fprintf(file, COLOR(MAGENTA) "byte_range: " COLOR(RESET) "%d,%d ", op->byte_start, op->byte_end);
     if (op->inst)
         x64_inst_print_bytes(op->inst, file);
     if (print_opts & X64_OP_PRINT(NL_END))

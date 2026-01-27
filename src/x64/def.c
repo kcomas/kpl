@@ -139,7 +139,7 @@ extern inline int16_t x64_pfx_mask(void);
 
 extern inline int16_t x64_flag_mask(void);
 
-x64_pfx_flag x64_byte_to_pfx(uint8_t byte) {
+x64_pfx_flag x64_pfx_byte_to_pfx_flag(uint8_t byte) {
     switch (byte) {
         case 0x66:
             return X64_PFX(OPERAND);
@@ -177,13 +177,13 @@ uint8_t x64_pfx_to_byte(x64_pfx_flag pfx) {
 extern inline uint8_t x64_pfx_byte_by_bit_idx(int8_t bit_idx);
 
 static const char *pfx_flag_strs[] = {
-    "LOCK",
-    "REP",
-    "REPNZ",
-    "REPNE",
-    "REPZ",
-    "REPE",
-    "OPERNAD",
+    "LOCK_F0",
+    "REP_F2",
+    "REPNZ_F2",
+    "REPNE_F2",
+    "REPZ_F3",
+    "REPE_F3",
+    "OPERNAD_66",
     "PREFIX",
     "REX",
     "0F",
