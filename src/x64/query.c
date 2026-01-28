@@ -38,7 +38,10 @@ static bool x64_opcode_match_opcode(const x64_inst *inst, const x64_op *op, uint
         return true;
     if (op->next[next_idx] == -1)
         return false;
-    return (~(1 << 7 | 1 << 6) & op->next[next_idx]) >> 3 == inst->o;
+    uint8_t opcode = op->next[next_idx];
+    opcode &= 1 << 5 | 1 << 4 | 1 << 3;
+    opcode >>= 3;
+    return opcode == inst->o;
 }
 
 static bool x64_opcode_match_by_op(const x64_inst *inst, const x64_op *op) {
@@ -47,9 +50,9 @@ static bool x64_opcode_match_by_op(const x64_inst *inst, const x64_op *op) {
     if (inst->so) {
         if (inst->so != op->next[0])
             return false;
-        if (!x64_opcode_match_opcode(inst, op, 0))
+        if (!x64_opcode_match_opcode(inst, op, 1))
             return false;
-    } else if (!x64_opcode_match_opcode(inst, op, 1))
+    } else if (!x64_opcode_match_opcode(inst, op, 0))
         return false;
     if (inst->so && inst->so != op->next[0])
         return false;

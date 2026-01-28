@@ -30,9 +30,9 @@ static constexpr uint16_t load_byte_flag_mask = X64_FLAG(PREFIX) | X64_FLAG(REX)
 
 static const uint8_t plusr_opcodes[] = { 0x50, 0x58, 0x90, 0xB0, 0xB8, 0xC8 };
 
-static constexpr uint8_t plusr_opcode_size = sizeof(plusr_opcodes) / sizeof(plusr_opcodes[0]);
+static constexpr uint8_t plusr_opcode_size = DEF_STATIC_ARRAY_SIZE(plusr_opcodes);
 
-static error *x64_load_intial_bytes(x64_state *state, x64_op *op) {
+static error *x64_dis_load_intial_bytes(x64_state *state, x64_op *op) {
     uint8_t next_byte;
     error *er = x64_dis_next_byte(state, op, &next_byte);
     if (er)
@@ -153,7 +153,8 @@ static error *x64_dis_next_imm(x64_state *state, x64_op *op, uint32_t imm_mask) 
     }
     for (int8_t imm_byte_len = 0; imm_byte_len < op->imm_byte_size; imm_byte_len++) {
         error *er = x64_dis_next_byte(state, op, &imm_byte_array[imm_byte_len]);
-        return er;
+        if (er)
+            return er;
     }
     memcpy(&op->imm.u64, imm_byte_array, op->imm_byte_size);
     return nullptr;
@@ -162,7 +163,7 @@ static error *x64_dis_next_imm(x64_state *state, x64_op *op, uint32_t imm_mask) 
 error *x64_dis_next(x64_state *state, x64_op *op) {
     x64_op_reset(op);
     op->byte_start = op->byte_end = state->byte_pos;
-    error *er = x64_load_intial_bytes(state, op);
+    error *er = x64_dis_load_intial_bytes(state, op);
     if (er)
         return er;
     if (x64_opcode_query(op) != DEF_STATUS(OK))

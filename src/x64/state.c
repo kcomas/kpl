@@ -215,7 +215,7 @@ static void x64_op_print_rm(const x64_op *op, int8_t op_idx, FILE *file) {
 static void x64_op_print_rel(const x64_op *op, FILE *file) {
     const char *rel_format_string = COLOR(BOLD) "INVALID REL" COLOR(RESET);
     switch (op->rel_byte_size) {
-        case 2:
+        case 1:
             rel_format_string = COLOR(BOLD) ">%02X" COLOR(RESET);
             break;
         case 4:
@@ -233,10 +233,10 @@ static void x64_op_print_imm(const x64_op *op, FILE *file) {
         case 1:
         case 2:
         case 4:
-            imm_format_string = COLOR(LIGHT_MAGENTA) "$%u" COLOR(RESET);
+            imm_format_string = COLOR(LIGHT_MAGENTA) "$%X" COLOR(RESET);
             break;
         case 8:
-            imm_format_string = COLOR(LIGHT_MAGENTA) "$%lu" COLOR(RESET);
+            imm_format_string = COLOR(LIGHT_MAGENTA) "$%lX" COLOR(RESET);
             break;
         default:
             break;
