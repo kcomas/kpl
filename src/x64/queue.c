@@ -37,12 +37,19 @@ static void x64_queue_resolve_item_print(const def_data data, FILE *file, int32_
     (void) print_opts;
     x64_queue_resolve_item item = x64_queue_resolve_item_decode(data);
     fprintf(file, "%*s", idnt, "");
-    fprintf(file, "{ " COLOR(BOLD) "%d" COLOR(RESET), item.byte_idx);
-    for (uint32_t bit_idx = 0; bit_idx <= X64_OP_REG_MAX_BIT; bit_idx++)
-        if (item.byte_size & (1 << bit_idx)) {
-            fprintf(file, COLOR2(BOLD, YELLOW) " %s" COLOR(RESET), x64_op_reg_str(bit_idx));
+    fprintf(file, "{ " COLOR(BOLD) "%d " COLOR(RESET), item.byte_idx);
+    const char *queue_size_str = "INVALID QUEUE SIZE";
+    switch (item.byte_size) {
+        case X64_QUEUE_SIZE(8):
+            queue_size_str = COLOR2(BOLD, YELLOW) "SIZE8" COLOR(RESET);
             break;
-        }
+        case X64_QUEUE_SIZE(32):
+            queue_size_str = COLOR2(BOLD, YELLOW) "SIZE32" COLOR(RESET);
+            break;
+        default:
+            break;
+    }
+    fprintf(file, queue_size_str);
     fprintf(file, " }");
 }
 
@@ -77,7 +84,7 @@ static void x64_queue_item_print(const def_data data, FILE *file, int32_t idnt, 
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, LIGHT_YELLOW) "%ld" COLOR(RESET) ":" COLOR(BOLD) "%d " COLOR(RESET) "->",
         item->label, item->byte_idx);
-    list_print(item->resolves, file, 1, 0);
+    list_print(item->resolves, file, 1, LIST_PRINT(_));
     if (print_opts & X64_QUEUE_ITEM_PRINT(NL_END))
         fprintf(file, "\n");
 }
@@ -136,7 +143,10 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
     def_data found;
     if (map_action(queue, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
         x64_queue_item *item = found.ptr;
-        list_add_back(item->resolves, x64_queue_resolve_item_encode(resolve_byte_idx, byte_size));
+        if (byte_idx != -1)
+            item->byte_idx = byte_idx;
+        if (resolve_byte_idx != -1)
+            list_add_back(item->resolves, x64_queue_resolve_item_encode(resolve_byte_idx, byte_size));
         return DEF_STATUS(OK);
     }
     x64_queue_item *item = x64_queue_item_init(byte_idx, label);

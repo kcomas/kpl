@@ -96,9 +96,9 @@ static def_status x64_asm_prep(x64_op *op) {
             default:
                 return DEF_STATUS(ERROR);
         }
-        int32_t reg_id_mask = op->op[op_idx] & x64_op_reg_id_mask();
+        int32_t reg_id_mask = op->inst->op[op_idx] & x64_op_reg_id_mask();
         if (reg_id_mask) {
-            if (reg_id_mask != x64_reg_id(op->reg[op_idx]))
+            if (x64_reg_id_mask_id(reg_id_mask) != x64_reg_id(op->reg[op_idx]))
                 return DEF_STATUS(ERROR);
             continue;
         }
@@ -297,10 +297,14 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
     va_end(args);
     if (x64_mne_query(mne, &op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 no op found");
-    // x64_op_print(&op, stdout, 0, X64_OP_PRINT(ASSEMBLE) | X64_OP_PRINT(NL_END));
+#ifdef X64_ASM_DEBUG_PRINT
+    x64_op_print(&op, stdout, 0, X64_OP_PRINT(ASSEMBLE) | X64_OP_PRINT(NL_END));
+#endif
     if (x64_asm_prep(&op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 invalid setup");
-    // x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
+#ifdef X64_ASM_DEBUG_PRINT
+    x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
+#endif
     if (state->next_label != -1) {
         if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, -1,
             X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
@@ -327,6 +331,25 @@ error *x64_asm_text_end(x64_state *state) {
 
 error *x64_asm_data_end(x64_state *state) {
     memcpy(x64_mem + state->byte_pos, &state->data_size, sizeof(int32_t));
-    // TODO resolve labels
+    if (!state->queue->used)
+        return nullptr;
+    for (const map_bucket *bucket = state->queue->head; bucket; bucket = bucket->next) {
+        x64_queue_item *queue_item = bucket->data.ptr;
+        if (!queue_item->resolves->head)
+            continue;
+        for (const list_item *item = queue_item->resolves->head; item; item = item->next) {
+            x64_queue_resolve_item resolve_item = x64_queue_resolve_item_decode(item->data);
+            int32_t byte_diff = queue_item->byte_idx - resolve_item.byte_idx;
+            if (resolve_item.byte_size == X64_QUEUE_SIZE(8)) {
+                if (byte_diff < INT8_MIN || byte_diff > INT8_MAX)
+                    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 queue label size8 diff out of range");
+                x64_mem[resolve_item.byte_idx - sizeof(int8_t)] = byte_diff;
+                continue;
+            }
+            if (resolve_item.byte_size != X64_QUEUE_SIZE(32))
+                return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 queue label invalid size");
+            memcpy(x64_mem + resolve_item.byte_idx - sizeof(int32_t), &byte_diff, sizeof(int32_t));
+        }
+    }
     return nullptr;
 }

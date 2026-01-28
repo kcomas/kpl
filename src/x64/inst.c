@@ -79,13 +79,17 @@ static constexpr uint16_t f0modrrm = f0 | modrrm;
 
 static constexpr uint16_t f0opcode = f0 | opcode;
 
+#define INVALID(PO) { .po = PO, .flags = X64_FLAG(INVALID), .mne = X64_MNE(INVALID) }
+
+#define INVALID_0F(PO) { .po = PO, .flags = X64_FLAG(INVALID) | X64_FLAG(0F), .mne = X64_MNE(INVALID) }
+
 #define GROUP_A(PO, LOCK, NAME) \
     { .po = PO, .flags = modrrm | LOCK, .mne = X64_MNE_INST(NAME), .op = { rm8, r8 } }, \
     { .po = PO + 1, .flags = modrrm | LOCK, .mne = X64_MNE_INST(NAME), .op = { rm163264, r163264 } }, \
     { .po = PO + 2, .flags = modrrm, .mne = X64_MNE_INST(NAME), .op = { r8, rm8 } }, \
     { .po = PO + 3, .flags = modrrm, .mne = X64_MNE_INST(NAME), .op = { r163264, rm163264 } }, \
-    { .po = PO + 4, .mne = X64_MNE_INST(NAME), .op = { r8 | rax, i8 } }, \
-    { .po = PO + 5, .mne = X64_MNE_INST(NAME), .op = { r163264 | rax, i1632 } }
+    INVALID(PO + 4), \
+    INVALID(PO + 5)
 
 #define GROUP_B(PO, OP1, OP2) \
     { .po = PO, .o = 0, .flags = lock | opcode, .mne = X64_MNE_INST(ADD), .op = { OP1, OP2 } }, \
@@ -128,10 +132,6 @@ static constexpr uint16_t f0opcode = f0 | opcode;
 #define CMOV(PO, NAME) { .po = PO, .flags = f0modrrm, .mne = X64_MNE_INST(NAME), .op = { r163264, rm163264 } }
 
 #define SET(PO, NAME) { .po = PO, .o = 0, .flags = f0opcode, .mne = X64_MNE_INST(NAME), .op = { rm8 } }
-
-#define INVALID(PO) { .po = PO, .flags = X64_FLAG(INVALID), .mne = X64_MNE(INVALID) }
-
-#define INVALID_0F(PO) { .po = PO, .flags = X64_FLAG(INVALID) | X64_FLAG(0F), .mne = X64_MNE(INVALID) }
 
 #define PREFIX(PO, NAME) { .po = PO, .flags = X64_FLAG(PREFIX), .mne = X64_MNE_PFX(NAME) }
 

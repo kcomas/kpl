@@ -15,7 +15,7 @@ Instructions that implicitly modify a register require the register as an argume
 
 ```
 # GAS Example
-imul %rdi -> imul %rdi, %rdx, %rax
+imul %rdi -> imul %rdi, %rax, %rdx
 leave -> leave %rbp
 ```
 

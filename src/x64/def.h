@@ -61,7 +61,7 @@ inline int32_t x64_op_rel_mask(void) {
 }
 
 inline int32_t x64_op_reg_id_mask(void) {
-    return X64_OP_REG(1) | X64_OP_REG(2) | X64_OP_REG(3) | X64_OP_REG(4) | X64_OP_REG(5) |
+    return X64_OP_REG(0) | X64_OP_REG(1) | X64_OP_REG(2) | X64_OP_REG(3) | X64_OP_REG(4) | X64_OP_REG(5) |
         X64_OP_REG(6) | X64_OP_REG(7);
 }
 

@@ -27,6 +27,8 @@
 
 #define DEF_U64_MASK(SHIFT) ((uint64_t) 1 << (SHIFT))
 
+#define DEF_STATIC_ARRAY_SIZE(ARRAY) (sizeof(ARRAY) / sizeof(ARRAY[0]))
+
 #define DEF_STATUS(NAME) DEF_STATUS_##NAME
 
 typedef enum [[gnu::packed]] {

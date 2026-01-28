@@ -126,7 +126,7 @@ static void x64_op_print_debug(const x64_op *op, FILE *file, int32_t idnt, x64_o
     }
     if (op->rel_byte_size) {
         x64_op_debug_field_print("rel", file);
-        fprintf(file, "0x%02X ", op->rel);
+        fprintf(file, COLOR(BOLD) "0x%02X " COLOR(RESET), op->rel);
     }
     if (op->imm_byte_size) {
         x64_op_debug_field_print("imm", file);
@@ -266,7 +266,7 @@ void x64_op_print(const x64_op *op, FILE *file, int32_t idnt, x64_op_print_opts 
         if (op->inst->op[op_idx] & x64_op_mem_mask())
             x64_op_print_rm(op, op_idx, file);
         else if (op->inst->op[op_idx] & x64_op_reg_mask())
-            x64_op_print_r(op, op_idx, op->r, file);
+            x64_op_print_r(op, op_idx, op->pfx & X64_FLAG(OPCODE) ? op->rm : op->r, file);
         if (op->inst->op[op_idx] & x64_op_rel_mask())
             x64_op_print_rel(op, file);
         if (op->inst->op[op_idx] & x64_op_imm_mask())

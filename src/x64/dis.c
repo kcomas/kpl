@@ -1,17 +1,15 @@
 
 #include "./dis.h"
 
-static uint8_t x64_dis_next_byte(x64_state *state, x64_op *op) {
-    uint8_t byte = x64_mem[state->byte_pos++];
+static error *x64_dis_next_byte(x64_state *state, x64_op *op, uint8_t *byte) {
+    *byte = x64_mem[state->byte_pos++];
     op->byte_end++;
     if (!state->byte_pos || state->byte_pos % getpagesize())
-        return byte;
-    printf(COLOR2(BOLD, RED) "X64 Disassembler hit page boundary, exiting\n" COLOR(RESET));
-    exit(DEF_EXIT_ERROR);
+        return nullptr;
+    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis hit page boundary");
 }
 
-static const x64_inst *x64_dis_load_inital_next_inst(x64_state *state, x64_op *op) {
-    uint8_t next_byte = x64_dis_next_byte(state, op);
+static const x64_inst *x64_dis_load_inital_next_inst(uint8_t next_byte) {
     int16_t inst_index = x64_opcode_table[next_byte][0];
     if (inst_index == -1)
         return nullptr;
@@ -35,7 +33,11 @@ static const uint8_t plusr_opcodes[] = { 0x50, 0x58, 0x90, 0xB0, 0xB8, 0xC8 };
 static constexpr uint8_t plusr_opcode_size = sizeof(plusr_opcodes) / sizeof(plusr_opcodes[0]);
 
 static error *x64_load_intial_bytes(x64_state *state, x64_op *op) {
-    const x64_inst *inst = x64_dis_load_inital_next_inst(state, op);
+    uint8_t next_byte;
+    error *er = x64_dis_next_byte(state, op, &next_byte);
+    if (er)
+        return er;
+    const x64_inst *inst = x64_dis_load_inital_next_inst(next_byte);
     if (!inst)
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst found");
     while (inst->flags & load_byte_flag_mask) {
@@ -59,7 +61,9 @@ static error *x64_load_intial_bytes(x64_state *state, x64_op *op) {
             default:
                 return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis should not happen");
         }
-        if (!(inst = x64_dis_load_inital_next_inst(state, op)))
+        if ((er = x64_dis_next_byte(state, op, &next_byte)))
+            return er;
+        if (!(inst = x64_dis_load_inital_next_inst(next_byte)))
             return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst after prefix rex 0f found");
     }
     op->po = inst->po;
@@ -84,8 +88,11 @@ static error *x64_dis_next_rel(x64_state *state, x64_op *op, uint32_t rel_mask) 
     op->rel_byte_size = x64_op_byte_size(rel_mask);
     if (!op->rel_byte_size)
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for rel");
-    for (int8_t rel_byte_len = 0; rel_byte_len < op->rel_byte_size; rel_byte_len++)
-        rel_byte_array[rel_byte_len] = x64_dis_next_byte(state, op);
+    for (int8_t rel_byte_len = 0; rel_byte_len < op->rel_byte_size; rel_byte_len++) {
+         error *er = x64_dis_next_byte(state, op, &rel_byte_array[rel_byte_len]);
+         if (er)
+            return er;
+    }
     memcpy(&op->rel, rel_byte_array, op->rel_byte_size);
     // TODO label
     return nullptr;
@@ -98,15 +105,22 @@ static void x64_dis_byte_to_bit_parts(uint8_t byte, int8_t *upper2, int8_t *midd
 }
 
 static error *x64_dis_next_mod(x64_state *state, x64_op *op) {
-    uint8_t modrrm = x64_dis_next_byte(state, op);
-    x64_dis_byte_to_bit_parts(modrrm, &op->mod, &op->r, &op->rm);
+    uint8_t modrrmsib;
+    error *er = x64_dis_next_byte(state, op, &modrrmsib);
+    if (er)
+        return er;
+    x64_dis_byte_to_bit_parts(modrrmsib, &op->mod, &op->r, &op->rm);
     if (op->rm == X64_SIB) {
-        uint8_t sib = x64_dis_next_byte(state, op);
-        x64_dis_byte_to_bit_parts(sib, &op->scale, &op->index, &op->base);
+        if ((er = x64_dis_next_byte(state, op, &modrrmsib)))
+            return er;
+        x64_dis_byte_to_bit_parts(modrrmsib, &op->scale, &op->index, &op->base);
     }
     if (op->mod == X64_MODSIB(01)) {
         op->dsp_byte_size = sizeof(uint8_t);
-        op->dsp = x64_dis_next_byte(state, op);
+        uint8_t dsp_byte;
+        if ((er = x64_dis_next_byte(state, op, &dsp_byte)))
+            return er;
+        op->dsp = dsp_byte;
         // TODO label
         return nullptr;
     }
@@ -115,7 +129,8 @@ static error *x64_dis_next_mod(x64_state *state, x64_op *op) {
     op->dsp_byte_size = sizeof(uint32_t);
     uint8_t dsp_byte_array[sizeof(uint32_t)] = {};
     for (int8_t dsp_byte_len = 0; dsp_byte_len < op->dsp_byte_size; dsp_byte_len++)
-        dsp_byte_array[dsp_byte_len] = x64_dis_next_byte(state, op);
+        if ((er = x64_dis_next_byte(state, op, &dsp_byte_array[dsp_byte_len])))
+            return er;
     memcpy(&op->dsp, dsp_byte_array, op->dsp_byte_size);
     // TODO label
     return nullptr;
@@ -136,8 +151,10 @@ static error *x64_dis_next_imm(x64_state *state, x64_op *op, uint32_t imm_mask) 
         default:
             return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for imm");
     }
-    for (int8_t imm_byte_len = 0; imm_byte_len < op->imm_byte_size; imm_byte_len++)
-        imm_byte_array[imm_byte_len] = x64_dis_next_byte(state, op);
+    for (int8_t imm_byte_len = 0; imm_byte_len < op->imm_byte_size; imm_byte_len++) {
+        error *er = x64_dis_next_byte(state, op, &imm_byte_array[imm_byte_len]);
+        return er;
+    }
     memcpy(&op->imm.u64, imm_byte_array, op->imm_byte_size);
     return nullptr;
 }
@@ -150,8 +167,10 @@ error *x64_dis_next(x64_state *state, x64_op *op) {
         return er;
     if (x64_opcode_query(op) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis query no inst found");
+    uint8_t byte;
     if (op->inst->so)
-        x64_dis_next_byte(state, op);
+        if ((er = x64_dis_next_byte(state, op, &byte)))
+            return er;
     if (!op->inst->op[0])
         return nullptr;
     if (op->inst->op[0] & x64_op_rel_mask())
