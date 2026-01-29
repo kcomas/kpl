@@ -68,7 +68,7 @@ inline int32_t x64_op_reg_id_mask(void) {
 int8_t x64_reg_id_mask_id(x64_op_reg reg);
 
 inline int32_t x64_op_label_mask(void) {
-    return X64_OP(DSP8) | X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
+    return X64_OP(DSP32) | X64_OP(REL8) | X64_OP(REL32);
 }
 
 uint8_t x64_op_byte_size(x64_op_reg op);

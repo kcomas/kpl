@@ -40,22 +40,6 @@ static def_status x64_asm_prep(x64_op *op) {
         int32_t op_mask = op->op[op_idx] & x64_op_mem_mask();
         if (!op_mask)
             continue;
-        switch (op_mask) {
-            case X64_OP(M8):
-                x64_asm_rex(op, X64_REX(REX));
-                break;
-            case X64_OP(M16):
-                op->pfx |= X64_PFX(OPERAND);
-                break;
-            case X64_OP(M64):
-                x64_asm_rex(op, X64_REX(W));
-                break;
-            case X64_OP(M32):
-            case X64_OP(M128):
-                break;
-            default:
-                return DEF_STATUS(ERROR);
-        }
         if (x64_reg_is_upper(op->reg[op_idx]))
             x64_asm_rex(op, X64_REX(B));
         op->rm = op->reg[op_idx];
@@ -71,6 +55,15 @@ static def_status x64_asm_prep(x64_op *op) {
             op->mod = X64_MODSIB(01);
         } else
             op->mod = X64_MODSIB(00);
+        if (op->scale != -1 || x64_reg_id(op->rm) == X64_SIB) {
+            if (op->scale != -1)
+                op->base = op->rm;
+            else {
+                op->scale = X64_MODSIB(00);
+                op->index = op->base = op->rm;
+            }
+            op->rm = X64_SIB;
+        }
         break;
     }
     for (int8_t op_idx = 0; op_idx < op->op_len; op_idx++) {
@@ -102,12 +95,19 @@ static def_status x64_asm_prep(x64_op *op) {
                 return DEF_STATUS(ERROR);
             continue;
         }
-        if (op->rm == -1)
-            op->rm = op->reg[op_idx];
-        else {
-            op->r = op->reg[op_idx];
-            break;
+        if (op_mask & (X64_OP(XMM) | X64_OP(MM))) {
+            if (op->r == -1)
+                op->r = op->reg[op_idx];
+            else if (op->rm == -1)
+                op->rm = op->reg[op_idx];
+        } else {
+            if (op->rm == -1)
+                op->rm = op->reg[op_idx];
+            else
+                op->r = op->reg[op_idx];
         }
+        if (op->r != -1 && op->rm != -1)
+            break;
     }
     if (op->rm != -1 && op->mod == -1)
         op->mod = X64_MODSIB(11);
@@ -115,15 +115,6 @@ static def_status x64_asm_prep(x64_op *op) {
         if (!(op->inst->flags & X64_FLAG(OPCODE)))
             return DEF_STATUS(ERROR);
         op->r = op->inst->o;
-    }
-    if (op->scale != -1 || x64_reg_id(op->rm) == X64_SIB) {
-        if (op->scale != -1)
-            op->base = op->rm;
-        else {
-            op->scale = X64_MODSIB(00);
-            op->index = op->base = op->rm;
-        }
-        op->rm = X64_SIB;
     }
     x64_finalize_reg(op, &op->r, X64_REX(R));
     x64_finalize_reg(op, &op->rm, X64_REX(B));
@@ -142,7 +133,7 @@ static error *x64_write_byte_array_error(x64_state *state, uint8_t byte_size, de
     if (!byte_size)
         return nullptr;
     uint8_t byte_array[sizeof(def_data)] = {};
-    memcpy(byte_array, &bytes.u64, byte_size);
+    memcpy(byte_array, &bytes.i32, byte_size);
     for (uint8_t byte_idx = 0; byte_idx < byte_size; byte_idx++)
         if (x64_mem_write_byte(&state->byte_pos, byte_array[byte_idx]) != DEF_STATUS(OK))
             return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm mem write bytes failed");
@@ -163,7 +154,7 @@ static error *x64_asm_write_text_bytes(x64_state *state, x64_op *op) {
     if ((op->inst->flags & X64_FLAG(0F)) && (er = x64_write_byte_error(state, 0x0F)))
         return er;
     if (op->inst->flags & X64_FLAG(PLUSR)) {
-        if ((er = x64_write_byte_error(state, op->inst->po + op->rm)))
+        if ((er = x64_write_byte_error(state, op->inst->po)))
             return er;
         return nullptr;
     }
@@ -177,7 +168,7 @@ static error *x64_asm_write_text_bytes(x64_state *state, x64_op *op) {
         return er;
     if ((er = x64_write_byte_array_error(state, op->dsp_byte_size, DEF_I32(op->dsp))))
         return er;
-    if (op->rel_byte_size)
+    if (op->rel_byte_size && op->rel)
         op->rel -= state->byte_pos;
     if ((er = x64_write_byte_array_error(state, op->rel_byte_size, DEF_I32(op->rel))))
         return er;
@@ -276,18 +267,19 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
                     return x64_asm_va_error(args, "x64 invalid label type");
                  op.label_size = x64_op_to_queue_size(next_op);
                  switch (next_op) {
-                    case X64_OP(DSP8):
                     case X64_OP(DSP32):
                         op.dsp_byte_size = x64_op_byte_size(next_op);
+                        op.dsp = 0;
                         break;
                     case X64_OP(REL8):
                     case X64_OP(REL32):
                         op.rel_byte_size = x64_op_byte_size(next_op);
+                        op.rel = 0;
+                        op.op[op.op_len++] = next_op;
                         break;
                     default:
-                        break;
+                        return x64_asm_va_error(args, "x64 invalid should not happen");
                  }
-                 op.op[op.op_len++] = next_op;
                  op.label = va_arg(args, ssize_t);
                  break;
             default:
@@ -326,6 +318,14 @@ error *x64_asm_text_end(x64_state *state) {
     if (er)
         return er;
     state->data_pos = state->byte_pos + sizeof(int32_t);
+    return nullptr;
+}
+
+error *x64_asm_data(x64_state *state, ssize_t label, size_t data_size, def_data data) {
+    if (x64_queue_add(&state->queue, state->byte_pos, label, -1, X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
+        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm data invalid label add");
+    memcpy(x64_mem + state->byte_pos, &data.u64, data_size);
+    state->byte_pos += data_size;
     return nullptr;
 }
 
