@@ -322,10 +322,11 @@ error *x64_asm_text_end(x64_state *state) {
 }
 
 error *x64_asm_data(x64_state *state, ssize_t label, size_t data_size, def_data data) {
-    if (x64_queue_add(&state->queue, state->byte_pos, label, -1, X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
+    if (x64_queue_add(&state->queue, state->data_pos, label, -1, X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
         return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm data invalid label add");
-    memcpy(x64_mem + state->byte_pos, &data.u64, data_size);
-    state->byte_pos += data_size;
+    memcpy(x64_mem + state->data_pos, &data.u64, data_size);
+    state->data_pos += data_size;
+    state->data_size += data_size;
     return nullptr;
 }
 
