@@ -3,6 +3,14 @@
 
 #include "./queue.h"
 
+#define X64_STATE_LABEL_STATUS(NAME) X64_STATE_LABEL_STATUS_##NAME
+
+typedef enum [[gnu::packed]] {
+    X64_STATE_LABEL_STATUS(PRINT)       = -2,
+    X64_STATE_LABEL_STATUS(NOT_SET)     = -1,
+    X64_STATE_LABEL_STATUS(LOAD)        = 0
+} x64_state_label_status;
+
 typedef struct {
     int32_t byte_start, byte_pos, data_pos, data_size;
     ssize_t next_label; // -1 not set

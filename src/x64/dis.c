@@ -83,6 +83,37 @@ static error *x64_dis_load_intial_bytes(x64_state *state, x64_op *op) {
     return nullptr;
 }
 
+static error *x64_dis_next_label(x64_state *state, x64_op *op, x64_queue_size byte_size) {
+    if (state->next_label == X64_STATE_LABEL_STATUS(NOT_SET))
+        return nullptr;
+    int32_t label_byte_pos = 0;
+    switch (byte_size) {
+        case X64_QUEUE_SIZE(8):
+            label_byte_pos = (int8_t) x64_mem[state->byte_pos - sizeof(int8_t)];
+            break;
+        case X64_QUEUE_SIZE(32):
+            memcpy(&label_byte_pos, x64_mem + state->byte_pos - sizeof(int32_t), sizeof(int32_t));
+            break;
+        default:
+            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for label");
+    }
+    label_byte_pos += state->byte_pos;
+    if (state->next_label == X64_STATE_LABEL_STATUS(PRINT)) {
+        const x64_queue_item *queue_item = x64_queue_find(&state->queue, label_byte_pos, state->next_label);
+        if (!queue_item)
+            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis unable to print label");
+        op->label = queue_item->label;
+        return nullptr;
+    }
+    size_t prev_used = state->queue->used;
+    if (x64_queue_add(&state->queue, label_byte_pos, state->next_label, state->byte_pos, byte_size) !=
+            DEF_STATUS(OK))
+        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis unable to load label");
+    if (state->queue->used > prev_used)
+        state->next_label++;
+    return nullptr;
+}
+
 static error *x64_dis_next_rel(x64_state *state, x64_op *op, uint32_t rel_mask) {
     uint8_t rel_byte_array[sizeof(uint32_t)] = {};
     op->rel_byte_size = x64_op_byte_size(rel_mask);
@@ -94,8 +125,7 @@ static error *x64_dis_next_rel(x64_state *state, x64_op *op, uint32_t rel_mask) 
             return er;
     }
     memcpy(&op->rel, rel_byte_array, op->rel_byte_size);
-    // TODO label rel_byte_size
-    return nullptr;
+    return x64_dis_next_label(state, op, x64_op_to_queue_size(rel_mask));
 }
 
 static void x64_dis_byte_to_bit_parts(uint8_t byte, int8_t *upper2, int8_t *middle3, int8_t *lower3) {
@@ -133,8 +163,7 @@ static error *x64_dis_next_mod(x64_state *state, x64_op *op) {
     memcpy(&op->dsp, dsp_byte_array, op->dsp_byte_size);
     if (op->mod != X64_MODSIB(00) || (op->mod == X64_MODSIB(00) && op->rm != x64_reg_id(X64_REG(RIP))))
         return nullptr;
-    // TODO label 4
-    return nullptr;
+    return x64_dis_next_label(state, op, x64_op_to_queue_size(X64_OP(DSP32)));
 }
 
 static error *x64_dis_next_imm(x64_state *state, x64_op *op, uint32_t imm_mask) {
@@ -195,21 +224,24 @@ void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opt
     x64_state state;
     error *er = nullptr;
     x64_state_init(&state, byte_idx, x64_queue_dis_init());
-    state.next_label = 0;
+    state.next_label = X64_STATE_LABEL_STATUS(LOAD);
     while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
         x64_op_reset(&op);
         er = x64_dis_next(&state, &op);
     }
     op = x64_op_init();
     state.byte_pos = state.byte_start;
-    state.next_label = -1;
-    while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
+    state.next_label = X64_STATE_LABEL_STATUS(PRINT);
+    for (;;) {
         x64_op_reset(&op);
         er = x64_dis_next(&state, &op);
-        if (!(op.inst->flags & X64_FLAG(DISASSEMBLER))) {
-            // TODO label
-            x64_op_print(&op, file, idnt, X64_OP_PRINT(NL_END));
-        }
+        if (er || op.inst->flags & X64_FLAG(DISASSEMBLER))
+            break;
+        const x64_queue_item *queue_item = x64_queue_find(&state.queue, state.byte_pos,
+                X64_STATE_LABEL_STATUS(NOT_SET));
+        if (queue_item)
+            fprintf(file, COLOR(LIGHT_YELLOW) "L%ld\n" COLOR(RESET), queue_item->label);
+        x64_op_print(&op, file, idnt, X64_OP_PRINT(NL_END));
     }
     if (print_opts & X64_DIS_PRINT(STATE)) {
         memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));

@@ -8,6 +8,7 @@ static error *dis_check_mne(x64_state *state, size_t byte_check_array_size, cons
     x64_state_init(state, byte_idx, x64_queue_dis_init());
     x64_state_unlock_mem(state);
     memcpy(x64_mem, byte_check_array, byte_check_array_size);
+    memset(x64_mem + byte_check_array_size, 0, sizeof(int32_t));
     x64_state_lock_mem(state);
     for (uint8_t inst_idx = 0; inst_idx < mne_array_size; inst_idx++) {
         x64_op op = x64_op_init();

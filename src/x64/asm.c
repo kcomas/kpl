@@ -305,13 +305,13 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
 #ifdef X64_ASM_DEBUG_PRINT
     x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
 #endif
-    if (state->next_label != -1) {
-        if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, -1,
+    if (state->next_label != X64_STATE_LABEL_STATUS(NOT_SET)) {
+        if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, X64_STATE_LABEL_STATUS(NOT_SET),
             X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
             return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 label add failure");
         if (state->next_fn)
             state->next_fn->fn_idx = state->byte_pos;
-        state->next_label = -1;
+        state->next_label = X64_STATE_LABEL_STATUS(NOT_SET);
         state->next_fn = nullptr;
     }
     return x64_asm_write_text_bytes(state, &op);

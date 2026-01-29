@@ -158,3 +158,11 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
         list_add_back(item->resolves, x64_queue_resolve_item_encode(resolve_byte_idx, byte_size));
     return DEF_STATUS(OK);
 }
+
+const x64_queue_item *x64_queue_find(map **queue, int32_t byte_idx, ssize_t label) {
+    x64_queue_item find = { .byte_idx = byte_idx, .label = label };
+    def_data found;
+    if (map_action(queue, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK))
+        return found.ptr;
+    return nullptr;
+}

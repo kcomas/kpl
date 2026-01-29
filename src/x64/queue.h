@@ -42,3 +42,5 @@ map *x64_queue_dis_init(void);
 
 def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t resolve_byte_idx,
     x64_queue_size byte_size);
+
+const x64_queue_item *x64_queue_find(map **queue, int32_t byte_idx, ssize_t label);

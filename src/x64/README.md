@@ -7,6 +7,8 @@ X86-64 Assembler/Disassembler
 
 No access to segment registers
 
+No access to upper 8bit of 16bit registers (ah, ch, dh, bh)
+
 No X87 Support
 
 ## Required Implicit Registers

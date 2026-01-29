@@ -4,7 +4,7 @@
 void x64_state_init(x64_state *state, int32_t byte_start, map *queue) {
     state->byte_start = state->byte_pos = byte_start;
     state->data_pos = state->data_size = 0;
-    state->next_label = -1;
+    state->next_label = X64_STATE_LABEL_STATUS(NOT_SET),
     state->next_fn = nullptr;
     state->queue = queue;
 }
@@ -35,7 +35,7 @@ void x64_state_print(const x64_state *state, FILE *file, int32_t idnt, x64_state
     if (state->queue->used > 0)
         fprintf(file, "\n");
     map_print(state->queue, stdout, 0, MAP_PRINT(_));
-    if (print_opts & X64_STATE_PRINT(NL_END))
+    if (!state->queue->used && (print_opts & X64_STATE_PRINT(NL_END)))
         fprintf(file, "\n");
 }
 
@@ -216,10 +216,10 @@ static void x64_op_print_rel(const x64_op *op, FILE *file) {
     const char *rel_format_string = COLOR(BOLD) "INVALID REL" COLOR(RESET);
     switch (op->rel_byte_size) {
         case 1:
-            rel_format_string = COLOR(BOLD) "@%02X" COLOR(RESET);
+            rel_format_string = COLOR(BOLD) "@%02X " COLOR(RESET);
             break;
         case 4:
-            rel_format_string = COLOR(BOLD) "@%08X" COLOR(RESET);
+            rel_format_string = COLOR(BOLD) "@%08X " COLOR(RESET);
             break;
         default:
             break;
@@ -233,10 +233,10 @@ static void x64_op_print_imm(const x64_op *op, FILE *file) {
         case 1:
         case 2:
         case 4:
-            imm_format_string = COLOR(LIGHT_MAGENTA) "$%X" COLOR(RESET);
+            imm_format_string = COLOR(LIGHT_MAGENTA) "$%X " COLOR(RESET);
             break;
         case 8:
-            imm_format_string = COLOR(LIGHT_MAGENTA) "$%lX" COLOR(RESET);
+            imm_format_string = COLOR(LIGHT_MAGENTA) "$%lX " COLOR(RESET);
             break;
         default:
             break;
@@ -272,7 +272,8 @@ void x64_op_print(const x64_op *op, FILE *file, int32_t idnt, x64_op_print_opts 
         if (op->inst->op[op_idx] & x64_op_imm_mask())
             x64_op_print_imm(op, file);
     }
-    // TODO label
+    if (op->label != -1)
+        fprintf(file, COLOR(LIGHT_YELLOW) "L%ld" COLOR(RESET), op->label);
     fprintf(file, "\n%*s", idnt + op_left_pad * byte_left_pad_mul, "");
     for (int32_t byte_idx = op->byte_start; byte_idx < op->byte_end; byte_idx++)
         fprintf(file, "%02X ", x64_mem[byte_idx]);
