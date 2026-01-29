@@ -33,7 +33,7 @@ static bool x64_queue_resolve_item_eq(const def_data data_a, const def_data data
     return false;
 }
 
-static void x64_queue_resolve_item_print(const def_data data, FILE *file, int32_t idnt, uint64_t print_opts) {
+static void x64_queue_resolve_item_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     (void) print_opts;
     x64_queue_resolve_item item = x64_queue_resolve_item_decode(data);
     fprintf(file, "%*s", idnt, "");
@@ -79,7 +79,7 @@ static void x64_queue_item_free(void *data) {
     mem_free(&queue_item_pool, item);
 }
 
-static void x64_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint64_t print_opts) {
+static void x64_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     const x64_queue_item *item = data.ptr;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, LIGHT_YELLOW) "%ld" COLOR(RESET) ":" COLOR(BOLD) "%d " COLOR(RESET) "->",

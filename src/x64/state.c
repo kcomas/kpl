@@ -216,10 +216,10 @@ static void x64_op_print_rel(const x64_op *op, FILE *file) {
     const char *rel_format_string = COLOR(BOLD) "INVALID REL" COLOR(RESET);
     switch (op->rel_byte_size) {
         case 1:
-            rel_format_string = COLOR(BOLD) ">%02X" COLOR(RESET);
+            rel_format_string = COLOR(BOLD) "@%02X" COLOR(RESET);
             break;
         case 4:
-            rel_format_string = COLOR(BOLD) ">%08X" COLOR(RESET);
+            rel_format_string = COLOR(BOLD) "@%08X" COLOR(RESET);
             break;
         default:
             break;

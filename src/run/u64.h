@@ -18,6 +18,6 @@ typedef enum [[gnu::packed]] {
     U64_PRINT(_)        = 0
 } u64_print_opts;
 
-void u64_print(const def_data data, FILE *file, int32_t idnt, uint64_t print_opts);
+void u64_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts);
 
 extern def_fn_table u64_fn_table;

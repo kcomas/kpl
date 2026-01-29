@@ -94,7 +94,7 @@ static error *x64_dis_next_rel(x64_state *state, x64_op *op, uint32_t rel_mask) 
             return er;
     }
     memcpy(&op->rel, rel_byte_array, op->rel_byte_size);
-    // TODO label
+    // TODO label rel_byte_size
     return nullptr;
 }
 
@@ -121,7 +121,6 @@ static error *x64_dis_next_mod(x64_state *state, x64_op *op) {
         if ((er = x64_dis_next_byte(state, op, &dsp_byte)))
             return er;
         op->dsp = dsp_byte;
-        // TODO label
         return nullptr;
     }
     if (op->mod == X64_MODSIB(11) || (op->mod == X64_MODSIB(00) && op->rm != x64_reg_id(X64_REG(RIP))))
@@ -132,7 +131,9 @@ static error *x64_dis_next_mod(x64_state *state, x64_op *op) {
         if ((er = x64_dis_next_byte(state, op, &dsp_byte_array[dsp_byte_len])))
             return er;
     memcpy(&op->dsp, dsp_byte_array, op->dsp_byte_size);
-    // TODO label
+    if (op->mod != X64_MODSIB(00) || (op->mod == X64_MODSIB(00) && op->rm != x64_reg_id(X64_REG(RIP))))
+        return nullptr;
+    // TODO label 4
     return nullptr;
 }
 
@@ -194,18 +195,21 @@ void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opt
     x64_state state;
     error *er = nullptr;
     x64_state_init(&state, byte_idx, x64_queue_dis_init());
+    state.next_label = 0;
     while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
         x64_op_reset(&op);
         er = x64_dis_next(&state, &op);
     }
     op = x64_op_init();
     state.byte_pos = state.byte_start;
+    state.next_label = -1;
     while (!er && (!op.inst || !(op.inst->flags & X64_FLAG(DISASSEMBLER)))) {
         x64_op_reset(&op);
         er = x64_dis_next(&state, &op);
-        // TODO label
-        if (!(op.inst->flags & X64_FLAG(DISASSEMBLER)))
+        if (!(op.inst->flags & X64_FLAG(DISASSEMBLER))) {
+            // TODO label
             x64_op_print(&op, file, idnt, X64_OP_PRINT(NL_END));
+        }
     }
     if (print_opts & X64_DIS_PRINT(STATE)) {
         memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));

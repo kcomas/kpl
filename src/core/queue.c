@@ -54,7 +54,7 @@ static bool core_queue_item_eq(const def_data data_a, const def_data data_b) {
     return string_eq(item_a->filename, item_b->filename);
 }
 
-static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint64_t print_opts) {
+static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     core_queue_item *item = data.ptr;
     fprintf(file, "%*s", idnt, "");
     string_print(item->filename, file, idnt, 0);
