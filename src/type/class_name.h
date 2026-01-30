@@ -48,6 +48,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(THREAD),
     // LIST
     TYPE_NAME(OP),
+    TYPE_NAME(TUPLE),
     TYPE_NAME(MAP),
     TYPE_NAME(OVERLOAD),
     // TABLE

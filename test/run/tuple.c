@@ -1,0 +1,13 @@
+
+#include "../test.h"
+
+TEST(tuple_example) {
+    tuple *tu = tuple_init(2);
+    ASSERT(tuple_set(tu, I64_PRINT(_), &i64_fn_table, DEF_I64(1), 0) == DEF_STATUS(OK), "invalid tuple set");
+    ASSERT(tuple_set(tu, U64_PRINT(_), &u64_fn_table, DEF_U64(2), 1) == DEF_STATUS(OK), "invalid tuple set");
+    tuple_item *item = tuple_get(tu, 1);
+    ASSERT(item && item->data.u64 == 2, "invalid tuple value");
+    ASSERT(!tuple_get(tu, 2), "should be null");
+    tuple_print(tu, stdout, 1, TUPLE_PRINT_OPTS(NO_FIRST_IDNT) | TUPLE_PRINT_OPTS(NL_END));
+    tuple_free(tu);
+}

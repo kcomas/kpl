@@ -21,11 +21,14 @@ typedef enum [[gnu::packed]] {
     TYPE_QUALIFIER_FLAG(_)      = 0,
 } type_qualifier_flags;
 
-#define TYPE_QUALIFIER_MASK (TYPE_QUALIFIER(CONST) | TYPE_QUALIFIER(REF) | \
-    TYPE_QUALIFIER(SHARED) | TYPE_QUALIFIER(MUTEX))
+inline uint32_t type_qualifier_mask(void) {
+    return TYPE_QUALIFIER(CONST) | TYPE_QUALIFIER(REF) | TYPE_QUALIFIER(SHARED) | TYPE_QUALIFIER(MUTEX);
+}
 
 const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 
-#define TYPE_FLAG_MASK (TYPE_FLAG(TRACING_GC) | TYPE_FLAG(MOVED) | TYPE_FLAG(REGISTER) | TYPE_FLAG(C_CODE))
+inline uint32_t type_flag_mask(void) {
+    return TYPE_FLAG(TRACING_GC) | TYPE_FLAG(MOVED) | TYPE_FLAG(REGISTER) | TYPE_FLAG(C_CODE);
+}
 
 const char *type_flag_str(type_qualifier_flags qualifier_flags);

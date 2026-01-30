@@ -169,10 +169,10 @@ bool map_eq(const map *ma_a, const map *ma_b) {
 
 void map_print(const map *ma, FILE *file, int32_t idnt, map_print_opts print_opts) {
     for (map_bucket *head = ma->head; head; head = head->next) {
+        int32_t data_idnt = idnt;
         if (head == ma->head && (print_opts & MAP_PRINT(NO_FIRST_IDNT)))
-            ma->fn_table->print_fn(head->data, file, 0, ma->print_opts);
-        else
-            ma->fn_table->print_fn(head->data, file, idnt, ma->print_opts);
+            data_idnt = 0;
+        ma->fn_table->print_fn(head->data, file, data_idnt, ma->print_opts);
         if ((print_opts & MAP_PRINT(SEMI_SPACER)) && head->next)
             fprintf(file, COLOR(DARK_GREY) ";" COLOR(RESET));
     }

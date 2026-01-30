@@ -248,8 +248,10 @@ void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opt
             fprintf(file, COLOR(LIGHT_YELLOW) "L%ld\n" COLOR(RESET), queue_item->label);
         x64_op_print(&op, file, idnt, X64_OP_PRINT(NL_END));
     }
+    memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));
+    fprintf(file, COLOR(LIGHT_YELLOW) "DATA\n" COLOR(RESET) COLOR(BOLD) "%05X" COLOR(RESET)
+        COLOR(LIGHT_MAGENTA) "    $%X\n" COLOR(RESET), state.byte_pos, state.data_size);
     if (print_opts & X64_DIS_PRINT(STATE)) {
-        memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));
         state.data_pos = state.byte_pos + sizeof(int32_t);
         x64_state_print(&state, file, idnt, X64_STATE_PRINT(NL_END));
     }

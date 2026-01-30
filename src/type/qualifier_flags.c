@@ -1,8 +1,10 @@
 
 #include "./qualifier_flags.h"
 
+extern inline uint32_t type_qualifier_mask(void);
+
 const char *type_qualifier_str(type_qualifier_flags qualifier_flags) {
-    switch (qualifier_flags & TYPE_QUALIFIER_MASK) {
+    switch (qualifier_flags & type_qualifier_mask()) {
         case TYPE_QUALIFIER(CONST):
             return "CONST";
         case TYPE_QUALIFIER(REF):
@@ -17,8 +19,10 @@ const char *type_qualifier_str(type_qualifier_flags qualifier_flags) {
     return nullptr;
 }
 
+extern inline uint32_t type_flag_mask(void);
+
 const char *type_flag_str(type_qualifier_flags qualifier_flags) {
-    switch (qualifier_flags & TYPE_FLAG_MASK) {
+    switch (qualifier_flags & type_flag_mask()) {
         case TYPE_FLAG(TRACING_GC):
             return "TRACING_GC";
         case TYPE_FLAG(MOVED):

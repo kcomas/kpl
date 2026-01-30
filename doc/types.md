@@ -77,6 +77,8 @@ A unique identifier, cannot be stored
 
 #### Op
 
+#### [Tuple](./types/pair.md)
+
 #### [Map](./types/map.md)
 
 #### [Overload](./functions.md)

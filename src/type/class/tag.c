@@ -22,20 +22,20 @@ void type_tag_free(type_tag *tag) {
     mem_free(&tag_pool, tag);
 }
 
-#define NUMBER_RANGE_START 1
+static constexpr char number_range_start = 1;
 
-#define UPPER_RANGE_START 12
+static constexpr char upper_range_start = 12;
 
-#define LOWER_RANGE_START 38
+static constexpr char lower_range_start = 38;
 
 static uint64_t symbol_value_from_char(char c) {
     if (c == '_')
         return 0;
     if (c >= '0' && c <= '9')
-        return c - '0' + NUMBER_RANGE_START;
+        return c - '0' + number_range_start;
     if (c >= 'A' && c <= 'Z')
-        return c - 'A' + UPPER_RANGE_START;
-    return c - 'a' + LOWER_RANGE_START;
+        return c - 'A' + upper_range_start;
+    return c - 'a' + lower_range_start;
 }
 
 static def_status symbol_store_part(uint64_t symbol[TYPE_SYMBOL_PARTS], size_t part_idx, const char *c_str,
@@ -69,11 +69,11 @@ def_status type_tag_symbol_from_c_str_slice(type_tag *tag, const char *c_str, si
 static char symbol_char_from_value(uint8_t value) {
     if (!value)
         return '_';
-    if (value < UPPER_RANGE_START)
-        return value - NUMBER_RANGE_START + '0';
-    if (value < LOWER_RANGE_START)
-        return value - UPPER_RANGE_START + 'A';
-    return value - LOWER_RANGE_START + 'a';
+    if (value < upper_range_start)
+        return value - number_range_start + '0';
+    if (value < lower_range_start)
+        return value - upper_range_start + 'A';
+    return value - lower_range_start + 'a';
 }
 
 static void symbol_load_part(uint64_t part, size_t part_idx, uint8_t buffer[TYPE_SYMBOL_C_STR_SIZE]) {
