@@ -250,7 +250,13 @@ void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opt
     }
     memcpy(&state.data_size, x64_mem + state.byte_pos, sizeof(int32_t));
     fprintf(file, COLOR(LIGHT_YELLOW) "DATA\n" COLOR(RESET) COLOR(BOLD) "%05X" COLOR(RESET)
-        COLOR(LIGHT_MAGENTA) "    $%X\n" COLOR(RESET), state.byte_pos, state.data_size);
+        COLOR(LIGHT_MAGENTA) "    $%X " COLOR(RESET), state.byte_pos, state.data_size);
+    for (const map_bucket *bucket = state.queue->head; bucket; bucket = bucket->next) {
+        x64_queue_item *queue_item = bucket->data.ptr;
+        if (queue_item->byte_idx > state.byte_pos)
+            fprintf(file, COLOR(LIGHT_YELLOW) "L%ld " COLOR(RESET), queue_item->label);
+    }
+    fprintf(file, "\n");
     if (print_opts & X64_DIS_PRINT(STATE)) {
         state.data_pos = state.byte_pos + sizeof(int32_t);
         x64_state_print(&state, file, idnt, X64_STATE_PRINT(NL_END));
