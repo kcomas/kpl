@@ -41,7 +41,7 @@ int main(void) {
                 inst_idx++;
                 continue;
             }
-            if (opcode_idx <= 0xFF && !(x64_inst_table[inst_idx].flags & X64_FLAG(0F))) {
+            if ((opcode_idx <= 0xFF && !(x64_inst_table[inst_idx].flags & X64_FLAG(0F))) || opcode_idx == 0x0F) {
                 if (x64_inst_table[inst_idx].po == opcode_idx)
                     inst_idx_array[array_idx++] = inst_idx;
             } else if (opcode_idx > 0xFF && (x64_inst_table[inst_idx].flags & X64_FLAG(0F))) {

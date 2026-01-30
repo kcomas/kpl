@@ -179,7 +179,21 @@ static void x64_op_print_rm(const x64_op *op, int8_t op_idx, FILE *file) {
     if (reg == X64_SIB)
         reg = op->base;
     x64_op_reg op_reg = X64_OP(M8);
-    if (op->inst->op[op_idx] & (X64_OP(M16) | X64_OP(M32) | X64_OP(M64))) {
+    if (op->inst->op[op_idx] & (X64_OP(XMM) | X64_OP(MM))) {
+        switch (op->inst->op[op_idx] & (X64_OP(M32) | X64_OP(M64) | X64_OP(M128))) {
+            case X64_OP(M32):
+                op_reg = X64_OP(M32);
+                break;
+            case X64_OP(M64):
+                op_reg = X64_OP(M64);
+                break;
+            case X64_OP(M128):
+                op_reg = X64_OP(M128);
+                break;
+            default:
+                op_reg = X64_OP_REG(_);
+        }
+    } else if (op->inst->op[op_idx] & (X64_OP(M16) | X64_OP(M32) | X64_OP(M64))) {
         op_reg = X64_OP(M32);
         if (op->pfx & X64_PFX(OPERAND))
             op_reg = X64_OP(R16);
@@ -188,18 +202,20 @@ static void x64_op_print_rm(const x64_op *op, int8_t op_idx, FILE *file) {
     }
     if (op->rex & X64_REX(B))
         reg += 8;
+    if (op->mod == X64_MODSIB(00) && reg == X64_REG(RBP))
+        reg = X64_REG(RIP);
     fprintf(file, COLOR(LIGHT_GREEN) "%s" COLOR(RESET) COLOR(LIGHT_RED) "%s" COLOR(RESET),
             x64_op_reg_str_by_mask(op_reg), x64_reg_str(reg));
     if (op->rm == X64_SIB) {
         int8_t index = op->index;
         if (op->rex & X64_REX(X))
             index += 8;
-        fprintf(file, COLOR(GREEN) "+%s*%u" COLOR(RESET), x64_reg_str(index), x64_op_byte_size(op->scale));
+        fprintf(file, COLOR(GREEN) "+%s*%u" COLOR(RESET), x64_reg_str(index), x64_scale_bits_to_size(op->scale));
     }
     if (op->dsp_byte_size) {
         const char *dsp_format_string = COLOR(CYAN) "INVALID DSP" COLOR(RESET);
         switch (op->dsp_byte_size) {
-            case 2:
+            case 1:
                 dsp_format_string = COLOR(CYAN) "+%02X" COLOR(RESET);
                 break;
             case 4:
