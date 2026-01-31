@@ -10,7 +10,7 @@ TEST(type_struct_size) {
 }
 
 TEST(type_shared_scalar) {
-    type *scalar = type_init(TYPE_NAME(I64), TYPE_QUALIFIER(SHARED), TYPE_CLASS_UNION_EMPTY);
+    type *scalar = type_init(TYPE_NAME(I64), TYPE_QUALIFIER(SHARED), type_class_union_empty());
     type_print(scalar, stdout, 0, TYPE_PRINT(NL_END));
     type_free(scalar);
 }

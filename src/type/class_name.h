@@ -34,6 +34,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(STRING),
     TYPE_NAME(REGEX),
     TYPE_NAME(ERROR),
+    TYPE_NAME(BUFFER),
     TYPE_NAME(FD),
     TYPE_NAME(SOCKET),
     // SIZE
@@ -51,6 +52,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(TUPLE),
     TYPE_NAME(MAP),
     TYPE_NAME(OVERLOAD),
+    TYPE_NAME(APPLY),
     // TABLE
     TYPE_NAME(ENUM),
     TYPE_NAME(STRUCT),

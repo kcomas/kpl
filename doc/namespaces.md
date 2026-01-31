@@ -47,7 +47,7 @@ scope_name(...)
 #### args
 
 ```
-.sys.args : Const[Arary[String;determined at runtime]]
+.sys`args : Const[Arary[String;determined at runtime]]
 argv0 : .sys.args`0 // Const[String]
 ```
 
@@ -56,9 +56,9 @@ argv0 : .sys.args`0 // Const[String]
 If interrupted by signal returns error
 
 ```
-.sys.sleep : Overload[
-    Fn[Result<Void>; U64`seconds]
-    Fn[Result<Void>; U64`seconds; U64`nano_seconds]
+.sys`sleep : Overload[
+    Fn[Result[Void]; U64`seconds]
+    Fn[Result[Void]; U64`seconds; U64`nano_seconds]
 ]
 ```
 
@@ -66,29 +66,41 @@ If interrupted by signal returns error
 
 ### io
 
+#### read
+
+```
+io`read : Overload[Fn[Result[Buffer]; Fd`fd]; TODO READ VARIANTS]
+```
+
+#### write
+
+```
+io`write : Overload[Fn[Result[Void]; Fd`fd; Buffer`data]; TODO WRITE VARIANTS]
+```
+
 #### Console
 
 ```
-.io.Console : Enum[I32; `stdin $ 0; `stdout $ 1; `stderr $ 2]
+.io`Console : Enum[I32; `stdin $ 0; `stdout $ 1; `stderr $ 2]
 
 ```
 
 #### stdin
 
 ```
-.io.stdin : Const[FD $ 0]
+.io`stdin : Const[FD $ 0]
 ```
 
 #### stdout
 
 ```
-.io.stdout : Const[FD $ 1]
+.io`stdout : Const[FD $ 1]
 ```
 
 #### stderr
 
 ```
-.io.stderr : Const[FD $ 2]
+.io`stderr : Const[FD $ 2]
 ```
 
 #### colors.codes

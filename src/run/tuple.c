@@ -9,7 +9,7 @@ tuple *tuple_init(uint32_t size) {
     tuple *tu = mem_alloc(&tuple_pool, sizeof(tuple) + sizeof(tuple_item) * size);
     tu->size = size;
     for (uint32_t tu_idx = 0; tu_idx < size; tu_idx++)
-        tu->items[tu_idx] = (tuple_item) { .print_opts = 0, .fn_table = &def_unused_fn_table, .data = DEF(_) };
+        tu->items[tu_idx] = (tuple_item) { .print_opts = 0, .fn_table = &def_unused_fn_table, .data = def() };
     return tu;
 }
 
@@ -30,7 +30,9 @@ def_status tuple_set(tuple *tu, uint32_t print_opts, def_fn_table *fn_table, def
 }
 
 tuple_item *tuple_get(tuple *tu, uint32_t idx) {
-    return idx < tu->size ? &tu->items[idx] : nullptr;
+    if (idx >= tu->size)
+        return nullptr;
+    return &tu->items[idx];
 }
 
 void tuple_print(const tuple *tu, FILE *file, uint32_t idnt, tuple_print_opts print_opts) {

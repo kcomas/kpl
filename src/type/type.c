@@ -1,14 +1,29 @@
 
 #include "./type.h"
 
+extern inline type_class_union type_class_union_empty(void);
+
+extern inline type_class_union type_class_union_inner(type *ty);
+
+extern inline type_class_union type_class_union_fixed(type_fixed *fixed);
+
+extern inline type_class_union type_class_union_list(list *li);
+
+extern inline type_class_union type_class_union_table(type_table *table);
+
+extern inline type_class_union type_class_union_tag(type_tag *tag);
+
+extern inline type_class_union type_class_union_base(type_base *base);
+
 MEM_POOL(type_pool);
 
 type *type_init(type_name name, type_qualifier_flags qualifier_flags, type_class_union class_union) {
     type *ty = mem_alloc(&type_pool, sizeof(type));
     ty->ref_count = 1;
-    ty->name = name;
-    ty->qualifier_flags = qualifier_flags;
     ty->class_union = class_union;
+    ty->qualifier_flags = qualifier_flags;
+    ty->op_name = TYPE_OP_NAME(_);
+    ty->name = name;
     return ty;
 }
 
@@ -45,7 +60,7 @@ size_t type_hash(const type *ty) {
     size_t hash = 0;
     if (!ty)
         return hash;
-    hash += ty->name;
+    hash += ty->name + ty->op_name;
     switch (type_name_get_class(ty->name)) {
         case TYPE_CLASS(SCALAR):
         case TYPE_CLASS(_):
@@ -105,8 +120,11 @@ type *type_copy(type *ty) {
     return ty;
 }
 
-static void print_type_name(FILE *file, type_name name) {
+static void print_type_name(FILE *file, type_name name, type_op_name op_name) {
     fprintf(file, COLOR2(BOLD, LIGHT_YELLOW) "%s" COLOR(RESET), type_name_str(name));
+    if (op_name == TYPE_OP_NAME(_))
+        return;
+    fprintf(file, "::" COLOR2(BOLD, YELLOW) "%s" COLOR(RESET), type_op_name_str(op_name));
 }
 
 void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts print_opts) {
@@ -116,7 +134,7 @@ void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts print_
     const char *qualifier_str = type_qualifier_str(ty->qualifier_flags);
     if (qualifier_str)
         fprintf(file, COLOR2(BOLD, RED) "%s" COLOR2(BOLD, WHITE) "[" COLOR(RESET), qualifier_str);
-    print_type_name(file, ty->name);
+    print_type_name(file, ty->name, ty->op_name);
     switch (type_name_get_class(ty->name)) {
         case TYPE_CLASS(SCALAR):
         case TYPE_CLASS(_):

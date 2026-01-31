@@ -19,7 +19,7 @@ void type_table_free(type_table *table) {
 }
 
 def_status type_table_add(type_table *table, type *inner_type) {
-    return map_action(&table->type_map, MAP_MODE(INSERT), DEF_PTR(inner_type), &def_unused);
+    return map_action(&table->type_map, MAP_MODE(INSERT), def_ptr(inner_type), &def_unused);
 }
 
 size_t type_table_hash(const type_table *table) {

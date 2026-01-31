@@ -38,12 +38,12 @@ static void _namespace_std_add(type *ty, va_list args) {
         }
         memcpy(st->data, key, st->len);
         type_base find_base = { .key = st };
-        type find = { .name = TYPE_NAME(BASE), .class_union = TYPE_CLASS_UNION_BASE(&find_base) };
+        type find = { .name = TYPE_NAME(BASE), .class_union = type_class_union_base(&find_base) };
         def_data found;
-        if (map_action(&base->type_map, MAP_MODE(FIND), DEF_PTR(&find), &found) != DEF_STATUS(OK)) {
+        if (map_action(&base->type_map, MAP_MODE(FIND), def_ptr(&find), &found) != DEF_STATUS(OK)) {
             type *next = type_init(TYPE_NAME(BASE), TYPE_QUALIFIER_FLAG(_),
-                TYPE_CLASS_UNION_BASE(type_base_init(string_init_c_str(key))));
-            if (map_action(&base->type_map, MAP_MODE(INSERT), DEF_PTR(next), &def_unused) != DEF_STATUS(OK)) {
+                type_class_union_base(type_base_init(string_init_c_str(key))));
+            if (map_action(&base->type_map, MAP_MODE(INSERT), def_ptr(next), &def_unused) != DEF_STATUS(OK)) {
                 printf(COLOR2(BOLD, RED) "Unable To Add Base To Std, Exiting\n" COLOR(RESET));
                 va_end(args);
                 exit(DEF_EXIT_ERROR);

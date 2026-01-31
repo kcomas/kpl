@@ -13,5 +13,5 @@ inline result result_value(def_data value) {
 }
 
 inline result result_error(error *er) {
-    return (result) { .value = DEF(_), .er = er };
+    return (result) { .value = def(), .er = er };
 }

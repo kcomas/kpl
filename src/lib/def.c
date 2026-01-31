@@ -1,7 +1,33 @@
 
 #include "./def.h"
 
-def_data def_unused = DEF(_);
+extern inline def_data def(void);
+
+extern inline def_data def_b(bool b);
+
+extern inline def_data def_u8(uint8_t u8);
+
+extern inline def_data def_u16(uint16_t u16);
+
+extern inline def_data def_u32(uint32_t u32);
+
+extern inline def_data def_u64(uint64_t u64);
+
+extern inline def_data def_i8(int8_t i8);
+
+extern inline def_data def_i16(int16_t i16);
+
+extern inline def_data def_i32(int32_t i32);
+
+extern inline def_data def_i64(int64_t i64);
+
+extern inline def_data def_f32(float f32);
+
+extern inline def_data def_f64(double f64);
+
+extern inline def_data def_ptr(void *ptr);
+
+def_data def_unused = (def_data) { .ptr = nullptr };
 
 static size_t def_unused_hash_fn(const def_data data) {
     return (size_t) data.u64;

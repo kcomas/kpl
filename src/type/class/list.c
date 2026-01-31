@@ -10,7 +10,7 @@ void type_list_free(list *li) {
 }
 
 void type_list_add(list *li, type *inner_type) {
-    return list_add_back(li, DEF_PTR(inner_type));
+    return list_add_back(li, def_ptr(inner_type));
 }
 
 size_t type_list_hash(const list *li) {

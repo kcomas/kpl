@@ -6,7 +6,7 @@ static error *x64_dis_next_byte(x64_state *state, x64_op *op, uint8_t *byte) {
     op->byte_end++;
     if (!state->byte_pos || state->byte_pos % getpagesize())
         return nullptr;
-    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis hit page boundary");
+    return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis hit page boundary");
 }
 
 static const x64_inst *x64_dis_load_inital_next_inst(const x64_op *op, uint8_t next_byte) {
@@ -40,34 +40,34 @@ static error *x64_dis_load_intial_bytes(x64_state *state, x64_op *op) {
         return er;
     const x64_inst *inst = x64_dis_load_inital_next_inst(op, next_byte);
     if (!inst)
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst found");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis no inst found");
     if (inst->flags & X64_FLAG(PREFIX)) {
         if (x64_dis_load_inital_next_prefix(inst, op) != DEF_STATUS(OK))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis prefix all ready set");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis prefix all ready set");
         if ((er = x64_dis_next_byte(state, op, &next_byte)))
             return er;
         if (!(inst = x64_dis_load_inital_next_inst(op, next_byte)))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst after prefix found");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis no inst after prefix found");
     }
     if (inst->flags & X64_FLAG(REX)) {
         if (op->rex)
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis rex all ready set");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis rex all ready set");
         op->rex = inst->po;
         if ((er = x64_dis_next_byte(state, op, &next_byte)))
             return er;
         if (!(inst = x64_dis_load_inital_next_inst(op, next_byte)))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst after rex found");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis no inst after rex found");
     }
     if (inst->flags & X64_FLAG(0F)) {
         if (inst->mne != X64_MNE(0F))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 should not happen");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 should not happen");
         if (op->pfx & X64_FLAG(0F))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis 0F all ready set");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis 0F all ready set");
         op->pfx |= X64_FLAG(0F);
         if ((er = x64_dis_next_byte(state, op, &next_byte)))
             return er;
         if (!(inst = x64_dis_load_inital_next_inst(op, next_byte)))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis no inst after 0f found");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis no inst after 0f found");
     }
     op->po = inst->po;
     if (inst->flags & X64_FLAG(PLUSR)) {
@@ -79,7 +79,7 @@ static error *x64_dis_load_intial_bytes(x64_state *state, x64_op *op) {
                 break;
             }
         if (op->rm == -1)
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis plusr rm not set");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis plusr rm not set");
     } else {
         op->next[0] = x64_mem[state->byte_pos];
         if ((state->byte_pos + 1) % getpagesize() != 0)
@@ -100,20 +100,20 @@ static error *x64_dis_next_label(x64_state *state, x64_op *op, x64_queue_size by
             memcpy(&label_byte_pos, x64_mem + state->byte_pos - sizeof(int32_t), sizeof(int32_t));
             break;
         default:
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for label");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis invalid byte size for label");
     }
     label_byte_pos += state->byte_pos;
     if (state->next_label == X64_STATE_LABEL_STATUS(PRINT)) {
         const x64_queue_item *queue_item = x64_queue_find(&state->queue, label_byte_pos, state->next_label);
         if (!queue_item)
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis unable to print label");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis unable to print label");
         op->label = queue_item->label;
         return nullptr;
     }
     size_t prev_used = state->queue->used;
     if (x64_queue_add(&state->queue, label_byte_pos, state->next_label, state->byte_pos, byte_size) !=
             DEF_STATUS(OK))
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis unable to load label");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis unable to load label");
     if (state->queue->used > prev_used)
         state->next_label++;
     return nullptr;
@@ -123,7 +123,7 @@ static error *x64_dis_next_rel(x64_state *state, x64_op *op, uint32_t rel_mask) 
     uint8_t rel_byte_array[sizeof(uint32_t)] = {};
     op->rel_byte_size = x64_op_byte_size(rel_mask);
     if (!op->rel_byte_size)
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for rel");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis invalid byte size for rel");
     for (int8_t rel_byte_len = 0; rel_byte_len < op->rel_byte_size; rel_byte_len++) {
          error *er = x64_dis_next_byte(state, op, &rel_byte_array[rel_byte_len]);
          if (er)
@@ -184,7 +184,7 @@ static error *x64_dis_next_imm(x64_state *state, x64_op *op, uint32_t imm_mask) 
             op->imm_byte_size = sizeof(uint64_t);
             break;
         default:
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis invalid byte size for imm");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis invalid byte size for imm");
     }
     for (int8_t imm_byte_len = 0; imm_byte_len < op->imm_byte_size; imm_byte_len++) {
         error *er = x64_dis_next_byte(state, op, &imm_byte_array[imm_byte_len]);
@@ -202,7 +202,7 @@ error *x64_dis_next(x64_state *state, x64_op *op) {
     if (er)
         return er;
     if (x64_opcode_query(op) != DEF_STATUS(OK))
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 dis query no inst found");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis query no inst found");
     uint8_t byte;
     if (op->inst->so)
         if ((er = x64_dis_next_byte(state, op, &byte)))
@@ -252,7 +252,7 @@ void x64_dis_print(int32_t byte_idx, FILE *file, int32_t idnt, x64_dis_print_opt
     fprintf(file, COLOR(LIGHT_YELLOW) "DATA\n" COLOR(RESET) COLOR(BOLD) "%05X" COLOR(RESET)
         COLOR(LIGHT_MAGENTA) "    $%X " COLOR(RESET), state.byte_pos, state.data_size);
     for (const map_bucket *bucket = state.queue->head; bucket; bucket = bucket->next) {
-        x64_queue_item *queue_item = bucket->data.ptr;
+        const x64_queue_item *queue_item = bucket->data.ptr;
         if (queue_item->byte_idx > state.byte_pos)
             fprintf(file, COLOR(LIGHT_YELLOW) "L%ld " COLOR(RESET), queue_item->label);
     }

@@ -47,6 +47,8 @@ A unique identifier, cannot be stored
 
 #### Error
 
+#### [Buffer](./file_system.md)
+
 #### [Fd](./file_system.md)
 
 #### Socket

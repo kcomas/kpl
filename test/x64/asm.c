@@ -130,8 +130,8 @@ TEST(x64_asm_fib) {
     A(x64_asm(&state, X64_MNE_INST(POP), X64_OP(R64), X64_REG(RBP), X64_END));
     A(x64_asm(&state, X64_MNE_INST(RET), X64_END));
     A(x64_asm_text_end(&state));
-    A(x64_asm_data(&state, 1, sizeof(double), DEF_F64(2.0)));
-    A(x64_asm_data(&state, 3, sizeof(double), DEF_F64(1.0)));
+    A(x64_asm_data(&state, 1, sizeof(double), def_f64(2.0)));
+    A(x64_asm_data(&state, 3, sizeof(double), def_f64(1.0)));
     A(x64_asm_data_end(&state));
     x64_state_lock_mem(&state);
     x64_state_print(&state, stdout, 0, X64_STATE_PRINT(NL_END) | X64_STATE_PRINT(BYTES));

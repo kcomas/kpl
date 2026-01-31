@@ -120,7 +120,7 @@ void task_free(task *ta) {
 
 result task_join(task *ta) {
     if (!ta)
-        return result_error(ERROR_INIT(0, &def_unused_fn_table, DEF(_), "THREAD ALREADY JOINED"));
+        return result_error(ERROR_INIT(0, &def_unused_fn_table, def(), "THREAD ALREADY JOINED"));
     sem_wait(&ta->sem);
     result re;
     if (ta->er) {
@@ -128,7 +128,7 @@ result task_join(task *ta) {
         ta->er = nullptr;
     } else {
         re = result_value(ta->data);
-        ta->data = DEF(_);
+        ta->data = def();
     }
     task_delete(ta);
     return re;

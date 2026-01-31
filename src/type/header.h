@@ -3,6 +3,7 @@
 
 #include "./qualifier_flags.h"
 #include "./class_name.h"
+#include "./op_name.h"
 
 typedef struct _type type;
 

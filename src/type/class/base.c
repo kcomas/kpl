@@ -18,7 +18,7 @@ void type_base_free(type_base *base) {
 }
 
 def_status type_base_add(type_base *base, type *inner_type) {
-    return map_action(&base->type_map, MAP_MODE(INSERT), DEF_PTR(inner_type), &def_unused);
+    return map_action(&base->type_map, MAP_MODE(INSERT), def_ptr(inner_type), &def_unused);
 }
 
 size_t type_base_hash(const type_base *base) {

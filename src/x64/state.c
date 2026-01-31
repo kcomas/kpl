@@ -206,11 +206,13 @@ static void x64_op_print_rm(const x64_op *op, int8_t op_idx, FILE *file) {
         reg = X64_REG(RIP);
     fprintf(file, COLOR(LIGHT_GREEN) "%s" COLOR(RESET) COLOR(LIGHT_RED) "%s" COLOR(RESET),
             x64_op_reg_str_by_mask(op_reg), x64_reg_str(reg));
-    if (op->rm == X64_SIB && (op->base != X64_SIB && op->scale != X64_MODSIB(00))) {
+    if (op->rm == X64_SIB) {
         int8_t index = op->index;
         if (op->rex & X64_REX(X))
             index += 8;
-        fprintf(file, COLOR(GREEN) "+%s*%u" COLOR(RESET), x64_reg_str(index), x64_scale_bits_to_size(op->scale));
+        if (op->base != X64_SIB && op->scale != X64_MODSIB(00))
+            fprintf(file, COLOR(GREEN) "+%s*%u" COLOR(RESET), x64_reg_str(index),
+                    x64_scale_bits_to_size(op->scale));
     }
     if (op->dsp_byte_size) {
         const char *dsp_format_string = COLOR(CYAN) "INVALID DSP" COLOR(RESET);

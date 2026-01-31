@@ -27,7 +27,7 @@ static void core_queue_item_free(void *data) {
 void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
     if (!dependent->parents) {
         dependent->parents = list_init(0, &def_unused_fn_table);
-        list_add_back(dependent->parents, DEF_PTR(parent));
+        list_add_back(dependent->parents, def_ptr(parent));
         parent->dependencies++;
         return;
     }
@@ -39,7 +39,7 @@ void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_
     }
     if (head)
         return;
-    list_add_back(dependent->parents, DEF_PTR(parent));
+    list_add_back(dependent->parents, def_ptr(parent));
     parent->dependencies++;
     return;
 }
@@ -91,7 +91,7 @@ static def_fn_table core_queue_item_error_fn_table = {
 
 error *core_queue_item_error(core_queue_item *item, const char *msg) {
     return ERROR_INIT(item->queue->ma->print_opts ^ QUEUE_ITEM_PRINT(NL_END),
-        &core_queue_item_error_fn_table, DEF_PTR(item), msg);
+        &core_queue_item_error_fn_table, def_ptr(item), msg);
 }
 
 void core_queue_init(core_queue *queue, core_queue_item_print_opts print_opts) {
@@ -118,13 +118,13 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
     pthread_mutex_lock(&queue->mutex);
     def_data found;
     core_queue_item find = { .filename = filename };
-    if (map_action(&queue->ma, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
+    if (map_action(&queue->ma, MAP_MODE(FIND), def_ptr(&find), &found) == DEF_STATUS(OK)) {
         string_free(filename);
         pthread_mutex_unlock(&queue->mutex);
         return found.ptr;
     }
     core_queue_item *insert = core_queue_item_init(queue, filename);
-    if (map_action(&queue->ma, MAP_MODE(INSERT), DEF_PTR(insert), &def_unused) != DEF_STATUS(OK)) {
+    if (map_action(&queue->ma, MAP_MODE(INSERT), def_ptr(insert), &def_unused) != DEF_STATUS(OK)) {
         core_queue_item_free(insert);
         pthread_mutex_unlock(&queue->mutex);
         return nullptr;

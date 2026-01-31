@@ -51,19 +51,57 @@ typedef union {
     void *ptr;
 } def_data;
 
-#define DEF(_) ((def_data) { .u64 = 0 })
-#define DEF_B(VALUE) ((def_data) { .b = VALUE })
-#define DEF_U8(VALUE) ((def_data) { .u8 = VALUE })
-#define DEF_U16(VALUE) ((def_data) { .u16 = VALUE })
-#define DEF_U32(VALUE) ((def_data) { .u32 = VALUE })
-#define DEF_U64(VALUE) ((def_data) { .u64 = VALUE })
-#define DEF_I8(VALUE) ((def_data) { .i8 = VALUE })
-#define DEF_I16(VALUE) ((def_data) { .i16 = VALUE })
-#define DEF_I32(VALUE) ((def_data) { .i32 = VALUE })
-#define DEF_I64(VALUE) ((def_data) { .i64 = VALUE })
-#define DEF_F32(VALUE) ((def_data) { .f32 = VALUE })
-#define DEF_F64(VALUE) ((def_data) { .f64 = VALUE })
-#define DEF_PTR(VALUE) ((def_data) { .ptr = (void*) VALUE })
+inline def_data def(void) {
+    return (def_data) { .ptr = nullptr };
+}
+
+inline def_data def_b(bool b) {
+    return (def_data) { .b = b };
+}
+
+inline def_data def_u8(uint8_t u8) {
+    return (def_data) { .u8 = u8 };
+}
+
+inline def_data def_u16(uint16_t u16) {
+    return (def_data) { .u16 = u16 };
+}
+
+inline def_data def_u32(uint32_t u32) {
+    return (def_data) { .u32 = u32 };
+}
+
+inline def_data def_u64(uint64_t u64) {
+    return (def_data) { .u64 = u64 };
+}
+
+inline def_data def_i8(int8_t i8) {
+    return (def_data) { .i8 = i8 };
+}
+
+inline def_data def_i16(int16_t i16) {
+    return (def_data) { .i16 = i16 };
+}
+
+inline def_data def_i32(int32_t i32) {
+    return (def_data) { .i32 = i32 };
+}
+
+inline def_data def_i64(int64_t i64) {
+    return (def_data) { .i64 = i64 };
+}
+
+inline def_data def_f32(float f32) {
+    return (def_data) { .f32 = f32 };
+}
+
+inline def_data def_f64(double f64) {
+    return (def_data) { .f64 = f64 };
+}
+
+inline def_data def_ptr(void *ptr) {
+    return (def_data) { .ptr = ptr };
+}
 
 extern def_data def_unused;
 

@@ -65,7 +65,7 @@ inline x64_op x64_op_init(void) {
         .byte_start = -1, .byte_end = -1,
         .op = { X64_OP_REG(_), X64_OP_REG(_), X64_OP_REG(_), X64_OP_REG(_) },
         .label = -1,
-        .imm = DEF(_),
+        .imm = def(),
         .inst = nullptr,
     };
 }
@@ -83,7 +83,7 @@ inline void x64_op_reset(x64_op *op) {
         op->op[op_idx] = X64_OP_REG(_);
     }
     op->label = -1;
-    op->imm = DEF(_);
+    op->imm = def();
     op->inst = nullptr;
 }
 

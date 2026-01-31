@@ -19,7 +19,7 @@ def_data x64_queue_resolve_item_encode(int32_t byte_idx, x64_queue_size byte_siz
     uint64_t value = byte_idx;
     value <<= 32;
     value |= byte_size;
-    return DEF_U64(value);
+    return def_u64(value);
 }
 
 x64_queue_resolve_item x64_queue_resolve_item_decode(def_data data) {
@@ -141,7 +141,7 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
     x64_queue_size byte_size) {
     x64_queue_item find = { .byte_idx = byte_idx, .label = label };
     def_data found;
-    if (map_action(queue, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK)) {
+    if (map_action(queue, MAP_MODE(FIND), def_ptr(&find), &found) == DEF_STATUS(OK)) {
         x64_queue_item *item = found.ptr;
         if (byte_idx != -1)
             item->byte_idx = byte_idx;
@@ -150,7 +150,7 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
         return DEF_STATUS(OK);
     }
     x64_queue_item *item = x64_queue_item_init(byte_idx, label);
-    if (map_action(queue, MAP_MODE(INSERT), DEF_PTR(item), &def_unused) != DEF_STATUS(OK)) {
+    if (map_action(queue, MAP_MODE(INSERT), def_ptr(item), &def_unused) != DEF_STATUS(OK)) {
         x64_queue_item_free(item);
         return DEF_STATUS(ERROR);
     }
@@ -162,7 +162,7 @@ def_status x64_queue_add(map **queue, int32_t byte_idx, ssize_t label, int32_t r
 const x64_queue_item *x64_queue_find(map **queue, int32_t byte_idx, ssize_t label) {
     x64_queue_item find = { .byte_idx = byte_idx, .label = label };
     def_data found;
-    if (map_action(queue, MAP_MODE(FIND), DEF_PTR(&find), &found) == DEF_STATUS(OK))
+    if (map_action(queue, MAP_MODE(FIND), def_ptr(&find), &found) == DEF_STATUS(OK))
         return found.ptr;
     return nullptr;
 }

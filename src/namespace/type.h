@@ -4,16 +4,16 @@
 #include "../type/type.h"
 
 inline type *namespace_scalar(type_name name) {
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_EMPTY);
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_empty());
 }
 
 inline type *namespace_fixed(type_name name, type *inner_type, uint32_t value) {
     type_fixed *fixed = type_fixed_init(inner_type, value);
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_FIXED(fixed));
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_fixed(fixed));
 }
 
 inline type *namespace_vector(type_name name, type *inner_type) {
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_INNER(inner_type));
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_inner(inner_type));
 }
 
 type *namespace_list(type_name name, ...);
@@ -27,7 +27,7 @@ inline type *namespace_tag(type_name name, type *inner_type, const char *symbol,
         type_tag_free(tag);
         return nullptr;
     }
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_TAG(tag));
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_tag(tag));
 }
 
 inline type *namespace_qualifier(type *ty, type_qualifier_flags qualifier) {

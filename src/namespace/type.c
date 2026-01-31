@@ -13,9 +13,9 @@ type *namespace_list(type_name name, ...) {
     va_start(args, name);
     type *ty;
     while ((ty = va_arg(args, type*)))
-        list_add_back(li, DEF_PTR(ty));
+        list_add_back(li, def_ptr(ty));
     va_end(args);
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_LIST(li));
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_list(li));
 }
 
 type *namespace_table(type_name name, type *inner_type, ...) {
@@ -30,7 +30,7 @@ type *namespace_table(type_name name, type *inner_type, ...) {
             return nullptr;
         }
     va_end(args);
-    return type_init(name, TYPE_QUALIFIER_FLAG(_), TYPE_CLASS_UNION_TABLE(table));
+    return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_table(table));
 }
 
 extern inline type *namespace_tag(type_name name, type *inner_type, const char *symbol, uint32_t print_opts,

@@ -15,11 +15,11 @@ static error *dis_check_mne(x64_state *state, size_t byte_check_array_size, cons
         error *er = x64_dis_next(state, &op);
         if (er)
             return er;
-#ifdef X64_DIS_BEBUG_PRINT
+#ifdef X64_DIS_DEBUG_PRINT
         x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
 #endif
         if (op.inst->mne != mne_array[inst_idx])
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 invalid dis mne");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 invalid dis mne");
     }
     x64_dis_print(byte_idx, stdout, 0, X64_DIS_PRINT(STATE));
     return nullptr;

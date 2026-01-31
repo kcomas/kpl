@@ -3,7 +3,7 @@
 
 error *x64_asm_label(x64_state *state, ssize_t label, type_table *fn) {
     if (state->next_label != -1)
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "X64 LABEL ALL READY SET");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "X64 LABEL ALL READY SET");
    state->next_label = label;
    state->next_fn = fn;
    return nullptr;
@@ -126,7 +126,7 @@ static def_status x64_asm_prep(x64_op *op) {
 static error *x64_write_byte_error(x64_state *state, uint8_t byte) {
     if (x64_mem_write_byte(&state->byte_pos, byte) == DEF_STATUS(OK))
         return nullptr;
-    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm mem write byte failed");
+    return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 asm mem write byte failed");
 }
 
 static error *x64_write_byte_array_error(x64_state *state, uint8_t byte_size, def_data bytes) {
@@ -136,7 +136,7 @@ static error *x64_write_byte_array_error(x64_state *state, uint8_t byte_size, de
     memcpy(byte_array, &bytes.i32, byte_size);
     for (uint8_t byte_idx = 0; byte_idx < byte_size; byte_idx++)
         if (x64_mem_write_byte(&state->byte_pos, byte_array[byte_idx]) != DEF_STATUS(OK))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm mem write bytes failed");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 asm mem write bytes failed");
     return nullptr;
 }
 
@@ -166,23 +166,23 @@ static error *x64_asm_write_text_bytes(x64_state *state, x64_op *op) {
         return er;
     if (op->scale != -1 && (er = x64_write_byte_error(state, op->scale << 6 | op->index << 3 | op->base)))
         return er;
-    if ((er = x64_write_byte_array_error(state, op->dsp_byte_size, DEF_I32(op->dsp))))
+    if ((er = x64_write_byte_array_error(state, op->dsp_byte_size, def_i32(op->dsp))))
         return er;
     if (op->rel_byte_size && op->rel)
         op->rel -= state->byte_pos;
-    if ((er = x64_write_byte_array_error(state, op->rel_byte_size, DEF_I32(op->rel))))
+    if ((er = x64_write_byte_array_error(state, op->rel_byte_size, def_i32(op->rel))))
         return er;
     if ((er = x64_write_byte_array_error(state, op->imm_byte_size, op->imm)))
         return er;
     if (op->label == -1 || x64_queue_add(&state->queue, -1, op->label, state->byte_pos, op->label_size) ==
         DEF_STATUS(OK))
         return nullptr;
-    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm label reference failure");
+    return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 asm label reference failure");
 }
 
 static error *x64_asm_va_error(va_list args, const char *msg) {
     va_end(args);
-    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), msg);
+    return ERROR_INIT(0, &def_unused_fn_table, def(), msg);
 }
 
 error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
@@ -288,19 +288,19 @@ error *_x64_asm(x64_state *state, x64_pfx_flag pfx, x64_mne mne, va_list args) {
     }
     va_end(args);
     if (x64_mne_query(mne, &op) != DEF_STATUS(OK))
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 no op found");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 no op found");
 #ifdef X64_ASM_DEBUG_PRINT
     x64_op_print(&op, stdout, 0, X64_OP_PRINT(ASSEMBLE) | X64_OP_PRINT(NL_END));
 #endif
     if (x64_asm_prep(&op) != DEF_STATUS(OK))
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 invalid setup");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 invalid setup");
 #ifdef X64_ASM_DEBUG_PRINT
     x64_op_print(&op, stdout, 0, X64_OP_PRINT(DEBUG) | X64_OP_PRINT(NL_END));
 #endif
     if (state->next_label != X64_STATE_LABEL_STATUS(NOT_SET)) {
         if (x64_queue_add(&state->queue, state->byte_pos, state->next_label, X64_STATE_LABEL_STATUS(NOT_SET),
             X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
-            return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 label add failure");
+            return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 label add failure");
         if (state->next_fn)
             state->next_fn->fn_idx = state->byte_pos;
         state->next_label = X64_STATE_LABEL_STATUS(NOT_SET);
@@ -323,7 +323,7 @@ error *x64_asm_text_end(x64_state *state) {
 
 error *x64_asm_data(x64_state *state, ssize_t label, size_t data_size, def_data data) {
     if (x64_queue_add(&state->queue, state->data_pos, label, -1, X64_QUEUE_SIZE(_)) != DEF_STATUS(OK))
-        return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 asm data invalid label add");
+        return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 asm data invalid label add");
     memcpy(x64_mem + state->data_pos, &data.u64, data_size);
     state->data_pos += data_size;
     state->data_size += data_size;
@@ -343,12 +343,12 @@ error *x64_asm_data_end(x64_state *state) {
             int32_t byte_diff = queue_item->byte_idx - resolve_item.byte_idx;
             if (resolve_item.byte_size == X64_QUEUE_SIZE(8)) {
                 if (byte_diff < INT8_MIN || byte_diff > INT8_MAX)
-                    return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 queue label size8 diff out of range");
+                    return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 queue label size8 diff out of range");
                 x64_mem[resolve_item.byte_idx - sizeof(int8_t)] = byte_diff;
                 continue;
             }
             if (resolve_item.byte_size != X64_QUEUE_SIZE(32))
-                return ERROR_INIT(0, &def_unused_fn_table, DEF(_), "x64 queue label invalid size");
+                return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 queue label invalid size");
             memcpy(x64_mem + resolve_item.byte_idx - sizeof(int32_t), &byte_diff, sizeof(int32_t));
         }
     }
