@@ -60,6 +60,8 @@ bool list_eq(const list *li_a, const list *li_b) {
     while (head_a && head_b) {
         if (!li_a->fn_table->eq_fn(head_a->data, head_b->data))
             return false;
+        head_a = head_a->next;
+        head_b = head_b->next;
     }
     return !head_a && !head_b;
 }

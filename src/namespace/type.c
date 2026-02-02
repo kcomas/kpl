@@ -18,6 +18,8 @@ type *namespace_list(type_name name, ...) {
     return type_init(name, TYPE_QUALIFIER_FLAG(_), type_class_union_list(li));
 }
 
+extern inline type *namespace_op(type_op_name op_name, type *return_type, type *left_type, type *right_type);
+
 type *namespace_table(type_name name, type *inner_type, ...) {
     type_table *table = type_table_init(inner_type);
     va_list args;

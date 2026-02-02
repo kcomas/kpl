@@ -78,29 +78,22 @@ io`read : Overload[Fn[Result[Buffer]; Fd`fd]; TODO READ VARIANTS]
 io`write : Overload[Fn[Result[Void]; Fd`fd; Buffer`data]; TODO WRITE VARIANTS]
 ```
 
-#### Console
-
-```
-.io`Console : Enum[I32; `stdin $ 0; `stdout $ 1; `stderr $ 2]
-
-```
-
 #### stdin
 
 ```
-.io`stdin : Const[FD $ 0]
+.io`stdin : Overload[Fn[Option[String]]; TODO STDIN VARIANTS]
 ```
 
 #### stdout
 
 ```
-.io`stdout : Const[FD $ 1]
+.io`stdout : Overload[Fn[Void; String`string]; TODO STDOUT VARIANTS]
 ```
 
 #### stderr
 
 ```
-.io`stderr : Const[FD $ 2]
+.io`stderr : Overload[Fn[Void; String`string]; TODO STDERR VARIANTS]
 ```
 
 #### colors.codes

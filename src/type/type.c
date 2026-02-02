@@ -124,7 +124,7 @@ static void print_type_name(FILE *file, type_name name, type_op_name op_name) {
     fprintf(file, COLOR2(BOLD, LIGHT_YELLOW) "%s" COLOR(RESET), type_name_str(name));
     if (op_name == TYPE_OP_NAME(_))
         return;
-    fprintf(file, "::" COLOR2(BOLD, YELLOW) "%s" COLOR(RESET), type_op_name_str(op_name));
+    fprintf(file, "::" COLOR2(BOLD, LIGHT_BLUE) "%s" COLOR(RESET), type_op_name_str(op_name));
 }
 
 void type_print(const type *ty, FILE *file, int32_t idnt, type_print_opts print_opts) {

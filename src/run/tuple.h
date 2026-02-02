@@ -23,13 +23,17 @@ def_status tuple_set(tuple *tu, uint32_t print_opts, def_fn_table *fn_table, def
 
 tuple_item *tuple_get(tuple *tu, uint32_t idx);
 
-#define TUPLE_PRINT_OPTS(NAME) TUPLE_PRINT_OPTS_##NAME
+size_t tuple_hash(const tuple *tu);
+
+bool tuple_eq(const tuple *tu_a, const tuple *tu_b);
+
+#define TUPLE_PRINT(NAME) TUPLE_PRINT_OPTS_##NAME
 
 typedef enum [[gnu::packed]] {
-    TUPLE_PRINT_OPTS(NL_END)        = 1 << 0,
-    TUPLE_PRINT_OPTS(NL_EACH)       = 1 << 1,
-    TUPLE_PRINT_OPTS(NO_FIRST_IDNT) = 1 << 2,
-    TUPLE_PRINT_OPTS(_)             = 0
+    TUPLE_PRINT(NL_END)        = 1 << 0,
+    TUPLE_PRINT(NL_EACH)       = 1 << 1,
+    TUPLE_PRINT(NO_FIRST_IDNT) = 1 << 2,
+    TUPLE_PRINT(_)             = 0
 } tuple_print_opts;
 
 void tuple_print(const tuple *tu, FILE *file, uint32_t idnt, tuple_print_opts print_opts);

@@ -9,7 +9,7 @@ list : list_fns`list_new()
 
 list_fns`list_each(list; { I64`value; U64`idx
     .io.colors.strings [ `reset; `blue; `green; `bold ]
-    .io`stdout << String (
+    .io`stdout(String (
         blue
         "idx: "
         bold
@@ -21,5 +21,5 @@ list_fns`list_each(list; { I64`value; U64`idx
         String $ value
         reset
         "\n"
-    )
+    ))
 })

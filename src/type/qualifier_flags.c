@@ -31,6 +31,10 @@ const char *type_flag_str(type_qualifier_flags qualifier_flags) {
             return "REGISTER";
         case TYPE_FLAG(C_CODE):
             return "C_CODE";
+        case TYPE_FLAG(PRINT_IR):
+            return "PRINT_IR";
+        case TYPE_FLAG(PRINT_AST):
+            return "PRINT_AST";
         default:
             break;
     }

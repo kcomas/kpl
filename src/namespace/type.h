@@ -18,12 +18,22 @@ inline type *namespace_vector(type_name name, type *inner_type) {
 
 type *namespace_list(type_name name, ...);
 
+inline type *namespace_op(type_op_name op_name, type *return_type, type *left_type, type *right_type) {
+    list *li = type_list_init();
+    list_add_back(li, def_ptr(return_type));
+    list_add_back(li, def_ptr(left_type));
+    list_add_back(li, def_ptr(right_type));
+    type *ty = type_init(TYPE_NAME(OP), TYPE_QUALIFIER_FLAG(_), type_class_union_list(li));
+    ty->op_name = op_name;
+    return ty;
+}
+
 type *namespace_table(type_name name, type *inner_type, ...);
 
 inline type *namespace_tag(type_name name, type *inner_type, const char *symbol, uint32_t print_opts,
     def_fn_table *fn_table, def_data data) {
     type_tag *tag = type_tag_init(inner_type, print_opts, fn_table, data);
-    if (type_tag_symbol_from_c_str_slice(tag, symbol, strlen(symbol)) != DEF_STATUS(OK)) {
+    if (symbol && type_tag_symbol_from_c_str_slice(tag, symbol, strlen(symbol)) != DEF_STATUS(OK)) {
         type_tag_free(tag);
         return nullptr;
     }
