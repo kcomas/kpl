@@ -7,14 +7,20 @@ extern inline ast_node_children ast_node_children_stmts(list *stmts);
 
 extern inline ast_node_children ast_node_children_op(tuple *op);
 
+extern inline ast_node_children ast_node_children_str(string *str);
+
 MEM_POOL(ast_node_pool);
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children) {
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, int32_t str_start,
+    uint16_t str_len, uint16_t line_no) {
     ast_node *node = mem_alloc(&ast_node_pool, sizeof(ast_node));
     node->ty = ty;
     node->parent = parent;
     node->children = children;
     node->ir = nullptr;
+    node->str_start = str_start;
+    node->str_len = str_len;
+    node->line_no = line_no;
     return node;
 }
 
@@ -26,6 +32,8 @@ void ast_node_free(ast_node *node) {
         case AST_NODE_TYPE(LIST):
             if (node->children.stmts)
                 list_free(node->children.stmts);
+            if (node->ty->name == TYPE_NAME(LAMBDA) && node->parent && !node->parent->ty)
+                ast_node_free(node->parent);
             break;
         case AST_NODE_TYPE(OP):
             if (node->children.op)
@@ -62,6 +70,17 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
                 fprintf(file, "\n");
             tuple_print(node->children.op, file, idnt + 1, TUPLE_PRINT(_));
             break;
+    }
+    if (node->str_start != -1) {
+        const ast_node *parent = node;
+        while (parent->parent)
+            parent = parent->parent;
+        fprintf(file, COLOR(BOLD) "%*s%d::%d+%d" COLOR(RESET), idnt, "", node->line_no,
+            node->str_start, node->str_len);
+        fprintf(file, COLOR(GREEN) "\"");
+        for (int32_t str_idx = node->str_start; str_idx < node->str_start + node->str_len; str_idx++)
+            fprintf(file, "%c", parent->children.str->data[str_idx]);
+        fprintf(file, "\"" COLOR(RESET));
     }
     fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
     if (print_opts & AST_NODE_PRINT(NL_END))
@@ -136,5 +155,15 @@ def_status ast_node_op_set_side(ast_node *restrict op_node, ast_node_op_side sid
     if (side == AST_NODE_OP_SIDE(RIGHT))
         item = item->next;
     item->data.ptr = type_copy(child->ty);
+    return DEF_STATUS(OK);
+}
+
+def_status ast_node_list_add_back(ast_node *restrict list_node, ast_node *restrict child) {
+    if (!list_node->ty || type_name_get_class(list_node->ty->name) != TYPE_CLASS(LIST))
+        return DEF_STATUS(ERROR);
+    if (!list_node->children.stmts)
+        list_node->children.stmts = list_init(AST_NODE_PRINT(NL_END), &ast_node_fn_table);
+    child->parent = list_node;
+    list_add_back(list_node->children.stmts, def_ptr(child));
     return DEF_STATUS(OK);
 }

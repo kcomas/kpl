@@ -1,14 +1,30 @@
 
 #include "./queue.h"
 
+extern inline uint16_t core_queue_item_state_mask(void);
+
+static const char *state_flags_strs[] = {
+    "INIT",
+    "DEPENDENCIES",
+    "RUNNING",
+    "DONE",
+    "MAIN",
+    "_"
+};
+
+const char *core_queue_item_state_flags_str(int32_t bit_idx) {
+    if (bit_idx > CORE_QUEUE_ITEM_STATE_FLAGS_MAX_BIT)
+        return "INVALID CORE ITEM STATE FLAG";
+    return state_flags_strs[bit_idx];
+}
+
 MEM_POOL(core_queue_item_pool);
 
-static core_queue_item *core_queue_item_init(core_queue *queue, string *filename) {
+static core_queue_item *core_queue_item_init(string *filename) {
     core_queue_item *item = mem_alloc(&core_queue_item_pool, sizeof(core_queue_item));
-    item->state = QUEUE_ITEM_STATE(INIT);
+    item->state_flags = CORE_QUEUE_ITEM_STATE(INIT);
     item->dependencies = 0;
     item->parents = nullptr;
-    item->queue = queue;
     item->filename = filename;
     item->filedata = nullptr;
     return item;
@@ -25,6 +41,8 @@ static void core_queue_item_free(void *data) {
 }
 
 void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_item *restrict parent) {
+    if (dependent->state_flags & CORE_QUEUE_ITEM_STATE(DONE))
+        return;
     if (!dependent->parents) {
         dependent->parents = list_init(0, &def_unused_fn_table);
         list_add_back(dependent->parents, def_ptr(parent));
@@ -41,7 +59,6 @@ void core_queue_item_add_parent(core_queue_item *restrict dependent, core_queue_
         return;
     list_add_back(dependent->parents, def_ptr(parent));
     parent->dependencies++;
-    return;
 }
 
 static size_t core_queue_item_hash(const def_data data) {
@@ -58,18 +75,20 @@ static void core_queue_item_print(const def_data data, FILE *file, int32_t idnt,
     core_queue_item *item = data.ptr;
     fprintf(file, "%*s", idnt, "");
     string_print(item->filename, file, idnt, 0);
-    fprintf(file, COLOR2(BOLD, MAGENTA) " %d" COLOR(RESET), item->dependencies);
-    if (print_opts & QUEUE_ITEM_PRINT(DEPENDENCIES) && item->parents) {
-        fprintf(file, COLOR2(BOLD, WHITE) " [" COLOR(RESET));
+    def_mask_print(item->state_flags, CORE_QUEUE_ITEM_STATE_FLAGS_MAX_BIT, COLOR(LIGHT_BLUE),
+        core_queue_item_state_flags_str, file);
+    fprintf(file, COLOR2(BOLD, MAGENTA) "%d " COLOR(RESET), item->dependencies);
+    if (print_opts & CORE_QUEUE_ITEM_PRINT(DEPENDENCIES) && item->parents) {
+        fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
         for (list_item *head = item->parents->head; head; head = head->next)
             string_print(((core_queue_item*) head->data.ptr)->filename, file, idnt + 1, STRING_PRINT(NL_START));
         fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
     }
-    if (print_opts & QUEUE_ITEM_PRINT(NL_END))
+    if (print_opts & CORE_QUEUE_ITEM_PRINT(NL_END))
         fprintf(file, "\n");
 }
 
-static def_fn_table core_queue_item_fn_table = {
+def_fn_table core_queue_item_fn_table = {
     .hash_fn = core_queue_item_hash,
     .cmp_fn = nullptr,
     .eq_fn = core_queue_item_eq,
@@ -90,13 +109,10 @@ static def_fn_table core_queue_item_error_fn_table = {
 };
 
 error *core_queue_item_error(core_queue_item *item, const char *msg) {
-    return ERROR_INIT(item->queue->ma->print_opts ^ QUEUE_ITEM_PRINT(NL_END),
-        &core_queue_item_error_fn_table, def_ptr(item), msg);
+    return ERROR_INIT(CORE_QUEUE_ITEM_PRINT(DEPENDENCIES), &core_queue_item_error_fn_table, def_ptr(item), msg);
 }
 
 void core_queue_init(core_queue *queue, core_queue_item_print_opts print_opts) {
-    queue->state_count.init = queue->state_count.dependencies = 0;
-    queue->state_count.running = queue->state_count.done = 0;
     queue->ma = map_init(0, print_opts, &core_queue_item_fn_table);
     queue->er = nullptr;
     pthread_mutex_init(&queue->mutex, nullptr);
@@ -123,13 +139,21 @@ core_queue_item *core_queue_add(core_queue *queue, const char *resolvepath, cons
         pthread_mutex_unlock(&queue->mutex);
         return found.ptr;
     }
-    core_queue_item *insert = core_queue_item_init(queue, filename);
+    core_queue_item *insert = core_queue_item_init(filename);
     if (map_action(&queue->ma, MAP_MODE(INSERT), def_ptr(insert), &def_unused) != DEF_STATUS(OK)) {
         core_queue_item_free(insert);
         pthread_mutex_unlock(&queue->mutex);
         return nullptr;
     }
     pthread_mutex_unlock(&queue->mutex);
-    queue->state_count.init++;
     return insert;
+}
+
+void core_queue_error(core_queue *queue, error *er) {
+    pthread_mutex_lock(&queue->mutex);
+    if (!queue->er)
+        queue->er = er;
+    else
+        error_stack_add(queue->er, er);
+    pthread_mutex_unlock(&queue->mutex);
 }

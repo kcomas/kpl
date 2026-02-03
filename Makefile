@@ -72,5 +72,5 @@ clean:
 > find \
 -not -path "./.git/*" \
 -type f \
--not -regex  "^./\(LICENSE\|\|\.gitignore\|Makefile\|.*\.\(md\|c\|h\|kpl\)\)$$" \
+-not -regex  "^./\(LICENSE\|\|\.gitignore\|Makefile\|src/VERSION\|.*\.\(md\|c\|h\|kpl\)\)$$" \
 -exec rm -v {} \;

@@ -23,10 +23,10 @@ void mem_list_remove(void *header);
 
 #ifndef MEM_POOL_OFF
 #define MEM_POOL(POOL_NAME) mem_pool POOL_NAME = (mem_pool) {}; \
-[[gnu::constructor(DEF_CONSTRUCTOR_MEM)]] void POOL_NAME##_constructor(void) { \
+[[gnu::constructor(DEF_CONSTRUCTOR_MEM)]] static void POOL_NAME##_constructor(void) { \
     mem_pool_init(&POOL_NAME); \
 } \
-[[gnu::destructor(DEF_DESTRUCTOR_MEM)]] void POOL_NAME##_destructor(void) { \
+[[gnu::destructor(DEF_DESTRUCTOR_MEM)]] static void POOL_NAME##_destructor(void) { \
     mem_pool_free(&POOL_NAME); \
 }
 

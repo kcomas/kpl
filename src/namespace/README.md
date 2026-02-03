@@ -15,7 +15,7 @@ Used for registering C code
 
 ### Import
 
-Runtime library,
+Runtime library
 
 Lock for access
 

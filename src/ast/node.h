@@ -6,14 +6,17 @@
 typedef union {
     list *stmts;
     tuple *op;
+    string *str; // weak ref
 } ast_node_children;
 
 typedef struct _ast_node {
     MEM_HEADER(_ast_node);
     type *ty;
-    struct _ast_node *parent; // weak ref
+    struct _ast_node *parent; // weak ref, except for string parent
     ast_node_children children;
     void *ir; // TODO keep space for pointer
+    int32_t str_start;
+    uint16_t str_len, line_no;
 } ast_node;
 
 inline ast_node_children ast_node_children_empty(void) {
@@ -28,6 +31,10 @@ inline ast_node_children ast_node_children_op(tuple *op) {
     return (ast_node_children) { .op = op };
 }
 
+inline ast_node_children ast_node_children_str(string *str) {
+    return (ast_node_children) { .str = str };
+}
+
 #define AST_NODE_OP_SIDE(NAME) AST_NODE_OP_SIDE_##NAME
 
 typedef enum [[gnu::packed]] {
@@ -37,7 +44,8 @@ typedef enum [[gnu::packed]] {
 
 #define AST_NODE_OP_SIZE 2
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children);
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, int32_t str_start,
+    uint16_t str_len, uint16_t line_no);
 
 void ast_node_free(ast_node *node);
 
@@ -53,3 +61,5 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
 extern def_fn_table ast_node_fn_table;
 
 def_status ast_node_op_set_side(ast_node *restrict op_node, ast_node_op_side side, ast_node *restrict child);
+
+def_status ast_node_list_add_back(ast_node *restrict list_node, ast_node *restrict child);
