@@ -14,7 +14,7 @@ TEST(core_absolute_file_path) {
 }
 
 TEST(core_read_file_string) {
-    string *fib = core_util_file_read_string("./example/fib_load.kpl");
+    string *fib = core_util_file_read_string("./example/fib_import.kpl");
     ASSERT(fib, "invalid file read");
     ASSERT(fib->len == 244, "invalid file len");
     string_free(fib);

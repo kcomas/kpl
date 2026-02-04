@@ -4,7 +4,7 @@
 static error *x64_dis_next_byte(x64_state *state, x64_op *op, uint8_t *byte) {
     *byte = x64_mem[state->byte_pos++];
     op->byte_end++;
-    if (!state->byte_pos || state->byte_pos % getpagesize())
+    if (!state->byte_pos || state->byte_pos % x64_mem_file_byte_size())
         return nullptr;
     return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis hit page boundary");
 }
@@ -82,7 +82,7 @@ static error *x64_dis_load_intial_bytes(x64_state *state, x64_op *op) {
             return ERROR_INIT(0, &def_unused_fn_table, def(), "x64 dis plusr rm not set");
     } else {
         op->next[0] = x64_mem[state->byte_pos];
-        if ((state->byte_pos + 1) % getpagesize() != 0)
+        if ((state->byte_pos + 1) % x64_mem_file_byte_size() != 0)
             op->next[1] = x64_mem[state->byte_pos + 1];
     }
     return nullptr;

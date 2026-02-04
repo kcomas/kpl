@@ -18,6 +18,7 @@ static type_base *std = nullptr;
 
 [[gnu::constructor(DEF_CONSTRUCTOR_STD)]] static void namespace_std_constructor(void) {
     std = type_base_init(nullptr);
+    // TODO add std lib
 }
 
 [[gnu::destructor(DEF_DESTRUCTOR_STD)]] static void namespace_std_destructor(void) {

@@ -24,29 +24,30 @@ static error *core_import_thread_fn(def_data data) {
     return nullptr;
 }
 
+static bool core_next_test(core_queue_item *item) {
+    return item->state_flags & CORE_QUEUE_ITEM_STATE(INIT) ||
+        (item->state_flags & CORE_QUEUE_ITEM_STATE(DEPENDENCIES) && !item->dependencies);
+}
+
 error *core_main(const char *filepath) {
     core_queue_item *main = core_queue_add(&queue, nullptr, filepath);
     if (!main)
         return ERROR_INIT(0, &def_unused_fn_table, def(), "File Not Found");
     main->state_flags |= CORE_QUEUE_ITEM_FLAG(MAIN);
-    uint32_t queue_size = 0;
-    while (running_threads || queue_size < queue.ma->used) {
+    uint32_t prev_queue_size = 0;
+    while (running_threads || prev_queue_size < queue.ma->used) {
         core_queue_item *next = nullptr;
         pthread_mutex_lock(&queue.mutex);
-        for (map_bucket *head = queue.ma->head; head; head = head->next) {
-            core_queue_item *search = head->data.ptr;
-            if (search->state_flags & CORE_QUEUE_ITEM_STATE(INIT)) {
-                next = search;
-                break;
-            }
-            if (search->state_flags & CORE_QUEUE_ITEM_STATE(DEPENDENCIES) && !search->dependencies) {
+        for (const map_bucket *tail = queue.ma->tail; tail; tail = tail->prev) {
+            core_queue_item *search = tail->data.ptr;
+            if (core_next_test(search)) {
                 next = search;
                 break;
             }
         }
+        prev_queue_size = queue.ma->used;
         pthread_mutex_unlock(&queue.mutex);
         if (!next || queue.er) {
-            queue_size = queue.ma->used;
             sem_wait(&queue.sem);
             continue;
         }
@@ -60,9 +61,10 @@ error *core_main(const char *filepath) {
             next->state_flags ^= CORE_QUEUE_ITEM_STATE(DEPENDENCIES);
             next->state_flags |= CORE_QUEUE_ITEM_STATE(RUNNING);
             running_threads--;
-        }
-        else
+        } else {
             core_queue_error(&queue, core_queue_item_error(next, "invalid core queue item state"));
+            running_threads--;
+        }
     }
     error *er = queue.er;
     queue.er = nullptr;

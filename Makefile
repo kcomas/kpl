@@ -50,6 +50,7 @@ endif
 
 ifdef TEST_THREAD
 FSAN := -fsanitize=thread
+kpl: FFLAGS += $(FSAN)
 endif
 
 ifdef TEST_MAX_COUNT
