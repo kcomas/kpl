@@ -44,12 +44,13 @@ Application entry point
 ```
 Lib -> X64
 Lib -> Run
+Lib -> Tkn
 Run -> Type
 Type -> Namespace
 Type -> X64
 Namespace -> Ast
 Ast X64 -> Ir
-Ast -> Parser
+Ast Tkn -> Parser
 Parser -> Fold
 Fold -> Check
 Check -> Eval

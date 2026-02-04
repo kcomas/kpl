@@ -21,7 +21,7 @@ type *namespace_list(type_name name, ...) {
 extern inline type *namespace_op(type_op_name op_name, type *return_type, type *left_type, type *right_type);
 
 type *namespace_table(type_name name, type *inner_type, ...) {
-    type_table *table = type_table_init(inner_type);
+    type_table *table = type_table_init(inner_type, nullptr);
     va_list args;
     va_start(args, inner_type);
     type *ty;

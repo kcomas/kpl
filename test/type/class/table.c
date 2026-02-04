@@ -3,7 +3,7 @@
 
 TEST(type_table) {
     type_table *table = type_table_init(type_init(TYPE_NAME(U64), TYPE_QUALIFIER_FLAG(_),
-        type_class_union_empty()));
+        type_class_union_empty()), nullptr);
     type_tag *tag = type_tag_init(type_init(TYPE_NAME(U64), TYPE_QUALIFIER_FLAG(_), type_class_union_empty()),
         0, &def_unused_fn_table, def());
     const char *tag_name = "n";

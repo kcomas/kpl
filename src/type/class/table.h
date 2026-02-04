@@ -8,9 +8,10 @@ typedef struct _type_table {
     int32_t fn_idx; // -1 not used
     type *inner_type;
     map *type_map;
+    struct _type_table *parent_scope; // parent lambda/fn, weak ref
 } type_table;
 
-type_table *type_table_init(type *inner_type);
+type_table *type_table_init(type *inner_type, type_table *parent_scope);
 
 void type_table_free(type_table *table);
 

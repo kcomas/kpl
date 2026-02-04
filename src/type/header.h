@@ -20,6 +20,7 @@ type *type_copy(type *ty);
 typedef enum [[gnu::packed]] {
     TYPE_PRINT(NL_END)         = 1 << 0,
     TYPE_PRINT(CLASS_NL_END)   = 1 << 1,
+    TYPE_PRINT(PARENT_SCOPE)   = 1 << 2,
     TYPE_PRINT(_)              = 0
 } type_print_opts;
 

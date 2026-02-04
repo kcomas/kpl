@@ -44,13 +44,13 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(LIST, SET),
     AST_NAME(ATOM, RESULT),
     AST_NAME(ATOM, OPTION),
-    AST_NAME(ATOM, CLOSURE),
     AST_NAME(ATOM, THREAD),
     // LIST
     AST_NAME(OP, OP),
     AST_NAME(LIST, TUPLE),
     AST_NAME(LIST, MAP),
     AST_NAME(LIST, OVERLOAD),
+    AST_NAME(ATOM, CLOSURE),
     AST_NAME(LIST, APPLY),
     // TABLE
     AST_NAME(LIST, ENUM),
@@ -59,6 +59,7 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(LIST, FN),
     AST_NAME(LIST, COROUTINE),
     AST_NAME(LIST, LAMBDA),
+    AST_NAME(LIST, DEFINE),
     // TAG
     AST_NAME(ATOM, TAG),
     AST_NAME(ATOM, VALUE),

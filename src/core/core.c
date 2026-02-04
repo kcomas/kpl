@@ -10,7 +10,10 @@ static core_queue queue = {};
 }
 
 [[gnu::destructor(DEF_DESTRUCTOR_CORE)]] static void core_destructor(void) {
+#ifdef CORE_QUEUE_DEBUG_PRINT
+    printf(COLOR2(BOLD, CYAN) "Core Queue\n" COLOR(RESET));
     map_print(queue.ma, stdout, 0, MAP_PRINT(_));
+#endif
     core_queue_free(&queue);
 }
 

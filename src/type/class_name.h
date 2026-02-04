@@ -45,13 +45,13 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(SET),
     TYPE_NAME(RESULT),
     TYPE_NAME(OPTION),
-    TYPE_NAME(CLOSURE),
     TYPE_NAME(THREAD),
     // LIST
     TYPE_NAME(OP),
     TYPE_NAME(TUPLE),
     TYPE_NAME(MAP),
     TYPE_NAME(OVERLOAD),
+    TYPE_NAME(CLOSURE),
     TYPE_NAME(APPLY),
     // TABLE
     TYPE_NAME(ENUM),
@@ -60,6 +60,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
     TYPE_NAME(LAMBDA),
+    TYPE_NAME(DEFINE),
     // TAG
     TYPE_NAME(TAG),
     TYPE_NAME(VALUE),

@@ -3,11 +3,12 @@
 
 MEM_POOL(table_pool);
 
-type_table *type_table_init(type *inner_type) {
+type_table *type_table_init(type *inner_type, type_table *parent_scope) {
     type_table *table = mem_alloc(&table_pool, sizeof(type_table));
     table->fn_idx = -1;
     table->inner_type = inner_type;
     table->type_map = map_init(0, TYPE_PRINT(_), &type_fn_table);
+    table->parent_scope = parent_scope;
     return table;
 }
 
@@ -43,6 +44,8 @@ void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_pr
             fprintf(file, COLOR(DARK_GREY) "; " COLOR(RESET));
     }
     map_print(table->type_map, file, 1, MAP_PRINT(NO_FIRST_IDNT) | MAP_PRINT(SEMI_SPACER));
+    if ((print_opts & TYPE_PRINT(PARENT_SCOPE)) && table->parent_scope)
+        type_table_print(table->parent_scope, file, idnt, print_opts);
     fprintf(file, COLOR2(BOLD, WHITE) "]" COLOR(RESET));
     if (print_opts & TYPE_PRINT(CLASS_NL_END))
         fprintf(file, "\n");

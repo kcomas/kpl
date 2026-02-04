@@ -6,7 +6,7 @@
 typedef union {
     list *stmts;
     tuple *op;
-    string *str; // weak ref
+    const string *str; // weak ref
 } ast_node_children;
 
 typedef struct _ast_node {
