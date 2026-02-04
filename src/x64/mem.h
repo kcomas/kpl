@@ -6,15 +6,15 @@
 extern uint8_t *x64_mem;
 
 #ifndef X64_MEM_PAGE_MUL
-#define X64_MEM_PAGE_MUL 1
+#define X64_MEM_PAGE_MUL 3
 #endif
 
 inline int32_t x64_mem_file_byte_size() {
     return getpagesize() * X64_MEM_PAGE_MUL;
 }
 
-#ifndef X64_MEM_PAGES
-#define X64_MEM_PAGES 100
+#ifndef X64_MEM_FILES
+#define X64_MEM_FILES (1000 * 1000 / x64_mem_file_byte_size())
 #endif
 
 void x64_mem_reset(void);

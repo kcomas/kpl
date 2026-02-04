@@ -7,7 +7,7 @@ static atomic_int_fast32_t x64_mem_len = 0;
 
 extern inline int32_t x64_mem_file_byte_size();
 
-#define X64_MEM_SIZE (X64_MEM_PAGES * x64_mem_file_byte_size())
+#define X64_MEM_SIZE (X64_MEM_FILES * x64_mem_file_byte_size())
 
 void x64_mem_reset(void) {
     x64_mem_len = 0;

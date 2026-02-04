@@ -44,7 +44,7 @@ static void _namespace_std_add(type *ty, va_list args) {
         if (map_action(&base->type_map, MAP_MODE(FIND), def_ptr(&find), &found) != DEF_STATUS(OK)) {
             type *next = type_init(TYPE_NAME(BASE), TYPE_QUALIFIER_FLAG(_),
                 type_class_union_base(type_base_init(string_init_c_str(key))));
-            if (map_action(&base->type_map, MAP_MODE(INSERT), def_ptr(next), &def_unused) != DEF_STATUS(OK)) {
+            if (type_base_add(base, next) != DEF_STATUS(OK)) {
                 printf(COLOR2(BOLD, RED) "Unable To Add Base To Std, Exiting\n" COLOR(RESET));
                 va_end(args);
                 exit(DEF_EXIT_ERROR);
