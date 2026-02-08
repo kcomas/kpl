@@ -55,9 +55,10 @@ static def_status match_number(const token_table_match *match, token_slice *slic
 static def_status match_string(const token_table_match *match, token_slice *slice) {
     (void) match;
     slice->str_end++;
-    while (slice->str->data[slice->str_end] != '"')
+    while (slice->str_end < slice->str->len && slice->str->data[slice->str_end] != '"')
         slice->str_end++;
-    return DEF_STATUS(OK);
+    slice->str_end++;
+    return slice->str_end < slice->str->len ? DEF_STATUS(OK) : DEF_STATUS(ERROR);
 }
 
 static def_status match_symbol(const token_table_match *match, token_slice *slice) {

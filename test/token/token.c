@@ -8,7 +8,7 @@ bool token_match(const char *c_str, size_t class_array_len, token_class class_ar
     token_state_init(&state, str);
     size_t class_array_idx = 0;
     token_slice slice = { .class = TOKEN_CLASS(INVALID) };
-    while (slice.class != TOKEN_CLASS(END) &&  class_array_idx < class_array_len) {
+    while (slice.class != TOKEN_CLASS(END) && class_array_idx < class_array_len) {
         if (token_next(&state, &slice) != DEF_STATUS(OK))
             break;
         token_slice_print(&slice, stdout, 0, TOKEN_SLICE_PRINT(CLASS) | TOKEN_SLICE_PRINT(NL_END));
@@ -16,7 +16,7 @@ bool token_match(const char *c_str, size_t class_array_len, token_class class_ar
             break;
     }
     string_free(str);
-    return class_array_idx == class_array_len;
+    return slice.class == TOKEN_CLASS(END) && class_array_idx == class_array_len;
 }
 
 #define C(NAME) TOKEN_CLASS(NAME)
@@ -25,5 +25,25 @@ TEST(token_basic) {
     const char *c_str = "a: 1 + 2\n";
     token_class class_array[] = { C(VAR), C(COLON), C(SPACES), C(INTEGER), C(SPACES), C(PLUS),
         C(SPACES), C(INTEGER), C(NEW_LINE), C(END) };
+    ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
+}
+
+TEST(token_if) {
+    const char *c_str = "obj ? { true; false }";
+    token_class class_array[] = { C(VAR), C(SPACES), C(QUESTION), C(SPACES), C(LAMBDA_START),
+        C(SPACES), C(TRUE_VALUE), C(SEMICOLON), C(SPACES), C(FALSE_VALUE), C(SPACES), C(LAMBDA_END), C(END) };
+    ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
+}
+
+TEST(token_command) {
+    const char *c_str = "\"path/to/file\"\\import [ `import_a; `import_b ]";
+    token_class class_array[] = { C(STRING), C(COMMAND), C(SPACES), C(DEFINE_START),
+        C(SPACES), C(SYMBOL), C(SEMICOLON), C(SPACES), C(SYMBOL), C(SPACES), C(DEFINE_END), C(END) };
+    ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
+}
+
+TEST(token_comments) {
+    const char *c_str = "// comment\n/* comments */\n";
+    token_class class_array[] = { C(COMMENT_LINE), C(NEW_LINE), C(COMMENT_RANGE), C(NEW_LINE), C(END) };
     ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
 }
