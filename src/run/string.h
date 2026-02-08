@@ -32,6 +32,7 @@ string *string_copy(const string *st);
 typedef enum [[gnu::packed]] {
     STRING_PRINT(NL_END)    = 1 << 0,
     STRING_PRINT(NL_START)  = 1 << 1,
+    STRING_PRINT(ESCAPE)    = 1 << 2,
     STRING_PRINT(_)         = 0
 } string_print_opts;
 

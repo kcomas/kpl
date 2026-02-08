@@ -1,6 +1,0 @@
-
-# Casting $
-
-```
-var : TYPE $ data
-```

@@ -27,6 +27,8 @@ const char *type_flag_str(type_qualifier_flags qualifier_flags) {
             return "TRACING_GC";
         case TYPE_FLAG(MOVED):
             return "MOVED";
+        case TYPE_FLAG(UNUSED):
+            return "UNUSED";
         case TYPE_FLAG(REGISTER):
             return "REGISTER";
         case TYPE_FLAG(C_CODE):

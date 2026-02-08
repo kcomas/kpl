@@ -3,8 +3,7 @@
 
 static const char version[] = {
 #embed "./VERSION"
-, '\0'
-};
+, '\0' };
 
 int usage(const char *argv0) {
     printf(COLOR(BOLD) "KPL %s" COLOR(RESET), version);

@@ -1,6 +1,0 @@
-
-# Swapping ~
-
-```
-var ~ var
-```

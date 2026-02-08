@@ -35,6 +35,15 @@ Names can be moved out of a base into the scope
 fn(...)
 ```
 
+#### Aliasing
+
+Destructured symbols can be assigned to new names
+
+```
+"./file"\import [ name : `fn ]
+name(...)
+```
+
 ```
 "./file"\import [ scope_name : `namespace_name ]
 scope_name(...)

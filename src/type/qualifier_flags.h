@@ -16,10 +16,11 @@ typedef enum [[gnu::packed]] {
     TYPE_QUALIFIER(MUTEX)       = 1 << 3,
     TYPE_FLAG(TRACING_GC)       = 1 << 4,
     TYPE_FLAG(MOVED)            = 1 << 5,
-    TYPE_FLAG(REGISTER)         = 1 << 6,
-    TYPE_FLAG(C_CODE)           = 1 << 7,
-    TYPE_FLAG(PRINT_IR)         = 1 << 8,
-    TYPE_FLAG(PRINT_AST)        = 1 << 9,
+    TYPE_FLAG(UNUSED)           = 1 << 6,
+    TYPE_FLAG(REGISTER)         = 1 << 7,
+    TYPE_FLAG(C_CODE)           = 1 << 8,
+    TYPE_FLAG(PRINT_IR)         = 1 << 9,
+    TYPE_FLAG(PRINT_AST)        = 1 << 10,
     TYPE_QUALIFIER_FLAG(_)      = 0
 } type_qualifier_flags;
 
@@ -30,8 +31,8 @@ inline uint32_t type_qualifier_mask(void) {
 const char *type_qualifier_str(type_qualifier_flags qualifier_flags);
 
 inline uint32_t type_flag_mask(void) {
-    return TYPE_FLAG(TRACING_GC) | TYPE_FLAG(MOVED) | TYPE_FLAG(REGISTER) | TYPE_FLAG(C_CODE) |
-        TYPE_FLAG(PRINT_IR) | TYPE_FLAG(PRINT_AST);
+    return TYPE_FLAG(TRACING_GC) | TYPE_FLAG(MOVED) | TYPE_FLAG(UNUSED) | TYPE_FLAG(REGISTER) |
+        TYPE_FLAG(C_CODE) | TYPE_FLAG(PRINT_IR) | TYPE_FLAG(PRINT_AST);
 }
 
 const char *type_flag_str(type_qualifier_flags qualifier_flags);

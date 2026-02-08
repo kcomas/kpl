@@ -1,0 +1,97 @@
+
+#pragma once
+
+#define TOKEN_CLASS(NAME) TOKEN_CLASS_##NAME
+
+typedef enum [[gnu::packed]] {
+    TOKEN_CLASS(INVALID),
+    // string end
+    TOKEN_CLASS(END), // \0
+    // whitespace
+    TOKEN_CLASS(SPACES), // \s+
+    TOKEN_CLASS(TABS), // \t+
+    // statement end
+    TOKEN_CLASS(NEW_LINE), // \n
+    TOKEN_CLASS(SEMICOLON), // ;
+    // identifiers
+    TOKEN_CLASS(TYPE), // first letter uppercase
+    TOKEN_CLASS(VAR), // first letter lowercase
+    TOKEN_CLASS(UNUSED_VAR), // first letter _
+    TOKEN_CLASS(BASE), // first letter .
+    // values
+    TOKEN_CLASS(TRUE_VALUE), // true
+    TOKEN_CLASS(TRUE_CONST), // True
+    TOKEN_CLASS(FALSE_VALUE), // false
+    TOKEN_CLASS(FALSE_CONST), // False
+    TOKEN_CLASS(INTEGER),
+    TOKEN_CLASS(FLOAT),
+    TOKEN_CLASS(STRING), // "
+    // action
+    TOKEN_CLASS(SYMBOL), // `
+    TOKEN_CLASS(UNUSED_SYMBOL), // `_
+    TOKEN_CLASS(COMMAND), // \command
+    // lists
+    TOKEN_CLASS(APPLY_START), // (
+    TOKEN_CLASS(APPLY_END), // )
+    TOKEN_CLASS(DEFINE_START), // [
+    TOKEN_CLASS(DEFINE_END), // ]
+    TOKEN_CLASS(LAMBDA_START), // {
+    TOKEN_CLASS(LAMBDA_END), // }
+    // operators
+    TOKEN_CLASS(TILDE), // ~
+    TOKEN_CLASS(EXCLAMATION), // !
+    TOKEN_CLASS(EXCLAMATION_COLON), // !:
+    TOKEN_CLASS(EXCLAMATION_EQUAL), // !=
+    TOKEN_CLASS(EXCLAMATION_DOUBLE), // !!
+    TOKEN_CLASS(EXCLAMATION_DOUBLE_COLON), // !!:
+    TOKEN_CLASS(POUND), // #
+    TOKEN_CLASS(AT), // @
+    TOKEN_CLASS(DOLLAR), // $
+    TOKEN_CLASS(DOLLAR_COLON), // $:
+    TOKEN_CLASS(PERCENT), // %
+    TOKEN_CLASS(PERCENT_COLON), // %:
+    TOKEN_CLASS(CARET), // ^
+    TOKEN_CLASS(CARET_DOUBLE), // ^^
+    TOKEN_CLASS(CARET_DOUBLE_COLON), // ^^:
+    TOKEN_CLASS(AMPERSAND), // &
+    TOKEN_CLASS(AMPERSAND_DOUBLE), // &&
+    TOKEN_CLASS(AMPERSAND_DOUBLE_COLON), // &&:
+    TOKEN_CLASS(STAR), // *
+    TOKEN_CLASS(STAR_COLON), // *:
+    TOKEN_CLASS(STAR_DOUBLE), // **
+    TOKEN_CLASS(STAR_DOUBLE_COLON), // **:
+    TOKEN_CLASS(DASH), // -
+    TOKEN_CLASS(DASH_COLON), // -:
+    TOKEN_CLASS(PLUS), // +
+    TOKEN_CLASS(PLUS_COLON), // +:
+    TOKEN_CLASS(EQUAL), // =
+    TOKEN_CLASS(EQUAL_DOUBLE), // ==
+    TOKEN_CLASS(PIPE), // |
+    TOKEN_CLASS(PIPE_DOUBLE), // ||
+    TOKEN_CLASS(PIPE_DOUBLE_COLON), // ||:
+    TOKEN_CLASS(COLON), // :
+    TOKEN_CLASS(COLON_DOUBLE), // ::
+    TOKEN_CLASS(QUOTE), // '
+    TOKEN_CLASS(ARROW_LEFT), // <
+    TOKEN_CLASS(ARROW_LEFT_COLON_ARROW_RIGHT), // <:>
+    TOKEN_CLASS(ARROW_LEFT_EQUAL), // <=
+    TOKEN_CLASS(ARROW_LEFT_EQUAL_ARROW_RIGHT), // <=>
+    TOKEN_CLASS(ARROW_LEFT_DOUBLE), // <<
+    TOKEN_CLASS(ARROW_LEFT_DOUBLE_COLON), // <<:
+    TOKEN_CLASS(COMMA), // ,
+    TOKEN_CLASS(COMMA_COLON), // ,:
+    TOKEN_CLASS(ARROW_RIGHT), // >
+    TOKEN_CLASS(ARROW_RIGHT_EQUAL), // >=
+    TOKEN_CLASS(ARROW_RIGHT_DOUBLE), // >>
+    TOKEN_CLASS(ARROW_RIGHT_DOUBLE_COLON), // >>:
+    TOKEN_CLASS(PERIOD_DOUBLE), // ..
+    TOKEN_CLASS(QUESTION), // ?
+    TOKEN_CLASS(FOWARD_SLASH), // /
+    TOKEN_CLASS(FOWARD_SLASH_COLON), // /:
+    // comments
+    TOKEN_CLASS(COMMENT_RANGE), // /* \*\/
+    TOKEN_CLASS(COMMENT_LINE), // //
+    TOKEN_CLASS(_)
+} token_class;
+
+const char *token_class_str(token_class class);

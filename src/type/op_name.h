@@ -5,6 +5,7 @@
 
 typedef enum [[gnu::packed]] {
     TYPE_OP_NAME(_),
+    // placeholders before type checking
     TYPE_OP_NAME(INDEX),
     TYPE_OP_NAME(INVALID)
 } type_op_name;

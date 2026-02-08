@@ -17,7 +17,7 @@ A unique identifier, cannot be stored
 
 #### Void
 
-#### Bool
+#### [Bool](./types/bool.md)
 
 #### U8
 
@@ -65,7 +65,7 @@ A unique identifier, cannot be stored
 
 #### [Set](./types/set.md)
 
-#### [Queue]
+#### Queue
 
 #### [Result](./types/result.md)
 

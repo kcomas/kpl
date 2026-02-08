@@ -13,9 +13,13 @@ TEST(core_absolute_file_path) {
     string_free(path_b);
 }
 
+static const char fib_import_file[] = {
+#embed "../../example/fib_import.kpl"
+, '\0' };
+
 TEST(core_read_file_string) {
     string *fib = core_util_file_read_string("./example/fib_import.kpl");
     ASSERT(fib, "invalid file read");
-    ASSERT(fib->len == 244, "invalid file len");
+    ASSERT(fib->len == strlen(fib_import_file), "invalid file len");
     string_free(fib);
 }
