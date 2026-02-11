@@ -11,7 +11,7 @@ typedef def_status token_table_match_fn(const token_table_match *match, token_sl
 
 typedef struct _token_table_match {
     token_class class; // TOKEN_CLASS(_) for no more matches
-    const char str[TOKEN_TABLE_ITEM_MATCH_SIZE];
+    const char c_str[TOKEN_TABLE_ITEM_MATCH_SIZE];
     token_table_match_fn *fn;
 } token_table_match;
 

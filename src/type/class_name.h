@@ -32,7 +32,6 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(F64),
     TYPE_NAME(CHAR),
     TYPE_NAME(STRING),
-    TYPE_NAME(REGEX),
     TYPE_NAME(ERROR),
     TYPE_NAME(BUFFER),
     TYPE_NAME(FD),
@@ -60,6 +59,8 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(FN),
     TYPE_NAME(COROUTINE),
     TYPE_NAME(LAMBDA),
+    TYPE_NAME(REGEX),
+    TYPE_NAME(RANGE),
     TYPE_NAME(DEFINE),
     // TAG
     TYPE_NAME(TAG),

@@ -15,7 +15,7 @@ typedef struct _ast_node {
     struct _ast_node *parent; // weak ref, except for string parent
     ast_node_children children;
     void *ir; // TODO keep space for pointer
-    int32_t str_start;
+    uint32_t str_start;
     uint16_t str_len, line_no;
 } ast_node;
 
@@ -44,7 +44,7 @@ typedef enum [[gnu::packed]] {
 
 #define AST_NODE_OP_SIZE 2
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, int32_t str_start,
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, uint32_t str_start,
     uint16_t str_len, uint16_t line_no);
 
 void ast_node_free(ast_node *node);
@@ -52,8 +52,9 @@ void ast_node_free(ast_node *node);
 #define AST_NODE_PRINT(NAME) AST_NAME_PRINT_##NAME
 
 typedef enum [[gnu::packed]] {
-    AST_NODE_PRINT(NL_END)  = 1 << 0,
-    AST_NODE_PRINT(_)       = 0
+    AST_NODE_PRINT(NL_END)      = 1 << 0,
+    AST_NODE_PRINT(POSITION)    = 1 << 1,
+    AST_NODE_PRINT(_)           = 0
 } ast_node_print_opts;
 
 void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_print_opts print_opts);

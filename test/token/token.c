@@ -47,3 +47,9 @@ TEST(token_comments) {
     token_class class_array[] = { C(COMMENT_LINE), C(NEW_LINE), C(COMMENT_RANGE), C(NEW_LINE), C(END) };
     ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
 }
+
+TEST(token_float) {
+    const char *c_str = "pi\\export : 3.14_159";
+    token_class class_array[] = { C(VAR), C(COMMAND), C(SPACES), C(COLON), C(SPACES), C(FLOAT), C(END) };
+    ASSERT(token_match(c_str, DEF_STATIC_ARRAY_SIZE(class_array), class_array), "invalid tokens");
+}

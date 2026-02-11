@@ -31,7 +31,6 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(ATOM, F64),
     AST_NAME(ATOM, CHAR),
     AST_NAME(ATOM, STRING),
-    AST_NAME(ATOM, REGEX),
     AST_NAME(ATOM, ERROR),
     AST_NAME(ATOM, BUFFER),
     AST_NAME(ATOM, FD),
@@ -59,6 +58,8 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(LIST, FN),
     AST_NAME(LIST, COROUTINE),
     AST_NAME(LIST, LAMBDA),
+    AST_NAME(ATOM, REGEX),
+    AST_NAME(ATOM, RANGE),
     AST_NAME(LIST, DEFINE),
     // TAG
     AST_NAME(ATOM, TAG),

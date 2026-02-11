@@ -37,9 +37,10 @@ error *core_main(const char *filepath) {
     if (!main)
         return ERROR_INIT(0, &def_unused_fn_table, def(), "File Not Found");
     main->state_flags |= CORE_QUEUE_ITEM_FLAG(MAIN);
-    uint32_t prev_queue_size = 0;
-    while (running_threads || prev_queue_size < queue.ma->used) {
-        core_queue_item *next = nullptr;
+    core_queue_item *next = nullptr;
+    uint32_t prev_queue_used = 0;
+    while (!queue.er && (next || prev_queue_used < queue.ma->used)) {
+        next = nullptr;
         pthread_mutex_lock(&queue.mutex);
         for (const map_bucket *tail = queue.ma->tail; tail; tail = tail->prev) {
             core_queue_item *search = tail->data.ptr;
@@ -48,27 +49,24 @@ error *core_main(const char *filepath) {
                 break;
             }
         }
-        prev_queue_size = queue.ma->used;
         pthread_mutex_unlock(&queue.mutex);
-        if (!next || queue.er) {
+        prev_queue_used = queue.ma->used;
+        if (queue.er || !next) {
             sem_wait(&queue.sem);
-            continue;
-        }
-        running_threads++;
-        if (next->state_flags & CORE_QUEUE_ITEM_STATE(INIT)) {
+        } else if (next->state_flags & CORE_QUEUE_ITEM_STATE(INIT)) {
             core_import_before(next);
+            running_threads++;
             task_init_detached(CORE_QUEUE_ITEM_PRINT(_), &def_unused_fn_table,
                     def_ptr(next), core_import_thread_fn);
         } else if (next->state_flags & CORE_QUEUE_ITEM_STATE(DEPENDENCIES)) {
             // TODO
             next->state_flags ^= CORE_QUEUE_ITEM_STATE(DEPENDENCIES);
             next->state_flags |= CORE_QUEUE_ITEM_STATE(RUNNING);
-            running_threads--;
-        } else {
+        } else
             core_queue_error(&queue, core_queue_item_error(next, "invalid core queue item state"));
-            running_threads--;
-        }
     }
+    while (running_threads)
+        sem_wait(&queue.sem);
     error *er = queue.er;
     queue.er = nullptr;
     return er;

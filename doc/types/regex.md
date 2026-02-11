@@ -3,19 +3,11 @@
 
 PCRE Regular Expressions
 
-## Creating
-
-```
-Regex ( "pattern"; "subsitition"; flags )
-```
-
 ## Using
 
-String ~ "pattern"
+String ~ "mode/pattern/subsitition/flags"\regex
 
-String ~ Regex ( "pattern"; flags )
-
-String ~ Regex ( "pattern"; "subsitition"; flags )
+String ~ Regex ( mode\`mode; "pattern"\`pattern; "subsitition"\`subsitition; flags\`flags )
 
 ## Flags
 

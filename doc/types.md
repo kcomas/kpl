@@ -43,8 +43,6 @@ A unique identifier, cannot be stored
 
 #### [String](./types/string.md)
 
-#### [Regex](./types/regex.md)
-
 #### Error
 
 #### [Buffer](./file_system.md)
@@ -89,8 +87,6 @@ A unique identifier, cannot be stored
 
 #### [Enum](./types/enum.md)
 
-#### Range
-
 #### [Struct](./types/struct.md)
 
 #### [Union](./types/union.md)
@@ -100,6 +96,10 @@ A unique identifier, cannot be stored
 #### [Coroutine](./functions.md)
 
 #### [Lambda](./functions.md)
+
+#### [Regex](./types/regex.md)
+
+#### Range
 
 ### [Tag Type\`Symbol Data](./types/tag.md)
 

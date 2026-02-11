@@ -11,7 +11,7 @@ extern inline ast_node_children ast_node_children_str(string *str);
 
 MEM_POOL(ast_node_pool);
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, int32_t str_start,
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, uint32_t str_start,
     uint16_t str_len, uint16_t line_no) {
     ast_node *node = mem_alloc(&ast_node_pool, sizeof(ast_node));
     node->ty = ty;
@@ -49,6 +49,17 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
         return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(BOLD) "❲" COLOR(RESET));
+    if (node->str_len) {
+        const ast_node *parent = node;
+        while (parent->parent)
+            parent = parent->parent;
+        if (print_opts & AST_NODE_PRINT(POSITION))
+            fprintf(file, COLOR(BOLD) "%u::%u+%u" COLOR(RESET), node->line_no, node->str_start, node->str_len);
+        fprintf(file, "|" COLOR(GREEN));
+        for (uint32_t str_idx = node->str_start; str_idx < node->str_start + node->str_len; str_idx++)
+            fprintf(file, "%c", parent->children.str->data[str_idx]);
+        fprintf(file, COLOR(RESET) "|");
+    }
     type_print(node->ty, file, 0, TYPE_PRINT(_));
     switch (ast_node_get_ast_type(node->ty)) {
         case AST_NODE_TYPE(ATOM):
@@ -70,17 +81,6 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
                 fprintf(file, "\n");
             tuple_print(node->children.op, file, idnt + 1, TUPLE_PRINT(_));
             break;
-    }
-    if (node->str_start != -1) {
-        const ast_node *parent = node;
-        while (parent->parent)
-            parent = parent->parent;
-        fprintf(file, COLOR(BOLD) "%*s%d::%d+%d" COLOR(RESET), idnt, "", node->line_no,
-            node->str_start, node->str_len);
-        fprintf(file, COLOR(GREEN) "\"");
-        for (int32_t str_idx = node->str_start; str_idx < node->str_start + node->str_len; str_idx++)
-            fprintf(file, "%c", parent->children.str->data[str_idx]);
-        fprintf(file, "\"" COLOR(RESET));
     }
     fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
     if (print_opts & AST_NODE_PRINT(NL_END))

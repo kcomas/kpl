@@ -6,12 +6,12 @@
 ```
 condition or { lambda }  ? statement or { lambda }
 
-var :: condition or { lambda } ? (
+var : condition or { lambda } ? (
     statement or { lambda } then
     statement or { lambda } else
 )
 
-var :: ? (
+var : ? (
     condition or { lambda } ? statement or { lambda } then
     ...
     statement or { lambda } else
@@ -41,7 +41,7 @@ loopable @ statment or { lambda } or { lambda }`label
 ## Match
 
 ```
-var :: matchable # (
+var : matchable # (
     { TYPE`var lambda }`symbol
     ...
 )
