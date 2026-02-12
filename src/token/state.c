@@ -14,6 +14,17 @@ void token_slice_init(const token_state *state, token_slice *slice) {
     slice->str = state->str;
 }
 
+bool token_slice_match_c_str(const token_slice *slice, const char *c_str, uint32_t slice_str_offset) {
+    uint32_t str_idx = slice->str_start + slice_str_offset;
+    while (*c_str && str_idx < slice->str_end) {
+        if (*c_str != slice->str->data[str_idx])
+            return false;
+        c_str++;
+        str_idx++;
+    }
+    return !*c_str && str_idx == slice->str_end;
+}
+
 void token_slice_print(const token_slice *slice, FILE *file, int32_t idnt, token_slice_print_opts print_opts) {
     fprintf(file, "%*s", idnt, "");
     if (print_opts & TOKEN_SLICE_PRINT(CLASS))

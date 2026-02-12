@@ -6,7 +6,7 @@
 
 typedef struct {
     uint16_t line_no;
-    int32_t str_pos;
+    uint32_t str_pos;
     const string *str; // weak ref
 } token_state;
 
@@ -20,6 +20,8 @@ typedef struct {
 } token_slice;
 
 void token_slice_init(const token_state *state, token_slice *slice);
+
+bool token_slice_match_c_str(const token_slice *slice, const char *c_str, uint32_t slice_str_offset);
 
 #define TOKEN_SLICE_PRINT(NAME) TOKEN_SLICE_PRINT_##NAME
 

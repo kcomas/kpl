@@ -18,7 +18,7 @@ typedef union {
 
 typedef struct _type {
     MEM_HEADER(_type);
-    int32_t ref_count;
+    atomic_int_least32_t ref_count;
     type_class_union class_union;
     type_qualifier_flags qualifier_flags;
     type_op_name op_name;

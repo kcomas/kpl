@@ -4,9 +4,9 @@
 #define TABLE_MATCH(CHAR, ...) \
     [CHAR - 'A'] = (parser_type_match[]) { __VA_ARGS__, { .name = TYPE_NAME(_) } }
 
-static constexpr uint8_t uppercase_letters_count = 'Z' - 'A';
+static constexpr uint8_t uppercase_letters_values = 'Z' - 'A';
 
-static const parser_type_match *table_match[uppercase_letters_count + 1] = {
+static const parser_type_match *table_match[uppercase_letters_values + 1] = {
     TABLE_MATCH('A',
         { .c_str = "Array", .name = TYPE_NAME(ARRAY) },
         { .c_str = "Apply", .name = TYPE_NAME(APPLY) }
@@ -85,33 +85,18 @@ static type *parser_type_alias(const token_slice *slice) {
     return type_init(TYPE_NAME(ALIAS), TYPE_QUALIFIER_FLAG(_), type_class_union_tag(tag));
 }
 
-static type *parser_type_match_c_str(const parser_type_match *match, const token_slice *slice) {
-    const char *c_str = match->c_str;
-    uint32_t str_idx = slice->str_start;
-    while (c_str && str_idx < slice->str_end) {
-        if (*c_str != slice->str->data[str_idx])
-            break;
-        c_str++;
-        str_idx++;
-    }
-    if (!*c_str && str_idx == slice->str_end)
-        return type_init(match->name, TYPE_QUALIFIER_FLAG(_), type_class_union_empty());
-    return nullptr;
-}
-
 type *parser_type(const token_slice *slice) {
     if (slice->class != TOKEN_CLASS(TYPE))
         return nullptr;
     uint8_t match_value = slice->str->data[slice->str_start] - 'A';
-    if (match_value > uppercase_letters_count)
+    if (match_value > uppercase_letters_values)
         return nullptr;
     const parser_type_match *match_array = table_match[match_value];
     if (!match_array)
         return parser_type_alias(slice);
     while (match_array->name != TYPE_NAME(_)) {
-        type *found_type = parser_type_match_c_str(match_array, slice);
-        if (found_type)
-            return found_type;
+        if (token_slice_match_c_str(slice, match_array->c_str, 0))
+            return type_init(match_array->name, TYPE_QUALIFIER_FLAG(_), type_class_union_empty());
         match_array++;
     }
     return parser_type_alias(slice);

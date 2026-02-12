@@ -3,6 +3,8 @@
 
 Runtime Modifiers
 
+Must start with lowercase letter
+
 ```
 var\command
 ```
@@ -27,13 +29,19 @@ Send information
 
 Start a REPL debugger
 
-## \disassemble
-
 ## \type
 
 ## \return_type
 
 ## \copy
+
+## Print Internals
+
+## \disassemble
+
+## \ast
+
+## \ir
 
 ## Documented Elsewhere
 
@@ -52,3 +60,5 @@ Start a REPL debugger
 ### \value
 
 ### \error
+
+### \regex
