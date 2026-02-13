@@ -35,6 +35,8 @@ Start a REPL debugger
 
 ## \copy
 
+Deep copy
+
 ## Print Internals
 
 ## \disassemble

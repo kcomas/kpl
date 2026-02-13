@@ -206,10 +206,7 @@ static const token_table_match *table_match[INT8_MAX] = {
     ),
     TABLE_MATCH('#', { .class = TOKEN_CLASS(POUND), .c_str = TABLE_CHARS('#'), .fn = match_fixed }),
     TABLE_MATCH('@', { .class = TOKEN_CLASS(AT), .c_str = TABLE_CHARS('@'), .fn = match_fixed }),
-    TABLE_MATCH('$',
-        { .class = TOKEN_CLASS(DOLLAR), .c_str = TABLE_CHARS('$'), .fn = match_fixed },
-        { .class = TOKEN_CLASS(DOLLAR_COLON), .c_str = TABLE_CHARS('$', ':'), .fn = match_fixed }
-    ),
+    TABLE_MATCH('$', { .class = TOKEN_CLASS(DOLLAR), .c_str = TABLE_CHARS('$'), .fn = match_fixed }),
     TABLE_MATCH('%',
         { .class = TOKEN_CLASS(PERCENT), .c_str = TABLE_CHARS('%'), .fn = match_fixed },
         { .class = TOKEN_CLASS(PERCENT_COLON), .c_str = TABLE_CHARS('%', ':'), .fn = match_fixed }
@@ -260,7 +257,10 @@ static const token_table_match *table_match[INT8_MAX] = {
         { .class = TOKEN_CLASS(ARROW_LEFT_EQUAL_ARROW_RIGHT),
             .c_str = TABLE_CHARS('<', '=', '>'), .fn = match_fixed },
         { .class = TOKEN_CLASS(ARROW_LEFT_DOUBLE), .c_str = TABLE_CHARS('<', '<'), .fn = match_fixed },
-        { .class = TOKEN_CLASS(ARROW_LEFT_DOUBLE_COLON), .c_str = TABLE_CHARS('<', '<', ':'), .fn = match_fixed }
+        { .class = TOKEN_CLASS(ARROW_LEFT_DOUBLE_COLON), .c_str = TABLE_CHARS('<', '<', ':'), .fn = match_fixed },
+        { .class = TOKEN_CLASS(ARROW_LEFT_TRIPLE), .c_str = TABLE_CHARS('<', '<', '<'), .fn = match_fixed },
+        { .class = TOKEN_CLASS(ARROW_LEFT_TRIPLE_COLON),
+            .c_str = TABLE_CHARS('<', '<', '<', ':'), .fn = match_fixed }
     ),
     TABLE_MATCH(',',
         { .class = TOKEN_CLASS(COMMA), .c_str = TABLE_CHARS(','), .fn = match_fixed },
@@ -270,7 +270,10 @@ static const token_table_match *table_match[INT8_MAX] = {
         { .class = TOKEN_CLASS(ARROW_RIGHT), .c_str = TABLE_CHARS('>'), .fn = match_fixed },
         { .class = TOKEN_CLASS(ARROW_RIGHT_EQUAL), .c_str = TABLE_CHARS('>', '='), .fn = match_fixed },
         { .class = TOKEN_CLASS(ARROW_RIGHT_DOUBLE), .c_str = TABLE_CHARS('>', '>'), .fn = match_fixed },
-        { .class = TOKEN_CLASS(ARROW_RIGHT_DOUBLE_COLON), .c_str = TABLE_CHARS('>', '>', ':'), .fn = match_fixed }
+        { .class = TOKEN_CLASS(ARROW_RIGHT_DOUBLE_COLON), .c_str = TABLE_CHARS('>', '>', ':'), .fn = match_fixed },
+        { .class = TOKEN_CLASS(ARROW_RIGHT_TRIPLE), .c_str = TABLE_CHARS('>', '>', '>'), .fn = match_fixed },
+        { .class = TOKEN_CLASS(ARROW_RIGHT_TRIPLE_COLON),
+            .c_str = TABLE_CHARS('>', '>', '>', ':'), .fn = match_fixed }
     ),
     TABLE_MATCH('?', { .class = TOKEN_CLASS(QUESTION), .c_str = TABLE_CHARS('?'), .fn = match_fixed }),
     TABLE_MATCH('/',
