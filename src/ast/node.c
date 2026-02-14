@@ -7,9 +7,10 @@ void ast_container_init(ast_container *cont, const string *str, type_base *base,
     cont->root = nullptr;
     wrapper->ty = nullptr;
     wrapper->children.cont = cont;
-    wrapper->str_start = UINT32_MAX;
-    wrapper->str_len = wrapper->line_no = UINT16_MAX;
+    wrapper->position = ast_position_init(UINT32_MAX, UINT16_MAX, UINT16_MAX);
 }
+
+extern inline ast_position ast_position_init(uint32_t str_start, int16_t str_len, int16_t line_no);
 
 extern inline void ast_container_set_root_parent(ast_container* cont, ast_node *wrapper);
 
@@ -21,15 +22,12 @@ extern inline ast_node_children ast_node_children_op(tuple *op);
 
 MEM_POOL(ast_node_pool);
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, uint32_t str_start,
-    uint16_t str_len, uint16_t line_no) {
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, ast_position pos) {
     ast_node *node = mem_alloc(&ast_node_pool, sizeof(ast_node));
     node->ty = ty;
     node->parent = parent;
     node->children = children;
-    node->str_start = str_start;
-    node->str_len = str_len;
-    node->line_no = line_no;
+    node->position = pos;
     return node;
 }
 
@@ -62,14 +60,18 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
         return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(BOLD) "❲" COLOR(RESET));
-    if (node->str_len) {
+    if (node->position.str_len) {
         if (print_opts & AST_NODE_PRINT(POSITION))
-            fprintf(file, COLOR(BOLD) "%u::%u+%u" COLOR(RESET), node->line_no, node->str_start, node->str_len);
-        fprintf(file, "|" COLOR(GREEN));
-        const string *str = ast_node_get_container(node)->str;
-        for (uint32_t str_idx = node->str_start; str_idx < node->str_start + node->str_len; str_idx++)
-            fprintf(file, "%c", str->data[str_idx]);
-        fprintf(file, COLOR(RESET) "|");
+            fprintf(file, COLOR(BOLD) "%u::%u+%u" COLOR(RESET),
+                    node->position.line_no, node->position.str_start, node->position.str_len);
+        if (print_opts & AST_NODE_PRINT(STRING)) {
+            fprintf(file, "|" COLOR(GREEN));
+            const string *str = ast_node_get_container(node)->str;
+            for (uint32_t str_idx = node->position.str_start;
+                    str_idx < node->position.str_start + node->position.str_len; str_idx++)
+                fprintf(file, "%c", str->data[str_idx]);
+            fprintf(file, COLOR(RESET) "|");
+        }
     }
     type_print(node->ty, file, 0, TYPE_PRINT(_));
     switch (ast_node_get_ast_type(node->ty)) {

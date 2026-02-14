@@ -19,13 +19,21 @@ typedef union {
     ast_container *cont; // weak ref
 } ast_node_children;
 
+typedef struct {
+    uint32_t str_start;
+    uint16_t str_len, line_no;
+} ast_position;
+
+inline ast_position ast_position_init(uint32_t str_start, int16_t str_len, int16_t line_no) {
+    return (ast_position) { .str_start = str_start, .str_len = str_len, .line_no = line_no };
+}
+
 typedef struct _ast_node {
     MEM_HEADER(_ast_node);
     type *ty;
     struct _ast_node *parent; // weak ref
     ast_node_children children;
-    uint32_t str_start;
-    uint16_t str_len, line_no;
+    ast_position position;
 } ast_node;
 
 inline void ast_container_set_root_parent(ast_container* cont, ast_node *wrapper) {
@@ -53,8 +61,7 @@ typedef enum [[gnu::packed]] {
 
 #define AST_NODE_OP_SIZE 2
 
-ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, uint32_t str_start,
-    uint16_t str_len, uint16_t line_no);
+ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, ast_position pos);
 
 void ast_node_free(ast_node *node);
 
@@ -64,7 +71,8 @@ ast_container *ast_node_get_container(const ast_node *node);
 
 typedef enum [[gnu::packed]] {
     AST_NODE_PRINT(NL_END)      = 1 << 0,
-    AST_NODE_PRINT(POSITION)    = 1 << 1,
+    AST_NODE_PRINT(STRING)      = 1 << 1,
+    AST_NODE_PRINT(POSITION)    = 1 << 2,
     AST_NODE_PRINT(_)           = 0
 } ast_node_print_opts;
 
