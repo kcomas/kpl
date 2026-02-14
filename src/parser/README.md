@@ -8,8 +8,7 @@ Parse left to right without precedence
 ## Operation
 
 1. Initialize a list for the main statements
-2. Add base node (nullptr for repl) for which exports are added
-3. Parse next statement and repeat statement parsing, until tokeniser END
+2. Parse next statement and repeat statement parsing, until tokeniser END
 
 ### Modes
 
@@ -34,9 +33,9 @@ Add new tree to list of trees
 ```
 type -> command
 command -> op
-op -> atom
-atom -> join
-join -> descent
-descent -> table
+op -> init
+init -> join
+join -> next
+next -> table
 table -> parser
 ```

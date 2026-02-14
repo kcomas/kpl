@@ -3,21 +3,34 @@
 
 #include "./node_type.h"
 
+typedef struct _ast_node ast_node;
+
+typedef struct {
+    const string *str;
+    type_base *base;
+    ast_node *root;
+} ast_container;
+
+void ast_container_init(ast_container *cont, const string *str, type_base *base, ast_node *wrapper);
+
 typedef union {
     list *stmts;
     tuple *op;
-    const string *str; // weak ref
+    ast_container *cont; // weak ref
 } ast_node_children;
 
 typedef struct _ast_node {
     MEM_HEADER(_ast_node);
     type *ty;
-    struct _ast_node *parent; // weak ref, except for string parent
+    struct _ast_node *parent; // weak ref
     ast_node_children children;
-    void *ir; // TODO keep space for pointer
     uint32_t str_start;
     uint16_t str_len, line_no;
 } ast_node;
+
+inline void ast_container_set_root_parent(ast_container* cont, ast_node *wrapper) {
+    cont->root->parent = wrapper;
+}
 
 inline ast_node_children ast_node_children_empty(void) {
     return (ast_node_children) { .stmts = nullptr };
@@ -29,10 +42,6 @@ inline ast_node_children ast_node_children_stmts(list *stmts) {
 
 inline ast_node_children ast_node_children_op(tuple *op) {
     return (ast_node_children) { .op = op };
-}
-
-inline ast_node_children ast_node_children_str(string *str) {
-    return (ast_node_children) { .str = str };
 }
 
 #define AST_NODE_OP_SIDE(NAME) AST_NODE_OP_SIDE_##NAME
@@ -48,6 +57,8 @@ ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, 
     uint16_t str_len, uint16_t line_no);
 
 void ast_node_free(ast_node *node);
+
+ast_container *ast_node_get_container(const ast_node *node);
 
 #define AST_NODE_PRINT(NAME) AST_NAME_PRINT_##NAME
 

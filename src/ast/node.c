@@ -1,13 +1,23 @@
 
 #include "./node.h"
 
+void ast_container_init(ast_container *cont, const string *str, type_base *base, ast_node *wrapper) {
+    cont->str = str;
+    cont->base = base;
+    cont->root = nullptr;
+    wrapper->ty = nullptr;
+    wrapper->children.cont = cont;
+    wrapper->str_start = UINT32_MAX;
+    wrapper->str_len = wrapper->line_no = UINT16_MAX;
+}
+
+extern inline void ast_container_set_root_parent(ast_container* cont, ast_node *wrapper);
+
 extern inline ast_node_children ast_node_children_empty(void);
 
 extern inline ast_node_children ast_node_children_stmts(list *stmts);
 
 extern inline ast_node_children ast_node_children_op(tuple *op);
-
-extern inline ast_node_children ast_node_children_str(string *str);
 
 MEM_POOL(ast_node_pool);
 
@@ -17,7 +27,6 @@ ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, 
     node->ty = ty;
     node->parent = parent;
     node->children = children;
-    node->ir = nullptr;
     node->str_start = str_start;
     node->str_len = str_len;
     node->line_no = line_no;
@@ -32,8 +41,6 @@ void ast_node_free(ast_node *node) {
         case AST_NODE_TYPE(LIST):
             if (node->children.stmts)
                 list_free(node->children.stmts);
-            if (node->ty->name == TYPE_NAME(LAMBDA) && node->parent && !node->parent->ty)
-                ast_node_free(node->parent);
             break;
         case AST_NODE_TYPE(OP):
             if (node->children.op)
@@ -44,20 +51,24 @@ void ast_node_free(ast_node *node) {
     mem_free(&ast_node_pool, node);
 }
 
+ast_container *ast_node_get_container(const ast_node *node) {
+    while (node->parent)
+        node = node->parent;
+    return node->children.cont;
+}
+
 void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_print_opts print_opts) {
     if (!node)
         return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR(BOLD) "❲" COLOR(RESET));
     if (node->str_len) {
-        const ast_node *parent = node;
-        while (parent->parent)
-            parent = parent->parent;
         if (print_opts & AST_NODE_PRINT(POSITION))
             fprintf(file, COLOR(BOLD) "%u::%u+%u" COLOR(RESET), node->line_no, node->str_start, node->str_len);
         fprintf(file, "|" COLOR(GREEN));
+        const string *str = ast_node_get_container(node)->str;
         for (uint32_t str_idx = node->str_start; str_idx < node->str_start + node->str_len; str_idx++)
-            fprintf(file, "%c", parent->children.str->data[str_idx]);
+            fprintf(file, "%c", str->data[str_idx]);
         fprintf(file, COLOR(RESET) "|");
     }
     type_print(node->ty, file, 0, TYPE_PRINT(_));

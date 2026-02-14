@@ -15,3 +15,17 @@ TEST(ast_node_index) {
     ast_node_print(op, stdout, 0, AST_NODE_PRINT(NL_END));
     ast_node_free(op);
 }
+
+TEST(ast_container) {
+    ast_node wrapper;
+    ast_container container;
+    string *str = string_init_c_str("test_ast +");
+    ast_container_init(&container, str, nullptr, &wrapper);
+    ast_node *var = ast_node_init(namespace_tag(TYPE_NAME(VAR), nullptr, "test_type", 0, &def_unused_fn_table, def()),
+        nullptr, ast_node_children_empty(), 0, 8, 1);
+    container.root = var;
+    ast_container_set_root_parent(&container, &wrapper);
+    ast_node_print(container.root, stdout, 0, AST_NODE_PRINT(POSITION) | AST_NODE_PRINT(NL_END));
+    ast_node_free(container.root);
+    string_free(str);
+}
