@@ -17,6 +17,8 @@ string *string_init(uint32_t size);
 
 string *string_init_c_str(const char *c_str);
 
+string *string_init_c_str_slice(const char *c_str, uint32_t len);
+
 void string_free(string *st);
 
 #define STRING_PRINT(NAME) STRING_PRINT_##NAME

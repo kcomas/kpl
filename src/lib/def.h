@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <stdatomic.h>
 #include <limits.h>
+#include <math.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <errno.h>
@@ -139,7 +140,7 @@ extern def_fn_table def_unused_fn_table;
 #define DEF_CONSTRUCTOR_IMPORT  113
 #define DEF_CONSTRUCTOR_X64     114
 #define DEF_CONSTRUCTOR_CORE    115
-#define DEF_CONSTRUCTOR_COMMAND 116
+#define DEF_CONSTRUCTOR_TYPE    116
 
 #define DEF_DESTRUCTOR_MEM      110
 #define DEF_DESTRUCTOR_TASK     111
@@ -147,7 +148,7 @@ extern def_fn_table def_unused_fn_table;
 #define DEF_DESTRUCTOR_IMPORT   113
 #define DEF_DESTRUCTOR_X64      114
 #define DEF_DESTRUCTOR_CORE     115
-#define DEF_DESTRUCTOR_COMMAND  116
+#define DEF_DESTRUCTOR_TYPE     116
 
 size_t def_hash64shift(size_t key);
 

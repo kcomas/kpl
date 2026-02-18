@@ -23,9 +23,11 @@ TEST(task_basic_join) {
     ASSERT(counter == TEST_THREADS, "invalid counter value");
 }
 
+#if TEST_THREADS > 1
 TEST(task_basic_detatch) {
     counter = 0;
     for (size_t task_idx = 0; task_idx < TEST_THREADS; task_idx++)
         task_init_detached(0, &def_unused_fn_table, def_u64(task_idx), task_counter_fn);
     ASSERT(counter > 0, "should have some increments");
 }
+#endif

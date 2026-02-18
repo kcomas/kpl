@@ -15,7 +15,7 @@ tuple *tuple_init(uint32_t size) {
 
 void tuple_free(tuple *tu) {
     for (uint32_t tu_idx = 0; tu_idx < tu->size; tu_idx++)
-        if (tu->items[tu_idx].fn_table->free_fn)
+        if (tu->items[tu_idx].fn_table->free_fn && tu->items[tu_idx].data.ptr)
             tu->items[tu_idx].fn_table->free_fn(tu->items[tu_idx].data.ptr);
     mem_free(&tuple_pool, tu);
 }

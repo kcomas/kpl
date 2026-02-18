@@ -21,7 +21,7 @@ ser_buffer *u64_serialize_fn(const def_data data) {
 
 void u64_print(const def_data data, FILE *file, int32_t idnt, uint32_t print_opts) {
     fprintf(file, "%*s", idnt, "");
-    printf(COLOR(YELLOW) "%lu" COLOR(RESET), data.u64);
+    fprintf(file, COLOR(LIGHT_CYAN) "%lu" COLOR(RESET), data.u64);
     if (print_opts & U64_PRINT(NL_END))
         fprintf(file, "\n");
 }

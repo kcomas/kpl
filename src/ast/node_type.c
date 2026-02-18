@@ -67,6 +67,7 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(ATOM, ALIAS),
     AST_NAME(ATOM, VAR),
     AST_NAME(ATOM, ARG),
+    AST_NAME(ATOM, NAME),
     // BASE
     AST_NAME(LIST, BASE),
     AST_NAME(_, _)

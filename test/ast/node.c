@@ -30,7 +30,7 @@ TEST(ast_container) {
     ast_node_print(container.root, stdout, 0,
         AST_NODE_PRINT(STRING) | AST_NODE_PRINT(POSITION) | AST_NODE_PRINT(NL_END));
     ast_node_print(container.root, stdout, 0, AST_NODE_PRINT(NL_END));
-    ASSERT(container.str == str, "invalid container");
+    ASSERT(container.state.str == str, "invalid container");
     ast_node_free(container.root);
     string_free(str);
 }

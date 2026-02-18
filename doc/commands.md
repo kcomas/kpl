@@ -64,3 +64,7 @@ Deep copy
 ### \error
 
 ### \regex
+
+### \test
+
+### \exit

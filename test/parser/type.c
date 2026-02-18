@@ -2,7 +2,7 @@
 #include "../test.h"
 
 TEST(parser_type) {
-    string *str = string_init_c_str("Byte_vector : Vector[U8]");
+    string *str = string_init_c_str("Byte_vector : Vector[Const[U8]]");
     token_state state;
     token_state_init(&state, str);
     token_slice slice;
@@ -20,6 +20,12 @@ TEST(parser_type) {
     ty = parser_type(&slice);
     type_print(ty, stdout, 0, TYPE_PRINT(NL_END));
     ASSERT(ty && ty->name == TYPE_NAME(VECTOR), "invalid token type");
+    type_free(ty);
+    ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");
+    ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");
+    ty = parser_type(&slice);
+    type_print(ty, stdout, 0, TYPE_PRINT(NL_END));
+    ASSERT(ty && ty->name == TYPE_NAME(_) && (ty->qualifier_flags & TYPE_QUALIFIER(CONST)), "invalid token type");
     type_free(ty);
     ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");
     ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");

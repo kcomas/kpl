@@ -24,6 +24,13 @@ string *string_init_c_str(const char *c_str) {
     return str;
 }
 
+string *string_init_c_str_slice(const char *c_str, uint32_t len) {
+    string *str = string_init(len);
+    str->len = len;
+    memcpy(str->data, c_str, len);
+    return str;
+}
+
 void string_free(string *str) {
     mem_free(&string_pool, str);
 }

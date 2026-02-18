@@ -47,6 +47,7 @@ static const char *name_str_array[] = {
     "ALIAS",
     "VAR",
     "ARG",
+    "NAME",
     "BASE",
     "_"
 };

@@ -48,10 +48,10 @@ Run -> Tkn
 Run -> Type
 Type -> Namespace
 Type -> X64
-Namespace -> Ast
+Namespace -> Token
+Token -> Ast
 Ast X64 -> Ir
-Ast -> Token
-Token -> Parser
+Ast -> Parser
 Parser -> Fold
 Fold -> Check
 Check -> Eval

@@ -26,6 +26,8 @@ typedef enum [[gnu::packed]] {
     TYPE_OP_NAME(CMD_VALUE),
     TYPE_OP_NAME(CMD_ERROR),
     TYPE_OP_NAME(CMD_REGEX),
+    TYPE_OP_NAME(CMD_TEST),
+    TYPE_OP_NAME(CMD_EXIT),
     // general
     TYPE_OP_NAME(INDEX),
     TYPE_OP_NAME(REGEX),

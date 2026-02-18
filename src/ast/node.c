@@ -2,11 +2,12 @@
 #include "./node.h"
 
 void ast_container_init(ast_container *cont, const string *str, type_base *base, ast_node *wrapper) {
-    cont->str = str;
     cont->base = base;
     cont->root = nullptr;
+    token_state_init(&cont->state, str);
     wrapper->ty = nullptr;
     wrapper->children.cont = cont;
+    wrapper->ir = nullptr;
     wrapper->position = ast_position_init(UINT32_MAX, UINT16_MAX, UINT16_MAX);
 }
 
@@ -27,9 +28,12 @@ ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, 
     node->ty = ty;
     node->parent = parent;
     node->children = children;
+    node->ir = nullptr;
     node->position = pos;
     return node;
 }
+
+extern inline ast_node *ast_node_init_slice(type *ty, ast_node *parent, const token_slice *slice);
 
 void ast_node_free(ast_node *node) {
     switch (ast_node_get_ast_type(node->ty)) {
@@ -66,7 +70,7 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
                     node->position.line_no, node->position.str_start, node->position.str_len);
         if (print_opts & AST_NODE_PRINT(STRING)) {
             fprintf(file, "|" COLOR(GREEN));
-            const string *str = ast_node_get_container(node)->str;
+            const string *str = ast_node_get_container(node)->state.str;
             for (uint32_t str_idx = node->position.str_start;
                     str_idx < node->position.str_start + node->position.str_len; str_idx++)
                 fprintf(file, "%c", str->data[str_idx]);
@@ -77,6 +81,7 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
     switch (ast_node_get_ast_type(node->ty)) {
         case AST_NODE_TYPE(ATOM):
         case AST_NODE_TYPE(_):
+            fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
             break;
         case AST_NODE_TYPE(LIST):
             if (!node->children.stmts)
@@ -86,6 +91,7 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
                 fprintf(file, "\n");
             list_print(node->children.stmts, file, idnt + 1, LIST_PRINT(_));
             fprintf(file, COLOR(BOLD) "}" COLOR(RESET));
+            fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
             break;
         case AST_NODE_TYPE(OP):
             if (!node->children.op)
@@ -93,9 +99,9 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
             if (print_opts & AST_NODE_PRINT(NL_END))
                 fprintf(file, "\n");
             tuple_print(node->children.op, file, idnt + 1, TUPLE_PRINT(_));
+            fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
             break;
     }
-    fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
     if (print_opts & AST_NODE_PRINT(NL_END))
         fprintf(file, "\n");
 }
@@ -167,12 +173,13 @@ def_status ast_node_op_set_side(ast_node *restrict op_node, ast_node_op_side sid
     list_item *item = op_node->ty->class_union.li->head->next;
     if (side == AST_NODE_OP_SIDE(RIGHT))
         item = item->next;
+    type_free(item->data.ptr);
     item->data.ptr = type_copy(child->ty);
     return DEF_STATUS(OK);
 }
 
 def_status ast_node_list_add_back(ast_node *restrict list_node, ast_node *restrict child) {
-    if (!list_node->ty || type_name_get_class(list_node->ty->name) != TYPE_CLASS(LIST))
+    if (!list_node->ty || ast_node_get_ast_type(list_node->ty) != AST_NODE_TYPE(LIST))
         return DEF_STATUS(ERROR);
     if (!list_node->children.stmts)
         list_node->children.stmts = list_init(AST_NODE_PRINT(NL_END), &ast_node_fn_table);

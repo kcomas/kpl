@@ -35,7 +35,6 @@ type -> command
 command -> op
 op -> init
 init -> join
-join -> next
-next -> table
+join -> table
 table -> parser
 ```

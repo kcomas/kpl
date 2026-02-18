@@ -1,26 +1,34 @@
 
 #pragma once
 
-#include "./next.h"
+#include "./join.h"
 
-typedef ast_node *parser_ast_init_fn(const token_slice *slice); // nullptr error
-
-typedef def_status parser_ast_join_fn(ast_node **current, ast_node *next);
-
-#define PARSER_ACTION(NAME) PARSER_ACTION_##NAME
+#define PARSER_MODE(NAME) PARSER_MODE_##NAME
 
 typedef enum [[gnu::packed]] {
-    PARSER_ACTION(SKIP),
-    PARSER_ACTION(NEXT_STMT),
-    PARSER_ACTION(NEXT_LIST),
-    PARSER_ACTION(END_STMT),
-    PARSER_ACTION(END_LIST),
-    PARSER_ACTION(STOP)
-} parser_action;
+    PARSER_MODE(INVALID),
+    PARSER_MODE(SKIP),
+    PARSER_MODE(NEXT_STMT),
+    PARSER_MODE(NEXT_LAMBDA),
+    PARSER_MODE(NEXT_APPLY),
+    PARSER_MODE(NEXT_DEFINE),
+    PARSER_MODE(END_STMT),
+    PARSER_MODE(END_LAMBDA),
+    PARSER_MODE(END_APPLY),
+    PARSER_MODE(END_DEFINE),
+    PARSER_MODE(END)
+} parser_mode;
+
+error *parser_next_list(ast_container *cont, ast_node *list_node, type_table *scope, parser_mode stop_mode);
+
+typedef ast_node *parser_ast_node_init_fn(const token_slice *slice); // nullptr error
+
+typedef def_status parser_ast_node_join_fn(ast_node **current_node, ast_node *next_node);
 
 typedef struct {
-    parser_action action;
-    token_class class;
-    parser_ast_init_fn *ast_int_fn;
-    parser_ast_join_fn *ast_join_fn;
-} parser_table;
+    parser_mode mode;
+    parser_ast_node_init_fn *ast_node_int_fn;
+    parser_ast_node_join_fn *ast_node_join_fn;
+} parser_table_action;
+
+const parser_table_action *parser_table_action_next(token_class class);

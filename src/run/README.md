@@ -9,6 +9,8 @@ Runtime data types and functions for those types
 
 Each data type associated with a struct has a print function pointer with its print options and a destructor function pointer
 
+## bool.[ch]
+
 ## i64.[ch]
 
 ## u64.[ch]

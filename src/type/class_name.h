@@ -68,6 +68,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(ALIAS),
     TYPE_NAME(VAR),
     TYPE_NAME(ARG),
+    TYPE_NAME(NAME),
     // BASE
     TYPE_NAME(BASE),
     TYPE_NAME(_)

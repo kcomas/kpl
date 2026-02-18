@@ -6,9 +6,9 @@
 typedef struct _ast_node ast_node;
 
 typedef struct {
-    const string *str;
     type_base *base;
     ast_node *root;
+    token_state state;
 } ast_container;
 
 void ast_container_init(ast_container *cont, const string *str, type_base *base, ast_node *wrapper);
@@ -33,6 +33,7 @@ typedef struct _ast_node {
     type *ty;
     struct _ast_node *parent; // weak ref
     ast_node_children children;
+    void *ir; // TODO
     ast_position position;
 } ast_node;
 
@@ -62,6 +63,11 @@ typedef enum [[gnu::packed]] {
 #define AST_NODE_OP_SIZE 2
 
 ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, ast_position pos);
+
+inline ast_node *ast_node_init_slice(type *ty, ast_node *parent, const token_slice *slice) {
+    ast_position pos = ast_position_init(slice->str_start, slice->str_end - slice->str_start, slice->line_no);
+    return ast_node_init(ty, parent, ast_node_children_empty(), pos);
+}
 
 void ast_node_free(ast_node *node);
 

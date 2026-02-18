@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../namespace/namespace.h"
+#include "../token/token.h"
 
 #define AST_NODE_TYPE(NAME) AST_NODE_TYPE_##NAME
 

@@ -23,6 +23,8 @@ static const char *op_name_strs[] = {
     "CMD_VALUE",
     "CMD_ERROR",
     "CMD_REGEX",
+    "CMD_TEST",
+    "CMD_EXIT",
     "INDEX",
     "REGEX",
     "MATCH",

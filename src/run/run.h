@@ -3,6 +3,8 @@
 
 #include "./i64.h"
 #include "./u64.h"
+#include "./f64.h"
+#include "./bool.h"
 #include "./error.h"
 #include "./map.h"
 #include "./string.h"

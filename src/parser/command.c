@@ -1,16 +1,6 @@
 
 #include "./command.h"
 
-static type *command_op_right_type = nullptr;
-
-[[gnu::constructor(DEF_CONSTRUCTOR_COMMAND)]] static void parser_command_constructor(void) {
-    command_op_right_type = type_init(TYPE_NAME(VOID), TYPE_QUALIFIER_FLAG(_), type_class_union_empty());
-}
-
-[[gnu::destructor(DEF_DESTRUCTOR_COMMAND)]] static void parser_command_destructor(void) {
-    type_free(command_op_right_type);
-}
-
 #define TABLE_MATCH(CHAR, ...) \
     [CHAR - 'a'] (parser_command_match[]) { __VA_ARGS__, { .op_name = TYPE_OP_NAME(_) } }
 
@@ -33,7 +23,8 @@ static const parser_command_match *table_match[lowercase_letters_values + 1] = {
     ),
     TABLE_MATCH('e',
         { .c_str = "export", .op_name = TYPE_OP_NAME(CMD_EXPORT) },
-        { .c_str = "error", .op_name = TYPE_OP_NAME(CMD_ERROR) }
+        { .c_str = "error", .op_name = TYPE_OP_NAME(CMD_ERROR) },
+        { .c_str = "exit", .op_name = TYPE_OP_NAME(CMD_EXIT) }
     ),
     // f
     // g
@@ -55,7 +46,10 @@ static const parser_command_match *table_match[lowercase_letters_values + 1] = {
         { .c_str = "regex", .op_name = TYPE_OP_NAME(CMD_REGEX) }
     ),
     // s
-    TABLE_MATCH('t', { .c_str = "type", .op_name = TYPE_OP_NAME(CMD_TYPE) }),
+    TABLE_MATCH('t',
+        { .c_str = "type", .op_name = TYPE_OP_NAME(CMD_TYPE) },
+        { .c_str = "test", .op_name = TYPE_OP_NAME(CMD_TEST) }
+    ),
     // u
     TABLE_MATCH('v', { .c_str = "value", .op_name = TYPE_OP_NAME(CMD_VALUE) })
     // v
@@ -68,15 +62,15 @@ static const parser_command_match *table_match[lowercase_letters_values + 1] = {
 type *parser_command(const token_slice *slice) {
     if (slice->class != TOKEN_CLASS(COMMAND) || slice->str_end - slice->str_start < 2)
         return nullptr;
-    uint8_t match_value = slice->str->data[slice->str_start + 1] - 'a';
+    uint8_t match_value = slice->str->data[slice->str_start + sizeof(char)] - 'a';
     if (match_value > lowercase_letters_values)
         return nullptr;
     const parser_command_match *match_array = table_match[match_value];
     if (!match_array)
         return nullptr;
     while (match_array->op_name != TYPE_OP_NAME(_)) {
-        if (token_slice_match_c_str(slice, match_array->c_str, 1))
-            return namespace_op(match_array->op_name, nullptr, nullptr, type_copy(command_op_right_type));
+        if (token_slice_match_c_str(slice, match_array->c_str, sizeof(char)))
+            return namespace_op(match_array->op_name, nullptr, nullptr, type_copy(namespace_type_void));
         match_array++;
     }
     return nullptr;

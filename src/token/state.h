@@ -1,16 +1,22 @@
 
 #pragma once
 
-#include "../ast/ast.h"
+#include "../namespace/namespace.h"
 #include "./class.h"
 
 typedef struct {
-    uint16_t line_no;
+    int16_t line_no; // -1 done
     uint32_t str_pos;
     const string *str; // weak ref
 } token_state;
 
-void token_state_init(token_state *state, const string *str);
+inline void token_state_init(token_state *state, const string *str) {
+    state->line_no = 1;
+    state->str_pos = 0;
+    state->str = str;
+}
+
+extern def_fn_table token_state_fn_table;
 
 typedef struct {
     token_class class;
@@ -19,7 +25,12 @@ typedef struct {
     const string *str; // weak ref
 } token_slice;
 
-void token_slice_init(const token_state *state, token_slice *slice);
+inline void token_slice_init(const token_state *state, token_slice *slice) {
+    slice->class = TOKEN_CLASS(INVALID);
+    slice->line_no = state->line_no;
+    slice->str_start = slice->str_end = state->str_pos;
+    slice->str = state->str;
+}
 
 bool token_slice_match_c_str(const token_slice *slice, const char *c_str, uint32_t slice_str_offset);
 
