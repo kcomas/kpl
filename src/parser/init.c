@@ -90,7 +90,7 @@ ast_node *parser_ast_node_init_string(const token_slice *slice) {
 ast_node *parser_ast_node_init_symbol(const token_slice *slice) {
     type_tag *tag = type_tag_init(nullptr, 0, &def_unused_fn_table, def());
     if (type_tag_symbol_from_c_str_slice(tag, slice->str->data + slice->str_start + sizeof(char),
-            slice->str_end - slice->str_start) != DEF_STATUS(OK)) {
+            slice->str_end - slice->str_start - sizeof(char)) != DEF_STATUS(OK)) {
         type_tag_free(tag);
         return nullptr;
     }
@@ -111,6 +111,23 @@ ast_node *parser_ast_node_init_command(const token_slice *slice) {
     if (!ty)
         return nullptr;
     return ast_node_init_slice(ty, nullptr, slice);
+}
+
+static ast_node *parser_ast_node_init_list(type_name name, const token_slice *slice) {
+    type *ty = namespace_table(name, nullptr, nullptr, nullptr);
+    return ast_node_init_slice(ty, nullptr, slice);
+}
+
+ast_node *parser_ast_node_init_apply(const token_slice *slice) {
+    return parser_ast_node_init_list(TYPE_NAME(APPLY), slice);
+}
+
+ast_node *parser_ast_node_init_define(const token_slice *slice) {
+    return parser_ast_node_init_list(TYPE_NAME(DEFINE), slice);
+}
+
+ast_node *parser_ast_node_init_lambda(const token_slice *slice) {
+    return parser_ast_node_init_list(TYPE_NAME(LAMBDA), slice);
 }
 
 ast_node *parser_ast_node_init_op(const token_slice *slice) {

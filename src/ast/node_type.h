@@ -9,6 +9,7 @@ typedef enum [[gnu::packed]] {
     AST_NODE_TYPE(ATOM),
     AST_NODE_TYPE(LIST),
     AST_NODE_TYPE(OP),
+    AST_NODE_TYPE(LEFT),
     AST_NODE_TYPE(_)
 } ast_node_type;
 

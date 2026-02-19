@@ -31,7 +31,7 @@ inline ast_position ast_position_init(uint32_t str_start, int16_t str_len, int16
 typedef struct _ast_node {
     MEM_HEADER(_ast_node);
     type *ty;
-    struct _ast_node *parent; // weak ref
+    struct _ast_node *parent, *left; // weak ref, owned
     ast_node_children children;
     void *ir; // TODO
     ast_position position;
@@ -89,3 +89,5 @@ extern def_fn_table ast_node_fn_table;
 def_status ast_node_op_set_side(ast_node *restrict op_node, ast_node_op_side side, ast_node *restrict child);
 
 def_status ast_node_list_add_back(ast_node *restrict list_node, ast_node *restrict child);
+
+def_status ast_node_left_set(ast_node *restrict parent, ast_node *restrict child);

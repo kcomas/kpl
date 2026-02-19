@@ -35,7 +35,7 @@ static const parser_command_match *table_match[lowercase_letters_values + 1] = {
         { .c_str = "ir", .op_name = TYPE_OP_NAME(CMD_IR) }
     ),
     // j
-    // l
+    TABLE_MATCH('l', { .c_str = "log", .op_name = TYPE_OP_NAME(CMD_LOG) }),
     // m
     // o
     // p
@@ -70,7 +70,7 @@ type *parser_command(const token_slice *slice) {
         return nullptr;
     while (match_array->op_name != TYPE_OP_NAME(_)) {
         if (token_slice_match_c_str(slice, match_array->c_str, sizeof(char)))
-            return namespace_op(match_array->op_name, nullptr, nullptr, type_copy(namespace_type_void));
+            return namespace_command(match_array->op_name, nullptr, nullptr);
         match_array++;
     }
     return nullptr;

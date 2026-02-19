@@ -25,6 +25,12 @@ typedef struct {
     const string *str; // weak ref
 } token_slice;
 
+inline void token_state_rewind_from_slice(token_state *state, const token_slice *slice) {
+    state->line_no = slice->line_no;
+    state->str_pos = slice->str_start;
+    state->str = slice->str;
+}
+
 inline void token_slice_init(const token_state *state, token_slice *slice) {
     slice->class = TOKEN_CLASS(INVALID);
     slice->line_no = state->line_no;

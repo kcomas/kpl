@@ -11,12 +11,12 @@ TEST(parser_command) {
     ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");
     type *ty = parser_command(&slice);
     type_print(ty, stdout, 0, TYPE_PRINT(NL_END));
-    ASSERT(ty && ty->name == TYPE_NAME(OP) && ty->op_name == TYPE_OP_NAME(CMD_IMPORT), "invalid command");
+    ASSERT(ty && ty->name == TYPE_NAME(COMMAND) && ty->op_name == TYPE_OP_NAME(CMD_IMPORT), "invalid command");
     type_free(ty);
     ASSERT(token_next(&state, &slice) == DEF_STATUS(OK), "invalid token next");
     ty = parser_command(&slice);
     type_print(ty, stdout, 0, TYPE_PRINT(NL_END));
-    ASSERT(ty && ty->name == TYPE_NAME(OP) && ty->op_name == TYPE_OP_NAME(CMD_EXPORT), "invalid command");
+    ASSERT(ty && ty->name == TYPE_NAME(COMMAND) && ty->op_name == TYPE_OP_NAME(CMD_EXPORT), "invalid command");
     type_free(ty);
     string_free(str);
 }

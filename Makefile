@@ -13,9 +13,8 @@ MAKEFLAGS := -j$(THREADS)
 CC := gcc
 OO := -g -Og
 FFLAGS := -fno-omit-frame-pointer -fhardened
-MFLAGS := -mincoming-stack-boundary=3
 WFLAGS := -Wall -Wextra -Wstack-protector
-CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(MFLAGS) $(WFLAGS)
+CFLAGS = -std=gnu23 $(FLAGS) $(OO) $(FFLAGS) $(WFLAGS)
 CCOBJ = $(CC) -o $@ $^ $(CFLAGS)
 
 SOURCES := $(wildcard ./src/**/*.c) $(wildcard ./src/**/**/*.c)

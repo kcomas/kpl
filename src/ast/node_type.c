@@ -46,6 +46,7 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(ATOM, THREAD),
     // LIST
     AST_NAME(OP, OP),
+    AST_NAME(LEFT, COMMAND),
     AST_NAME(LIST, TUPLE),
     AST_NAME(LIST, MAP),
     AST_NAME(LIST, OVERLOAD),
@@ -62,7 +63,7 @@ static const ast_node_type type_name_node_type_array[] = {
     AST_NAME(ATOM, RANGE),
     AST_NAME(LIST, DEFINE),
     // TAG
-    AST_NAME(ATOM, TAG),
+    AST_NAME(LEFT, TAG),
     AST_NAME(ATOM, VALUE),
     AST_NAME(ATOM, ALIAS),
     AST_NAME(ATOM, VAR),

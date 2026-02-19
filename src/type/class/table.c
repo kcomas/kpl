@@ -13,6 +13,8 @@ type_table *type_table_init(type *inner_type, type_table *parent_scope) {
 }
 
 void type_table_free(type_table *table) {
+    if (!table)
+        return;
     if (table->inner_type)
         type_free(table->inner_type);
     map_free(table->type_map);
@@ -36,6 +38,8 @@ bool type_table_eq(const type_table *table_a, const type_table *table_b) {
 }
 
 void type_table_print(const type_table *table, FILE *file, int32_t idnt, type_print_opts print_opts) {
+    if (!table)
+        return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (table->inner_type) {

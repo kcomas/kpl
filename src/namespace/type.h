@@ -28,6 +28,15 @@ inline type *namespace_op(type_op_name op_name, type *return_type, type *left_ty
     return ty;
 }
 
+inline type *namespace_command(type_op_name op_name, type *return_type, type *left_type) {
+    list *li = type_list_init();
+    list_add_back(li, def_ptr(return_type));
+    list_add_back(li, def_ptr(left_type));
+    type *ty = type_init(TYPE_NAME(COMMAND), TYPE_QUALIFIER_FLAG(_), type_class_union_list(li));
+    ty->op_name = op_name;
+    return ty;
+}
+
 type *namespace_table(type_name name, type_table *parent_scope, type *inner_type, ...);
 
 inline type *namespace_tag(type_name name, type *inner_type, const char *symbol, uint32_t print_opts,

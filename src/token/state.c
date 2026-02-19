@@ -27,7 +27,7 @@ static void token_state_print_fn(const def_data data, FILE *file, int32_t idnt, 
     if (state->line_no > 0)
         fprintf(file, COLOR(BOLD) " L%d::B%u" COLOR(RESET), state->line_no, byte_pos);
     else
-        fprintf(file, COLOR(BOLD) " EOF" COLOR(RESET));
+        fprintf(file, COLOR(BOLD) " EOS" COLOR(RESET));
     fprintf(file, "|" COLOR(GREEN));
     while (str_start < str_end)
         fprintf(file, "%c", state->str->data[str_start++]);
@@ -43,6 +43,8 @@ def_fn_table token_state_fn_table = {
     .print_fn = token_state_print_fn,
     .free_fn = nullptr
 };
+
+extern inline void token_state_rewind_from_slice(token_state *state, const token_slice *slice);
 
 extern inline void token_slice_init(const token_state *state, token_slice *slice);
 

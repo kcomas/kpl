@@ -11,6 +11,8 @@ type_fixed *type_fixed_init(type *inner_type, uint32_t value) {
 }
 
 void type_fixed_free(type_fixed *fixed) {
+    if (!fixed)
+        return;
     if (fixed->inner_type)
         type_free(fixed->inner_type);
     mem_free(&fixed_pool, fixed);
@@ -29,6 +31,8 @@ bool type_fixed_eq(const type_fixed *fixed_a, const type_fixed *fixed_b) {
 }
 
 void type_fixed_print(const type_fixed *fixed, FILE *file, uint32_t idnt, type_print_opts print_opts) {
+    if (!fixed)
+        return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (fixed->inner_type)

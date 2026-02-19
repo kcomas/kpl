@@ -15,6 +15,8 @@ type_tag *type_tag_init(type *inner_type, uint32_t print_opts, def_fn_table *fn_
 }
 
 void type_tag_free(type_tag *tag) {
+    if (!tag)
+        return;
     if (tag->inner_type)
         type_free(tag->inner_type);
     if (tag->fn_table->free_fn && tag->data.ptr)
@@ -115,6 +117,8 @@ bool type_tag_eq(const type_tag *tag_a, const type_tag *tag_b) {
 }
 
 void type_tag_print(const type_tag *tag, FILE *file, int32_t idnt, type_print_opts print_opts) {
+    if (!tag)
+        return;
     fprintf(file, "%*s", idnt, "");
     fprintf(file, COLOR2(BOLD, WHITE) "[" COLOR(RESET));
     if (tag->inner_type)

@@ -29,4 +29,10 @@ ast_node *parser_ast_node_init_symbol_unused(const token_slice *slice);
 
 ast_node *parser_ast_node_init_command(const token_slice *slice);
 
+ast_node *parser_ast_node_init_apply(const token_slice *slice);
+
+ast_node *parser_ast_node_init_define(const token_slice *slice);
+
+ast_node *parser_ast_node_init_lambda(const token_slice *slice);
+
 ast_node *parser_ast_node_init_op(const token_slice *slice);

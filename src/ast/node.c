@@ -27,6 +27,7 @@ ast_node *ast_node_init(type *ty, ast_node *parent, ast_node_children children, 
     ast_node *node = mem_alloc(&ast_node_pool, sizeof(ast_node));
     node->ty = ty;
     node->parent = parent;
+    node->left = nullptr;
     node->children = children;
     node->ir = nullptr;
     node->position = pos;
@@ -43,10 +44,16 @@ void ast_node_free(ast_node *node) {
         case AST_NODE_TYPE(LIST):
             if (node->children.stmts)
                 list_free(node->children.stmts);
+            if (node->left)
+                ast_node_free(node->left);
             break;
         case AST_NODE_TYPE(OP):
             if (node->children.op)
                 tuple_free(node->children.op);
+            break;
+        case AST_NODE_TYPE(LEFT):
+            if (node->left)
+                ast_node_free(node->left);
             break;
     }
     type_free(node->ty);
@@ -86,12 +93,17 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
         case AST_NODE_TYPE(LIST):
             if (!node->children.stmts)
                 break;
-            fprintf(file, COLOR(BOLD) "{" COLOR(RESET));
+            if (node->left) {
+                if (print_opts & AST_NODE_PRINT(NL_END))
+                    fprintf(file, "\n");
+                ast_node_print(node->left, file, idnt + 1, print_opts & AST_NODE_PRINT(NL_END));
+                fprintf(file, COLOR(BOLD) "%*s{" COLOR(RESET), idnt, "");
+            } else
+                fprintf(file, COLOR(BOLD) "{" COLOR(RESET));
             if (print_opts & AST_NODE_PRINT(NL_END))
                 fprintf(file, "\n");
             list_print(node->children.stmts, file, idnt + 1, LIST_PRINT(_));
-            fprintf(file, COLOR(BOLD) "}" COLOR(RESET));
-            fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
+            fprintf(file, COLOR(BOLD) "%*s}❳" COLOR(RESET), idnt, "");
             break;
         case AST_NODE_TYPE(OP):
             if (!node->children.op)
@@ -99,6 +111,14 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
             if (print_opts & AST_NODE_PRINT(NL_END))
                 fprintf(file, "\n");
             tuple_print(node->children.op, file, idnt + 1, TUPLE_PRINT(_));
+            fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
+            break;
+        case AST_NODE_TYPE(LEFT):
+            if (!node->left)
+                break;
+            if (print_opts & AST_NODE_PRINT(NL_END))
+                fprintf(file, "\n");
+            ast_node_print(node->left, file, idnt + 1, print_opts & AST_NODE_PRINT(NL_END));
             fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
             break;
     }
@@ -119,11 +139,15 @@ static size_t ast_node_hash_fn(const def_data data) {
             if (!node->children.stmts)
                 break;
             hash += list_hash(node->children.stmts);
+            hash += ast_node_hash_fn(def_ptr(node->left));
             break;
         case AST_NODE_TYPE(OP):
             if (!node->children.op)
                 break;
             hash += tuple_hash(node->children.op);
+            break;
+        case AST_NODE_TYPE(LEFT):
+            hash += ast_node_hash_fn(def_ptr(node->left));
             break;
     }
     return hash + type_hash(node->ty);
@@ -142,9 +166,12 @@ static bool ast_node_eq_fn(const def_data data_a, const def_data data_b) {
         case AST_NODE_TYPE(_):
             return true;
         case AST_NODE_TYPE(LIST):
-            return list_eq(node_a->children.stmts, node_b->children.stmts);
+            return list_eq(node_a->children.stmts, node_b->children.stmts) &&
+                ast_node_eq_fn(def_ptr(node_a->left), def_ptr(node_b->left));
         case AST_NODE_TYPE(OP):
             return tuple_eq(node_a->children.op, node_b->children.op);
+        case AST_NODE_TYPE(LEFT):
+            return ast_node_eq_fn(def_ptr(node_a->left), def_ptr(node_b->left));
         default:
             break;
     }
@@ -185,5 +212,28 @@ def_status ast_node_list_add_back(ast_node *restrict list_node, ast_node *restri
         list_node->children.stmts = list_init(AST_NODE_PRINT(NL_END), &ast_node_fn_table);
     child->parent = list_node;
     list_add_back(list_node->children.stmts, def_ptr(child));
+    return DEF_STATUS(OK);
+}
+
+def_status ast_node_left_set(ast_node *restrict parent, ast_node *restrict child) {
+    if (!parent->ty || !child->ty || parent->left)
+        return DEF_STATUS(ERROR);
+    switch (type_name_get_class(parent->ty->name)) {
+        case TYPE_CLASS(LIST):
+            type_free(parent->ty->class_union.li->tail->data.ptr);
+            parent->ty->class_union.li->tail->data.ptr = type_copy(child->ty);
+            break;
+        case TYPE_CLASS(TABLE):
+            type_free(parent->ty->class_union.table->inner_type);
+            parent->ty->class_union.table->inner_type = type_copy(child->ty);
+            break;
+        case TYPE_CLASS(TAG):
+            type_free(parent->ty->class_union.tag->inner_type);
+            parent->ty->class_union.tag->inner_type = type_copy(child->ty);
+            break;
+        default:
+            return DEF_STATUS(ERROR);
+    }
+    parent->left = child;
     return DEF_STATUS(OK);
 }

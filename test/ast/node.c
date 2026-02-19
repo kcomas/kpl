@@ -34,3 +34,14 @@ TEST(ast_container) {
     ast_node_free(container.root);
     string_free(str);
 }
+
+TEST(ast_command) {
+    ast_node *left = ast_node_init(namespace_tag(TYPE_NAME(VAR),
+                namespace_vector(TYPE_NAME(VECTOR), namespace_scalar(TYPE_NAME(I64))), "vec",
+                0, &def_unused_fn_table, def()), nullptr, ast_node_children_empty(), ast_position_init(0, 0, 0));
+    ast_node *command = ast_node_init(namespace_command(TYPE_OP_NAME(CMD_LOG), nullptr, nullptr),
+            nullptr, ast_node_children_empty(), ast_position_init(0, 0, 0));
+    ASSERT(ast_node_left_set(command, left) == DEF_STATUS(OK), "invalid ast node left set");
+    ast_node_print(command, stdout, 0, AST_NODE_PRINT(NL_END));
+    ast_node_free(command);
+}
