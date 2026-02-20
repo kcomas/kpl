@@ -17,11 +17,11 @@ print_fib\export : Fn { U64`idx; I64`n
         clear
         "("
         magenta
-        String $ idx
+        idx
         clear
         ") = "
         green
-        String $ fib(n)
+        fib(n)
         reset
         "\n"
     ))

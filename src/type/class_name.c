@@ -2,6 +2,7 @@
 #include "./class_name.h"
 
 static const char *name_str_array[] = {
+    // SCALAR
     "VOID",
     "BOOL",
     "U8",
@@ -20,35 +21,41 @@ static const char *name_str_array[] = {
     "BUFFER",
     "FD",
     "SOCKET",
+    // SIZE
     "ARRAY",
     "TMP",
+    // VECTOR
     "VECTOR",
     "SET",
     "RESULT",
     "OPTION",
     "THREAD",
+    // LIST
     "OP",
     "COMMAND",
     "TUPLE",
     "MAP",
     "OVERLOAD",
     "CLOSURE",
-    "APPLY",
+    // TABLE
     "ENUM",
     "STRUCT",
     "UNION",
     "FN",
     "COROUTINE",
     "LAMBDA",
+    "APPLY",
+    "DEFINE",
     "REGEX",
     "RANGE",
-    "DEFINE",
+    // TAG
     "TAG",
     "VALUE",
     "ALIAS",
     "VAR",
     "ARG",
     "NAME",
+    // BASE
     "BASE",
     "_"
 };
@@ -77,7 +84,6 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(SCALAR, CHAR),
     CLASS_NAME(SCALAR, STRING),
     CLASS_NAME(SCALAR, BUFFER),
-    CLASS_NAME(SCALAR, REGEX),
     CLASS_NAME(SCALAR, ERROR),
     CLASS_NAME(SCALAR, FD),
     CLASS_NAME(SCALAR, SOCKET),
@@ -94,7 +100,6 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(LIST, MAP),
     CLASS_NAME(LIST, OVERLOAD),
     CLASS_NAME(LIST, CLOSURE),
-    CLASS_NAME(LIST, APPLY),
     CLASS_NAME(TABLE, ENUM),
     CLASS_NAME(TABLE, STRUCT),
     CLASS_NAME(TABLE, UNION),
@@ -102,6 +107,9 @@ static type_class type_name_class_array[] = {
     CLASS_NAME(TABLE, COROUTINE),
     CLASS_NAME(TABLE, LAMBDA),
     CLASS_NAME(TABLE, DEFINE),
+    CLASS_NAME(TABLE, APPLY),
+    CLASS_NAME(TABLE, REGEX),
+    CLASS_NAME(TABLE, RANGE),
     CLASS_NAME(TAG, TAG),
     CLASS_NAME(TAG, VALUE),
     CLASS_NAME(TAG, ALIAS),

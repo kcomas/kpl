@@ -25,6 +25,7 @@ static const char *op_name_strs[] = {
     "CMD_REGEX",
     "CMD_TEST",
     "CMD_EXIT",
+    "BASE",
     "INDEX",
     "REGEX",
     "MATCH",

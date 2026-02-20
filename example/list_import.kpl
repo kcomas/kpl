@@ -13,12 +13,12 @@ list_fns`list_each(list; { `value; `idx
         blue
         "idx: "
         bold
-        String $ idx
+        idx
         clear
         green
         ", value: "
         bold
-        String $ value
+        value
         reset
         "\n"
     ))

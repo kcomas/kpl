@@ -141,7 +141,7 @@ static const parser_table_action table_action[TOKEN_CLASS(_)] = {
     TABLE_MODE(TYPE, NEXT_STMT, parser_ast_node_init_type, parser_ast_node_join_value),
     TABLE_MODE(VAR, NEXT_STMT, parser_ast_node_init_var, parser_ast_node_join_value),
     TABLE_MODE(UNUSED_VAR, NEXT_STMT, parser_ast_node_init_var_unused, parser_ast_node_join_value),
-    TABLE_MODE(BASE, INVALID, nullptr, nullptr), // TODO BASE
+    TABLE_MODE(BASE, NEXT_STMT, parser_ast_node_init_base, parser_ast_node_join_op),
     TABLE_MODE(TRUE_VALUE, NEXT_STMT, parser_ast_node_init_true_value, parser_ast_node_join_value),
     TABLE_MODE(TRUE_CONST, NEXT_STMT, parser_ast_node_init_true_const, parser_ast_node_join_value),
     TABLE_MODE(FALSE_VALUE, NEXT_STMT, parser_ast_node_init_false_value, parser_ast_node_join_value),

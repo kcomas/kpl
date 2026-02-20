@@ -9,6 +9,8 @@ ast_node *parser_ast_node_init_var(const token_slice *slice);
 
 ast_node *parser_ast_node_init_var_unused(const token_slice *slice);
 
+ast_node *parser_ast_node_init_base(const token_slice *slice);
+
 ast_node *parser_ast_node_init_true_value(const token_slice *slice);
 
 ast_node *parser_ast_node_init_true_const(const token_slice *slice);

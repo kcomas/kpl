@@ -99,6 +99,10 @@ A unique identifier, cannot be stored
 
 #### [Lambda](./functions.md)
 
+#### Define
+
+#### Apply
+
 #### [Regex](./types/regex.md)
 
 #### Range
