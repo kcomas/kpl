@@ -1,7 +1,18 @@
 
 #include "./helper.h"
 
+static bool check_empty_node(const type_name check_array[], uint32_t *check_array_idx) {
+    bool status = check_array[*check_array_idx] == TYPE_NAME(_);
+    if (!status)
+        printf(COLOR2(BOLD, RED) "EXPECTING %s, NONE FOUND\n" COLOR(RESET),
+                type_name_str(check_array[*check_array_idx]));
+    ++*check_array_idx;
+    return status;
+}
+
 static bool parser_check_op(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
+    if (!node->children.op)
+        return check_empty_node(check_array, check_array_idx) && check_empty_node(check_array, check_array_idx);
     const ast_node *left_node = node->children.op->items[AST_NODE_OP_SIDE(LEFT)].data.ptr;
     const ast_node *right_node = node->children.op->items[AST_NODE_OP_SIDE(RIGHT)].data.ptr;
     return parser_check(left_node, check_array, check_array_idx) &&
@@ -11,6 +22,8 @@ static bool parser_check_op(const ast_node *node, const type_name check_array[],
 static bool parser_check_list(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
     if (!parser_check(node->left, check_array, check_array_idx))
         return false;
+    if (!node->children.stmts)
+        return check_empty_node(check_array, check_array_idx);
     const list_item *head = node->children.stmts->head;
     while (head) {
         if (!parser_check(head->data.ptr, check_array, check_array_idx))
@@ -22,7 +35,7 @@ static bool parser_check_list(const ast_node *node, const type_name check_array[
 
 bool parser_check(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
     if (!node)
-        return check_array[(*check_array_idx)++] == TYPE_NAME(_);
+        return check_empty_node(check_array, check_array_idx);
     if (!node->ty) {
         printf(COLOR2(BOLD, RED) "NODE WITHOUT TYPE FOUND\n" COLOR(RESET));
         return false;

@@ -77,8 +77,9 @@ ast_container *ast_node_get_container(const ast_node *node);
 
 typedef enum [[gnu::packed]] {
     AST_NODE_PRINT(NL_END)      = 1 << 0,
-    AST_NODE_PRINT(STRING)      = 1 << 1,
-    AST_NODE_PRINT(POSITION)    = 1 << 2,
+    AST_NODE_PRINT(NL_LEFT)     = 1 << 1,
+    AST_NODE_PRINT(STRING)      = 1 << 2,
+    AST_NODE_PRINT(POSITION)    = 1 << 3,
     AST_NODE_PRINT(_)           = 0
 } ast_node_print_opts;
 

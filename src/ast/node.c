@@ -91,15 +91,16 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
             fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
             break;
         case AST_NODE_TYPE(LIST):
-            if (!node->children.stmts)
-                break;
             if (node->left) {
                 if (print_opts & AST_NODE_PRINT(NL_END))
                     fprintf(file, "\n");
-                ast_node_print(node->left, file, idnt + 1, print_opts & AST_NODE_PRINT(NL_END));
-                fprintf(file, COLOR(BOLD) "%*s{" COLOR(RESET), idnt, "");
-            } else
-                fprintf(file, COLOR(BOLD) "{" COLOR(RESET));
+                ast_node_print(node->left, file, idnt + 1, print_opts | AST_NODE_PRINT(NL_LEFT));
+            }
+            if (!node->children.stmts) {
+                fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
+                break;
+            }
+            fprintf(file, COLOR(BOLD) "{" COLOR(RESET));
             if (print_opts & AST_NODE_PRINT(NL_END))
                 fprintf(file, "\n");
             list_print(node->children.stmts, file, idnt + 1, LIST_PRINT(_));
@@ -118,11 +119,11 @@ void ast_node_print(const ast_node *node, FILE *file, int32_t idnt, ast_node_pri
                 break;
             if (print_opts & AST_NODE_PRINT(NL_END))
                 fprintf(file, "\n");
-            ast_node_print(node->left, file, idnt + 1, print_opts & AST_NODE_PRINT(NL_END));
-            fprintf(file, COLOR(BOLD) "%*s❳" COLOR(RESET), idnt, "");
+            ast_node_print(node->left, file, idnt + 1, print_opts | AST_NODE_PRINT(NL_LEFT));
+            fprintf(file, COLOR(BOLD) "❳" COLOR(RESET));
             break;
     }
-    if (print_opts & AST_NODE_PRINT(NL_END))
+    if ((print_opts & AST_NODE_PRINT(NL_END)) && !(print_opts & AST_NODE_PRINT(NL_LEFT)))
         fprintf(file, "\n");
 }
 

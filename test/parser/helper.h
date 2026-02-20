@@ -13,4 +13,4 @@ bool parser_check(const ast_node *node, const type_name check_array[], uint32_t 
 
 #define OP(LEFT_NODE, RIGHT_NODE) TYPE_NAME(OP), LEFT_NODE, RIGHT_NODE
 
-#define LEFT(NAME, LEFT_NODE) TYPE_NAME(NAME) LEFT_NPDE
+#define LEFT(NAME, LEFT_NODE) TYPE_NAME(NAME), LEFT_NODE
