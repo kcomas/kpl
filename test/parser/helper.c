@@ -4,11 +4,13 @@
 static bool parser_check_empty_node(const type_name check_array[], uint32_t *check_array_idx) {
     bool status = check_array[*check_array_idx] == TYPE_NAME(_);
     if (!status)
-        printf(COLOR2(BOLD, RED) "EXPECTING %s, NONE FOUND\n" COLOR(RESET),
+        printf(COLOR2(BOLD, RED) "FOUND: NONE, EXPECTING %s\n" COLOR(RESET),
                 type_name_str(check_array[*check_array_idx]));
     ++*check_array_idx;
     return status;
 }
+
+static bool parser_check(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx);
 
 static bool parser_check_op(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
     if (!node->children.op)
@@ -34,7 +36,7 @@ static bool parser_check_list(const ast_node *node, const type_name check_array[
     return true;
 }
 
-bool parser_check(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
+static bool parser_check(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx) {
     if (!node)
         return parser_check_empty_node(check_array, check_array_idx);
     if (!node->ty) {
@@ -42,7 +44,7 @@ bool parser_check(const ast_node *node, const type_name check_array[], uint32_t 
         return false;
     }
     if (node->ty->name != check_array[*check_array_idx]) {
-        printf(COLOR2(BOLD, RED) "AST: %s, TEST: %s\n",
+        printf(COLOR2(BOLD, RED) "FOUND %s, EXPECTING: %s\n",
             type_name_str(node->ty->name), type_name_str(check_array[*check_array_idx]));
         return false;
     }
@@ -60,4 +62,24 @@ bool parser_check(const ast_node *node, const type_name check_array[], uint32_t 
             break;
     }
     return false;
+}
+
+bool parser_test(const char *c_str, const type_name type_check_array[]) {
+    bool status = false;
+    ast_node wrapper;
+    ast_container cont;
+    uint32_t type_check_array_idx = 0;
+    string *str = string_init_c_str(c_str);
+    error *er = parser_run(&cont, str, nullptr, &wrapper);
+    if (er) {
+        error_print(er, stdout, 0, ERROR_PRINT(NL_END));
+        error_free(er);
+    } else if (cont.root) {
+        string_print(str, stdout, 0, STRING_PRINT(NL_END));
+        ast_node_print(cont.root, stdout, 0, AST_NODE_PRINT(NL_END));
+        status = parser_check(cont.root, type_check_array, &type_check_array_idx);
+    }
+    ast_node_free(cont.root);
+    string_free(str);
+    return status;
 }

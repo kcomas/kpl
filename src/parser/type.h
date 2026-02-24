@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../ast/ast.h"
+#include "../query/query.h"
 
 typedef struct {
     const char *c_str;

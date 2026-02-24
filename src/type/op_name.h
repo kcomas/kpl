@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "./qualifier_flags.h"
+
 #define TYPE_OP_NAME(NAME) TYPE_OP_NAME_##NAME
 
 typedef enum [[gnu::packed]] {
@@ -91,3 +93,9 @@ typedef enum [[gnu::packed]] {
 } type_op_name;
 
 const char *type_op_name_str(type_op_name op_name);
+
+#define TYPE_OP_BITS_PER_BYTE 8
+
+#define TYPE_OP_MASK_BYTE_SIZE (TYPE_OP_NAME(INVALID) / TYPE_OP_BITS_PER_BYTE + sizeof(uint8_t))
+
+void type_op_set_mask(uint8_t mask[TYPE_OP_MASK_BYTE_SIZE], ...); // TYPE_OP_NAME(_) end

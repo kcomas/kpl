@@ -3,7 +3,7 @@
 
 #include "../test.h"
 
-bool parser_check(const ast_node *node, const type_name check_array[], uint32_t *check_array_idx);
+bool parser_test(const char *c_str, const type_name type_check_array[]);
 
 #define NONE TYPE_NAME(_)
 

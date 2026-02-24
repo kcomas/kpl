@@ -88,3 +88,12 @@ const char *type_op_name_str(type_op_name op_name) {
         return "INVALID OP";
     return op_name_strs[op_name];
 }
+
+void type_op_set_mask(uint8_t mask[TYPE_OP_MASK_BYTE_SIZE], ...) {
+    uint32_t next = 0;
+    va_list args;
+    va_start(args, mask);
+    while ((next = va_arg(args, uint32_t)))
+        mask[next / TYPE_OP_BITS_PER_BYTE] = 1 << (next % TYPE_OP_BITS_PER_BYTE);
+    va_end(args);
+}

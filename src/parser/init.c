@@ -31,7 +31,7 @@ ast_node *parser_ast_node_init_base(const token_slice *slice) {
     string *value = string_init_c_str_slice(slice->str->data + slice->str_start,
             slice->str_end - slice->str_start);
     type *value_type = namespace_value(namespace_scalar(TYPE_NAME(STRING)), 0, &string_fn_table, def_ptr(value));
-    type *ty = namespace_op(TYPE_OP_NAME(BASE), value_type, nullptr, nullptr);
+    type *ty = namespace_op(TYPE_OP_NAME(BASE), type_copy(namespace_type_void), value_type, nullptr);
     return ast_node_init_slice(ty, nullptr, slice);
 }
 

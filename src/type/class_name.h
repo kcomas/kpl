@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "./op_name.h"
+
 #define TYPE_CLASS(NAME) TYPE_CLASS_##NAME
 
 typedef enum [[gnu::packed]] {
@@ -13,6 +15,8 @@ typedef enum [[gnu::packed]] {
     TYPE_CLASS(BASE),
     TYPE_CLASS(_)
 } type_class;
+
+const char *type_class_str(type_class class);
 
 #define TYPE_NAME(NAME) TYPE_NAME_##NAME
 
@@ -36,7 +40,7 @@ typedef enum [[gnu::packed]] {
     TYPE_NAME(BUFFER),
     TYPE_NAME(FD),
     TYPE_NAME(SOCKET),
-    // SIZE
+    // FIXED
     TYPE_NAME(ARRAY),
     TYPE_NAME(TMP),
     // VECTOR
@@ -78,3 +82,11 @@ typedef enum [[gnu::packed]] {
 const char *type_name_str(type_name name);
 
 type_class type_name_get_class(type_name name);
+
+uint32_t type_name_get_mask(type_name name);
+
+uint32_t type_name_create_mask(...); // TYPE_NAME(_) end
+
+#define TYPE_CLASS_BITS_PER_NAME 31
+
+type_name type_class_first_name(type_class class);

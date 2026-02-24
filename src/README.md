@@ -51,14 +51,13 @@ Type -> X64
 Namespace -> Token
 Token -> Ast
 Ast X64 -> Ir
-Ast -> Parser
+Ast -> Query
+Query -> Parser
 Parser -> Fold
 Fold -> Check
 Check -> Eval
-Eval -> Repl
 Eval Ir -> Gen
-Gen -> Opt
-Opt -> Core
+Gen -> Core
 Core -> Repl
 Repl -> main.c
 ```

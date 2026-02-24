@@ -5,7 +5,6 @@ static error *parser_error(ast_container *cont, const char *msg) {
     return ERROR_INIT(0, &token_state_fn_table, def_ptr(&cont->state), msg);
 }
 
-
 static parser_mode parser_mode_get_end(parser_mode mode) {
     switch (mode) {
         case PARSER_MODE(NEXT_LAMBDA):
@@ -218,5 +217,8 @@ static const parser_table_action table_action[TOKEN_CLASS(_)] = {
 const parser_table_action *parser_table_action_next(token_class class) {
     if (class >= TOKEN_CLASS(_))
         return &table_action[TOKEN_CLASS(INVALID)];
-    return &table_action[class];
+    const parser_table_action *action = &table_action[class];
+    if (!action)
+        return &table_action[TOKEN_CLASS(INVALID)];
+    return action;
 }
