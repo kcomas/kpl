@@ -64,6 +64,23 @@ vec : Vector(1; 2; 3) // Vector[I64] with elements
 
 Statement list
 
+```
+{ statement; statement
+    statement
+}
+```
+
+#### Lambda Arguments
+
+For functions, matches ...
+
+```
+vec : Vector(1; 2; 3)
+vec @ { I64.x; x\log } // print each item in a vector
+vec @ { I64.x\log } // same as above
+vec @ { .x\log } // same as above
+```
+
 ## Operators
 
 No Precedence

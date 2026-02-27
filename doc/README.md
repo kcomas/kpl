@@ -2,19 +2,19 @@
 
 ## [Syntax](./syntax.md)
 
-## [Values](./values.md)
-
 ## [Commands](./commands.md)
-
-## [Results](./results.md)
-
-## [Containers](./containers.md)
-
-## [Operations](./operations.md)
 
 ## [Control Flow](./control_flow.md)
 
 ## [Functions](./functions.md)
+
+## [Results](./results.md)
+
+## [Values](./values.md)
+
+## [Containers](./containers.md)
+
+## [Operations](./operations.md)
 
 ## [Ownership](./ownership.md)
 
