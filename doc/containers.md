@@ -2,9 +2,9 @@
 
 ## Option
 
-## Union
-
 ## Tuple
+
+## Struct
 
 ## Array
 

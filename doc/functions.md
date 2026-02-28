@@ -27,3 +27,13 @@ Fn[Return Type; TYPE.name; ...]
 ### Return Type
 
 ### Arguments
+
+## Calling By Tuple
+
+```
+fn : { F64.x + F64.y }
+args : Tupple(1.0; 2.0)
+*(fn; args)\log // F64 : 3.0
+```
+
+## Overloading

@@ -85,8 +85,48 @@ vec @ { .x\log } // same as above
 
 No Precedence
 
-All operators can be called with () syntax
+Left To Right
+
+```
+3 * 2 + 1 // evaluates as 3 * (2 + 1)
+```
+
+All operators can be called as a function with () syntax
 
 ```
 1 + 2 -> +(1; 2)
+*(3; 2) + 1
+```
+
+#### No () For precedence, use operator function syntax
+
+### General Operators
+
+#### Assign
+
+```
+var : value
+```
+
+#### Shadow
+
+```
+{
+    a : 1
+    b : 2
+    {
+        a : 2
+        b :: 2
+        a\log // I64 : 2
+        b\log // I64 : 2
+    }
+    a\log // I64 : 2
+    b\log // I64 : 1
+}
+```
+
+#### Cast
+
+```
+uint : U64 $ 1
 ```

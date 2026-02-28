@@ -32,6 +32,8 @@ condition @ statement/lambda
 loopable @ { TYPE?.value; TYPE?.index; statements }
 ```
 
+No left argument for infinite loop
+
 ### Break
 
 ### Continue
@@ -52,5 +54,6 @@ condition @ {
 matchable # (
     { TYPE?.var }.name // var is what has been matched
     ...
+    default statement/lambda
 )
 ```

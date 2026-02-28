@@ -23,3 +23,5 @@
 ## [Namespaces](./namespaces.md)
 
 ## [C Code](./c_code.md)
+
+## [Standard Library](./standard_library.md)
