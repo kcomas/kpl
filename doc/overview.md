@@ -10,6 +10,8 @@
 
 * APL style code but with keywords instead of symbols, no operator precedence
 
+* Minimal dependencies; only requires make, gcc, and openssl
+
 ## Syntax
 
 ### Comments
@@ -22,17 +24,17 @@
 
 ### Variables
 
-Start with a lowercase letter, allows [a-zA-Z0-9_], 40 character limit
+Start with a lowercase letter, allows [a-zA-Z0-9_]
 
 Start a variable _ to designate the variable as unused
 
 ### Types
 
-Start with an uppercase letter, allows [A-Za-z0-9_], 40 character limit
+Start with an uppercase letter, allows [A-Za-z0-9_]
 
 ### Symbols
 
-Start with `.` allows [a-zA-Z0-9_], 40 character limit not including `.`
+Start with `.` allows [a-zA-Z0-9_]
 
 ### Statements
 
@@ -60,8 +62,8 @@ Start with \`, allows [a-zA-Z0-9_], 40 character limit not including \`
 Used like traditional operators or functions
 
 ```
-`log "Hello Word" // String : "Hello World"
-`log("Hello World") // String : "Hello World"
+`info "Hello Word" // String : "Hello World"
+`info("Hello World") // String : "Hello World"
 ```
 
 ### Lists
