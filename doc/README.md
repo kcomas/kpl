@@ -12,11 +12,11 @@
 
 ## [Operators](./operators.md)
 
-## [Lambdas](./lambdas.md)
+## [Functions](./functions.md)
 
-## Modifiers
+## [Ownership](./ownership.md)
 
-## Asynchronous
+## [Asynchronous](./asynchronous.md)
 
 ## Namespaces
 
